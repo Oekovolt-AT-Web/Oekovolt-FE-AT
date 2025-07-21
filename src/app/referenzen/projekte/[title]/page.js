@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import BannerSection from "@/components/Reusable/banner";
 import ProjectDetailComponent from "@/components/ProjectItem/projectitem";
@@ -21,6 +22,7 @@ export function generateSlug(title) {
     .replace(/-+/g, "-") // bashkon `--` në një `-`
     .replace(/^-+|-+$/g, ""); // heq `-` nga fillimi ose fundi
 }
+
 
 export async function generateStaticParams() {
   try {
@@ -93,7 +95,7 @@ export default async function ProjectDetailPage({ params }) {
     
  const project = data.message.find((p) => {
       const projectSlug = generateSlug(p.title || p.name);
-      console.log(`Comparing: ${projectSlug} === ${title}`);
+      // console.log(`Comparing: ${projectSlug} === ${title}`);
       return projectSlug === title;
     });
     
@@ -102,8 +104,8 @@ export default async function ProjectDetailPage({ params }) {
     //   notFound();
     // }
 
-console.log("Param Title:", title);
-console.log("Available slugs:", data.message.map(p => generateSlug(p.title || p.name)));
+// console.log("Param Title:", title);
+// console.log("Available slugs:", data.message.map(p => generateSlug(p.title || p.name)));
 
 
     

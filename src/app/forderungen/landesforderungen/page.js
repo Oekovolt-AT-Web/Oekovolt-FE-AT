@@ -11,7 +11,7 @@ export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     seoData = json.message?.[0]; // Assuming first item contains general metadata
   } catch (error) {
@@ -92,7 +92,7 @@ export default async function Page() {
   let data = null;
 
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     data = json.message;
   } catch (error) {

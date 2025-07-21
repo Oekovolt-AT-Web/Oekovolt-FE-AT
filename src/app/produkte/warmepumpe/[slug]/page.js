@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
@@ -19,6 +20,7 @@ export async function generateMetadata(props) {
   const { slug } = await props.params;
   return { title: slug };
 }
+
 
 export default async function HerstellerDetailPage({ params }) {
   const { slug } = params;

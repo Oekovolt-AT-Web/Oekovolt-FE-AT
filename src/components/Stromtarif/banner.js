@@ -7,8 +7,8 @@ const BannerSection = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src={`${API_IMG_URL}${data.dynami_image}`}
-          alt={data.dynami_image_alt_text || "Banner Image"}
+          src={`${API_IMG_URL}${data?.dynami_image}`}
+          alt={data?.dynami_image_alt_text || "Banner Image"}
           fill
           className="object-cover"
           priority

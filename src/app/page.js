@@ -14,7 +14,7 @@ export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     seoData = json.message;
   } catch (error) {
@@ -41,36 +41,7 @@ export async function generateMetadata() {
     title: seoData?.title || "Ökovolt Solartechnik - Photovoltaik Lösungen",
     description: seoData?.first_card_description || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
     keywords: apiKeywords,
-    // openGraph: {
-    //   title: seoData?.title || "Ökovolt Solartechnik",
-    //   description: seoData?.first_card_description || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
-    //   url: "https://www.oekovolt.de",
-    //   siteName: "Ökovolt Solartechnik",
-    //   images: [
-    //     {
-    //       url: seoData?.first_card_images?.[0]?.image 
-    //         ? `${API_BASE_URL}${seoData.first_card_images[0].image}` 
-    //         : "/images/og-image.jpg",
-    //       width: 1200,
-    //       height: 630,
-    //     },
-    //   ],
-    //   locale: "de_DE",
-    //   type: "website",
-    // },
-    // twitter: {
-    //   card: "summary_large_image",
-    //   title: seoData?.title || "Ökovolt Solartechnik",
-    //   description: seoData?.first_card_description || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
-    //   images: [
-    //     seoData?.first_card_images?.[0]?.image 
-    //       ? `${API_BASE_URL}${seoData.first_card_images[0].image}` 
-    //       : "/images/og-image.jpg"
-    //   ],
-    // },
-    // alternates: {
-    //   canonical: "https://www.oekovolt.de",
-    // },
+
   };
 }
 
@@ -78,7 +49,7 @@ export default async function Home() {
   let data = null;
 
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     data = json.message;
   } catch (error) {

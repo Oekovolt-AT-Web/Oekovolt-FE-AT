@@ -6,13 +6,14 @@ import EnergyOfferSection from "@/components/smartenergyhome/fourth";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import EndSection from "@/components/Reusable/end";
 
+
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_energy_home_page.api.get_smart_energy_page_with_keywords`;
 
 export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     seoData = json.message;
   } catch (error) {
@@ -63,7 +64,7 @@ export default async function SmartEnergyPage() {
   let data = null;
 
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     data = json.message;
   } catch (error) {

@@ -12,11 +12,12 @@ import EndSection from "@/components/Reusable/end";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.dynamischer_stromtarif_service_page.api.get_dynamischer_page_with_keywords`;
 
+
 export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     seoData = json.message;
   } catch (error) {
@@ -62,7 +63,7 @@ export default async function StromtarifPage() {
   let data = null;
 
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     data = json.message;
   } catch (error) {

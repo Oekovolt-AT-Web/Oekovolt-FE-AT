@@ -8,11 +8,13 @@ import { API_BASE_URL } from "@/lib/apiBaseUrl";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.faqs_page.api.get_faqs_page`;
 
+
+
 export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     seoData = json.message;
   } catch (error) {
@@ -66,7 +68,7 @@ export default async function Home() {
   let data = null;
 
   try {
-    const res = await fetch(DATA_URL, { cache: "no-store" });
+    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
     const json = await res.json();
     data = json.message;
   } catch (error) {

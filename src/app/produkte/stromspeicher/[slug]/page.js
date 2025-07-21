@@ -15,6 +15,9 @@ const slugToTitle = (slug) =>
     .replace(/[ß]/g, "ss")
     .replace(/[^a-z0-9-]/g, "");
 
+    export const dynamic = 'force-dynamic'; // Force dynamic behavior
+
+
 export async function generateMetadata(props) {
   const { slug } = await props.params;
   return { title: slug };
