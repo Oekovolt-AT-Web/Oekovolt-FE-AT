@@ -2,46 +2,51 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaMapMarkerAlt, FaCalendarAlt, FaTools, FaBolt } from "react-icons/fa";
-import GreenFeatureSection from "../Reusable/contactInfo";
+import {
+  FaMapMarkerAlt,
+  FaCalendarAlt,
+  FaTools,
+  FaBolt,
+} from "react-icons/fa";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
-
-export function generateSlug(title = "") {
+// Same slug function used across frontend and backend
+function generateSlug(title) {
+  if (!title) return "";
   return title
     .toLowerCase()
-    .replace(/\s+/g, "-")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s–—]+/g, "-")
     .replace(/\//g, "-")
     .replace(/[ä]/g, "ae")
     .replace(/[ö]/g, "oe")
     .replace(/[ü]/g, "ue")
     .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "");
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
-
-
-const end = {
-  greentitle: "Smarthome-Lösung",
-  title: "Ihre persönliche Solarberatung",
-  description: "Interessieren Sie sich für eine eigene Solaranlage? Wir beraten Sie individuell – kontaktieren Sie uns jetzt!"
-};
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const slug = generateSlug(project?.title);
+
   return (
     <Link
-      href={`/referenzen/projekte/${encodeURIComponent(generateSlug(project.title))}`}
+      href={`/referenzen/projekte/${slug}`}
       className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full h-full">
         <Image
-          src={`${API_IMG_URL}${project?.bild_anhagen[0].bild_anhagen}`}
+          src={`${API_IMG_URL}${project?.bild_anhagen[0]?.bild_anhagen}`}
           alt={`Project background - ${project?.location}`}
           fill
-          className={`transition-all duration-500 object-cover object-center ${isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"}`}
+          className={`transition-all duration-500 object-cover object-center ${
+            isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
+          }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-black/30 transition-opacity duration-300"></div>
@@ -134,8 +139,6 @@ const ProjectDetailComponent = ({ project, related }) => {
           ))}
         </div>
       </div>
-
-      {/* <GreenFeatureSection data={end} /> */}
     </div>
   );
 };

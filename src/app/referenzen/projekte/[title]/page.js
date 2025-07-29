@@ -7,21 +7,22 @@ import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 // Consistent slug generation function
-export function generateSlug(title) {
+function generateSlug(title) {
   if (!title) return '';
   return title
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // heq aksentet
-    .replace(/[\s–—]+/g, "-") // hapësira dhe lloje të ndryshme të dash
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s–—]+/g, "-")
     .replace(/\//g, "-")
     .replace(/[ä]/g, "ae")
     .replace(/[ö]/g, "oe")
     .replace(/[ü]/g, "ue")
     .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "") // largon karaktere të tjera
-    .replace(/-+/g, "-") // bashkon `--` në një `-`
-    .replace(/^-+|-+$/g, ""); // heq `-` nga fillimi ose fundi
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
+
 
 
 export async function generateStaticParams() {

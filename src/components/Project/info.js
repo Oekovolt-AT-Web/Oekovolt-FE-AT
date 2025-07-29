@@ -6,20 +6,29 @@ import { FaSolarPanel } from "react-icons/fa";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
+// Slug function inside same file
+function generateSlug(title) {
+  if (!title) return "";
+  return title
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s–—]+/g, "-")
+    .replace(/\//g, "-")
+    .replace(/[ä]/g, "ae")
+    .replace(/[ö]/g, "oe")
+    .replace(/[ü]/g, "ue")
+    .replace(/[ß]/g, "ss")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <Link
-      href={`/referenzen/projekte/${project.location
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/\//g, "-")
-        .replace(/[\u00e4]/g, "ae")
-        .replace(/[\u00f6]/g, "oe")
-        .replace(/[\u00fc]/g, "ue")
-        .replace(/[\u00df]/g, "ss")
-        .replace(/[^a-z0-9-]/g, "")}`}
+      href={`/referenzen/projekte/${generateSlug(project.location)}`}
       className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -50,19 +59,11 @@ const ProjectCard = ({ project }) => {
           </div>
         </div>
       </div>
-
-      {/* <div
-        className={`absolute top-3 right-3 px-3 py-1 text-sm rounded-full bg-[#669933] text-white font-medium shadow-md transition-all duration-500 ${
-          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90"
-        }`}
-      >
-        Mehr erfahren →
-      </div> */}
     </Link>
   );
 };
 
-const ProjectsSection = ({data}) => {
+const ProjectsSection = ({ data }) => {
   const [marken, setMarken] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 9;
@@ -116,10 +117,9 @@ const ProjectsSection = ({data}) => {
             </h2>
           </div>
           <div className="prose prose-lg text-gray-600 space-y-4 text-center text-[18px]">
-           {data.first_card_table?.map((item, key) => (
-  <p key={key}>{item.option}</p>
-))}
-
+            {data.first_card_table?.map((item, key) => (
+              <p key={key}>{item.option}</p>
+            ))}
           </div>
         </div>
       </section>
@@ -130,7 +130,7 @@ const ProjectsSection = ({data}) => {
           ))}
         </div>
         {totalPages > 1 && (
-          <div className="flex justify-center mt-8 ">
+          <div className="flex justify-center mt-8">
             <nav className="flex items-center space-x-2">
               <button
                 onClick={() => paginate(Math.max(1, currentPage - 1))}
@@ -144,7 +144,9 @@ const ProjectsSection = ({data}) => {
                   key={number}
                   onClick={() => paginate(number)}
                   className={`px-4 py-2 rounded-md cursor-pointer ${
-                    currentPage === number ? "bg-[#669933] text-white" : "border border-gray-300"
+                    currentPage === number
+                      ? "bg-[#669933] text-white"
+                      : "border border-gray-300"
                   }`}
                 >
                   {number}
