@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion"; // ✅ Import motion
+import { motion } from "framer-motion";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -7,15 +7,14 @@ import {
   FaSolarPanel,
   FaIndustry,
   FaChartLine,
-  FaArrowLeft,
-  FaArrowRight,
 } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
-import { useEffect, useState, useRef } from "react";
+import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 const CustomPrevArrow = ({ onClick }) => (
   <div
     onClick={onClick}
@@ -34,10 +33,8 @@ const CustomNextArrow = ({ onClick }) => (
   </div>
 );
 
-export default function SolutionsPage({data}) {
-  const [isHovered, setIsHovered] = useState(false);
-
-  const stats = [
+export default function SolutionsPage({ data }) {
+ const stats = useMemo(() => [
     {
       icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
       value: 5000,
@@ -55,20 +52,38 @@ export default function SolutionsPage({data}) {
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ];
+  ], []);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
   const animationRef = useRef(null);
-  const [hasMounted, setHasMounted] = useState(false);
   const [partnersFrappe, setPartnersFrappe] = useState([]);
   const [projectFrappe, setProjectFrappe] = useState([]);
 
   useEffect(() => {
-    setHasMounted(true);
-  }, []);
+    const startCounters = () => {
+      const duration = 3000;
+      const startTime = performance.now();
 
-  useEffect(() => {
+      const animateCounters = (currentTime) => {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+
+        const newCounters = stats.map((stat, i) => {
+          const value = stats[i].value;
+          return Math.floor(progress * value);
+        });
+
+        setCounters(newCounters);
+
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animateCounters);
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animateCounters);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -89,47 +104,7 @@ export default function SolutionsPage({data}) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
-
-  const startCounters = () => {
-    const duration = 3000;
-    const startTime = performance.now();
-
-    const animateCounters = (currentTime) => {
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-
-      const newCounters = stats.map((stat, i) => {
-        const value = stats[i].value;
-        return Math.floor(progress * value);
-      });
-
-      setCounters(newCounters);
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animateCounters);
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animateCounters);
-  };
-
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
-    cssEase: "linear",
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
-      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
-    ],
-  };
+  }, [stats]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -176,8 +151,8 @@ export default function SolutionsPage({data}) {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-
-<section className="py-10 md:py-16">
+      {/* First Card Section */}
+      <section className="py-10 md:py-16">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-10">
             <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-[18px]">
@@ -185,19 +160,18 @@ export default function SolutionsPage({data}) {
               <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
             </h2>
             <h2 className="text-3xl font-semibold text-gray-900 mt-10">
-             {data.first_card_subtitle}
+              {data.first_card_subtitle}
             </h2>
           </div>
           <div className="text-gray-700 space-y-4 text-center text-[17px] max-w-4xl mx-auto">
-           {data.first_card_table?.map((item, key) => (
-  <p key={key}>{item.option}</p>
-))}
-
-           
+            {data.first_card_table?.map((item, key) => (
+              <p key={key}>{item.option}</p>
+            ))}
           </div>
         </div>
       </section>
-      {/* Projects Section */}
+
+      {/* Projects Slider Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -205,8 +179,6 @@ export default function SolutionsPage({data}) {
         transition={{ duration: 0.8 }}
         className="mb-9 md:mb-17"
       >
-       
-
         <Slider
           {...{
             dots: false,
@@ -241,12 +213,14 @@ export default function SolutionsPage({data}) {
                   .replace(/[^a-z0-9-]/g, "")}`}
                 className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
               >
-                <img
-                  src={`${API_IMG_URL}${project.image}`}
-                  alt={project.title}
-                  className="w-full h-70 object-cover rounded-lg"
-                />
-                {/* 👇 Make this box appear only when hovered using Tailwind */}
+               <Image
+  src={`${API_IMG_URL}${project.image}`}
+  alt={project.title}
+  width={400}  // set appropriate width
+  height={280} // set appropriate height
+  className="rounded-lg object-cover"
+/>
+
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
                     <h3 className="text-white text-xl font-semibold">

@@ -9,14 +9,13 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
-
-export default function Partners({data}) {
-  const stats = [
+export default function Partners({ data }) {
+   const stats = useMemo(() => [
     {
       icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
       value: 5000,
@@ -34,7 +33,7 @@ export default function Partners({data}) {
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ];
+  ], []);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
@@ -42,6 +41,29 @@ export default function Partners({data}) {
   const [partnersFrappe, setPartnersFrappe] = useState([]);
 
   useEffect(() => {
+    const startCounters = () => {
+      const duration = 3000;
+      const startTime = performance.now();
+
+      const animateCounters = (currentTime) => {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+
+        const newCounters = stats.map((stat, i) => {
+          const value = stat.value;
+          return Math.floor(progress * value);
+        });
+
+        setCounters(newCounters);
+
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animateCounters);
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animateCounters);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -62,47 +84,7 @@ export default function Partners({data}) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
-
-  const startCounters = () => {
-    const duration = 3000;
-    const startTime = performance.now();
-
-    const animateCounters = (currentTime) => {
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-
-      const newCounters = stats.map((stat, i) => {
-        const value = stats[i].value;
-        return Math.floor(progress * value);
-      });
-
-      setCounters(newCounters);
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animateCounters);
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animateCounters);
-  };
-
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
-    cssEase: "linear",
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
-      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
-    ],
-  };
+  }, [stats]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,16 +113,31 @@ export default function Partners({data}) {
     fetchData();
   }, []);
 
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+    cssEase: "linear",
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
+      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
+      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
+    ],
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden">
-
       {/* Partners Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className=""
       >
         <div className="text-center mb-6">
           <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-lg">

@@ -50,40 +50,6 @@ export async function generateMetadata() {
       seoData?.description ||
       "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
     keywords: apiKeywords,
-    // openGraph: {
-    //   title: seoData?.title || "Smarthome Lösungen | Ökovolt Solartechnik",
-    //   description:
-    //     seoData?.description ||
-    //     "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.",
-    //   url: "https://www.oekovolt.de/smarthome",
-    //   siteName: "Ökovolt Solartechnik",
-    //   images: [
-    //     {
-    //       url: seoData?.banner_image
-    //         ? `${API_BASE_URL}${seoData.banner_image}`
-    //         : "/images/smarthome-og.jpg",
-    //       width: 1200,
-    //       height: 630,
-    //     },
-    //   ],
-    //   locale: "de_DE",
-    //   type: "website",
-    // },
-    // twitter: {
-    //   card: "summary_large_image",
-    //   title: seoData?.title || "Smarthome Lösungen | Ökovolt Solartechnik",
-    //   description:
-    //     seoData?.description ||
-    //     "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.",
-    //   images: [
-    //     seoData?.banner_image
-    //       ? `${API_BASE_URL}${seoData.banner_image}`
-    //       : "/images/smarthome-og.jpg",
-    //   ],
-    // },
-    // alternates: {
-    //   canonical: "https://www.oekovolt.de/smarthome",
-    // },
   };
 }
 

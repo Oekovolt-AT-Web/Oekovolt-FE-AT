@@ -7,6 +7,8 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import Image from "next/image"; // Make sure this is at the top if not already
+
 
 // Reusable slug generator
 export function generateSlug(title) {
@@ -119,11 +121,15 @@ export default function ProjectsSection({data}) {
   href={`/referenzen/projekte/${generateSlug(project.title)}`}
   className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
 >
-              <img
-                src={`${API_IMG_URL}${project.image}`}
-                alt={project.title}
-                className="w-full md:h-100 lg:h-120 h-85 object-cover rounded-lg"
-              />
+             <Image
+  src={`${API_IMG_URL}${project.image}`}
+  alt={project.title}
+  width={800} // Use approximate width
+  height={600} // Use approximate height
+  className="w-full md:h-100 lg:h-120 h-85 object-cover rounded-lg"
+  style={{ width: '100%', height: 'auto' }} // Keep responsive layout
+  priority={i === 0} // Optionally prioritize the first image for LCP
+/>
               <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
                   <h3 className="text-white text-xl font-semibold">

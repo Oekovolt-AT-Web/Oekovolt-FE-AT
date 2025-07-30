@@ -291,7 +291,7 @@ const Navbar = () => {
             <div className="w-[180px]">
               <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
                 <Image
-                  src="/Images/Navbar/Logo.png"
+                  src="/Images/Navbar/logo.png"
                   alt="Logo"
                   width={180}
                   height={64}

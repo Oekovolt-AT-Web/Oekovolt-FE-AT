@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { API_IMG_URL } from '@/lib/apiImgUrl';
+import Image from 'next/image'; // <-- Import Image here
+
 import { FaCogs, FaBolt, FaMapMarkedAlt, FaThumbsUp, FaTools, FaHandsHelping, FaLightbulb, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const iconList = [
@@ -66,10 +68,12 @@ export default function WaermepumpePartnerSection({ data }) {
           {/* Image on the left */}
           {image && (
             <div className="w-full lg:w-1/2 h-auto min-h-[200px] md:min-h-[400px] relative rounded-xl overflow-hidden shadow">
-              <img
-                src={`${API_IMG_URL}${image}`}
-                alt={imageAlt}
-                className="w-full h-full object-cover"
+               <Image
+                src={`${API_IMG_URL}${data.waermepumpe_fifth_card_image}`}
+                alt={data.waermepumpe_fifth_card_image_alt}
+                fill
+                className="object-cover"
+                priority
               />
             </div>
           )}

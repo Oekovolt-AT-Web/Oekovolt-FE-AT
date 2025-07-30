@@ -9,14 +9,13 @@ import {
   FaChartLine,
 } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
-
-export default function SolutionsPage({data}) {
-  const stats = [
+export default function SolutionsPage({ data }) {
+   const stats = useMemo(() => [
     {
       icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
       value: 5000,
@@ -34,7 +33,7 @@ export default function SolutionsPage({data}) {
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ];
+  ], []);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
@@ -42,6 +41,29 @@ export default function SolutionsPage({data}) {
   const [partnersFrappe, setPartnersFrappe] = useState([]);
 
   useEffect(() => {
+    const startCounters = () => {
+      const duration = 3000;
+      const startTime = performance.now();
+
+      const animateCounters = (currentTime) => {
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / duration, 1);
+
+        const newCounters = stats.map((stat, i) => {
+          const value = stat.value;
+          return Math.floor(progress * value);
+        });
+
+        setCounters(newCounters);
+
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animateCounters);
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animateCounters);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -62,30 +84,7 @@ export default function SolutionsPage({data}) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, []);
-
-  const startCounters = () => {
-    const duration = 3000;
-    const startTime = performance.now();
-
-    const animateCounters = (currentTime) => {
-      const elapsedTime = currentTime - startTime;
-      const progress = Math.min(elapsedTime / duration, 1);
-
-      const newCounters = stats.map((stat, i) => {
-        const value = stats[i].value;
-        return Math.floor(progress * value);
-      });
-
-      setCounters(newCounters);
-
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animateCounters);
-      }
-    };
-
-    animationRef.current = requestAnimationFrame(animateCounters);
-  };
+  }, [stats]);
 
   const sliderSettings = {
     dots: false,
@@ -173,8 +172,6 @@ export default function SolutionsPage({data}) {
           </motion.div>
         ))}
       </motion.div>
-
-    
     </div>
   );
 }

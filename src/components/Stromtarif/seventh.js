@@ -2,20 +2,22 @@
 import { motion } from 'framer-motion';
 import { FaPlug, FaWifi } from 'react-icons/fa';
 import { API_IMG_URL } from '@/lib/apiImgUrl';
+import Image from 'next/image';
 
 const icons = [<FaPlug key="plug"/>, <FaWifi key="wifi"/>];
 
 const RequirementsSection = ({ data }) => {
   return (
-    <section className="bg-gray-100 py-10  md:py-16 px-6 md:px-12 ">
+    <section className="bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        
         {/* LEFT SIDE: Title, Description, Image */}
         <div>
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl  text-gray-900 mb-4"
+            className="text-4xl text-gray-900 mb-4"
           >
             {data.dynami_sixth_card_title}
           </motion.h2>
@@ -33,12 +35,15 @@ const RequirementsSection = ({ data }) => {
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="rounded-xl overflow-hidden shadow-lg"
+            className="rounded-xl overflow-hidden shadow-lg relative w-full h-80"
           >
-            <img
+            <Image
               src={`${API_IMG_URL}${data.dynami_sixth_card_image}`}
               alt={data.dynami_sixth_card_alt_image}
-              className="w-full h-80 object-cover object-center"
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
             />
           </motion.div>
         </div>

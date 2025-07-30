@@ -5,6 +5,7 @@ import { HiPhone } from "react-icons/hi";
 import { MdEmail } from "react-icons/md";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import Image from "next/image";  // <-- Import Image here
 
 const TeamMember = ({ member, index }) => {
   return (
@@ -22,10 +23,13 @@ const TeamMember = ({ member, index }) => {
 
       {/* Image with slight dark overlay */}
       <div className="relative w-full h-100">
-        <img
+        <Image
           src={member.image}
           alt={`${member.name} ${member.surname}`}
-          className="w-full h-full  object-cover brightness-100 group-hover:scale-105 transition-transform duration-500"
+          fill
+          className="object-cover brightness-100 group-hover:scale-105 transition-transform duration-500 rounded-md"
+          sizes="(max-width: 768px) 100vw, 33vw"
+          priority
         />
         <div className="absolute inset-0  transition-all duration-300" />
       </div>
@@ -56,8 +60,6 @@ const TeamMember = ({ member, index }) => {
             </a>
           )}
         </div>
-
-        
       </div>
     </motion.div>
   );

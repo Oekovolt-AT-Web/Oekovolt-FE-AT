@@ -10,13 +10,15 @@ import {
   FaRegCommentDots,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Image from "next/image"; // <-- import Image
+
 
 export default function KontaktFormular() {
   const [agreed, setAgreed] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
   const inputStyle =
-    "flex items-center border border-gray-300 bg-white rounded-md px-6 md:px-12 py-3 gap-3 w-full text-sm focus-within:border-[#669933] focus-within:ring-2 focus-within:ring-[#669933]/30 transition";
+    "flex items-center border border-gray-300 bg-white rounded-md px-6 md:px-2 py-3 gap-3 w-full text-sm focus-within:border-[#669933] focus-within:ring-2 focus-within:ring-[#669933]/30 transition";
 
   return (
     <section className="bg-[#f9fafb] py-10 md:py-16 px-6 md:px-12">
@@ -27,7 +29,7 @@ export default function KontaktFormular() {
         viewport={{ once: true }}
         className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden p-1 md:p-8"
       >
-        {/* Left Column - Info Box */}
+          {/* Left Column - Info Box */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -36,14 +38,16 @@ export default function KontaktFormular() {
           className="hidden md:block bg-[#669933] p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative"
         >
           <div
-            className="relative overflow-hidden rounded-xl"
+            className="relative overflow-hidden rounded-xl h-[400px] md:h-[400px] lg:h-full" // fixed height for Image fill
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
-            <img
+            <Image
               src="/Images/Jobs/download.jpg"
               alt="Solar panels"
-              className="w-full md:h-100 lg:h-168  object-cover transition duration-500"
+              fill
+              className="object-cover transition duration-500"
+              priority
             />
             <div
               className={`absolute inset-0 bg-[#669933]/90 flex items-center justify-center p-6 transition-opacity duration-500 ${

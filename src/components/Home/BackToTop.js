@@ -9,7 +9,7 @@ export default function ToTopButton() {
     const handleScroll = () => {
       const shouldShow = window.scrollY > 100;
       setShow(shouldShow);
-      console.log("Scroll position:", window.scrollY, "Show button:", shouldShow);
+      // console.log("Scroll position:", window.scrollY, "Show button:", shouldShow);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });

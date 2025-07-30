@@ -3,49 +3,48 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, BarChart3, MonitorSmartphone } from 'lucide-react';
 import { API_IMG_URL } from '@/lib/apiImgUrl';
+import Image from 'next/image'; // ✅ Import Next.js Image
 
 const icons = [BarChart3, MonitorSmartphone, CheckCircle2];
 
 const PhotovoltaikOptimization = ({ data }) => {
   return (
-    <section className="py-10 md:py-16 px-6 md:px-12  bg-white">
-        <div className="max-w-7xl mx-auto">
+    <section className="py-10 md:py-16 px-6 md:px-12 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl text-gray-900"
+        >
+          {data.second_card_title}
+        </motion.h2>
 
-                  <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl text-gray-900"
-          >
-            {data.second_card_title}
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-gray-700 text-lg leading-relaxed mt-5"
-          >
-            {data.second_card_description}
-          </motion.p>
-        </div>
-     
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="text-gray-700 text-lg leading-relaxed mt-5"
+        >
+          {data.second_card_description}
+        </motion.p>
+      </div>
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 items-start mt-10">
-
         {/* Left Side: Image and Text */}
         <div className="w-full lg:w-1/2 space-y-6">
-        
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg"
+            className="w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg relative"
           >
-            <img
+            <Image
               src={`${API_IMG_URL}${data.second_card_image}`}
-              alt={data.second_card_alt_text}
-              className="w-full h-full object-cover object-center"
+              alt={data.second_card_alt_text || 'Photovoltaik image'}
+              fill
+              className="object-cover object-center"
+              priority
             />
           </motion.div>
         </div>
