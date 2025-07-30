@@ -25,6 +25,8 @@ function AnlageSection({ data }) {
                                         alt={card.alt_text}
                                         fill
                                         className="object-contain"
+                                                  sizes="(max-width: 768px) 100vw, 768px"
+
                                     />
                                 </div>
                             </div>

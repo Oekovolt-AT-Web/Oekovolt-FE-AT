@@ -97,13 +97,18 @@ const HerstellerSection = ({ data }) => {
 
                       {item.logo_image && (
                         <div className="absolute top-4 left-4  p-2  z-10 max-w-[120px] bg-white/80 rounded-xl">
-                          <Image
-                            src={`${API_IMG_URL}${item.logo_image}`}
-                            alt={item.alt_logo_image || item.title}
-                            width={120}
-                            height={40}
-                            className="object-contain w-full h-10"
-                          />
+                 <div className="relative w-[120px] h-[40px]">
+  <Image
+    src={`${API_IMG_URL}${item.logo_image}`}
+    alt={item.alt_logo_image || item.title}
+    fill
+    className="object-contain"
+                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
+  />
+</div>
+
+
                         </div>
                       )}
                     </div>

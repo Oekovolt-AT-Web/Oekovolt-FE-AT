@@ -14,11 +14,11 @@ const SmartmeterBanner = ({ data }) => {
             <Image
               src={`${API_IMG_URL}${data.smart_meter_image}`}
               alt={data.smart_meter_alt_image || "Wallbox installation"}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              className=""
+              fill
+              className="object-cover object-center"
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
             />
             {/* Mobile gradient overlay */}
             <div className="absolute bottom-0 left-0 right-0 h-full bg-gradient-to-l from-[#003473]/40 to-[#669933]/80 " />

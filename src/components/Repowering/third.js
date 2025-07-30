@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { CheckCircle2, BarChart3, MonitorSmartphone } from 'lucide-react';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
-import Image from 'next/image'; // ✅ Import Next.js Image
+import { motion } from "framer-motion";
+import { CheckCircle2, BarChart3, MonitorSmartphone } from "lucide-react";
+import { API_IMG_URL } from "@/lib/apiImgUrl";
+import Image from "next/image"; // ✅ Import Next.js Image
 
 const icons = [BarChart3, MonitorSmartphone, CheckCircle2];
 
@@ -41,10 +41,11 @@ const PhotovoltaikOptimization = ({ data }) => {
           >
             <Image
               src={`${API_IMG_URL}${data.second_card_image}`}
-              alt={data.second_card_alt_text || 'Photovoltaik image'}
+              alt={data.second_card_alt_text || "Photovoltaik image"}
               fill
               className="object-cover object-center"
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           </motion.div>
         </div>
@@ -65,8 +66,12 @@ const PhotovoltaikOptimization = ({ data }) => {
                   <Icon size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg text-[#333]">{option.primary_paragraph}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed mt-1">{option.secondary_paragraph}</p>
+                  <h3 className="text-lg text-[#333]">
+                    {option.primary_paragraph}
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed mt-1">
+                    {option.secondary_paragraph}
+                  </p>
                 </div>
               </motion.div>
             );

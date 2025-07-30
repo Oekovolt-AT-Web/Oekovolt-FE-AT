@@ -24,6 +24,8 @@ export default function WarmepumpeFinancingSection({ data }) {
               alt={data.warmepumpe_fourth_card_image_alt}
               fill
               className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
             />
           </div>
 

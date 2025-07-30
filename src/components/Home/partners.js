@@ -152,16 +152,16 @@ export default function Partners({ data }) {
         <Slider {...sliderSettings} className="mt-6">
           {partnersFrappe.map((partner, index) => (
             <div key={index} className="px-2">
-              <div className="flex items-center justify-center h-40 transition-transform duration-500 hover:scale-105">
-                <Image
-                  src={`${API_IMG_URL}${partner.image}`}
-                  alt={partner.name}
-                  width={200}
-                  height={160}
-                  className="object-contain"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
+            <div className="relative w-full h-40 flex items-center justify-center">
+  <Image
+    src={`${API_IMG_URL}${partner.image}`}
+    alt={partner.name}
+    fill
+    style={{ objectFit: "contain" }}
+    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+  />
+</div>
+
             </div>
           ))}
         </Slider>

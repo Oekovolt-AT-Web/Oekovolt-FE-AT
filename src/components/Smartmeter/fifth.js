@@ -70,6 +70,8 @@ const NextArrow = ({ onClick }) => (
               fill
               className="object-cover"
               priority
+             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-[#669933]/50 lg:bg-gradient-to-r" />
             <div className="absolute bottom-6 left-6 right-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">

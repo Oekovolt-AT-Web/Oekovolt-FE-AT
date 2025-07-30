@@ -56,6 +56,8 @@ export default function WarmepumpeHerstellerList({ data }) {
                       alt={item.alt_banner_image || "Wärmepumpen Banner"}
                       fill
                       className="object-cover rounded-t-2xl"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                     />
                   </div>
                 )}
@@ -70,6 +72,8 @@ export default function WarmepumpeHerstellerList({ data }) {
                         alt={item.alt_logo_image || `${item.title} Logo`}
                         fill
                         className="object-contain"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                       />
                     </div>
                   )}

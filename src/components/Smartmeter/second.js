@@ -102,10 +102,10 @@ const SmartMeterCardSection = ({ data }) => {
             <Image
               src={`${API_IMG_URL}${data.smart_meter_first_card_image}`}
               alt={data.smart_meter_first_card_alt_image || "Smart Meter"}
-              layout="fill"
-              objectFit="cover"
-              objectPosition="center"
-              className="rounded-t-2xl lg:rounded-r-2xl lg:rounded-tl-none "
+             fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
+              className="object-cover object-center rounded-t-2xl lg:rounded-r-2xl lg:rounded-tl-none "
               priority
             />
             <motion.div

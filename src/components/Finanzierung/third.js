@@ -36,6 +36,7 @@ const FinancingBenefitsSection = ({ data }) => {
                   alt={item.alt_text}
                   fill
                   className="object-cover"
+          sizes="(max-width: 1280px) 100vw, 1280px"
                 />
               </motion.div>
 

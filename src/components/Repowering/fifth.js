@@ -39,6 +39,8 @@ export default function SystemExpansionSection({ data }) {
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 priority
+                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
               />
             </div>
             
@@ -79,6 +81,8 @@ export default function SystemExpansionSection({ data }) {
                   src={`${API_IMG_URL}${data.second_sec_2nd_card_image}`}
                   alt={data.second_sec_2nd_card_alt_text}
                   fill
+                                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                   className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               </div>

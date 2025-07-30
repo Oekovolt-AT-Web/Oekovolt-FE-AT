@@ -16,6 +16,8 @@ const MieterstromBanner = ({ data }) => {
           quality={100}
           className="object-cover object-center w-full h-full"
           priority
+                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
         />
       </div>
 

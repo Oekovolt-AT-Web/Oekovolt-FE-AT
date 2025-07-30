@@ -48,6 +48,8 @@ export default function KontaktFormular() {
               fill
               className="object-cover transition duration-500"
               priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
             />
             <div
               className={`absolute inset-0 bg-[#669933]/90 flex items-center justify-center p-6 transition-opacity duration-500 ${

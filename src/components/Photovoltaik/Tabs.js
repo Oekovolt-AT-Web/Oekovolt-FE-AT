@@ -5,7 +5,9 @@ import Image from "next/image";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 export default function Tabs({ data }) {
-  const [activeComponent, setActiveComponent] = useState(data.first_card_table[0].title.toLowerCase().replace(/\s+/g, ''));
+  const [activeComponent, setActiveComponent] = useState(
+    data.first_card_table[0].title.toLowerCase().replace(/\s+/g, "")
+  );
 
   return (
     <div className="flex justify-center items-center px-6 md:px-12 overflow-hidden">
@@ -15,7 +17,7 @@ export default function Tabs({ data }) {
           <nav className="lg:p-4 border border-gray-200">
             <ul className="space-y-4">
               {data.first_card_table.map((tab) => {
-                const tabKey = tab.title.toLowerCase().replace(/\s+/g, '');
+                const tabKey = tab.title.toLowerCase().replace(/\s+/g, "");
                 return (
                   <li key={tabKey}>
                     <button
@@ -31,9 +33,12 @@ export default function Tabs({ data }) {
                           src={`${API_IMG_URL}${tab.icon}`}
                           alt={tab.alt_text}
                           fill
+                          sizes="20px"
                           className="object-contain"
+                          priority
                         />
                       </div>
+
                       {tab.title}
                     </button>
                     <AnimatePresence mode="wait">
@@ -61,7 +66,7 @@ export default function Tabs({ data }) {
         <div className="hidden lg:flex flex-1 p-8 border border-gray-200">
           <AnimatePresence mode="wait">
             {data.first_card_table.map((tab) => {
-              const tabKey = tab.title.toLowerCase().replace(/\s+/g, '');
+              const tabKey = tab.title.toLowerCase().replace(/\s+/g, "");
               return (
                 activeComponent === tabKey && (
                   <motion.div
@@ -84,28 +89,30 @@ export default function Tabs({ data }) {
   );
 }
 
-// Dynamic content component (unchanged)
+// Dynamic content component (updated TabContent)
 function TabContent({ tab }) {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl mx-auto">
       <h2 className="text-2xl font-semibold mb-10 tracking-wide inline-block relative">
         {tab.card_title}
       </h2>
       <hr className="w-70 h-1 bg-[#669933] text-[#669933] mt-[-30px] mb-5"></hr>
-      
-      <div className="mb-6 flex justify-start">
+
+      {/* Image container: relative with fixed height */}
+      <div className="relative w-full h-[400px] mb-6 flex justify-start">
         <Image
           src={`${API_IMG_URL}${tab.card_image}`}
           alt={tab.card_alt_text}
-          width={1200}
-          height={400}
+          fill
+          sizes="(max-width: 768px) 100vw, 768px"
           quality={100}
-          className="object-cover object-center h-[400] w-[100%]"
+          className="object-cover object-center"
+          priority
         />
       </div>
-      
+
       <div className="space-y-3">
-        {tab.card_description.split('\n\n').map((paragraph, index) => (
+        {tab.card_description.split("\n\n").map((paragraph, index) => (
           <p key={index} className="text-gray-800 text-[18px]">
             {paragraph}
           </p>

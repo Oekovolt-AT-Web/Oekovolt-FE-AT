@@ -29,9 +29,10 @@ const ProjekteTechnologySection = ({ data}) => {
             <Image
                src={`${API_IMG_URL}${data.second_card_second_image}`}
                            alt={data.second_card_second_alt_text}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+              fill
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
+              className="rounded-md object-cover"
             />
           )}
         </div>
@@ -41,9 +42,10 @@ const ProjekteTechnologySection = ({ data}) => {
             <Image
               src={`${API_IMG_URL}${data.second_card_first_image}`}
                           alt={data.second_card_first_alt_text}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+             fill
+              className="rounded-md object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
             />
           )}
         </div>

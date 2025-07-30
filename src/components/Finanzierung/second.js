@@ -88,6 +88,7 @@ const FinancingSection = ({ data }) => {
             src={`${API_IMG_URL}${data.finanzierung_first_card_image}`}
             alt={data.finanzierung_first_card_image_alt_text}
             fill
+          sizes="(max-width: 1280px) 100vw, 1280px"
             className="object-cover transition-transform duration-700 hover:scale-105"
           />
         </div>

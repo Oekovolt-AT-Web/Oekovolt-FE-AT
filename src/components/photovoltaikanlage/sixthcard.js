@@ -23,6 +23,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                 alt={images[0].alt_image || "solar"}
                 fill
                 className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
               />
             </div>
           )}
@@ -39,6 +41,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                     alt={img.alt_image || "solar"}
                     fill
                     className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                   />
                 </div>
               ))}
@@ -58,6 +62,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                       alt={img.alt_image || "solar"}
                       fill
                       className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                     />
                   </div>
                 ))}
@@ -68,6 +74,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                   alt={images[2].alt_image || "solar"}
                   fill
                   className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
                 />
               </div>
             </>
@@ -83,6 +91,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
           alt={images[0].alt_image || "solar"}
           fill
           className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
         />
       </div>
     </div>
@@ -99,6 +109,8 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
             alt={img.alt_image || "solar"}
             fill
             className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
           />
         </div>
       ))}

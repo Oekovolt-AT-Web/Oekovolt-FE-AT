@@ -19,14 +19,16 @@ function AnlageSection({ data }) {
                     {data.second_card_table.map((card, index) => (
                         <div key={index} className="flex space-x-4">
                             <div className="flex-shrink-0">
-                                <div className="w-10 h-10 relative">
-                                    <Image
-                                        src={`${API_IMG_URL}${card.image}`}
-                                        alt={card.alt_text}
-                                        fill
-                                        className="object-contain"
-                                    />
-                                </div>
+                              <div className="w-10 h-10 relative">
+  <Image
+    src={`${API_IMG_URL}${card.image}`}
+    alt={card.alt_text}
+    fill
+    sizes="40px"
+    className="object-contain"
+  />
+</div>
+
                             </div>
                             <div>
                                 <h3 className="text-xl font-semibold text-gray-900 mb-3">

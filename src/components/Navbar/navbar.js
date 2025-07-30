@@ -203,13 +203,19 @@ const Navbar = () => {
         {/* Logo - kept exactly as in your original */}
         <div className="w-[180px]">
           <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-            <Image
-              src="/Images/Navbar/logo.png"
-              alt="Logo"
-              width={180}
-              height={64}
-              className="object-contain object-left"
-            />
+      <div style={{ width: 180, height: 64, position: "relative" }}>
+  <Image
+    src="/Images/Navbar/logo.png"
+    alt="Logo"
+    fill
+    priority
+    style={{ objectFit: "contain" }}
+                          sizes="(max-width: 1280px) 100vw, 1280px"
+
+  />
+</div>
+
+
           </Link>
         </div>
 
@@ -290,13 +296,18 @@ const Navbar = () => {
           <div className="flex justify-between items-center p-5 border-b border-white/10">
             <div className="w-[180px]">
               <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-                <Image
-                  src="/Images/Navbar/logo.png"
-                  alt="Logo"
-                  width={180}
-                  height={64}
-                  className="object-contain object-left"
-                />
+          <div style={{ width: 180, height: 64, position: "relative" }}>
+  <Image
+    src="/Images/Navbar/logo.png"
+    alt="Logo"
+    fill
+    style={{ objectFit: "contain" }}
+                          sizes="(max-width: 1280px) 100vw, 1280px"
+
+  />
+</div>
+
+
               </Link>
             </div>
             <button

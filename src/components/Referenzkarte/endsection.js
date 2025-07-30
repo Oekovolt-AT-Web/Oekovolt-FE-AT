@@ -30,9 +30,9 @@ const ReferenzkarteTechnologySection = ({data}) => {
             src={`${API_IMG_URL}${data.third_card_first_image}`} // Replace with your image path
             
               alt={data.third_card_first_alt_text}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+             fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="rounded-md object-cover"
             />
           )}
         </div>
@@ -42,9 +42,9 @@ const ReferenzkarteTechnologySection = ({data}) => {
              src={`${API_IMG_URL}${data.third_card_second_image}`} // Replace with your image path
             
               alt={data.third_card_second_alt_text}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="rounded-md object-cover"
             />
           )}
         </div>

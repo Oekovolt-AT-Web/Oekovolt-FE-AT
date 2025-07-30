@@ -47,13 +47,13 @@ const SecondCardSection = ({ data }) => {
               <div className="relative h-120 md:h-64 w-full overflow-hidden rounded-xl bg-white">
                 {/* Logo at top-right */}
                 <div className="absolute top-5 right-5 z-20">
-                  <Image
-                    src={img}
-                    alt="Oekovolt Logo"
-                    width={150}
-                    height={100}
-                    className=""
-                  />
+                <Image
+  src={img}
+  alt="Oekovolt Logo"
+  className="w-[150px] h-auto"
+
+/>
+
                 </div>
 
                 <div
@@ -99,9 +99,7 @@ const SecondCardSection = ({ data }) => {
                       key={index}
                       onClick={() => setCurrentIndex(index)}
                       className={`cursor-pointer w-3 h-3 rounded-full transition-colors ${
-                        currentIndex === index
-                          ? "bg-[#669933]"
-                          : "bg-gray-300"
+                        currentIndex === index ? "bg-[#669933]" : "bg-gray-300"
                       }`}
                     />
                   ))}
@@ -118,8 +116,7 @@ const SecondCardSection = ({ data }) => {
               <Image
                 src={`${API_IMG_URL}${data.second_card_image}`}
                 alt={
-                  data.second_card_alt_text ||
-                  "Solarstrom Direktvermarktung"
+                  data.second_card_alt_text || "Solarstrom Direktvermarktung"
                 }
                 width={800}
                 height={600}
@@ -142,7 +139,9 @@ const SecondCardSection = ({ data }) => {
                   src={`${API_IMG_URL}${data.second_card_second_image}`}
                   alt={data.second_card_second_alt_text || "SolarTalk"}
                   fill
+                  priority
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               </div>

@@ -12,6 +12,7 @@ const BannerSection = ({ data }) => {
           fill
           className="object-cover"
           priority
+          sizes="(max-width: 1280px) 100vw, 1280px"
         />
       </div>
 
@@ -32,6 +33,8 @@ const BannerSection = ({ data }) => {
             fill
             className="object-cover"
             priority
+                      sizes="(max-width: 1280px) 100vw, 1280px"
+
           />
         </div>
 

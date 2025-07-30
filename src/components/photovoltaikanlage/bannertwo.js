@@ -118,6 +118,8 @@ const SolvixBanner = ({ data }) => {
             fill
             className="rounded-2xl object-cover"
             priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+
           />
 
           <motion.div
