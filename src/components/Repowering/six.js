@@ -26,7 +26,7 @@ const SixSection = ({ data }) => {
                 src={`${API_IMG_URL}${data.third_sec_1st_card_image}`}
                 alt={data.third_sec_1st_card_alt_text}
                 fill
-                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                 className="object-cover hover:scale-105 transition-transform duration-700"
               />

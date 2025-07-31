@@ -10,10 +10,11 @@ const BaurechtBannerSection = () => {
           src="/Images/Kontakt/download-2.jpg"
           alt="Banner Image"
           fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
           className="object-cover"
           priority
+          quality={100}
         />
       </div>
 
@@ -34,7 +35,8 @@ const BaurechtBannerSection = () => {
             fill
             className="object-cover"
             priority
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
+          quality={100}
 
           />
         </div>

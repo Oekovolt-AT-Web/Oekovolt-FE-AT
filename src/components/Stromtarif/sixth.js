@@ -30,7 +30,7 @@ const FlexibleBenefitsSection = ({ data }) => {
             alt={data.dynami_fifth_card_alt_text}
             fill
             className="object-cover object-center"
-            sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes=" 100vw"
             priority
           />
         </motion.div>

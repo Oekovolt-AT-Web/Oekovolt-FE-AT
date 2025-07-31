@@ -64,7 +64,7 @@ const FifthCardSection = ({ data }) => {
                     alt={data.fourth_card_1st_alt_image || "Vorteile"}
                     fill
                     className="object-cover"
-                                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
@@ -127,7 +127,7 @@ const FifthCardSection = ({ data }) => {
                     alt={data.fourth_card_2nd_alt_image || "Nachteile"}
                     fill
                     className="object-cover"
-                                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>

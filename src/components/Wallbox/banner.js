@@ -45,7 +45,7 @@ const WallboxBanner = ({ data }) => {
               fill
               className="lg:rounded-r-2xl object-cover object-center"
               priority
-                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
             />
             {/* Mobile gradient overlay */}

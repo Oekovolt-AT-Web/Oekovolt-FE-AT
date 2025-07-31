@@ -64,7 +64,7 @@ const StromSecondCardSection = () => {
                   alt={item.alt_banner_image || "Banner Image"}
                   fill
                   className="object-cover rounded-t-2xl"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                 />
               </div>
@@ -79,7 +79,7 @@ const StromSecondCardSection = () => {
                       alt={item.alt_logo_image || "Logo"}
                       fill
                       className="object-contain"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                     />
                   </div>

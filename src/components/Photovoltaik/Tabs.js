@@ -33,7 +33,7 @@ export default function Tabs({ data }) {
                           src={`${API_IMG_URL}${tab.icon}`}
                           alt={tab.alt_text}
                           fill
-                          sizes="20px"
+  sizes="100vw"
                           className="object-contain"
                           priority
                         />
@@ -104,7 +104,7 @@ function TabContent({ tab }) {
           src={`${API_IMG_URL}${tab.card_image}`}
           alt={tab.card_alt_text}
           fill
-          sizes="(max-width: 768px) 100vw, 768px"
+  sizes="100vw"
           quality={100}
           className="object-cover object-center"
           priority

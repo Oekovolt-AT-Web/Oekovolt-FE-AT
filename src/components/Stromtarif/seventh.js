@@ -42,7 +42,7 @@ const RequirementsSection = ({ data }) => {
               alt={data.dynami_sixth_card_alt_image}
               fill
               className="object-cover object-center"
-              sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes=" 100vw"
               priority
             />
           </motion.div>

@@ -27,7 +27,7 @@ const RecommendationSection2 = ({ data }) => {
                 fill
                 className="object-cover"
                 priority
-                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
               />
             </div>
@@ -47,7 +47,7 @@ const RecommendationSection2 = ({ data }) => {
                 fill
                 className="object-cover"
                 priority
-                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
               />
             </div>
@@ -76,7 +76,7 @@ const RecommendationSection2 = ({ data }) => {
               fill
               className="object-cover"
               priority
-                                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
             />
             <div className="absolute inset-0 bg-black/40" />

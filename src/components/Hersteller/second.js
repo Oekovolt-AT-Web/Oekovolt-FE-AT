@@ -103,7 +103,7 @@ const HerstellerSection = ({ data }) => {
     alt={item.alt_logo_image || item.title}
     fill
     className="object-contain"
-                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
   />
 </div>

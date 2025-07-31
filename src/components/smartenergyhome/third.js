@@ -54,7 +54,7 @@ const SmartEnergyFourthSection = ({data}) => {
                 alt={data.fourth_image_alt_txt}
                 fill
                 className="object-cover w-full h-full"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes="100vw"
 
               />
     

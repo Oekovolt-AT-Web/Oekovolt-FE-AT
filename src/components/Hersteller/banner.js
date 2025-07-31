@@ -16,6 +16,8 @@ const HerstellerBanner = ({ data }) => {
           quality={100}
           className="object-cover object-center w-full h-full"
           priority
+                              sizes=" 100vw"
+
         />
       </div>
 

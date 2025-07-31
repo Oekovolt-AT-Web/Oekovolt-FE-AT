@@ -66,7 +66,7 @@ const MieterstromThirdSection = ({ data }) => {
                   alt={item.alt_text || item.title}
                   fill
                   className="object-cover"
-                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
                 />
               </motion.div>

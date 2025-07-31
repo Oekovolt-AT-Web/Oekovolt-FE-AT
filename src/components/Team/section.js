@@ -15,7 +15,7 @@ const TeamBenefitsLayout = ({ data }) => {
                 src={`${API_IMG_URL}${data.second_card_image}`} // Replace with your image path
                 alt={data.second_card_alt_text}
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+                sizes="100vw"
                 className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>

@@ -80,6 +80,7 @@ export default function WarmepumpeSecondCardSection({ data }) {
           width={600}
           height={400}
           className="rounded-xl shadow-md object-cover w-full h-auto"
+          quality={100}
         />
       </motion.div>
     </div>

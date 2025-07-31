@@ -29,7 +29,7 @@ const PhotovoltaikRegionalNetzSection = ({ data }) => {
             alt={data.photovoltaik_image_fourth_card_alt || "Map"}
             fill
             className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="100vw"
 
           />
         </motion.div>

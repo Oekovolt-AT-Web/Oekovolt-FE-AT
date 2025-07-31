@@ -23,7 +23,7 @@ const WallboxThirdCard = ({ data }) => {
               alt={data.wallbox_third_card_image_alt || 'Wallbox Vorteile'}
               fill
               className="rounded-xl object-cover"
-             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#669933]/60 to-transparent" />

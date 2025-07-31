@@ -28,7 +28,7 @@ const TeamMember = ({ member, index }) => {
           alt={`${member.name} ${member.surname}`}
           fill
           className="object-cover brightness-100 group-hover:scale-105 transition-transform duration-500 rounded-md"
-          sizes="(max-width: 768px) 100vw, 33vw"
+                sizes="100vw"
           priority
         />
         <div className="absolute inset-0  transition-all duration-300" />

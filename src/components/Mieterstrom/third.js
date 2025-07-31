@@ -69,7 +69,7 @@ const MieterstromBenefits = ({ data }) => {
             alt={mieterstorm_second_card_alt_image || "Oekovolt Mieterstrom Vorteile"}
             fill
             className="object-cover"
-                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
 
           />
         </motion.div>

@@ -98,13 +98,15 @@ function TabContent({ tab }) {
       {/* Updated Image container */}
       <div className="relative w-full h-[400px] mb-6 flex justify-start">
         <Image
-          src={`${API_IMG_URL}${tab.card_image}`}
-          alt={tab.card_alt_text}
-          fill
-          sizes="(max-width: 768px) 100vw, 768px"
-          quality={100}
-          className="object-cover object-center"
-        />
+  src={`${API_IMG_URL}${tab.card_image}`}
+  alt={tab.card_alt_text}
+  fill
+  quality={100}
+  priority
+  className="object-cover object-center"
+  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+/>
+
       </div>
 
       <div className="space-y-3">

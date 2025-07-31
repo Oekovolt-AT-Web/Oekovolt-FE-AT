@@ -45,7 +45,7 @@ const PhotovoltaikOptimization = ({ data }) => {
               fill
               className="object-cover object-center"
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    sizes=" 100vw"
             />
           </motion.div>
         </div>
