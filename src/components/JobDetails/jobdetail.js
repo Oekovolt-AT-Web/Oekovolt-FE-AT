@@ -473,7 +473,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#669933] to-[#7db33f] text-white py-5 px-8 rounded-2xl font-bold text-lg  md:text-xl shadow-xl hover:shadow-2xl transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-[#669933] to-[#7db33f] text-white py-2 md:py-5 px-3 md:px-8 rounded-2xl md:font-bold text-lg  md:text-xl shadow-xl hover:shadow-2xl transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
