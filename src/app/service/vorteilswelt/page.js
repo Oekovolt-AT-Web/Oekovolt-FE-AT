@@ -12,7 +12,7 @@ export async function generateMetadata() {
   // Fetch data for metadata
   let seoData = null;
   try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
+    const res = await fetch(DATA_URL , { next: { revalidate: 3600 } }) ;
     const json = await res.json();
     seoData = json.message;
   } catch (error) {
