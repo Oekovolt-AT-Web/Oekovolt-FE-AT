@@ -52,7 +52,8 @@ npm or Yarn
 
 Clone the repository:
 
-git clone http://46.99.162.142:3000/Oekovolt-Website/Oekovolt-DE-Website.git
+git clone http://ead19aa6fcd8624eb9a0dd4a4209cfad8451adb7@46.99.162.142:3000/Oekovolt-Website/Oekovolt-DE-Website.git
+
 cd Oekovolt-DE-Website
 
 Install dependencies:
