@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="./public/Logo_ov_4cDeutschland-removebg-preview.png" alt="IT Engineers Logo" width="300" />
+  <img src="./public/Logo_ov_4cDeutschland-removebg-preview.png" alt="Oekovolt Solartechnik GmbH" width="300" />
 </p>
 
 
-☀️ Oekovolt Solartechnik GmbH – Developer Branch
+☀️ Oekovolt Solartechnik GmbH – General Branch
 
-Welcome to the developer branch of the official website developed by IT Engineers for Oekovolt Solartechnik GmbH.
+Welcome to the general branch of the official website developed by IT Engineers for Oekovolt Solartechnik GmbH.
 
-This branch serves as the main environment for developing, testing, and validating new features. Once functionality is approved, changes are merged into the main branch for production deployment.
+This branch is dedicated to developers for implementing and refining new features. All development work should be carried out in this branch. Once a feature is completed and verified, it should be merged into the develop branch for further testing and integration.
 
 📌 Project Overview
 
@@ -52,8 +52,8 @@ npm or Yarn
 
 Clone the repository:
 
-git clone http://46.99.162.142:3000/IT-Engineers-LLC/OekovoltDe-Web.git --branch develop
-cd OekovoltDe-Web
+git clone http://46.99.162.142:3000/Oekovolt-Website/Oekovolt-DE-Website.git --branch general
+cd Oekovolt-DE-Website
 
 Install dependencies:
 

@@ -11,7 +11,7 @@ export default function RotatingImageSection({ data = {} }) {
   const [iconSize, setIconSize] = useState(66);
 
   // Safely get data with defaults
-  const message = data.message || {};
+  const message = data || {};
   const firstCardImages = message.first_card_images || [];
   const firstCardOptions = message.first_card_options || [];
 
@@ -93,7 +93,6 @@ export default function RotatingImageSection({ data = {} }) {
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-15 overflow-hidden" >
       <div className="flex flex-col lg:flex-row items-center gap-5">
-        {/* Animated Left side */}
         <motion.div
           initial={{ opacity: 0, x: -100 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -106,7 +105,6 @@ export default function RotatingImageSection({ data = {} }) {
             maxWidth: "100%",
           }}
         >
-          {/* Center image animation */}
           {images.length > 0 && (
             <motion.div
               key={activeIndex}
@@ -130,8 +128,6 @@ export default function RotatingImageSection({ data = {} }) {
               />
             </motion.div>
           )}
-
-          {/* Dotted Circle */}
           <svg
             className="absolute top-0 left-0 w-full h-full z-[5]"
             viewBox={`0 0 ${containerSize} ${containerSize}`}
@@ -147,8 +143,6 @@ export default function RotatingImageSection({ data = {} }) {
               strokeDasharray="4 4"
             />
           </svg>
-
-          {/* Icons rotating */}
           {icons.map(({ icon: Icon }, index) => {
             const { x, y } = getIconPosition(index);
             const isActive = index === activeIndex;
@@ -182,8 +176,6 @@ export default function RotatingImageSection({ data = {} }) {
             );
           })}
         </motion.div>
-
-        {/* Animated Right side */}
         <motion.div
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -203,8 +195,6 @@ export default function RotatingImageSection({ data = {} }) {
           <p className="text-black text-[18px] leading-[1.7]">
             {description}
           </p>
-
-          {/* Animated Checklist */}
           {items.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 50 }}
