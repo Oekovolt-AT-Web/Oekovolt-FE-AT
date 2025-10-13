@@ -52,7 +52,7 @@ npm or Yarn
 
 Clone the repository:
 
-git clone http://46.99.162.142:3000/Oekovolt-Website/Oekovolt-DE-Website.git --branch general
+git clone http://46.99.162.142:3000/Oekovolt-Website/Oekovolt-DE-Website.git
 cd Oekovolt-DE-Website
 
 Install dependencies:
