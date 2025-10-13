@@ -5,7 +5,7 @@
 
 ☀️ Oekovolt Solartechnik GmbH – Main Branch
 
-Welcome to the main production branch of the official website developed by IT Engineers for Platzhirsch Studio.
+Welcome to the main production branch of the official website developed by IT Engineers for Oekovolt Solartechnik GmbH.
 
 This branch serves as the production version of the platform. All features here are stable, tested, and ready for live usage. Contributions should be thoroughly reviewed and tested in the develop branch before being merged here.
 
