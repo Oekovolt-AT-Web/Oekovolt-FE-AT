@@ -131,7 +131,7 @@ Push to the remote develop branch.
 
 📄 License
 
-This software is proprietary and was developed by IT Engineers for Oekovolt Solartechnik GmbH.
+This platform is proprietary software, developed exclusively by IT Engineers for Oekovolt Solartechnik GmbH. Unauthorized use or distribution is strictly prohibited.
 
 📢 Contact
 
