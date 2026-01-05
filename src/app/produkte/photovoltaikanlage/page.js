@@ -14,7 +14,8 @@ import PhotovoltaikComponentSection from "@/components/photovoltaikanlage/sevent
 import PhotovoltaikSliderSection from "@/components/photovoltaikanlage/seventhcard";
 import FaqSection from "@/components/photovoltaikanlage/eightcard";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.products.api.get_photovoltaik_page_with_keywords`;
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaikanlage_page.api.get_photovoltaik_page_with_keywords`;
+
 
 export async function generateMetadata() {
   // Fetch data for metadata

@@ -11,7 +11,7 @@ import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import WarmeBanner from "@/components/Warmepumpe/bannertwo";
 import EndSection from "@/components/Reusable/end";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.products.api.get_waermepumpe_page_with_keywords`;
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.waermepumpe_page.api.get_waermepumpe_page_with_keywords`;
 
 export async function generateMetadata() {
   // Fetch data for metadata

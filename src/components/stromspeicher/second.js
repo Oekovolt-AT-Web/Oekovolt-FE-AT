@@ -6,7 +6,7 @@ import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { FiArrowRight } from "react-icons/fi";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.products.api.get_strom_page_with_keywords`;
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
 
 const umlautMap = {
   ä: "a",

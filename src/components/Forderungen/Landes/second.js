@@ -14,7 +14,7 @@ const ForderungenSection = () => {
     const fetchData = async () => {
       try {
         // Simulated API call - replace with your actual endpoint
-        const response = await fetch('http://10.10.200.192:8000/api/method/oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages');
+        const response = await fetch('http://10.10.200.203:8000/api/method/oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages');
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

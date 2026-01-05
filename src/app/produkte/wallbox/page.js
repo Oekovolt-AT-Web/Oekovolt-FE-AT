@@ -6,7 +6,7 @@ import WallboxSecondCard2 from "@/components/Wallbox/second";
 import WallboxThirdCard from "@/components/Wallbox/fourth";
 import EndSection from "@/components/Reusable/end";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.products.api.get_wallbox_page_with_keywords`;
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.wallbox_page.api.get_wallbox_page_with_keywords`;
 
 export async function generateMetadata() {
   // Fetch data for metadata

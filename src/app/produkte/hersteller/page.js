@@ -4,7 +4,7 @@ import HerstellerBanner from "@/components/Hersteller/banner";
 import HerstellerSection from "@/components/Hersteller/second";
 import EndSection from "@/components/Reusable/end";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.products.api.get_hersteller_page_with_keywords`;
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller_page.api.get_hersteller_page_with_keywords`;
 
 export async function generateMetadata() {
   // Fetch data for metadata
