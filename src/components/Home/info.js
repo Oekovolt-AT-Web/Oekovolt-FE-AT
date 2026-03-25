@@ -10,30 +10,34 @@ import {
 } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState, useRef, useMemo } from "react";
-import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 export default function SolutionsPage({ data }) {
-   const stats = useMemo(() => [
+   const toNumber = (value, fallback) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const stats = useMemo(() => [
     {
       icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
-      value: 5000,
+      value: toNumber(data?.pv_kraftwerke, 5000),
       label: "PV-Kraftwerke",
     },
     {
       icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
-      value: 340000,
+      value: toNumber(data?.leistung, 340000),
       suffix: "kWp",
       label: "Leistung",
     },
     {
       icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
-      value: 112000,
+      value: toNumber(data?.co2_einsparung, 112000),
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ], []);
+  ], [data?.pv_kraftwerke, data?.leistung, data?.co2_einsparung]);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);

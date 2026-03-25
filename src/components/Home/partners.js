@@ -10,30 +10,34 @@ import {
 } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState, useRef, useMemo } from "react";
-import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
-export default function Partners({ data }) {
-   const stats = useMemo(() => [
+export default function SolutionsPage({ data }) {
+   const toNumber = (value, fallback) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const stats = useMemo(() => [
     {
       icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
-      value: 5000,
+      value: toNumber(data?.pv_kraftwerke, 5000),
       label: "PV-Kraftwerke",
     },
     {
       icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
-      value: 340000,
+      value: toNumber(data?.leistung, 340000),
       suffix: "kWp",
       label: "Leistung",
     },
     {
       icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
-      value: 112000,
+      value: toNumber(data?.co2_einsparung, 112000),
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ], []);
+  ], [data?.pv_kraftwerke, data?.leistung, data?.co2_einsparung]);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
@@ -86,6 +90,23 @@ export default function Partners({ data }) {
     };
   }, [stats]);
 
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+    cssEase: "linear",
+    responsive: [
+      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
+      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
+      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
+    ],
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,58 +134,47 @@ export default function Partners({ data }) {
     fetchData();
   }, []);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
-    cssEase: "linear",
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
-      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
-    ],
-  };
-
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden">
-      {/* Partners Section */}
+      {/* Title Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
+        className="text-center mb-16"
       >
-        <div className="text-center mb-6">
-          <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-lg">
-            PARTNERS
-            <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
-          </h2>
-          <p className="text-center text-black-500 mx-auto lg:text-[30px] text-2xl md:text-3xl font-bold mb-6 mt-6">
-            {data.partners_title}
-          </p>
-        </div>
+        <h2 className="text-2xl md:text-2xl lg:text-2xl font-[500] text-gray-900 mb-6">
+          {data.photovoltaiklösungen_title}
+        </h2>
+      </motion.div>
 
-        <Slider {...sliderSettings} className="mt-6">
-          {partnersFrappe.map((partner, index) => (
-            <div key={index} className="px-2">
-            <div className="relative w-full h-40 flex items-center justify-center">
-  <Image
-    src={`${API_IMG_URL}${partner.image}`}
-    alt={partner.name}
-    fill
-    style={{ objectFit: "contain" }}
-    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-  />
-</div>
-
+      {/* Stats Section */}
+      <motion.div
+        ref={countersRef}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1 }}
+        className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-8 lg:mb-12 relative pb-10"
+      >
+        {stats.map((item, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.2, duration: 0.8 }}
+            className="text-center"
+          >
+            <div className="flex justify-center mb-2">{item.icon}</div>
+            <div className="text-[40px] font-[500] text-[#669933] mb-2">
+              {counters[i].toLocaleString()}
+              {item.suffix && <span>{item.suffix}</span>}
             </div>
-          ))}
-        </Slider>
+            <p className="text-black text-[18px]">{item.label}</p>
+          </motion.div>
+        ))}
       </motion.div>
     </div>
   );

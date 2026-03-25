@@ -13,7 +13,7 @@ const TeamMember = ({ member, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: index * 0.2 }}
-      className="relative w-full gap-8 pt-10 bg-white  rounded-xl overflow-hidden shadow-xl group "
+      className="relative w-full gap-8 bg-white  rounded-xl overflow-hidden shadow-xl group "
     >
       {/* Green top border */}
       <div className="absolute top-0 left-0 w-full h-2 bg-[#669933] z-10" />
@@ -25,7 +25,7 @@ const TeamMember = ({ member, index }) => {
       <div className="relative w-full h-100">
         <Image
           src={member.image}
-          alt={`${member.name} ${member.surname}`}
+          alt={member.name || "Team member"}
           fill
           className="object-cover brightness-100 group-hover:scale-105 transition-transform duration-500 rounded-md"
                 sizes="100vw"
@@ -77,8 +77,7 @@ const TeamSection = () => {
         if (!response.ok) throw new Error("Error fetching team");
         const data = await response.json();
         const formatted = data.message.map((person) => ({
-          name: person.name1,
-          surname: person.vorname,
+          name: person.vorname || person.name1 || person.name || "",
           email: person.e_mail,
           phone: person.telefon,
           image: `${API_IMG_URL}${person.bild_anhagen}`,

@@ -3,11 +3,7 @@ import { motion } from "framer-motion";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import {
-  FaSolarPanel,
-  FaIndustry,
-  FaChartLine,
-} from "react-icons/fa";
+import { FaSolarPanel, FaIndustry, FaChartLine } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
@@ -34,25 +30,33 @@ const CustomNextArrow = ({ onClick }) => (
 );
 
 export default function SolutionsPage({ data }) {
- const stats = useMemo(() => [
-    {
-      icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
-      value: 5000,
-      label: "PV-Kraftwerke",
-    },
-    {
-      icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
-      value: 340000,
-      suffix: "kWp",
-      label: "Leistung",
-    },
-    {
-      icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
-      value: 112000,
-      suffix: "t",
-      label: "Co2-Einsparung",
-    },
-  ], []);
+  const toNumber = (value, fallback) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
+
+  const stats = useMemo(
+    () => [
+      {
+        icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
+        value: toNumber(data?.pv_kraftwerke, 5000),
+        label: "PV-Kraftwerke",
+      },
+      {
+        icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
+        value: toNumber(data?.leistung, 340000),
+        suffix: "kWp",
+        label: "Leistung",
+      },
+      {
+        icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
+        value: toNumber(data?.co2_einsparung, 112000),
+        suffix: "t",
+        label: "Co2-Einsparung",
+      },
+    ],
+    [data?.pv_kraftwerke, data?.leistung, data?.co2_einsparung],
+  );
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
@@ -91,7 +95,7 @@ export default function SolutionsPage({ data }) {
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (countersRef.current) {
@@ -111,10 +115,10 @@ export default function SolutionsPage({ data }) {
       try {
         const [partnersRes, projectsRes] = await Promise.all([
           fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partnersde.api.partnersde_data`
+            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partnersde.api.partnersde_data`,
           ),
           fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`
+            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
           ),
         ]);
 
@@ -213,13 +217,15 @@ export default function SolutionsPage({ data }) {
                   .replace(/[^a-z0-9-]/g, "")}`}
                 className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
               >
-               <Image
-  src={`${API_IMG_URL}${project.image}`}
-  alt={project.title}
-  width={400}  // set appropriate width
-  height={280} // set appropriate height
-  className="rounded-lg object-cover"
-/>
+                <div className="relative w-full h-64">
+                  <Image
+                    src={`${API_IMG_URL}${project.image}`}
+                    alt={project.title}
+                    fill
+                    className="rounded-lg object-cover"
+                    sizes="(max-width: 450px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">

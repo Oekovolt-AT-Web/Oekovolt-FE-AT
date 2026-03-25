@@ -85,66 +85,49 @@ export async function generateMetadata({ params }) {
 
 export default async function ProjectDetailPage({ params }) {
   const { title } = await params;
-  
+
+  let project = null;
+  let relatedProjects = [];
+
   try {
     const res = await fetch(
       `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
-      { next: { revalidate: 3600 } }
+      { cache: "no-store" }
     );
-    
+
+    if (!res.ok) throw new Error("Failed to fetch projects");
+
     const data = await res.json();
-    
- const project = data.message.find((p) => {
-      const projectSlug = generateSlug(p.title || p.name);
-      // console.log(`Comparing: ${projectSlug} === ${title}`);
-      return projectSlug === title;
-    });
-    
-    // if (!project) {
-    //   console.log("No match found for title:", title);
-    //   notFound();
-    // }
 
-// console.log("Param Title:", title);
-// console.log("Available slugs:", data.message.map(p => generateSlug(p.title || p.name)));
+    project = data.message?.find((p) => generateSlug(p.title || p.name) === title) ?? null;
 
-
-    
-     if (!project) {
-      console.log("No match found");
-      notFound();
-    }
-    // Get related projects
-    const getRandomItems = (array, count, excludeSlug) => {
-      const filtered = array.filter(item => 
-        generateSlug(item.title) !== excludeSlug &&
-        generateSlug(item.name) !== excludeSlug
+    if (project) {
+      const currentSlug = generateSlug(project.title || project.name);
+      const filtered = data.message.filter(
+        (item) => generateSlug(item.title || item.name) !== currentSlug
       );
-      return [...filtered]
-        .sort(() => 0.5 - Math.random())
-        .slice(0, count);
-    };
-    
-    const currentSlug = generateSlug(project.title || project.name);
-    const relatedProjects = getRandomItems(data.message, 3, currentSlug);
-    
-    const bannerInfo = {
-      title: project.title || project.name,
-      img: `${API_IMG_URL}${project?.bild_anhagen?.[0]?.bild_anhagen}`,
-    };
-    
-    return (
-      <div>
-        <BannerProject data={bannerInfo} />
-        <ProjectDetailComponent 
-          project={project} 
-          related={relatedProjects} 
-        />
-      </div>
-    );
-    
+      relatedProjects = [...filtered].sort(() => 0.5 - Math.random()).slice(0, 3);
+    }
   } catch (error) {
-    console.error('Error loading project:', error);
+    console.error("Error loading project:", error);
+  }
+
+  if (!project) {
     notFound();
   }
+
+  const bannerInfo = {
+    title: project.title || project.name,
+    img: `${API_IMG_URL}${project?.bild_anhagen?.[0]?.bild_anhagen}`,
+  };
+
+  return (
+    <div>
+      <BannerProject data={bannerInfo} />
+      <ProjectDetailComponent
+        project={project}
+        related={relatedProjects}
+      />
+    </div>
+  );
 }
