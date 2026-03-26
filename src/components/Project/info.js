@@ -52,11 +52,7 @@ const ProjectCard = ({ project }) => {
             isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >
-          <h3 className="text-white text-xl font-semibold">{project?.location}</h3>
-          <div className="flex items-center text-white gap-2 mt-2 text-[16px]">
-            <FaSolarPanel className="text-[#ffde59]" />
-            <span>{project?.capacity}</span>
-          </div>
+          <h3 className="text-white text-lg font-semibold">{project?.location}</h3>
         </div>
       </div>
     </Link>
@@ -79,6 +75,38 @@ const ProjectsSection = ({ data }) => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
+  };
+
+  // Pagination range helper — returns an array of page numbers and 'DOTS' placeholders
+  const getPaginationRange = (total, current, siblingCount = 1) => {
+    const DOTS = "DOTS";
+    const totalPageNumbers = siblingCount * 2 + 5; // first, last, current, and two DOTS
+
+    if (total <= totalPageNumbers) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    const leftSiblingIndex = Math.max(current - siblingCount, 2);
+    const rightSiblingIndex = Math.min(current + siblingCount, total - 1);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < total - 1;
+
+    const pages = [];
+
+    pages.push(1);
+
+    if (shouldShowLeftDots) pages.push(DOTS);
+
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+      pages.push(i);
+    }
+
+    if (shouldShowRightDots) pages.push(DOTS);
+
+    pages.push(total);
+
+    return pages;
   };
 
   useEffect(() => {
@@ -131,31 +159,46 @@ const ProjectsSection = ({ data }) => {
         </div>
         {totalPages > 1 && (
           <div className="flex justify-center mt-8">
-            <nav className="flex items-center space-x-2">
+            <nav className="flex items-center space-x-2" aria-label="Pagination">
               <button
                 onClick={() => paginate(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-4 py-2 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+                aria-label="Previous page"
               >
                 Previous
               </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
-                <button
-                  key={number}
-                  onClick={() => paginate(number)}
-                  className={`px-4 py-2 rounded-md cursor-pointer ${
-                    currentPage === number
-                      ? "bg-[#669933] text-white"
-                      : "border border-gray-300"
-                  }`}
-                >
-                  {number}
-                </button>
-              ))}
+
+              {getPaginationRange(totalPages, currentPage).map((item, idx) => {
+                if (item === "DOTS") {
+                  return (
+                    <span key={`dots-${idx}`} className="px-2 text-gray-500">
+                      …
+                    </span>
+                  );
+                }
+
+                return (
+                  <button
+                    key={item}
+                    onClick={() => paginate(item)}
+                    aria-current={currentPage === item ? "page" : undefined}
+                    className={`px-3 py-1.5 rounded-md text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#669933] ${
+                      currentPage === item
+                        ? "bg-[#669933] text-white border-transparent"
+                        : "border border-gray-300 bg-white text-gray-700"
+                    }`}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
+
               <button
                 onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="px-3 py-1.5 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+                aria-label="Next page"
               >
                 Next
               </button>

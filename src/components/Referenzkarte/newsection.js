@@ -25,9 +25,9 @@ const ReferenzkarteBenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2 ">
             {/* <h2 className="text-2xl md:text-3xl font-bold text-[#669933] mb-8">{data.title}</h2> */}
             <h2 className="text-2xl  font-bold text-black tracking-wide inline-block relative">
-            {data.second_card_title}
-      </h2>
-      <hr className="w-70  h-1 bg-[#669933] text-[#669933] mt-[10px] mb-10"></hr>
+              {data.second_card_title}
+            </h2>
+            <hr className="w-70  h-1 bg-[#669933] text-[#669933] mt-[10px] mb-10"></hr>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Benefit 1 */}
@@ -36,12 +36,16 @@ const ReferenzkarteBenefitsLayout = ({ data }) => {
                   <h2 className="text-[20px]  text-[#669933] mb-3 break-all md:break-normal">
                     {benefit.primary_paragraph}
                   </h2>
-                  <p className="text-gray-700 text-[16px]">{benefit.secondary_paragraph}</p>
+                  <p className="text-gray-700 text-[16px]">
+                    {benefit.secondary_paragraph}
+                  </p>
                 </div>
               ))}
             </div>
             {/* Summary Paragraph */}
-            <p className="text-gray-700  text-left  mx-auto pt-8 text-[16px]">{data.second_card_description}</p>
+            <p className="text-gray-700  text-left  mx-auto pt-8 text-[16px]">
+              {data.second_card_description}
+            </p>
           </div>
         </div>
       </div>

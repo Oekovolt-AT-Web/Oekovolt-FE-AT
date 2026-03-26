@@ -229,13 +229,9 @@ export default function SolutionsPage({ data }) {
 
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
-                    <h3 className="text-white text-xl font-semibold">
+                    <h3 className="text-white text-lg font-semibold">
                       {project.title}
                     </h3>
-                    <div className="flex items-center text-white gap-2 mt-2 text-[16px]">
-                      <FaSolarPanel className="text-[#ffde59]" />
-                      <span>{project.leistung}</span>
-                    </div>
                   </div>
                 </div>
               </Link>

@@ -9,13 +9,13 @@ import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import Image from "next/image"; // Make sure this is at the top if not already
 
-
 // Reusable slug generator
 export function generateSlug(title) {
-  if (!title) return '';
+  if (!title) return "";
   return title
-   .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[\s–—]+/g, "-")
     .replace(/\//g, "-")
     .replace(/[ä]/g, "ae")
@@ -45,21 +45,21 @@ const CustomNextArrow = ({ onClick }) => (
   </div>
 );
 
-export default function ProjectsSection({data}) {
+export default function ProjectsSection({ data }) {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
       try {
         const res = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
         );
         if (!res.ok) throw new Error("Fehler beim Laden der Projekte");
         const data = await res.json();
 
         const formatted = data.message
-          .filter(p => p.status === "Aktiv")
-          .map(projekt => ({
+          .filter((p) => p.status === "Aktiv")
+          .map((projekt) => ({
             title: projekt.title,
             slug: generateSlug(projekt.title),
             image: projekt.bild_anhagen?.[0]?.bild_anhagen,
@@ -117,28 +117,25 @@ export default function ProjectsSection({data}) {
       >
         {projects.map((project, i) => (
           <div key={i} className="px-5">
-           <Link
-  href={`/referenzen/projekte/${generateSlug(project.title)}`}
-  className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
->
-             <Image
-  src={`${API_IMG_URL}${project.image}`}
-  alt={project.title}
-  width={800} // Use approximate width
-  height={600} // Use approximate height
-  className="w-full md:h-100 lg:h-120 h-85 object-cover rounded-lg"
-  style={{ width: '100%', height: 'auto' }} // Keep responsive layout
-  priority={i === 0} // Optionally prioritize the first image for LCP
-/>
+            <Link
+              href={`/referenzen/projekte/${generateSlug(project.title)}`}
+              className="relative block group overflow-hidden rounded-lg h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px] transform transition-all duration-700"
+            >
+              <div className="absolute inset-0">
+                <Image
+                  src={`${API_IMG_URL}${project.image}`}
+                  alt={project.title}
+                  fill
+                  sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
+                  className="object-cover rounded-lg"
+                  priority={i === 0} // Optionally prioritize the first image for LCP
+                />
+              </div>
               <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                 <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
-                  <h3 className="text-white text-xl font-semibold">
+                  <h3 className="text-white text-lg font-semibold">
                     {project.title}
                   </h3>
-                  <div className="flex items-center text-white gap-2 mt-2 text-[16px]">
-                    <FaSolarPanel className="text-[#ffde59]" />
-                    <span>{project.leistung}</span>
-                  </div>
                 </div>
               </div>
             </Link>
