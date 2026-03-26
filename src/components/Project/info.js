@@ -80,9 +80,10 @@ const ProjectsSection = ({ data }) => {
   // Pagination range helper — returns an array of page numbers and 'DOTS' placeholders
   const getPaginationRange = (total, current, siblingCount = 1) => {
     const DOTS = "DOTS";
-    const totalPageNumbers = siblingCount * 2 + 5; // first, last, current, and two DOTS
+    // Only show all pages when there are 5 or fewer; otherwise always use dots
+    const threshold = siblingCount * 2 + 3; // = 5 with default siblingCount
 
-    if (total <= totalPageNumbers) {
+    if (total <= threshold) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
 
@@ -158,22 +159,27 @@ const ProjectsSection = ({ data }) => {
           ))}
         </div>
         {totalPages > 1 && (
-          <div className="flex justify-center mt-8">
-            <nav className="flex items-center space-x-2" aria-label="Pagination">
+          <div className="flex justify-center mt-10">
+            <nav className="flex items-center gap-1.5" aria-label="Pagination">
+              {/* Previous */}
               <button
                 onClick={() => paginate(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+                className="h-9 px-4 rounded-md border border-gray-300 bg-white text-gray-600 text-sm font-medium transition-colors duration-150 hover:border-[#669933] hover:text-[#669933] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 cursor-pointer select-none"
                 aria-label="Previous page"
               >
                 Previous
               </button>
 
+              {/* Page numbers */}
               {getPaginationRange(totalPages, currentPage).map((item, idx) => {
                 if (item === "DOTS") {
                   return (
-                    <span key={`dots-${idx}`} className="px-2 text-gray-500">
-                      …
+                    <span
+                      key={`dots-${idx}`}
+                      className="flex items-center justify-center w-9 h-9 text-gray-400 text-sm select-none"
+                    >
+                      ...
                     </span>
                   );
                 }
@@ -183,10 +189,10 @@ const ProjectsSection = ({ data }) => {
                     key={item}
                     onClick={() => paginate(item)}
                     aria-current={currentPage === item ? "page" : undefined}
-                    className={`px-3 py-1.5 rounded-md text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#669933] ${
+                    className={`flex items-center justify-center w-9 h-9 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#669933] ${
                       currentPage === item
-                        ? "bg-[#669933] text-white border-transparent"
-                        : "border border-gray-300 bg-white text-gray-700"
+                        ? "bg-[#669933] text-white border border-[#669933]"
+                        : "bg-white border border-gray-300 text-gray-600 hover:border-[#669933] hover:text-[#669933]"
                     }`}
                   >
                     {item}
@@ -194,10 +200,11 @@ const ProjectsSection = ({ data }) => {
                 );
               })}
 
+              {/* Next */}
               <button
                 onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 rounded-md border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-sm"
+                className="h-9 px-4 rounded-md border border-gray-300 bg-white text-gray-600 text-sm font-medium transition-colors duration-150 hover:border-[#669933] hover:text-[#669933] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:text-gray-600 cursor-pointer select-none"
                 aria-label="Next page"
               >
                 Next
