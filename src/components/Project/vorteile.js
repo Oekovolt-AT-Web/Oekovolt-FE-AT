@@ -40,8 +40,8 @@ const Vorteil = ({data}) => {
    <Image
                               src={`${API_IMG_URL}${data.fourth_card_right_image}`} // Replace with your image path
                               alt={data.fourth_card_right_alt_text}
-                            width={20}
-                            height={20}
+                            width={50}
+                            height={50}
                              
                               className="inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                             />            </div>

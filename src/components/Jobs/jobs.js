@@ -12,7 +12,7 @@ const JobsInfo = ({ data }) => {
           {/* Left Column - Image */}
 
           <div className="lg:w-1/2">
-            <h2 className="text-[28px] md:text-[35px] font-bold text-[#669933] mb-8">{data.fourth_card_title}</h2>
+            <h2 className="text-[28px] md:text-[35px] font-bold text-gray-900 mb-8">{data.fourth_card_title}</h2>
 
             {data.fourth_card_description.map((desc, index) => (
               <p key={index} className="text-gray-700 mb-8  max-w-4xl mx-auto text-[16px]">

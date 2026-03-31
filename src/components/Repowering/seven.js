@@ -33,7 +33,7 @@ export default function RepoweringSection({ data }) {
                     <FaSolarPanel className="text-2xl text-[#669933]" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    {data.first_table_title}
+                    {data.third_sec_2nd_card_first_table_title}
                   </h3>
                 </div>
                 <ul className="space-y-4">
@@ -64,7 +64,7 @@ export default function RepoweringSection({ data }) {
                     <FaBatteryFull className="text-2xl text-[#669933]" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    {data.second_table_title}
+                    {data.third_sec_2nd_card_second_table_title}
                   </h3>
                 </div>
                 <ul className="space-y-4">

@@ -8,7 +8,7 @@ const JobsTechnologySection = ({data}) => {
     <div className="bg-gray-100 w-full text-white py-10 md:py-16 px-6 md:px-12 flex flex-col lg:flex-row lg:items-center justify-center gap-10 relative overflow-hidden">
       <div className="max-w-xl lg:max-w-xl md:max-w-full z-10">
         <p className="text-[#669933] font-semibold uppercase mb-2">{data.third_card_title}</p>
-        <h2 className="text-4xl text-gray-900 md:text-5xl font-bold leading-tight mb-6">{data.third_card_subtitle}</h2>
+        <h2 className="text-[28px] md:text-[35px] font-bold text-gray-900 mb-6">{data.third_card_subtitle}</h2>
         <p className="text-gray-600 mb-6">{data.third_card_description}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-semibold text-gray-600">
