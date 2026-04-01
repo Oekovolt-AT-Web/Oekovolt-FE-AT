@@ -115,10 +115,10 @@ export default function SolutionsPage({ data }) {
       try {
         const [partnersRes, projectsRes] = await Promise.all([
           fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partnersde.api.partnersde_data`,
+            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`,
           ),
           fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
+            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
           ),
         ]);
 

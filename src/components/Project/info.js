@@ -114,7 +114,7 @@ const ProjectsSection = ({ data }) => {
     const fetchEvents = async () => {
       try {
         const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`
         );
         if (!response.ok) throw new Error("Gabim gjate marrjes se te dhenave");
         const data = await response.json();

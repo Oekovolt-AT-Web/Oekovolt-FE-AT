@@ -52,7 +52,7 @@ export default function ProjectsSection({ data }) {
     const fetchProjects = async () => {
       try {
         const res = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
         );
         if (!res.ok) throw new Error("Fehler beim Laden der Projekte");
         const data = await res.json();

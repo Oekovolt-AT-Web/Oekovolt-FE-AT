@@ -111,7 +111,7 @@ export default function SolutionsPage({ data }) {
     const fetchData = async () => {
       try {
         const partnersRes = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partnersde.api.partnersde_data`
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`
         );
 
         if (!partnersRes.ok)

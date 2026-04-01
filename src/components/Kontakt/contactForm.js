@@ -189,7 +189,7 @@ export default function ContactForm() {
 
     try {
       const response = await fetch(
-        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt_de.api.create_contact`,
+        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt.api.create_contact`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

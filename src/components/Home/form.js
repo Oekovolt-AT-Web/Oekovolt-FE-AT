@@ -49,7 +49,7 @@ export default function PVInquiryForm({ data }) {
       };
 
       const response = await fetch(
-        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.anfrage_de.api.create_anfrage`,
+        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.anfrage.api.create_anfrage`,
         {
           method: "POST",
           headers: {

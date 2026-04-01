@@ -72,7 +72,7 @@ const TeamSection = () => {
     const fetchTeam = async () => {
       try {
         const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.teamde.api.teamde_data`
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.team.api.teamde_data`
         );
         if (!response.ok) throw new Error("Error fetching team");
         const data = await response.json();

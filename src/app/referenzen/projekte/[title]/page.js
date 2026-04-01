@@ -28,7 +28,7 @@ function generateSlug(title) {
 export async function generateStaticParams() {
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
       { next: { revalidate: 3600 } }
     );
     
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }) {
   try {
     const { title } = await params;
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
       { next: { revalidate: 3600 } }
     );
     
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params }) {
 
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projektede.api.projektede_data`,
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
       { cache: "no-store" }
     );
 
