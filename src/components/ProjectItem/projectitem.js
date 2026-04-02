@@ -80,19 +80,23 @@ const ProjectDetailComponent = ({ project, related }) => {
       <div className="flex flex-col md:flex-row gap-10 mb-16">
         <div className="w-full md:w-2/4">
           <div className="grid grid-cols-1 gap-6">
-            {project?.bild_anhagen?.map((image, index) => (
-              <div
-                key={index}
-                className="relative h-[500px] rounded-2xl overflow-hidden shadow-lg"
-              >
-                <Image
-                  src={`${API_IMG_URL}${image.bild_anhagen}`}
-                  alt={`${project.title} - ${index + 1}`}
-                  fill
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            ))}
+            {project?.bild_anhagen
+              ?.filter((image, index, self) => 
+                index === self.findIndex(img => img.bild_anhagen === image.bild_anhagen)
+              )
+              .map((image, index) => (
+                <div
+                  key={index}
+                  className="relative h-[500px] rounded-2xl overflow-hidden shadow-lg"
+                >
+                  <Image
+                    src={`${API_IMG_URL}${image.bild_anhagen}`}
+                    alt={`${project.title} - ${index + 1}`}
+                    fill
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              ))}
           </div>
         </div>
 
@@ -101,25 +105,25 @@ const ProjectDetailComponent = ({ project, related }) => {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               {project?.title}
             </h2>
-            {project?.leistung && (
+            {!!project?.leistung && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
                 <FaBolt className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.leistung}</span>
               </div>
             )}
-            {project?.jahr && (
+            {!!project?.jahr && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
                 <FaCalendarAlt className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.jahr}</span>
               </div>
             )}
-            {project?.typ && (
+            {!!project?.typ && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
                 <FaTools className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.typ}</span>
               </div>
             )}
-            {project?.ort && (
+            {!!project?.ort && (
               <div className="flex items-center gap-3 text-gray-700">
                 <FaMapMarkerAlt className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.ort}</span>

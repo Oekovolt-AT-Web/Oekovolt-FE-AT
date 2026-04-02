@@ -5,10 +5,8 @@ import { API_BASE_URL } from "@/lib/apiBaseUrl";
 async function getBodyData() {
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.steuerlich.api.get_steuerlich_data`,
-      {
-        cache: "no-store", // Use 'force-cache' for static data or add revalidate
-      }
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.steuerlich.api.get_steuerlich_data`
+      // Next.js will use the revalidate time from the page component
     );
 
     if (!res.ok) {

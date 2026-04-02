@@ -24,9 +24,15 @@ function generateSlug(title) {
 export async function generateStaticParams() {
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobsde.api.jobsde_data`
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`
     );
     const data = await res.json();
+
+    // Check if data.message exists and is an array
+    if (!data || !data.message || !Array.isArray(data.message)) {
+      console.error("Invalid data structure:", data);
+      return [];
+    }
 
     const paths = data.message.map((project) => ({
       title: generateSlug(project.name),
@@ -46,9 +52,18 @@ export async function generateMetadata({ params }) {
   const { title } = await params;
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobsde.api.jobsde_data`
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`
     );
     const data = await res.json();
+
+    // Check if data.message exists
+    if (!data || !data.message || !Array.isArray(data.message)) {
+      console.error("Invalid data structure in generateMetadata:", data);
+      return {
+        title: "Jobs Not Found",
+        description: "Unable to load jobs data.",
+      };
+    }
 
     // Find the matching project based on slugified title
     const project = data.message.find((p) => generateSlug(p.name) === title);
@@ -75,9 +90,19 @@ export default async function ProjectDetailPage({ params }) {
   const { title } = await params;
   try {
     const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobsde.api.jobsde_data`
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`
     );
     const data = await res.json();
+
+    // Check if data.message exists
+    if (!data || !data.message || !Array.isArray(data.message)) {
+      console.error("Invalid data structure in page component:", data);
+      return (
+        <div className="max-w-7xl mx-auto px-4 py-8 text-red-500">
+          Error loading jobs data. Please try again later.
+        </div>
+      );
+    }
 
     const project = data.message.find((p) => generateSlug(p.name) === title);
 
