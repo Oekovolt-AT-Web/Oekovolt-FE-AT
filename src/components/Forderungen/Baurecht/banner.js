@@ -1,14 +1,51 @@
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import Image from "next/image";
 
-const BaurechtBannerSection = () => {
+// Fetch banner data from API
+async function getBannerData() {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.baurecht.api.get_baurecht_data`,
+      {
+        cache: "no-store", // Use 'force-cache' for static data or add revalidate
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch banner data");
+    }
+
+    const data = await res.json();
+    return data.message?.banner || null;
+  } catch (error) {
+    console.error("Error fetching banner data:", error);
+    return null;
+  }
+}
+
+const BaurechtBannerSection = async () => {
+  const bannerData = await getBannerData();
+
+  if (!bannerData) {
+    return (
+      <section className="relative w-full h-auto lg:h-[500px] flex items-center justify-center bg-[#0a1e35]">
+        <p className="text-white">Daten werden geladen...</p>
+      </section>
+    );
+  }
+
+  const imageUrl = bannerData.image?.startsWith('/files/') 
+    ? `${API_IMG_URL}${bannerData.image}` 
+    : bannerData.image;
+
   return (
     <section className="relative w-full h-auto lg:h-[500px] flex flex-col lg:flex-row overflow-hidden bg-[#0a1e35]">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src="/Images/Kontakt/download-2.jpg"
-          alt="Banner Image"
+          src={imageUrl}
+          alt={bannerData.image_alt_text || "Banner Image"}
           fill
                     sizes=" 100vw"
 
@@ -47,12 +84,12 @@ const BaurechtBannerSection = () => {
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
           <div className="max-w-xl space-y-6 text-center lg:text-left">
-            <p className="text-md  text-[#669933] uppercase ">Förderungen</p>
+            <p className="text-md  text-[#669933] uppercase ">{bannerData.category}</p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
-              Baurecht
+              {bannerData.title}
             </h2>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
-              Dieser Bereich gibt einen Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland. Behandelt werden Genehmigungspflichten, Bauvorschriften, Abstandsregelungen und Sonderbestimmungen für unterschiedliche Gebäudearten sowie die aktuellen Änderungen durch die Novellierung des Örtlichen Raumordnungsprogramms.
+              {bannerData.description}
             </p>
           </div>
         </div>

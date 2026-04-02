@@ -1,19 +1,55 @@
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import Image from "next/image";
 
-const RichtlinenBannerSection = () => {
+// Fetch banner data from API
+async function getBannerData() {
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.richtlinen.api.get_richtlinen_data`,
+      {
+        cache: "no-store", // Use 'force-cache' for static data or add revalidate
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch banner data");
+    }
+
+    const data = await res.json();
+    return data.message?.banner || null;
+  } catch (error) {
+    console.error("Error fetching banner data:", error);
+    return null;
+  }
+}
+
+const RichtlinenBannerSection = async () => {
+  const bannerData = await getBannerData();
+
+  if (!bannerData) {
+    return (
+      <section className="relative w-full h-auto lg:h-[500px] flex items-center justify-center bg-[#0a1e35]">
+        <p className="text-white">Daten werden geladen...</p>
+      </section>
+    );
+  }
+
+  const imageUrl = bannerData.image?.startsWith('/files/') 
+    ? `${API_IMG_URL}${bannerData.image}` 
+    : bannerData.image;
+
   return (
     <section className="relative w-full h-auto lg:h-[500px] flex flex-col lg:flex-row overflow-hidden bg-[#0a1e35]">
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src="/Images/Team/download-1.jpg"
-          alt="Banner Image"
+          src={imageUrl}
+          alt={bannerData.image_alt_text || "Banner Image"}
           fill
           className="object-cover"
           priority
-                    sizes=" 100vw"
-
+          sizes=" 100vw"
         />
       </div>
 
@@ -34,8 +70,7 @@ const RichtlinenBannerSection = () => {
             fill
             className="object-cover"
             priority
-                    sizes=" 100vw"
-
+            sizes=" 100vw"
           />
         </div>
 
@@ -45,12 +80,13 @@ const RichtlinenBannerSection = () => {
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
           <div className="max-w-xl space-y-6 text-center lg:text-left">
-            <p className="text-md  text-[#669933] uppercase ">Förderungen</p>
+            <p className="text-md  text-[#669933] uppercase ">{bannerData.category}</p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
-              Richtlinen
+              {bannerData.title}
             </h2>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
-Diese Übersicht fasst die wesentlichen technischen Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland zusammen. Behandelt werden elektrotechnische Standards (OVE), brandschutztechnische Anforderungen (OIB), wiener Sonderbestimmungen sowie Arbeitsschutzvorschriften für Installation und Wartung – mit besonderem Fokus auf aktuelle Regelwerke ab 2022            </p>
+              {bannerData.description}
+            </p>
           </div>
         </div>
       </div>
