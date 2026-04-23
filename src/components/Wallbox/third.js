@@ -32,7 +32,14 @@ const WallboxFeatures2 = ({ data }) => {
     <section className="py-10 md:py-16 bg-gray-100">
       <div className="container mx-auto px-6 md:px-12  max-w-7xl">
         <h2 className="text-4xl text-center mb-14 text-gray-800">
-          Deine Vorteile mit <span className="text-[#669933]">Oekovolt</span>
+          {data.wallbox_first_card_title?.split("Ökovolt").map((part, i, arr) => (
+            <span key={i}>
+              {part}
+              {i < arr.length - 1 && (
+                <span className="text-[#669933]">Ökovolt</span>
+              )}
+            </span>
+          ))}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">

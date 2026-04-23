@@ -6,10 +6,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 const WallboxSecondCard2 = ({ data }) => {
-  if (
-    !data 
-  )
-    return null;
+  if (!data) return null;
 
   return (
     <section className="w-full  py-10 md:py-16 px-6 md:px-12">
@@ -27,8 +24,7 @@ const WallboxSecondCard2 = ({ data }) => {
             alt={data.wallbox_second_card_image_alt || "Map"}
             fill
             className="object-cover"
-                    sizes=" 100vw"
-
+            sizes=" 100vw"
           />
         </motion.div>
 
@@ -55,7 +51,7 @@ const WallboxSecondCard2 = ({ data }) => {
             }}
             transition={{ duration: 0.4 }}
           >
-            {data.wallbox_second_card_title}
+            {data.wallbox_second_card_subtitle}
           </motion.h2>
 
           <motion.h3
@@ -66,7 +62,7 @@ const WallboxSecondCard2 = ({ data }) => {
             }}
             transition={{ duration: 0.5 }}
           >
-            {data.wallbox_subtitle}
+            {data.wallbox_second_card_title}
           </motion.h3>
 
           <motion.p
@@ -79,23 +75,6 @@ const WallboxSecondCard2 = ({ data }) => {
           >
             {data.wallbox_second_card_description}
           </motion.p>
-
-  
-          {/* <motion.div
-            className="pt-4"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.5 }}
-          >
-            <Link
-              href="/kontakt"
-              className="inline-block border border-[#669933] text-[#669933] px-6 py-3 rounded-md hover:bg-[#669933] hover:text-white transition text-md font-medium"
-            >
-              Fachbetrieb in deiner Nähe finden
-            </Link>
-          </motion.div> */}
         </motion.div>
       </div>
     </section>

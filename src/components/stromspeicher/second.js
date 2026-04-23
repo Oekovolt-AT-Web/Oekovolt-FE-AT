@@ -73,7 +73,7 @@ const StromSecondCardSection = () => {
               <div className="pl-6 pr-6 pb-6 flex flex-col grow">
                 {/* Logo */}
                 {item.logo_image && (
-                  <div className="relative w-20 h-18">
+                  <div className="relative w-24 h-18 mb-2">
                     <Image
                       src={`${API_IMG_URL}${item.logo_image}`}
                       alt={item.alt_logo_image || "Logo"}

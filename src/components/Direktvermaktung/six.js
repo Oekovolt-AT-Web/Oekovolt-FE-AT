@@ -1,21 +1,21 @@
-'use client';
-import { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+"use client";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function SixCardSection({ data }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef(null);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => 
-      prev === data.fifth_card_description.length - 1 ? 0 : prev + 1
+    setCurrentIndex((prev) =>
+      prev === data.fifth_card_description.length - 1 ? 0 : prev + 1,
     );
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => 
-      prev === 0 ? data.fifth_card_description.length - 1 : prev - 1
+    setCurrentIndex((prev) =>
+      prev === 0 ? data.fifth_card_description.length - 1 : prev - 1,
     );
   };
 
@@ -29,30 +29,31 @@ export default function SixCardSection({ data }) {
           className="text-center"
         >
           {/* Section Header */}
-          <div className="mb-12">
-            <div className="inline-flex items-center justify-center mb-4">
-              <div className="w-12 h-1 bg-[#669933] mr-4"></div>
-              <CheckCircle className="text-2xl text-[#669933]" />
-              <div className="w-12 h-1 bg-[#669933] ml-4"></div>
-            </div>
-            <h2 className="text-4xl text-gray-900 mb-4">
-              <span className="text-[#669933]">{data.fifth_card_title.split(' ')[0]}</span> {data.fifth_card_title.split(' ').slice(1).join(' ')}
-            </h2>
-            <div className="w-24 h-1 bg-[#669933] mx-auto rounded-full"></div>
+          <div className="inline-flex items-center justify-center mb-4">
+            <div className="w-12 h-1 bg-[#669933] mr-4"></div>
+            <CheckCircle className="text-2xl text-[#669933]" />
+            <div className="w-12 h-1 bg-[#669933] ml-4"></div>
           </div>
+          <h2 className="text-4xl text-gray-900 mb-4">
+            <span className="text-[#669933]">
+              {data.fifth_card_title.split(" ")[0]}
+            </span>{" "}
+            {data.fifth_card_title.split(" ").slice(1).join(" ")}
+          </h2>
+          <div className="w-24 h-1 bg-[#669933] mx-auto rounded-full"></div>
 
           {/* Slider Container */}
-          <div className="relative h-120 md:h-80 lg:h-70 w-full overflow-hidden  bg-white">
-            <div 
+          <div className="relative h-80 md:h-60 lg:h-50 w-full overflow-hidden  bg-white">
+            <div
               ref={sliderRef}
               className="absolute inset-0 flex"
               style={{
                 transform: `translateX(-${currentIndex * 100}%)`,
-                transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
               {data.fifth_card_description?.map((item, index) => (
-                <div 
+                <div
                   key={index}
                   className="flex-shrink-0 w-full h-full flex items-center justify-center p-4"
                 >
@@ -75,15 +76,15 @@ export default function SixCardSection({ data }) {
             </div>
 
             {/* Navigation Arrows */}
-            <button 
+            <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 hover:bg-gray-50 transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 hover:bg-gray-50 transition-colors"
             >
               <ChevronLeft className="text-[#669933] w-6 h-6" />
             </button>
-            <button 
+            <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 hover:bg-gray-50 transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow-md z-10 hover:bg-gray-50 transition-colors"
             >
               <ChevronRight className="text-[#669933] w-6 h-6" />
             </button>
@@ -94,13 +95,11 @@ export default function SixCardSection({ data }) {
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${currentIndex === index ? 'bg-[#669933]' : 'bg-gray-300'}`}
+                  className={`w-3 h-3 rounded-full transition-colors ${currentIndex === index ? "bg-[#669933]" : "bg-gray-300"}`}
                 />
               ))}
             </div>
           </div>
-
-
         </motion.div>
       </div>
     </section>

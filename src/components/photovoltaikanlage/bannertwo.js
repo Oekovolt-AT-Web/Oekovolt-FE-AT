@@ -26,17 +26,13 @@ const useCounter = (target, speed = 50) => {
 };
 
 const SolvixBanner = ({ data }) => {
-  const count1 = useCounter(100);
-  const count2 = useCounter(50000);
-  const count3 = useCounter(17);
-
   if (!data) return null;
 
   return (
     <section className="w-full px-4 md:px-12 py-10 md:py-16 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
         {/* LEFT CONTENT */}
-        <div className="w-full lg:w-1/2 space-y-6">
+        <div className="w-full lg:w-1/2 space-y-2">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +40,7 @@ const SolvixBanner = ({ data }) => {
             viewport={{ once: true }}
             className="text-sm font-semibold text-[#669933] uppercase tracking-wide"
           >
-            Photovoltaik Lösung
+            {data.photovoltaik_description || ""}
           </motion.p>
 
           <motion.h1
@@ -54,7 +50,7 @@ const SolvixBanner = ({ data }) => {
             viewport={{ once: true }}
             className="text-4xl leading-tight text-gray-900"
           >
-            {data.photovoltaik_title}
+            {data.photovoltaik_title || ""}
           </motion.h1>
 
           <div className="space-y-4">
@@ -69,13 +65,13 @@ const SolvixBanner = ({ data }) => {
               >
                 <FaCheckCircle className="text-[#669933] w-5 h-5 mt-1" />
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  {opt.first_header_options} {opt.second_text_paragraph}
+                  {opt.first_header_options || ""}{" "}
+                  {opt.second_text_paragraph || ""}
                 </p>
               </motion.div>
             ))}
           </div>
 
-          {/* STATISTICS */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -85,21 +81,24 @@ const SolvixBanner = ({ data }) => {
           >
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {count1}+
+                {data.first_statistic_value.toLocaleString("de-DE")}
+                {data.first_value_suffix || ""}
               </h3>
-              <p>Standorte</p>
+              <p>{data.first_statistic_title || ""}</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {count2.toLocaleString("de-DE")}+
+                {data.second_statistic_value.toLocaleString("de-DE")}
+                {data.second_value_suffix || ""}
               </h3>
-              <p>Installationen</p>
+              <p>{data.second_statistic_title || ""}</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {count3} Jahre
+                {data.third_statistic_value.toLocaleString("de-DE")}{" "}
+                {data.third_value_suffix || ""}
               </h3>
-              <p>Erfahrung</p>
+              <p>{data.third_statistic_title || ""}</p>
             </motion.div>
           </motion.div>
         </div>
@@ -118,8 +117,7 @@ const SolvixBanner = ({ data }) => {
             fill
             className="rounded-2xl object-cover"
             priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
           <motion.div

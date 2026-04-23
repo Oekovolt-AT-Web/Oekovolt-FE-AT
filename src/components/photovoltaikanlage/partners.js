@@ -72,12 +72,13 @@ const FeaturedLogos = () => {
         <Slider {...settings}>
           {logos.map((logo, index) => (
             <div key={index} className="!flex justify-center items-center h-20 px-2">
-              <div className="relative w-full h-12 grayscale hover:grayscale-0 transition-all duration-300">
+              <div className="relative grayscale hover:grayscale-0 transition-all duration-300 flex items-center justify-center">
                 <Image
                   src={`${API_IMG_URL}${logo.logo_image}`}
                   alt={logo.alt_logo_image || `Partner Logo ${index + 1}`}
-                  fill
-                  className="object-contain !static"
+                  width={100}
+                  height={38}
+                  className="object-contain"
                   sizes="(max-width: 768px) 100px, 150px"
                 />
               </div>

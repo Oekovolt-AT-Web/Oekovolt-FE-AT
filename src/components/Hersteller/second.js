@@ -71,7 +71,6 @@ const HerstellerSection = ({ data }) => {
           <div className="lg:col-span-3 space-y-8">
             {activeCategory.hersteller_list.map((item, i) => {
               const isEven = i % 2 === 1; // 0-based index, so 1 = 2nd item
-
               return (
                 <motion.div
                   key={i}
@@ -97,18 +96,15 @@ const HerstellerSection = ({ data }) => {
 
                       {item.logo_image && (
                         <div className="absolute top-4 left-4  p-2  z-10 max-w-[120px] bg-white/80 rounded-xl">
-                 <div className="relative w-[120px] h-[40px]">
-  <Image
-    src={`${API_IMG_URL}${item.logo_image}`}
-    alt={item.alt_logo_image || item.title}
-    fill
-    className="object-contain"
-                    sizes=" 100vw"
-
-  />
-</div>
-
-
+                          <div className="relative w-[100px] h-[30px]">
+                            <Image
+                              src={`${API_IMG_URL}${item.logo_image}`}
+                              alt={item.alt_logo_image || item.title}
+                              fill
+                              className="object-contain"
+                              sizes=" 100vw"
+                            />
+                          </div>
                         </div>
                       )}
                     </div>

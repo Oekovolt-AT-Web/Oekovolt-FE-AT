@@ -15,7 +15,7 @@ export default function FinanzierungFAQ({data}) {
     <section className="w-full bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl text-center text-gray-900 mb-14">
-          Häufige Fragen zur Finanzierung mit Oekovolt
+          {data.finanzierung_fourth_card_title}
         </h2>
         <div className="space-y-4">
           {data.finanzierung_fourth_card_table.map((item, index) => (

@@ -13,10 +13,11 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { useRef } from "react";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const PhotovoltaikSliderSection = ({ data }) => {
-
-    const sliderRef = useRef();
+  const sliderRef = useRef();
 
   if (!data) return null;
 
@@ -29,7 +30,7 @@ const PhotovoltaikSliderSection = ({ data }) => {
     arrows: false, // we use custom arrows below
     infinite: true,
     autoplay: true,
-    autoplaySpeed: 8000,
+    autoplaySpeed: 6000,
     speed: 700,
     slidesToShow: 3,
     slidesToScroll: 1,
@@ -46,16 +47,14 @@ const PhotovoltaikSliderSection = ({ data }) => {
   };
 
   const getIcon = (title) => {
+    const iconClass = "text-[#669933] w-8 h-8";
     const lower = title.toLowerCase();
-    if (lower.includes("modul"))
-      return <FaSolarPanel className="text-[#669933] text-3xl" />;
+    if (lower.includes("modul")) return <FaSolarPanel className={iconClass} />;
     if (lower.includes("speicher"))
-      return <FaBatteryHalf className="text-[#669933] text-3xl" />;
-    if (lower.includes("wallbox"))
-      return <FaPlug className="text-[#669933] text-3xl" />;
-    if (lower.includes("wärmepumpe"))
-      return <FaHome className="text-[#669933] text-3xl" />;
-    return <FaBolt className="text-[#669933] text-3xl" />;
+      return <FaBatteryHalf className={iconClass} />;
+    if (lower.includes("wallbox")) return <FaPlug className={iconClass} />;
+    if (lower.includes("wärmepumpe")) return <FaHome className={iconClass} />;
+    return <FaBolt className={iconClass} />;
   };
 
   return (
@@ -64,16 +63,16 @@ const PhotovoltaikSliderSection = ({ data }) => {
         <div className=" md:flex-row lg:flex flex-col justify-between">
           <div className="flex-col">
             {/* title */}
-           
-             <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-sm mb-3 font-semibold text-[#669933] uppercase tracking-wide"
-          >
-            {title}
-          </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-sm mb-3 font-semibold text-[#669933] uppercase tracking-wide"
+            >
+              {title}
+            </motion.p>
 
             {/* Subtitle */}
             <motion.h2
@@ -115,7 +114,7 @@ const PhotovoltaikSliderSection = ({ data }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-gray-100 rounded-2xl overflow-hidden flex flex-col h-auto md:h-[420px] justify-between transition duration-300"
+                className="bg-gray-100 rounded-2xl overflow-hidden flex flex-col h-[400px] transition duration-300"
               >
                 {/* Image */}
                 <div className="relative w-full h-52 shrink-0">
@@ -124,20 +123,21 @@ const PhotovoltaikSliderSection = ({ data }) => {
                     alt={item.alt_text || "solar"}
                     fill
                     className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex flex-col flex-grow justify-between">
-                  <div className="flex items-center gap-3 mb-3">
-                    {getIcon(item.title)}
-                    <h3 className="text-lg font-semibold text-gray-900">
+                <div className="p-6 flex flex-col flex-1 overflow-hidden">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex-shrink-0 w-7 h-7 flex items-center justify-center">
+                      {getIcon(item.title)}
+                    </div>
+                    <h3 className="text-normal font-semibold text-gray-900 line-clamp-2">
                       {item.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">
+                  <p className="text-sm text-gray-700 leading-relaxed line-clamp-6">
                     {item.description}
                   </p>
                 </div>

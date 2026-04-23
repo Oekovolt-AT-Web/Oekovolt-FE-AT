@@ -12,8 +12,7 @@ const BannerSection = ({ data }) => {
           fill
           className="object-cover"
           priority
-                    sizes=" 100vw"
-
+          sizes=" 100vw"
         />
       </div>
 
@@ -34,8 +33,7 @@ const BannerSection = ({ data }) => {
             fill
             className="object-cover"
             priority
-                    sizes=" 100vw"
-
+            sizes=" 100vw"
           />
         </div>
 
@@ -44,11 +42,11 @@ const BannerSection = ({ data }) => {
 
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
-          <div className="max-w-xl space-y-6 text-center lg:text-left">
+          <div className="max-w-xl space-y-2 text-center lg:text-left">
             <p className="text-md  text-[#669933] uppercase ">
               {data.dynami_subtitle}
             </p>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {data.dynami_title}
             </h2>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">

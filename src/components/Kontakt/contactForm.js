@@ -11,7 +11,6 @@ import {
   MdLocationOn,
 } from "react-icons/md";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 const Buttons = styled.div`
   display: flex;
@@ -142,6 +141,7 @@ export default function ContactForm() {
     message: "",
     zipCity: "",
     street: "",
+    acceptTerms: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -161,8 +161,11 @@ export default function ContactForm() {
   }, [message]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -170,9 +173,15 @@ export default function ContactForm() {
     setLoading(true);
     setMessage(null);
 
-    const { firstName, lastName, email, phone, message, zipCity, street } = formData;
+    const { firstName, lastName, email, phone, message, zipCity, street, acceptTerms } = formData;
     if (!firstName || !lastName || !email || !phone || !message || !zipCity || !street) {
       setMessage({ type: "error", text: "Bitte füllen Sie alle Pflichtfelder aus." });
+      setLoading(false);
+      return;
+    }
+
+    if (!acceptTerms) {
+      setMessage({ type: "error", text: "Bitte akzeptieren Sie die Allgemeinen Geschäftsbedingungen." });
       setLoading(false);
       return;
     }
@@ -185,6 +194,7 @@ export default function ContactForm() {
       ihre_nachricht: message,
       strasse_und_hausnummer: street,
       plz_und_ort: zipCity,
+      allgemeine_geschaeftsbedingungen: acceptTerms ? 1 : 0,
     };
 
     try {
@@ -213,6 +223,7 @@ export default function ContactForm() {
         message: "",
         zipCity: "",
         street: "",
+        acceptTerms: false,
       });
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -369,6 +380,25 @@ export default function ContactForm() {
                 rows={4}
                 className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 resize-none"
               ></textarea>
+            </div>
+
+            {/* Terms & Conditions Checkbox */}
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="acceptTerms"
+                name="acceptTerms"
+                checked={formData.acceptTerms}
+                onChange={handleChange}
+                className="mt-1 w-4 h-4 text-[#669933] border-gray-300 rounded focus:ring-[#669933]"
+              />
+              <label htmlFor="acceptTerms" className="text-sm text-gray-600">
+                Ich akzeptiere die Allgemeinen Geschäftsbedingungen und bestätige, dass ich die{" "}
+                <a href="/datenschutz" className="text-[#669933] underline hover:text-[#558822]">
+                  Datenschutzbestimmungen
+                </a>{" "}
+                von Oekovolt gelesen habe. Du kannst deine Einwilligung zur Datennutzung jederzeit widerrufen.
+              </label>
             </div>
 
             {/* Submit Button */}

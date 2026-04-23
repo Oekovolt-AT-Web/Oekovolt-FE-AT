@@ -81,7 +81,7 @@ const BaurechtBannerSection = async () => {
 
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
-          <div className="max-w-xl space-y-6 text-center lg:text-left">
+          <div className="max-w-xl space-y-2 text-center lg:text-left">
             <p className="text-md  text-[#669933] uppercase ">{bannerData.category}</p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {bannerData.title}

@@ -56,8 +56,7 @@ export default function WarmepumpeHerstellerList({ data }) {
                       alt={item.alt_banner_image || "Wärmepumpen Banner"}
                       fill
                       className="object-cover rounded-t-2xl"
-                    sizes=" 100vw"
-
+                      sizes="100vw"
                     />
                   </div>
                 )}
@@ -66,14 +65,13 @@ export default function WarmepumpeHerstellerList({ data }) {
                 <div className="flex flex-col grow pl-6 pr-6 pb-6">
                   {/* Logo */}
                   {item.logo_image && (
-                    <div className="relative w-20 h-18 mb-4">
+                    <div className="relative w-24 h-18 mb-2">
                       <Image
                         src={`${API_IMG_URL}${item.logo_image}`}
-                        alt={item.alt_logo_image || `${item.title} Logo`}
+                        alt={item.alt_logo_image || "Logo"}
                         fill
                         className="object-contain"
-                    sizes=" 100vw"
-
+                        sizes=" 100vw"
                       />
                     </div>
                   )}

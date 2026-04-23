@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FaUser,
   FaPhoneAlt,
@@ -9,13 +9,111 @@ import {
   FaMailBulk,
   FaRegCommentDots,
 } from "react-icons/fa";
-import { motion } from "framer-motion";
-import Image from "next/image"; // <-- import Image
-
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { API_BASE_URL } from "@/lib/apiBaseUrl";
 
 export default function KontaktFormular() {
-  const [agreed, setAgreed] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    street: "",
+    city: "",
+    zipCode: "",
+    email: "",
+    message: "",
+    acceptTerms: false,
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
   const [isHovering, setIsHovering] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (message) {
+      timer = setTimeout(() => {
+        setMessage(null);
+      }, 10000);
+    }
+    return () => clearTimeout(timer);
+  }, [message]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+
+    const { firstName, lastName, email, phone, message: msg, zipCode, street, city, acceptTerms } = formData;
+    
+    if (!firstName || !lastName || !email || !phone || !msg || !zipCode || !street || !city) {
+      setMessage({ type: "error", text: "Bitte füllen Sie alle Pflichtfelder aus." });
+      setLoading(false);
+      return;
+    }
+
+    if (!acceptTerms) {
+      setMessage({ type: "error", text: "Bitte akzeptieren Sie die Allgemeinen Geschäftsbedingungen." });
+      setLoading(false);
+      return;
+    }
+
+    const payload = {
+      nachname: lastName,
+      vorname: firstName,
+      e_mail_adressee: email,
+      telefonnummer: phone,
+      ihre_nachricht: msg,
+      strasse_und_hausnummer: street,
+      plz_und_ort: `${zipCode} ${city}`,
+      allgemeine_geschaeftsbedingungen: acceptTerms ? 1 : 0,
+    };
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt.api.create_contact`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        const errorMsg = responseData.message || responseData.error || "Fehler beim Senden der Nachricht.";
+        throw new Error(errorMsg);
+      }
+
+      setMessage({ type: "success", text: "Nachricht erfolgreich gesendet!" });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        street: "",
+        city: "",
+        zipCode: "",
+        email: "",
+        message: "",
+        acceptTerms: false,
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setMessage({ type: "error", text: error.message || "Es gab einen Fehler beim Senden Ihrer Nachricht." });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const inputStyle =
     "flex items-center border border-gray-300 bg-white rounded-md px-6 md:px-2 py-3 gap-3 w-full text-sm focus-within:border-[#669933] focus-within:ring-2 focus-within:ring-[#669933]/30 transition";
@@ -76,6 +174,7 @@ export default function KontaktFormular() {
 
         {/* Right Column - Form */}
         <motion.form
+          onSubmit={handleSubmit}
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 0.2 }}
@@ -86,12 +185,30 @@ export default function KontaktFormular() {
             Jetzt unverbindlich anfragen:
           </h3>
 
+          <AnimatePresence>
+            {message && (
+              <Notification
+                key="notification"
+                type={message.type}
+                text={
+                  message.type === "success"
+                    ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
+                    : message.text
+                }
+              />
+            )}
+          </AnimatePresence>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className={inputStyle}>
               <FaUser className="text-[#669933]" />
               <input
                 type="text"
-                placeholder="Vorname"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                placeholder="Vorname *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
@@ -99,15 +216,23 @@ export default function KontaktFormular() {
               <FaUser className="text-[#669933]" />
               <input
                 type="text"
-                placeholder="Nachname"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                placeholder="Nachname *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2`}>
               <FaPhoneAlt className="text-[#669933]" />
               <input
-                type="text"
-                placeholder="Telefonnummer"
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Telefonnummer *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
@@ -115,7 +240,11 @@ export default function KontaktFormular() {
               <FaMapMarkerAlt className="text-[#669933]" />
               <input
                 type="text"
-                placeholder="Straße und Hausnummer"
+                name="street"
+                value={formData.street}
+                onChange={handleChange}
+                placeholder="Straße und Hausnummer *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
@@ -123,7 +252,11 @@ export default function KontaktFormular() {
               <FaCity className="text-[#669933]" />
               <input
                 type="text"
-                placeholder="Ort"
+                name="city"
+                value={formData.city}
+                onChange={handleChange}
+                placeholder="Ort *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
@@ -131,7 +264,11 @@ export default function KontaktFormular() {
               <FaMailBulk className="text-[#669933]" />
               <input
                 type="text"
-                placeholder="Postleitzahl"
+                name="zipCode"
+                value={formData.zipCode}
+                onChange={handleChange}
+                placeholder="Postleitzahl *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
@@ -139,48 +276,75 @@ export default function KontaktFormular() {
               <FaEnvelope className="text-[#669933]" />
               <input
                 type="email"
-                placeholder="E-Mail Adresse"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="E-Mail Adresse *"
+                required
                 className="flex-1 outline-none"
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2 items-start`}>
               <FaRegCommentDots className="mt-1 text-[#669933]" />
               <textarea
-                placeholder="Deine Nachricht"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                placeholder="Deine Nachricht *"
+                required
                 className="flex-1 outline-none resize-none h-24 bg-transparent"
               />
             </div>
           </div>
 
-          <div className="flex items-start gap-2 mt-2">
+          <div className="flex items-start gap-3 mt-2">
             <input
               type="checkbox"
-              checked={agreed}
-              onChange={() => setAgreed(!agreed)}
-              className="mt-1 accent-[#669933]"
+              id="acceptTerms"
+              name="acceptTerms"
+              checked={formData.acceptTerms}
+              onChange={handleChange}
+              className="mt-1 w-4 h-4 text-[#669933] border-gray-300 rounded focus:ring-[#669933]"
             />
-            <label className="text-gray-600 text-[14px]">
-              Ich stimme der Verarbeitung meiner Daten gemäß der{" "}
-              <a href="/datenschutz" className="text-[#669933] underline">
-                Datenschutzerklärung
+            <label htmlFor="acceptTerms" className="text-gray-600 text-[14px]">
+              Ich akzeptiere die Allgemeinen Geschäftsbedingungen und bestätige, dass ich die{" "}
+              <a href="/datenschutz" className="text-[#669933] underline hover:text-[#558822]">
+                Datenschutzbestimmungen
               </a>{" "}
-              zu.
+              von Oekovolt gelesen habe. Du kannst deine Einwilligung zur Datennutzung jederzeit widerrufen.
             </label>
           </div>
 
           <button
             type="submit"
-            disabled={!agreed}
+            disabled={loading}
             className={`mt-4 w-full py-3 px-6 text-white font-semibold rounded-md transition-all ${
-              agreed
-                ? "bg-[#669933] hover:bg-[#557a26]"
-                : "bg-gray-300 cursor-not-allowed"
+              loading
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-[#669933] hover:bg-[#557a26]"
             }`}
           >
-            Anfrage absenden
+            {loading ? "Wird gesendet..." : "Anfrage absenden"}
           </button>
         </motion.form>
       </motion.div>
     </section>
   );
 }
+
+const Notification = ({ type, text }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className={`p-3 mb-5 rounded-md text-center ${
+        type === "success"
+          ? "bg-green-100 text-green-800"
+          : "bg-red-100 text-red-800"
+      }`}
+    >
+      {text}
+    </motion.div>
+  );
+};

@@ -4,7 +4,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-import img from "../../../public/Images/Home/Logo (2).jpg";
 
 const SecondCardSection = ({ data }) => {
   const listItems = data?.second_card_description_table || [];
@@ -44,17 +43,8 @@ const SecondCardSection = ({ data }) => {
               </h2>
 
               {/* Slider Container */}
-              <div className="relative h-120 md:h-64 w-full overflow-hidden rounded-xl bg-white">
+              <div className="relative h-70 md:h-38 w-full overflow-hidden rounded-xl bg-white">
                 {/* Logo at top-right */}
-                <div className="absolute top-5 right-5 z-20">
-                <Image
-  src={img}
-  alt="Oekovolt Logo"
-  className="w-[150px] h-auto"
-
-/>
-
-                </div>
 
                 <div
                   ref={sliderRef}
@@ -141,7 +131,7 @@ const SecondCardSection = ({ data }) => {
                   fill
                   priority
                   className="object-cover"
-                    sizes=" 100vw"
+                  sizes=" 100vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
               </div>

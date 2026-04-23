@@ -2,9 +2,7 @@
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import {FaArrowRight} from "react-icons/fa";
-
-
+import { FaArrowRight } from "react-icons/fa";
 
 const BannerSection = ({ data }) => {
   return (
@@ -17,8 +15,7 @@ const BannerSection = ({ data }) => {
           fill
           className="object-cover"
           priority
-  sizes="100vw"
-
+          sizes="100vw"
         />
       </div>
 
@@ -39,8 +36,7 @@ const BannerSection = ({ data }) => {
             fill
             className="object-cover"
             priority
-  sizes="100vw"
-
+            sizes="100vw"
           />
         </div>
 
@@ -49,35 +45,32 @@ const BannerSection = ({ data }) => {
 
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
-          <div className="max-w-xl space-y-6 text-center lg:text-left">
+          <div className="max-w-xl space-y-2 text-center lg:text-left">
             <p className="text-md  text-[#669933] uppercase ">
               {data.subtitle}
             </p>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {data.title}
             </h2>
-          {data.direkt_banner_options.map((item, idx) => (
-                    <motion.li 
-                      key={idx} 
-                      className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: 10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * idx }}
-                    >
-                      <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
-                        <FaArrowRight className="text-white text-xs" />
-                      </div>
-                      <span className="text-gray-700 text-lg">{item.options}</span>
-                    </motion.li>
-                  ))}
+            {data.direkt_banner_options.map((item, idx) => (
+              <motion.li
+                key={idx}
+                className="flex items-start gap-3"
+                initial={{ opacity: 0, x: 10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 * idx }}
+              >
+                <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
+                  <FaArrowRight className="text-white text-xs" />
+                </div>
+                <span className="text-gray-700 text-lg">{item.options}</span>
+              </motion.li>
+            ))}
           </div>
         </div>
       </div>
     </section>
   );
 };
-
-
-
 
 export default BannerSection;
