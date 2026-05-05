@@ -1,1 +1,1 @@
-export const API_BASE_URL = "http://10.10.200.203:8000/api/method/";
+export const API_BASE_URL = "https://backoffice.oekovolt.de/api/method/";
