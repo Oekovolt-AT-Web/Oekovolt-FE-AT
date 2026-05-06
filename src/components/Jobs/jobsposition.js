@@ -84,7 +84,7 @@ const JobListings = () => {
     const fetchJobs = async () => {
       try {
         const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`
+          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobsde.api.jobsde_data`
         );
 
         if (!response.ok) throw new Error("Failed to fetch data");
