@@ -4,8 +4,8 @@ const nextConfig = {
     minimumCacheTTL: 60,
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "10.10.200.203",
+        protocol: "https",
+        hostname: "backoffice.oekovolt.de",
         pathname: "/**",
       },
     ],
