@@ -3,9 +3,8 @@ import RichtlinienPV from "@/components/Forderungen/Richtlinen/second";
 import EndSection from "@/components/Reusable/end";
 import React from "react";
 
-// Revalidate every 1 hour (3600 seconds)
-// CMS content doesn't change frequently, so this is optimal
-export const revalidate = 3600;
+// Always fetch fresh data at request time (API unavailable at build time)
+export const dynamic = "force-dynamic";
 
 // Metadata for SEO and browser tab
 export const metadata = {
