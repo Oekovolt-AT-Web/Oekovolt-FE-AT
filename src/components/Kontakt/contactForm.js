@@ -202,7 +202,7 @@ export default function ContactForm() {
         `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt.api.create_contact`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "Expect": "" },
           body: JSON.stringify(payload),
         }
       );
