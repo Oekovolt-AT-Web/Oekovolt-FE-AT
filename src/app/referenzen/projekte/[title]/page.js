@@ -23,31 +23,6 @@ function generateSlug(title) {
     .replace(/^-+|-+$/g, "");
 }
 
-
-
-export async function generateStaticParams() {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
-      { next: { revalidate: 3600 } }
-    );
-    
-    if (!res.ok) throw new Error('Failed to fetch projects');
-    
-    const data = await res.json();
-    
-    if (!data?.message) return [];
-    
-    return data.message.map((project) => ({
-      title: generateSlug(project.title || project.name)
-    }));
-    
-  } catch (error) {
-    console.error('Error generating static params:', error);
-    return [];
-  }
-}
-
 export async function generateMetadata({ params }) {
   try {
     const { title } = await params;
