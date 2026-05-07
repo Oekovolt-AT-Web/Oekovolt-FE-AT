@@ -156,7 +156,7 @@ export default function RotatingImageSection({ data = {} }) {
                   height: `${iconSize}px`,
                   marginLeft: `-${iconSize / 2}px`,
                   marginTop: `-${iconSize / 2}px`,
-                  zIndex: "100",
+                  zIndex: "10",
                 }}
                 onClick={() => setActiveIndex(index)}
                 whileHover={{ scale: 1.15 }}
