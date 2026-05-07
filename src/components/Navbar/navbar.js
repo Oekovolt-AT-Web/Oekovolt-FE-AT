@@ -152,7 +152,7 @@ const Navbar = () => {
           link: "/forderungen/baurecht",
         },
         {
-          name: "Richtlinen",
+          name: "Richtlinien",
           slug: "richtlinen",
           link: "/forderungen/richtlinen",
         },

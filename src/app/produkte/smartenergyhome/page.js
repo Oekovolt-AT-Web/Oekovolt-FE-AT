@@ -30,11 +30,16 @@ export async function generateMetadata() {
         "Intelligente Stromnutzung",
         "Nachhaltige Energie",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/smartenergyhome",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/smartenergyhome",
         title: "Smart Energy Lösungen | Ökovolt Solartechnik",
         description:
           "Innovative Smart Energy Lösungen für intelligentes Energiemanagement.",
-        images: [{ url: "/images/smart-energy-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -56,7 +61,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Innovative Smart Energy Lösungen für intelligentes Energiemanagement in Ihrem Zuhause. Energieeffizienz, Nachhaltigkeit und Kosteneinsparung durch moderne Technologie.",
     keywords: apiKeywords,
-    
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/smartenergyhome",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/smartenergyhome",
+      title: seoData?.title || "Smart Energy Lösungen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Innovative Smart Energy Lösungen für intelligentes Energiemanagement in Ihrem Zuhause. Energieeffizienz, Nachhaltigkeit und Kosteneinsparung durch moderne Technologie.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

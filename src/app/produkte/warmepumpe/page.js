@@ -34,11 +34,16 @@ export async function generateMetadata() {
         "Umweltfreundliche Heizung",
         "Energieeffiziente Heizung",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/warmepumpe",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/warmepumpe",
         title: "Wärmepumpen | Ökovolt Solartechnik",
         description:
           "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen.",
-        images: [{ url: "/images/waermepumpe-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -60,7 +65,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/warmepumpe",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/warmepumpe",
+      title: seoData?.title || "Wärmepumpen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

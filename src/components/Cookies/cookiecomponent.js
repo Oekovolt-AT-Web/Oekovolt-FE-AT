@@ -275,12 +275,12 @@ export default function CookieBanner({ forceShow = false, onClose }) {
   useEffect(() => {
     if (consent.googleAnalytics && !window.gtagInitialized) {
       const existingScript = document.querySelector(
-        'script[src="https://www.googletagmanager.com/gtag/js?id=G-X914LD3K1V"]'
+        'script[src="https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG"]'
       );
 
       if (!existingScript) {
         const script = document.createElement("script");
-        script.src = "https://www.googletagmanager.com/gtag/js?id=G-X914LD3K1V";
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG";
         script.async = true;
         script.defer = true;
         document.head.appendChild(script);

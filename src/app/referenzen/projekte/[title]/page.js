@@ -1,6 +1,4 @@
-export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
-import BannerSection from "@/components/Reusable/banner";
 import ProjectDetailComponent from "@/components/ProjectItem/projectitem";
 import BannerProject from "@/components/Reusable/bannerproject";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
@@ -45,8 +43,11 @@ export async function generateMetadata({ params }) {
     };
     
     return {
-      title: project.title || project.name,
-      description: project.description || `Details about ${project.title || project.name} project`,
+      title: `${project.title || project.name} | Referenzen | Ökovolt Solartechnik`,
+      description: project.description || `Photovoltaik-Referenzprojekt: ${project.title || project.name} – realisiert von Ökovolt Solartechnik.`,
+      alternates: {
+        canonical: `https://www.oekovolt.de/referenzen/projekte/${title}`,
+      },
     };
     
   } catch (error) {
@@ -67,7 +68,7 @@ export default async function ProjectDetailPage({ params }) {
   try {
     const res = await fetch(
       `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
-      { cache: "no-store" }
+      { next: { revalidate: 60 } }
     );
 
     if (!res.ok) throw new Error("Failed to fetch projects");

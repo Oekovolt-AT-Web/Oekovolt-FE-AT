@@ -3,14 +3,35 @@ import RichtlinienPV from "@/components/Forderungen/Richtlinen/second";
 import EndSection from "@/components/Reusable/end";
 import React from "react";
 
-// Always fetch fresh data at request time (API unavailable at build time)
-export const dynamic = "force-dynamic";
-
-// Metadata for SEO and browser tab
 export const metadata = {
-  title: "Richtlinien - Förderungen | Oekovolt Germany",
-  description: "Diese Übersicht fasst die wesentlichen technischen Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland zusammen.",
-  keywords: "Photovoltaik, Richtlinien, Normen, Deutschland, Förderungen, OVE, Sicherheit",
+  title: "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland",
+  description:
+    "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – OVE-Normen und aktuelle Sicherheitsanforderungen.",
+  keywords: [
+    "Photovoltaik Richtlinien",
+    "PV-Anlage Normen",
+    "Sicherheitsrichtlinien Solar",
+    "Technische Normen Photovoltaik",
+    "OVE Richtlinien",
+  ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/forderungen/richtlinen",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/forderungen/richtlinen",
+    title: "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland",
+    description:
+      "Technische Normen und Sicherheitsrichtlinien für Photovoltaikanlagen in Deutschland.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 const page = () => {
@@ -24,4 +45,3 @@ const page = () => {
 };
 
 export default page;
-  

@@ -33,11 +33,16 @@ export async function generateMetadata() {
         "Solarenergie",
         "PV-Anlage",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
         title: "Photovoltaikanlagen | Ökovolt Solartechnik",
         description:
           "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
-        images: [{ url: "/images/photovoltaik-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -59,6 +64,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
     keywords: apiKeywords,
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
+      title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

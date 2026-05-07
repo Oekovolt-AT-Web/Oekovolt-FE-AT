@@ -3,14 +3,35 @@ import TaxTreatmentPV from "@/components/Forderungen/Steuerlich/second";
 import EndSection from "@/components/Reusable/end";
 import React from "react";
 
-// Always fetch fresh data at request time (API unavailable at build time)
-export const dynamic = "force-dynamic";
-
-// Metadata for SEO and browser tab
 export const metadata = {
-  title: "Steuerlich - Förderungen | Oekovolt Germany",
-  description: "Diese Übersicht erläutert die aktuellen steuerrechtlichen Bestimmungen für Photovoltaikanlagen in Deutschland, differenziert nach privaten Betreibern und Unternehmen.",
-  keywords: "Photovoltaik, Steuer, Deutschland, Förderungen, Einkommensteuer, Umsatzsteuer",
+  title: "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
+  description:
+    "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland – Einkommensteuer, Umsatzsteuer und steuerliche Vorteile für private und gewerbliche Betreiber.",
+  keywords: [
+    "Photovoltaik Steuer",
+    "Solaranlage Steuervorteile",
+    "Einkommensteuer Photovoltaik",
+    "Umsatzsteuer PV-Anlage",
+    "Steuerliche Förderung Solar",
+  ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/forderungen/steuerlich",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/forderungen/steuerlich",
+    title: "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
+    description:
+      "Steuerrechtliche Bestimmungen für Photovoltaikanlagen – Einkommensteuer und Umsatzsteuer für Betreiber.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 const page = () => {

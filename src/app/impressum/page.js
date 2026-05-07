@@ -15,6 +15,23 @@ export const metadata = {
     "Kontakt ÖKOVOLT",
     "Haftungshinweise ÖKOVOLT",
   ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/impressum",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/impressum",
+    title: "Impressum | Ökovolt Deutschland",
+    description: "Rechtliche Informationen der ÖKOVOLT GmbH Solartechnik.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 export default function Home() {

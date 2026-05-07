@@ -27,11 +27,16 @@ export async function generateMetadata() {
         "Qualitätshersteller",
         "Solar Marken",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/hersteller",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/hersteller",
         title: "Hersteller & Partner | Ökovolt Solartechnik",
         description:
           "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
-        images: [{ url: "/images/hersteller-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -53,7 +58,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/hersteller",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/hersteller",
+      title: seoData?.title || "Hersteller & Partner | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

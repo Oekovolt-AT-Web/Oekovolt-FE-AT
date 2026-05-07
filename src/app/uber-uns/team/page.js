@@ -20,6 +20,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Unser Team | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/uber-uns/team" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/uber-uns/team", title: "Unser Team | Ökovolt Solartechnik", description: "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
       keywords: [
@@ -52,7 +54,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
     keywords: apiKeywords,
- 
+    alternates: {
+      canonical: "https://www.oekovolt.de/uber-uns/team",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/uber-uns/team",
+      title: seoData?.title || "Unser Team | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

@@ -23,6 +23,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/service/direktvermaktung" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/direktvermaktung", title: "Direktvermarktung von Solarstrom | Ökovolt Solartechnik", description: "Professionelle Direktvermarktung Ihres Solarstroms.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
       keywords: [
@@ -59,6 +61,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
     keywords: apiKeywords,
+    alternates: {
+      canonical: "https://www.oekovolt.de/service/direktvermaktung",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/service/direktvermaktung",
+      title: seoData?.title || "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

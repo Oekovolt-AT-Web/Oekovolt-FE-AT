@@ -22,6 +22,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/faqs" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/faqs", title: "Häufige Fragen (FAQ) | Ökovolt Solartechnik", description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
       keywords: [
@@ -59,8 +61,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
     keywords: apiKeywords,
-   
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/faqs",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/faqs",
+      title: seoData?.title || "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

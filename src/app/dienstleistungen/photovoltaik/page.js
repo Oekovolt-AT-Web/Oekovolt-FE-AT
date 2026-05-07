@@ -30,11 +30,16 @@ export async function generateMetadata() {
         "Photovoltaik Förderung",
         "Solaranlage",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
         title: "Photovoltaikanlagen | Ökovolt Solartechnik",
         description:
           "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
-        images: [{ url: "/images/photovoltaik-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -56,7 +61,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
     keywords: apiKeywords,
-  
+    alternates: {
+      canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
+      title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

@@ -22,6 +22,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Finanzierung & Förderungen | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/service/finanzierung" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/finanzierung", title: "Finanzierung & Förderungen | Ökovolt Solartechnik", description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
       keywords: [
@@ -53,7 +55,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/service/finanzierung",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/service/finanzierung",
+      title: seoData?.title || "Finanzierung & Förderungen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

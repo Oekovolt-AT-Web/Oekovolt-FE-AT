@@ -21,6 +21,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Referenzen | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/referenzen/projekte" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/projekte", title: "Referenzen | Ökovolt Solartechnik", description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
       keywords: [
@@ -53,7 +55,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
     keywords: apiKeywords,
-  
+    alternates: {
+      canonical: "https://www.oekovolt.de/referenzen/projekte",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/referenzen/projekte",
+      title: seoData?.title || "Referenzen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

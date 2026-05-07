@@ -29,11 +29,16 @@ export async function generateMetadata() {
         "Elektroauto Ladestation",
         "Wallbox Installation",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/wallbox",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/wallbox",
         title: "Wallbox & Ladestationen | Ökovolt Solartechnik",
         description:
           "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge.",
-        images: [{ url: "/images/wallbox-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -55,7 +60,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/wallbox",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/wallbox",
+      title: seoData?.title || "Wallbox & Ladestationen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

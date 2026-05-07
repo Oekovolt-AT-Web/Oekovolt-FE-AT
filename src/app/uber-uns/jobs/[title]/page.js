@@ -38,8 +38,6 @@ export async function generateStaticParams() {
       title: generateSlug(project.name),
     }));
 
-    console.log("Generated Static Paths:", paths);
-
     return paths;
   } catch (error) {
     console.error("Error fetching paths:", error);
@@ -71,8 +69,11 @@ export async function generateMetadata({ params }) {
     if (!project) notFound();
 
     return {
-      title: project.name,
-      description: `Learn more about ${project.name} jobs`,
+      title: `${project.name} | Karriere bei Ökovolt`,
+      description: `Stellenangebot: ${project.name} bei Ökovolt Solartechnik. Bewerben Sie sich jetzt für einen Job in der Photovoltaik-Branche.`,
+      alternates: {
+        canonical: `https://www.oekovolt.de/uber-uns/jobs/${title}`,
+      },
     };
   } catch (error) {
     console.error("Error fetching metadata:", error);
@@ -107,7 +108,6 @@ export default async function ProjectDetailPage({ params }) {
     const project = data.message.find((p) => generateSlug(p.name) === title);
 
     if (!project) {
-      console.log("No match found!");
       notFound();
     }
 

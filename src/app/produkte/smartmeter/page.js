@@ -31,10 +31,15 @@ export async function generateMetadata() {
         "Stromzähler",
         "Intelligente Messsysteme",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/smartmeter",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/smartmeter",
         title: "Smart Meter & Zähler | Ökovolt Solartechnik",
         description: "Moderne Smart Meter für intelligentes Energiemanagement.",
-        images: [{ url: "/images/smartmeter-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -56,7 +61,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/smartmeter",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/smartmeter",
+      title: seoData?.title || "Smart Meter & Zähler | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

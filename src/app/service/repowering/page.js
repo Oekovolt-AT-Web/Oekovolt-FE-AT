@@ -25,6 +25,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Photovoltaik Repowering | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/service/repowering" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/repowering", title: "Photovoltaik Repowering | Ökovolt Solartechnik", description: "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.",
       keywords: [
@@ -55,7 +57,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.",
     keywords: apiKeywords,
-   
+    alternates: {
+      canonical: "https://www.oekovolt.de/service/repowering",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/service/repowering",
+      title: seoData?.title || "Photovoltaik Repowering | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

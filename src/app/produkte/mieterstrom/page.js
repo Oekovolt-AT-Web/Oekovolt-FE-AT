@@ -30,10 +30,15 @@ export async function generateMetadata() {
         "Energieversorgung Mehrfamilienhaus",
         "Nachhaltige Wohnanlagen",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/mieterstrom",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/mieterstrom",
         title: "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
         description: "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser.",
-        images: [{ url: "/images/mieterstrom-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -59,8 +64,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
     keywords: apiKeywords,
-   
-    
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/mieterstrom",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/mieterstrom",
+      title: seoData?.title || "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

@@ -3,14 +3,35 @@ import BaurechtPV from "@/components/Forderungen/Baurecht/second";
 import EndSection from "@/components/Reusable/end";
 import React from "react";
 
-// Always fetch fresh data at request time (API unavailable at build time)
-export const dynamic = "force-dynamic";
-
-// Metadata for SEO and browser tab
 export const metadata = {
-  title: "Baurecht - Förderungen | Oekovolt Germany",
-  description: "Dieser Bereich gibt einen Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland. Behandelt werden Genehmigungspflichten, Bauvorschriften und Abstandsregelungen.",
-  keywords: "Photovoltaik, Baurecht, Deutschland, Förderungen, Genehmigung, Bauvorschriften",
+  title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
+  description:
+    "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
+  keywords: [
+    "Photovoltaik Baurecht",
+    "PV-Anlage Genehmigung",
+    "Bauvorschriften Photovoltaik",
+    "Solaranlage Abstand",
+    "Förderungen Baurecht",
+  ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/forderungen/baurecht",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/forderungen/baurecht",
+    title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
+    description:
+      "Baurechtliche Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten und Bauvorschriften.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 const page = () => {

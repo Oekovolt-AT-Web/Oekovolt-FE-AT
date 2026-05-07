@@ -32,10 +32,15 @@ export async function generateMetadata() {
         "Energiespeicher",
         "Photovoltaik Speicher",
       ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/produkte/stromspeicher",
+      },
       openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/produkte/stromspeicher",
         title: "Stromspeicher Lösungen | Ökovolt Solartechnik",
         description: "Hochwertige Stromspeicher für Photovoltaikanlagen.",
-        images: [{ url: "/images/stromspeicher-og.jpg" }],
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
   }
@@ -57,7 +62,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
     keywords: apiKeywords,
-    
+    alternates: {
+      canonical: "https://www.oekovolt.de/produkte/stromspeicher",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/produkte/stromspeicher",
+      title: seoData?.title || "Stromspeicher Lösungen | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

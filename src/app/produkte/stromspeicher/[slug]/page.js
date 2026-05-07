@@ -15,12 +15,53 @@ const slugToTitle = (slug) =>
     .replace(/[ß]/g, "ss")
     .replace(/[^a-z0-9-]/g, "");
 
-    export const dynamic = 'force-dynamic'; // Force dynamic behavior
-
-
 export async function generateMetadata(props) {
   const { slug } = await props.params;
-  return { title: slug };
+  const title = slugToTitle(slug);
+  try {
+    const apiUrl = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(title)}`;
+    const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
+    const json = await res.json();
+    const hersteller = json.message?.message;
+    if (hersteller) {
+      return {
+        title: `${hersteller.title} Stromspeicher | Ökovolt Solartechnik`,
+        description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+        alternates: { canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` },
+        openGraph: {
+          type: "website",
+          url: `https://www.oekovolt.de/produkte/stromspeicher/${slug}`,
+          title: `${hersteller.title} Stromspeicher | Ökovolt Solartechnik`,
+          description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+          images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: `${hersteller.title} Stromspeicher` }],
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: `${hersteller.title} Stromspeicher | Ökovolt Solartechnik`,
+          description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik.`,
+          images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
+        },
+      };
+    }
+  } catch {}
+  return {
+    title: "Stromspeicher Hersteller | Ökovolt Solartechnik",
+    description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
+    alternates: { canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` },
+    openGraph: {
+      type: "website",
+      url: `https://www.oekovolt.de/produkte/stromspeicher/${slug}`,
+      title: "Stromspeicher Hersteller | Ökovolt Solartechnik",
+      description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
+      images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Stromspeicher Hersteller | Ökovolt Solartechnik",
+      description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
+    },
+  };
 }
 
 export default async function HerstellerDetailPage({ params }) {
@@ -30,7 +71,7 @@ export default async function HerstellerDetailPage({ params }) {
 
   let hersteller = null;
   try {
-    const res = await fetch(apiUrl, { cache: "no-store" });
+    const res = await fetch(apiUrl, { next: { revalidate: 60 } });
     const json = await res.json();
     hersteller = json.message.message;
   } catch (err) {

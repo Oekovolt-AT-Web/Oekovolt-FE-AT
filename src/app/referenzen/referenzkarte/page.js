@@ -24,6 +24,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Referenzkarte | Ökovolt Solartechnik",
+      alternates: { canonical: "https://www.oekovolt.de/referenzen/referenzkarte" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/referenzkarte", title: "Referenzkarte | Ökovolt Solartechnik", description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
       keywords: [
@@ -56,7 +58,25 @@ export async function generateMetadata() {
       seoData?.description ||
       "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
     keywords: apiKeywords,
-    
+    alternates: {
+      canonical: "https://www.oekovolt.de/referenzen/referenzkarte",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/referenzen/referenzkarte",
+      title: seoData?.title || "Referenzkarte | Ökovolt Solartechnik",
+      description:
+        seoData?.description ||
+        "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 

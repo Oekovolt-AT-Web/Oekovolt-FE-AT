@@ -13,6 +13,23 @@ export const metadata = {
     "Google Analytics",
     "Cookies",
   ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/datenschutz",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/datenschutz",
+    title: "Datenschutz | Ökovolt Deutschland",
+    description: "Datenschutzrechtliche Bestimmungen und Ihre Rechte bei ÖKOVOLT GmbH.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 export default function Home() {

@@ -14,6 +14,24 @@ export const metadata = {
     "Solaranlagen Kontakt",
     "ÖKOVOLT Deutschland",
   ],
+  alternates: {
+    canonical: "https://www.oekovolt.de/kontakt",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://www.oekovolt.de/kontakt",
+    title: "Kontaktieren Sie uns | Ökovolt Deutschland",
+    description:
+      "Kontaktieren Sie ÖKOVOLT Deutschland für professionelle Beratung rund um Photovoltaik-Lösungen. Wir sind Montag bis Freitag für Sie da.",
+    images: [
+      {
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Deutschland",
+      },
+    ],
+  },
 };
 
 export default function Home() {

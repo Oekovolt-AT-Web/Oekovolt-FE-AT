@@ -22,6 +22,8 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Ökovolt Solartechnik - Photovoltaik Lösungen",
+      alternates: { canonical: "https://www.oekovolt.de" },
+      openGraph: { type: "website", url: "https://www.oekovolt.de", title: "Ökovolt Solartechnik - Photovoltaik Lösungen", description: "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description: "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
       keywords: ["Photovoltaik", "Solaranlagen", "Energielösungen"],
       // openGraph: {
@@ -41,7 +43,25 @@ export async function generateMetadata() {
     title: seoData?.title || "Ökovolt Solartechnik - Photovoltaik Lösungen",
     description: seoData?.first_card_description || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
     keywords: apiKeywords,
-
+    alternates: {
+      canonical: "https://www.oekovolt.de",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de",
+      title: seoData?.title || "Ökovolt Solartechnik - Photovoltaik Lösungen",
+      description:
+        seoData?.first_card_description ||
+        "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.",
+      images: [
+        {
+          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Deutschland",
+        },
+      ],
+    },
   };
 }
 
