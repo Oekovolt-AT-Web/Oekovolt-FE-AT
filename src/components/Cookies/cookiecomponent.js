@@ -197,7 +197,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
   
   useEffect(() => {
     const tagManagerArgs = {
-      gtmId: "GTM-MTT7LVDC",
+      gtmId: "GTM-WR8PDT7V",
     };
     TagManager.initialize(tagManagerArgs);
   }, []);
@@ -319,7 +319,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
 
     if (consentState.functional) {
       TagManager.initialize({
-        gtmId: "GTM-MTT7LVDC",
+        gtmId: "GTM-WR8PDT7V",
         dataLayer: { event: "consent_given" },
       });
     }

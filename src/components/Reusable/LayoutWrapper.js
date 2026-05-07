@@ -8,7 +8,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 export default function LayoutWrapper({ children }) {
   return (
     <>
-      <GoogleTagManager gtmId="GTM-MTT7LVDC" />
+      <GoogleTagManager gtmId="GTM-WR8PDT7V" />
       <Navbar />
       {children}
       <CookieComponent />
