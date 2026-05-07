@@ -7,6 +7,7 @@ import ProjectsSlider from "@/components/Home/projekte";
 import RotatingCircleSection from "@/components/Home/welcome";
 import EndWhite from "@/components/Reusable/Endwhite";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.home_page.api.get_home_page`;
 
@@ -86,9 +87,9 @@ export default async function Home() {
   return (
     <div>
       <VideoBanner
-        videoSrc={"/Images/Navbar/intro.mp4"}
+        mediaSrc={data?.image ? `${API_IMG_URL}${data.image}` : "/Images/Kontakt/download-1.jpg"}
+        mediaAlt={data?.alt_text || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
         title={data?.title || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
-        mobileVideoSrc={"/Images/Navbar/intro.mp4"}
       />
       <ServicesBanner data={data} />
       <RotatingCircleSection data={data} />
