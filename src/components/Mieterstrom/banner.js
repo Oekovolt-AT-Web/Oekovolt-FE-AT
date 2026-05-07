@@ -14,10 +14,9 @@ const MieterstromBanner = ({ data }) => {
           alt={data.mieterstorm_banner_alt_image || "Banner Background"}
           fill
           quality={100}
-          className="object-cover object-center w-full h-full"
+          className="object-cover w-full h-full"
           priority
-                    sizes=" 100vw"
-
+          sizes="100vw"
         />
       </div>
 

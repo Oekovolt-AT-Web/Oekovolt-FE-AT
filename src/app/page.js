@@ -87,7 +87,7 @@ export default async function Home() {
   return (
     <div>
       <VideoBanner
-        mediaSrc={data?.image ? `${API_IMG_URL}${data.image}` : "/Images/Kontakt/download-1.jpg"}
+        mediaSrc={data?.image ? `${API_IMG_URL}${data.image}` : "/Images/Navbar/intro.mp4"}
         mediaAlt={data?.alt_text || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
         title={data?.title || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
       />
