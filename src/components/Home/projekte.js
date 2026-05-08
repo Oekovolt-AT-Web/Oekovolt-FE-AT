@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { FaSolarPanel } from "react-icons/fa";
@@ -47,6 +47,24 @@ const CustomNextArrow = ({ onClick }) => (
 
 export default function ProjectsSection({ data }) {
   const [projects, setProjects] = useState([]);
+  const sliderContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (projects.length === 0 || !sliderContainerRef.current) return;
+    const container = sliderContainerRef.current;
+    const applyTabIndex = () => {
+      container
+        .querySelectorAll('.slick-slide[aria-hidden="true"] a, .slick-slide[aria-hidden="true"] button')
+        .forEach((el) => el.setAttribute('tabindex', '-1'));
+      container
+        .querySelectorAll('.slick-slide:not([aria-hidden="true"]) a, .slick-slide:not([aria-hidden="true"]) button')
+        .forEach((el) => el.removeAttribute('tabindex'));
+    };
+    const observer = new MutationObserver(applyTabIndex);
+    observer.observe(container, { subtree: true, attributes: true, attributeFilter: ['aria-hidden'] });
+    applyTabIndex();
+    return () => observer.disconnect();
+  }, [projects]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -95,6 +113,7 @@ export default function ProjectsSection({ data }) {
         </p>
       </div>
 
+      <div ref={sliderContainerRef}>
       <Slider
         {...{
           dots: false,
@@ -142,6 +161,7 @@ export default function ProjectsSection({ data }) {
           </div>
         ))}
       </Slider>
+      </div>
 
       <div className="text-center flex flex-row items-center justify-center mt-4">
         <Link

@@ -3,8 +3,6 @@ import Image from "next/image";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
 // Custom Arrow Components to Handle Props

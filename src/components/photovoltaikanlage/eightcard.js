@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { BsQuestionCircleFill } from 'react-icons/bs';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
 import {motion} from 'framer-motion'
 
 export default function FaqSection({ data }) {

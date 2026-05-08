@@ -389,7 +389,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
           <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
             <button
               onClick={handleAcceptAll}
-              className="px-4 py-2 text-white bg-[#669933] rounded-lg hover:bg-[#669933] transition-colors text-sm cursor-pointer"
+              className="px-4 py-2 text-white bg-[#4d7a1a] rounded-lg hover:bg-[#4d7a1a] transition-colors text-sm cursor-pointer"
             >
               Alle akzeptieren
             </button>
@@ -435,7 +435,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             <div className={`flex flex-col space-y-3 w-[100%] md:w-[40%] md:ml-4 transition-all duration-200 mb-4`}>
               <button
                 onClick={handleAcceptAll}
-                className="px-4 py-2 text-white bg-[#669933] rounded-lg hover:bg-[#669933] transition-colors text-sm whitespace-nowrap cursor-pointer"
+                className="px-4 py-2 text-white bg-[#4d7a1a] rounded-lg hover:bg-[#4d7a1a] transition-colors text-sm whitespace-nowrap cursor-pointer"
               >
                 Alle akzeptieren
               </button>

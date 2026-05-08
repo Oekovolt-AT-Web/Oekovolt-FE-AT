@@ -1,8 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { FaSolarPanel, FaIndustry, FaChartLine } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useMemo, useEffect, useState, useRef } from "react";
@@ -63,6 +61,24 @@ export default function SolutionsPage({ data }) {
   const animationRef = useRef(null);
   const [partnersFrappe, setPartnersFrappe] = useState([]);
   const [projectFrappe, setProjectFrappe] = useState([]);
+  const sliderContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (projectFrappe.length === 0 || !sliderContainerRef.current) return;
+    const container = sliderContainerRef.current;
+    const applyTabIndex = () => {
+      container
+        .querySelectorAll('.slick-slide[aria-hidden="true"] a, .slick-slide[aria-hidden="true"] button')
+        .forEach((el) => el.setAttribute('tabindex', '-1'));
+      container
+        .querySelectorAll('.slick-slide:not([aria-hidden="true"]) a, .slick-slide:not([aria-hidden="true"]) button')
+        .forEach((el) => el.removeAttribute('tabindex'));
+    };
+    const observer = new MutationObserver(applyTabIndex);
+    observer.observe(container, { subtree: true, attributes: true, attributeFilter: ['aria-hidden'] });
+    applyTabIndex();
+    return () => observer.disconnect();
+  }, [projectFrappe]);
 
   useEffect(() => {
     const startCounters = () => {
@@ -183,6 +199,7 @@ export default function SolutionsPage({ data }) {
         transition={{ duration: 0.8 }}
         className="mb-9 md:mb-17"
       >
+        <div ref={sliderContainerRef}>
         <Slider
           {...{
             dots: false,
@@ -238,6 +255,7 @@ export default function SolutionsPage({ data }) {
             </div>
           ))}
         </Slider>
+        </div>
 
         <div className="text-center flex flex-row items-center justify-center mt-4">
           <Link

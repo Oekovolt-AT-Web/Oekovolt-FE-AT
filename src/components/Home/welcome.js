@@ -184,10 +184,10 @@ export default function RotatingImageSection({ data = {} }) {
           className="space-y-4 w-full lg:w-1/2"
         >
           <div>
-            <h2 className="text-[#669933] text-lg font-semibold uppercase">
+            <h2 className="text-[#4d7a1a] text-lg font-semibold uppercase">
               {title}
             </h2>
-            <div className="h-0.5 w-20 bg-[#669933] mt-1"></div>
+            <div className="h-0.5 w-20 bg-[#4d7a1a] mt-1"></div>
           </div>
           <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-[1.5]">
             {subtitle}

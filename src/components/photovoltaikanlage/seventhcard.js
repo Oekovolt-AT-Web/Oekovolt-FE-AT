@@ -13,8 +13,6 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { useRef } from "react";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 const PhotovoltaikSliderSection = ({ data }) => {
   const sliderRef = useRef();

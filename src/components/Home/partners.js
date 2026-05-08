@@ -1,8 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";

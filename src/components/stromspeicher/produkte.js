@@ -6,8 +6,6 @@ import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { FiBox, FiCheckCircle } from "react-icons/fi"; // Ikonat e reja
 
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 function CustomPrevArrow({ onClick }) {
   return (

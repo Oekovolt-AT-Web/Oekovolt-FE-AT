@@ -30,9 +30,9 @@ const ServicesBanner = ({ data }) => {
                   />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-[540] text-black mb-2 text-center sm:text-start leading-[1.7]">
+                  <h2 className="text-2xl font-[540] text-black mb-2 text-center sm:text-start leading-[1.7]">
                     {card.title}
-                  </h3>
+                  </h2>
                   <p className="text-lg text-gray-700 leading-relaxed text-center sm:text-start">
                     {card.description}
                   </p>

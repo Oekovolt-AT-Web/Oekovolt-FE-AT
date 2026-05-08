@@ -10,7 +10,7 @@ export default function LayoutWrapper({ children }) {
     <>
       <GoogleTagManager gtmId="GTM-WR8PDT7V" />
       <Navbar />
-      {children}
+      <main>{children}</main>
       <CookieComponent />
       <Footer />
       <ToTopButton />

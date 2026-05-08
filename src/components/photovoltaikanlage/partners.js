@@ -4,8 +4,6 @@ import Image from "next/image";
 import Slider from "react-slick";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_icon_partners`;
 
