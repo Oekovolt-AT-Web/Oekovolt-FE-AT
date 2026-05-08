@@ -60,7 +60,7 @@ const ForderungenSection = () => {
   );
 
   return (
-    <div className="w-full overflow-x-hidden">
+    <div className="w-full">
      
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 mt-9 md:mt-14 ">

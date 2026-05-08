@@ -95,7 +95,7 @@ const ContactSection = () => {
 
           {/* Image with decorative frame */}
           <div className="relative">
-            <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl z-100">
+            <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl z-10">
               <Image
                 src="/Images/Kontakt/download-1.jpg"
                 alt="Zentrale von Ökovolt Deutschland in Türkheim (Bayern)"
