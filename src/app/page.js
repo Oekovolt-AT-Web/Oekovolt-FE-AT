@@ -1,14 +1,16 @@
-import ServicesBanner from "@/components/Home/about";
+import dynamic from "next/dynamic";
 import VideoBanner from "@/components/Home/banner";
-import PVInquiryForm from "@/components/Home/form";
-import SolutionsPage from "@/components/Home/info";
-import Partners from "@/components/Home/partners";
-import ProjectsSlider from "@/components/Home/projekte";
-import RotatingCircleSection from "@/components/Home/welcome";
-import EndWhite from "@/components/Reusable/Endwhite";
+import ServicesBanner from "@/components/Home/about";
+import HomeLoader from "@/components/Home/HomeLoader";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-import HomeLoader from "@/components/Home/HomeLoader";
+
+const RotatingCircleSection = dynamic(() => import("@/components/Home/welcome"));
+const SolutionsPage = dynamic(() => import("@/components/Home/info"));
+const ProjectsSlider = dynamic(() => import("@/components/Home/projekte"));
+const Partners = dynamic(() => import("@/components/Home/partners"));
+const PVInquiryForm = dynamic(() => import("@/components/Home/form"));
+const EndWhite = dynamic(() => import("@/components/Reusable/Endwhite"));
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.home_page.api.get_home_page`;
 

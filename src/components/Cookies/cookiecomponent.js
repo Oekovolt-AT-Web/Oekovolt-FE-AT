@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { setCookie, getCookie } from "cookies-next";
-import TagManager from "react-gtm-module";
 import CookieDetails from "./coookieItem";
 import Link from "next/link";
 import { GoDotFill } from "react-icons/go";
@@ -195,13 +194,6 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     setIsShown(!isShown);
   };
   
-  useEffect(() => {
-    const tagManagerArgs = {
-      gtmId: "GTM-WR8PDT7V",
-    };
-    TagManager.initialize(tagManagerArgs);
-  }, []);
-  
   const [showBanner, setShowBanner] = useState(forceShow);
   const [expandedSections, setExpandedSections] = useState({
     functional: false,
@@ -317,11 +309,8 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     setShowBanner(false);
     handleClose();
 
-    if (consentState.functional) {
-      TagManager.initialize({
-        gtmId: "GTM-WR8PDT7V",
-        dataLayer: { event: "consent_given" },
-      });
+    if (consentState.functional && window.dataLayer) {
+      window.dataLayer.push({ event: "consent_given" });
     }
 
     if (window.gtag) {

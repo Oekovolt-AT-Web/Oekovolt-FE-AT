@@ -20,7 +20,7 @@ const VideoBanner = ({
 
     if (VIDEO_EXTENSIONS_REGEX.test(src)) {
       return (
-        <video autoPlay loop muted playsInline className={className} aria-label={mediaAlt}>
+        <video autoPlay loop muted playsInline preload="metadata" className={className} aria-label={mediaAlt}>
           <source src={src} type="video/mp4" />
           Your browser does not support the video tag.
         </video>

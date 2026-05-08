@@ -105,6 +105,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="de">
+      <head>
+        <link rel="preconnect" href="https://backoffice.oekovolt.de" />
+        <link rel="dns-prefetch" href="https://backoffice.oekovolt.de" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body className="bg-white text-black">
         <script
           type="application/ld+json"
