@@ -3,23 +3,7 @@ import ProjectDetailComponent from "@/components/ProjectItem/projectitem";
 import BannerProject from "@/components/Reusable/bannerproject";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-
-// Consistent slug generation function
-function generateSlug(title) {
-  if (!title) return '';
-  return title
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { generateSlug } from "@/lib/slugify";
 
 export async function generateMetadata({ params }) {
   try {
@@ -28,20 +12,20 @@ export async function generateMetadata({ params }) {
       `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
       { next: { revalidate: 3600 } }
     );
-    
+
     const data = await res.json();
-    
+
     // Find project by comparing slugs
-    const project = data.message?.find(p => 
-      generateSlug(p.title) === title || 
+    const project = data.message?.find(p =>
+      generateSlug(p.title) === title ||
       generateSlug(p.name) === title
     );
-    
+
     if (!project) return {
       title: 'Project Not Found',
       description: 'The requested project could not be found'
     };
-    
+
     return {
       title: `${project.title || project.name} | Referenzen `,
       description: project.description || `Photovoltaik-Referenzprojekt: ${project.title || project.name} – realisiert von Ökovolt Solartechnik.`,
@@ -49,7 +33,7 @@ export async function generateMetadata({ params }) {
         canonical: `https://www.oekovolt.de/referenzen/projekte/${title}`,
       },
     };
-    
+
   } catch (error) {
     console.error('Error generating metadata:', error);
     return {

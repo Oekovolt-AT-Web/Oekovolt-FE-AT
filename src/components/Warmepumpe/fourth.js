@@ -4,24 +4,7 @@ import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { motion } from "framer-motion";
-
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss",
-};
-
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .split("")
-    .map((char) => umlautMap[char] || char)
-    .join("")
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-};
+import { generateSlug as createSlug } from "@/lib/slugify";
 
 export default function WarmepumpeHerstellerList({ data }) {
   if (!data?.warmepumpe_third_card_options_table?.length) {

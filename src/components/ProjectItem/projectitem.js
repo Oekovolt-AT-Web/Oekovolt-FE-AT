@@ -9,23 +9,7 @@ import {
   FaBolt,
 } from "react-icons/fa";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-
-// Same slug function used across frontend and backend
-function generateSlug(title) {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { generateSlug } from "@/lib/slugify";
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -81,7 +65,7 @@ const ProjectDetailComponent = ({ project, related }) => {
         <div className="w-full md:w-2/4">
           <div className="grid grid-cols-1 gap-6">
             {project?.bild_anhagen
-              ?.filter((image, index, self) => 
+              ?.filter((image, index, self) =>
                 index === self.findIndex(img => img.bild_anhagen === image.bild_anhagen)
               )
               .map((image, index) => (

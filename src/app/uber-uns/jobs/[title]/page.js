@@ -1,24 +1,9 @@
 // Page Component
 import { notFound } from "next/navigation";
 import BannerSection from "@/components/Reusable/banner";
-import ProjectDetailComponent from "@/components/ProjectItem/projectitem";
 import JobDetails from "@/components/JobDetails/jobdetail";
-import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-
-// Function to slugify the title manually
-function generateSlug(title) {
-  return title
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, ""); // Remove other special characters
-}
+import { generateJobSlug } from "@/lib/slugify";
 
 // Function to generate static paths
 export async function generateStaticParams() {
@@ -35,7 +20,7 @@ export async function generateStaticParams() {
     }
 
     const paths = data.message.map((project) => ({
-      title: generateSlug(project.name),
+      title: generateJobSlug(project.name),
     }));
 
     return paths;
@@ -64,7 +49,7 @@ export async function generateMetadata({ params }) {
     }
 
     // Find the matching project based on slugified title
-    const project = data.message.find((p) => generateSlug(p.name) === title);
+    const project = data.message.find((p) => generateJobSlug(p.name) === title);
 
     if (!project) notFound();
 
@@ -83,8 +68,6 @@ export async function generateMetadata({ params }) {
     };
   }
 }
-
-// ... keep your generateStaticParams and generateMetadata functions the same ...
 
 // Page Component
 export default async function ProjectDetailPage({ params }) {
@@ -105,27 +88,19 @@ export default async function ProjectDetailPage({ params }) {
       );
     }
 
-    const project = data.message.find((p) => generateSlug(p.name) === title);
+    const project = data.message.find((p) => generateJobSlug(p.name) === title);
 
     if (!project) {
       notFound();
     }
 
     const bannerInfo = {
-      title: project.title || project.name, // Use project.name if title is undefined
+      title: project.title || project.name,
       img: `/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg`,
     };
 
-    
-  const end={
-    greentitle:"Solaranlage sichern",
-    title:"Jetzt Kontakt aufnehmen & Solaranlage sichern",
-    description:"Interessiert an einer maßgeschneiderten Photovoltaikanlage für Ihr Zuhause oder Unternehmen? Füllen Sie unser Kontaktformular aus oder rufen Sie uns direkt an! Unser Expertenteam berät Sie persönlich und individuell."
-  }
-
     return (
       <div>
-        {/* Project Header */}
         <BannerSection data={bannerInfo} />
         <JobDetails jobData={project} />
         {/* <GreenFeatureSection data={end} /> */}

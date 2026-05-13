@@ -2,26 +2,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaSolarPanel } from "react-icons/fa";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-
-// Slug function inside same file
-function generateSlug(title) {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { generateSlug } from "@/lib/slugify";
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);

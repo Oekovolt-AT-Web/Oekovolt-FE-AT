@@ -12,9 +12,8 @@ import {
 } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { MdSentimentDissatisfied } from "react-icons/md";
-
+import { generateJobSlug } from "@/lib/slugify";
 
 const Buttons = styled.div`
   display: flex;
@@ -47,17 +46,6 @@ const Buttons = styled.div`
     }
   }
 `;
-
-const generateSlug = (title) =>
-  title
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "");
 
 const JobListings = () => {
   const [jobsPosition, setJobsPosition] = useState([]);
@@ -128,7 +116,7 @@ const JobListings = () => {
         ) : jobsPosition.length > 0 ? (
           <div className="space-y-8">
             {jobsPosition.map((job, index) => {
-              const slug = generateSlug(job.title || "unnamed-job");
+              const slug = generateJobSlug(job.title || "unnamed-job");
 
               return (
                 <motion.div

@@ -5,26 +5,9 @@ import Link from "next/link";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { FiArrowRight } from "react-icons/fi";
+import { generateSlug as createSlug } from "@/lib/slugify";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
-
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss"
-};
-
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .split("")
-    .map(char => umlautMap[char] || char)
-    .join("")
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-};
 
 
 const StromSecondCardSection = () => {

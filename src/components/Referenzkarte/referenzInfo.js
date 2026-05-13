@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { generateSlug } from "@/lib/slugify";
 
 const CustomPrevArrow = ({ onClick }) => (
   <div
@@ -223,15 +224,7 @@ export default function SolutionsPage({ data }) {
           {projectFrappe.map((project, i) => (
             <div key={i} className="px-5">
               <Link
-                href={`/referenzen/projekte/${project.title
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")
-                  .replace(/\//g, "-")
-                  .replace(/[ä]/g, "ae")
-                  .replace(/[ö]/g, "oe")
-                  .replace(/[ü]/g, "ue")
-                  .replace(/[ß]/g, "ss")
-                  .replace(/[^a-z0-9-]/g, "")}`}
+                href={`/referenzen/projekte/${generateSlug(project.title)}`}
                 className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
               >
                 <div className="relative w-full h-64">

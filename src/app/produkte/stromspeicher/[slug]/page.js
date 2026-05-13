@@ -3,17 +3,7 @@ import Link from "next/link";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { FiGlobe, FiMail, FiPhone, FiCheckCircle } from "react-icons/fi";
-
-const slugToTitle = (slug) =>
-  slug
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "");
+import { generateSlug as slugToTitle } from "@/lib/slugify";
 
 export async function generateMetadata(props) {
   const { slug } = await props.params;

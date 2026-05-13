@@ -1,15 +1,15 @@
-	export function generateSlug(title) {
+export function generateSlug(title) {
   if (!title) return "";
   return title
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
     .replace(/ä/g, "ae")
     .replace(/ö/g, "oe")
     .replace(/ü/g, "ue")
     .replace(/ß/g, "ss")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\s–—]+/g, "-")
+    .replace(/\//g, "-")
     .replace(/[^a-z0-9-]/g, "")
     .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
