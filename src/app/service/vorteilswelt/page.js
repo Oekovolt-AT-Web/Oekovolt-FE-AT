@@ -19,9 +19,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Vorteilswelt | Ökovolt Solartechnik",
+      title: "Vorteilswelt ",
       alternates: { canonical: "https://www.oekovolt.de/service/vorteilswelt" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/service/vorteilswelt", title: "Vorteilswelt | Ökovolt Solartechnik", description: "Exklusive Vorteile und Services für unsere Ökovolt Kunden.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/vorteilswelt", title: "Vorteilswelt ", description: "Exklusive Vorteile und Services für unsere Ökovolt Kunden.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
       keywords: [
@@ -47,7 +47,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Vorteilswelt | Ökovolt Solartechnik",
+    title: seoData?.title || "Vorteilswelt ",
     description:
       seoData?.description ||
       "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
@@ -58,7 +58,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/service/vorteilswelt",
-      title: seoData?.title || "Vorteilswelt | Ökovolt Solartechnik",
+      title: seoData?.title || "Vorteilswelt ",
       description:
         seoData?.description ||
         "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",

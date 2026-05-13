@@ -1,18 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
-import Slider from "react-slick";
 import {
   FaSolarPanel,
   FaIndustry,
   FaChartLine,
 } from "react-icons/fa";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState, useRef, useMemo } from "react";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 export default function SolutionsPage({ data }) {
-   const toNumber = (value, fallback) => {
+  const toNumber = (value, fallback) => {
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : fallback;
   };
@@ -40,7 +36,6 @@ export default function SolutionsPage({ data }) {
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
   const animationRef = useRef(null);
-  const [partnersFrappe, setPartnersFrappe] = useState([]);
 
   useEffect(() => {
     const startCounters = () => {
@@ -50,14 +45,7 @@ export default function SolutionsPage({ data }) {
       const animateCounters = (currentTime) => {
         const elapsedTime = currentTime - startTime;
         const progress = Math.min(elapsedTime / duration, 1);
-
-        const newCounters = stats.map((stat, i) => {
-          const value = stat.value;
-          return Math.floor(progress * value);
-        });
-
-        setCounters(newCounters);
-
+        setCounters(stats.map((stat) => Math.floor(progress * stat.value)));
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animateCounters);
         }
@@ -88,53 +76,8 @@ export default function SolutionsPage({ data }) {
     };
   }, [stats]);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    pauseOnHover: true,
-    cssEase: "linear",
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
-      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
-    ],
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const partnersRes = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`
-        );
-
-        if (!partnersRes.ok)
-          throw new Error("Fehler beim Laden der Partnerdaten");
-
-        const partnersData = await partnersRes.json();
-
-        const formattedPartners = partnersData.message.map((marke) => ({
-          name: marke.name1,
-          image: marke.bild_anhagen,
-          status: marke.status,
-        }));
-
-        setPartnersFrappe(formattedPartners);
-      } catch (error) {
-        console.error("Fehler:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden">
-      {/* Title Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -147,7 +90,6 @@ export default function SolutionsPage({ data }) {
         </h2>
       </motion.div>
 
-      {/* Stats Section */}
       <motion.div
         ref={countersRef}
         initial={{ opacity: 0 }}

@@ -24,7 +24,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Wärmepumpen | Ökovolt Solartechnik",
+      title: "Wärmepumpen ",
       description:
         "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
       keywords: [
@@ -40,7 +40,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/warmepumpe",
-        title: "Wärmepumpen | Ökovolt Solartechnik",
+        title: "Wärmepumpen ",
         description:
           "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
@@ -60,7 +60,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Wärmepumpen | Ökovolt Solartechnik",
+    title: seoData?.title || "Wärmepumpen ",
     description:
       seoData?.description ||
       "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
@@ -71,7 +71,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/warmepumpe",
-      title: seoData?.title || "Wärmepumpen | Ökovolt Solartechnik",
+      title: seoData?.title || "Wärmepumpen ",
       description:
         seoData?.description ||
         "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",

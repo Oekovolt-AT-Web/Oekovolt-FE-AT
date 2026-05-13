@@ -20,7 +20,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
+      title: "Mieterstrom & Quartierslösungen ",
       description:
         "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
       keywords: [
@@ -36,7 +36,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/mieterstrom",
-        title: "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
+        title: "Mieterstrom & Quartierslösungen ",
         description: "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
@@ -59,7 +59,7 @@ export async function generateMetadata() {
   return {
     title:
       seoData?.title ||
-      "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
+      "Mieterstrom & Quartierslösungen ",
     description:
       seoData?.description ||
       "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
@@ -70,7 +70,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/mieterstrom",
-      title: seoData?.title || "Mieterstrom & Quartierslösungen | Ökovolt Solartechnik",
+      title: seoData?.title || "Mieterstrom & Quartierslösungen ",
       description:
         seoData?.description ||
         "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",

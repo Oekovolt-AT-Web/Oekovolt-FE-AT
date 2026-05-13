@@ -24,9 +24,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Dynamischer Stromtarif | Ökovolt Solartechnik",
+      title: "Dynamischer Stromtarif ",
       alternates: { canonical: "https://www.oekovolt.de/service/stromtarif" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/service/stromtarif", title: "Dynamischer Stromtarif | Ökovolt Solartechnik", description: "Flexible Stromtarife für Photovoltaik-Besitzer.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/stromtarif", title: "Dynamischer Stromtarif ", description: "Flexible Stromtarife für Photovoltaik-Besitzer.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
       keywords: [
@@ -52,7 +52,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Dynamischer Stromtarif | Ökovolt Solartechnik",
+    title: seoData?.title || "Dynamischer Stromtarif ",
     description:
       seoData?.description ||
       "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
@@ -63,7 +63,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/service/stromtarif",
-      title: seoData?.title || "Dynamischer Stromtarif | Ökovolt Solartechnik",
+      title: seoData?.title || "Dynamischer Stromtarif ",
       description:
         seoData?.description ||
         "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",

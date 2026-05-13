@@ -32,7 +32,7 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default function AgbPage() {
   const data = {
     title: "Allgemeine Geschäfts­bedingungen",
     img: "/Images/Kontakt/download-2.jpg",

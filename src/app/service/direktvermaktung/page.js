@@ -22,9 +22,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      title: "Direktvermarktung von Solarstrom ",
       alternates: { canonical: "https://www.oekovolt.de/service/direktvermaktung" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/service/direktvermaktung", title: "Direktvermarktung von Solarstrom | Ökovolt Solartechnik", description: "Professionelle Direktvermarktung Ihres Solarstroms.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/service/direktvermaktung", title: "Direktvermarktung von Solarstrom ", description: "Professionelle Direktvermarktung Ihres Solarstroms.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
       keywords: [
@@ -35,7 +35,7 @@ export async function generateMetadata() {
         "Solarstrom verkaufen",
       ],
       // openGraph: {
-      //   title: "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      //   title: "Direktvermarktung von Solarstrom ",
       //   description: "Professionelle Direktvermarktung Ihres Solarstroms.",
       //   images: [{ url: "/images/direktvermarktung-og.jpg" }],
       // },
@@ -56,7 +56,7 @@ export async function generateMetadata() {
   return {
     title:
       seoData?.title ||
-      "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      "Direktvermarktung von Solarstrom ",
     description:
       seoData?.description ||
       "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
@@ -67,7 +67,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/service/direktvermaktung",
-      title: seoData?.title || "Direktvermarktung von Solarstrom | Ökovolt Solartechnik",
+      title: seoData?.title || "Direktvermarktung von Solarstrom ",
       description:
         seoData?.description ||
         "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",

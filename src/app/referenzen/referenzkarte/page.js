@@ -23,9 +23,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Referenzkarte | Ökovolt Solartechnik",
+      title: "Referenzkarte ",
       alternates: { canonical: "https://www.oekovolt.de/referenzen/referenzkarte" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/referenzkarte", title: "Referenzkarte | Ökovolt Solartechnik", description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/referenzkarte", title: "Referenzkarte ", description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
       keywords: [
@@ -53,7 +53,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   return {
-    title: seoData?.title || "Referenzkarte | Ökovolt Solartechnik",
+    title: seoData?.title || "Referenzkarte ",
     description:
       seoData?.description ||
       "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
@@ -64,7 +64,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/referenzen/referenzkarte",
-      title: seoData?.title || "Referenzkarte | Ökovolt Solartechnik",
+      title: seoData?.title || "Referenzkarte ",
       description:
         seoData?.description ||
         "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
@@ -80,7 +80,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function ReferenzkarteSeite() {
   let data = null;
 
   try {

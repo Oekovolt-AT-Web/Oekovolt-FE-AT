@@ -25,19 +25,19 @@ export async function generateMetadata(props) {
     const hersteller = json.message?.message;
     if (hersteller) {
       return {
-        title: `${hersteller.title} Wärmepumpen | Ökovolt Solartechnik`,
+        title: `${hersteller.title} Wärmepumpen `,
         description: hersteller.company_description || `${hersteller.title} Wärmepumpen bei Ökovolt Solartechnik – hochwertige und effiziente Heizlösungen.`,
         alternates: { canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}` },
         openGraph: {
           type: "website",
           url: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`,
-          title: `${hersteller.title} Wärmepumpen | Ökovolt Solartechnik`,
+          title: `${hersteller.title} Wärmepumpen `,
           description: hersteller.company_description || `${hersteller.title} Wärmepumpen bei Ökovolt Solartechnik – hochwertige und effiziente Heizlösungen.`,
           images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: `${hersteller.title} Wärmepumpen` }],
         },
         twitter: {
           card: "summary_large_image",
-          title: `${hersteller.title} Wärmepumpen | Ökovolt Solartechnik`,
+          title: `${hersteller.title} Wärmepumpen `,
           description: hersteller.company_description || `${hersteller.title} Wärmepumpen bei Ökovolt Solartechnik.`,
           images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
         },
@@ -45,19 +45,19 @@ export async function generateMetadata(props) {
     }
   } catch {}
   return {
-    title: "Wärmepumpen Hersteller | Ökovolt Solartechnik",
+    title: "Wärmepumpen Hersteller ",
     description: "Entdecken Sie hochwertige Wärmepumpen von führenden Herstellern bei Ökovolt Solartechnik.",
     alternates: { canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}` },
     openGraph: {
       type: "website",
       url: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`,
-      title: "Wärmepumpen Hersteller | Ökovolt Solartechnik",
+      title: "Wärmepumpen Hersteller ",
       description: "Entdecken Sie hochwertige Wärmepumpen von führenden Herstellern bei Ökovolt Solartechnik.",
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Wärmepumpen" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "Wärmepumpen Hersteller | Ökovolt Solartechnik",
+      title: "Wärmepumpen Hersteller ",
       description: "Entdecken Sie hochwertige Wärmepumpen von führenden Herstellern bei Ökovolt Solartechnik.",
       images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
     },

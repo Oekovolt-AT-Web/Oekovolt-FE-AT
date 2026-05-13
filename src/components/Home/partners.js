@@ -1,13 +1,13 @@
 "use client";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 
-export default function SolutionsPage({ data }) {
-  const [partnersFrappe, setPartnersFrappe] = useState([]);
+export default function PartnersSection({ data }) {
+  const [partners, setPartners] = useState([]);
 
   const sliderSettings = {
     dots: false,
@@ -20,54 +20,71 @@ export default function SolutionsPage({ data }) {
     pauseOnHover: true,
     cssEase: "linear",
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 3, autoplay: true } },
-      { breakpoint: 768, settings: { slidesToShow: 2, autoplay: true } },
-      { breakpoint: 468, settings: { slidesToShow: 1, autoplay: true } },
+      { breakpoint: 1024, settings: { slidesToShow: 3 } },
+      { breakpoint: 768, settings: { slidesToShow: 2 } },
+      { breakpoint: 468, settings: { slidesToShow: 1 } },
     ],
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchPartners = async () => {
       try {
-        const partnersRes = await fetch(
+        const res = await fetch(
           `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`
         );
-
-        if (!partnersRes.ok)
-          throw new Error("Fehler beim Laden der Partnerdaten");
-
-        const partnersData = await partnersRes.json();
-
-        const formattedPartners = partnersData.message.map((marke) => ({
-          name: marke.name1,
-          image: marke.bild_anhagen,
-          status: marke.status,
-        }));
-
-        setPartnersFrappe(formattedPartners);
+        if (!res.ok) throw new Error("Fehler beim Laden der Partnerdaten");
+        const json = await res.json();
+        setPartners(
+          json.message.map((p) => ({
+            name: p.name1,
+            image: p.bild_anhagen,
+          }))
+        );
       } catch (error) {
         console.error("Fehler:", error);
       }
     };
-
-    fetchData();
+    fetchPartners();
   }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden">
-      {/* Title Section */}
+    <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden pb-10">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="text-center mb-16"
+        className="text-center mb-10"
       >
-        <h2 className="text-2xl md:text-2xl lg:text-2xl font-[500] text-gray-900 mb-6">
-          {data.photovoltaiklösungen_title}
+        <h2 className="text-2xl font-[500] text-gray-900 mb-6">
+          {data?.photovoltaiklösungen_title}
         </h2>
       </motion.div>
 
+      {partners.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+        >
+          <Slider {...sliderSettings}>
+            {partners.map((partner, i) => (
+              <div key={i} className="px-4">
+                <div className="relative h-16 w-full">
+                  <Image
+                    src={`${API_IMG_URL}${partner.image}`}
+                    alt={partner.name || "Partner"}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 468px) 100vw, (max-width: 768px) 50vw, 25vw"
+                  />
+                </div>
+              </div>
+            ))}
+          </Slider>
+        </motion.div>
+      )}
     </div>
   );
 }

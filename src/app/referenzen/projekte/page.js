@@ -20,9 +20,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Referenzen | Ökovolt Solartechnik",
+      title: "Referenzen ",
       alternates: { canonical: "https://www.oekovolt.de/referenzen/projekte" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/projekte", title: "Referenzen | Ökovolt Solartechnik", description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/referenzen/projekte", title: "Referenzen ", description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
       keywords: [
@@ -50,7 +50,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   return {
-    title: seoData?.title || "Referenzen | Ökovolt Solartechnik",
+    title: seoData?.title || "Referenzen ",
     description:
       seoData?.description ||
       "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
@@ -61,7 +61,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/referenzen/projekte",
-      title: seoData?.title || "Referenzen | Ökovolt Solartechnik",
+      title: seoData?.title || "Referenzen ",
       description:
         seoData?.description ||
         "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
@@ -77,7 +77,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function ProjektePage() {
   let data = null;
 
   try {

@@ -21,9 +21,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+      title: "Häufige Fragen (FAQ) ",
       alternates: { canonical: "https://www.oekovolt.de/faqs" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/faqs", title: "Häufige Fragen (FAQ) | Ökovolt Solartechnik", description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/faqs", title: "Häufige Fragen (FAQ) ", description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
       keywords: [
@@ -34,7 +34,7 @@ export async function generateMetadata() {
         "Solar Förderung FAQ",
       ],
       // openGraph: {
-      //   title: "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+      //   title: "Häufige Fragen (FAQ) ",
       //   description:
       //     "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik und Solaranlagen.",
       //   images: [{ url: "/images/faqs-og.jpg" }],
@@ -56,7 +56,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   return {
-    title: seoData?.title || "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+    title: seoData?.title || "Häufige Fragen (FAQ) ",
     description:
       seoData?.description ||
       "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
@@ -67,7 +67,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/faqs",
-      title: seoData?.title || "Häufige Fragen (FAQ) | Ökovolt Solartechnik",
+      title: seoData?.title || "Häufige Fragen (FAQ) ",
       description:
         seoData?.description ||
         "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
@@ -83,7 +83,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function FaqsPage() {
   let data = null;
 
   try {

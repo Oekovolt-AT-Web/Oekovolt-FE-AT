@@ -34,7 +34,7 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default function KontaktPage() {
   const data = {
     title: "Kontaktieren Sie uns",
     img: "/Images/Kontakt/download.jpg",

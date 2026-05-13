@@ -23,7 +23,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaikanlagen | Ökovolt Solartechnik",
+      title: "Photovoltaikanlagen ",
       description:
         "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
       keywords: [
@@ -39,7 +39,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
-        title: "Photovoltaikanlagen | Ökovolt Solartechnik",
+        title: "Photovoltaikanlagen ",
         description:
           "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
@@ -59,7 +59,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+    title: seoData?.title || "Photovoltaikanlagen ",
     description:
       seoData?.description ||
       "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
@@ -70,7 +70,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
-      title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+      title: seoData?.title || "Photovoltaikanlagen ",
       description:
         seoData?.description ||
         "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",

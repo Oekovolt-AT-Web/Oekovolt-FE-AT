@@ -7,29 +7,30 @@ const siteSchema = {
     {
       "@type": ["Organization", "LocalBusiness"],
       "@id": "https://www.oekovolt.de/#organization",
-      "name": "Ökovolt Deutschland",
-      "url": "https://www.oekovolt.de",
-      "logo": {
+      name: "Ökovolt Deutschland",
+      url: "https://www.oekovolt.de",
+      logo: {
         "@type": "ImageObject",
-        "url": "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-        "width": 400,
-        "height": 100,
+        url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 400,
+        height: 100,
       },
-      "description": "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen für Privat und Gewerbe.",
-      "address": {
+      description:
+        "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen für Privat und Gewerbe.",
+      address: {
         "@type": "PostalAddress",
-        "addressCountry": "DE",
+        addressCountry: "DE",
       },
-      "priceRange": "€€",
-      "areaServed": "DE",
+      priceRange: "€€",
+      areaServed: "DE",
     },
     {
       "@type": "WebSite",
       "@id": "https://www.oekovolt.de/#website",
-      "url": "https://www.oekovolt.de",
-      "name": "Ökovolt Deutschland",
-      "inLanguage": "de-DE",
-      "publisher": {
+      url: "https://www.oekovolt.de",
+      name: "Ökovolt Deutschland",
+      inLanguage: "de-DE",
+      publisher: {
         "@id": "https://www.oekovolt.de/#organization",
       },
     },
@@ -108,9 +109,16 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="preconnect" href="https://backoffice.oekovolt.de" />
         <link rel="dns-prefetch" href="https://backoffice.oekovolt.de" />
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
       </head>
       <body className="bg-white text-black">
         <script

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
 import CookieDetails from "./coookieItem";
 import Link from "next/link";
@@ -187,13 +188,10 @@ export const cookieServices = {
 };
 
 export default function CookieBanner({ forceShow = false, onClose }) {
+  const router = useRouter();
   const [isShown, setIsShown] = useState(false);
   const [isCompact, setIsCompact] = useState(true);
 
-  const togglePrivacy = () => {
-    setIsShown(!isShown);
-  };
-  
   const [showBanner, setShowBanner] = useState(forceShow);
   const [expandedSections, setExpandedSections] = useState({
     functional: false,
@@ -240,12 +238,12 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     };
     setConsent(newConsent);
     saveConsent(newConsent);
-    window.location.reload();
+    router.refresh();
   };
 
   const handleAcceptSelected = () => {
     saveConsent(consent);
-    window.location.reload();
+    router.refresh();
   };
 
   const handleRejectAll = () => {
@@ -261,7 +259,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     };
     setConsent(newConsent);
     saveConsent(newConsent);
-    window.location.reload();
+    router.refresh();
   };
 
   useEffect(() => {

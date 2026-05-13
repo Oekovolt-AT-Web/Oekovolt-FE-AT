@@ -17,7 +17,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Hersteller & Partner | Ökovolt Solartechnik",
+      title: "Hersteller & Partner ",
       description:
         "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
       keywords: [
@@ -33,7 +33,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/hersteller",
-        title: "Hersteller & Partner | Ökovolt Solartechnik",
+        title: "Hersteller & Partner ",
         description:
           "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
@@ -53,7 +53,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Hersteller & Partner | Ökovolt Solartechnik",
+    title: seoData?.title || "Hersteller & Partner ",
     description:
       seoData?.description ||
       "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
@@ -64,7 +64,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/hersteller",
-      title: seoData?.title || "Hersteller & Partner | Ökovolt Solartechnik",
+      title: seoData?.title || "Hersteller & Partner ",
       description:
         seoData?.description ||
         "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",

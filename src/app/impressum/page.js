@@ -34,7 +34,7 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default function ImpressumPage() {
   const data = {
     title: "Impressum",
     img: "/Images/Kontakt/download-2.jpg",

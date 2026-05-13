@@ -21,7 +21,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Smart Meter & Zähler | Ökovolt Solartechnik",
+      title: "Smart Meter & Zähler ",
       description:
         "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
       keywords: [
@@ -37,7 +37,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/smartmeter",
-        title: "Smart Meter & Zähler | Ökovolt Solartechnik",
+        title: "Smart Meter & Zähler ",
         description: "Moderne Smart Meter für intelligentes Energiemanagement.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
@@ -56,7 +56,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Smart Meter & Zähler | Ökovolt Solartechnik",
+    title: seoData?.title || "Smart Meter & Zähler ",
     description:
       seoData?.description ||
       "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
@@ -67,7 +67,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/smartmeter",
-      title: seoData?.title || "Smart Meter & Zähler | Ökovolt Solartechnik",
+      title: seoData?.title || "Smart Meter & Zähler ",
       description:
         seoData?.description ||
         "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",

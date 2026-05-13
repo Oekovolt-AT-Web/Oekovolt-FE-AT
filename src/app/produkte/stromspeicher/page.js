@@ -22,7 +22,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Stromspeicher Lösungen | Ökovolt Solartechnik",
+      title: "Stromspeicher Lösungen ",
       description:
         "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
       keywords: [
@@ -38,7 +38,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/stromspeicher",
-        title: "Stromspeicher Lösungen | Ökovolt Solartechnik",
+        title: "Stromspeicher Lösungen ",
         description: "Hochwertige Stromspeicher für Photovoltaikanlagen.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
@@ -57,7 +57,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Stromspeicher Lösungen | Ökovolt Solartechnik",
+    title: seoData?.title || "Stromspeicher Lösungen ",
     description:
       seoData?.description ||
       "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
@@ -68,7 +68,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/stromspeicher",
-      title: seoData?.title || "Stromspeicher Lösungen | Ökovolt Solartechnik",
+      title: seoData?.title || "Stromspeicher Lösungen ",
       description:
         seoData?.description ||
         "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",

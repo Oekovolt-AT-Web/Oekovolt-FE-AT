@@ -19,9 +19,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Smarthome Lösungen | Ökovolt Solartechnik",
+      title: "Smarthome Lösungen ",
       alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/dienstleistungen/smarthome", title: "Smarthome Lösungen | Ökovolt Solartechnik", description: "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/dienstleistungen/smarthome", title: "Smarthome Lösungen ", description: "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
       keywords: [
@@ -47,7 +47,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Smarthome Lösungen | Ökovolt Solartechnik",
+    title: seoData?.title || "Smarthome Lösungen ",
     description:
       seoData?.description ||
       "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
@@ -58,7 +58,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/dienstleistungen/smarthome",
-      title: seoData?.title || "Smarthome Lösungen | Ökovolt Solartechnik",
+      title: seoData?.title || "Smarthome Lösungen ",
       description:
         seoData?.description ||
         "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
@@ -74,7 +74,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function SmarthomePage() {
   let data = null;
 
   try {

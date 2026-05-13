@@ -43,7 +43,7 @@ export async function generateMetadata({ params }) {
     };
     
     return {
-      title: `${project.title || project.name} | Referenzen | Ökovolt Solartechnik`,
+      title: `${project.title || project.name} | Referenzen `,
       description: project.description || `Photovoltaik-Referenzprojekt: ${project.title || project.name} – realisiert von Ökovolt Solartechnik.`,
       alternates: {
         canonical: `https://www.oekovolt.de/referenzen/projekte/${title}`,

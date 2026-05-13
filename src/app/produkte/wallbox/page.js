@@ -19,7 +19,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Wallbox & Ladestationen | Ökovolt Solartechnik",
+      title: "Wallbox & Ladestationen ",
       description:
         "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
       keywords: [
@@ -35,7 +35,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/wallbox",
-        title: "Wallbox & Ladestationen | Ökovolt Solartechnik",
+        title: "Wallbox & Ladestationen ",
         description:
           "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
@@ -55,7 +55,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Wallbox & Ladestationen | Ökovolt Solartechnik",
+    title: seoData?.title || "Wallbox & Ladestationen ",
     description:
       seoData?.description ||
       "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
@@ -66,7 +66,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/produkte/wallbox",
-      title: seoData?.title || "Wallbox & Ladestationen | Ökovolt Solartechnik",
+      title: seoData?.title || "Wallbox & Ladestationen ",
       description:
         seoData?.description ||
         "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",

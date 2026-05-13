@@ -78,7 +78,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function JobsPage() {
   let data = null;
 
   try {

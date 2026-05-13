@@ -2,30 +2,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
-import { FaSolarPanel } from "react-icons/fa";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
+import Image from "next/image";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
-import Image from "next/image"; // Make sure this is at the top if not already
-
-// Reusable slug generator
-export function generateSlug(title) {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { generateSlug } from "@/lib/slugify";
 
 const CustomPrevArrow = ({ onClick }) => (
   <div
@@ -73,9 +55,9 @@ export default function ProjectsSection({ data }) {
           `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
         );
         if (!res.ok) throw new Error("Fehler beim Laden der Projekte");
-        const data = await res.json();
+        const json = await res.json();
 
-        const formatted = data.message
+        const formatted = json.message
           .filter((p) => p.status === "Aktiv")
           .map((projekt) => ({
             title: projekt.title,
@@ -84,7 +66,7 @@ export default function ProjectsSection({ data }) {
             leistung: projekt.leistung,
             status: projekt.status,
           }))
-          .slice(0, 3); // Now slice after slug generation
+          .slice(0, 3);
 
         setProjects(formatted);
       } catch (error) {
@@ -114,58 +96,58 @@ export default function ProjectsSection({ data }) {
       </div>
 
       <div ref={sliderContainerRef}>
-      <Slider
-        {...{
-          dots: false,
-          infinite: true,
-          speed: 700,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          arrows: true,
-          nextArrow: <CustomNextArrow />,
-          prevArrow: <CustomPrevArrow />,
-          autoplay: true,
-          autoplaySpeed: 4000,
-          responsive: [
-            { breakpoint: 1024, settings: { slidesToShow: 2 } },
-            { breakpoint: 768, settings: { slidesToShow: 2 } },
-            { breakpoint: 450, settings: { slidesToShow: 1 } },
-          ],
-        }}
-        className="mb-12 relative"
-      >
-        {projects.map((project, i) => (
-          <div key={i} className="px-5">
-            <Link
-              href={`/referenzen/projekte/${generateSlug(project.title)}`}
-              className="relative block group overflow-hidden rounded-lg h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px] transform transition-all duration-700"
-            >
-              <div className="absolute inset-0">
-                <Image
-                  src={`${API_IMG_URL}${project.image}`}
-                  alt={project.title}
-                  fill
-                  sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
-                  className="object-cover rounded-lg"
-                  priority={i === 0} // Optionally prioritize the first image for LCP
-                />
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
-                  <h3 className="text-white text-lg font-semibold">
-                    {project.title}
-                  </h3>
+        <Slider
+          {...{
+            dots: false,
+            infinite: true,
+            speed: 700,
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            arrows: true,
+            nextArrow: <CustomNextArrow />,
+            prevArrow: <CustomPrevArrow />,
+            autoplay: true,
+            autoplaySpeed: 4000,
+            responsive: [
+              { breakpoint: 1024, settings: { slidesToShow: 2 } },
+              { breakpoint: 768, settings: { slidesToShow: 2 } },
+              { breakpoint: 450, settings: { slidesToShow: 1 } },
+            ],
+          }}
+          className="mb-12 relative"
+        >
+          {projects.map((project, i) => (
+            <div key={i} className="px-5">
+              <Link
+                href={`/referenzen/projekte/${generateSlug(project.title)}`}
+                className="relative block group overflow-hidden rounded-lg h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px] transform transition-all duration-700"
+              >
+                <div className="absolute inset-0">
+                  <Image
+                    src={`${API_IMG_URL}${project.image}`}
+                    alt={project.title}
+                    fill
+                    sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
+                    className="object-cover rounded-lg"
+                    priority={i === 0}
+                  />
                 </div>
-              </div>
-            </Link>
-          </div>
-        ))}
-      </Slider>
+                <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                  <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
+                    <h3 className="text-white text-lg font-semibold">
+                      {project.title}
+                    </h3>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </Slider>
       </div>
 
       <div className="text-center flex flex-row items-center justify-center mt-4">
         <Link
-          href={"/referenzen/projekte"}
+          href="/referenzen/projekte"
           className="flex items-center justify-center gap-2 bg-[#669933] hover:bg-[#669933]/90 text-white uppercase px-6 py-3 rounded-lg transition-colors duration-300 text-[14px]"
         >
           Weitere Projekte <FaAngleRight />

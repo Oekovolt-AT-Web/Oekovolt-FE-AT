@@ -18,9 +18,9 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Landesförderungen | Ökovolt Solartechnik",
+      title: "Landesförderungen ",
       alternates: { canonical: "https://www.oekovolt.de/forderungen/landesforderungen" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/forderungen/landesforderungen", title: "Landesförderungen | Ökovolt Solartechnik", description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", url: "https://www.oekovolt.de/forderungen/landesforderungen", title: "Landesförderungen ", description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
       description:
         "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
       keywords: [
@@ -48,7 +48,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   return {
-    title: seoData?.title || "Landesförderungen | Ökovolt Solartechnik",
+    title: seoData?.title || "Landesförderungen ",
     description:
       seoData?.description ||
       "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
@@ -59,7 +59,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/forderungen/landesforderungen",
-      title: seoData?.title || "Landesförderungen | Ökovolt Solartechnik",
+      title: seoData?.title || "Landesförderungen ",
       description:
         seoData?.description ||
         "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",

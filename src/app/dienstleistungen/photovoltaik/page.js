@@ -20,7 +20,7 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaikanlagen | Ökovolt Solartechnik",
+      title: "Photovoltaikanlagen ",
       description:
         "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
       keywords: [
@@ -36,7 +36,7 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-        title: "Photovoltaikanlagen | Ökovolt Solartechnik",
+        title: "Photovoltaikanlagen ",
         description:
           "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
@@ -56,7 +56,7 @@ export async function generateMetadata() {
       ];
 
   return {
-    title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+    title: seoData?.title || "Photovoltaikanlagen ",
     description:
       seoData?.description ||
       "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
@@ -67,7 +67,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-      title: seoData?.title || "Photovoltaikanlagen | Ökovolt Solartechnik",
+      title: seoData?.title || "Photovoltaikanlagen ",
       description:
         seoData?.description ||
         "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
@@ -83,7 +83,7 @@ export async function generateMetadata() {
   };
 }
 
-export default async function Home() {
+export default async function PhotovoltaikPage() {
   let data = null;
 
   try {

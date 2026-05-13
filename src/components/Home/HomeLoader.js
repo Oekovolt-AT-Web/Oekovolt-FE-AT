@@ -7,8 +7,8 @@ export default function HomeLoader() {
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = setTimeout(() => setFadeOut(true), 1800);
-    const hideTimer = setTimeout(() => setVisible(false), 2300);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 300);
+    const hideTimer = setTimeout(() => setVisible(false), 600);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(hideTimer);

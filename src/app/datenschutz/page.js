@@ -32,7 +32,7 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+export default function DatenschutzPage() {
   const data = {
     title: "Datenschutz",
     img: "/Images/Kontakt/download-2.jpg",
