@@ -20,26 +20,26 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaikanlagen ",
+      title: "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
       description:
         "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
-      keywords: [
-        "Photovoltaikanlage",
-        "Solarenergie",
-        "Energiekosten senken",
-        "Photovoltaik Förderung",
-        "Solaranlage",
-      ],
-      alternates: {
-        canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-      },
+      keywords: ["Photovoltaikanlage", "Solarenergie", "Energiekosten senken", "Photovoltaik Förderung", "Solaranlage"],
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik" },
+      robots: { index: true, follow: true },
       openGraph: {
         type: "website",
+        locale: "de_DE",
         url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-        title: "Photovoltaikanlagen ",
-        description:
-          "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
-        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
+        siteName: "Ökovolt Deutschland",
+        title: "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
+        description: "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
+        images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Photovoltaik" }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
+        description: "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
+        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
   }
@@ -55,33 +55,34 @@ export async function generateMetadata() {
         "Solaranlage",
       ];
 
+  const title = seoData?.title || "Photovoltaik Dienstleistungen | Ökovolt Deutschland";
+  const description = seoData?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.";
+
   return {
-    title: seoData?.title || "Photovoltaikanlagen ",
-    description:
-      seoData?.description ||
-      "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
+    title,
+    description,
     keywords: apiKeywords,
-    alternates: {
-      canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-    },
+    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik" },
+    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
+      locale: "de_DE",
       url: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-      title: seoData?.title || "Photovoltaikanlagen ",
-      description:
-        seoData?.description ||
-        "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
-      images: [
-        {
-          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-          width: 1200,
-          height: 630,
-          alt: "Ökovolt Deutschland",
-        },
-      ],
+      siteName: "Ökovolt Deutschland",
+      title,
+      description,
+      images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Photovoltaik" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
     },
   };
 }
+
+const PV_PAGE_URL = "https://www.oekovolt.de/dienstleistungen/photovoltaik";
 
 export default async function PhotovoltaikPage() {
   let data = null;
@@ -94,8 +95,31 @@ export default async function PhotovoltaikPage() {
     console.error("Failed to fetch photovoltaik data", error);
   }
 
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${PV_PAGE_URL}/#webpage`,
+    url: PV_PAGE_URL,
+    name: data?.title || "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
+    description: data?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
+    inLanguage: "de-DE",
+    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    about: { "@id": "https://www.oekovolt.de/#organization" },
+    datePublished: "2020-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
+        { "@type": "ListItem", position: 2, name: "Dienstleistungen", item: "https://www.oekovolt.de/dienstleistungen/photovoltaik" },
+        { "@type": "ListItem", position: 3, name: "Photovoltaik", item: PV_PAGE_URL },
+      ],
+    },
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <PhotovoltaikanlageBannerSection data={data} />
       <Tabs data={data} />
       <AnlageSection data={data} />

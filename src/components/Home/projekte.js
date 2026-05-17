@@ -1,4 +1,6 @@
 "use client";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
@@ -125,11 +127,12 @@ export default function ProjectsSection({ data }) {
                 <div className="absolute inset-0">
                   <Image
                     src={`${API_IMG_URL}${project.image}`}
-                    alt={project.title}
+                    alt={`Referenzprojekt: ${project.title} – Photovoltaikanlage von Ökovolt${project.leistung ? ` (${project.leistung})` : ""}`}
                     fill
                     sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
                     className="object-cover rounded-lg"
                     priority={i === 0}
+                    title={project.title}
                   />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">

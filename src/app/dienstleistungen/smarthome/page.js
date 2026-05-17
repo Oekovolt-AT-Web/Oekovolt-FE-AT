@@ -19,9 +19,10 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Smarthome Lösungen ",
+      title: "Smart Home Lösungen | Ökovolt Deutschland",
       alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/dienstleistungen/smarthome", title: "Smarthome Lösungen ", description: "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", locale: "de_DE", url: "https://www.oekovolt.de/dienstleistungen/smarthome", siteName: "Ökovolt Deutschland", title: "Smart Home Lösungen | Ökovolt Deutschland", description: "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Smart Home" }] },
+      twitter: { card: "summary_large_image", title: "Smart Home Lösungen | Ökovolt Deutschland", description: "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
       description:
         "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
       keywords: [
@@ -46,31 +47,20 @@ export async function generateMetadata() {
         "Vernetztes Wohnen",
       ];
 
+  const title = seoData?.title || "Smart Home Lösungen | Ökovolt Deutschland";
+  const description = seoData?.description || "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.";
+  const canonical = "https://www.oekovolt.de/dienstleistungen/smarthome";
+
   return {
-    title: seoData?.title || "Smarthome Lösungen ",
-    description:
-      seoData?.description ||
-      "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
-    keywords: apiKeywords,
-    alternates: {
-      canonical: "https://www.oekovolt.de/dienstleistungen/smarthome",
-    },
+    title, description, keywords: apiKeywords,
+    alternates: { canonical },
+    robots: { index: true, follow: true },
     openGraph: {
-      type: "website",
-      url: "https://www.oekovolt.de/dienstleistungen/smarthome",
-      title: seoData?.title || "Smarthome Lösungen ",
-      description:
-        seoData?.description ||
-        "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
-      images: [
-        {
-          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-          width: 1200,
-          height: 630,
-          alt: "Ökovolt Deutschland",
-        },
-      ],
+      type: "website", locale: "de_DE", url: canonical, siteName: "Ökovolt Deutschland",
+      title, description,
+      images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Smart Home" }],
     },
+    twitter: { card: "summary_large_image", title, description, images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
   };
 }
 

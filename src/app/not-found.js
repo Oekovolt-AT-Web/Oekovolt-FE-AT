@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import { FaChevronRight, FaHome, FaSolarPanel, FaPhone } from "react-icons/fa";
 import { motion } from "framer-motion";
 

@@ -291,11 +291,17 @@ export default function PVInquiryForm({ data }) {
               <input
                 type="range"
                 name="powerConsumption"
+                id="powerConsumption"
                 min="1000"
                 max="20000"
                 step="100"
                 value={formData.powerConsumption}
                 onChange={handleChange}
+                aria-label="Jährlicher Stromverbrauch"
+                aria-valuemin={1000}
+                aria-valuemax={20000}
+                aria-valuenow={formData.powerConsumption}
+                aria-valuetext={`${formData.powerConsumption} kWh pro Jahr`}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <div className="text-center mt-4 text-[20px] lg:text-[24px] font-semibold">
@@ -337,11 +343,12 @@ export default function PVInquiryForm({ data }) {
 
             <div className="space-y-4 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                   Vorname *
                 </label>
                 <input
                   type="text"
+                  id="firstName"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
@@ -355,11 +362,12 @@ export default function PVInquiryForm({ data }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                   Nachname
                 </label>
                 <input
                   type="text"
+                  id="lastName"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
@@ -368,11 +376,12 @@ export default function PVInquiryForm({ data }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email *
                 </label>
                 <input
                   type="email"
+                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
@@ -385,11 +394,12 @@ export default function PVInquiryForm({ data }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
                     Postleitzahl *
                   </label>
                   <input
                     type="text"
+                    id="zipCode"
                     name="zipCode"
                     value={formData.zipCode}
                     onChange={handleChange}
@@ -403,11 +413,12 @@ export default function PVInquiryForm({ data }) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
                     Ort *
                   </label>
                   <input
                     type="text"
+                    id="city"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
@@ -420,11 +431,12 @@ export default function PVInquiryForm({ data }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
                   Telefonnummer *
                 </label>
                 <input
                   type="tel"
+                  id="phone"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}

@@ -1,4 +1,6 @@
 "use client";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { useEffect, useState } from "react";
@@ -74,10 +76,11 @@ export default function PartnersSection({ data }) {
                 <div className="relative h-16 w-full">
                   <Image
                     src={`${API_IMG_URL}${partner.image}`}
-                    alt={partner.name || "Partner"}
+                    alt={partner.name ? `${partner.name} – Ökovolt Photovoltaik Partner` : "Photovoltaik Partner von Ökovolt Deutschland"}
                     fill
                     className="object-contain"
                     sizes="(max-width: 468px) 100vw, (max-width: 768px) 50vw, 25vw"
+                    title={partner.name || "Ökovolt Partner"}
                   />
                 </div>
               </div>

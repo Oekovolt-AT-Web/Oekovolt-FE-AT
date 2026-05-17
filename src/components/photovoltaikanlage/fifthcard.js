@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 
 const PhotovoltaikOverviewSlider = ({ data }) => {

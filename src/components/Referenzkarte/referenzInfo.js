@@ -1,5 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FaSolarPanel, FaIndustry, FaChartLine } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";

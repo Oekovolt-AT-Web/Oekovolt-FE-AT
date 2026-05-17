@@ -18,9 +18,10 @@ export async function generateMetadata() {
     console.error("Failed to fetch SEO data", error);
     // Fallback metadata if API fails
     return {
-      title: "Landesförderungen ",
+      title: "Photovoltaik Landesförderungen 2025 | Ökovolt",
       alternates: { canonical: "https://www.oekovolt.de/forderungen/landesforderungen" },
-      openGraph: { type: "website", url: "https://www.oekovolt.de/forderungen/landesforderungen", title: "Landesförderungen ", description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }] },
+      openGraph: { type: "website", locale: "de_DE", url: "https://www.oekovolt.de/forderungen/landesforderungen", siteName: "Ökovolt Deutschland", title: "Photovoltaik Landesförderungen 2025 | Ökovolt", description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Förderungen" }] },
+      twitter: { card: "summary_large_image", title: "Photovoltaik Landesförderungen 2025 | Ökovolt", description: "Aktuelle Förderprogramme für Photovoltaik und Speicher.", images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
       description:
         "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
       keywords: [
@@ -47,31 +48,20 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
+  const title = seoData?.title || "Photovoltaik Landesförderungen 2025 | Ökovolt";
+  const description = seoData?.description || "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Bis zu 30% Förderung sichern – jetzt Fördercheck machen!";
+  const canonical = "https://www.oekovolt.de/forderungen/landesforderungen";
+
   return {
-    title: seoData?.title || "Landesförderungen ",
-    description:
-      seoData?.description ||
-      "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
-    keywords: apiKeywords,
-    alternates: {
-      canonical: "https://www.oekovolt.de/forderungen/landesforderungen",
-    },
+    title, description, keywords: apiKeywords,
+    alternates: { canonical },
+    robots: { index: true, follow: true },
     openGraph: {
-      type: "website",
-      url: "https://www.oekovolt.de/forderungen/landesforderungen",
-      title: seoData?.title || "Landesförderungen ",
-      description:
-        seoData?.description ||
-        "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
-      images: [
-        {
-          url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-          width: 1200,
-          height: 630,
-          alt: "Ökovolt Deutschland",
-        },
-      ],
+      type: "website", locale: "de_DE", url: canonical, siteName: "Ökovolt Deutschland",
+      title, description,
+      images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Förderungen" }],
     },
+    twitter: { card: "summary_large_image", title, description, images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
   };
 }
 

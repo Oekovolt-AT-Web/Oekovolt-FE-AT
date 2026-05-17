@@ -452,12 +452,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             Grundlage Ihrer Einwilligung für die folgenden Zwecke:
           </p>
           <div className="mt-3">
-            <p
-              className={`text-center text-sm text-[var(--secondry)]/80 ${isShown && `hidden`} md:hidden pb-4 cursor-pointer`}
+            <button
+              type="button"
+              className={`text-center text-sm text-[var(--secondry)]/80 ${isShown && `hidden`} md:hidden pb-4 cursor-pointer bg-transparent border-0 w-full`}
               onClick={() => setIsShown(!isShown)}
+              aria-expanded={isShown}
             >
               Individuelle Privatsphäre-Präferenzen
-            </p>
+            </button>
           </div>
 
           <div className={`flex-1 p-6 space-y-6 ${isShown ? "block" : "hidden"} md:block`}>
@@ -506,12 +508,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   Inhalte von z.B. Videoplattformen und Social-Media-Plattformen sind standardmäßig blockiert und können
                   zugestimmt werden. Wenn dem Dienst zugestimmt wird, werden diese Inhalte automatisch ohne weitere
                   manuelle Zustimmung geladen.&nbsp;&nbsp;
-                  <span
-                    onClick={() => toggleCategoryDetails("functional")}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                  <button
+                   type="button"
+                   onClick={() => toggleCategoryDetails("functional")}
+                   aria-expanded={expandedSections.functional}
+                   className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer bg-transparent border-0 p-0"
                   >
-                    {expandedSections.functional ? "Details ausblenden" : "Details anzeigen"}
-                  </span>
+                   {expandedSections.functional ? "Details ausblenden" : "Details anzeigen"}
+                  </button>
                 </p>
               </div>
               {expandedSections.functional && (
@@ -534,12 +538,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                     </div>
                     <p className="text-sm text-gray-500 ml-8">
                       {cookieServices.functional.googleMaps.description}&nbsp;&nbsp;
-                      <span
+                      <button
+                        type="button"
                         onClick={() => toggleServiceDetails("googleMaps")}
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                        aria-expanded={expandedServices.googleMaps}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                       >
                         {expandedServices.googleMaps ? "Details ausblenden" : "Details anzeigen"}
-                      </span>
+                      </button>
                     </p>
                     {expandedServices.googleMaps && <CookieDetails service={cookieServices.functional.googleMaps} />}
                   </div>
@@ -564,12 +570,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                     </div>
                     <p className="text-sm text-gray-500 ml-8">
                       {cookieServices.functional.googleTagManager.description}&nbsp;&nbsp;
-                      <span
+                      <button
+                        type="button"
                         onClick={() => toggleServiceDetails("googleTagManager")}
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                        aria-expanded={expandedServices.googleTagManager}
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                       >
                         {expandedServices.googleTagManager ? "Details ausblenden" : "Details anzeigen"}
-                      </span>
+                      </button>
                     </p>
                     {expandedServices.googleTagManager && (
                       <CookieDetails service={cookieServices.functional.googleTagManager} />
@@ -600,12 +608,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   Statistikdienste sind erforderlich, um pseudonymisierte Daten über die Besucher der Website zu
                   sammeln. Die Daten ermöglichen es uns, die Besucher besser zu verstehen und die Website zu
                   optimieren.&nbsp;&nbsp;
-                  <span
-                    onClick={() => toggleCategoryDetails("statistics")}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                  <button
+                   type="button"
+                   onClick={() => toggleCategoryDetails("statistics")}
+                   aria-expanded={expandedSections.statistics}
+                   className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                   >
-                    {expandedSections.statistics ? "Details ausblenden" : "Details anzeigen"}
-                  </span>
+                   {expandedSections.statistics ? "Details ausblenden" : "Details anzeigen"}
+                  </button>
                 </p>
               </div>
               {expandedSections.statistics && (
@@ -628,12 +638,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   </div>
                   <p className="text-sm text-gray-500 ml-8">
                     {cookieServices.statistics.googleAnalytics.description}&nbsp;&nbsp;
-                    <span
+                    <button
+                      type="button"
                       onClick={() => toggleServiceDetails("googleAnalytics")}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                      aria-expanded={expandedServices.googleAnalytics}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                     >
                       {expandedServices.googleAnalytics ? "Details ausblenden" : "Details anzeigen"}
-                    </span>
+                    </button>
                   </p>
                   {expandedServices.googleAnalytics && (
                     <CookieDetails service={cookieServices.statistics.googleAnalytics} />
@@ -664,12 +676,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   mehrere Seiten hinweg) zu verfolgen, die gesammelten Daten zu analysieren und beispielsweise
                   personalisierte Anzeigen anzuzeigen. Diese Dienste ermöglichen es uns, Besucher über mehrere Websites
                   hinweg zu verfolgen.&nbsp;&nbsp;
-                  <span
-                    onClick={() => toggleCategoryDetails("marketing")}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                  <button
+                   type="button"
+                   onClick={() => toggleCategoryDetails("marketing")}
+                   aria-expanded={expandedSections.marketing}
+                   className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                   >
-                    {expandedSections.marketing ? "Details ausblenden" : "Details anzeigen"}
-                  </span>
+                   {expandedSections.marketing ? "Details ausblenden" : "Details anzeigen"}
+                  </button>
                 </p>
               </div>
               {expandedSections.marketing && (
@@ -690,12 +704,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   </div>
                   <p className="text-sm text-gray-500 ml-8">
                     {cookieServices.marketing.googleAds.description}&nbsp;&nbsp;
-                    <span
+                    <button
+                      type="button"
                       onClick={() => toggleServiceDetails("googleAds")}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                      aria-expanded={expandedServices.googleAds}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                     >
                       {expandedServices.googleAds ? "Details ausblenden" : "Details anzeigen"}
-                    </span>
+                    </button>
                   </p>
                   {expandedServices.googleAds && <CookieDetails service={cookieServices.marketing.googleAds} />}
                 </div>

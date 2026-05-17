@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { API_IMG_URL } from "@/lib/apiImgUrl";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
