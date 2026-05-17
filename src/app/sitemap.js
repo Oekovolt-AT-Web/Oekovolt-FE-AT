@@ -3,8 +3,8 @@ import { generateSlug, generateJobSlug } from "@/lib/slugify";
 const BASE_URL = "https://www.oekovolt.de";
 const API_BASE = "https://backoffice.oekovolt.de/api/method/";
 
-// Update this date every time you deploy changes to production
-const LAST_DEPLOY = new Date("2025-05-12");
+// Auto-set to current deploy date
+const LAST_DEPLOY = new Date();
 // Legal pages rarely change — only update if you actually edit their content
 const LEGAL_DATE = new Date("2025-01-01");
 
@@ -77,7 +77,7 @@ export default async function sitemap() {
         if (slug) {
           dynamicEntries.push({
             url: `${BASE_URL}/referenzen/projekte/${slug}`,
-            lastModified: project.modified ? new Date(project.modified) : new Date("2025-01-15"),
+            lastModified: project.modified ? new Date(project.modified) : LAST_DEPLOY,
             changeFrequency: "monthly",
             priority: 0.5,
           });
@@ -101,7 +101,7 @@ export default async function sitemap() {
         if (slug) {
           dynamicEntries.push({
             url: `${BASE_URL}/uber-uns/jobs/${slug}`,
-            lastModified: job.modified ? new Date(job.modified) : new Date("2025-01-15"),
+            lastModified: job.modified ? new Date(job.modified) : LAST_DEPLOY,
             changeFrequency: "weekly",
             priority: 0.5,
           });
