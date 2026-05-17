@@ -166,19 +166,6 @@ export default async function PhotovoltaikanlagePage() {
     },
   };
 
-  // Product schema PA aggregateRating — i sigurt për Google policies.
-  // Kur të mblidhen reviews reale (Google Business / ProvenExpert), shtohet aggregateRating.
-  const productSchema = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: "Photovoltaikanlage von Ökovolt",
-    description:
-      "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe von Ökovolt Deutschland.",
-    brand: { "@type": "Brand", name: "Ökovolt Deutschland" },
-    manufacturer: { "@id": "https://www.oekovolt.de/#organization" },
-    category: "Photovoltaikanlage",
-  };
-
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -223,10 +210,6 @@ export default async function PhotovoltaikanlagePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
       <script
         type="application/ld+json"
