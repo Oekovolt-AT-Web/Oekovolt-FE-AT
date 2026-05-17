@@ -64,7 +64,7 @@ const siteSchema = {
         },
       ],
       telephone: "+49-8245-96788-0",
-      email: "office@oekovolt.de",
+      email: "office@oekovolt.com",
       priceRange: "€€",
       currenciesAccepted: "EUR",
       paymentAccepted: "Cash, Credit Card, Bank Transfer",

@@ -74,8 +74,8 @@ const Footer = () => {
                 <p>
                   <span className="font-medium">E-Mail</span>
                   <br />
-                  <a href="mailto:office@oekovolt.de" className="hover:text-[#669933] transition-colors text-[16px]">
-                    office@oekovolt.de
+                  <a href="mailto:office@oekovolt.com" className="hover:text-[#669933] transition-colors text-[16px]">
+                    office@oekovolt.com
                   </a>
                 </p>
               </div>
