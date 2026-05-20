@@ -10,7 +10,7 @@ import {
   MdMessage,
   MdLocationOn,
 } from "react-icons/md";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { submitContact } from "@/lib/api/contact/create_contact";
 
 const Buttons = styled.div`
   display: flex;
@@ -162,9 +162,9 @@ export default function ContactForm() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ 
-      ...prev, 
-      [name]: type === 'checkbox' ? checked : value 
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -187,8 +187,8 @@ export default function ContactForm() {
     }
 
     const payload = {
-      nachname: firstName,
-      vorname: lastName,
+      nachname: lastName,
+      vorname: firstName,
       e_mail_adressee: email,
       telefonnummer: phone,
       ihre_nachricht: message,
@@ -198,21 +198,8 @@ export default function ContactForm() {
     };
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt.api.create_contact`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Expect": "" },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const errorMsg = responseData.message || responseData.error || "Fehler beim Senden der Nachricht.";
-        throw new Error(errorMsg);
-      }
+      // Use the new submitContact function
+      await submitContact(payload);
 
       setMessage({ type: "success", text: "Nachricht erfolgreich gesendet!" });
       setFormData({
@@ -410,7 +397,6 @@ export default function ContactForm() {
                     "Senden..."
                   ) : (
                     <>
-                     
                       <svg
                         className="ml-2"
                         fill="none"
@@ -442,11 +428,10 @@ const Notification = ({ type, text }) => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className={`p-3 mb-5 rounded-md text-center ${
-        type === "success"
-          ? "bg-green-100 text-green-800"
-          : "bg-red-100 text-red-800"
-      }`}
+      className={`p-3 mb-5 rounded-md text-center ${type === "success"
+        ? "bg-green-100 text-green-800"
+        : "bg-red-100 text-red-800"
+        }`}
     >
       {text}
     </motion.div>

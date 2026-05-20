@@ -1,16 +1,17 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const MieterstromBanner = ({ data }) => {
   if (!data) return null;
+  console.log("image", data)
 
   return (
     <section className="relative h-[360px] md:h-[400px] w-full overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={`${API_IMG_URL}${data.mieterstorm_banner_image}`}
+          src={data?.mieterstorm_banner_image ? `/api/image?path=${data.mieterstorm_banner_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.mieterstorm_banner_alt_image || "Banner Background"}
           fill
           quality={100}

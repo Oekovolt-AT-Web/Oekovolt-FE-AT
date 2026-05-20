@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const HerstellerBanner = ({ data }) => {
   if (!data) return null;
@@ -10,13 +10,13 @@ const HerstellerBanner = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={`${API_IMG_URL}${data.hersteller_image}`}
+          src={data.hersteller_image ? `/api/image?path=${data.hersteller_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.hersteller_alt_image || "Banner Background"}
           fill
           quality={100}
           className="object-cover object-center w-full h-full"
-          priority
-                              sizes=" 100vw"
+          loading="eager"
+          sizes=" 100vw"
 
         />
       </div>

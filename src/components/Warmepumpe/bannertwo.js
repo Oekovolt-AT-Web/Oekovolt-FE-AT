@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const WarmeBanner = ({ data }) => {
   if (!data) return null;
@@ -10,12 +10,13 @@ const WarmeBanner = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={`${API_IMG_URL}${data.warmepumpe_banner_image}`}
+          src={`/api/image?path=${data.warmepumpe_banner_image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.warmepumpe_alt_text_image_banner || "Banner Background"}
           fill
           quality={100}
+          sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
           className="object-cover object-center w-full h-full"
-          priority
+          loading="eager"
         />
       </div>
 

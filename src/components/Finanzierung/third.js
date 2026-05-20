@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Lightbulb, Euro, Home, Leaf } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 
 const FinancingBenefitsSection = ({ data }) => {
@@ -32,7 +32,7 @@ const FinancingBenefitsSection = ({ data }) => {
                 className="w-full lg:w-1/2 h-[280px] sm:h-[400px] lg:h-[450px] relative overflow-hidden rounded-xl shadow-md"
               >
                 <Image
-                  src={`${API_IMG_URL}${item.image}`}
+                  src={item.image ? `/api/image?path=${item.image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={item.alt_text}
                   fill
                   className="object-cover"

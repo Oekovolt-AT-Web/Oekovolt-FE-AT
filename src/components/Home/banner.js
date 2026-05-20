@@ -26,7 +26,7 @@ const VideoBanner = ({
         </video>
       );
     }
-    return <Image src={src} alt={mediaAlt} fill className={className} style={{ objectFit: "cover" }} />;
+    return <Image src={src} alt={mediaAlt} fill sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw" className={className} style={{ objectFit: "cover" }} />;
   };
 
   return (

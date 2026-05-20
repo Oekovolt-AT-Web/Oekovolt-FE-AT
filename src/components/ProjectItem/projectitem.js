@@ -8,7 +8,7 @@ import {
   FaTools,
   FaBolt,
 } from "react-icons/fa";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { generateSlug } from "@/lib/slugify";
 
 const ProjectCard = ({ project }) => {
@@ -25,12 +25,11 @@ const ProjectCard = ({ project }) => {
     >
       <div className="relative w-full h-full">
         <Image
-          src={`${API_IMG_URL}${project?.bild_anhagen[0]?.bild_anhagen}`}
+          src={project?.bild_anhagen[0]?.bild_anhagen ? `/api/image?path=${project?.bild_anhagen[0]?.bild_anhagen}` : "/Images/Jobs/jobs3.jpg"}
           alt={`Project background - ${project?.location}`}
           fill
-          className={`transition-all duration-500 object-cover object-center ${
-            isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
-          }`}
+          className={`transition-all duration-500 object-cover object-center ${isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
+            }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-black/30 transition-opacity duration-300"></div>
@@ -38,9 +37,8 @@ const ProjectCard = ({ project }) => {
 
       <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
         <div
-          className={`transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 ${
-            isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
+          className={`transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
         >
           <h3 className="text-white text-xl font-semibold">{project?.title}</h3>
           <div className="flex items-center text-white gap-2 mt-2 text-[16px]">
@@ -74,9 +72,10 @@ const ProjectDetailComponent = ({ project, related }) => {
                   className="relative h-[500px] rounded-2xl overflow-hidden shadow-lg"
                 >
                   <Image
-                    src={`${API_IMG_URL}${image.bild_anhagen}`}
+                    src={image.bild_anhagen ? `/api/image?path=${image.bild_anhagen}` : "/Images/Jobs/jobs3.jpg"}
                     alt={`${project.title} - ${index + 1}`}
                     fill
+                    sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
                     className="object-cover w-full h-full"
                   />
                 </div>

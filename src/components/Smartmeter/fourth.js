@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FaSolarPanel } from 'react-icons/fa';
 
 const HeroEnergy = ({data}) => {
@@ -32,13 +32,13 @@ const HeroEnergy = ({data}) => {
 
         <div className="relative z-10">
           <Image
-            src={`${API_IMG_URL}${data.smart_meter_third_card_image}`}
+            src={`/api/image?path=${data.smart_meter_third_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt="Smart Energy"
             className="rounded-tl-[140px] w-full h-auto"
             width={570}
             height={300}
             quality={100}
-            priority
+            loading="eager"
           />
         </div>
 {/* 

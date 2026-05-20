@@ -1,13 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_icon_partners`;
+import { getPartnersIcon } from "@/lib/api/partners/partners_icon";
 
 const FeaturedLogos = () => {
   const [logos, setLogos] = useState([]);
@@ -15,9 +12,9 @@ const FeaturedLogos = () => {
   useEffect(() => {
     const fetchLogos = async () => {
       try {
-        const res = await fetch(DATA_URL, { cache: "no-store" });
-        const json = await res.json();
-        setLogos(json.message || []);
+
+        const json = await getPartnersIcon();
+        setLogos(json?.message || []);
       } catch (error) {
         console.error("Failed to fetch logos", error);
       }
@@ -74,7 +71,7 @@ const FeaturedLogos = () => {
             <div key={index} className="!flex justify-center items-center h-20 px-2">
               <div className="relative grayscale hover:grayscale-0 transition-all duration-300 flex items-center justify-center">
                 <Image
-                  src={`${API_IMG_URL}${logo.logo_image}`}
+                  src={logo.logo_image ? `/api/image?path=${logo.logo_image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={logo.alt_logo_image || `Partner Logo ${index + 1}`}
                   width={100}
                   height={38}

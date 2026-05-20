@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -12,7 +12,7 @@ import Slider from "react-slick";
 const PhotovoltaikOverviewSlider = ({ data }) => {
   const sliderRef = useRef();
 
-  
+
   if (
     !data ||
     !data.photovoltaik_title_fifth_card_first ||
@@ -103,8 +103,8 @@ const PhotovoltaikOverviewSlider = ({ data }) => {
                 >
                   <div className="relative w-full h-52 shrink-0">
                     <Image
-                      src={`${API_IMG_URL}${item.image}`}
-                      alt={item.alt_text || "Image"}
+                      src={item?.image ? `/api/image?path=${item.image}` : "/Images/Jobs/jobs3.jpg"}
+                      alt={item?.alt_text || "Image"}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 
 export default function DynamicSteps({ data }) {
   const steps = data.dynami_fourth_card_options_table;
@@ -49,7 +48,7 @@ export default function DynamicSteps({ data }) {
         >
           <div className="rounded-xl overflow-hidden shadow-lg">
             <Image
-            src={`${API_IMG_URL}${data.dynami_fourth_card_image}`}
+            src={`/api/image?path=${data.dynami_fourth_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.dynami_fourth_card_image_alt_text}
               width={800}
               height={600}

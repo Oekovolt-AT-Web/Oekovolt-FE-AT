@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { BookOpenCheck, TrendingUp, ArrowRight } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const ThirdCardSection = ({ data }) => {
   return (
@@ -29,16 +29,16 @@ const ThirdCardSection = ({ data }) => {
                   <BookOpenCheck className="text-[#669933] w-6 h-6" />
                 </div>
                 <span className="text-[#669933] font-medium uppercase tracking-wider text-sm">
-                  {data.third_card_subtitle}
+                  {data?.third_card_subtitle}
                 </span>
               </div>
-              
+
               <h2 className="text-4xl text-gray-900 leading-tight">
-                {data.third_card_title}
+                {data?.third_card_title}
               </h2>
-              
+
               <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
-                {data.third_card_description}
+                {data?.third_card_description}
               </p>
 
             </motion.div>
@@ -51,8 +51,8 @@ const ThirdCardSection = ({ data }) => {
               className="relative rounded-3xl overflow-hidden shadow-2xl group"
             >
               <Image
-                src={`${API_IMG_URL}${data.third_card_image}`}
-                alt={data.third_card_alt_text || "Marktprämienmodell"}
+                src={data?.third_card_image ? `/api/image?path=${data?.third_card_image}` : "/Images/Jobs/jobs3.jpg"}
+                alt={data?.third_card_alt_text || "Marktprämienmodell"}
                 width={800}
                 height={600}
                 className="w-full h-auto aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
@@ -74,7 +74,7 @@ const ThirdCardSection = ({ data }) => {
                   <TrendingUp className="text-white w-6 h-6" />
                 </div>
                 <h3 className="text-2xl md:text-3xl  text-gray-900">
-                  {data.first_section_title_field}
+                  {data?.first_section_title_field}
                 </h3>
               </div>
 
@@ -89,7 +89,7 @@ const ThirdCardSection = ({ data }) => {
 
                 <div>
                   <p className="text-gray-600 text-lg leading-relaxed">
-                    {data.first_section_description_field}
+                    {data?.first_section_description_field}
                   </p>
                 </div>
               </div>

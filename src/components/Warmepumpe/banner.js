@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const WarmepumpeBanner = ({data}) => {
 
@@ -10,11 +10,11 @@ const WarmepumpeBanner = ({data}) => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0">
         <Image
-        src={`${API_IMG_URL}${data.warmepumpe_banner_image}`}
+        src={`/api/image?path=${data.warmepumpe_banner_image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.warmepumpe_alt_text_image_banner || "Wärmepumpe Banner"}
           fill
           className="object-cover object-center"
-          priority
+          loading="eager"
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-black opacity-50" />

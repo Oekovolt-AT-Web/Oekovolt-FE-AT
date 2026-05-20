@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const ReferralStepsSection = ({ data }) => {
 
@@ -30,7 +30,7 @@ const ReferralStepsSection = ({ data }) => {
              
                 <div className="relative w-14 h-14 mb-4">
                   <Image
-                src={`${API_IMG_URL}${step.image}`}
+                src={`/api/image?path=${step.image}` || "/Images/Jobs/jobs3.jpg"}
                     alt={step.alt_text || `Step ${index + 1}`}
                     width={100}
                     height={100}

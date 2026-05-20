@@ -1,4 +1,4 @@
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const RecommendationSection2 = ({ data }) => {
@@ -22,12 +22,12 @@ const RecommendationSection2 = ({ data }) => {
             {/* Image */}
             <div className="relative w-full aspect-video lg:aspect-auto lg:min-h-[400px] rounded-xl overflow-hidden order-1 lg:order-2">
               <Image
-                src={`${API_IMG_URL}${data.first_card_table[1].image}`}
+                src={`/api/image?path=${data.first_card_table[1].image}` || "/Images/Jobs/jobs3.jpg"}
                 alt={data.first_card_table[1].alt_text || "Section image"}
                 fill
                 className="object-cover"
-                priority
-                    sizes=" 100vw"
+                loading="eager"
+                sizes=" 100vw"
 
               />
             </div>
@@ -42,12 +42,12 @@ const RecommendationSection2 = ({ data }) => {
             {/* Image */}
             <div className="relative w-full aspect-video lg:aspect-auto lg:min-h-[400px] rounded-xl overflow-hidden">
               <Image
-                src={`${API_IMG_URL}${data.first_card_table[0].image}`}
+                src={`/api/image?path=${data.first_card_table[0].image}` || "/Images/Jobs/jobs3.jpg"}
                 alt={data.first_card_table[0].alt_text || "Section image"}
                 fill
                 className="object-cover"
-                priority
-                    sizes=" 100vw"
+                loading="eager"
+                sizes=" 100vw"
 
               />
             </div>
@@ -71,12 +71,12 @@ const RecommendationSection2 = ({ data }) => {
         <section className="relative min-h-[500px] lg:min-h-[600px]">
           <div className="absolute inset-0">
             <Image
-              src={`${API_IMG_URL}${data.first_card_table[2].image}`}
+              src={`/api/image?path=${data.first_card_table[2].image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.first_card_table[2].alt_text || "Section image"}
               fill
               className="object-cover"
-              priority
-                    sizes=" 100vw"
+              loading="eager"
+              sizes=" 100vw"
 
             />
             <div className="absolute inset-0 bg-black/40" />

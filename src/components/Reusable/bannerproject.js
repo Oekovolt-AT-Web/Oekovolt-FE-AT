@@ -7,14 +7,16 @@ const BannerProject = ({ data }) => {
   return (
     <section className="h-[300px] w-full overflow-hidden lg:h-[400px] relative">
       {/* Background Image */}
-      <div className="absolute inset-0 ">
+      <div className="absolute inset-0">
         <Image
           src={img}
           alt="Banner Background"
           fill
-          quality={100}
+          quality={85}
+          sizes="100vw"
           className="object-cover w-full h-full object-center"
-          priority
+          loading="eager"
+          placeholder="blur"
           style={{
             objectPosition: "center center",
           }}
@@ -24,8 +26,8 @@ const BannerProject = ({ data }) => {
       <div className="relative z-10 h-full flex items-center max-w-7xl mx-auto px-6">
         <div>
           <div className="max-w-xl text-white">
-            <h1 className="max-w-[660px] text-[28px]  md:text-[40px] font-medium mb-4">{data.title}</h1>
-            <p className="max-w-[560px] text-[20px] font-medium mb-4">{data.subtitle}</p>
+            <h1 className="max-w-[660px] text-[28px]  md:text-[40px] font-medium mb-4">{data?.title}</h1>
+            <p className="max-w-[560px] text-[20px] font-medium mb-4">{data?.subtitle}</p>
           </div>
         </div>
       </div>

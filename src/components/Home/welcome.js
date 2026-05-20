@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FaCheck, FaSolarPanel, FaPlug, FaLeaf } from "react-icons/fa";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function RotatingImageSection({ data = {} }) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -16,13 +16,9 @@ export default function RotatingImageSection({ data = {} }) {
   const firstCardOptions = message.first_card_options || [];
 
   // Dynamic data from API with fallbacks
-  const images = firstCardImages.length > 0 
-    ? firstCardImages.map(img => `${API_IMG_URL}${img.image}`)
-    : [
-        "/Images/Home/download-1.jpg",
-        "/Images/Home/download-2.jpg",
-        "/Images/Home/download.jpg"
-      ];
+  const images = firstCardImages.length > 0
+    ? firstCardImages.map(img => `/api/image?path=${img.image}`)
+    : "/Images/Jobs/jobs3.jpg";
 
   const icons = [
     { icon: FaSolarPanel, color: "text-white" },
@@ -32,19 +28,19 @@ export default function RotatingImageSection({ data = {} }) {
 
   const items = firstCardOptions.length > 0
     ? firstCardOptions.map(item => ({
-        name: item.primary_paragraph || "",
-        description: item.secondary_paragraph || ""
-      }))
+      name: item?.primary_paragraph || "",
+      description: item?.secondary_paragraph || ""
+    }))
     : [
-        {
-          name: "Individuelle Photovoltaikanlagen",
-          description: "Perfekte Abstimmung auf Ihren Energiebedarf",
-        },
-        {
-          name: "Alles aus einer Hand",
-          description: "Von der Planung bis zur Inbetriebnahme Ihrer PV-Anlage",
-        },
-      ];
+      {
+        name: "Individuelle Photovoltaikanlagen",
+        description: "Perfekte Abstimmung auf Ihren Energiebedarf",
+      },
+      {
+        name: "Alles aus einer Hand",
+        description: "Von der Planung bis zur Inbetriebnahme Ihrer PV-Anlage",
+      },
+    ];
 
   const title = message.first_card_title || "WILLKOMMEN BEI ÖKOVOLT SOLARTECHNIK";
   const subtitle = message.first_card_subtitle || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.";

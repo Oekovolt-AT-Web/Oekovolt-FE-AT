@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const ProjekteTechnologySection = ({ data }) => {
   return (
@@ -29,7 +29,7 @@ const ProjekteTechnologySection = ({ data }) => {
         <div className="lg:w-120 lg:h-84 w-85 h-50 md:w-170 md:h-70 relative">
           {data.second_card_second_image && (
             <Image
-              src={`${API_IMG_URL}${data.second_card_second_image}`}
+              src={data.second_card_first_image ? `/api/image?path=${data.second_card_second_image}` : "/Images/Jobs/jobs3.jpg"}
               alt={data.second_card_second_alt_text}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -40,7 +40,7 @@ const ProjekteTechnologySection = ({ data }) => {
         <div className="w-120 h-84 relative -mt-28 ml-24 z-20 shadow-lg hidden lg:block">
           {data.second_card_first_image && (
             <Image
-              src={`${API_IMG_URL}${data.second_card_first_image}`}
+              src={data.second_card_first_image ? `/api/image?path=${data.second_card_first_image}` : "/Images/Jobs/jobs3.jpg"}
               alt={data.second_card_first_alt_text}
               fill
               className="rounded-md object-cover"

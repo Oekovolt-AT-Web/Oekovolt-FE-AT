@@ -26,7 +26,7 @@ const Navbar = () => {
     setHoverDropdown(name);
   };
 
- const navItems = [
+  const navItems = [
     {
       title: "Dienstleistungen",
       slug: "dienstleistungen",
@@ -171,18 +171,18 @@ const Navbar = () => {
   ];
 
   useEffect(() => {
-  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
 
-  if (isOpen) {
-    document.body.style.overflow = "hidden";
-    document.body.style.overscrollBehavior = "none";
-    document.body.style.paddingRight = `${scrollbarWidth}px`;
-  } else {
-    document.body.style.overflow = "";
-    document.body.style.overscrollBehavior = "";
-    document.body.style.paddingRight = "";
-  }
-}, [isOpen]);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.overscrollBehavior = "none";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
+      document.body.style.paddingRight = "";
+    }
+  }, [isOpen]);
 
 
   useEffect(() => {
@@ -198,22 +198,22 @@ const Navbar = () => {
   }, [hoverDropdown]);
 
   return (
-<header className="static  top-0 bg-white w-full z-150">
+    <header className="static  top-0 bg-white w-full z-150">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-5 px-4">
         {/* Logo - kept exactly as in your original */}
         <div className="w-[180px]">
           <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-      <div style={{ width: 180, height: 64, position: "relative" }}>
-  <Image
-    src="/Images/Navbar/logo.png"
-    alt="Logo"
-    fill
-    priority
-    style={{ objectFit: "contain" }}
-                          sizes="(max-width: 1280px) 100vw, 1280px"
+            <div style={{ width: 180, height: 64, position: "relative" }}>
+              <Image
+                src="/Images/Navbar/logo.png"
+                alt="Logo"
+                fill
+                loading="eager"
+                style={{ objectFit: "contain" }}
+                sizes="(max-width: 1280px) 100vw, 1280px"
 
-  />
-</div>
+              />
+            </div>
 
 
           </Link>
@@ -247,11 +247,10 @@ const Navbar = () => {
                       )}
                     </Link>
                     <div
-                      className={`absolute left-1/2 -translate-x-1/2 top-full w-[190px] bg-white rounded shadow-lg py-1 z-50 transition-all duration-300 ${
-                        hoverDropdown === item.title
+                      className={`absolute left-1/2 -translate-x-1/2 top-full w-[190px] bg-white rounded shadow-lg py-1 z-50 transition-all duration-300 ${hoverDropdown === item.title
                           ? "opacity-100 visible translate-y-0"
                           : "opacity-0 invisible translate-y-2"
-                      }`}
+                        }`}
                     >
                       {item.items.map((subItem) => (
                         <Link
@@ -289,23 +288,22 @@ const Navbar = () => {
 
         {/* Mobile Menu Overlay */}
         <div
-          className={`fixed inset-0 bg-white top-[-5] z-40 transition-transform duration-300 ${
-            isOpen ? "translate-x-0" : "translate-x-full"
-          } xl:hidden`}
+          className={`fixed inset-0 bg-white top-[-5] z-40 transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
+            } xl:hidden`}
         >
           <div className="flex justify-between items-center p-5 border-b border-white/10">
             <div className="w-[180px]">
               <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-          <div style={{ width: 180, height: 64, position: "relative" }}>
-  <Image
-    src="/Images/Navbar/logo.png"
-    alt="Logo"
-    fill
-    style={{ objectFit: "contain" }}
-                          sizes="(max-width: 1280px) 100vw, 1280px"
+                <div style={{ width: 180, height: 64, position: "relative" }}>
+                  <Image
+                    src="/Images/Navbar/logo.png"
+                    alt="Logo"
+                    fill
+                    style={{ objectFit: "contain" }}
+                    sizes="(max-width: 1280px) 100vw, 1280px"
 
-  />
-</div>
+                  />
+                </div>
 
 
               </Link>
@@ -336,9 +334,8 @@ const Navbar = () => {
                       )}
                     </button>
                     <div
-                      className={`overflow-hidden transition-all duration-300 ${
-                        openDropdown === item.title ? "max-h-[500px]" : "max-h-0"
-                      }`}
+                      className={`overflow-hidden transition-all duration-300 ${openDropdown === item.title ? "max-h-[500px]" : "max-h-0"
+                        }`}
                     >
                       <div className="pb-2 pl-3">
                         {item.items.map((subItem) => (

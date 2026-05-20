@@ -1,31 +1,9 @@
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+
 import Image from "next/image";
 
-// Fetch banner data from API
-async function getBannerData() {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.baurecht.api.get_baurecht_data`
-      // Next.js will use the revalidate time from the page component
-    );
+const BaurechtBannerSection = async ({ data }) => {
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch banner data");
-    }
-
-    const data = await res.json();
-    return data.message?.banner || null;
-  } catch (error) {
-    console.error("Error fetching banner data:", error);
-    return null;
-  }
-}
-
-const BaurechtBannerSection = async () => {
-  const bannerData = await getBannerData();
-
-  if (!bannerData) {
+  if (!data) {
     return (
       <section className="relative w-full h-auto lg:h-[500px] flex items-center justify-center bg-[#0a1e35]">
         <p className="text-white">Daten werden geladen...</p>
@@ -33,9 +11,9 @@ const BaurechtBannerSection = async () => {
     );
   }
 
-  const imageUrl = bannerData.image?.startsWith('/files/') 
-    ? `${API_IMG_URL}${bannerData.image}` 
-    : bannerData.image;
+  const imageUrl = data?.image?.startsWith('/files/') && data?.image
+    ? `/api/image?path=${data?.image}`
+    : "/Images/Jobs/jobs3.jpg";
 
   return (
     <section className="relative w-full h-auto lg:h-[500px] flex flex-col lg:flex-row overflow-hidden bg-[#0a1e35]">
@@ -43,12 +21,12 @@ const BaurechtBannerSection = async () => {
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
           src={imageUrl}
-          alt={bannerData.image_alt_text || "Banner Image"}
+          alt={data?.image_alt_text || "Banner Image"}
           fill
-                    sizes=" 100vw"
+          sizes=" 100vw"
 
           className="object-cover"
-          priority
+          loading="eager"
           quality={100}
         />
       </div>
@@ -69,9 +47,9 @@ const BaurechtBannerSection = async () => {
             alt="Banner Image"
             fill
             className="object-cover"
-            priority
-                    sizes=" 100vw"
-          quality={100}
+            loading="eager"
+            sizes=" 100vw"
+            quality={100}
 
           />
         </div>
@@ -82,12 +60,12 @@ const BaurechtBannerSection = async () => {
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
           <div className="max-w-xl space-y-2 text-center lg:text-left">
-            <p className="text-md  text-[#669933] uppercase ">{bannerData.category}</p>
+            <p className="text-md  text-[#669933] uppercase ">{data?.category}</p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
-              {bannerData.title}
+              {data?.title}
             </h2>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
-              {bannerData.description}
+              {data?.description}
             </p>
           </div>
         </div>

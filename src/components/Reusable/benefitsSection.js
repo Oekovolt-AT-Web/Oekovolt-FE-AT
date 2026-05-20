@@ -11,7 +11,7 @@ const BenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2  pr-2 lg:pr-0">
             <div className=" h-[300px] md:h-[500px] relative lg:h-[550px] w-full rounded-lg overflow-hidden">
               <Image
-                src={`${data.img}`} // Replace with your image path
+                src={`${data?.img}`} // Replace with your image path
                 alt="Solar panel installation"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
@@ -22,15 +22,15 @@ const BenefitsLayout = ({ data }) => {
 
           {/* Right Column - Benefits Grid */}
           <div className="lg:w-1/2 ">
-            {/* <h2 className="text-2xl md:text-3xl font-bold text-[#669933] mb-8">{data.title}</h2> */}
+            {/* <h2 className="text-2xl md:text-3xl font-bold text-[#669933] mb-8">{data?.title}</h2> */}
             <h2 className="text-2xl  font-bold text-black tracking-wide inline-block relative">
-            {data.title}
+            {data?.title}
       </h2>
       <hr className="w-70  h-1 bg-[#669933] text-[#669933] mt-[10px] mb-10"></hr>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Benefit 1 */}
-              {data.benefits.map((benefit, index) => (
+              {data?.benefits.map((benefit, index) => (
                 <div key={index} className="bg-white  ">
                   <h2 className="text-[20px]  text-[#669933] mb-3 break-all md:break-normal">
                     {benefit.title}
@@ -40,7 +40,7 @@ const BenefitsLayout = ({ data }) => {
               ))}
             </div>
             {/* Summary Paragraph */}
-            <p className="text-gray-700  text-left  mx-auto pt-8 text-[16px]">{data.description}</p>
+            <p className="text-gray-700  text-left  mx-auto pt-8 text-[16px]">{data?.description}</p>
           </div>
         </div>
       </div>

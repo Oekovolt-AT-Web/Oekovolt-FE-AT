@@ -4,7 +4,7 @@ import { FaChevronDown } from 'react-icons/fa';
 
 
 
-export default function FinanzierungFAQ({data}) {
+export default function FinanzierungFAQ({ data }) {
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleAccordion = (index) => {
@@ -31,9 +31,8 @@ export default function FinanzierungFAQ({data}) {
               >
                 <span className="text-lg font-medium text-gray-900">{item.question}</span>
                 <FaChevronDown
-                  className={`text-[#669933] transition-transform duration-300 ${
-                    openIndex === index ? 'rotate-180' : ''
-                  }`}
+                  className={`text-[#669933] transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                    }`}
                 />
               </button>
 

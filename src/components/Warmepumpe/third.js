@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { FaCheckCircle } from "react-icons/fa";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { motion } from "framer-motion";
 
 export default function WarmepumpeSecondCardSection({ data }) {
@@ -75,7 +75,7 @@ export default function WarmepumpeSecondCardSection({ data }) {
         viewport={{ once: true }}
       >
         <Image
-          src={`${API_IMG_URL}${image}`}
+          src={`/api/image?path=${image}` || "/Images/Jobs/jobs3.jpg"}
           alt={imageAlt}
           width={600}
           height={400}

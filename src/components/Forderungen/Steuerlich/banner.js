@@ -1,32 +1,10 @@
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+
 import Image from "next/image";
 
-// Fetch banner data from API
-async function getBannerData() {
-  try {
-    const res = await fetch(
-      `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.steuerlich.api.get_steuerlich_data`
-      // Next.js will use the revalidate time from the page component
-    );
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch banner data");
-    }
-
-    const data = await res.json();
-    return data.message?.banner || null;
-  } catch (error) {
-    console.error("Error fetching banner data:", error);
-    return null;
-  }
-}
-
-const SteuerlichBannerSection = async () => {
-  const bannerData = await getBannerData();
+const SteuerlichBannerSection = async ({ data }) => {
 
   // Fallback data if API fails
-  const banner = bannerData || {
+  const banner = data || {
     category: "Förderungen",
     title: "Steuerlich",
     image: "/Images/Jobs/download.jpg",
@@ -34,9 +12,9 @@ const SteuerlichBannerSection = async () => {
     description: "Diese Übersicht erläutert die aktuellen steuerrechtlichen Bestimmungen für Photovoltaikanlagen in Österreich, differenziert nach privaten Betreibern und Unternehmen. Behandelt werden Einkommensteuer, Umsatzsteuer, Elektrizitätsabgabe sowie wichtige Meldepflichten – inklusive der Neuerungen durch das Abgabenänderungsgesetz 2022 und temporäre Mehrsteuersatz-Regelungen."
   };
 
-  const imageUrl = banner.image?.startsWith('/files/') 
-    ? `${API_IMG_URL}${banner.image}` 
-    : banner.image;
+  const imageUrl = banner.image?.startsWith('/files/') && banner?.image
+    ? `/api/image?path=${banner.image}`
+    : "/Images/Jobs/jobs3.jpg"
 
   return (
     <section className="relative w-full h-auto lg:h-[500px] flex flex-col lg:flex-row overflow-hidden bg-[#0a1e35]">
@@ -47,7 +25,7 @@ const SteuerlichBannerSection = async () => {
           alt={banner.image_alt_text || "Banner Image"}
           fill
           className="object-cover"
-          priority
+          loading="eager"
           sizes=" 100vw"
 
         />
@@ -69,7 +47,7 @@ const SteuerlichBannerSection = async () => {
             alt="Banner Image"
             fill
             className="object-cover"
-            priority
+            loading="eager"
             sizes=" 100vw"
 
           />

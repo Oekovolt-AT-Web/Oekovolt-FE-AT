@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { submitContact } from "@/lib/api/contact/create_contact";
 
 export default function KontaktFormular() {
   const [formData, setFormData] = useState({
@@ -79,21 +79,8 @@ export default function KontaktFormular() {
     };
 
     try {
-      const response = await fetch(
-        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.kontakt.api.create_contact`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Expect": "" },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const errorMsg = responseData.message || responseData.error || "Fehler beim Senden der Nachricht.";
-        throw new Error(errorMsg);
-      }
+      // Use the new submitContact function
+      await submitContact(payload);
 
       setMessage({ type: "success", text: "Nachricht erfolgreich gesendet!" });
       setFormData({
@@ -136,7 +123,7 @@ export default function KontaktFormular() {
           className="hidden md:block bg-[#669933] p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative"
         >
           <div
-            className="relative overflow-hidden rounded-xl h-[400px] md:h-[400px] lg:h-full" // fixed height for Image fill
+            className="relative overflow-hidden rounded-xl h-[400px] md:h-[400px] lg:h-full"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
@@ -145,9 +132,8 @@ export default function KontaktFormular() {
               alt="Solar panels"
               fill
               className="object-cover transition duration-500"
-              priority
-                    sizes=" 100vw"
-
+              loading="eager"
+              sizes="100vw"
             />
             <div
               className={`absolute inset-0 bg-[#669933]/90 flex items-center justify-center p-6 transition-opacity duration-500 ${

@@ -1,5 +1,5 @@
 "use client";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const ProjekteBenefitsLayout = ({ data }) => {
@@ -12,7 +12,7 @@ const ProjekteBenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2  pr-2 lg:pr-0">
             <div className=" h-[300px] md:h-[500px] relative lg:h-[550px] w-full rounded-lg overflow-hidden">
               <Image
-                src={`${API_IMG_URL}${data.third_card_image}`} // Replace with your image path
+                src={data.third_card_image ? `/api/image?path=${data.third_card_image}` : "/Images/Jobs/jobs3.jpg"} // Replace with your image path
                 alt={data.third_card_alt_text}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
@@ -25,9 +25,9 @@ const ProjekteBenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2 ">
             {/* <h2 className="text-2xl md:text-3xl font-bold text-[#669933] mb-8">{data.title}</h2> */}
             <h2 className="text-2xl  font-bold text-black tracking-wide inline-block relative">
-            {data.third_card_title}
-      </h2>
-      <hr className="w-70  h-1 bg-[#669933] text-[#669933] mt-[10px] mb-10"></hr>
+              {data.third_card_title}
+            </h2>
+            <hr className="w-70  h-1 bg-[#669933] text-[#669933] mt-[10px] mb-10"></hr>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Benefit 1 */}

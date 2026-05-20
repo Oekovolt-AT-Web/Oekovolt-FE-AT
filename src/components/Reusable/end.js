@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaChevronRight } from "react-icons/fa";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { useState, useEffect } from "react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { getCardContact } from "@/lib/api/contact/card_contact";
+
 
 export default function EndSection() {
   const [info, setInfo] = useState(null);
@@ -15,16 +15,8 @@ export default function EndSection() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.card_contact_redirection.api.get_card_contact`, {
-          next: { revalidate: 3600 }
-        });
-        
-        if (!res.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        
-        const data = await res.json();
-        setInfo(data.message);
+        const data = await getCardContact();
+        setInfo(data?.message);
       } catch (err) {
         console.error("Failed to fetch green feature data:", err);
         setError(err.message);
@@ -36,7 +28,6 @@ export default function EndSection() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="text-center py-12">Loading...</div>;
   if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>;
 
   return (
@@ -73,11 +64,11 @@ export default function EndSection() {
       <div className="relative w-full lg:w-1/2 flex justify-center items-center group mt-8 lg:mt-0">
         <div className="relative z-10 w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-white shadow-xl">
           <Image
-            src={`${API_IMG_URL}${info.image}`}
+            src={info?.image ? `/api/image?path=${info?.image}` : "/Images/Jobs/jobs3.jpg"}
             alt={info?.alt_text || "Solaranlage auf einem Hausdach"}
             fill
             className="object-cover"
-            priority
+            loading="eager"
             sizes="(max-width: 1280px) 100vw, 1280px"
           />
         </div>

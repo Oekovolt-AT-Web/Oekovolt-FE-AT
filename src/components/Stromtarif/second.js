@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 
 
@@ -22,7 +22,7 @@ const DynamicGreenEnergy = ({data}) => {
           >
             <div className="w-14 h-14 mx-auto mb-4">
               <Image
-            src={`${API_IMG_URL}${card.image}`}
+            src={`/api/image?path=${card.image}` || "/Images/Jobs/jobs3.jpg"}
                 alt={card.alt_text}
                 width={56}
                 height={56}

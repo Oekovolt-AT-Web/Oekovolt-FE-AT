@@ -1,16 +1,16 @@
 "use client";
 import { motion } from "framer-motion";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { FaSolarPanel, FaIndustry, FaChartLine } from "react-icons/fa";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import { generateSlug } from "@/lib/slugify";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
+import { getPartners } from "@/lib/api/partners/partners_api";
+import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
 
 const CustomPrevArrow = ({ onClick }) => (
   <div
@@ -133,39 +133,34 @@ export default function SolutionsPage({ data }) {
     const fetchData = async () => {
       try {
         const [partnersRes, projectsRes] = await Promise.all([
-          fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`,
-          ),
-          fetch(
-            `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
-          ),
+          getPartners(),
+          getProjectItem(),
         ]);
 
-        if (!partnersRes.ok || !projectsRes.ok)
-          throw new Error("Fehler beim Laden der Daten");
+        const formattedPartners = (partnersRes?.message || []).map(
+          (marke) => ({
+            name: marke?.name1 || "",
+            image: marke?.bild_anhagen || "",
+            status: marke?.status || "",
+          })
+        );
 
-        const partnersData = await partnersRes.json();
-        const projectsData = await projectsRes.json();
-
-        const formattedPartners = partnersData.message.map((marke) => ({
-          name: marke.name1,
-          image: marke.bild_anhagen,
-          status: marke.status,
-        }));
-
-        const formattedProjects = projectsData.message
+        const formattedProjects = (projectsRes?.message || [])
           .slice(0, 3)
           .map((projekt) => ({
-            title: projekt.title,
-            image: projekt.bild_anhagen[0]?.bild_anhagen,
-            leistung: projekt.leistung,
-            status: projekt.status,
+            title: projekt?.title || "",
+            image: projekt?.bild_anhagen?.[0]?.bild_anhagen || "",
+            leistung: projekt?.leistung || "",
+            status: projekt?.status || "",
           }));
 
         setPartnersFrappe(formattedPartners);
         setProjectFrappe(formattedProjects);
       } catch (error) {
         console.error("Fehler:", error);
+
+        setPartnersFrappe([]);
+        setProjectFrappe([]);
       }
     };
 
@@ -179,15 +174,15 @@ export default function SolutionsPage({ data }) {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-10">
             <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-[18px]">
-              {data.first_card_title}
+              {data?.first_card_title}
               <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
             </h2>
             <h2 className="text-3xl font-semibold text-gray-900 mt-10">
-              {data.first_card_subtitle}
+              {data?.first_card_subtitle}
             </h2>
           </div>
           <div className="text-gray-700 space-y-4 text-center text-[17px] max-w-4xl mx-auto">
-            {data.first_card_table?.map((item, key) => (
+            {data?.first_card_table?.map((item, key) => (
               <p key={key}>{item.option}</p>
             ))}
           </div>
@@ -203,53 +198,61 @@ export default function SolutionsPage({ data }) {
         className="mb-9 md:mb-17"
       >
         <div ref={sliderContainerRef}>
-        <Slider
-          {...{
-            dots: false,
-            infinite: true,
-            speed: 700,
-            slidesToShow: 3,
-            slidesToScroll: 1,
-            arrows: true,
-            nextArrow: <CustomNextArrow />,
-            prevArrow: <CustomPrevArrow />,
-            autoplay: true,
-            autoplaySpeed: 4000,
-            responsive: [
-              { breakpoint: 1024, settings: { slidesToShow: 2 } },
-              { breakpoint: 768, settings: { slidesToShow: 2 } },
-              { breakpoint: 450, settings: { slidesToShow: 1 } },
-            ],
-          }}
-          className="mb-12 relative"
-        >
-          {projectFrappe.map((project, i) => (
-            <div key={i} className="px-5">
-              <Link
-                href={`/referenzen/projekte/${generateSlug(project.title)}`}
-                className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
-              >
-                <div className="relative w-full h-64">
-                  <Image
-                    src={`${API_IMG_URL}${project.image}`}
-                    alt={project.title}
-                    fill
-                    className="rounded-lg object-cover"
-                    sizes="(max-width: 450px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                </div>
-
-                <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                  <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
-                    <h3 className="text-white text-lg font-semibold">
-                      {project.title}
-                    </h3>
+          <Slider
+            {...{
+              dots: false,
+              infinite: true,
+              speed: 700,
+              slidesToShow: 3,
+              slidesToScroll: 1,
+              arrows: true,
+              nextArrow: <CustomNextArrow />,
+              prevArrow: <CustomPrevArrow />,
+              autoplay: true,
+              autoplaySpeed: 4000,
+              responsive: [
+                { breakpoint: 1024, settings: { slidesToShow: 2 } },
+                { breakpoint: 768, settings: { slidesToShow: 2 } },
+                { breakpoint: 450, settings: { slidesToShow: 1 } },
+              ],
+            }}
+            className="mb-12 relative"
+          >
+            {projectFrappe.map((project, i) => (
+              <div key={i} className="px-5">
+                <Link
+                  href={`/referenzen/projekte/${project.title
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")
+                    .replace(/\//g, "-")
+                    .replace(/[ä]/g, "ae")
+                    .replace(/[ö]/g, "oe")
+                    .replace(/[ü]/g, "u")
+                    .replace(/[ß]/g, "ss")
+                    .replace(/[^a-z0-9-]/g, "")}`}
+                  className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"
+                >
+                  <div className="relative w-full h-64">
+                    <Image
+                      src={project?.image ? `/api/image?path=${project.image}` : "/Images/Jobs/jobs3.jpg"}
+                      alt={project.title}
+                      fill
+                      className="rounded-lg object-cover"
+                      sizes="(max-width: 450px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
                   </div>
-                </div>
-              </Link>
-            </div>
-          ))}
-        </Slider>
+
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                    <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
+                      <h3 className="text-white text-lg font-semibold">
+                        {project.title}
+                      </h3>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </Slider>
         </div>
 
         <div className="text-center flex flex-row items-center justify-center mt-4">

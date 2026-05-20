@@ -1,16 +1,15 @@
 'use client';
 import { motion } from 'framer-motion';
 import { FaPlug, FaWifi } from 'react-icons/fa';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 import Image from 'next/image';
 
-const icons = [<FaPlug key="plug"/>, <FaWifi key="wifi"/>];
+const icons = [<FaPlug key="plug" />, <FaWifi key="wifi" />];
 
 const RequirementsSection = ({ data }) => {
   return (
     <section className="bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-        
+
         {/* LEFT SIDE: Title, Description, Image */}
         <div>
           <motion.h2
@@ -38,12 +37,12 @@ const RequirementsSection = ({ data }) => {
             className="rounded-xl overflow-hidden shadow-lg relative w-full h-80"
           >
             <Image
-              src={`${API_IMG_URL}${data.dynami_sixth_card_image}`}
+              src={`/api/image?path=${data.dynami_sixth_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.dynami_sixth_card_alt_image}
               fill
               className="object-cover object-center"
-                    sizes=" 100vw"
-              priority
+              sizes=" 100vw"
+              loading="eager"
             />
           </motion.div>
         </div>

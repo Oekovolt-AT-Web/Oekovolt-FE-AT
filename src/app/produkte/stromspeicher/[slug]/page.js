@@ -1,145 +1,265 @@
+// src/app/produkte/stromspeicher/[slug]/page.js
+
 import Image from "next/image";
 import Link from "next/link";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { notFound } from "next/navigation";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { FiGlobe, FiMail, FiPhone, FiCheckCircle } from "react-icons/fi";
-import { generateSlug as slugToTitle } from "@/lib/slugify";
 
-export async function generateMetadata(props) {
-  const { slug } = await props.params;
-  const title = slugToTitle(slug);
+// Die gleiche Slug-Funktion wie in StromSecondCardSection
+const umlautMap = {
+  ä: "a",
+  ö: "o",
+  ü: "u",
+  ß: "ss"
+};
+
+const createSlug = (title) => {
+  return title
+    .toLowerCase()
+    .split("")
+    .map(char => umlautMap[char] || char)
+    .join("")
+    .replace(/\s+/g, "-")
+    .replace(/\//g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+};
+
+// 1. ALLE Stromspeicher Items holen (für generateStaticParams)
+async function fetchAllStromspeicherItems() {
+  const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
+
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    return [];
+  }
+
   try {
-    const apiUrl = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(title)}`;
-    const res = await fetch(apiUrl, { next: { revalidate: 3600 } });
-    const json = await res.json();
-    const hersteller = json.message?.message;
-    if (hersteller) {
-      return {
-        title: `${hersteller.title} Stromspeicher `,
-        description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
-        alternates: { canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` },
-        openGraph: {
-          type: "website",
-          url: `https://www.oekovolt.de/produkte/stromspeicher/${slug}`,
-          title: `${hersteller.title} Stromspeicher `,
-          description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
-          images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: `${hersteller.title} Stromspeicher` }],
-        },
-        twitter: {
-          card: "summary_large_image",
-          title: `${hersteller.title} Stromspeicher `,
-          description: hersteller.company_description || `${hersteller.title} Stromspeicher bei Ökovolt Solartechnik.`,
-          images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
-        },
-      };
+    const headers = getApiHeaders();
+
+    const res = await fetch(DATA_URL, {
+      method: "GET",
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) {
+      console.error(`API returned ${res.status}`);
+      return [];
     }
-  } catch {}
+
+    const json = await res.json();
+    const data = json.message;
+    
+    // Die strom_second_card_table ist das Array mit allen Items
+    const items = data?.strom_second_card_table || [];
+    
+    return items;
+  } catch (error) {
+    console.error("Error fetching stromspeicher items:", error);
+    return [];
+  }
+}
+
+// 2. Hersteller DETAILS holen (für die Seite)
+async function fetchManufacturerByName(name) {
+  const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(name)}`;
+
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const res = await fetch(API_URL, {
+      method: "GET",
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) {
+      console.error(`API returned ${res.status} for ${name}`);
+      return null;
+    }
+
+    const data = await res.json();
+    const manufacturer = data?.message?.message || data?.message;
+
+    if (!manufacturer) {
+      return null;
+    }
+
+    return manufacturer;
+  } catch (error) {
+    console.error(`Error fetching manufacturer ${name}:`, error);
+    return null;
+  }
+}
+
+// generateStaticParams: Holt alle Slugs aus der strom_second_card_table
+export async function generateStaticParams() {
+  try {
+    const items = await fetchAllStromspeicherItems();
+
+    if (!items || items.length === 0) {
+      console.warn("⚠️ No stromspeicher items found - returning empty params");
+      return [];
+    }
+
+    const params = items.map((item) => ({
+      slug: createSlug(item.title)
+    })).filter(param => param.slug);
+
+    
+    return params;
+  } catch (error) {
+    console.error("Error in generateStaticParams:", error);
+    return [];
+  }
+}
+
+// Metadata für SEO
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  
+  // Wir müssen den Titel aus dem Slug finden
+  const items = await fetchAllStromspeicherItems();
+  const item = items.find(i => createSlug(i.title) === slug);
+  
+  if (!item) {
+    return {
+      title: `${slug} | Hersteller nicht gefunden`,
+      description: `Informationen zum Hersteller konnten nicht geladen werden.`,
+    };
+  }
+
+  // Jetzt den Hersteller mit dem Titel holen
+  const manufacturer = await fetchManufacturerByName(item.title);
+
+  if (!manufacturer) {
+    return {
+      title: `${item.title} Stromspeicher`,
+      description: `Informationen über ${item.title} als Hersteller von Stromspeichern.`,
+    };
+  }
+
   return {
-    title: "Stromspeicher Hersteller ",
-    description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
-    alternates: { canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` },
+    title: `${manufacturer.title} Stromspeicher`,
+    description: manufacturer.company_description || `${manufacturer.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+    alternates: { 
+      canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` 
+    },
     openGraph: {
       type: "website",
       url: `https://www.oekovolt.de/produkte/stromspeicher/${slug}`,
-      title: "Stromspeicher Hersteller ",
-      description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
-      images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: "Stromspeicher Hersteller ",
-      description: "Entdecken Sie hochwertige Stromspeicher von führenden Herstellern bei Ökovolt Solartechnik.",
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
+      title: `${manufacturer.title} Stromspeicher`,
+      description: manufacturer.company_description || `${manufacturer.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+      images: [{ 
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", 
+        width: 1200, 
+        height: 630, 
+        alt: `${manufacturer.title} Stromspeicher` 
+      }],
     },
   };
 }
 
+// Hauptseite
 export default async function HerstellerDetailPage({ params }) {
-  const { slug } = params;
-  const title = slugToTitle(slug);
-  const apiUrl = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(title)}`;
-
+  const { slug } = await params;
+  
+  // 1. Erst alle Items holen um den Titel zu finden
+  const items = await fetchAllStromspeicherItems();
+  const stromspeicherItem = items.find(i => createSlug(i.title) === slug);
+  
+  if (!stromspeicherItem) {
+    notFound();
+  }
+  
+  // 2. Dann den Hersteller mit dem Titel holen
   let hersteller = null;
+  
   try {
-    const res = await fetch(apiUrl, { next: { revalidate: 60 } });
-    const json = await res.json();
-    hersteller = json.message.message;
+    hersteller = await fetchManufacturerByName(stromspeicherItem.title);
   } catch (err) {
     console.error("Error fetching data:", err);
   }
 
   if (!hersteller) {
-    return <div className="p-6 text-center text-gray-500">Keine Daten gefunden.</div>;
+    notFound();
   }
 
- const products = [
-  {
-    status: hersteller.first_product_status,
-    name: hersteller.first_product_name,
-    image: hersteller.first_product_image,
-    alt: hersteller.first_product_image_alt,
-    description: hersteller.first_product_description,
-    options: hersteller.first_product_options,
-    hersteller_category: hersteller.first_product_category, 
-  },
-  {
-    status: hersteller.second_product_status,
-    name: hersteller.second_product_name,
-    image: hersteller.second_product_image,
-    alt: hersteller.second_product_image_alt,
-    description: hersteller.second_product_description,
-    options: hersteller.second_product_options,
-    hersteller_category: hersteller.second_product_category,
-  },
-  {
-    status: hersteller.third_product_status,
-    name: hersteller.third_product_name,
-    image: hersteller.third_product_image,
-    alt: hersteller.third_product_image_alt,
-    description: hersteller.third_product_description,
-    options: hersteller.third_product_options,
-    hersteller_category: hersteller.third_product_category,
-  },
-  {
-    status: hersteller.fourth_product_status,
-    name: hersteller.fourth_product_name,
-    image: hersteller.fourth_product_image,
-    alt: hersteller.fourth_product_image_alt,
-    description: hersteller.fourth_product_description,
-    options: hersteller.fourth_product_options,
-    hersteller_category: hersteller.fourth_product_category,
-  },
-  {
-    status: hersteller.fifth_product_status,
-    name: hersteller.fifth_product_name,
-    image: hersteller.fifth_product_image,
-    alt: hersteller.fifth_product_image_alt,
-    description: hersteller.fifth_product_description,
-    options: hersteller.fifth_product_options,
-    hersteller_category: hersteller.fifth_product_category,
-  },
-].filter(
-  (p) => p.status === "Aktiv"
-);
+  // Produkte Array aus den Hersteller-Daten
+  const products = [
+    {
+      status: hersteller.first_product_status,
+      name: hersteller.first_product_name,
+      image: hersteller.first_product_image,
+      alt: hersteller.first_product_image_alt,
+      description: hersteller.first_product_description,
+      options: hersteller.first_product_options,
+      hersteller_category: hersteller.first_product_category,
+    },
+    {
+      status: hersteller.second_product_status,
+      name: hersteller.second_product_name,
+      image: hersteller.second_product_image,
+      alt: hersteller.second_product_image_alt,
+      description: hersteller.second_product_description,
+      options: hersteller.second_product_options,
+      hersteller_category: hersteller.second_product_category,
+    },
+    {
+      status: hersteller.third_product_status,
+      name: hersteller.third_product_name,
+      image: hersteller.third_product_image,
+      alt: hersteller.third_product_image_alt,
+      description: hersteller.third_product_description,
+      options: hersteller.third_product_options,
+      hersteller_category: hersteller.third_product_category,
+    },
+    {
+      status: hersteller.fourth_product_status,
+      name: hersteller.fourth_product_name,
+      image: hersteller.fourth_product_image,
+      alt: hersteller.fourth_product_image_alt,
+      description: hersteller.fourth_product_description,
+      options: hersteller.fourth_product_options,
+      hersteller_category: hersteller.fourth_product_category,
+    },
+    {
+      status: hersteller.fifth_product_status,
+      name: hersteller.fifth_product_name,
+      image: hersteller.fifth_product_image,
+      alt: hersteller.fifth_product_image_alt,
+      description: hersteller.fifth_product_description,
+      options: hersteller.fifth_product_options,
+      hersteller_category: hersteller.fifth_product_category,
+    },
+  ].filter((p) => p.status === "Aktiv");
 
-
+  // Render
   return (
     <section>
       {/* Banner */}
-      <div className="relative bg-gray-900 text-white px-6">
+      <div className="relative bg-gray-900 text-white px-6 min-h-[300px]">
         {hersteller.banner_image && (
-          <div className="absolute inset-0 bg-black opacity-50">
+          <>
+            <div className="absolute inset-0 bg-black/50 z-10"></div>
             <Image
-              src={`${API_IMG_URL}${hersteller.banner_image}`}
+              src={`/api/image?path=${hersteller.banner_image}`}
               alt={hersteller.alt_banner_image || hersteller.title}
               fill
+              sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
               className="object-cover object-center"
-              priority
+              loading="eager"
             />
-          </div>
+          </>
         )}
-        <div className="relative max-w-7xl mx-auto py-10 md:py-16">
-          <div className="flex md:flex-row items-center gap-6 h-60">
+        <div className="relative z-20 max-w-7xl mx-auto py-10 md:py-16">
+          <div className="flex md:flex-row items-center gap-6 min-h-[240px]">
             <div>
               <h1 className="text-4xl md:text-5xl font-bold mb-2">{hersteller.title}</h1>
             </div>
@@ -168,9 +288,10 @@ export default async function HerstellerDetailPage({ params }) {
                     {product.image && (
                       <div className="relative w-full max-w-xl h-[300px] md:h-[400px] mb-6">
                         <Image
-                          src={`${API_IMG_URL}${product.image}`}
+                          src={`/api/image?path=${product.image}`}
                           alt={product.alt || product.name}
                           fill
+                          sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
                           className="object-contain rounded-xl shadow-md"
                         />
                       </div>
@@ -200,11 +321,11 @@ export default async function HerstellerDetailPage({ params }) {
           </div>
 
           {/* Contact Info Card */}
-          <div className="lg:w-1/3 bg-gray-100 p-6 rounded-xl shadow-md space-y-4 max-w-xl">
+          <div className="lg:w-1/3 bg-gray-100 p-6 rounded-xl shadow-md space-y-4 max-w-xl sticky top-6">
             {hersteller.logo_image && (
               <div className="shrink-0">
                 <Image
-                  src={`${API_IMG_URL}${hersteller.logo_image}`}
+                  src={`/api/image?path=${hersteller.logo_image}`}
                   alt={hersteller.alt_logo_image || hersteller.title}
                   width={120}
                   height={120}
@@ -218,11 +339,12 @@ export default async function HerstellerDetailPage({ params }) {
             <div className="space-y-2 text-gray-700">
               {hersteller.website_url && (
                 <p className="flex items-center gap-2">
-                  <FiGlobe className="text-blue-600" />
+                  <FiGlobe className="text-blue-600 shrink-0" />
                   <Link
                     href={hersteller.website_url}
-                    className="underline hover:text-blue-800 transition"
+                    className="underline hover:text-blue-800 transition break-all"
                     target="_blank"
+                    rel="noopener noreferrer"
                   >
                     {hersteller.website_url}
                   </Link>
@@ -230,15 +352,15 @@ export default async function HerstellerDetailPage({ params }) {
               )}
               {hersteller.email && (
                 <p className="flex items-center gap-2">
-                  <FiMail className="text-red-500" />
-                  <a href={`mailto:${hersteller.email}`} className="hover:underline">
+                  <FiMail className="text-red-500 shrink-0" />
+                  <a href={`mailto:${hersteller.email}`} className="hover:underline break-all">
                     {hersteller.email}
                   </a>
                 </p>
               )}
               {hersteller.phone_number && (
                 <p className="flex items-center gap-2">
-                  <FiPhone className="text-green-600" />
+                  <FiPhone className="text-green-600 shrink-0" />
                   <a href={`tel:${hersteller.phone_number}`} className="hover:underline">
                     {hersteller.phone_number}
                   </a>

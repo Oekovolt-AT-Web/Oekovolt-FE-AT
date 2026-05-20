@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function TeamAnotherDesign({ data }) {
   return (
@@ -10,7 +10,7 @@ export default function TeamAnotherDesign({ data }) {
         <div className="relative w-full max-w-xl">
           <div className="relative z-10 rounded-lg overflow-hidden">
             <Image
-                src={`${API_IMG_URL}${data.third_card_image}`} // Replace with your image path
+                src={`/api/image?path=${data.third_card_image}` || "/Images/Jobs/jobs3.jpg"} // Replace with your image path
               alt={data.third_card_alt_text}
               width={600}
               height={800}
@@ -31,7 +31,7 @@ export default function TeamAnotherDesign({ data }) {
             <div className="card-content flex flex-col items-center lg:flex-row lg:items-start md:flex-row md:items-start gap-4">
               {data.third_card_card_image && (
                 <Image
-                    src={`${API_IMG_URL}${data.third_card_card_image}`} // Replace with your image path
+                    src={`/api/image?path=${data.third_card_card_image}` || "/Images/Jobs/jobs3.jpg"} // Replace with your image path
                   alt={data.third_card_card_alt_text}
                   width={150}
                   height={150}

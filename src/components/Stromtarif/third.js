@@ -2,7 +2,6 @@
 
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 
 export default function DynamicInfoSection({data}) {
   return (
@@ -32,7 +31,7 @@ export default function DynamicInfoSection({data}) {
           className="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-md"
         >
           <Image
-            src={`${API_IMG_URL}${data.dynami_second_card_image}`}
+            src={`/api/image?path=${data.dynami_second_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.dynami_second_card_image_alt_text}
             width={800}
             height={600}

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FaUserTie, FaDraftingCompass, FaTools } from "react-icons/fa";
 
 const icons = [FaUserTie, FaDraftingCompass, FaTools];
@@ -11,7 +11,7 @@ const PhotovoltaikStepsSection = ({ data }) => {
 
   const steps = [
     {
-        number:"1",
+      number: "1",
       icon: FaUserTie,
       title: data.photovoltaik_title_third_card_first,
       image: data.photovoltaik_image_third_card_first,
@@ -19,7 +19,7 @@ const PhotovoltaikStepsSection = ({ data }) => {
       description: data.photovoltaik_description_third_card_alt_first,
     },
     {
-                number:"2",
+      number: "2",
 
       icon: FaDraftingCompass,
       title: data.photovoltaik_third_second_card_second,
@@ -28,7 +28,7 @@ const PhotovoltaikStepsSection = ({ data }) => {
       description: data.photovoltaik_description_third_card_alt_second,
     },
     {
-                number:"3",
+      number: "3",
 
       icon: FaTools,
       title: data.photovoltaik_third_second_card_third,
@@ -73,20 +73,20 @@ const PhotovoltaikStepsSection = ({ data }) => {
               viewport={{ once: true }}
               className="relative bg-white rounded-xl  shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1"
             >
-                
-                <div className="absolute -top-6 left-3 w-12 h-12 bg-[#669933] clip-triangle z-10 flex items-center justify-center">
-  <span className="text-white text-xl">{step.number}</span>
-</div>
+
+              <div className="absolute -top-6 left-3 w-12 h-12 bg-[#669933] clip-triangle z-10 flex items-center justify-center">
+                <span className="text-white text-xl">{step.number}</span>
+              </div>
 
 
-                
+
               <div className="relative w-full h-60">
                 <Image
-                  src={`${API_IMG_URL}${step.image}`}
+                  src={step.image ? `/api/image?path=${step.image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={step.alt || "Image"}
                   fill
                   className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 
                 />
               </div>

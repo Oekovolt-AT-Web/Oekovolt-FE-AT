@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FaSolarPanel, FaBatteryFull, FaArrowRight } from "react-icons/fa";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function SystemExpansionSection({ data }) {
   return (
@@ -16,10 +16,10 @@ export default function SystemExpansionSection({ data }) {
           className="text-center mb-16 relative"
         >
           <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-[#669933] to-transparent opacity-70"></div>
-             <h2 className="text-3xl  text-gray-900 ">
+          <h2 className="text-3xl  text-gray-900 ">
             {data.second_section_title}
           </h2>
-            <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-[#669933] to-transparent opacity-70"></div>
+          <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-64 h-1 bg-gradient-to-r from-transparent via-[#669933] to-transparent opacity-70"></div>
 
         </motion.div>
 
@@ -34,16 +34,16 @@ export default function SystemExpansionSection({ data }) {
             <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl group">
               <div className=" absolute inset-0 bg-gradient-to-br from-[#669933]/10 to-transparent z-10"></div>
               <Image
-                src={`${API_IMG_URL}${data.second_sec_1st_card_image}`}
+                src={data.second_sec_1st_card_image ? `/api/image?path=${data.second_sec_1st_card_image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={data.second_sec_1st_card_alt_image}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                priority
-                    sizes=" 100vw"
+                loading="eager"
+                sizes=" 100vw"
 
               />
             </div>
-            
+
             <div className="relative pl-16">
               <div className="absolute left-0 top-0 w-12 h-12 bg-[#669933] rounded-lg flex items-center justify-center text-white">
                 <FaSolarPanel className="text-xl" />
@@ -78,10 +78,10 @@ export default function SystemExpansionSection({ data }) {
               <div className="relative w-full h-56 sm:h-64 rounded-lg overflow-hidden mb-8 group">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10"></div>
                 <Image
-                  src={`${API_IMG_URL}${data.second_sec_2nd_card_image}`}
+                  src={data.second_sec_2nd_card_image ? `/api/image?path=${data.second_sec_2nd_card_image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={data.second_sec_2nd_card_alt_text}
                   fill
-                    sizes=" 100vw"
+                  sizes=" 100vw"
 
                   className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />

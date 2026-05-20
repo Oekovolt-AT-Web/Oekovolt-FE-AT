@@ -1,5 +1,5 @@
 "use client";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const ReferenzkarteBenefitsLayout = ({ data }) => {
@@ -12,8 +12,8 @@ const ReferenzkarteBenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2  pr-2 lg:pr-0">
             <div className=" h-[300px] md:h-[500px] relative lg:h-[550px] w-full rounded-lg overflow-hidden">
               <Image
-                src={`${API_IMG_URL}${data.second_card_image}`} // Replace with your image path
-                alt={data.second_card_alt_text}
+                src={data?.second_card_image ? `/api/image?path=${data?.second_card_image}` : "/Images/Jobs/jobs3.jpg"} // Replace with your image path
+                alt={data?.second_card_alt_text}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
                 className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-500"

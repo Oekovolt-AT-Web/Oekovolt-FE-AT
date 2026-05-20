@@ -1,6 +1,4 @@
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 const SmartBanner = ({data}) => {
 
@@ -11,13 +9,13 @@ const SmartBanner = ({data}) => {
     <section className="relative h-[300px] w-full overflow-hidden lg:h-[400px] ">
       <div className="absolute inset-0">
         <Image
-            src={`${API_IMG_URL}${data.banner_image}`}
+            src={`/api/image?path=${data.banner_image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.banner_alt_text || "Banner Background"}
           fill
           quality={100}
           className="object-cover object-center w-full h-full"
           sizes="100vw"
-          priority
+          loading="eager"
           style={{
             objectPosition: "center center",
           }}

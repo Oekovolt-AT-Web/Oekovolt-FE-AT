@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FaLeaf } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -25,11 +25,11 @@ const PhotovoltaikRegionalNetzSection = ({ data }) => {
           viewport={{ once: true }}
         >
           <Image
-            src={`${API_IMG_URL}${data.photovoltaik_image_fourth_card}`}
+            src={data.photovoltaik_image_fourth_card ? `/api/image?path=${data.photovoltaik_image_fourth_card}` : "/Images/Jobs/jobs3.jpg"}
             alt={data.photovoltaik_image_fourth_card_alt || "Map"}
             fill
             className="object-cover"
-                sizes="100vw"
+            sizes="100vw"
 
           />
         </motion.div>

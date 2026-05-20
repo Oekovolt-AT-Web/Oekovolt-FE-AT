@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 import { BsQuestionCircleFill } from 'react-icons/bs';
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion'
 
 export default function FaqSection({ data }) {
   const [openIndex, setOpenIndex] = useState(null);
@@ -21,26 +21,26 @@ export default function FaqSection({ data }) {
       {/* Centered Title & Subtitle */}
       <div className="text-center max-w-2xl mx-auto mb-12">
 
-         <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-sm mb-3 font-semibold text-[#669933] uppercase tracking-wide"
-          >
-            {title}
-          </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-sm mb-3 font-semibold text-[#669933] uppercase tracking-wide"
+        >
+          {title}
+        </motion.p>
 
         {/* <h4 className="mt-4 text-2xl text-gray-600">{subtitle}</h4> */}
-          <motion.h2
-            className="text-3xl  mt-4  text-gray-900"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            {subtitle}
-          </motion.h2>
+        <motion.h2
+          className="text-3xl  mt-4  text-gray-900"
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+        >
+          {subtitle}
+        </motion.h2>
       </div>
 
       {/* Questions Below, Centered */}
@@ -61,9 +61,8 @@ export default function FaqSection({ data }) {
                 </span>
               </div>
               <FaChevronDown
-                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${
-                  openIndex === index ? 'rotate-180' : ''
-                }`}
+                className={`w-4 h-4 text-gray-500 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
+                  }`}
               />
             </button>
 

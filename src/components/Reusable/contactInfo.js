@@ -16,13 +16,13 @@ export default function GreenFeatureSection({data}) {
       {/* LEFT: Text Content */}
       <div className="w-full lg:w-1/2">
         <p className="uppercase text-sm tracking-wide text-[#669933] font-semibold mb-3 mt-3">
-         {data.greentitle}
+         {data?.greentitle}
         </p>
         <h2 className="text-2xl lg:text-3xl md:text-3xl font-bold text-gray-900 mb-5 leading-tight">
-          {data.title}
+          {data?.title}
         </h2>
         <p className="text-gray-700 mb-6">
-          {data.description}
+          {data?.description}
         </p>
 
        

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function Tabs({ data }) {
   const [activeComponent, setActiveComponent] = useState(
@@ -22,20 +22,19 @@ export default function Tabs({ data }) {
                   <li key={tabKey}>
                     <button
                       onClick={() => setActiveComponent(tabKey)} // Simplified - no toggle logic
-                      className={`flex items-center w-full p-2 text-left rounded cursor-pointer text-[21px] ${
-                        activeComponent === tabKey
-                          ? "bg-gray-100 text-[#669933] font-medium"
-                          : "hover:bg-gray-100 text-gray-800"
-                      }`}
+                      className={`flex items-center w-full p-2 text-left rounded cursor-pointer text-[21px] ${activeComponent === tabKey
+                        ? "bg-gray-100 text-[#669933] font-medium"
+                        : "hover:bg-gray-100 text-gray-800"
+                        }`}
                     >
                       <div className="mr-3 w-5 h-5 relative">
                         <Image
-                          src={`${API_IMG_URL}${tab.icon}`}
+                          src={tab.icon ? `/api/image?path=${tab.icon}` : "/Images/Jobs/jobs3.jpg"}
                           alt={tab.alt_text}
                           fill
-  sizes="100vw"
+                          sizes="100vw"
                           className="object-contain"
-                          priority
+                          loading="eager"
                         />
                       </div>
 
@@ -101,13 +100,13 @@ function TabContent({ tab }) {
       {/* Image container: relative with fixed height */}
       <div className="relative w-full h-[400px] mb-6 flex justify-start">
         <Image
-          src={`${API_IMG_URL}${tab.card_image}`}
-          alt={tab.card_alt_text}
+          src={tab?.card_image ? `/api/image?path=${tab?.card_image}` : "/Images/Jobs/jobs3.jpg"}
+          alt={tab?.card_alt_text}
           fill
-  sizes="100vw"
+          sizes="100vw"
           quality={100}
           className="object-cover object-center"
-          priority
+          loading="eager"
         />
       </div>
 

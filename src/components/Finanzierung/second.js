@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const FinancingSection = ({ data }) => {
@@ -61,7 +61,7 @@ const FinancingSection = ({ data }) => {
 
         <div className="w-full lg:w-1/2 rounded-xl overflow-hidden shadow-xl aspect-[4/3] sm:aspect-[5/3] relative">
           <Image
-            src={`${API_IMG_URL}${data.finanzierung_first_card_image}`}
+            src={data.finanzierung_first_card_image ? `/api/image?path=${data.finanzierung_first_card_image}` : "/Images/Jobs/jobs3.jpg"}
             alt={data.finanzierung_first_card_image_alt_text}
             fill
             sizes="(max-width: 1280px) 100vw, 1280px"

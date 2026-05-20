@@ -5,10 +5,10 @@ import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { FaCheckCircle } from "react-icons/fa";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
 
 
-const BannerLegal = ({data}) => {
+
+const BannerLegal = ({ data }) => {
 
   if (!data) return null;
 
@@ -18,7 +18,7 @@ const BannerLegal = ({data}) => {
       {/* Decorative background dots (top right & bottom center) */}
       <div className="absolute top-10 right-70 w-20 h-20 bg-[url('/Images/Home/dots.png')] opacity-100 " />
       <div className="absolute bottom-10 left-250 transform -translate-x-1/2 w-20 h-20 bg-[url('/Images/Home/dots.png')] opacity-40" />
-    
+
       {/* Social Icons */}
       <div className="absolute left-26 top-1/2 transform -translate-y-1/2 flex flex-col gap-4 z-10">
         <a
@@ -46,14 +46,14 @@ const BannerLegal = ({data}) => {
         {/* Text Left */}
         <div className="text-center lg:text-left space-y-9 max-w-xl z-10">
           <h1 className="text-4xl   text-gray-900 leading-tight">
-           {data.photovoltaik_title}
+            {data.photovoltaik_title}
           </h1>
-           <div className="space-y-6">
+          <div className="space-y-6">
             {data.photovoltaik_options?.map((opt, index) => (
               <motion.div
                 key={index}
                 className="flex items-center gap-3"
-                
+
                 transition={{ type: "spring", stiffness: 200 }}
               >
                 <FaCheckCircle className="text-[#669933] text-lg mt-1 w-10 h-10" />
@@ -63,25 +63,26 @@ const BannerLegal = ({data}) => {
               </motion.div>
             ))}
           </div>
-            <Link
-          href="/kontakt"
-          className="inline-flex items-center font-semibold gap-2 px-6 py-3 rounded-md text-white transition-colors hover:bg-[#558822] text-[14px] uppercase"
-          style={{ backgroundColor: "#669933" }}
-        >
-          Jetzt Kontaktieren
-          <FaChevronRight />
+          <Link
+            href="/kontakt"
+            className="inline-flex items-center font-semibold gap-2 px-6 py-3 rounded-md text-white transition-colors hover:bg-[#558822] text-[14px] uppercase"
+            style={{ backgroundColor: "#669933" }}
+          >
+            Jetzt Kontaktieren
+            <FaChevronRight />
           </Link>
-          
+
         </div>
 
         {/* Image Right */}
         <div className="relative w-150 h-[500px] z-10">
           <Image
-            src={`${API_IMG_URL}${data.photovoltaik_banner_image}`}
+            src={data.photovoltaik_banner_image ? `/api/image?path=${data.photovoltaik_banner_image}` : "/Images/Jobs/jobs3.jpg"}
             alt="Expert Lawyer"
             fill
+            sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
             className="object-cover rounded-tr-[80px] rounded-bl-[80px]"
-            priority
+            loading="eager"
           />
         </div>
       </div>

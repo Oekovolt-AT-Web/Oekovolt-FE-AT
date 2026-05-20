@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const StromspeicherBanner = ({ data }) => {
   if (!data) return null;
@@ -10,12 +10,12 @@ const StromspeicherBanner = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
-          src={`${API_IMG_URL}${data.strom_banner_image}`}
+          src={`/api/image?path=${data.strom_banner_image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.strom_banner_image_alt || "Banner Background"}
           fill
           quality={100}
           className="object-cover object-center w-full h-full"
-          priority
+          loading="eager"
           sizes=" 100vw"
         />
       </div>

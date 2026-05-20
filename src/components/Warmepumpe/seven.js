@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 import Image from 'next/image'; // <-- Import Image here
 
 import { FaCogs, FaBolt, FaMapMarkedAlt, FaThumbsUp, FaTools, FaHandsHelping, FaLightbulb, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
@@ -68,13 +67,13 @@ export default function WaermepumpePartnerSection({ data }) {
           {/* Image on the left */}
           {image && (
             <div className="w-full lg:w-1/2 h-auto min-h-[200px] md:min-h-[400px] relative rounded-xl overflow-hidden shadow">
-               <Image
-                src={`${API_IMG_URL}${data.waermepumpe_fifth_card_image}`}
+              <Image
+                src={`/api/image?path=${data.waermepumpe_fifth_card_image}` || "/Images/Jobs/jobs3.jpg"}
                 alt={data.waermepumpe_fifth_card_image_alt}
                 fill
                 className="object-cover"
-                priority
-                    sizes=" 100vw"
+                loading="eager"
+                sizes=" 100vw"
 
               />
             </div>
@@ -82,23 +81,22 @@ export default function WaermepumpePartnerSection({ data }) {
 
           {/* Carousel on the right */}
           <div className="w-full lg:w-1/2 flex flex-col">
-            <div 
+            <div
               className="relative flex-grow overflow-hidden mb-4"
               onMouseEnter={() => setIsAutoPlaying(false)}
               onMouseLeave={() => setIsAutoPlaying(true)}
             >
-              <div 
-                className={`flex flex-col gap-6 transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] ${
-                  transitionDirection === 'right' 
-                    ? 'animate-slide-right' 
+              <div
+                className={`flex flex-col gap-6 transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)] ${transitionDirection === 'right'
+                    ? 'animate-slide-right'
                     : 'animate-slide-left'
-                }`}
+                  }`}
                 key={currentIndex}
               >
                 {getCurrentPairs().map((item, pairIndex) => {
                   const featureIndex = currentIndex * 2 + pairIndex;
                   const Icon = iconList[featureIndex % iconList.length];
-                  
+
                   return (
                     <div
                       key={featureIndex}
@@ -125,7 +123,7 @@ export default function WaermepumpePartnerSection({ data }) {
             {/* Navigation controls - now properly visible */}
             {features.length > 2 && (
               <div className="flex items-center justify-center gap-4 mt-4">
-                <button 
+                <button
                   onClick={() => {
                     prevPair();
                     handleUserInteraction();
@@ -135,7 +133,7 @@ export default function WaermepumpePartnerSection({ data }) {
                 >
                   <FaChevronLeft className="text-gray-600" />
                 </button>
-                
+
                 <div className="flex gap-2 mx-4">
                   {Array.from({ length: totalPairs }).map((_, idx) => (
                     <button
@@ -145,15 +143,14 @@ export default function WaermepumpePartnerSection({ data }) {
                         handleUserInteraction();
                         setTransitionDirection(idx > currentIndex ? 'right' : 'left');
                       }}
-                      className={`w-3 h-3 rounded-full transition-all ${
-                        idx === currentIndex ? 'bg-[#669933] w-6' : 'bg-gray-400'
-                      }`}
+                      className={`w-3 h-3 rounded-full transition-all ${idx === currentIndex ? 'bg-[#669933] w-6' : 'bg-gray-400'
+                        }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
                   ))}
                 </div>
-                
-                <button 
+
+                <button
                   onClick={() => {
                     nextPair();
                     handleUserInteraction();

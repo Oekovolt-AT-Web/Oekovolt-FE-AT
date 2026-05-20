@@ -1,5 +1,5 @@
-"use client"
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+"use client";
+
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FaArrowRight } from "react-icons/fa";
@@ -10,11 +10,11 @@ const BannerSection = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src={`${API_IMG_URL}${data.image}`}
-          alt={data.direkt_image_alt_text || "Banner Image"}
+          src={data?.image ? `/api/image?path=${data?.image}` : "/Images/Jobs/jobs3.jpg"}
+          alt={data?.direkt_image_alt_text || "Banner Image"}
           fill
           className="object-cover"
-          priority
+          loading="eager"
           sizes="100vw"
         />
       </div>
@@ -31,11 +31,11 @@ const BannerSection = ({ data }) => {
         {/* Image section on mobile/tablet, stays empty on desktop */}
         <div className="w-full lg:w-1/2 h-[250px] sm:h-[300px] lg:h-auto hidden relative">
           <Image
-            src={`${API_IMG_URL}${data.image}`}
-            alt={data.direkt_image_alt_text || "Banner Image"}
+            src={data?.image ? `/api/image?path=${data?.image}` : "/Images/Jobs/jobs3.jpg"}
+            alt={data?.direkt_image_alt_text || "Banner Image"}
             fill
             className="object-cover"
-            priority
+            loading="eager"
             sizes="100vw"
           />
         </div>
@@ -47,12 +47,12 @@ const BannerSection = ({ data }) => {
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-46 bg-white/80 lg:bg-transparent">
           <div className="max-w-xl space-y-2 text-center lg:text-left">
             <p className="text-md  text-[#669933] uppercase ">
-              {data.subtitle}
+              {data?.subtitle}
             </p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
-              {data.title}
+              {data?.title}
             </h2>
-            {data.direkt_banner_options.map((item, idx) => (
+            {data?.direkt_banner_options?.map((item, idx) => (
               <motion.li
                 key={idx}
                 className="flex items-start gap-3"
@@ -63,7 +63,7 @@ const BannerSection = ({ data }) => {
                 <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
                   <FaArrowRight className="text-white text-xs" />
                 </div>
-                <span className="text-gray-700 text-lg">{item.options}</span>
+                <span className="text-gray-700 text-lg">{item?.options}</span>
               </motion.li>
             ))}
           </div>

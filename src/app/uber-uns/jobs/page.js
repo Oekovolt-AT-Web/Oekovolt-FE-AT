@@ -1,6 +1,8 @@
+// uber-uns/jobs/page.js
+
 import JobsInfo from "@/components/Jobs/jobs";
 import JobListings from "@/components/Jobs/jobsposition";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import EndSection from "@/components/Reusable/end";
 import JobsBannerSection from "@/components/Jobs/banner";
 import JobsInfoSection from "@/components/Jobs/info";
@@ -9,27 +11,99 @@ import JobsTechnologySection from "@/components/Jobs/jobssection";
 import JobsAnotherDesign from "@/components/Jobs/endsection";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.jobs_page.api.get_jobs_de`;
+const JOBS_LIST_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
+const JOBS_PAGE_URL = "https://www.oekovolt.de/uber-uns/jobs";
+
+async function fetchJobsPageData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
+async function fetchJobsList() {
+  if (!isApiConfigured()) {
+    return [];
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(JOBS_LIST_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      console.error(`Jobs API returned ${response.status}`);
+      return [];
+    }
+
+    const data = await response.json();
+    if (Array.isArray(data?.message)) {
+      return data.message;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching jobs list:", error);
+    return [];
+  }
+}
 
 export async function generateMetadata() {
-  // Fetch data for metadata
-  let seoData = null;
-  try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 3600 } }) ;
-    const json = await res.json();
-    seoData = json.message;
-  } catch (error) {
-    console.error("Failed to fetch SEO data", error);
+  const seoData = await fetchJobsPageData();
+
+  const defaultKeywords = [
+    "Solar Jobs",
+    "Photovoltaik Karriere",
+    "Erneuerbare Energien Stellen",
+    "Ökovolt Jobs",
+    "Energiebranche Karriere",
+  ];
+
+  if (!seoData) {
     // Fallback metadata if API fails
     return {
       title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
       description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
-      keywords: ["Solar Jobs", "Photovoltaik Karriere", "Erneuerbare Energien Stellen", "Ökovolt Jobs", "Energiebranche Karriere"],
-      alternates: { canonical: "https://www.oekovolt.de/uber-uns/jobs" },
+      keywords: defaultKeywords,
+      alternates: { canonical: JOBS_PAGE_URL },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
         locale: "de_DE",
-        url: "https://www.oekovolt.de/uber-uns/jobs",
+        url: JOBS_PAGE_URL,
         siteName: "Ökovolt Deutschland",
         title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
         description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche bei Ökovolt.",
@@ -45,14 +119,6 @@ export async function generateMetadata() {
   }
 
   // Process keywords - combine API keywords with defaults if available
-  const defaultKeywords = [
-    "Solar Jobs",
-    "Photovoltaik Karriere",
-    "Erneuerbare Energien Stellen",
-    "Ökovolt Jobs",
-    "Energiebranche Karriere",
-  ];
-
   const apiKeywords = seoData?.keywords
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
@@ -64,12 +130,12 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: "https://www.oekovolt.de/uber-uns/jobs" },
+    alternates: { canonical: JOBS_PAGE_URL },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       locale: "de_DE",
-      url: "https://www.oekovolt.de/uber-uns/jobs",
+      url: JOBS_PAGE_URL,
       siteName: "Ökovolt Deutschland",
       title,
       description,
@@ -84,24 +150,11 @@ export async function generateMetadata() {
   };
 }
 
-const JOBS_LIST_URL = `https://backoffice.oekovolt.de/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
-const JOBS_PAGE_URL = "https://www.oekovolt.de/uber-uns/jobs";
-
 export default async function JobsPage() {
-  let data = null;
-  let jobsList = [];
-
-  try {
-    const [pageRes, jobsRes] = await Promise.all([
-      fetch(DATA_URL, { next: { revalidate: 60 } }),
-      fetch(JOBS_LIST_URL, { next: { revalidate: 3600 } }),
-    ]);
-    data = (await pageRes.json()).message;
-    const jobsData = await jobsRes.json();
-    if (Array.isArray(jobsData?.message)) jobsList = jobsData.message;
-  } catch (error) {
-    console.error("Failed to fetch jobs data", error);
-  }
+  const [data, jobsList] = await Promise.all([
+    fetchJobsPageData(),
+    fetchJobsList(),
+  ]);
 
   const jobListingSchema = jobsList.length > 0 ? {
     "@context": "https://schema.org",
@@ -123,17 +176,32 @@ export default async function JobsPage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
-      { "@type": "ListItem", position: 2, name: "Über Uns", item: "https://www.oekovolt.de/uber-uns/team" },
+      { "@type": "ListItem", position: 2, name: "Über Uns", item: "https://www.oekovolt.de/uber-uns" },
       { "@type": "ListItem", position: 3, name: "Jobs", item: JOBS_PAGE_URL },
     ],
   };
 
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${JOBS_PAGE_URL}/#webpage`,
+    url: JOBS_PAGE_URL,
+    name: data?.title || "Karriere bei Ökovolt | Jobs in der Solarbranche",
+    description: data?.description || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
+    inLanguage: "de-DE",
+    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    about: { "@id": "https://www.oekovolt.de/#organization" },
+    datePublished: "2020-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    breadcrumb: breadcrumbSchema,
+  };
+
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       {jobListingSchema && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobListingSchema) }} />
       )}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <JobsBannerSection data={data} />
       <JobsInfoSection data={data} />
       <JobListings data={data} />

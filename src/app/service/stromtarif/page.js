@@ -1,5 +1,7 @@
+// service/stromtarif/page.js
+
 import React from "react";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import BannerSection from "@/components/Stromtarif/banner";
 import DynamicGreenEnergy from "@/components/Stromtarif/second";
 import DynamicInfoSection from "@/components/Stromtarif/third";
@@ -11,77 +13,143 @@ import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import EndSection from "@/components/Reusable/end";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.dynamischer_stromtarif_service_page.api.get_dynamischer_page_with_keywords`;
+const PAGE_URL = "https://www.oekovolt.de/service/stromtarif";
 
+async function fetchStromtarifData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
 
 export async function generateMetadata() {
-  // Fetch data for metadata
-  let seoData = null;
-  try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 3600 } }) ;
-    const json = await res.json();
-    seoData = json.message;
-  } catch (error) {
-    console.error("Failed to fetch SEO data", error);
+  const seoData = await fetchStromtarifData();
+
+  const defaultKeywords = [
+    "Dynamischer Stromtarif",
+    "Flexibler Strompreis",
+    "Stromtarif für PV-Anlagen",
+    "Intelligenter Stromtarif",
+    "Energiekosten optimieren",
+  ];
+
+  if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt",
-      alternates: { canonical: "https://www.oekovolt.de/service/stromtarif" },
-      openGraph: { type: "website", locale: "de_DE", url: "https://www.oekovolt.de/service/stromtarif", siteName: "Ökovolt Deutschland", title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt", description: "Flexible Stromtarife für Photovoltaik-Besitzer.", images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromtarif" }] },
-      twitter: { card: "summary_large_image", title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt", description: "Flexible Stromtarife für Photovoltaik-Besitzer.", images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
-      description:
-        "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
-      keywords: [
-        "Dynamischer Stromtarif",
-        "Flexibler Strompreis",
-        "Stromtarif für PV-Anlagen",
-        "Intelligenter Stromtarif",
-        "Energiekosten optimieren",
-      ],
-    
+      title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+      description: "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
+      keywords: defaultKeywords,
+      alternates: { canonical: PAGE_URL },
+      robots: { index: true, follow: true },
+      openGraph: {
+        type: "website", 
+        locale: "de_DE", 
+        url: PAGE_URL, 
+        siteName: "Ökovolt Deutschland",
+        title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+        description: "Flexible Stromtarife für Photovoltaik-Besitzer.",
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromtarif" }],
+      },
+      twitter: { 
+        card: "summary_large_image", 
+        title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland", 
+        description: "Flexible Stromtarife für Photovoltaik-Besitzer.", 
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      },
     };
   }
 
   // Process keywords - use API keywords if available, otherwise fallback
   const apiKeywords = seoData?.keywords
     ? seoData.keywords.split(/,\s*/)
-    : [
-        "Dynamischer Stromtarif",
-        "Flexibler Strompreis",
-        "Stromtarif für PV-Anlagen",
-        "Intelligenter Stromtarif",
-        "Energiekosten optimieren",
-      ];
+    : defaultKeywords;
 
-  const title = seoData?.title || "Dynamischer Stromtarif für PV-Anlagen | Ökovolt";
+  const title = seoData?.title || "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland";
   const description = seoData?.description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.";
-  const canonical = "https://www.oekovolt.de/service/stromtarif";
+  const canonical = PAGE_URL;
 
   return {
-    title, description, keywords: apiKeywords,
+    title, 
+    description, 
+    keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", locale: "de_DE", url: canonical, siteName: "Ökovolt Deutschland",
-      title, description,
+      type: "website", 
+      locale: "de_DE", 
+      url: canonical, 
+      siteName: "Ökovolt Deutschland",
+      title, 
+      description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Dynamischer Stromtarif" }],
     },
-    twitter: { card: "summary_large_image", title, description, images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
+    twitter: { 
+      card: "summary_large_image", 
+      title, 
+      description, 
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    },
   };
 }
 
 export default async function StromtarifPage() {
-  let data = null;
+  const data = await fetchStromtarifData();
 
-  try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
-    const json = await res.json();
-    data = json.message;
-  } catch (error) {
-    console.error("Failed to fetch stromtarif data", error);
-  }
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${PAGE_URL}/#webpage`,
+    url: PAGE_URL,
+    name: data?.title || "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+    description: data?.description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
+    inLanguage: "de-DE",
+    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    about: { "@id": "https://www.oekovolt.de/#organization" },
+    datePublished: "2020-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
+        { "@type": "ListItem", position: 2, name: "Service", item: "https://www.oekovolt.de/service" },
+        { "@type": "ListItem", position: 3, name: "Stromtarif", item: PAGE_URL },
+      ],
+    },
+  };
 
   return (
     <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <BannerSection data={data} />
       <FlexiblePowerSection data={data} />
       <DynamicInfoSection data={data} />

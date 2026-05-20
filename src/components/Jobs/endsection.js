@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function JobsAnotherDesign({ data }) {
   return (
@@ -10,7 +10,7 @@ export default function JobsAnotherDesign({ data }) {
         <div className="relative w-full max-w-xl">
           <div className="relative z-10 rounded-lg overflow-hidden">
             <Image
-             src={`${API_IMG_URL}${data.fifth_card_image}`} // Replace with your image path
+              src={data.fifth_card_card_image ? `/api/image?path=${data.fifth_card_image}` : "/Images/Jobs/jobs3.jpg"} // Replace with your image path
               alt={data.fifth_card_alt_text}
               width={600}
               height={800}
@@ -31,8 +31,8 @@ export default function JobsAnotherDesign({ data }) {
             <div className="card-content flex flex-col items-center lg:flex-row lg:items-start md:flex-row md:items-start gap-4">
               {data.cardImage && (
                 <Image
-                   src={`${API_IMG_URL}${data.fifth_card_card_image}`} // Replace with your image path
-              alt={data.fifth_card_card_alt_text}
+                  src={data?.fifth_card_card_image ? `/api/image?path=${data.fifth_card_card_image}` : "/Images/Jobs/jobs3.jpg"} // Replace with your image path
+                  alt={data.fifth_card_card_alt_text}
                   width={150}
                   height={150}
                   className="hidden lg:block md:block rounded-md object-cover"

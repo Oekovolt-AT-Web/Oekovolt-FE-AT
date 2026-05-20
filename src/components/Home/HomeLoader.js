@@ -28,7 +28,7 @@ export default function HomeLoader() {
         alt="Ökovolt lädt..."
         width={120}
         height={120}
-        priority
+        loading="eager"
       />
     </div>
   );

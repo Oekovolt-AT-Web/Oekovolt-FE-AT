@@ -1,5 +1,4 @@
 import React from "react";
-
 const FAQInfoSection = ({ data }) => {
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12">

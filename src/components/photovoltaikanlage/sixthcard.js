@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaChevronRight } from "react-icons/fa";
@@ -19,11 +19,11 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
           {imageCount === 1 && (
             <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md">
               <Image
-                src={`${API_IMG_URL}${images[0].image}`}
+                src={image[0]?.image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={images[0].alt_image || "solar"}
                 fill
                 className="object-cover"
-                    sizes=" 100vw"
+                sizes=" 100vw"
 
               />
             </div>
@@ -37,7 +37,7 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                   className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
                 >
                   <Image
-                    src={`${API_IMG_URL}${img.image}`}
+                    src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
                     alt={img.alt_image || "solar"}
                     fill
                     className="object-cover"
@@ -58,11 +58,11 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                     className="relative w-full h-60 aspect-[4/3] rounded-xl overflow-hidden shadow-md"
                   >
                     <Image
-                      src={`${API_IMG_URL}${img.image}`}
+                      src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
                       alt={img.alt_image || "solar"}
                       fill
                       className="object-cover"
-                    sizes=" 100vw"
+                      sizes=" 100vw"
 
                     />
                   </div>
@@ -70,53 +70,53 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
               </div>
               <div className="relative w-full h-60 aspect-[4/3] rounded-xl overflow-hidden shadow-md">
                 <Image
-                  src={`${API_IMG_URL}${images[2].image}`}
+                  src={images[2].image ? `/api/image?path=${images[2].image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={images[2].alt_image || "solar"}
                   fill
                   className="object-cover"
-                    sizes=" 100vw"
+                  sizes=" 100vw"
 
                 />
               </div>
             </>
           )}
 
-         {imageCount === 4 && (
-  <div className="flex flex-col md:flex-row items-stretch gap-4">
-    {/* Large image on the left */}
-    <div className="w-full md:w-1/2">
-      <div className="relative w-full h-full aspect-[4/3] rounded-xl overflow-hidden shadow-md">
-        <Image
-          src={`${API_IMG_URL}${images[0].image}`}
-          alt={images[0].alt_image || "solar"}
-          fill
-          className="object-cover"
+          {imageCount === 4 && (
+            <div className="flex flex-col md:flex-row items-stretch gap-4">
+              {/* Large image on the left */}
+              <div className="w-full md:w-1/2">
+                <div className="relative w-full h-full aspect-[4/3] rounded-xl overflow-hidden shadow-md">
+                  <Image
+                    src={images[0].image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={images[0].alt_image || "solar"}
+                    fill
+                    className="object-cover"
                     sizes=" 100vw"
 
-        />
-      </div>
-    </div>
+                  />
+                </div>
+              </div>
 
-    {/* Three stacked smaller images on the right */}
-    <div className="w-full md:w-1/2 h-120 flex flex-col gap-4">
-      {images.slice(1, 4).map((img, index) => (
-        <div
-          key={index}
-          className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
-        >
-          <Image
-            src={`${API_IMG_URL}${img.image}`}
-            alt={img.alt_image || "solar"}
-            fill
-            className="object-cover"
-                    sizes=" 100vw"
+              {/* Three stacked smaller images on the right */}
+              <div className="w-full md:w-1/2 h-120 flex flex-col gap-4">
+                {images.slice(1, 4).map((img, index) => (
+                  <div
+                    key={index}
+                    className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
+                  >
+                    <Image
+                      src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
+                      alt={img.alt_image || "solar"}
+                      fill
+                      className="object-cover"
+                      sizes=" 100vw"
 
-          />
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
         </div>
 

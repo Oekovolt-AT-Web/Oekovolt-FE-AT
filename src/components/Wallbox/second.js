@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FaLeaf } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -20,7 +20,7 @@ const WallboxSecondCard2 = ({ data }) => {
           viewport={{ once: true }}
         >
           <Image
-            src={`${API_IMG_URL}${data.wallbox_second_card_image}`}
+            src={`/api/image?path=${data.wallbox_second_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.wallbox_second_card_image_alt || "Map"}
             fill
             className="object-cover"

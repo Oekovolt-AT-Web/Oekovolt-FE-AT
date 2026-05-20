@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const JobsInfo = ({ data }) => {
   return (
@@ -24,11 +24,11 @@ const JobsInfo = ({ data }) => {
           <div className="lg:w-1/2">
             <div className="relative h-full w-full rounded-lg overflow-hidden shadow-lg min-h-[400px] ">
               <Image
-                          src={`${API_IMG_URL}${data.fourth_card_image}`} // Replace with your image path
-              
+                src={data.fourth_card_image ? `/api/image?path=${data.fourth_card_image}` : "/Images/Jobs/jobs3.jpg"} // Replace with your image path
+
                 alt={data.fourth_card_alt_text}
                 fill
-                priority
+                loading="eager"
                 className="object-cover rounded-lg"
                 sizes="100vw"
               />

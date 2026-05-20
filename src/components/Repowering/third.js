@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle2, BarChart3, MonitorSmartphone } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image"; // ✅ Import Next.js Image
 
 const icons = [BarChart3, MonitorSmartphone, CheckCircle2];
@@ -40,12 +40,12 @@ const PhotovoltaikOptimization = ({ data }) => {
             className="w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg relative"
           >
             <Image
-              src={`${API_IMG_URL}${data.second_card_image}`}
+              src={data.second_card_image ? `/api/image?path=${data.second_card_image}` : "/Images/Jobs/jobs3.jpg"}
               alt={data.second_card_alt_text || "Photovoltaik image"}
               fill
               className="object-cover object-center"
-              priority
-                    sizes=" 100vw"
+              loading="eager"
+              sizes=" 100vw"
             />
           </motion.div>
         </div>

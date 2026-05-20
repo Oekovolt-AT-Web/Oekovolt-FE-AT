@@ -1,47 +1,155 @@
+// src/app/forderungen/baurecht/page.js
+
 import BaurechtBannerSection from "@/components/Forderungen/Baurecht/banner";
 import BaurechtPV from "@/components/Forderungen/Baurecht/second";
 import EndSection from "@/components/Reusable/end";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import React from "react";
 
-export const metadata = {
-  title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
-  description:
-    "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
-  keywords: [
-    "Photovoltaik Baurecht",
-    "PV-Anlage Genehmigung",
-    "Bauvorschriften Photovoltaik",
-    "Solaranlage Abstand",
-    "Förderungen Baurecht",
-  ],
-  alternates: {
-    canonical: "https://www.oekovolt.de/forderungen/baurecht",
-  },
-  openGraph: {
-    type: "website",
-    url: "https://www.oekovolt.de/forderungen/baurecht",
-    title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
-    description:
-      "Baurechtliche Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten und Bauvorschriften.",
-    images: [
-      {
-        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Deutschland",
-      },
-    ],
-  },
-};
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.baurecht.api.get_baurecht_data`;
 
-const page = () => {
+async function fetchBaurechtData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
+// Generate metadata dynamically from fetched data
+export async function generateMetadata() {
+  const data = await fetchBaurechtData();
+  const bannerData = data?.message?.banner;
+
+  if (!data) {
+    // Fallback metadata if API fails
+    return {
+      title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
+      description: "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
+      keywords: [
+        "Photovoltaik Baurecht",
+        "PV-Anlage Genehmigung",
+        "Bauvorschriften Photovoltaik",
+        "Solaranlage Abstand",
+        "Förderungen Baurecht",
+      ],
+      alternates: {
+        canonical: "https://www.oekovolt.de/forderungen/baurecht",
+      },
+      openGraph: {
+        type: "website",
+        url: "https://www.oekovolt.de/forderungen/baurecht",
+        title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
+        description: "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland.",
+        images: [
+          {
+            url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+            width: 1200,
+            height: 630,
+            alt: "Ökovolt Deutschland",
+          },
+        ],
+      },
+    };
+  }
+
+  const title = bannerData?.title || "Baurecht für Photovoltaik | Ökovolt Deutschland";
+  const description = bannerData?.description ||
+    "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.";
+
+  return {
+    title: title,
+    description: description,
+    keywords: [
+      "Photovoltaik Baurecht",
+      "PV-Anlage Genehmigung",
+      "Bauvorschriften Photovoltaik",
+      "Solaranlage Abstand",
+      "Förderungen Baurecht",
+    ],
+    alternates: {
+      canonical: "https://www.oekovolt.de/forderungen/baurecht",
+    },
+    openGraph: {
+      type: "website",
+      url: "https://www.oekovolt.de/forderungen/baurecht",
+      title: title,
+      description: description,
+      images: [
+        {
+          url: bannerData?.image || "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: bannerData?.alt_image || "Ökovolt Deutschland",
+        },
+      ],
+    },
+  };
+}
+
+const BAURECHT_PAGE_URL = "https://www.oekovolt.de/forderungen/baurecht";
+
+export default async function Baurecht() {
+  const response = await fetchBaurechtData();
+  const data = response?.message;
+
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${BAURECHT_PAGE_URL}/#webpage`,
+    url: BAURECHT_PAGE_URL,
+    name: data?.banner?.title || "Baurecht für Photovoltaik | Ökovolt Deutschland",
+    description: data?.banner?.description || "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
+    inLanguage: "de-DE",
+    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    about: { "@id": "https://www.oekovolt.de/#organization" },
+    datePublished: "2020-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
+        { "@type": "ListItem", position: 2, name: "Förderungen", item: "https://www.oekovolt.de/forderungen" },
+        { "@type": "ListItem", position: 3, name: "Baurecht", item: BAURECHT_PAGE_URL },
+      ],
+    },
+  };
+
   return (
     <div>
-      <BaurechtBannerSection />
-      <BaurechtPV />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <BaurechtBannerSection data={data?.banner} />
+      <BaurechtPV data={data?.body} />
       <EndSection />
     </div>
   );
-};
-
-export default page;
+}

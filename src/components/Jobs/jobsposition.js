@@ -11,9 +11,9 @@ import {
   MdWorkOutline,
 } from "react-icons/md";
 import { FaChevronRight } from "react-icons/fa";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { MdSentimentDissatisfied } from "react-icons/md";
-import { generateJobSlug } from "@/lib/slugify";
+import { generateJobSlug as generateSlug } from "@/lib/slugify";
+import { getJobs } from "@/lib/api/uber-uns/jobs_api";
 
 const Buttons = styled.div`
   display: flex;
@@ -71,15 +71,9 @@ const JobListings = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`
-        );
+        const data = await getJobs();
 
-        if (!response.ok) throw new Error("Failed to fetch data");
-
-        const data = await response.json();
-
-        setJobsPosition(data.message || []);
+        setJobsPosition(data?.message || []);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -116,7 +110,7 @@ const JobListings = () => {
         ) : jobsPosition.length > 0 ? (
           <div className="space-y-8">
             {jobsPosition.map((job, index) => {
-              const slug = generateJobSlug(job.title || "unnamed-job");
+              const slug = generateSlug(job.title || "unnamed-job");
 
               return (
                 <motion.div
@@ -134,7 +128,7 @@ const JobListings = () => {
                       <div className="flex flex-wrap text-gray-600 text-sm gap-x-6 gap-y-2">
                         <span className="flex items-center gap-1">
                           <MdBusinessCenter className="text-[#669933]" />
-                          {"company" in job ? job.company : "Oekovolt Deutschland"}
+                          {"company" in job ? job.company : "Ökovolt Austria"}
                         </span>
                         <span className="flex items-center gap-1">
                           <MdLocationOn className="text-[#669933]" />
@@ -201,12 +195,12 @@ const JobListings = () => {
           </div>
         ) : (
           <div className="bg-white p-6 rounded-xl shadow-lg text-center text-gray-700 flex flex-col items-center space-y-3 border border-gray-200">
-          <MdSentimentDissatisfied className="text-5xl text-yellow-500" />
-          <h3 className="text-lg font-semibold">Keine offenen Stellen</h3>
-          <p className="text-sm max-w-md">
-            Derzeit sind keine offenen Stellen verfügbar. Bitte schauen Sie später wieder vorbei.
-          </p>
-        </div>
+            <MdSentimentDissatisfied className="text-5xl text-yellow-500" />
+            <h3 className="text-lg font-semibold">Keine offenen Stellen</h3>
+            <p className="text-sm max-w-md">
+              Derzeit sind keine offenen Stellen verfügbar. Bitte schauen Sie später wieder vorbei.
+            </p>
+          </div>
         )}
       </div>
     </div>

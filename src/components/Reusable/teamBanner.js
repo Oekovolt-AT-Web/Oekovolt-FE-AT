@@ -6,13 +6,13 @@ const BannerSection = ({ data }) => {
     <section className="relative h-[300px] w-full overflow-hidden lg:h-[400px]">
       <div className="absolute inset-0">
         <Image
-          src={`${data.img}`}
+          src={`${data?.img}`}
           alt="Banner Background"
           fill
           quality={100}
           className="object-cover object-center w-full h-full"
           sizes="100vw"
-          priority
+          loading="eager"
           style={{
             objectPosition: "center center",
           }}
@@ -22,8 +22,8 @@ const BannerSection = ({ data }) => {
       <div className="relative z-10 h-full flex items-center max-w-7xl mx-auto">
         <div className="container mx-auto px-4">
           <div className=" text-white">
-            <h1 className="max-w-[660px] text-[28px]  md:text-[40px] font-medium mb-4">{data.title}</h1>
-            <p className="max-w-[560px] text-[20px] font-medium mb-4">{data.description}</p>
+            <h1 className="max-w-[660px] text-[28px]  md:text-[40px] font-medium mb-4">{data?.title}</h1>
+            <p className="max-w-[560px] text-[20px] font-medium mb-4">{data?.description}</p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { motion } from "framer-motion";
 import { CheckCircle, Settings, Cpu, FileText } from "lucide-react";
 
@@ -30,11 +30,11 @@ const MieterstromSection = ({ data }) => {
           className="relative w-full h-[300px] md:h-[450px] rounded-xl overflow-hidden shadow-lg"
         >
           <Image
-            src={`${API_IMG_URL}${card.image}`}
+            src={card.image ? `/api/image?path=${card.image}` : "/Images/Jobs/jobs3.jpg"}
             alt={card.alt || "Oekovolt Mieterstrom"}
             fill
             className="object-cover"
-                    sizes=" 100vw"
+            sizes=" 100vw"
 
           />
         </motion.div>
@@ -55,7 +55,7 @@ const MieterstromSection = ({ data }) => {
           >
             {card.title}
           </motion.p>
-        
+
           <h3 className="text-2xl md:text-3xl mb-4 text-gray-800">
             {card.tableTitle}
           </h3>
