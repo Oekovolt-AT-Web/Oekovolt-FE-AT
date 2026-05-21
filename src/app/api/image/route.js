@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const BASE_URL = "http://10.10.200.203:8000";
+const BASE_URL = process.env.SERVER;
 
 export async function GET(req) {
   try {

@@ -145,6 +145,11 @@ const Footer = () => {
                       Impressum
                     </a>
                   </li>
+                  <li>
+                    <a href="https://oekovolt.integrityline.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#669933] transition-colors">
+                      Hinweisgebersystem
+                    </a>
+                  </li>
                 </ul>
                 </nav>
               </div>
