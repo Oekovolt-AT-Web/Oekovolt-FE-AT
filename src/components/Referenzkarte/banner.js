@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const ReferenzkarteBannerSection = ({ data }) => {
   return (
@@ -9,12 +9,13 @@ const ReferenzkarteBannerSection = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0 ">
         <Image
-          src={`${API_IMG_URL}${data.image}`}
+          src={data?.image ? `/api/image?path=${data.image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.alt_image}
           fill
+          sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
           quality={100}
           className="object-cover w-full h-full object-center"
-          priority
+          loading="eager"
           style={{
             objectPosition: "center center",
           }}

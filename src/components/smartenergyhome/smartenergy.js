@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { MdBolt, MdCheckCircle } from "react-icons/md";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const SmartEnergySection = ({ data }) => {
   if (!data) return null;
@@ -50,7 +50,7 @@ const SmartEnergySection = ({ data }) => {
           viewport={{ once: true }}
         >
           <Image
-            src={`${API_IMG_URL}${data.second_card_image}`}
+            src={`/api/image?path=${data.second_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.second_image_alt_txt}
             fill
             className="object-cover w-full h-full"

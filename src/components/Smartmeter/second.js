@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { motion } from "framer-motion";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -100,13 +100,12 @@ const SmartMeterCardSection = ({ data }) => {
           {/* right Side - Image (Stretched) */}
           <div className="w-full lg:w-1/2 relative h-64 sm:h-80 lg:h-[600px]">
             <Image
-              src={`${API_IMG_URL}${data.smart_meter_first_card_image}`}
+              src={`/api/image?path=${data.smart_meter_first_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.smart_meter_first_card_alt_image || "Smart Meter"}
-             fill
-                    sizes=" 100vw"
-
+              fill
+              sizes=" 100vw"
               className="object-cover object-center rounded-t-2xl lg:rounded-r-2xl lg:rounded-tl-none "
-              priority
+              loading="eager"
             />
             <motion.div
               className="absolute inset-0 bg-[#669933]/20 rounded-t-2xl lg:rounded-r-2xl lg:rounded-tl-none"

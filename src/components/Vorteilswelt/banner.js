@@ -1,4 +1,4 @@
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const BannerSection = ({ data }) => {
@@ -7,13 +7,13 @@ const BannerSection = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src={`${API_IMG_URL}${data.Image}`}
+          src={`/api/image?path=${data.Image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.alt || "Banner Image"}
           fill
           className="object-cover"
-          priority
-                    sizes=" 100vw"
-                    quality={100}
+          loading="eager"
+          sizes=" 100vw"
+          quality={100}
 
         />
       </div>
@@ -30,13 +30,13 @@ const BannerSection = ({ data }) => {
         {/* Image section on mobile/tablet, stays empty on desktop */}
         <div className="w-full lg:w-1/2 h-[250px] sm:h-[300px] lg:h-auto hidden relative">
           <Image
-            src={`${API_IMG_URL}${data.Image}`}
+            src={`/api/image?path=${data.Image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.alt || "Banner Image"}
             fill
             className="object-cover"
-            priority
-                    sizes=" 100vw"
-                    quality={100}
+            loading="eager"
+            sizes=" 100vw"
+            quality={100}
 
           />
         </div>

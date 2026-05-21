@@ -35,9 +35,9 @@ const TechnologySection = ({ data = {} }) => {
             <Image
               src={image1}
               alt="Image 1"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+              fill
+              sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
+              className="obkect-cover rounded-md"
             />
           )}
         </div>
@@ -46,9 +46,9 @@ const TechnologySection = ({ data = {} }) => {
             <Image
               src={image2}
               alt="Image 2"
-              layout="fill"
-              objectFit="cover"
-              className="rounded-md"
+              fill
+              sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
+              className="object-cover rounded-md"
             />
           )}
         </div>

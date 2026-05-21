@@ -1,15 +1,15 @@
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FaSolarPanel } from 'react-icons/fa';
 
 
-const HeroEnergy = ({data}) => {
- 
+const HeroEnergy = ({ data }) => {
+
   if (!data) return null;
 
   return (
     <div className="max-w-7xl mx-auto relative flex flex-col lg:flex-row items-center gap-10 px-6 md:px-12 py-10 md:py-16 bg-white overflow-hidden">
-      
+
       {/* Image section */}
       <div className="w-full lg:w-1/2 relative px-6 ">
         {/* Gradient box - hidden on mobile */}
@@ -17,13 +17,13 @@ const HeroEnergy = ({data}) => {
 
         <div className="relative z-10">
           <Image
-            src={`${API_IMG_URL}${data.first_card_image}`}
+            src={`/api/image?path=${data.first_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt="Smart Energy"
             className="rounded-tl-[140px] w-full h-auto"
             width={570}
             height={300}
             quality={100}
-            priority
+            loading="eager"
 
           />
         </div>
@@ -60,9 +60,9 @@ const HeroEnergy = ({data}) => {
             alt="Solar Icon"
             fill
             quality={100}
-            priority
+            loading="eager"
             className="object-contain"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 
           />
         </div>

@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const MieterstromBenefits = ({ data }) => {
   if (!data) return null;
@@ -23,7 +23,7 @@ const MieterstromBenefits = ({ data }) => {
           transition={{ duration: 0.6, delay: 0.1 }}
           viewport={{ once: true }}
         >
-          
+
           <h3 className="text-2xl md:text-3xl mb-4 text-gray-800">
             {mieterstorm_second_card_title}
           </h3>
@@ -35,16 +35,16 @@ const MieterstromBenefits = ({ data }) => {
                 whileHover={{ scale: 1.02 }}
                 className="flex flex-col items-start bg-gray-50 rounded-lg shadow-sm p-5 transition"
               >
-               <div className="w-10 h-10 mb-3">
- <Image
-  src={`${API_IMG_URL}${item.icon}`}
-  alt={item.alt_icon_image || item.title}
-  width={40}
-  height={40}
-  className="object-contain"
-/>
+                <div className="w-10 h-10 mb-3">
+                  <Image
+                    src={item.icon ? `/api/image?path=${item.icon}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={item.alt_icon_image || item.title}
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
 
-</div>
+                </div>
 
                 <h4 className="text-md text-gray-900 mb-1">
                   {item.title}
@@ -65,11 +65,11 @@ const MieterstromBenefits = ({ data }) => {
           className="relative w-full h-[300px] md:h-[450px] rounded-xl overflow-hidden shadow-xl"
         >
           <Image
-            src={`${API_IMG_URL}${mieterstorm_second_card_image}`}
+            src={mieterstorm_second_card_image ? `/api/image?path=${mieterstorm_second_card_image}` : "/Images/Jobs/jobs3.jpg"}
             alt={mieterstorm_second_card_alt_image || "Oekovolt Mieterstrom Vorteile"}
             fill
             className="object-cover"
-                    sizes=" 100vw"
+            sizes=" 100vw"
 
           />
         </motion.div>

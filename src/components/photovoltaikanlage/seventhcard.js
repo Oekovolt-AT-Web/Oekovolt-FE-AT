@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
@@ -119,7 +119,7 @@ const PhotovoltaikSliderSection = ({ data }) => {
                 {/* Image */}
                 <div className="relative w-full h-52 shrink-0">
                   <Image
-                    src={`${API_IMG_URL}${item.image}`}
+                    src={item.image ? `/api/image?path=${item.image}` : "/Images/Jobs/jobs3.jpg"}
                     alt={item.alt_text || "solar"}
                     fill
                     className="object-cover"

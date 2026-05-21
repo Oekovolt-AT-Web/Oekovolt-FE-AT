@@ -1,7 +1,6 @@
 'use client';
 import Image from 'next/image';
 import { FaClock, FaEuroSign, FaCheckCircle, FaRocket } from 'react-icons/fa';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 import { motion } from 'framer-motion';
 
 const iconMap = [FaClock, FaEuroSign, FaCheckCircle, FaRocket];
@@ -20,7 +19,7 @@ export default function WarmepumpeFinancingSection({ data }) {
         >
           <div className="w-full h-[300px] relative rounded-xl shadow-lg overflow-hidden mb-6">
             <Image
-              src={`${API_IMG_URL}${data.warmepumpe_fourth_card_image}`}
+              src={`/api/image?path=${data.warmepumpe_fourth_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.warmepumpe_fourth_card_image_alt}
               fill
               className="object-cover"

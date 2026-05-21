@@ -101,7 +101,7 @@ const ContactSection = () => {
                 alt="Zentrale von Ökovolt Deutschland in Türkheim (Bayern)"
                 fill
                 className="object-cover"
-                priority
+                loading="eager"
                 sizes="100vw"
 
               />

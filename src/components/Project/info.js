@@ -2,9 +2,25 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import { generateSlug } from "@/lib/slugify";
+
+import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
+
+// Slug function inside same file
+function generateSlug(title) {
+  if (!title) return "";
+  return title
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\s–—]+/g, "-")
+    .replace(/\//g, "-")
+    .replace(/[ä]/g, "ae")
+    .replace(/[ö]/g, "oe")
+    .replace(/[ü]/g, "ue")
+    .replace(/[ß]/g, "ss")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -18,12 +34,11 @@ const ProjectCard = ({ project }) => {
     >
       <div className="relative w-full h-full ">
         <Image
-          src={`${API_IMG_URL}${project?.image}`}
+          src={project?.image ? `/api/image?path=${project?.image}` : "/Images/Jobs/jobs3.jpg"}
           alt={`Project - ${project?.location}`}
           fill
-          className={`transition-all duration-500 object-cover object-center ${
-            isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
-          }`}
+          className={`transition-all duration-500 object-cover object-center ${isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
+            }`}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         <div className="absolute inset-0 bg-black/30 transition-opacity duration-300"></div>
@@ -31,9 +46,8 @@ const ProjectCard = ({ project }) => {
 
       <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
         <div
-          className={`transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 ${
-            isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-          }`}
+          className={`transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
         >
           <h3 className="text-white text-lg font-semibold">{project?.location}</h3>
         </div>
@@ -96,12 +110,8 @@ const ProjectsSection = ({ data }) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`
-        );
-        if (!response.ok) throw new Error("Gabim gjate marrjes se te dhenave");
-        const data = await response.json();
-        const formattedEvents = data.message.slice().map((marke) => ({
+        const data = await getProjectItem();
+        const formattedEvents = data?.message?.slice().map((marke) => ({
           location: marke?.title,
           image: marke?.bild_anhagen[0]?.bild_anhagen,
           status: marke?.status,
@@ -121,15 +131,15 @@ const ProjectsSection = ({ data }) => {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-6">
             <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-[18px]">
-              {data.first_card_title}
+              {data?.first_card_title}
               <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
             </h2>
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mt-6">
-              {data.first_card_subtitle}
+              {data?.first_card_subtitle}
             </h2>
           </div>
           <div className="prose prose-lg text-gray-600 space-y-4 text-center text-[18px]">
-            {data.first_card_table?.map((item, key) => (
+            {data?.first_card_table?.map((item, key) => (
               <p key={key}>{item.option}</p>
             ))}
           </div>
@@ -172,11 +182,10 @@ const ProjectsSection = ({ data }) => {
                     key={item}
                     onClick={() => paginate(item)}
                     aria-current={currentPage === item ? "page" : undefined}
-                    className={`flex items-center justify-center w-9 h-9 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#669933] ${
-                      currentPage === item
+                    className={`flex items-center justify-center w-9 h-9 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer select-none focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#669933] ${currentPage === item
                         ? "bg-[#669933] text-white border border-[#669933]"
                         : "bg-white border border-gray-300 text-gray-600 hover:border-[#669933] hover:text-[#669933]"
-                    }`}
+                      }`}
                   >
                     {item}
                   </button>

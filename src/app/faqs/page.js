@@ -1,19 +1,55 @@
+// faqs/page.js
 import BannerSection from "@/components/Faqs/banner";
 import SolarInfoAccordion from "@/components/Faqs/faqs";
 import FAQInfoSection from "@/components/Faqs/info";
 import EndSection from "@/components/Reusable/end";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.faqs_page.api.get_faqs_page`;
 const PAGE_URL = "https://www.oekovolt.de/faqs";
 
-export async function generateMetadata() {
-  let seoData = null;
+async function fetchFaqsData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
   try {
-    const res = await fetch(DATA_URL, { next: { revalidate: 3600 } });
-    const json = await res.json();
-    seoData = json.message;
-  } catch {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
+export async function generateMetadata() {
+  const seoData = await fetchFaqsData();
+
+  if (!seoData) {
+    // Fallback metadata if API fails
     return {
       title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
       description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
@@ -21,12 +57,20 @@ export async function generateMetadata() {
       alternates: { canonical: PAGE_URL },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland",
+        type: "website", 
+        locale: "de_DE", 
+        url: PAGE_URL, 
+        siteName: "Ökovolt Deutschland",
         title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
         description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
       },
-      twitter: { card: "summary_large_image", title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt", description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik.", images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
+      twitter: { 
+        card: "summary_large_image", 
+        title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt", 
+        description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik.", 
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      },
     };
   }
 
@@ -36,27 +80,31 @@ export async function generateMetadata() {
   const description = seoData?.description || "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.";
 
   return {
-    title, description, keywords: apiKeywords,
+    title, 
+    description, 
+    keywords: apiKeywords,
     alternates: { canonical: PAGE_URL },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland",
-      title, description,
+      type: "website", 
+      locale: "de_DE", 
+      url: PAGE_URL, 
+      siteName: "Ökovolt Deutschland",
+      title, 
+      description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
-    twitter: { card: "summary_large_image", title, description, images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
+    twitter: { 
+      card: "summary_large_image", 
+      title, 
+      description, 
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    },
   };
 }
 
 export default async function FaqsPage() {
-  let data = null;
-  try {
-    const res = await fetch(DATA_URL, { next: { revalidate: 60 } });
-    const json = await res.json();
-    data = json.message;
-  } catch (error) {
-    console.error("Failed to fetch FAQs data", error);
-  }
+  const data = await fetchFaqsData();
 
   // Collect all FAQ items across all sections for FAQPage schema
   const allQuestions = [

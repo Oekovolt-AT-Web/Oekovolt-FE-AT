@@ -1,12 +1,12 @@
 "use client";
+import { motion } from "framer-motion";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { motion } from "framer-motion";
 import Slider from "react-slick";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
+import { getPartners } from "@/lib/api/partners/partners_api";
 
 export default function PartnersSection({ data }) {
   const [partners, setPartners] = useState([]);
@@ -31,13 +31,9 @@ export default function PartnersSection({ data }) {
   useEffect(() => {
     const fetchPartners = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.partners.api.partnersde_data`
-        );
-        if (!res.ok) throw new Error("Fehler beim Laden der Partnerdaten");
-        const json = await res.json();
+        const data = await getPartners();
         setPartners(
-          json.message.map((p) => ({
+          data?.message?.map((p) => ({
             name: p.name1,
             image: p.bild_anhagen,
           }))
@@ -75,12 +71,11 @@ export default function PartnersSection({ data }) {
               <div key={i} className="px-4">
                 <div className="relative h-16 w-full">
                   <Image
-                    src={`${API_IMG_URL}${partner.image}`}
-                    alt={partner.name ? `${partner.name} – Ökovolt Photovoltaik Partner` : "Photovoltaik Partner von Ökovolt Deutschland"}
+                    src={partner.image ? `/api/image?path=${partner.image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={partner.name || "Partner"}
                     fill
                     className="object-contain"
                     sizes="(max-width: 468px) 100vw, (max-width: 768px) 50vw, 25vw"
-                    title={partner.name || "Ökovolt Partner"}
                   />
                 </div>
               </div>

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import GoogleReviewsCarousel from "./googlereview";
 import { motion } from "framer-motion";
 
@@ -25,16 +25,16 @@ const ReviewsPage = ({ data }) => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-           
-               <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="text-sm font-semibold text-[#669933] uppercase tracking-wide "
-          >
-            {data.photovoltaik_title_second_card}
-          </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-sm font-semibold text-[#669933] uppercase tracking-wide "
+            >
+              {data.photovoltaik_title_second_card}
+            </motion.p>
             <h3 className="text-4xl md:mb-5 lg:mb-0">
               {data.photovoltaik_subtitle_second_card}
             </h3>
@@ -48,11 +48,11 @@ const ReviewsPage = ({ data }) => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <Image
-              src={`${API_IMG_URL}${data.photovoltaik_image_second_card}`}
+              src={data.photovoltaik_image_second_card ? `/api/image?path=${data.photovoltaik_image_second_card}` : "/Images/Jobs/jobs3.jpg"}
               width={600}
               height={300}
               quality={100}
-              priority
+
               alt={data.photovoltaik_image_second_card_alt}
               className="object-cover object-center rounded-xl"
             />

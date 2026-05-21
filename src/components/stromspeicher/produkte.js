@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { FiBox, FiCheckCircle } from "react-icons/fi"; // Ikonat e reja
 
@@ -56,7 +56,7 @@ export default function HerstellerSlider({ products }) {
               <div className="w-full md:w-1/2">
                 {product.image && (
                   <Image
-                    src={`${API_IMG_URL}${product.image}`}
+                    src={`/api/image?path=${product.image}` || "/Images/Jobs/jobs3.jpg"}
                     alt={product.alt || product.name}
                     width={600}
                     height={400}

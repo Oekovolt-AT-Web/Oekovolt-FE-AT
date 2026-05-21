@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 
 const EnergyOfferSection = ({data}) => {
@@ -25,12 +25,12 @@ const EnergyOfferSection = ({data}) => {
           <div className="hidden lg:absolute bottom-19 right-56 w-[65%] h-[85%] bg-gradient-to-b from-[#669933] to-[#003473] rounded-xl z-10" />
 
           <Image
-            src={`${API_IMG_URL}${data.third_card_image}`}
+            src={`/api/image?path=${data.third_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.third_image_alt_txt}
             width={600}
             height={600}
             className="rounded-xl object-cover w-full h-full relative z-50"
-            priority
+            loading="eager"
           />
         </motion.div>
 

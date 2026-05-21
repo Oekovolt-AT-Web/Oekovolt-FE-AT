@@ -7,6 +7,9 @@ const openSans = Open_Sans({
   weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-open-sans",
+  preload: true,
+  fallback: ["system-ui", "arial"],
+
 });
 
 const BASE_URL = "https://www.oekovolt.de";
@@ -240,10 +243,7 @@ export default function RootLayout({ children }) {
     <html lang="de" dir="ltr">
       <head>
         {/* Resource hints */}
-        <link rel="preconnect" href="https://backoffice.oekovolt.de" />
-        <link rel="dns-prefetch" href="https://backoffice.oekovolt.de" />
-
-        <link rel="dns-prefetch" href="https://unpkg.com" />
+        {/* <link rel="dns-prefetch" href="https://unpkg.com" /> */}
         {/* msapplication tile color for IE/Edge */}
         <meta name="msapplication-TileColor" content="#669933" />
         {/* Geo targeting */}

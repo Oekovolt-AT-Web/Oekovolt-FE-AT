@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FiArrowRight } from "react-icons/fi";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { motion } from "framer-motion";
 import { generateSlug as createSlug } from "@/lib/slugify";
 
@@ -35,7 +35,7 @@ export default function WarmepumpeHerstellerList({ data }) {
                 {item.banner_image && (
                   <div className="relative w-full h-52">
                     <Image
-                      src={`${API_IMG_URL}${item.banner_image}`}
+                      src={`/api/image?path=${item.banner_image}` || "/Images/Jobs/jobs3.jpg"}
                       alt={item.alt_banner_image || "Wärmepumpen Banner"}
                       fill
                       className="object-cover rounded-t-2xl"
@@ -50,7 +50,7 @@ export default function WarmepumpeHerstellerList({ data }) {
                   {item.logo_image && (
                     <div className="relative w-24 h-18 mb-2">
                       <Image
-                        src={`${API_IMG_URL}${item.logo_image}`}
+                        src={`/api/image?path=${item.logo_image}` || "/Images/Jobs/jobs3.jpg"}
                         alt={item.alt_logo_image || "Logo"}
                         fill
                         className="object-contain"

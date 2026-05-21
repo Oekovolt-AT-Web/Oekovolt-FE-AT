@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { FiArrowRight } from "react-icons/fi"; // at the top of your file
 
 const HerstellerSection = ({ data }) => {
@@ -45,21 +45,19 @@ const HerstellerSection = ({ data }) => {
                     animate={i === activeIndex ? "active" : "inactive"}
                     transition={{ duration: 0.3 }}
                     onClick={() => setActiveIndex(i)}
-                    className={`cursor-pointer group flex justify-between items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
-                      i === activeIndex
+                    className={`cursor-pointer group flex justify-between items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${i === activeIndex
                         ? "bg-[#669933] text-white shadow-md"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
+                      }`}
                   >
                     <span className="font-medium text-lg">
                       {cat.hersteller_category}
                     </span>
                     <FiArrowRight
-                      className={`text-2xl transition-transform duration-300 ${
-                        i === activeIndex
+                      className={`text-2xl transition-transform duration-300 ${i === activeIndex
                           ? "translate-x-0 opacity-100"
                           : "-translate-x-2 opacity-0 group-hover:opacity-80"
-                      }`}
+                        }`}
                     />
                   </motion.li>
                 ))}
@@ -79,15 +77,14 @@ const HerstellerSection = ({ data }) => {
                   whileInView="visible"
                   transition={{ duration: 0.5, delay: i * 0.2 }}
                   viewport={{ once: true }}
-                  className={`bg-white flex flex-col lg:flex-row ${
-                    isEven ? "lg:flex-row-reverse" : ""
-                  } gap-10 p-5 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100`}
+                  className={`bg-white flex flex-col lg:flex-row ${isEven ? "lg:flex-row-reverse" : ""
+                    } gap-10 p-5 rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100`}
                 >
                   {/* Image (banner) */}
                   {item.banner_image && (
                     <div className="lg:w-1/2 relative">
                       <Image
-                        src={`${API_IMG_URL}${item.banner_image}`}
+                        src={item.banner_image ? `/api/image?path=${item.banner_image}` : "/Images/Jobs/jobs3.jpg"}
                         alt={item.alt_banner_image || "Banner"}
                         width={1500}
                         height={500}
@@ -98,7 +95,7 @@ const HerstellerSection = ({ data }) => {
                         <div className="absolute top-4 left-4  p-2  z-10 max-w-[120px] bg-white/80 rounded-xl">
                           <div className="relative w-[100px] h-[30px]">
                             <Image
-                              src={`${API_IMG_URL}${item.logo_image}`}
+                              src={item.logo_image ? `/api/image?path=${item.logo_image}` : "/Images/Jobs/jobs3.jpg"}
                               alt={item.alt_logo_image || item.title}
                               fill
                               className="object-contain"

@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const FlexiblePowerSection = ({ data }) => {
   const {
@@ -23,7 +23,7 @@ const FlexiblePowerSection = ({ data }) => {
         >
           <div className="w-full">
             <Image
-              src={`${API_IMG_URL}${data.dynami_third_card_image}`}
+              src={`/api/image?path=${data.dynami_third_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.dynami_third_card_image_alt_text}
               width={600}
               height={400}

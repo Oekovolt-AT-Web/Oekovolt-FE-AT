@@ -3,20 +3,20 @@
 import { motion } from "framer-motion";
 import { FaSolarPanel, FaArrowRight, FaBatteryFull, FaChartLine } from "react-icons/fa";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function RepoweringSection({ data }) {
   return (
     <section className="w-full px-6 md:px-12 py-10 md:py-16 bg-gray-100 relative overflow-hidden">
       {/* Decorative elements */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-[#f0f7e6] rounded-full blur-3xl opacity-40 -mr-32 -mt-32"></div>
-      
+
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Modern split layout with visual contrast */}
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
-            
+
           {/* Left Side - Enhanced media gallery */}
-                  <motion.div
+          <motion.div
             className="w-full lg:w-1/2 space-y-8"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -24,7 +24,7 @@ export default function RepoweringSection({ data }) {
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* First feature card */}
-              <motion.div 
+              <motion.div
                 className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"
                 whileHover={{ y: -5 }}
               >
@@ -38,8 +38,8 @@ export default function RepoweringSection({ data }) {
                 </div>
                 <ul className="space-y-4">
                   {data.third_sec_2nd_card_first_table.map((item, idx) => (
-                    <motion.li 
-                      key={idx} 
+                    <motion.li
+                      key={idx}
                       className="flex items-start gap-3"
                       initial={{ opacity: 0, x: 10 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -55,7 +55,7 @@ export default function RepoweringSection({ data }) {
               </motion.div>
 
               {/* Second feature card */}
-              <motion.div 
+              <motion.div
                 className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"
                 whileHover={{ y: -5 }}
               >
@@ -69,8 +69,8 @@ export default function RepoweringSection({ data }) {
                 </div>
                 <ul className="space-y-4">
                   {data.third_sec_2nd_card_second_table.map((item, idx) => (
-                    <motion.li 
-                      key={idx} 
+                    <motion.li
+                      key={idx}
                       className="flex items-start gap-3"
                       initial={{ opacity: 0, x: 10 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -87,10 +87,10 @@ export default function RepoweringSection({ data }) {
             </div>
 
           </motion.div>
-        
+
 
           {/* Right Side - Modern comparison cards */}
-    <motion.div
+          <motion.div
             className="w-full lg:w-1/2 space-y-8"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function RepoweringSection({ data }) {
 
             <div className="grid grid-cols-2 gap-6">
               {/* First image with floating badge */}
-              <motion.div 
+              <motion.div
                 className="relative rounded-2xl overflow-hidden shadow-xl group"
                 whileHover={{ scale: 1.01 }}
               >
@@ -115,7 +115,7 @@ export default function RepoweringSection({ data }) {
                   Before
                 </div> */}
                 <Image
-                  src={`${API_IMG_URL}${data.third_sec_2nd_card_first_image}`}
+                  src={data.third_sec_2nd_card_first_image ? `/api/image?path=${data.third_sec_2nd_card_first_image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={data.third_sec_2nd_card_first_alt_text}
                   width={800}
                   height={450}
@@ -124,7 +124,7 @@ export default function RepoweringSection({ data }) {
               </motion.div>
 
               {/* Second image with floating badge */}
-              <motion.div 
+              <motion.div
                 className="relative rounded-2xl overflow-hidden shadow-xl group"
                 whileHover={{ scale: 1.01 }}
               >
@@ -132,7 +132,7 @@ export default function RepoweringSection({ data }) {
                   After
                 </div> */}
                 <Image
-                  src={`${API_IMG_URL}${data.third_sec_2nd_card_second_image}`}
+                  src={data.third_sec_2nd_card_second_image ? `/api/image?path=${data.third_sec_2nd_card_second_image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={data.third_sec_2nd_card_second_alt_image}
                   width={800}
                   height={450}

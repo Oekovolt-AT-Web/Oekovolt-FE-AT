@@ -1,5 +1,5 @@
 "use client";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const PhotovoltaikanlageBannerSection = ({ data }) => {
@@ -7,13 +7,13 @@ const PhotovoltaikanlageBannerSection = ({ data }) => {
     <section className="relative h-[300px] w-full overflow-hidden lg:h-[400px]">
       <div className="absolute inset-0">
         <Image
-          src={`${API_IMG_URL}${data.image}`}
+          src={data.image ? `/api/image?path=${data.image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.alt_image}
           fill
           quality={100}
           className="object-cover object-center w-full h-full"
           sizes="100vw"
-          priority
+          loading="eager"
           style={{
             objectPosition: "center center",
           }}

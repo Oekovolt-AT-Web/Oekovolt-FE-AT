@@ -7,9 +7,9 @@ import Slider from "react-slick";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { generateSlug } from "@/lib/slugify";
+import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
 
 const CustomPrevArrow = ({ onClick }) => (
   <div
@@ -53,13 +53,8 @@ export default function ProjectsSection({ data }) {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`,
-        );
-        if (!res.ok) throw new Error("Fehler beim Laden der Projekte");
-        const json = await res.json();
-
-        const formatted = json.message
+        const json = await getProjectItem();
+        const formatted = json?.message
           .filter((p) => p.status === "Aktiv")
           .map((projekt) => ({
             title: projekt.title,
@@ -93,7 +88,7 @@ export default function ProjectsSection({ data }) {
           <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
         </h2>
         <p className="text-center text-black-500 mx-auto mb-6 md:mb-12 lg:text-[30px] text-2xl md:text-3xl font-bold mt-6">
-          {data.projekte_title}
+          {data?.projekte_title}
         </p>
       </div>
 
@@ -122,17 +117,17 @@ export default function ProjectsSection({ data }) {
             <div key={i} className="px-5">
               <Link
                 href={`/referenzen/projekte/${generateSlug(project.title)}`}
-                className="relative block group overflow-hidden rounded-lg h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px] transform transition-all duration-700"
+                className="relative block group overflow-hidden rounded-lg w-full h-[320px] sm:h-[360px] md:h-[420px] lg:h-[460px] transform transition-all duration-700"
               >
-                <div className="absolute inset-0">
+                {/* Image container - full width and height */}
+                <div className="absolute inset-0 w-full h-full">
                   <Image
-                    src={`${API_IMG_URL}${project.image}`}
-                    alt={`Referenzprojekt: ${project.title} – Photovoltaikanlage von Ökovolt${project.leistung ? ` (${project.leistung})` : ""}`}
+                    src={project.image ? `/api/image?path=${project.image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={project.title}
                     fill
                     sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
                     className="object-cover rounded-lg"
-                    priority={i === 0}
-                    title={project.title}
+                    style={{ objectFit: 'cover' }}
                   />
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">

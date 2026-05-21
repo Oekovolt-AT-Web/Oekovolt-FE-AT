@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function Tabs({ data }) {
   const [activeComponent, setActiveComponent] = useState(
@@ -22,15 +22,14 @@ export default function Tabs({ data }) {
                   <li key={tabKey}>
                     <button
                       onClick={() => setActiveComponent(tabKey)} // Simplified - no toggle logic
-                      className={`flex items-center w-full p-2 text-left rounded cursor-pointer text-[21px] ${
-                        activeComponent === tabKey
+                      className={`flex items-center w-full p-2 text-left rounded cursor-pointer text-[21px] ${activeComponent === tabKey
                           ? "bg-gray-100 text-[#669933] font-medium"
                           : "hover:bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       <div className="mr-3 w-5 h-5 relative">
                         <Image
-                          src={`${API_IMG_URL}${tab.icon}`}
+                          src={`/api/image?path=${tab.icon}`}
                           alt={tab.alt_text}
                           fill
                           sizes="20px"
@@ -98,14 +97,14 @@ function TabContent({ tab }) {
       {/* Updated Image container */}
       <div className="relative w-full h-[400px] mb-6 flex justify-start">
         <Image
-  src={`${API_IMG_URL}${tab.card_image}`}
-  alt={tab.card_alt_text}
-  fill
-  quality={100}
-  priority
-  className="object-cover object-center"
-  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-/>
+          src={`/api/image?path=${tab.card_image}` || "/Images/Jobs/jobs3.jpg"}
+          alt={tab.card_alt_text}
+          fill
+          quality={100}
+          loading="eager"
+          className="object-cover object-center"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+        />
 
       </div>
 

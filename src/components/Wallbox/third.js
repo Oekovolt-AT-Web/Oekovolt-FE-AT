@@ -76,3 +76,4 @@ const WallboxFeatures2 = ({ data }) => {
 };
 
 export default WallboxFeatures2;
+ 

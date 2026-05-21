@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Banknote, ShieldCheck, Home } from "lucide-react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const FinanzierungPartnerSection = ({ data }) => {
 
@@ -11,7 +11,7 @@ const FinanzierungPartnerSection = ({ data }) => {
     <section className="w-full bg-white py-10 md:py-16">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                {/* Right Side: Content */}
+          {/* Right Side: Content */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -38,7 +38,7 @@ const FinanzierungPartnerSection = ({ data }) => {
               </p>
             </div>
 
-           
+
           </motion.div>
           {/* Left Side: Image */}
           <motion.div
@@ -48,7 +48,7 @@ const FinanzierungPartnerSection = ({ data }) => {
             viewport={{ once: true }}
           >
             <Image
-            src={`${API_IMG_URL}${data.finanzierung_third_card_image}`}
+              src={data.finanzierung_third_card_image ? `/api/image?path=${data.finanzierung_third_card_image}` : "/Images/Jobs/jobs3.jpg"}
               alt={data.finanzierung_third_card_image_alt_text}
               width={600}
               height={400}
@@ -56,7 +56,7 @@ const FinanzierungPartnerSection = ({ data }) => {
             />
           </motion.div>
 
-      
+
         </div>
       </div>
     </section>

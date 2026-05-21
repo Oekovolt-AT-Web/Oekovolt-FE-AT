@@ -3,8 +3,6 @@
 import { BsCheckCircleFill, BsLightningCharge } from 'react-icons/bs'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { FaLeaf, FaChartLine } from 'react-icons/fa'
-import { API_IMG_URL } from '@/lib/apiImgUrl'
 
 export default function ThirdCardSection({ data }) {
   return (
@@ -14,7 +12,7 @@ export default function ThirdCardSection({ data }) {
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
           {/* Header section */}
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -28,15 +26,15 @@ export default function ThirdCardSection({ data }) {
           </motion.div>
 
           {/* First Feature Row */}
-          <motion.div 
+          <motion.div
             className="flex flex-col lg:flex-row items-center gap-12"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             <div className="lg:w-1/2 relative rounded-xl overflow-hidden shadow-lg group">
-              <Image 
-                src={`${API_IMG_URL}${data.third_sec_3rd_card_first_image}`}
+              <Image
+                src={data?.third_sec_3rd_card_first_image ? `/api/image?path=${data.third_sec_3rd_card_first_image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={data.third_sec_3rd_card_first_alt_text}
                 width={800}
                 height={600}
@@ -54,11 +52,11 @@ export default function ThirdCardSection({ data }) {
                   {data.third_sec_3rd_card_first_title}
                 </h3>
               </div>
-              
+
               <ul className="space-y-4">
                 {data.third_sec_3rd_card_first_options_table.map((item, index) => (
-                  <motion.li 
-                    key={index} 
+                  <motion.li
+                    key={index}
                     className="flex items-start"
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -77,15 +75,15 @@ export default function ThirdCardSection({ data }) {
       {/* Full-width gray background reversed section */}
       <div className="w-full bg-gray-100 py-10 md:py-16">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          <motion.div 
+          <motion.div
             className="flex flex-col lg:flex-row-reverse items-center gap-12"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <div className="lg:w-1/2 relative rounded-xl overflow-hidden shadow-lg group">
-              <Image 
-                src={`${API_IMG_URL}${data.third_sec_3rd_card_second_card}`}
+              <Image
+                src={data.third_sec_3rd_card_second_card ? `/api/image?path=${data.third_sec_3rd_card_second_card}` : "/Images/Jobs/jobs3.jpg"}
                 alt={data.third_sec_3rd_card_second_alt_text}
                 width={800}
                 height={600}
@@ -103,11 +101,11 @@ export default function ThirdCardSection({ data }) {
                   {data.third_sec_3rd_card_second_title}
                 </h3>
               </div>
-              
+
               <ul className="space-y-4">
                 {data.third_sec_3rd_card_second_options_table.map((item, index) => (
-                  <motion.li 
-                    key={index} 
+                  <motion.li
+                    key={index}
                     className="flex items-start"
                     initial={{ opacity: 0, x: -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -119,13 +117,13 @@ export default function ThirdCardSection({ data }) {
                 ))}
               </ul>
 
-        
+
             </div>
           </motion.div>
         </div>
       </div>
 
-     
+
     </section>
   )
 }

@@ -89,7 +89,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFileChange(e.dataTransfer.files[0]);
     }
@@ -140,7 +140,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
       });
       setFile(null);
       setLoading(false);
-      
+
       setTimeout(() => {
         setShowSuccess(false);
       }, 5000);
@@ -184,7 +184,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
           </div>
         </motion.div>
 
-   {/* Company Description */}
+        {/* Company Description */}
         {jobData.firmen_beschreibung && (
           <motion.div
             className="mb-8"
@@ -218,7 +218,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
           <p className="text-gray-700 text-lg leading-relaxed">{jobData.beschreibung}</p>
         </motion.div>
 
-     
+
 
         {/* Job Details Grid */}
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
@@ -329,7 +329,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
             </div> */}
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Jetzt Bewerben</h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Senden Sie uns Ihre Bewerbung und werden Sie Teil unseres innovativen Teams. 
+              Senden Sie uns Ihre Bewerbung und werden Sie Teil unseres innovativen Teams.
               Wir freuen uns darauf, Sie kennenzulernen!
             </p>
           </div>
@@ -437,13 +437,12 @@ const JobDetails = ({ jobData = mockJobData }) => {
                 accept=".pdf"
               />
               <div
-                className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-300 cursor-pointer ${
-                  dragActive
+                className={`border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-300 cursor-pointer ${dragActive
                     ? 'border-[#669933] bg-green-50 scale-105'
                     : file
-                    ? 'border-[#669933] bg-green-50'
-                    : 'border-gray-300 hover:border-[#669933] hover:bg-green-50/50'
-                }`}
+                      ? 'border-[#669933] bg-green-50'
+                      : 'border-gray-300 hover:border-[#669933] hover:bg-green-50/50'
+                  }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}

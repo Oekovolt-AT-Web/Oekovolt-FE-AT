@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { MdBolt, MdCheckCircle } from "react-icons/md";
 
 
@@ -50,7 +50,7 @@ const SmartEnergyFourthSection = ({ data }) => {
             viewport={{ once: true }}
           >
             <Image
-              src={`${API_IMG_URL}${data.fourth_card_image}`}
+              src={`/api/image?path=${data.fourth_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.fourth_image_alt_txt}
               fill
               className="object-cover w-full h-full"

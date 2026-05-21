@@ -5,7 +5,7 @@ import {
   HiOutlineWrenchScrewdriver,
 } from "react-icons/hi2";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 
 
@@ -22,7 +22,7 @@ const ServicesBanner = ({ data }) => {
               >
                 <div className="w-18 h-18 rounded-full bg-[#669933] flex items-center justify-center text-white shrink-0 pulse-hover transition-all">
                   <Image
-                    src={`${API_IMG_URL}${card.image}`}
+                    src={card.image ? `/api/image?path=${card.image}` : "/Images/Jobs/jobs3.jpg"}
                     alt={card.alt_text}
                     width={30}
                     height={30}

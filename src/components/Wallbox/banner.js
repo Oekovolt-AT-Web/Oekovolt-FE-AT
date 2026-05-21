@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa";
 
@@ -37,11 +37,11 @@ const WallboxBanner = ({ data }) => {
           <div className="hidden lg:block relative h-64 sm:h-80 md:h-96 lg:h-full w-full">
             <div className="absolute inset-0 bg-gradient-to-l from-[#669933]/20 to-transparent" />
             <Image
-              src={`${API_IMG_URL}${data.wallbox_image}`}
+              src={`/api/image?path=${data.wallbox_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.wallbox_alt_text_image || "Wallbox installation"}
               fill
               className="lg:rounded-r-2xl object-cover object-center"
-              priority
+              loading="eager"
               sizes=" 100vw"
             />
             {/* Mobile gradient overlay */}

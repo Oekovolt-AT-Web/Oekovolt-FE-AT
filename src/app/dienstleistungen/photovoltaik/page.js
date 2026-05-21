@@ -1,23 +1,57 @@
+// dienstleistungen/photovoltaik/page.js
 import React from "react";
 import Tabs from "@/components/Photovoltaik/Tabs";
 import AnlageSection from "@/components/Photovoltaik/Anlage";
 import KomponentenSlider from "@/components/Photovoltaik/Slider";
 import ProcessSteps from "@/components/Photovoltaik/Cards";
 import PhotovoltaikanlageBannerSection from "@/components/Photovoltaik/banner";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import EndSection from "@/components/Reusable/end";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.photovoltaikanlagen_primary_page.api.get_photovoltaikanlagen`;
 
+async function fetchPhotovoltaikData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
 export async function generateMetadata() {
   // Fetch data for metadata
-  let seoData = null;
-  try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 3600 } }) ;
-    const json = await res.json();
-    seoData = json.message;
-  } catch (error) {
-    console.error("Failed to fetch SEO data", error);
+  let seoData = await fetchPhotovoltaikData();
+
+  if (!seoData) {
     // Fallback metadata if API fails
     return {
       title: "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
@@ -48,12 +82,12 @@ export async function generateMetadata() {
   const apiKeywords = seoData?.keywords
     ? seoData.keywords.split(/,\s*/)
     : [
-        "Photovoltaikanlage",
-        "Solarenergie",
-        "Energiekosten senken",
-        "Photovoltaik Förderung",
-        "Solaranlage",
-      ];
+      "Photovoltaikanlage",
+      "Solarenergie",
+      "Energiekosten senken",
+      "Photovoltaik Förderung",
+      "Solaranlage",
+    ];
 
   const title = seoData?.title || "Photovoltaik Dienstleistungen | Ökovolt Deutschland";
   const description = seoData?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.";
@@ -85,15 +119,7 @@ export async function generateMetadata() {
 const PV_PAGE_URL = "https://www.oekovolt.de/dienstleistungen/photovoltaik";
 
 export default async function PhotovoltaikPage() {
-  let data = null;
-
-  try {
-    const res = await fetch(DATA_URL , { next: { revalidate: 60 } }) ;
-    const json = await res.json();
-    data = json.message;
-  } catch (error) {
-    console.error("Failed to fetch photovoltaik data", error);
-  }
+  let data = await fetchPhotovoltaikData();
 
   const webPageSchema = {
     "@context": "https://schema.org",

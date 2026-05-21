@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 export default function FourthCardSection({ data }) {
 
@@ -17,13 +17,13 @@ export default function FourthCardSection({ data }) {
           transition={{ duration: 0.6 }}
         >
           <Image
-            src={`${API_IMG_URL}${data.fourth_card_image}`}
+            src={data.fourth_card_image ? `/api/image?path=${data.fourth_card_image}` : "/Images/Jobs/jobs3.jpg"}
             alt={data.fourth_card_alt_text}
             width={800}
             height={600}
             className="rounded-2xl shadow-xl object-cover w-full h-full"
           />
-        
+
         </motion.div>
 
         {/* Right: Option Boxes */}
@@ -33,7 +33,7 @@ export default function FourthCardSection({ data }) {
           whileInView={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
         >
-             <h2 className="text-3xl  text-gray-900 ">
+          <h2 className="text-3xl  text-gray-900 ">
             {data.fourth_card_title}
           </h2>
           <p className="text-gray-700  whitespace-pre-line">

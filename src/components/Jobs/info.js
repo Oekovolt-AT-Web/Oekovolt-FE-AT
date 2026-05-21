@@ -24,4 +24,4 @@ const JobsInfoSection = ({ data }) => {
   );
 };
 
-export default  JobsInfoSection;
+export default JobsInfoSection;

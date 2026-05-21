@@ -1,6 +1,5 @@
 import React from 'react';
 import Image from 'next/image';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 
 function AnlageSection({ data }) {
     return (
@@ -19,15 +18,15 @@ function AnlageSection({ data }) {
                     {data.second_card_table.map((card, index) => (
                         <div key={index} className="flex space-x-4">
                             <div className="flex-shrink-0">
-                              <div className="w-10 h-10 relative">
-  <Image
-    src={`${API_IMG_URL}${card.image}`}
-    alt={card.alt_text}
-    fill
-    sizes="40px"
-    className="object-contain"
-  />
-</div>
+                                <div className="w-10 h-10 relative">
+                                    <Image
+                                        src={card.image ? `/api/image?path=${card.image}` : "/Images/Jobs/jobs3.jpg"}
+                                        alt={card.alt_text}
+                                        fill
+                                        sizes="40px"
+                                        className="object-contain"
+                                    />
+                                </div>
 
                             </div>
                             <div>

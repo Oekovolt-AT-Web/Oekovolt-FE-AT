@@ -3,9 +3,8 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { HiPhone } from "react-icons/hi";
 import { MdEmail } from "react-icons/md";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
-import Image from "next/image";  // <-- Import Image here
+import Image from "next/image";
+import { getTeam } from "@/lib/api/team/team_api";
 
 const TeamMember = ({ member, index }) => {
   return (
@@ -28,8 +27,8 @@ const TeamMember = ({ member, index }) => {
           alt={member.name || "Team member"}
           fill
           className="object-cover brightness-100 group-hover:scale-105 transition-transform duration-500 rounded-md"
-                sizes="100vw"
-          priority
+          sizes="100vw"
+          loading="eager"
         />
         <div className="absolute inset-0  transition-all duration-300" />
       </div>
@@ -71,16 +70,12 @@ const TeamSection = () => {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.team.api.teamde_data`
-        );
-        if (!response.ok) throw new Error("Error fetching team");
-        const data = await response.json();
-        const formatted = data.message.map((person) => ({
+        const data = await getTeam();
+        const formatted = data?.message?.map((person) => ({
           name: person.vorname || person.name1 || person.name || "",
           email: person.e_mail,
           phone: person.telefon,
-          image: `${API_IMG_URL}${person.bild_anhagen}`,
+          image: `/api/image?path=${person.bild_anhagen}` || "/Images/Jobs/jobs3.jpg",
           status: person.status,
           position: person.rolle,
           bio: person.bio || "", // Optional bio if available
@@ -97,24 +92,24 @@ const TeamSection = () => {
 
   return (
     teams.length > 0 && (
-    <section className="py-10 md:py-16 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-center text-[#333] mb-12"
-        >
-          Unser Team
-        </motion.h2>
+      <section className="py-10 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-center text-[#333] mb-12"
+          >
+            Unser Team
+          </motion.h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10 justify-items-center">
-          {teams.map((member, index) => (
-            <TeamMember key={index} member={member} index={index} />
-          ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-10 justify-items-center">
+            {teams.map((member, index) => (
+              <TeamMember key={index} member={member} index={index} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
     )
   );
 };

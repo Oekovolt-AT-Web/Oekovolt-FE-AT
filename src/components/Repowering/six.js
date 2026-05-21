@@ -1,8 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
-import { FaSolarPanel, FaBolt, FaPlug, FaCheckCircle } from 'react-icons/fa';
+import { FaSolarPanel, FaBolt, FaPlug } from 'react-icons/fa';
 import Image from 'next/image';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 
 const SixSection = ({ data }) => {
   return (
@@ -10,7 +9,7 @@ const SixSection = ({ data }) => {
       {/* Decorative elements */}
       {/* <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#669933] to-transparent opacity-10"></div> */}
       <div className="absolute bottom-20 right-0 w-64 h-64 rounded-full bg-[#f0f7e6] blur-3xl opacity-60 -mr-32"></div>
-      
+
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Modern split layout with overlapping elements */}
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -23,10 +22,10 @@ const SixSection = ({ data }) => {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
               <Image
-                src={`${API_IMG_URL}${data.third_sec_1st_card_image}`}
+                src={data.third_sec_1st_card_image ? `/api/image?path=${data.third_sec_1st_card_image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={data.third_sec_1st_card_alt_text}
                 fill
-                    sizes=" 100vw"
+                sizes=" 100vw"
 
                 className="object-cover hover:scale-105 transition-transform duration-700"
               />
@@ -44,7 +43,7 @@ const SixSection = ({ data }) => {
               <p className="text-gray-600">{data.third_sec_1st_card_first_description}</p>
             </motion.div>
 
-           
+
           </motion.div>
 
           {/* RIGHT SIDE: Modern feature cards with animated icons */}
@@ -60,7 +59,7 @@ const SixSection = ({ data }) => {
               </h2>
               <div className="w-20 h-1 bg-[#669933] rounded-full"></div>
             </div>
-               <motion.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
@@ -83,9 +82,9 @@ const SixSection = ({ data }) => {
                   <div className="relative">
                     <div className="absolute inset-0 bg-[#669933] rounded-full opacity-10 animate-ping"></div>
                     <div className="relative w-8 h-8 p-2 bg-[#f0f7e6] rounded-full flex items-center justify-center text-[#669933]">
-                      {index % 3 === 0 ? <FaPlug className="text-md" /> : 
-                       index % 3 === 1 ? <FaSolarPanel className="text-md" /> : 
-                       <FaBolt className="text-xl" />}
+                      {index % 3 === 0 ? <FaPlug className="text-md" /> :
+                        index % 3 === 1 ? <FaSolarPanel className="text-md" /> :
+                          <FaBolt className="text-xl" />}
                     </div>
                   </div>
                   <div>
@@ -98,7 +97,7 @@ const SixSection = ({ data }) => {
               ))}
             </div>
 
-         
+
           </motion.div>
         </div>
       </div>

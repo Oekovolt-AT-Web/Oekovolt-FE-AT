@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const FifthCardSection = ({ data }) => {
   const advantages = data?.fourth_card_1st_description || [];
@@ -42,7 +42,7 @@ const FifthCardSection = ({ data }) => {
             className="relative bg-white rounded-3xl shadow-xl overflow-hidden "
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#669933] to-[#8ab959]"></div>
-            
+
             <div className="p-8 lg:p-10 space-y-6">
               <div className="flex items-center gap-4">
                 <div className="bg-[#f0f7e6] p-3 rounded-lg">
@@ -52,7 +52,7 @@ const FifthCardSection = ({ data }) => {
                   {data?.fourth_card_1st_title}
                 </h3>
               </div>
-              
+
               <p className="text-gray-600 text-lg">
                 {data?.fourth_card_1st_subtitle}
               </p>
@@ -60,8 +60,8 @@ const FifthCardSection = ({ data }) => {
               {data?.fourth_card_1st_image && (
                 <div className="relative h-48 w-full rounded-xl overflow-hidden shadow-md mt-4">
                   <Image
-                    src={`${API_IMG_URL}${data.fourth_card_1st_image}`}
-                    alt={data.fourth_card_1st_alt_image || "Vorteile"}
+                    src={data?.fourth_card_1st_image ? `/api/image?path=${data?.fourth_card_1st_image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={data?.fourth_card_1st_alt_image || "Vorteile"}
                     fill
                     className="object-cover"
                     sizes=" 100vw"
@@ -73,7 +73,7 @@ const FifthCardSection = ({ data }) => {
 
               <ul className="space-y-6 mt-6">
                 {advantages.map((item, index) => (
-                  <motion.li 
+                  <motion.li
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -85,10 +85,10 @@ const FifthCardSection = ({ data }) => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">
-                        {item.primary_paragraph}
+                        {item?.primary_paragraph}
                       </p>
                       <p className="text-gray-600 mt-1">
-                        {item.secondary_paragraph}
+                        {item?.secondary_paragraph}
                       </p>
                     </div>
                   </motion.li>
@@ -105,7 +105,7 @@ const FifthCardSection = ({ data }) => {
             className="relative bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-300"></div>
-            
+
             <div className="p-8 lg:p-10 space-y-6">
               <div className="flex items-center gap-4">
                 <div className="bg-gray-100 p-3 rounded-lg">
@@ -115,7 +115,7 @@ const FifthCardSection = ({ data }) => {
                   {data?.fourth_card_2nd_title}
                 </h3>
               </div>
-              
+
               <p className="text-gray-600 text-lg">
                 {data?.fourth_card_2nd_subtitle}
               </p>
@@ -123,8 +123,8 @@ const FifthCardSection = ({ data }) => {
               {data?.fourth_card_2nd_image && (
                 <div className="relative h-48 w-full rounded-xl overflow-hidden shadow-md mt-4">
                   <Image
-                    src={`${API_IMG_URL}${data.fourth_card_2nd_image}`}
-                    alt={data.fourth_card_2nd_alt_image || "Nachteile"}
+                    src={data?.fourth_card_2nd_image? `/api/image?path=${data?.fourth_card_2nd_image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={data?.fourth_card_2nd_alt_image || "Nachteile"}
                     fill
                     className="object-cover"
                     sizes=" 100vw"
@@ -136,7 +136,7 @@ const FifthCardSection = ({ data }) => {
 
               <ul className="space-y-6 mt-6">
                 {challenges.map((item, index) => (
-                  <motion.li 
+                  <motion.li
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -148,10 +148,10 @@ const FifthCardSection = ({ data }) => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">
-                        {item.primary_paragraph}
+                        {item?.primary_paragraph}
                       </p>
                       <p className="text-gray-600 mt-1">
-                        {item.secondary_paragraph}
+                        {item?.secondary_paragraph}
                       </p>
                     </div>
                   </motion.li>

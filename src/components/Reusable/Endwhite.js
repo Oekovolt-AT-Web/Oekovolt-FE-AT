@@ -4,8 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FaChevronRight } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { getCardContact } from "@/lib/api/contact/card_contact";
 
 export default function EndWhite() {
   const [info, setInfo] = useState(null);
@@ -15,16 +14,8 @@ export default function EndWhite() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.card_contact_redirection.api.get_card_contact`, {
-          next: { revalidate: 3600 }
-        });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const data = await res.json();
-        setInfo(data.message);
+        const data = await getCardContact();
+        setInfo(data?.message);
       } catch (err) {
         console.error("Failed to fetch contact section data:", err);
         setError(err.message);
@@ -73,7 +64,7 @@ export default function EndWhite() {
       <div className="relative w-full lg:w-1/2 flex justify-center items-center group lg:mt-0">
         <div className="relative z-10 w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-white shadow-xl">
           <Image
-            src={`${API_IMG_URL}${info?.image}` || "/Images/Home/contactImage.jpg"}
+            src={`/api/image?path=${info?.image}` || "/Images/Home/contactImage.jpg"}
             alt={info?.alt_text || "Kontaktbild"}
             fill
             className="object-cover"

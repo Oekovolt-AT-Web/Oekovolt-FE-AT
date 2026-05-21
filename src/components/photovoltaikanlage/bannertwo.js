@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FaChevronRight, FaCheckCircle, FaSolarPanel } from "react-icons/fa";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 // Counter hook
 const useCounter = (target, speed = 50) => {
@@ -81,24 +81,24 @@ const SolvixBanner = ({ data }) => {
           >
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {data.first_statistic_value.toLocaleString("de-DE")}
-                {data.first_value_suffix || ""}
+                {data?.first_statistic_value?.toLocaleString("de-DE")}
+                {data?.first_value_suffix || ""}
               </h3>
               <p>{data.first_statistic_title || ""}</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {data.second_statistic_value.toLocaleString("de-DE")}
-                {data.second_value_suffix || ""}
+                {data?.second_statistic_value?.toLocaleString("de-DE")}
+                {data?.second_value_suffix || ""}
               </h3>
-              <p>{data.second_statistic_title || ""}</p>
+              <p>{data?.second_statistic_title || ""}</p>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }}>
               <h3 className="text-3xl font-semibold text-[#669933]">
-                {data.third_statistic_value.toLocaleString("de-DE")}{" "}
-                {data.third_value_suffix || ""}
+                {data?.third_statistic_value?.toLocaleString("de-DE")}{" "}
+                {data?.third_value_suffix || ""}
               </h3>
-              <p>{data.third_statistic_title || ""}</p>
+              <p>{data?.third_statistic_title || ""}</p>
             </motion.div>
           </motion.div>
         </div>
@@ -112,11 +112,11 @@ const SolvixBanner = ({ data }) => {
           className="w-full lg:w-1/2 relative lg:h-[520px] h-80"
         >
           <Image
-            src={`${API_IMG_URL}${data.photovoltaik_banner_image}`}
-            alt={data.photovoltaik_alt_banner_image || "Photovoltaik"}
+            src={data?.photovoltaik_banner_image ? `/api/image?path=${data?.photovoltaik_banner_image}` : "/Images/Jobs/jobs3.jpg"}
+            alt={data?.photovoltaik_alt_banner_image || "Photovoltaik"}
             fill
             className="rounded-2xl object-cover"
-            priority
+            loading="eager"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 

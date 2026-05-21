@@ -24,7 +24,7 @@ const WarmepumpeVorteileSection = ({ data }) => {
     <section className="bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {items.map((item, index) => {
+          {items?.map((item, index) => {
             const IconComponent = iconMap[item.title] || FiZap;
 
             return (

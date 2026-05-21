@@ -2,9 +2,9 @@ export function generateSlug(title) {
   if (!title) return "";
   return title
     .toLowerCase()
-    .replace(/ä/g, "ae")
-    .replace(/ö/g, "oe")
-    .replace(/ü/g, "ue")
+    .replace(/ä/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
     .replace(/ß/g, "ss")
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
@@ -22,9 +22,9 @@ export function generateJobSlug(title) {
     .toLowerCase()
     .replace(/\s+/g, "-")
     .replace(/\//g, "-")
-    .replace(/ä/g, "ae")
-    .replace(/ö/g, "oe")
-    .replace(/ü/g, "ue")
+    .replace(/ä/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/ü/g, "u")
     .replace(/ß/g, "ss")
     .replace(/[^a-z0-9-]/g, "");
 }

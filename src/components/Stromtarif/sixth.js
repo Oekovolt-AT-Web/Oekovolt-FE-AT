@@ -1,6 +1,5 @@
 'use client';
 import { motion } from 'framer-motion';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 import { FaCheckCircle } from 'react-icons/fa';
 import Image from 'next/image';
 
@@ -26,12 +25,12 @@ const FlexibleBenefitsSection = ({ data }) => {
           className="w-full h-64 md:h-96 rounded-3xl overflow-hidden shadow-xl my-10 relative"
         >
           <Image
-            src={`${API_IMG_URL}${data.dynami_fifth_card_image}`}
+            src={`/api/image?path=${data.dynami_fifth_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.dynami_fifth_card_alt_text}
             fill
             className="object-cover object-center"
-                    sizes=" 100vw"
-            priority
+            sizes=" 100vw"
+            loading="eager"
           />
         </motion.div>
 

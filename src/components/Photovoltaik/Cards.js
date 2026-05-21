@@ -8,7 +8,7 @@ import {
   FaKey,
 } from "react-icons/fa";
 import Image from "next/image";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const ProcessSteps = ({ data }) => {
   return (
@@ -31,7 +31,7 @@ const ProcessSteps = ({ data }) => {
           >
             <div className="absolute -top-5 left-6 bg-[#669933] text-white rounded-full w-13 h-13 flex items-center justify-center shadow-md ring-4 ring-white text-sm font-bold z-10">
               <Image
-                src={`${API_IMG_URL}${step.image}`}
+                src={step.image ? `/api/image?path=${step.image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={step.alt_text}
                 width={25}
                 height={25}

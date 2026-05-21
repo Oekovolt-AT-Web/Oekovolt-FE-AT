@@ -1,47 +1,172 @@
+// src/app/forderungen/richtlinen/page.js
+
 import RichtlinenBannerSection from "@/components/Forderungen/Richtlinen/banner";
 import RichtlinienPV from "@/components/Forderungen/Richtlinen/second";
 import EndSection from "@/components/Reusable/end";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import React from "react";
 
-export const metadata = {
-  title: "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland",
-  description:
-    "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – OVE-Normen und aktuelle Sicherheitsanforderungen.",
-  keywords: [
-    "Photovoltaik Richtlinien",
-    "PV-Anlage Normen",
-    "Sicherheitsrichtlinien Solar",
-    "Technische Normen Photovoltaik",
-    "OVE Richtlinien",
-  ],
-  alternates: {
-    canonical: "https://www.oekovolt.de/forderungen/richtlinen",
-  },
-  openGraph: {
-    type: "website",
-    url: "https://www.oekovolt.de/forderungen/richtlinen",
-    title: "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland",
-    description:
-      "Technische Normen und Sicherheitsrichtlinien für Photovoltaikanlagen in Deutschland.",
-    images: [
-      {
-        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Deutschland",
-      },
-    ],
-  },
-};
+const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.richtlinen.api.get_richtlinen_data`;
 
-const page = () => {
+async function fetchRichtlinenData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
+// Generate metadata dynamically from fetched data
+export async function generateMetadata() {
+  const data = await fetchRichtlinenData();
+  const bannerData = data?.message?.banner;
+  
+  // Fallback für Deutschland (wenn keine API-Daten)
+  const isGermany = process.env.NEXT_PUBLIC_SITE === "de" || 
+                    process.env.NEXT_PUBLIC_COUNTRY === "deutschland";
+  
+  const defaultTitle = isGermany 
+    ? "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland"
+    : "Technische Richtlinien für Photovoltaik | Ökovolt Austria";
+    
+  const defaultDescription = isGermany
+    ? "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
+    : "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Österreich – OVE-Normen und aktuelle Sicherheitsanforderungen.";
+    
+  const defaultCanonical = isGermany
+    ? "https://www.oekovolt.de/forderungen/richtlinen"
+    : "https://www.oekovolt.com/forderungen/richtlinen";
+
+  if (!data) {
+    // Fallback metadata if API fails
+    return {
+      title: defaultTitle,
+      description: defaultDescription,
+      keywords: [
+        "Photovoltaik Richtlinien",
+        "PV-Anlage Normen",
+        "Sicherheitsrichtlinien Solar",
+        "Technische Normen Photovoltaik",
+        isGermany ? "VDE Richtlinien" : "OVE Richtlinien",
+      ],
+      alternates: {
+        canonical: defaultCanonical,
+      },
+      openGraph: {
+        type: "website",
+        url: defaultCanonical,
+        title: defaultTitle,
+        description: defaultDescription,
+        images: [
+          {
+            url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+            width: 1200,
+            height: 630,
+            alt: "Ökovolt",
+          },
+        ],
+      },
+    };
+  }
+
+  const title = bannerData?.title || defaultTitle;
+  const description = bannerData?.description || defaultDescription;
+
+  return {
+    title: title,
+    description: description,
+    keywords: [
+      "Photovoltaik Richtlinien",
+      "PV-Anlage Normen",
+      "Sicherheitsrichtlinien Solar",
+      "Technische Normen Photovoltaik",
+      isGermany ? "VDE Richtlinien" : "OVE Richtlinien",
+    ],
+    alternates: {
+      canonical: defaultCanonical,
+    },
+    openGraph: {
+      type: "website",
+      url: defaultCanonical,
+      title: title,
+      description: description,
+      images: [
+        {
+          url: bannerData?.image || "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+          width: 1200,
+          height: 630,
+          alt: bannerData?.alt_image || "Ökovolt",
+        },
+      ],
+    },
+  };
+}
+
+const RICHTLINEN_PAGE_URL = process.env.NEXT_PUBLIC_SITE === "de" || process.env.NEXT_PUBLIC_COUNTRY === "deutschland"
+  ? "https://www.oekovolt.de/forderungen/richtlinen"
+  : "https://www.oekovolt.com/forderungen/richtlinen";
+
+export default async function Richtlinen() {
+  const response = await fetchRichtlinenData();
+  const data = response?.message;
+
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${RICHTLINEN_PAGE_URL}/#webpage`,
+    url: RICHTLINEN_PAGE_URL,
+    name: data?.banner?.title || "Technische Richtlinien für Photovoltaik | Ökovolt",
+    description: data?.banner?.description || "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen.",
+    inLanguage: "de-DE",
+    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    about: { "@id": "https://www.oekovolt.de/#organization" },
+    datePublished: "2020-01-01",
+    dateModified: new Date().toISOString().split("T")[0],
+    breadcrumb: {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
+        { "@type": "ListItem", position: 2, name: "Förderungen", item: "https://www.oekovolt.de/forderungen" },
+        { "@type": "ListItem", position: 3, name: "Richtlinien", item: RICHTLINEN_PAGE_URL },
+      ],
+    },
+  };
+
   return (
     <div>
-      <RichtlinenBannerSection />
-      <RichtlinienPV />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <RichtlinenBannerSection data={data?.banner} />
+      <RichtlinienPV data={data?.body} />
       <EndSection />
     </div>
   );
-};
-
-export default page;
+}

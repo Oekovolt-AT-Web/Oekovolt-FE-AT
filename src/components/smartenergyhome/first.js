@@ -16,6 +16,8 @@ export default function LawyerSection() {
             src={lawyerImage}
             alt="Lawyer talking to client"
             className="rounded-md"
+            fill
+            sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
           />
         </div>
       </div>

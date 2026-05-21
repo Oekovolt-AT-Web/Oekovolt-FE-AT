@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const SecondCardSection = ({ data }) => {
   const listItems = data?.second_card_description_table || [];
@@ -37,14 +37,15 @@ const SecondCardSection = ({ data }) => {
 
               <h2 className="text-4xl text-gray-900 leading-tight">
                 <span className="text-[#669933]">
-                  {data.second_card_title.split(" ")[0]}
+                  {data?.second_card_title.split(" ")[0]}
                 </span>{" "}
-                {data.second_card_title.split(" ").slice(1).join(" ")}
+                {data?.second_card_title.split(" ").slice(1).join(" ")}
               </h2>
 
               {/* Slider Container */}
               <div className="relative h-70 md:h-38 w-full overflow-hidden rounded-xl bg-white">
                 {/* Logo at top-right */}
+
 
                 <div
                   ref={sliderRef}
@@ -88,9 +89,8 @@ const SecondCardSection = ({ data }) => {
                     <button
                       key={index}
                       onClick={() => setCurrentIndex(index)}
-                      className={`cursor-pointer w-3 h-3 rounded-full transition-colors ${
-                        currentIndex === index ? "bg-[#669933]" : "bg-gray-300"
-                      }`}
+                      className={`cursor-pointer w-3 h-3 rounded-full transition-colors ${currentIndex === index ? "bg-[#669933]" : "bg-gray-300"
+                        }`}
                     />
                   ))}
                 </div>
@@ -104,9 +104,9 @@ const SecondCardSection = ({ data }) => {
               className="relative rounded-2xl overflow-hidden shadow-2xl group"
             >
               <Image
-                src={`${API_IMG_URL}${data.second_card_image}`}
+                src={data?.second_card_image ? `/api/image?path=${data?.second_card_image}` : "/Images/Jobs/jobs3.jpg"}
                 alt={
-                  data.second_card_alt_text || "Solarstrom Direktvermarktung"
+                  data?.second_card_alt_text || "Solarstrom Direktvermarktung"
                 }
                 width={800}
                 height={600}
@@ -126,10 +126,10 @@ const SecondCardSection = ({ data }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               <div className="relative h-full min-h-[400px]">
                 <Image
-                  src={`${API_IMG_URL}${data.second_card_second_image}`}
-                  alt={data.second_card_second_alt_text || "SolarTalk"}
+                  src={data?.second_card_second_image ? `/api/image?path=${data?.second_card_second_image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt={data?.second_card_second_alt_text || "SolarTalk"}
                   fill
-                  priority
+
                   className="object-cover"
                   sizes=" 100vw"
                 />
@@ -138,10 +138,10 @@ const SecondCardSection = ({ data }) => {
 
               <div className="p-10 lg:p-12 space-y-6">
                 <h3 className="text-3xl text-gray-900">
-                  {data.second_card_second_title}
+                  {data?.second_card_second_title}
                 </h3>
                 <p className="text-gray-600 text-md leading-relaxed whitespace-pre-line">
-                  {data.second_card_second_description}
+                  {data?.second_card_second_description}
                 </p>
               </div>
             </div>

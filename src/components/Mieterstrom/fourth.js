@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import { Bolt, Home, Settings } from "lucide-react";
 
 const icons = [Home, Settings, Bolt];
@@ -27,23 +27,22 @@ const MieterstromThirdSection = ({ data }) => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
                 viewport={{ once: true }}
-                className={`${
-                  isEven
+                className={`${isEven
                     ? "order-2 md:order-1"
                     : "order-2 md:order-2"
-                } flex flex-col gap-5`}
+                  } flex flex-col gap-5`}
               >
                 <div className="flex items-center gap-3">
                   <div className="bg-[#669933] text-white p-2 rounded-full">
                     <Icon className="w-6 h-6" />
                   </div>
-               
-                     
-          
+
+
+
                 </div>
                 <h3 className="text-2xl md:text-3xl text-gray-800">
-            {item.title}
-          </h3>
+                  {item.title}
+                </h3>
                 <p className="text-gray-700 text-lg leading-relaxed">
                   {item.description}
                 </p>
@@ -55,18 +54,17 @@ const MieterstromThirdSection = ({ data }) => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className={`${
-                  isEven
+                className={`${isEven
                     ? "order-1 md:order-2"
                     : "order-1 md:order-1"
-                } relative w-full h-[300px] md:h-[420px] rounded-xl overflow-hidden shadow-md`}
+                  } relative w-full h-[300px] md:h-[420px] rounded-xl overflow-hidden shadow-md`}
               >
                 <Image
-                  src={`${API_IMG_URL}${item.image}`}
+                  src={item?.image ? `/api/image?path=${item.image}` : "/Images/Jobs/jobs3.jpg"}
                   alt={item.alt_text || item.title}
                   fill
                   className="object-cover"
-                    sizes=" 100vw"
+                  sizes=" 100vw"
 
                 />
               </motion.div>

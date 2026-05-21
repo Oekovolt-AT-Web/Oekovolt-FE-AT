@@ -1,5 +1,5 @@
 "use client";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const TeamBenefitsLayout = ({ data }) => {
@@ -12,7 +12,7 @@ const TeamBenefitsLayout = ({ data }) => {
           <div className="lg:w-1/2  pr-2 lg:pr-0">
             <div className=" h-[300px] md:h-[500px] relative lg:h-[550px] w-full rounded-lg overflow-hidden">
               <Image
-                src={`${API_IMG_URL}${data.second_card_image}`} // Replace with your image path
+                src={`/api/image?path=${data.second_card_image}` || "/Images/Jobs/jobs3.jpg"} // Replace with your image path
                 alt={data.second_card_alt_text}
                 fill
                 sizes="100vw"

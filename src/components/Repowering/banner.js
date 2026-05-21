@@ -1,4 +1,4 @@
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
 
 const BannerSection = ({ data }) => {
@@ -7,11 +7,11 @@ const BannerSection = ({ data }) => {
       {/* Background Image */}
       <div className="absolute inset-0 w-full h-full z-0">
         <Image
-          src={`${API_IMG_URL}${data.photovoltaik_image}`}
+          src={data.photovoltaik_image ? `/api/image?path=${data.photovoltaik_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.photovoltaik_image_alt_text || "Banner Image"}
           fill
           className="object-cover"
-          priority
+          loading="eager"
           sizes=" 100vw"
         />
       </div>
@@ -22,15 +22,15 @@ const BannerSection = ({ data }) => {
         <div className="absolute left-[40%] top-0 w-[75%] h-full bg-[#003473] transform -skew-x-[25deg] origin-left opacity-70" />
         <div className="absolute left-[47%] top-0 w-[45%] h-full bg-gray-100 transform -skew-x-[25deg] origin-left opacity-95" />
       </div>
-      
+
       <div className="relative z-20 w-full flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/2 h-[250px] sm:h-[300px] lg:h-auto hidden relative">
           <Image
-            src={`${API_IMG_URL}${data.photovoltaik_image}`}
+            src={data.photovoltaik_image ? `/api/image?path=${data.photovoltaik_image}` : "/Images/Jobs/jobs3.jpg"}
             alt={data.photovoltaik_image_alt_text || "Banner Image"}
             fill
             className="object-cover"
-            priority
+            loading="eager"
             sizes="100vw"
           />
         </div>

@@ -1,3 +1,5 @@
+// referenzen/projekte/page.js
+
 import ProjekteBannerSection from "@/components/Project/banner";
 import ProjekteAnotherDesign from "@/components/Project/endsection";
 import ProjectsHero from "@/components/Project/info";
@@ -5,69 +7,143 @@ import ProjekteTechnologySection from "@/components/Project/newsection";
 import ProjekteBenefitsLayout from "@/components/Project/second";
 import Vorteil from "@/components/Project/vorteile";
 import EndSection from "@/components/Reusable/end";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
+const PROJECTS_API = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
 const PAGE_URL = "https://www.oekovolt.de/referenzen/projekte";
 
-export async function generateMetadata() {
-  let seoData = null;
+async function fetchProjekteData() {
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
+    return null;
+  }
+
   try {
-    const res = await fetch(DATA_URL, { next: { revalidate: 3600 } });
-    const json = await res.json();
-    seoData = json.message;
-  } catch {
+    const headers = getApiHeaders();
+
+    const response = await fetch(DATA_URL, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      let errorText = "";
+      try {
+        const errorData = await response.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await response.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${response.status}: ${errorText}`);
+      return null;
+    }
+
+    const data = await response.json();
+    return data.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
+}
+
+async function fetchProjectsList() {
+  if (!isApiConfigured()) {
+    return [];
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const response = await fetch(PROJECTS_API, {
+      method: 'GET',
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!response.ok) {
+      console.error(`Projects API returned ${response.status}`);
+      return [];
+    }
+
+    const data = await response.json();
+    if (Array.isArray(data?.message)) {
+      return data.message;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching projects list:", error);
+    return [];
+  }
+}
+
+export async function generateMetadata() {
+  const seoData = await fetchProjekteData();
+
+  const defaultKeywords = ["Photovoltaik Referenzen", "Solarprojekte", "PV-Anlagen Beispiele", "Ökovolt Projekte", "Energielösungen Referenzen"];
+
+  if (!seoData) {
+    // Fallback metadata if API fails
     return {
       title: "Referenzprojekte | Ökovolt Deutschland",
       description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
-      keywords: ["Photovoltaik Referenzen", "Solarprojekte", "PV-Anlagen Beispiele", "Ökovolt Projekte", "Energielösungen Referenzen"],
+      keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland",
+        type: "website", 
+        locale: "de_DE", 
+        url: PAGE_URL, 
+        siteName: "Ökovolt Deutschland",
         title: "Referenzprojekte | Ökovolt Deutschland",
         description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
       },
-      twitter: { card: "summary_large_image", title: "Referenzprojekte | Ökovolt Deutschland", description: "Unsere erfolgreichen Photovoltaik-Projekte.", images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
+      twitter: { 
+        card: "summary_large_image", 
+        title: "Referenzprojekte | Ökovolt Deutschland", 
+        description: "Unsere erfolgreichen Photovoltaik-Projekte.", 
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      },
     };
   }
 
-  const defaultKeywords = ["Photovoltaik Referenzen", "Solarprojekte", "PV-Anlagen Beispiele", "Ökovolt Projekte", "Energielösungen Referenzen"];
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
   const title = seoData?.title || "Referenzprojekte | Ökovolt Deutschland";
   const description = seoData?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.";
 
   return {
-    title, description, keywords: apiKeywords,
+    title, 
+    description, 
+    keywords: apiKeywords,
     alternates: { canonical: PAGE_URL },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland",
-      title, description,
+      type: "website", 
+      locale: "de_DE", 
+      url: PAGE_URL, 
+      siteName: "Ökovolt Deutschland",
+      title, 
+      description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
     },
-    twitter: { card: "summary_large_image", title, description, images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] },
+    twitter: { 
+      card: "summary_large_image", 
+      title, 
+      description, 
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    },
   };
 }
 
-const PROJECTS_API = `https://backoffice.oekovolt.de/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
-
 export default async function ProjektePage() {
-  let data = null;
-  let projectsList = [];
-
-  try {
-    const [pageRes, projRes] = await Promise.all([
-      fetch(DATA_URL, { next: { revalidate: 60 } }),
-      fetch(PROJECTS_API, { next: { revalidate: 3600 } }),
-    ]);
-    data = (await pageRes.json()).message;
-    const projData = await projRes.json();
-    if (Array.isArray(projData?.message)) projectsList = projData.message;
-  } catch (error) {
-    console.error("Failed to fetch projects data", error);
-  }
+  const [data, projectsList] = await Promise.all([
+    fetchProjekteData(),
+    fetchProjectsList(),
+  ]);
 
   const collectionSchema = {
     "@context": "https://schema.org",
@@ -87,7 +163,7 @@ export default async function ProjektePage() {
           "@type": "ListItem",
           position: i + 1,
           name: p.title || p.name,
-          url: `${PAGE_URL}/${p.title?.toLowerCase().replace(/\s+/g, "-") || p.name}`,
+          url: `${PAGE_URL}/${(p.title || p.name)?.toLowerCase().replace(/\s+/g, "-")}`,
         })),
       },
     }),
@@ -98,7 +174,7 @@ export default async function ProjektePage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
-      { "@type": "ListItem", position: 2, name: "Referenzen", item: "https://www.oekovolt.de/referenzen/projekte" },
+      { "@type": "ListItem", position: 2, name: "Referenzen", item: "https://www.oekovolt.de/referenzen" },
       { "@type": "ListItem", position: 3, name: "Projekte", item: PAGE_URL },
     ],
   };

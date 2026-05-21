@@ -1,9 +1,10 @@
+// src/app/page.js (Home page)
+
 import { cache } from "react";
 import dynamic from "next/dynamic";
 import VideoBanner from "@/components/Home/banner";
 import ServicesBanner from "@/components/Home/about";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 const RotatingCircleSection = dynamic(() => import("@/components/Home/welcome"));
 const SolutionsPage = dynamic(() => import("@/components/Home/info"));
@@ -16,9 +17,40 @@ const BASE_URL = "https://www.oekovolt.de";
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.home_page.api.get_home_page`;
 
 const getHomeData = cache(async () => {
-  const res = await fetch(DATA_URL, { next: { revalidate: 3600 } });
-  const json = await res.json();
-  return json.message;
+  if (!isApiConfigured()) {
+    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    return null;
+  }
+
+  try {
+    const headers = getApiHeaders();
+
+    const res = await fetch(DATA_URL, {
+      method: "GET",
+      headers: headers,
+      next: { revalidate: 3600 }
+    });
+
+    if (!res.ok) {
+      let errorText = "";
+      try {
+        const errorData = await res.json();
+        errorText = JSON.stringify(errorData);
+        console.error("Error response:", errorData);
+      } catch (e) {
+        errorText = await res.text();
+        console.error("Error text:", errorText);
+      }
+      console.error(`API returned ${res.status}: ${errorText}`);
+      return null;
+    }
+
+    const json = await res.json();
+    return json.message;
+  } catch (error) {
+    console.error("Fetch error details:", error);
+    return null;
+  }
 });
 
 const FALLBACK_META = {
@@ -27,18 +59,39 @@ const FALLBACK_META = {
 };
 
 export async function generateMetadata() {
-  let seoData = null;
-  try {
-    seoData = await getHomeData();
-  } catch {
-    // use fallback
+  const seoData = await getHomeData();
+
+  const defaultKeywords = ["Photovoltaik kaufen", "Solaranlage Deutschland", "Photovoltaikanlage", "Stromspeicher", "Wärmepumpe", "Wallbox", "Ökovolt", "Solarenergie", "KfW Förderung Photovoltaik", "PV Anlage Kosten"];
+
+  if (!seoData) {
+    // Fallback metadata if API fails
+    return {
+      title: FALLBACK_META.title,
+      description: FALLBACK_META.description,
+      keywords: defaultKeywords,
+      alternates: { canonical: BASE_URL, languages: { "de-DE": BASE_URL } },
+      robots: {
+        index: true, follow: true,
+        googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+      },
+      openGraph: {
+        type: "website", locale: "de_DE", url: BASE_URL, siteName: "Ökovolt Deutschland",
+        title: FALLBACK_META.title, description: FALLBACK_META.description,
+        images: [{ url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`, width: 1200, height: 630, alt: "Ökovolt Deutschland – Photovoltaik & Solaranlagen", type: "image/webp" }],
+      },
+      twitter: {
+        card: "summary_large_image", site: "@oekovolt", creator: "@oekovolt",
+        title: FALLBACK_META.title, description: FALLBACK_META.description,
+        images: [`${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`],
+      },
+    };
   }
 
   const title = seoData?.title || FALLBACK_META.title;
   const description = seoData?.first_card_description || FALLBACK_META.description;
   const apiKeywords = seoData?.keywords
     ? seoData.keywords.split(/,\s*/)
-    : ["Photovoltaik kaufen", "Solaranlage Deutschland", "Photovoltaikanlage", "Stromspeicher", "Wärmepumpe", "Wallbox", "Ökovolt", "Solarenergie", "KfW Förderung Photovoltaik", "PV Anlage Kosten"];
+    : defaultKeywords;
 
   return {
     title,
@@ -59,17 +112,11 @@ export async function generateMetadata() {
       title, description,
       images: [`${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`],
     },
-    // Schemas are injected via <script> tags in the page component directly
   };
 }
 
 export default async function HomePage() {
-  let data = null;
-  try {
-    data = await getHomeData();
-  } catch (error) {
-    console.error("Failed to fetch home page data", error);
-  }
+  const data = await getHomeData();
 
   const title = data?.title || FALLBACK_META.title;
   const description = data?.first_card_description || FALLBACK_META.description;
@@ -117,7 +164,7 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceListSchema) }} />
       <VideoBanner
-        mediaSrc={data?.image ? `${API_IMG_URL}${data.image}` : "/Images/Navbar/intro.mp4"}
+        mediaSrc={data?.image ? `/api/image?path=${data.image}` : "/Images/Navbar/intro.mp4"}
         mediaAlt={data?.alt_text || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
         title={data?.title || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
       />

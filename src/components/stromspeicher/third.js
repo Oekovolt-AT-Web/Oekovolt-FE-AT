@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FiShield, FiSun, FiTrendingDown, FiZap } from "react-icons/fi";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const iconList = [FiShield, FiSun, FiTrendingDown, FiZap];
 
@@ -11,7 +11,7 @@ const StromThirdCardSection = ({ data }) => {
         {/* Image */}
         <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg">
           <Image
-            src={`${API_IMG_URL}${data.strom_third_card_image}`}
+            src={`/api/image?path=${data.strom_third_card_image}` || "/Images/Jobs/jobs3.jpg"}
             alt={data.strom_third_card_image_alt || "Stromspeicher Bild"}
             fill
             className="object-cover rounded-2xl"

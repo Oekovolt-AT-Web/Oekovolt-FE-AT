@@ -1,37 +1,8 @@
 "use client";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
 
-const LandesBannerSection = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_page.api.get_forderungen_page`,
-          { cache: "no-store" },
-        );
-        const json = await response.json();
-        setData(json.message);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="w-full h-[300px] lg:h-[500px] bg-gray-200 animate-pulse"></div>
-    );
-  }
+const LandesBannerSection = ({ data }) => {
 
   if (!data) {
     return <div className="w-full h-[300px] lg:h-[500px] bg-gray-200"></div>;
@@ -43,11 +14,11 @@ const LandesBannerSection = () => {
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full z-0">
           <Image
-            src={`${API_IMG_URL}${data.image}`}
-            alt={data.alt_text_for_image || "Banner Image"}
+            src={data?.image ? `/api/image?path=${data?.image}` : "/Images/Jobs/jobs3.jpg"}
+            alt={data?.alt_text_for_image || "Banner Image"}
             fill
             className="object-cover"
-            priority
+            loading="eager"
             sizes=" 100vw"
           />
         </div>
@@ -68,7 +39,7 @@ const LandesBannerSection = () => {
               alt="Banner Image"
               fill
               className="object-cover"
-              priority
+              loading="eager"
               sizes=" 100vw"
             />
           </div>
@@ -81,10 +52,10 @@ const LandesBannerSection = () => {
             <div className="max-w-xl space-y-2 text-center lg:text-left">
               <p className="text-md text-[#669933] uppercase">Förderungen</p>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg">
-                {data.title}
+                {data?.title}
               </h2>
               <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
-                {data.description}
+                {data?.description}
               </p>
             </div>
           </div>
@@ -98,10 +69,10 @@ const LandesBannerSection = () => {
               Landesförderungen{" "}
             </p>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg">
-              {data.first_card_title}
+              {data?.first_card_title}
             </h2>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
-              {data.first_card_description}
+              {data?.first_card_description}
             </p>
           </div>
         </div>

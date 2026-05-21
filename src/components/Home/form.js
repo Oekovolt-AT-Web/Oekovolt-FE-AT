@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { API_BASE_URL } from "@/lib/apiBaseUrl";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+import { submitAnfrage } from "@/lib/api/anfrage/create_anfrage";
 
 export default function PVInquiryForm({ data }) {
   const [step, setStep] = useState(1);
@@ -48,26 +47,14 @@ export default function PVInquiryForm({ data }) {
         allgemeine_geschäftsbedingungen: formData.acceptTerms ? 1 : 0,
       };
 
-      const response = await fetch(
-        `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.anfrage.api.create_anfrage`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      // Use the new submitAnfrage function
+      const response = await submitAnfrage(payload);
 
-      if (!response.ok) {
-        throw new Error("Fehler beim Senden der Anfrage");
-      }
-
-      await response.json();
-      setStep(5); // Shfaq step 5 (suksesi)
+      // If we get here, submission was successful (or skipped during build)
+      setStep(5); // Show step 5 (success)
       setSubmitStatus("success");
 
-      // Reset form pas 5 sekondave
+      // Reset form after 5 seconds
       setTimeout(() => {
         setFormData({
           roofType: "",
@@ -219,7 +206,6 @@ export default function PVInquiryForm({ data }) {
           </motion.div>
         )}
 
-        {/* ...rest of the steps remain the same, you can repeat the structure of step 2–4 here */}
         {step === 2 && (
           <motion.div
             initial={{ opacity: 0, x: 50 }}

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { FaChevronRight, FaCheckCircle, FaPlay } from "react-icons/fa";
 import Link from "next/link";
-import { API_IMG_URL } from "@/lib/apiImgUrl";
+
 
 const PhotovoltaikBanner = ({ data }) => {
   if (!data) return null;
@@ -60,11 +60,11 @@ const PhotovoltaikBanner = ({ data }) => {
         {/* Right Image Section */}
         <div className="w-full lg:w-1/2 relative h-[420px]">
           <Image
-            src={`${API_IMG_URL}${data.photovoltaik_banner_image}`}
-            alt={data.photovoltaik_alt_banner_image || "Photovoltaik"}
+            src={data?.photovoltaik_banner_image ? `/api/image?path=${data.photovoltaik_banner_image}` : "/Images/Jobs/jobs3.jpg"}
+            alt={data?.photovoltaik_alt_banner_image || "Photovoltaik"}
             fill
             className="rounded-2xl object-cover"
-            priority
+            loading="eager"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 

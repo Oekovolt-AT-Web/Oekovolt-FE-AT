@@ -1,6 +1,5 @@
 "use client"
 import Image from 'next/image';
-import { API_IMG_URL } from '@/lib/apiImgUrl';
 import { motion } from 'framer-motion';
 import { FaCheckCircle } from 'react-icons/fa';
 
@@ -19,7 +18,7 @@ const WallboxThirdCard = ({ data }) => {
             className="relative h-80 lg:h-[500px] rounded-xl overflow-hidden shadow-lg"
           >
             <Image
-              src={`${API_IMG_URL}${data.wallbox_third_card_image}`}
+              src={`/api/image?path=${data.wallbox_third_card_image}` || "/Images/Jobs/jobs3.jpg"}
               alt={data.wallbox_third_card_image_alt || 'Wallbox Vorteile'}
               fill
               className="rounded-xl object-cover"
