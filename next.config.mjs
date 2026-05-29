@@ -4,6 +4,103 @@ const nextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
+  
+      {
+        source: "/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de",
+        permanent: true,
+      },
+      {
+        source: "/faqs",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/faqs",
+        permanent: true,
+      },
+      {
+        source: "/faqs/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/faqs",
+        permanent: true,
+      },
+      {
+        source: "/referenzkarte",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/referenzkarte",
+        permanent: true,
+      },
+      {
+        source: "/jobs",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/uber-uns/jobs",
+        permanent: true,
+      },
+      {
+        source: "/service",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
+        permanent: true,
+      },
+      {
+        source: "/kontakt",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/kontakt",
+        permanent: true,
+      },
+      {
+        source: "/agb",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/agb",
+        permanent: true,
+      },
+
+
+      {
+        source: "/referenzkarte",
+        has: [{ type: "host", value: "www.oekovolt.de" }],
+        destination: "/referenzen/referenzkarte",
+        permanent: true,
+      },
+      {
+        source: "/jobs",
+        has: [{ type: "host", value: "www.oekovolt.de" }],
+        destination: "/uber-uns/jobs",
+        permanent: true,
+      },
+      {
+        source: "/service",
+        has: [{ type: "host", value: "www.oekovolt.de" }],
+        destination: "/dienstleistungen/photovoltaik",
+        permanent: true,
+      },
+
+   
+      {
+        source: "/ravensburg-flachdach/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/projekte/ravensburg-flachdach",
+        permanent: true,
+      },
+      {
+        source: "/buchloe-einfamilienhaus-satteldach/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
+        permanent: true,
+      },
+      {
+        source: "/mering-flachdach-ost-west/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/projekte/mering-flachdach-ost-west",
+        permanent: true,
+      },
+      {
+        source: "/salzburg-flachdach-blechfalzdach/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/projekte/salzburg-flachdach-blechfalzdach",
+        permanent: true,
+      },
+
+     
       {
         source: "/:path*",
         has: [{ type: "host", value: "oekovolt.de" }],
