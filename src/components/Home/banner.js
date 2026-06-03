@@ -20,13 +20,22 @@ const VideoBanner = ({
 
     if (VIDEO_EXTENSIONS_REGEX.test(src)) {
       return (
-        <video autoPlay loop muted playsInline preload="metadata" className={className} aria-label={mediaAlt}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          fetchPriority="high"
+          className={className}
+          aria-label={mediaAlt}
+        >
           <source src={src} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       );
     }
-    return <Image src={src} alt={mediaAlt} fill sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw" className={className} style={{ objectFit: "cover" }} />;
+    return <Image src={src} alt={mediaAlt} fill sizes="100vw" fetchPriority="high" className={className} style={{ objectFit: "cover" }} />;
   };
 
   return (

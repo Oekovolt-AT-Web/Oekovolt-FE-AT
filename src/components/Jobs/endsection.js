@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 
-
 export default function JobsAnotherDesign({ data }) {
   return (
     <div className="w-full bg-gray-100">
@@ -41,6 +40,53 @@ export default function JobsAnotherDesign({ data }) {
               <p className="text-sm text-white">{data.fifth_card_card_description}</p>
             </div>
           </div>
+
+          <style jsx>
+            {`
+            .card-container {
+  position: relative;
+  width: 100%;
+  height: 120px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.animated-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(360deg, #669933, #669933);
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: rotBGimg 6s linear infinite;
+  will-change: transform;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.card-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 5px;
+  border-radius: 8px;
+  background: #07182E;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  padding: 20px;
+  gap: 10px;
+}
+
+.card-content h2 {
+  color: white;
+  font-size: 2em;
+  text-align: center;
+}`}
+          </style>
 
           {/* Bullet points */}
           <ul className="space-y-2 text-gray-800 font-semibold lg:mb-6">

@@ -119,8 +119,10 @@ export default function RotatingImageSection({ data = {} }) {
                 fill
                 src={images[activeIndex % images.length]}
                 alt={firstCardImages[activeIndex % images.length]?.alt_text || "Solar Image"}
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 640px) 85vw, (max-width: 1024px) 40vw, 400px"
                 className="w-full h-full object-cover"
+                quality={80}  // Reduce quality to 80% for smaller files
+                priority={activeIndex === 0}  // Only prioritize first image
               />
             </motion.div>
           )}

@@ -262,38 +262,38 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     router.refresh();
   };
 
-  useEffect(() => {
-    if (consent.googleAnalytics && !window.gtagInitialized) {
-      const existingScript = document.querySelector(
-        'script[src="https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG"]'
-      );
+  // useEffect(() => {
+  //   if (consent.googleAnalytics && !window.gtagInitialized) {
+  //     const existingScript = document.querySelector(
+  //       'script[src="https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG"]'
+  //     );
 
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.src = "https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG";
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      }
+  //     if (!existingScript) {
+  //       const script = document.createElement("script");
+  //       script.src = "https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG";
+  //       script.async = true;
+  //       script.defer = true;
+  //       document.head.appendChild(script);
+  //     }
 
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        window.dataLayer.push(arguments);
-      }
+  //     window.dataLayer = window.dataLayer || [];
+  //     function gtag() {
+  //       window.dataLayer.push(arguments);
+  //     }
 
-      window.gtag = gtag;
-      window.gtagInitialized = true;
+  //     window.gtag = gtag;
+  //     window.gtagInitialized = true;
 
-      gtag("js", new Date());
-      gtag("config", "G-X914LD3K1V", {
-        anonymize_ip: true,
-      });
+  //     gtag("js", new Date());
+  //     gtag("config", "G-X914LD3K1V", {
+  //       anonymize_ip: true,
+  //     });
 
-      gtag("consent", "update", {
-        analytics_storage: "granted",
-      });
-    }
-  }, [consent.googleAnalytics]);
+  //     gtag("consent", "update", {
+  //       analytics_storage: "granted",
+  //     });
+  //   }
+  // }, [consent.googleAnalytics]);
 
   const handleClose = () => {
     setShowBanner(false);
