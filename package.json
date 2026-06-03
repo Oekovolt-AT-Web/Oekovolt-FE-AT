@@ -1,7 +1,6 @@
 {
   "name": "oekovoltweb",
   "version": "0.1.0",
-  "private": true,
   "browserslist": {
     "production": [
       "chrome >= 90",
@@ -17,6 +16,7 @@
       "last 1 safari version"
     ]
   },
+  "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
