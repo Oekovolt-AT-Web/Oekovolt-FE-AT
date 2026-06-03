@@ -4,6 +4,8 @@ import { cache } from "react";
 import dynamic from "next/dynamic";
 import VideoBanner from "@/components/Home/banner";
 import ServicesBanner from "@/components/Home/about";
+import HomeLoader from "@/components/Home/HomeLoader";
+
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 const RotatingCircleSection = dynamic(() => import("@/components/Home/welcome"));
@@ -163,8 +165,9 @@ export default async function HomePage() {
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceListSchema) }} />
+      <HomeLoader />
       <VideoBanner
-        mediaSrc={data?.image ? `/api/image?path=${data.image}` : "/Images/Navbar/intro.mp4"}
+        mediaSrc={data?.image ? `/api/image?path=${data.image}` : "/Images/Kontakt/download-2.jpg"}
         mediaAlt={data?.alt_text || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
         title={data?.title || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
       />

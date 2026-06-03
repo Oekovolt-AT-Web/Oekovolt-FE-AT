@@ -1,13 +1,6 @@
+"use client"
 import React from "react";
-import {
-  HiOutlineCog6Tooth,
-  HiOutlineBolt,
-  HiOutlineWrenchScrewdriver,
-} from "react-icons/hi2";
 import Image from "next/image";
-
-
-
 
 const ServicesBanner = ({ data }) => {
   return (
@@ -29,6 +22,23 @@ const ServicesBanner = ({ data }) => {
                     className="object-cover"
                   />
                 </div>
+                <style jsx>{`
+                  @keyframes pulseblue {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(30, 64, 175, 0.6); /* blu */
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(30, 64, 175, 0);
+  }
+}
+
+.pulse-hover:hover {
+  animation: pulseblue 1.7s infinite;
+  background-color: #023a51 !important; /* blu në hover */
+}
+                `}</style>
                 <div>
                   <h2 className="text-2xl font-[540] text-black mb-2 text-center sm:text-start leading-[1.7]">
                     {card.title}

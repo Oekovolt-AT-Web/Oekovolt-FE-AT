@@ -4,7 +4,7 @@ const nextConfig = {
   poweredByHeader: false,
   async redirects() {
     return [
-  
+
       {
         source: "/",
         has: [{ type: "host", value: "oekovolt.de" }],
@@ -74,7 +74,7 @@ const nextConfig = {
         permanent: true,
       },
 
-   
+
       {
         source: "/ravensburg-flachdach/",
         has: [{ type: "host", value: "oekovolt.de" }],
@@ -100,7 +100,7 @@ const nextConfig = {
         permanent: true,
       },
 
-     
+
       {
         source: "/:path*",
         has: [{ type: "host", value: "oekovolt.de" }],
@@ -150,6 +150,25 @@ const nextConfig = {
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
+      },
+      // --- VIDEO OPTIMIZATION ADDITIONS ---
+      {
+        // Target all common background video formats
+        source: "/(.*)\\.(mp4|webm|ogg|mov|m4v)",
+        headers: [
+          // 1. Long-term static asset caching
+          { key: "Cache-Control", value: "public, max-age=31536000, must-revalidate" },
+          // 2. Explicitly allow byte-range streaming requests
+          { key: "Accept-Ranges", value: "bytes" }
+        ],
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/backoffice/:path*',
+        destination: 'https://backoffice.oekovolt.de/:path*',
       },
     ];
   },

@@ -1,16 +1,16 @@
 import "./globals.css";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
-import { Open_Sans } from "next/font/google";
+// import { Open_Sans } from "next/font/google";
 
-const openSans = Open_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-  variable: "--font-open-sans",
-  preload: true,
-  fallback: ["system-ui", "arial"],
+// const openSans = Open_Sans({
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700"],
+//   display: "swap",
+//   variable: "--font-open-sans",
+//   preload: true,
+//   fallback: ["system-ui", "arial"],
 
-});
+// });
 
 const BASE_URL = "https://www.oekovolt.de";
 
@@ -253,8 +253,15 @@ export default function RootLayout({ children }) {
         <meta name="ICBM" content="48.03858, 10.62765" />
         {/* Language */}
         <meta httpEquiv="content-language" content="de-DE" />
+
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+
+        {/* Also preconnect to Google Analytics if needed */}
+        <link rel="preconnect" href="https://www.google-analytics.com" />
+        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
-      <body className={`${openSans.className} bg-white text-black`}>
+      <body className={`bg-white text-black`}>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#669933] focus:text-white focus:rounded">Zum Hauptinhalt springen</a>
         <script
           type="application/ld+json"

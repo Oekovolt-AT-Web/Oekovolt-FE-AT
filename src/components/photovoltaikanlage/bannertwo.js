@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { FaChevronRight, FaCheckCircle, FaSolarPanel } from "react-icons/fa";
-import Link from "next/link";
+import {  FaCheckCircle, FaSolarPanel } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 
