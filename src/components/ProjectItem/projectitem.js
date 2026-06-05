@@ -2,12 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  FaMapMarkerAlt,
-  FaCalendarAlt,
-  FaTools,
-  FaBolt,
-} from "react-icons/fa";
+import { MapPin, Calendar, Wrench, Zap } from "lucide-react";
 
 import { generateSlug } from "@/lib/slugify";
 
@@ -42,7 +37,7 @@ const ProjectCard = ({ project }) => {
         >
           <h3 className="text-white text-xl font-semibold">{project?.title}</h3>
           <div className="flex items-center text-white gap-2 mt-2 text-[16px]">
-            <FaBolt className="text-[#ffde59]" />
+            <Zap className="text-[#ffde59]" />
             <span>{project?.leistung}</span>
           </div>
         </div>
@@ -90,25 +85,25 @@ const ProjectDetailComponent = ({ project, related }) => {
             </h2>
             {!!project?.leistung && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
-                <FaBolt className="text-[#669933]" />
+                <Zap className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.leistung}</span>
               </div>
             )}
             {!!project?.jahr && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
-                <FaCalendarAlt className="text-[#669933]" />
+                <Calendar className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.jahr}</span>
               </div>
             )}
             {!!project?.typ && (
               <div className="flex items-center gap-3 text-gray-700 mb-3">
-                <FaTools className="text-[#669933]" />
+                <Wrench className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.typ}</span>
               </div>
             )}
             {!!project?.ort && (
               <div className="flex items-center gap-3 text-gray-700">
-                <FaMapMarkerAlt className="text-[#669933]" />
+                <MapPin className="text-[#669933]" />
                 <span className="font-medium text-xl">{project.ort}</span>
               </div>
             )}

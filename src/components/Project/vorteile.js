@@ -1,7 +1,3 @@
-"use client";
-import { FaSolarPanel } from "react-icons/fa";
-import { FaFlag } from "react-icons/fa";
-
 import Image from "next/image";
 
 const Vorteil = ({ data }) => {

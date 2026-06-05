@@ -1,7 +1,5 @@
 import Image from "next/image";
-
-import { FaSolarPanel } from 'react-icons/fa';
-
+import {  Sun } from "lucide-react";
 
 const HeroEnergy = ({ data }) => {
 
@@ -30,7 +28,7 @@ const HeroEnergy = ({ data }) => {
 
         <div className="relative left-0 mt-5 z-10">
           <h2 className="mt-2 text-gray-600 text-center">
-            <FaSolarPanel className="inline-block w-5 h-5 text-[#669933] mr-3" />
+            <Sun className="inline-block w-5 h-5 text-[#669933] mr-3" />
             {data.first_card_image_description}
           </h2>
         </div>

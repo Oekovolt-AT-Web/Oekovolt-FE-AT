@@ -1,20 +1,21 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function GreenFeatureSection2() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16 lg:py-20 animate-fadeInUp">
       <div className="flex flex-col md:flex-row items-center gap-8 pb-[20px]">
-        <motion.div
+        
+        {/* Left Content */}
+        <FadeInView
+          direction="left"
+          distance={50}
+          duration={800}
           className="w-full md:w-3/4 space-y-6"
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h2 className="lg:text-[30px] text-2xl md:text-3xl  font-[500]" style={{ color: "#2e8400" }}>
+          <h2 className="lg:text-[30px] text-2xl md:text-3xl font-[500]" style={{ color: "#2e8400" }}>
             Nachhaltige Energie für Ihr Zuhause
           </h2>
 
@@ -30,14 +31,17 @@ export default function GreenFeatureSection2() {
             style={{ backgroundColor: "#669933" }}
           >
             Jetzt Kontaktieren
-            <FaChevronRight />
+            <ChevronRight />
           </Link>
-        </motion.div>
-        <motion.div
+        </FadeInView>
+
+        {/* Right Image */}
+        <FadeInView
+          direction="right"
+          distance={50}
+          duration={800}
+          delay={200}
           className="w-full md:w-1/4 flex justify-center"
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         >
           <div className="relative aspect-square w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden">
             <Image
@@ -49,7 +53,7 @@ export default function GreenFeatureSection2() {
               sizes="(max-width: 768px) 100px, 200px; (max-width: 1024px) 50vw, 33vw"
             />
           </div>
-        </motion.div>
+        </FadeInView>
       </div>
     </div>
   );

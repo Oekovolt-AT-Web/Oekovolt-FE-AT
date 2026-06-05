@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
-
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { FaChevronRight } from "react-icons/fa";
+import {ChevronRight} from "lucide-react"
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const PhotovoltaikSixthCardSection = ({ data }) => {
   if (!data) return null;
@@ -19,12 +18,11 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
           {imageCount === 1 && (
             <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md">
               <Image
-                src={image[0]?.image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
-                alt={images[0].alt_image || "solar"}
+                src={images[0]?.image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
+                alt={images[0]?.alt_image || "solar"}
                 fill
                 className="object-cover"
-                sizes=" 100vw"
-
+                sizes="100vw"
               />
             </div>
           )}
@@ -37,12 +35,11 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                   className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
                 >
                   <Image
-                    src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
-                    alt={img.alt_image || "solar"}
+                    src={img?.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={img?.alt_image || "solar"}
                     fill
                     className="object-cover"
-                    sizes=" 100vw"
-
+                    sizes="100vw"
                   />
                 </div>
               ))}
@@ -58,24 +55,22 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                     className="relative w-full h-60 aspect-[4/3] rounded-xl overflow-hidden shadow-md"
                   >
                     <Image
-                      src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
-                      alt={img.alt_image || "solar"}
+                      src={img?.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
+                      alt={img?.alt_image || "solar"}
                       fill
                       className="object-cover"
-                      sizes=" 100vw"
-
+                      sizes="100vw"
                     />
                   </div>
                 ))}
               </div>
               <div className="relative w-full h-60 aspect-[4/3] rounded-xl overflow-hidden shadow-md">
                 <Image
-                  src={images[2].image ? `/api/image?path=${images[2].image}` : "/Images/Jobs/jobs3.jpg"}
-                  alt={images[2].alt_image || "solar"}
+                  src={images[2]?.image ? `/api/image?path=${images[2].image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt={images[2]?.alt_image || "solar"}
                   fill
                   className="object-cover"
-                  sizes=" 100vw"
-
+                  sizes="100vw"
                 />
               </div>
             </>
@@ -87,12 +82,11 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
               <div className="w-full md:w-1/2">
                 <div className="relative w-full h-full aspect-[4/3] rounded-xl overflow-hidden shadow-md">
                   <Image
-                    src={images[0].image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
-                    alt={images[0].alt_image || "solar"}
+                    src={images[0]?.image ? `/api/image?path=${images[0].image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={images[0]?.alt_image || "solar"}
                     fill
                     className="object-cover"
-                    sizes=" 100vw"
-
+                    sizes="100vw"
                   />
                 </div>
               </div>
@@ -105,55 +99,65 @@ const PhotovoltaikSixthCardSection = ({ data }) => {
                     className="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md"
                   >
                     <Image
-                      src={img.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
-                      alt={img.alt_image || "solar"}
+                      src={img?.image ? `/api/image?path=${img.image}` : "/Images/Jobs/jobs3.jpg"}
+                      alt={img?.alt_image || "solar"}
                       fill
                       className="object-cover"
-                      sizes=" 100vw"
-
+                      sizes="100vw"
                     />
                   </div>
                 ))}
               </div>
             </div>
           )}
-
         </div>
 
         {/* Text Content */}
         <div className="w-full lg:w-1/2 space-y-6">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
             className="text-sm font-semibold text-[#669933] uppercase tracking-wide"
           >
             {data.photovoltaik_title_sixth_card_first}
-          </motion.p>
+          </FadeInView>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+          <FadeInView
+            direction="bottom"
+            distance={30}
+            duration={800}
             className="text-3xl md:text-4xl leading-tight text-gray-900"
           >
             {data.photovoltaik_subtitle_sixth_card_first}
-          </motion.h2>
+          </FadeInView>
 
-          <p className="text-gray-800 text-lg whitespace-pre-line">
-            {data.photovoltaik_description_sixth_card_alt_second}
-          </p>
-
-          <Link
-            href="/kontakt"
-            className="inline-flex items-center font-semibold gap-2 px-6 py-3 rounded-md text-white transition-colors hover:bg-[#558822] text-[14px] uppercase"
-            style={{ backgroundColor: "#669933" }}
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
+            delay={100}
           >
-            Jetzt Kontaktieren
-            <FaChevronRight />
-          </Link>
+            <p className="text-gray-800 text-lg whitespace-pre-line">
+              {data.photovoltaik_description_sixth_card_alt_second}
+            </p>
+          </FadeInView>
+
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
+            delay={200}
+          >
+            <Link
+              href="/kontakt"
+              className="inline-flex items-center font-semibold gap-2 px-6 py-3 rounded-md text-white transition-colors hover:bg-[#558822] text-[14px] uppercase"
+              style={{ backgroundColor: "#669933" }}
+            >
+              Jetzt Kontaktieren
+              <ChevronRight />
+            </Link>
+          </FadeInView>
         </div>
       </div>
     </section>

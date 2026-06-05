@@ -50,21 +50,12 @@ export async function generateMetadata() {
   const data = await fetchRichtlinenData();
   const bannerData = data?.message?.banner;
   
-  // Fallback für Deutschland (wenn keine API-Daten)
-  const isGermany = process.env.NEXT_PUBLIC_SITE === "de" || 
-                    process.env.NEXT_PUBLIC_COUNTRY === "deutschland";
-  
-  const defaultTitle = isGermany 
-    ? "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland"
-    : "Technische Richtlinien für Photovoltaik | Ökovolt Austria";
+  const defaultTitle = "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland";
     
-  const defaultDescription = isGermany
-    ? "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
-    : "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Österreich – OVE-Normen und aktuelle Sicherheitsanforderungen.";
-    
-  const defaultCanonical = isGermany
-    ? "https://www.oekovolt.de/forderungen/richtlinen"
-    : "https://www.oekovolt.com/forderungen/richtlinen";
+  const defaultDescription = "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
+   
+  const defaultCanonical ="https://www.oekovolt.de/forderungen/richtlinen";
+   
 
   if (!data) {
     // Fallback metadata if API fails
@@ -76,7 +67,7 @@ export async function generateMetadata() {
         "PV-Anlage Normen",
         "Sicherheitsrichtlinien Solar",
         "Technische Normen Photovoltaik",
-        isGermany ? "VDE Richtlinien" : "OVE Richtlinien",
+        "VDE Richtlinien",
       ],
       alternates: {
         canonical: defaultCanonical,
@@ -109,7 +100,7 @@ export async function generateMetadata() {
       "PV-Anlage Normen",
       "Sicherheitsrichtlinien Solar",
       "Technische Normen Photovoltaik",
-      isGermany ? "VDE Richtlinien" : "OVE Richtlinien",
+      "VDE Richtlinien",
     ],
     alternates: {
       canonical: defaultCanonical,

@@ -1,8 +1,7 @@
 import Image from "next/image";
-import { FiShield, FiSun, FiTrendingDown, FiZap } from "react-icons/fi";
+import { Shield, Sun, TrendingDown, Zap } from "lucide-react";
 
-
-const iconList = [FiShield, FiSun, FiTrendingDown, FiZap];
+const iconList = [Shield, Sun, TrendingDown, Zap];
 
 const StromThirdCardSection = ({ data }) => {
   return (

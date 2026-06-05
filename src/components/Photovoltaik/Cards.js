@@ -1,12 +1,4 @@
 import React from "react";
-import {
-  FaEnvelope,
-  FaPhoneAlt,
-  FaRulerCombined,
-  FaFileAlt,
-  FaTools,
-  FaKey,
-} from "react-icons/fa";
 import Image from "next/image";
 
 

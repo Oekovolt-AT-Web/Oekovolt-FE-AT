@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getCardContact } from "@/lib/api/contact/card_contact";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function EndWhite() {
   const [info, setInfo] = useState(null);
@@ -31,12 +31,11 @@ export default function EndWhite() {
   if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>;
 
   return (
-    <motion.div
+    <FadeInView
+      direction="bottom"
+      distance={30}
+      duration={800}
       className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 px-6 md:px-12 lg:py-20 py-10 max-w-7xl mx-auto rounded-2xl overflow-hidden"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
-      viewport={{ once: true }}
     >
       {/* LEFT: Text Content */}
       <div className="w-full lg:w-1/2">
@@ -56,7 +55,7 @@ export default function EndWhite() {
           style={{ backgroundColor: "#669933" }}
         >
           Jetzt Kontaktieren
-          <FaChevronRight />
+          <ChevronRight />
         </Link>
       </div>
 
@@ -64,7 +63,7 @@ export default function EndWhite() {
       <div className="relative w-full lg:w-1/2 flex justify-center items-center group lg:mt-0">
         <div className="relative z-10 w-[200px] h-[200px] md:w-[300px] md:h-[300px] rounded-full overflow-hidden border-4 border-white shadow-xl">
           <Image
-            src={`/api/image?path=${info?.image}` || "/Images/Home/contactImage.jpg"}
+            src={info?.image ? `/api/image?path=${info?.image}` : "/Images/Home/contactImage.jpg"}
             alt={info?.alt_text || "Kontaktbild"}
             fill
             className="object-cover"
@@ -88,6 +87,6 @@ export default function EndWhite() {
         <div className="hidden md:block absolute w-[340px] h-[340px] rounded-full bg-[#669933]/40 -z-10"></div>
         <div className="hidden md:block absolute w-[380px] h-[380px] rounded-full border border-[#669933] -z-20"></div>
       </div>
-    </motion.div>
+    </FadeInView>
   );
 }

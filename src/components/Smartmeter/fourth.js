@@ -1,7 +1,5 @@
 import Image from "next/image";
 
-import { FaSolarPanel } from 'react-icons/fa';
-
 const HeroEnergy = ({data}) => {
  
   if (!data) return null;

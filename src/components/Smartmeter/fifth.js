@@ -1,33 +1,16 @@
-"use client"
+"use client";
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import Slider from 'react-slick';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-
-import { FiCheck, FiZap, FiDollarSign, FiClock, FiShield } from 'react-icons/fi';
+import { ArrowLeft, ArrowRight, Check, Zap, DollarSign, Clock, Shield } from "lucide-react";
+import FadeInView from '@/components/Reusable/FadeInView';
 
 const SmartMeterCostSection = ({ data }) => {
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 }
-  };
   const PrevArrow = ({ onClick }) => (
     <button
       onClick={onClick}
       className="cursor-pointer absolute z-10 left-[-20px] top-1/2 transform -translate-y-1/2 text-[#669933] bg-white rounded-full p-2 shadow hover:bg-[#669933] hover:text-white transition"
     >
-      <FiArrowLeft />
+      <ArrowLeft />
     </button>
   );
 
@@ -36,122 +19,116 @@ const SmartMeterCostSection = ({ data }) => {
       onClick={onClick}
       className="cursor-pointer absolute z-10 right-[-20px] top-1/2 transform -translate-y-1/2 text-[#669933] bg-white rounded-full p-2 shadow hover:bg-[#669933] hover:text-white transition"
     >
-      <FiArrowRight />
+      <ArrowRight />
     </button>
   );
 
-
   // Icon mapping for features
   const getIcon = (index) => {
-    const icons = [<FiZap key="zap" />, <FiDollarSign key="dollar" />,
-    <FiClock key="clock" />, <FiShield key="shield" />];
+    const icons = [<Zap key="zap" />, <DollarSign key="dollar" />, <Clock key="clock" />, <Shield key="shield" />];
     return icons[index % icons.length];
   };
 
   return (
     <section className="py-10 md:py-16 bg-gray-100">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          variants={container}
-          viewport={{ once: true, margin: "-100px" }}
-          className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row"
-        >
-          {/* Image Section - Full Height */}
-          <motion.div
-            variants={item}
-            className="w-full lg:w-2/5 relative h-80 lg:h-auto"
-          >
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden flex flex-col lg:flex-row">
+          {/* Image Section */}
+          <div className="w-full lg:w-2/5 relative h-80 lg:h-auto">
             <Image
-              src={`/api/image?path=${data.smart_meter_fourth_card_image}` || "/Images/Jobs/jobs3.jpg"}
-              alt={data.smart_meter_fourth_card_alt_image || 'Smart Meter'}
+              src={data?.smart_meter_fourth_card_image ? `/api/image?path=${data.smart_meter_fourth_card_image}` : "/Images/Jobs/jobs3.jpg"}
+              alt={data?.smart_meter_fourth_card_alt_image || 'Smart Meter'}
               fill
               className="object-cover"
               loading="eager"
-              sizes=" 100vw"
-
+              sizes="100vw"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-[#669933]/50 lg:bg-gradient-to-r" />
             <div className="absolute bottom-6 left-6 right-6 lg:bottom-auto lg:top-1/2 lg:-translate-y-1/2">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+              <FadeInView
+                direction="bottom"
+                distance={20}
+                duration={300}
+                delay={300}
                 className="text-3xl font-bold text-white drop-shadow-lg"
               >
-                {data.smart_meter_fourth_card_title}
-              </motion.h2>
+                <h2>{data?.smart_meter_fourth_card_title}</h2>
+              </FadeInView>
             </div>
-          </motion.div>
+          </div>
 
           {/* Content Section */}
           <div className="w-full lg:w-3/5 p-8 lg:p-12">
             {/* Description */}
-            <motion.div
-              variants={item}
+            <FadeInView
+              direction="bottom"
+              distance={20}
+              duration={500}
               className="mb-10"
             >
               <p className="text-lg text-gray-600 leading-relaxed">
-                {data.smart_meter_fourth_card_description}
+                {data?.smart_meter_fourth_card_description}
               </p>
-            </motion.div>
+            </FadeInView>
 
             {/* Pricing Tables */}
             <div className="space-y-12">
               {/* First Table */}
-              <motion.div
-                variants={container}
-                className="bg-gray-50 rounded-xl p-6 shadow-inner"
-              >
-                <motion.h3
-                  variants={item}
-                  className="text-2xl  text-gray-900 mb-6 flex items-center"
+              <div className="bg-gray-50 rounded-xl p-6 shadow-inner">
+                <FadeInView
+                  direction="bottom"
+                  distance={20}
+                  duration={500}
+                  className="text-2xl text-gray-900 mb-6 flex items-center"
                 >
-                  <FiDollarSign className="mr-3 text-[#669933]" />
-                  {data.smart_meter_fourth_card_first_table_title}
-                </motion.h3>
+                  <h3 className="flex items-center">
+                    <DollarSign className="mr-3 text-[#669933]" />
+                    {data?.smart_meter_fourth_card_first_table_title}
+                  </h3>
+                </FadeInView>
                 <ul className="space-y-4">
-                  {data.smart_meter_fourth_card_first_table.map((item, index) => (
-                    <motion.li
+                  {data?.smart_meter_fourth_card_first_table?.map((item, index) => (
+                    <FadeInView
                       key={index}
-                      variants={item}
+                      direction="bottom"
+                      distance={10}
+                      duration={400}
+                      delay={index * 100}
                       className="flex items-start p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all"
                     >
                       <div className="bg-[#669933]/80 p-2 rounded-full mr-4">
-                        <FiCheck className="text-white" />
+                        <Check className="text-white" />
                       </div>
-                      <span className="text-gray-700">{item.options}</span>
-                    </motion.li>
+                      <span className="text-gray-700">{item?.options}</span>
+                    </FadeInView>
                   ))}
                 </ul>
-              </motion.div>
-
-              {/* Second Table */}
-
+              </div>
             </div>
           </div>
-        </motion.div>
-      </div >
-      {/* Redesigned Second Table */}
-      <motion.div
-        variants={container}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-9 md:pt-15"
-      >
-        <motion.h3
-          variants={item}
-          className="text-3xl  text-gray-800 mb-6 flex items-center justify-center gap-3 text-center"
-        >
-          {/* <FiZap className="text-[#669933] text-4xl" /> */}
-          {data.smart_meter_fourth_card_second_table_title}
-        </motion.h3>
+        </div>
+      </div>
 
-        <motion.p
-          variants={item}
+      {/* Second Table Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-9 md:pt-15">
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={500}
+          className="text-3xl text-gray-800 mb-6 flex items-center justify-center gap-3 text-center"
+        >
+          <h3>{data?.smart_meter_fourth_card_second_table_title}</h3>
+        </FadeInView>
+
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={500}
+          delay={100}
           className="text-gray-500 text-lg mb-8 leading-relaxed text-center"
         >
-          {data.smart_meter_fourth_card_second_table_description}
-        </motion.p>
+          <p>{data?.smart_meter_fourth_card_second_table_description}</p>
+        </FadeInView>
 
         {/* Slider Section */}
         <Slider
@@ -166,42 +143,27 @@ const SmartMeterCostSection = ({ data }) => {
           prevArrow={<PrevArrow />}
           nextArrow={<NextArrow />}
           responsive={[
-            {
-              breakpoint: 1024,
-              settings: {
-                slidesToShow: 2,
-              },
-            },
-            {
-              breakpoint: 768,
-              settings: {
-                slidesToShow: 1,
-              },
-            },
+            { breakpoint: 1024, settings: { slidesToShow: 2 } },
+            { breakpoint: 768, settings: { slidesToShow: 1 } },
           ]}
-          className="relative "
+          className="relative"
         >
-          {data.smart_meter_fourth_card_second_table_options.map((item, index) => (
+          {data?.smart_meter_fourth_card_second_table_options?.map((item, index) => (
             <div key={index} className="px-3 h-full">
-              <motion.div
-                variants={item}
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="group flex flex-col justify-between p-6 bg-white rounded-2xl transition-all h-full" // ✅ h-full and justify-between
+              <div
+                className="group flex flex-col justify-between p-6 bg-white rounded-2xl transition-all duration-300 hover:scale-[1.02] h-full"
               >
                 <div className="flex items-center justify-center w-12 h-12 mb-4 bg-gray-100 group-hover:bg-[#669933] transition-all rounded-full text-[#669933] group-hover:text-white text-xl">
                   {getIcon(index)}
                 </div>
                 <span className="text-gray-800 text-base font-medium">
-                  {item.options}
+                  {item?.options}
                 </span>
-              </motion.div>
+              </div>
             </div>
           ))}
         </Slider>
-
-      </motion.div>
-
+      </div>
     </section>
   );
 };

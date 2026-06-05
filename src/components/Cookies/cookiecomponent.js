@@ -4,7 +4,8 @@ import { useRouter } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
 import CookieDetails from "./coookieItem";
 import Link from "next/link";
-import { GoDotFill } from "react-icons/go";
+import { Circle } from "lucide-react";
+
 
 // cookieData.js
 export const cookieServices = {
@@ -262,60 +263,75 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     router.refresh();
   };
 
-  // useEffect(() => {
-  //   if (consent.googleAnalytics && !window.gtagInitialized) {
-  //     const existingScript = document.querySelector(
-  //       'script[src="https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG"]'
-  //     );
+  useEffect(() => {
+    // Initialize Google Analytics when consent is given
+    if (consent.googleAnalytics) {
+      // Check if gtag already exists to avoid duplicates
+      if (!window.gtagInitialized) {
+        const existingScript = document.querySelector(
+          'script[src="https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG"]'
+        );
 
-  //     if (!existingScript) {
-  //       const script = document.createElement("script");
-  //       script.src = "https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG";
-  //       script.async = true;
-  //       script.defer = true;
-  //       document.head.appendChild(script);
-  //     }
+        if (!existingScript) {
+          const script = document.createElement("script");
+          script.src = "https://www.googletagmanager.com/gtag/js?id=G-CQ40N7W7PG";
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+        }
 
-  //     window.dataLayer = window.dataLayer || [];
-  //     function gtag() {
-  //       window.dataLayer.push(arguments);
-  //     }
+        // Initialize dataLayer
+        window.dataLayer = window.dataLayer || [];
 
-  //     window.gtag = gtag;
-  //     window.gtagInitialized = true;
+        // Define gtag function
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
 
-  //     gtag("js", new Date());
-  //     gtag("config", "G-X914LD3K1V", {
-  //       anonymize_ip: true,
-  //     });
+        window.gtagInitialized = true;
 
-  //     gtag("consent", "update", {
-  //       analytics_storage: "granted",
-  //     });
-  //   }
-  // }, [consent.googleAnalytics]);
+        // Initialize with consent granted
+        window.gtag("js", new Date());
+        window.gtag("config", "G-CQ40N7W7PG", {
+          anonymize_ip: true,
+        });
+
+        window.gtag("consent", "update", {
+          analytics_storage: "granted",
+        });
+      }
+    } else if (window.gtag && !consent.googleAnalytics) {
+      // If consent was removed, update to denied
+      window.gtag("consent", "update", {
+        analytics_storage: "denied",
+      });
+    }
+  }, [consent.googleAnalytics]);
 
   const handleClose = () => {
     setShowBanner(false);
     if (onClose) onClose();
   };
-  
+
   const saveConsent = (consentState) => {
     setCookie("cookieConsent", JSON.stringify(consentState), {
       maxAge: 60 * 60 * 24 * 365,
     });
-    setShowBanner(false);
-    handleClose();
 
-    if (consentState.functional && window.dataLayer) {
-      window.dataLayer.push({ event: "consent_given" });
-    }
-
+    // Update gtag consent BEFORE initializing
     if (window.gtag) {
       window.gtag("consent", "update", {
         analytics_storage: consentState.googleAnalytics ? "granted" : "denied",
       });
     }
+
+    if (consentState.functional && window.dataLayer) {
+      window.dataLayer.push({ event: "consent_given" });
+    }
+
+    // Close banner last
+    setShowBanner(false);
+    if (onClose) onClose();
   };
 
   const toggleConsent = (category) => {
@@ -356,7 +372,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
       [service]: !prev[service],
     }));
   };
-  
+
   const toggleCompact = () => {
     setIsCompact(!isCompact);
     setIsShown(true);
@@ -509,12 +525,12 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   zugestimmt werden. Wenn dem Dienst zugestimmt wird, werden diese Inhalte automatisch ohne weitere
                   manuelle Zustimmung geladen.&nbsp;&nbsp;
                   <button
-                   type="button"
-                   onClick={() => toggleCategoryDetails("functional")}
-                   aria-expanded={expandedSections.functional}
-                   className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer bg-transparent border-0 p-0"
+                    type="button"
+                    onClick={() => toggleCategoryDetails("functional")}
+                    aria-expanded={expandedSections.functional}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer bg-transparent border-0 p-0"
                   >
-                   {expandedSections.functional ? "Details ausblenden" : "Details anzeigen"}
+                    {expandedSections.functional ? "Details ausblenden" : "Details anzeigen"}
                   </button>
                 </p>
               </div>
@@ -609,12 +625,12 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   sammeln. Die Daten ermöglichen es uns, die Besucher besser zu verstehen und die Website zu
                   optimieren.&nbsp;&nbsp;
                   <button
-                   type="button"
-                   onClick={() => toggleCategoryDetails("statistics")}
-                   aria-expanded={expandedSections.statistics}
-                   className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
+                    type="button"
+                    onClick={() => toggleCategoryDetails("statistics")}
+                    aria-expanded={expandedSections.statistics}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                   >
-                   {expandedSections.statistics ? "Details ausblenden" : "Details anzeigen"}
+                    {expandedSections.statistics ? "Details ausblenden" : "Details anzeigen"}
                   </button>
                 </p>
               </div>
@@ -677,12 +693,12 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                   personalisierte Anzeigen anzuzeigen. Diese Dienste ermöglichen es uns, Besucher über mehrere Websites
                   hinweg zu verfolgen.&nbsp;&nbsp;
                   <button
-                   type="button"
-                   onClick={() => toggleCategoryDetails("marketing")}
-                   aria-expanded={expandedSections.marketing}
-                   className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
+                    type="button"
+                    onClick={() => toggleCategoryDetails("marketing")}
+                    aria-expanded={expandedSections.marketing}
+                    className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
                   >
-                   {expandedSections.marketing ? "Details ausblenden" : "Details anzeigen"}
+                    {expandedSections.marketing ? "Details ausblenden" : "Details anzeigen"}
                   </button>
                 </p>
               </div>
@@ -721,7 +737,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
           <div className="border-t border-gray-200 bg-gray-50 p-2 sticky bottom-0">
             <p className="text-center text-sm text-gray-600 gap-1 flex justify-center items-center">
               <Link href={"/datenschutz"} className="cursor-pointer">Datenschutzerklärung</Link>
-              <GoDotFill />
+              <Circle />
               <Link href={"/impressum"} className="cursor-pointer">Impressum</Link>
             </p>
           </div>

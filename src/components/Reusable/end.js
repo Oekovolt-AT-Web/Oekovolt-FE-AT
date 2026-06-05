@@ -1,11 +1,10 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { getCardContact } from "@/lib/api/contact/card_contact";
-
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function EndSection() {
   const [info, setInfo] = useState(null);
@@ -31,19 +30,18 @@ export default function EndSection() {
   if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>;
 
   return (
-    <motion.div
+    <FadeInView
+      direction="bottom"
+      distance={30}
+      duration={800}
       className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 px-6 md:px-12 max-w-7xl mx-auto rounded-2xl md:mt-12 lg:pt-12 lg:mt-12 md:mb-10"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
-      viewport={{ once: true }}
     >
       {/* LEFT: Text Content */}
       <div className="w-full lg:w-1/2">
         <p className="uppercase text-sm tracking-wide text-[#669933] font-semibold mb-3 mt-3">
           {info?.title}
         </p>
-        <h2 className="text-2xl lg:text-3xl md:text-3xl  text-gray-900 mb-5 leading-tight">
+        <h2 className="text-2xl lg:text-3xl md:text-3xl text-gray-900 mb-5 leading-tight">
           {info?.subtitle || "Dein Solarstrom. Dein Gewinn."}
         </h2>
         <p className="text-gray-700 mb-6">
@@ -56,7 +54,7 @@ export default function EndSection() {
           style={{ backgroundColor: "#669933" }}
         >
           Jetzt Kontaktieren
-          <FaChevronRight />
+          <ChevronRight />
         </Link>
       </div>
 
@@ -89,6 +87,6 @@ export default function EndSection() {
         <div className="hidden md:block absolute w-[340px] h-[340px] rounded-full bg-[#669933]/40 -z-10"></div>
         <div className="hidden md:block absolute w-[380px] h-[380px] rounded-full border border-[#669933] -z-20"></div>
       </div>
-    </motion.div>
+    </FadeInView>
   );
 }

@@ -4,21 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { FiGlobe, FiMail, FiPhone, FiCheckCircle } from "react-icons/fi";
+import { Globe, Mail, Phone, CheckCircle } from "lucide-react";
+import { generateSlug } from "@/lib/slugify";
 
-// Die gleiche Slug-Funktion wie in WarmepumpeHerstellerList
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss",
-};
 
 const createSlug = (title) => {
   return title
     .toLowerCase()
     .split("")
-    .map((char) => umlautMap[char] || char)
+    .map((char) => generateSlug[char] || char)
     .join("")
     .replace(/\s+/g, "-")
     .replace(/\//g, "-")
@@ -50,10 +44,10 @@ async function fetchAllWaermepumpeItems() {
 
     const json = await res.json();
     const data = json.message;
-    
+
     // Die warmepumpe_third_card_options_table ist das Array mit allen Herstellern
     const items = data?.warmepumpe_third_card_options_table || [];
-    
+
     return items;
   } catch (error) {
     console.error("Error fetching waermepumpe items:", error);
@@ -112,7 +106,7 @@ export async function generateStaticParams() {
       slug: createSlug(item.title)
     })).filter(param => param.slug);
 
-    
+
     return params;
   } catch (error) {
     console.error("Error in generateStaticParams:", error);
@@ -123,11 +117,11 @@ export async function generateStaticParams() {
 // Metadata für SEO
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  
+
   // Wir müssen den Titel aus dem Slug finden
   const items = await fetchAllWaermepumpeItems();
   const item = items.find(i => createSlug(i.title) === slug);
-  
+
   if (!item) {
     return {
       title: `${slug} | Hersteller nicht gefunden`,
@@ -147,20 +141,20 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${manufacturer.title} Wärmepumpen`,
-    description: manufacturer.company_description || `${manufacturer.title} Wärmepumpen bei Ökovolt Solartechnik – hochwertige und effiziente Heizlösungen.`,
-    alternates: { 
-      canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}` 
+    description: manufacturer.company_description || `${manufacturer.title} `,
+    alternates: {
+      canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`
     },
     openGraph: {
       type: "website",
       url: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`,
       title: `${manufacturer.title} Wärmepumpen`,
-      description: manufacturer.company_description || `${manufacturer.title} Wärmepumpen bei Ökovolt Solartechnik – hochwertige und effiziente Heizlösungen.`,
-      images: [{ 
-        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", 
-        width: 1200, 
-        height: 630, 
-        alt: `${manufacturer.title} Wärmepumpen` 
+      description: manufacturer.company_description || `${manufacturer.title}`,
+      images: [{
+        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        width: 1200,
+        height: 630,
+        alt: `${manufacturer.title} Wärmepumpen`
       }],
     },
   };
@@ -169,18 +163,18 @@ export async function generateMetadata({ params }) {
 // Hauptseite
 export default async function WaermepumpeDetailPage({ params }) {
   const { slug } = await params;
-  
+
   // 1. Erst alle Items holen um den Titel zu finden
   const items = await fetchAllWaermepumpeItems();
   const waermepumpeItem = items.find(i => createSlug(i.title) === slug);
-  
+
   if (!waermepumpeItem) {
     notFound();
   }
-  
+
   // 2. Dann den Hersteller mit dem Titel holen
   let hersteller = null;
-  
+
   try {
     hersteller = await fetchManufacturerByName(waermepumpeItem.title);
   } catch (err) {
@@ -317,7 +311,7 @@ export default async function WaermepumpeDetailPage({ params }) {
                         <ul className="space-y-2 text-gray-700">
                           {product.options.map((opt, i) => (
                             <li key={i} className="flex items-start gap-2">
-                              <FiCheckCircle className="mt-1 text-[#669933] shrink-0" />
+                              <CheckCircle className="mt-1 text-[#669933] shrink-0" />
                               <span>{opt.options}</span>
                             </li>
                           ))}
@@ -351,7 +345,7 @@ export default async function WaermepumpeDetailPage({ params }) {
             <div className="space-y-2 text-gray-700">
               {hersteller.website_url && (
                 <p className="flex items-center gap-2">
-                  <FiGlobe className="text-blue-600 shrink-0" />
+                  <Globe className="text-blue-600 shrink-0" />
                   <Link
                     href={hersteller.website_url}
                     className="underline hover:text-blue-800 transition break-all"
@@ -364,7 +358,7 @@ export default async function WaermepumpeDetailPage({ params }) {
               )}
               {hersteller.email && (
                 <p className="flex items-center gap-2">
-                  <FiMail className="text-red-500 shrink-0" />
+                  <Mail className="text-red-500 shrink-0" />
                   <a href={`mailto:${hersteller.email}`} className="hover:underline break-all">
                     {hersteller.email}
                   </a>
@@ -372,7 +366,7 @@ export default async function WaermepumpeDetailPage({ params }) {
               )}
               {hersteller.phone_number && (
                 <p className="flex items-center gap-2">
-                  <FiPhone className="text-green-600 shrink-0" />
+                  <Phone className="text-green-600 shrink-0" />
                   <a href={`tel:${hersteller.phone_number}`} className="hover:underline">
                     {hersteller.phone_number}
                   </a>

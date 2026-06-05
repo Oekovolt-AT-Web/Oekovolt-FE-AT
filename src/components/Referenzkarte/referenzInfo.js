@@ -1,13 +1,12 @@
 "use client";
-import { motion } from "framer-motion";
 import Slider from "react-slick";
-import { FaSolarPanel, FaIndustry, FaChartLine } from "react-icons/fa";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
+import { Sun, Factory, ChartLine, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 import { getPartners } from "@/lib/api/partners/partners_api";
 import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
@@ -17,7 +16,7 @@ const CustomPrevArrow = ({ onClick }) => (
     onClick={onClick}
     className="absolute left-2 top-1/2 z-50 transform -translate-y-1/2 text-5xl text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-md"
   >
-    <FaAngleLeft />
+    <ChevronLeft />
   </div>
 );
 
@@ -26,7 +25,7 @@ const CustomNextArrow = ({ onClick }) => (
     onClick={onClick}
     className="absolute right-2 top-1/2 z-50 transform -translate-y-1/2 text-5xl text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-md"
   >
-    <FaAngleRight />
+    <ChevronRight />
   </div>
 );
 
@@ -39,18 +38,18 @@ export default function SolutionsPage({ data }) {
   const stats = useMemo(
     () => [
       {
-        icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
+        icon: <Sun className="text-[35px] text-[#669933]/90" />,
         value: toNumber(data?.pv_kraftwerke, 5000),
         label: "PV-Kraftwerke",
       },
       {
-        icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
+        icon: <Factory className="text-[35px] text-[#669933]/90" />,
         value: toNumber(data?.leistung, 340000),
         suffix: "kWp",
         label: "Leistung",
       },
       {
-        icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
+        icon: <ChartLine className="text-[35px] text-[#669933]/90" />,
         value: toNumber(data?.co2_einsparung, 112000),
         suffix: "t",
         label: "Co2-Einsparung",
@@ -158,7 +157,6 @@ export default function SolutionsPage({ data }) {
         setProjectFrappe(formattedProjects);
       } catch (error) {
         console.error("Fehler:", error);
-
         setPartnersFrappe([]);
         setProjectFrappe([]);
       }
@@ -183,18 +181,31 @@ export default function SolutionsPage({ data }) {
           </div>
           <div className="text-gray-700 space-y-4 text-center text-[17px] max-w-4xl mx-auto">
             {data?.first_card_table?.map((item, key) => (
-              <p key={key}>{item.option}</p>
+              <p key={key}>{item?.option}</p>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Stats Section with Counter */}
+      <div ref={countersRef} className="grid grid-cols-1 md:grid-cols-3 gap-8 py-10">
+        {stats.map((stat, idx) => (
+          <div key={idx} className="text-center">
+            <div className="flex justify-center mb-2">{stat.icon}</div>
+            <div className="text-3xl font-bold text-[#669933]">
+              {counters[idx].toLocaleString()}
+              {stat.suffix}
+            </div>
+            <div className="text-gray-600">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Projects Slider Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <FadeInView
+        direction="bottom"
+        distance={50}
+        duration={800}
         className="mb-9 md:mb-17"
       >
         <div ref={sliderContainerRef}>
@@ -260,10 +271,10 @@ export default function SolutionsPage({ data }) {
             href={"/referenzen/projekte"}
             className="flex items-center justify-center gap-2 bg-[#669933] hover:bg-[#669933]/90 text-white uppercase px-6 py-3 rounded-lg transition-colors duration-300 text-[14px]"
           >
-            Weitere Projekte <FaAngleRight />
+            Weitere Projekte <ChevronRight />
           </Link>
         </div>
-      </motion.div>
+      </FadeInView>
     </div>
   );
 }

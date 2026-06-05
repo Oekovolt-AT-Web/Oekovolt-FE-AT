@@ -1,6 +1,5 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin,
   DollarSign,
@@ -17,35 +16,9 @@ import {
   Star,
   Building2
 } from 'lucide-react';
+import FadeInView from '@/components/Reusable/FadeInView';
 
-// Mock job data for demonstration
-const mockJobData = {
-  title: "Senior Software Developer",
-  ort: "Berlin, Deutschland",
-  gehalt: "€65,000 - €85,000",
-  beschreibung: "Wir suchen einen erfahrenen Software-Entwickler, der unser Team bei der Entwicklung innovativer Lösungen unterstützt. Sie werden an spannenden Projekten arbeiten und haben die Möglichkeit, modernste Technologien einzusetzen.",
-  firmen_beschreibung: "Unser Unternehmen ist ein führender Anbieter von nachhaltigen Technologielösungen mit über 10 Jahren Erfahrung. Wir entwickeln innovative Software für die Energiebranche und setzen dabei auf modernste Technologien und agile Entwicklungsmethoden. Unser Team besteht aus leidenschaftlichen Entwicklern, die gemeinsam an der Zukunft der digitalen Transformation arbeiten.",
-  deine_aufgaben: [
-    { beschreibung: "Entwicklung und Wartung von React-Anwendungen" },
-    { beschreibung: "Code-Reviews und Qualitätssicherung" },
-    { beschreibung: "Zusammenarbeit mit dem Design-Team" },
-    { beschreibung: "Mentoring von Junior-Entwicklern" }
-  ],
-  deine_qualifikationen: [
-    { beschreibung: "3+ Jahre Erfahrung mit React und JavaScript" },
-    { beschreibung: "Kenntnisse in TypeScript und Node.js" },
-    { beschreibung: "Erfahrung mit agilen Entwicklungsmethoden" },
-    { beschreibung: "Gute Kommunikationsfähigkeiten" }
-  ],
-  deine_vorteile: [
-    { beschreibung: "Flexible Arbeitszeiten und Home-Office möglich" },
-    { beschreibung: "Moderne Arbeitsplätze und neueste Technologien" },
-    { beschreibung: "Weiterbildungsmöglichkeiten und Konferenzbesuche" },
-    { beschreibung: "Teamevents und entspannte Arbeitsatmosphäre" }
-  ]
-};
-
-const JobDetails = ({ jobData = mockJobData }) => {
+const JobDetails = ({ jobData }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -159,55 +132,55 @@ const JobDetails = ({ jobData = mockJobData }) => {
   }
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16">
+
         {/* Header Section */}
-        <motion.div
+        <FadeInView
+          direction="top"
+          distance={20}
+          duration={600}
           className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
         >
           <div className="inline-block bg-gradient-to-r from-[#669933] to-[#7db33f] text-white px-6 py-2 rounded-full text-sm font-medium mb-4">
             Stellenausschreibung
           </div>
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{jobData.title}</h1>
+          <h1 className="text-4xl font-bold text-gray-800 mb-4">{jobData?.title}</h1>
           <div className="flex flex-wrap justify-center gap-8 text-lg">
             <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-md">
               <MapPin className="text-[#669933] w-5 h-5" />
-              <span className="text-gray-700 font-medium">{jobData.ort}</span>
+              <span className="text-gray-700 font-medium">{jobData?.ort}</span>
             </div>
             <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-md">
               <DollarSign className="text-[#669933] w-5 h-5" />
-              <span className="text-gray-700 font-medium">{jobData.gehalt}</span>
+              <span className="text-gray-700 font-medium">{jobData?.gehalt}</span>
             </div>
           </div>
-        </motion.div>
+        </FadeInView>
 
         {/* Company Description */}
-        {jobData.firmen_beschreibung && (
-          <motion.div
+        {jobData?.firmen_beschreibung && (
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
+            delay={300}
             className="mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              {/* <div className="bg-[#669933] p-2 rounded-xl">
-                <Building2 className="text-white w-6 h-6" />
-              </div> */}
               <h2 className="text-2xl font-bold text-gray-800">Über Unser Unternehmen</h2>
             </div>
-            <p className="text-gray-700 text-lg leading-relaxed">{jobData.firmen_beschreibung}</p>
-          </motion.div>
+            <p className="text-gray-700 text-lg leading-relaxed">{jobData?.firmen_beschreibung}</p>
+          </FadeInView>
         )}
 
         {/* Job Description */}
-        <motion.div
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={600}
+          delay={200}
           className="bg-white rounded-3xl shadow-xl p-8 mb-8 border-l-4 border-[#669933]"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
         >
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-[#669933] p-2 rounded-xl">
@@ -215,20 +188,19 @@ const JobDetails = ({ jobData = mockJobData }) => {
             </div>
             <h2 className="text-2xl font-bold text-gray-800">Stellenbeschreibung</h2>
           </div>
-          <p className="text-gray-700 text-lg leading-relaxed">{jobData.beschreibung}</p>
-        </motion.div>
-
-
+          <p className="text-gray-700 text-lg leading-relaxed">{jobData?.beschreibung}</p>
+        </FadeInView>
 
         {/* Job Details Grid */}
         <div className="grid lg:grid-cols-3 gap-8 mb-12">
           {/* Tasks */}
-          {jobData.deine_aufgaben?.length > 0 && (
-            <motion.div
+          {jobData?.deine_aufgaben?.length > 0 && (
+            <FadeInView
+              direction="bottom"
+              distance={20}
+              duration={600}
+              delay={400}
               className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-gradient-to-r from-[#669933] to-[#7db33f] p-3 rounded-xl">
@@ -237,29 +209,32 @@ const JobDetails = ({ jobData = mockJobData }) => {
                 <h3 className="text-xl font-bold text-gray-800">Deine Aufgaben</h3>
               </div>
               <ul className="space-y-4">
-                {jobData.deine_aufgaben.map((item, index) => (
-                  <motion.li
+                {jobData?.deine_aufgaben.map((item, index) => (
+                  <li
                     key={index}
                     className="flex items-start gap-3 text-gray-700"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.5 + index * 0.1 }}
+                    style={{
+                      animation: `slideIn 0.4s ease-out ${0.5 + index * 0.1}s forwards`,
+                      opacity: 0,
+                      transform: 'translateX(-10px)'
+                    }}
                   >
                     <CheckCircle className="text-[#669933] w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span className="leading-relaxed">{item.beschreibung}</span>
-                  </motion.li>
+                    <span className="leading-relaxed">{item?.beschreibung}</span>
+                  </li>
                 ))}
               </ul>
-            </motion.div>
+            </FadeInView>
           )}
 
           {/* Qualifications */}
-          {jobData.deine_qualifikationen?.length > 0 && (
-            <motion.div
+          {jobData?.deine_qualifikationen?.length > 0 && (
+            <FadeInView
+              direction="bottom"
+              distance={20}
+              duration={600}
+              delay={500}
               className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-gradient-to-r from-[#669933] to-[#7db33f] p-3 rounded-xl">
@@ -268,29 +243,32 @@ const JobDetails = ({ jobData = mockJobData }) => {
                 <h3 className="text-xl font-bold text-gray-800">Deine Qualifikationen</h3>
               </div>
               <ul className="space-y-4">
-                {jobData.deine_qualifikationen.map((item, index) => (
-                  <motion.li
+                {jobData?.deine_qualifikationen.map((item, index) => (
+                  <li
                     key={index}
                     className="flex items-start gap-3 text-gray-700"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
+                    style={{
+                      animation: `slideIn 0.4s ease-out ${0.6 + index * 0.1}s forwards`,
+                      opacity: 0,
+                      transform: 'translateX(-10px)'
+                    }}
                   >
                     <CheckCircle className="text-[#669933] w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span className="leading-relaxed">{item.beschreibung}</span>
-                  </motion.li>
+                    <span className="leading-relaxed">{item?.beschreibung}</span>
+                  </li>
                 ))}
               </ul>
-            </motion.div>
+            </FadeInView>
           )}
 
           {/* Benefits */}
-          {jobData.deine_vorteile?.length > 0 && (
-            <motion.div
+          {jobData?.deine_vorteile?.length > 0 && (
+            <FadeInView
+              direction="bottom"
+              distance={20}
+              duration={600}
+              delay={600}
               className="bg-white rounded-3xl shadow-xl p-8 hover:shadow-2xl transition-all duration-300"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
             >
               <div className="flex items-center gap-3 mb-6">
                 <div className="bg-gradient-to-r from-[#669933] to-[#7db33f] p-3 rounded-xl">
@@ -299,34 +277,34 @@ const JobDetails = ({ jobData = mockJobData }) => {
                 <h3 className="text-xl font-bold text-gray-800">Deine Vorteile</h3>
               </div>
               <ul className="space-y-4">
-                {jobData.deine_vorteile.map((item, index) => (
-                  <motion.li
+                {jobData?.deine_vorteile.map((item, index) => (
+                  <li
                     key={index}
                     className="flex items-start gap-3 text-gray-700"
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
+                    style={{
+                      animation: `slideIn 0.4s ease-out ${0.7 + index * 0.1}s forwards`,
+                      opacity: 0,
+                      transform: 'translateX(-10px)'
+                    }}
                   >
                     <CheckCircle className="text-[#669933] w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <span className="leading-relaxed">{item.beschreibung}</span>
-                  </motion.li>
+                    <span className="leading-relaxed">{item?.beschreibung}</span>
+                  </li>
                 ))}
               </ul>
-            </motion.div>
+            </FadeInView>
           )}
         </div>
 
         {/* Application Form */}
-        <motion.div
-          className="max-w-7xl  bg-white rounded-3xl shadow-2xl p-8 border-t-4 border-[#669933]"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.7 }}
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={600}
+          delay={700}
+          className="max-w-7xl bg-white rounded-3xl shadow-2xl p-8 border-t-4 border-[#669933]"
         >
           <div className="text-center mb-8">
-            {/* <div className="inline-block bg-gradient-to-r from-[#669933] to-[#7db33f] p-3 rounded-full mb-4">
-              <Send className="text-white w-8 h-8" />
-            </div> */}
             <h2 className="text-3xl font-bold text-gray-800 mb-4">Jetzt Bewerben</h2>
             <p className="text-gray-600 text-lg max-w-2xl mx-auto">
               Senden Sie uns Ihre Bewerbung und werden Sie Teil unseres innovativen Teams.
@@ -334,38 +312,26 @@ const JobDetails = ({ jobData = mockJobData }) => {
             </p>
           </div>
 
-          <AnimatePresence>
-            {showSuccess && (
-              <motion.div
-                className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-green-100 border-2 border-[#669933] text-[#669933] px-6 py-4 rounded-2xl mb-6"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <CheckCircle className="w-6 h-6" />
-                <span className="font-semibold text-lg">Vielen Dank! Ihre Bewerbung wurde erfolgreich eingereicht.</span>
-              </motion.div>
-            )}
-            {error && (
-              <motion.div
-                className="flex items-center gap-3 bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-400 text-red-700 px-6 py-4 rounded-2xl mb-6"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <AlertCircle className="w-6 h-6" />
-                <span className="font-semibold text-lg">{error}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* Success/Error Messages with CSS animations */}
+          {showSuccess && (
+            <div className="flex items-center gap-3 bg-gradient-to-r from-green-50 to-green-100 border-2 border-[#669933] text-[#669933] px-6 py-4 rounded-2xl mb-6 animate-fade-in">
+              <CheckCircle className="w-6 h-6" />
+              <span className="font-semibold text-lg">Vielen Dank! Ihre Bewerbung wurde erfolgreich eingereicht.</span>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-center gap-3 bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-400 text-red-700 px-6 py-4 rounded-2xl mb-6 animate-fade-in">
+              <AlertCircle className="w-6 h-6" />
+              <span className="font-semibold text-lg">{error}</span>
+            </div>
+          )}
 
           <form onSubmit={handleApply} className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Name Input */}
               <div className="relative group">
-                <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 group-focus-within:border-[#669933] group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-green-100/50">
+                <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 focus-within:border-[#669933] focus-within:bg-white focus-within:shadow-lg focus-within:shadow-green-100/50">
                   <User className="text-[#669933] w-5 h-5" />
                   <input
                     type="text"
@@ -381,7 +347,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
 
               {/* Email Input */}
               <div className="relative group">
-                <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 group-focus-within:border-[#669933] group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-green-100/50">
+                <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 focus-within:border-[#669933] focus-within:bg-white focus-within:shadow-lg focus-within:shadow-green-100/50">
                   <Mail className="text-[#669933] w-5 h-5" />
                   <input
                     type="email"
@@ -398,7 +364,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
 
             {/* Phone Input */}
             <div className="relative group">
-              <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 group-focus-within:border-[#669933] group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-green-100/50">
+              <div className="flex items-center gap-3 bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 focus-within:border-[#669933] focus-within:bg-white focus-within:shadow-lg focus-within:shadow-green-100/50">
                 <Phone className="text-[#669933] w-5 h-5" />
                 <input
                   type="tel"
@@ -414,7 +380,7 @@ const JobDetails = ({ jobData = mockJobData }) => {
 
             {/* Message Textarea */}
             <div className="relative group">
-              <div className="bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 group-focus-within:border-[#669933] group-focus-within:bg-white group-focus-within:shadow-lg group-focus-within:shadow-green-100/50">
+              <div className="bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-4 transition-all duration-300 focus-within:border-[#669933] focus-within:bg-white focus-within:shadow-lg focus-within:shadow-green-100/50">
                 <textarea
                   name="message"
                   rows="5"
@@ -469,12 +435,10 @@ const JobDetails = ({ jobData = mockJobData }) => {
             </div>
 
             {/* Submit Button */}
-            <motion.button
+            <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#669933] to-[#7db33f] text-white py-2 md:py-5 px-3 md:px-8 rounded-2xl md:font-bold text-lg  md:text-xl shadow-xl hover:shadow-2xl transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: loading ? 1 : 0.98 }}
+              className="w-full bg-gradient-to-r from-[#669933] to-[#7db33f] text-white py-2 md:py-5 px-3 md:px-8 rounded-2xl md:font-bold text-lg md:text-xl shadow-xl hover:shadow-2xl transform transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:transform-none disabled:cursor-not-allowed"
             >
               <div className="flex items-center justify-center gap-3">
                 {loading ? (
@@ -484,15 +448,44 @@ const JobDetails = ({ jobData = mockJobData }) => {
                   </>
                 ) : (
                   <>
-                    <span className='' >Bewerbung Absenden</span>
+                    <span>Bewerbung Absenden</span>
                     <Send className="w-6 h-6" />
                   </>
                 )}
               </div>
-            </motion.button>
+            </button>
           </form>
-        </motion.div>
+        </FadeInView>
       </div>
+
+      {/* Add CSS animations */}
+      <style jsx>{`
+        @keyframes slideIn {
+          0% {
+            opacity: 0;
+            transform: translateX(-10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };

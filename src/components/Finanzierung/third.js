@@ -1,14 +1,10 @@
-"use client";
-import { motion } from "framer-motion";
+import FadeInView from "@/components/Reusable/FadeInView";
 import Image from "next/image";
-import { Lightbulb, Euro, Home, Leaf } from "lucide-react";
-
-
 
 const FinancingBenefitsSection = ({ data }) => {
   return (
     <section className="w-full">
-      {data.finanzierung_second_card_table.map((item, index) => (
+      {data?.finanzierung_second_card_table?.map((item, index) => (
         <div
           key={index}
           className={`w-full ${
@@ -24,39 +20,39 @@ const FinancingBenefitsSection = ({ data }) => {
                   : "lg:flex-row-reverse"
               } items-center gap-12`}
             >
-              {/* Image */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: "easeOut" }}
+              {/* Image - with scale effect */}
+              <FadeInView
+                direction="none"
+                scale={0.95}
+                duration={600}
                 className="w-full lg:w-1/2 h-[280px] sm:h-[400px] lg:h-[450px] relative overflow-hidden rounded-xl shadow-md"
               >
                 <Image
-                  src={item.image ? `/api/image?path=${item.image}` : "/Images/Jobs/jobs3.jpg"}
-                  alt={item.alt_text}
+                  src={item?.image ? `/api/image?path=${item?.image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt={item?.alt_text}
                   fill
                   className="object-cover"
-          sizes="(max-width: 1280px) 100vw, 1280px"
+                  sizes="(max-width: 1280px) 100vw, 1280px"
                 />
-              </motion.div>
+              </FadeInView>
 
-              {/* Text Content */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, ease: "easeOut", delay: 0.2 }}
+              {/* Text Content - with slide up effect */}
+              <FadeInView
+                direction="bottom"
+                distance={30}
+                duration={700}
+                delay={200}
                 className="w-full lg:w-1/2 space-y-5"
               >
                 <div className="flex items-center gap-3">
-                
                   <h3 className="text-2xl md:text-3xl text-[#0a1e35]">
-                    {item.title}
+                    {item?.title}
                   </h3>
                 </div>
                 <p className="text-gray-700 text-base md:text-lg whitespace-pre-line">
-                  {item.description}
+                  {item?.description}
                 </p>
-              </motion.div>
+              </FadeInView>
             </div>
           </div>
         </div>

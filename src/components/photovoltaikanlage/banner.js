@@ -1,6 +1,6 @@
-"use client";
+
 import Image from "next/image";
-import { FaChevronRight, FaCheckCircle, FaPlay } from "react-icons/fa";
+import { ChevronRight, CheckCircle, Play } from "lucide-react";
 import Link from "next/link";
 
 
@@ -23,7 +23,7 @@ const PhotovoltaikBanner = ({ data }) => {
           <div className="space-y-4">
             {data.photovoltaik_options?.map((opt, index) => (
               <div key={index} className="flex gap-3 items-start">
-                <FaCheckCircle className="text-[#669933] w-5 h-5 mt-1" />
+                <CheckCircle className="text-[#669933] w-5 h-5 mt-1" />
                 <p className="text-gray-700 text-base leading-relaxed">
                   <strong>{opt.first_header_options}</strong>{" "}
                   {opt.second_text_paragraph}
@@ -37,7 +37,7 @@ const PhotovoltaikBanner = ({ data }) => {
             className="inline-flex items-center font-semibold gap-2 px-6 py-3 rounded-full text-white transition hover:bg-[#558822] text-sm mt-4"
             style={{ backgroundColor: "#669933" }}
           >
-            Jetzt Kontaktieren <FaChevronRight />
+            Jetzt Kontaktieren <ChevronRight />
           </Link>
 
           {/* Optional Static Stats */}
@@ -71,7 +71,7 @@ const PhotovoltaikBanner = ({ data }) => {
           {/* Play Button Overlay (optional) */}
           <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-md p-4 w-64 flex items-center gap-4">
             <div className="bg-[#669933] w-10 h-10 flex items-center justify-center rounded-full text-white">
-              <FaPlay className="text-sm" />
+              <Play className="text-sm" />
             </div>
             <p className="text-sm text-gray-800 font-medium">
               Entdecken Sie die Kraft der Solartechnologie.

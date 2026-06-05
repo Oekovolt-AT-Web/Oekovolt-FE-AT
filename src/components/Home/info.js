@@ -1,11 +1,7 @@
 "use client";
-import { motion } from "framer-motion";
-import {
-  FaSolarPanel,
-  FaIndustry,
-  FaChartLine,
-} from "react-icons/fa";
+import { Sun, Factory, ChartLine } from "lucide-react";
 import { useEffect, useState, useRef, useMemo } from "react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function SolutionsPage({ data }) {
   const toNumber = (value, fallback) => {
@@ -15,18 +11,18 @@ export default function SolutionsPage({ data }) {
 
   const stats = useMemo(() => [
     {
-      icon: <FaSolarPanel className="text-[35px] text-[#669933]/90" />,
+      icon: <Sun className="text-[35px] text-[#669933]/90" />,
       value: toNumber(data?.pv_kraftwerke, 5000),
       label: "PV-Kraftwerke",
     },
     {
-      icon: <FaIndustry className="text-[35px] text-[#669933]/90" />,
+      icon: <Factory className="text-[35px] text-[#669933]/90" />,
       value: toNumber(data?.leistung, 340000),
       suffix: "kWp",
       label: "Leistung",
     },
     {
-      icon: <FaChartLine className="text-[35px] text-[#669933]/90" />,
+      icon: <ChartLine className="text-[35px] text-[#669933]/90" />,
       value: toNumber(data?.co2_einsparung, 112000),
       suffix: "t",
       label: "Co2-Einsparung",
@@ -78,44 +74,41 @@ export default function SolutionsPage({ data }) {
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 overflow-hidden">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      {/* Title Section */}
+      <FadeInView
+        direction="bottom"
+        distance={50}
+        duration={800}
         className="text-center mb-16"
       >
         <h2 className="text-2xl md:text-2xl lg:text-2xl font-[500] text-gray-900 mb-6">
-          {data.photovoltaiklösungen_title}
+          {data?.photovoltaiklösungen_title}
         </h2>
-      </motion.div>
+      </FadeInView>
 
-      <motion.div
+      {/* Stats Section */}
+      <div
         ref={countersRef}
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1 }}
         className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-8 lg:mb-12 relative pb-10"
       >
         {stats.map((item, i) => (
-          <motion.div
+          <FadeInView
             key={i}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.2, duration: 0.8 }}
+            direction="bottom"
+            distance={30}
+            duration={800}
+            delay={i * 200} // 0ms, 200ms, 400ms stagger effect
             className="text-center"
           >
             <div className="flex justify-center mb-2">{item.icon}</div>
             <div className="text-[40px] font-[500] text-[#669933] mb-2">
-              {counters[i].toLocaleString()}
+              {counters[i]?.toLocaleString()}
               {item.suffix && <span>{item.suffix}</span>}
             </div>
             <p className="text-black text-[18px]">{item.label}</p>
-          </motion.div>
+          </FadeInView>
         ))}
-      </motion.div>
+      </div>
     </div>
   );
 }

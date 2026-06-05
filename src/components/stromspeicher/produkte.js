@@ -4,9 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Image from "next/image";
-
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { FiBox, FiCheckCircle } from "react-icons/fi"; // Ikonat e reja
+import { ArrowLeft, ArrowRight, Box, CheckCircle } from "lucide-react";
 
 
 function CustomPrevArrow({ onClick }) {
@@ -68,7 +66,7 @@ export default function HerstellerSlider({ products }) {
               {/* Text Right */}
               <div className="w-full md:w-1/2 text-gray-800">
                 <h3 className="text-3xl font-semibold mb-4 flex items-center gap-2">
-                  <FiBox className="text-primary" size={28} />
+                  <Box className="text-primary" size={28} />
                   {product.name}
                 </h3>
                 <p className="text-gray-700 mb-4 whitespace-pre-line leading-relaxed">
@@ -78,7 +76,7 @@ export default function HerstellerSlider({ products }) {
                   <ul className="space-y-2 text-gray-700">
                     {product.options.map((opt, i) => (
                       <li key={i} className="flex items-center gap-2">
-                        <FiCheckCircle className="text-green-500" size={18} />
+                        <CheckCircle className="text-green-500" size={18} />
                         {opt.options}
                       </li>
                     ))}

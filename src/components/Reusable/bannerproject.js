@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 import Image from "next/image";
 import img from "../../../public/Images/Referenzen/Referenzkarte-1.jpg"

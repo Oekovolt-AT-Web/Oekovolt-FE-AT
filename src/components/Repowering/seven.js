@@ -1,9 +1,6 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { FaSolarPanel, FaArrowRight, FaBatteryFull, FaChartLine } from "react-icons/fa";
+import { Sun, ArrowRight, BatteryFull } from "lucide-react";
 import Image from "next/image";
-
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function RepoweringSection({ data }) {
   return (
@@ -16,131 +13,109 @@ export default function RepoweringSection({ data }) {
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
 
           {/* Left Side - Enhanced media gallery */}
-          <motion.div
-            className="w-full lg:w-1/2 space-y-8"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
+          <div className="w-full lg:w-1/2 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* First feature card */}
-              <motion.div
-                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"
-                whileHover={{ y: -5 }}
-              >
+              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="bg-[#f0f7e6] p-3 rounded-lg">
-                    <FaSolarPanel className="text-2xl text-[#669933]" />
+                    <Sun className="text-2xl text-[#669933]" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    {data.third_sec_2nd_card_first_table_title}
+                    {data?.third_sec_2nd_card_first_table_title}
                   </h3>
                 </div>
                 <ul className="space-y-4">
-                  {data.third_sec_2nd_card_first_table.map((item, idx) => (
-                    <motion.li
+                  {data?.third_sec_2nd_card_first_table?.map((item, idx) => (
+                    <FadeInView
                       key={idx}
+                      direction="right"
+                      distance={10}
+                      duration={400}
+                      delay={idx * 100}
                       className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: 10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * idx }}
                     >
                       <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
-                        <FaArrowRight className="text-white text-xs" />
+                        <ArrowRight className="text-white text-xs" />
                       </div>
-                      <span className="text-gray-700 text-lg">{item.option}</span>
-                    </motion.li>
+                      <span className="text-gray-700 text-lg">{item?.option}</span>
+                    </FadeInView>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
 
               {/* Second feature card */}
-              <motion.div
-                className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all"
-                whileHover={{ y: -5 }}
-              >
+              <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all hover:-translate-y-1 duration-300">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="bg-[#f0f7e6] p-3 rounded-lg">
-                    <FaBatteryFull className="text-2xl text-[#669933]" />
+                    <BatteryFull className="text-2xl text-[#669933]" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    {data.third_sec_2nd_card_second_table_title}
+                    {data?.third_sec_2nd_card_second_table_title}
                   </h3>
                 </div>
                 <ul className="space-y-4">
-                  {data.third_sec_2nd_card_second_table.map((item, idx) => (
-                    <motion.li
+                  {data?.third_sec_2nd_card_second_table?.map((item, idx) => (
+                    <FadeInView
                       key={idx}
+                      direction="right"
+                      distance={10}
+                      duration={400}
+                      delay={idx * 100}
                       className="flex items-start gap-3"
-                      initial={{ opacity: 0, x: 10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 * idx }}
                     >
                       <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
-                        <FaArrowRight className="text-white text-xs" />
+                        <BatteryFull className="text-white text-xs" />
                       </div>
-                      <span className="text-gray-700 text-lg">{item.option}</span>
-                    </motion.li>
+                      <span className="text-gray-700 text-lg">{item?.option}</span>
+                    </FadeInView>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             </div>
-
-          </motion.div>
-
+          </div>
 
           {/* Right Side - Modern comparison cards */}
-          <motion.div
-            className="w-full lg:w-1/2 space-y-8"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <div className="space-y-6">
-              <h2 className="text-4xl text-gray-900">
-                <span className="text-[#669933]">{data.third_sec_2nd_card_title.split(' ')[0]}</span> {data.third_sec_2nd_card_title.split(' ').slice(1).join(' ')}
-              </h2>
-              <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
-                {data.third_sec_2nd_card_description}
-              </p>
-            </div>
+          <div className="w-full lg:w-1/2 space-y-8">
+            <FadeInView
+              direction="bottom"
+              distance={40}
+              duration={700}
+            >
+              <div className="space-y-6">
+                <h2 className="text-4xl text-gray-900">
+                  <span className="text-[#669933]">{data?.third_sec_2nd_card_title?.split(' ')[0]}</span> {data?.third_sec_2nd_card_title?.split(' ').slice(1).join(' ')}
+                </h2>
+                <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
+                  {data?.third_sec_2nd_card_description}
+                </p>
+              </div>
+            </FadeInView>
 
             <div className="grid grid-cols-2 gap-6">
-              {/* First image with floating badge */}
-              <motion.div
-                className="relative rounded-2xl overflow-hidden shadow-xl group"
-                whileHover={{ scale: 1.01 }}
-              >
-                {/* <div className="absolute top-4 left-4 bg-[#669933] text-white px-3 py-1 rounded-full text-sm font-medium z-10">
-                  Before
-                </div> */}
+              {/* First image */}
+              <div className="relative rounded-2xl overflow-hidden shadow-xl group hover:scale-[1.01] transition-transform duration-300">
                 <Image
-                  src={data.third_sec_2nd_card_first_image ? `/api/image?path=${data.third_sec_2nd_card_first_image}` : "/Images/Jobs/jobs3.jpg"}
-                  alt={data.third_sec_2nd_card_first_alt_text}
+                  src={data?.third_sec_2nd_card_first_image ? `/api/image?path=${data.third_sec_2nd_card_first_image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt={data?.third_sec_2nd_card_first_alt_text || "Before"}
                   width={800}
                   height={450}
                   className="w-full h-auto aspect-video object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-              </motion.div>
+              </div>
 
-              {/* Second image with floating badge */}
-              <motion.div
-                className="relative rounded-2xl overflow-hidden shadow-xl group"
-                whileHover={{ scale: 1.01 }}
-              >
-                {/* <div className="absolute top-4 left-4 bg-[#669933] text-white px-3 py-1 rounded-full text-sm font-medium z-10">
-                  After
-                </div> */}
+              {/* Second image */}
+              <div className="relative rounded-2xl overflow-hidden shadow-xl group hover:scale-[1.01] transition-transform duration-300">
                 <Image
-                  src={data.third_sec_2nd_card_second_image ? `/api/image?path=${data.third_sec_2nd_card_second_image}` : "/Images/Jobs/jobs3.jpg"}
-                  alt={data.third_sec_2nd_card_second_alt_image}
+                  src={data?.third_sec_2nd_card_second_image ? `/api/image?path=${data.third_sec_2nd_card_second_image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt={data?.third_sec_2nd_card_second_alt_image || "After"}
                   width={800}
                   height={450}
                   className="w-full h-auto aspect-video object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

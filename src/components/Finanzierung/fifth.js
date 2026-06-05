@@ -1,8 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { FaChevronDown } from 'react-icons/fa';
-
-
+import { ChevronDown } from "lucide-react";
 
 export default function FinanzierungFAQ({ data }) {
   const [openIndex, setOpenIndex] = useState(null);
@@ -30,7 +28,7 @@ export default function FinanzierungFAQ({ data }) {
                 className="cursor-pointer w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
               >
                 <span className="text-lg font-medium text-gray-900">{item.question}</span>
-                <FaChevronDown
+                <ChevronDown
                   className={`text-[#669933] transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''
                     }`}
                 />

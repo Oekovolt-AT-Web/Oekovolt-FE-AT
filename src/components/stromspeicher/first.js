@@ -1,8 +1,5 @@
 import Image from "next/image";
 
-import { FaSolarPanel } from 'react-icons/fa';
-
-
 const HeroStromspeicher = ({ data }) => {
 
   if (!data) return null;

@@ -1,34 +1,34 @@
-"use client";
-import { motion } from "framer-motion";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const EnhancedCardsSection = ({ data }) => {
   return (
     <section className="bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={600}
           className="text-3xl text-center text-gray-900 mb-10"
         >
-          {data.photovoltaik_second_card_title || ""}
-        </motion.h2>
+          <h2>{data?.photovoltaik_second_card_title || ""}</h2>
+        </FadeInView>
 
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {data.cards.map((item, index) => {
+          {data?.cards?.map((item, index) => {
             return (
-              <motion.div
+              <FadeInView
                 key={index}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                direction="bottom"
+                distance={40}
+                duration={500}
+                delay={index * 100}
                 className="border-gray-100 bg-white border rounded-2xl p-6 text-center shadow-md hover:shadow-xl transition-all"
               >
-                <h3 className="text-xl text-gray-900 mb-2">{item.title}</h3>
+                <h3 className="text-xl text-gray-900 mb-2">{item?.title}</h3>
                 <p className="text-gray-700 text-sm leading-relaxed">
-                  {item.description}
+                  {item?.description}
                 </p>
-              </motion.div>
+              </FadeInView>
             );
           })}
         </div>

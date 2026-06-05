@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { motion } from "framer-motion";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -11,7 +11,6 @@ import Slider from "react-slick";
 
 const PhotovoltaikOverviewSlider = ({ data }) => {
   const sliderRef = useRef();
-
 
   if (
     !data ||
@@ -51,25 +50,23 @@ const PhotovoltaikOverviewSlider = ({ data }) => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
             className="text-sm mb-3 font-semibold text-[#669933] uppercase tracking-wide"
           >
             {title}
-          </motion.p>
+          </FadeInView>
 
-          <motion.h2
+          <FadeInView
+            direction="top"
+            distance={20}
+            duration={500}
             className="text-3xl md:text-4xl text-gray-900"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
           >
             {subtitle}
-          </motion.h2>
+          </FadeInView>
         </div>
 
         {/* Slider */}
@@ -80,25 +77,25 @@ const PhotovoltaikOverviewSlider = ({ data }) => {
               className="p-3 rounded-full border border-gray-300 hover:bg-gray-100 transition"
               aria-label="Previous slide"
             >
-              <FaChevronLeft />
+              <ChevronLeft />
             </button>
             <button
               onClick={() => sliderRef.current?.slickNext()}
               className="p-3 rounded-full border border-gray-300 hover:bg-gray-100 transition"
               aria-label="Next slide"
             >
-              <FaChevronRight />
+              <ChevronRight />
             </button>
           </div>
 
           <Slider ref={sliderRef} {...settings}>
             {items.map((item, index) => (
               <div key={index} className="px-3 h-full">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                <FadeInView
+                  direction="bottom"
+                  distance={20}
+                  duration={500}
+                  delay={index * 100}
                   className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col h-[450px] transition duration-300"
                 >
                   <div className="relative w-full h-52 shrink-0">
@@ -112,13 +109,13 @@ const PhotovoltaikOverviewSlider = ({ data }) => {
                   </div>
                   <div className="p-6 flex flex-col flex-1 overflow-hidden">
                     <h3 className="text-xl font-semibold mb-2 line-clamp-2">
-                      {item.title}
+                      {item?.title}
                     </h3>
                     <p className="text-gray-600 text-sm leading-relaxed line-clamp-8">
-                      {item.description}
+                      {item?.description}
                     </p>
                   </div>
-                </motion.div>
+                </FadeInView>
               </div>
             ))}
           </Slider>

@@ -2,50 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import styled from "styled-components";
-import { motion } from "framer-motion";
-import {
-  MdLocationOn,
-  MdBusinessCenter,
-  MdAccessTime,
-  MdWorkOutline,
-} from "react-icons/md";
-import { FaChevronRight } from "react-icons/fa";
-import { MdSentimentDissatisfied } from "react-icons/md";
+import { MapPin, Briefcase, Clock, BriefcaseBusiness, ChevronRight, Frown } from "lucide-react";
 import { generateJobSlug as generateSlug } from "@/lib/slugify";
 import { getJobs } from "@/lib/api/uber-uns/jobs_api";
+import FadeInView from "@/components/Reusable/FadeInView";
 
-const Buttons = styled.div`
-  display: flex;
-  justify-content: flex-end;
 
-  a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 20px;
-    background-color: #669933;
-    color: white;
-    font-weight: 600;
-    border-radius: 8px;
-    box-shadow: 0 0 8px #669933aa;
-    transition: all 0.3s ease;
-    text-decoration: none;
-
-    svg {
-      transition: transform 0.3s ease;
-    }
-
-    &:hover {
-      box-shadow: 0 0 14px #669933dd;
-      transform: translateY(-2px);
-
-      svg {
-        transform: translateX(4px);
-      }
-    }
-  }
-`;
 
 const JobListings = () => {
   const [jobsPosition, setJobsPosition] = useState([]);
@@ -72,7 +34,6 @@ const JobListings = () => {
     const fetchJobs = async () => {
       try {
         const data = await getJobs();
-
         setJobsPosition(data?.message || []);
       } catch (error) {
         setError(error.message);
@@ -94,14 +55,18 @@ const JobListings = () => {
   return (
     <div className="bg-gray-50 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-5xl mx-auto">
-        <motion.h1
-          className="text-3xl font-bold mb-10 text-gray-900 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+
+        {/* Title */}
+        <FadeInView
+          direction="bottom"
+          distance={20}
+          duration={600}
+          className="text-center"
         >
-          Offene Stellen bei Oekovolt
-        </motion.h1>
+          <h1 className="text-3xl font-bold mb-10 text-gray-900">
+            Offene Stellen bei Oekovolt
+          </h1>
+        </FadeInView>
 
         {loading ? (
           <div className="flex items-center justify-center p-8 text-gray-600">
@@ -113,11 +78,12 @@ const JobListings = () => {
               const slug = generateSlug(job.title || "unnamed-job");
 
               return (
-                <motion.div
+                <FadeInView
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  direction="bottom"
+                  distance={20}
+                  duration={400}
+                  delay={index * 100} // 0ms, 100ms, 200ms, etc.
                   className="bg-white border border-gray-200 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 p-6"
                 >
                   <div className="flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
@@ -127,11 +93,11 @@ const JobListings = () => {
                       </h2>
                       <div className="flex flex-wrap text-gray-600 text-sm gap-x-6 gap-y-2">
                         <span className="flex items-center gap-1">
-                          <MdBusinessCenter className="text-[#669933]" />
+                          <Briefcase className="text-[#669933]" />
                           {"company" in job ? job.company : "Ökovolt Austria"}
                         </span>
                         <span className="flex items-center gap-1">
-                          <MdLocationOn className="text-[#669933]" />
+                          <MapPin className="text-[#669933]" />
                           {job.ort || "Unbekannter Ort"}
                         </span>
                         <span className="flex items-center gap-1">
@@ -140,17 +106,17 @@ const JobListings = () => {
                         </span>
 
                         {/* Vorteile with checkboxes */}
-                        <span className="flex  items-center gap-2">
+                        <span className="flex items-center gap-2">
                           <strong className="flex items-center gap-1 text-[#669933]">
-                            <MdWorkOutline />
+                            <BriefcaseBusiness />
                           </strong>
 
                           {Array.isArray(job.vorteile) ? (
-                            <div className=" gap-4">
+                            <div className="gap-4">
                               {job.vorteile.map((vorteil, i) => (
                                 <label
                                   key={i}
-                                  className="inline-flex items-center cursor-pointer"
+                                  className="inline-flex items-center cursor-pointer mr-4"
                                 >
                                   <input
                                     type="checkbox"
@@ -173,7 +139,7 @@ const JobListings = () => {
 
                     <div className="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
                       <span className="flex items-center gap-1 text-sm text-gray-500">
-                        <MdAccessTime className="text-[#669933]" />
+                        <Clock className="text-[#669933]" />
                         Veröffentlicht{" "}
                         {new Date(job.posted || Date.now()).toLocaleDateString("de-DE", {
                           day: "2-digit",
@@ -182,25 +148,34 @@ const JobListings = () => {
                         })}
                       </span>
 
-                      <Buttons>
-                        <Link href={`/uber-uns/jobs/${slug}`}>
-                          Jetzt Bewerben <FaChevronRight />
+                      <div className="flex justify-end">
+                        <Link
+                          href={`/uber-uns/jobs/${slug}`}
+                          className="flex items-center gap-2 px-5 py-2.5 bg-[#669933] text-white font-semibold rounded-lg shadow-[0_0_8px_#669933aa] transition-all duration-300 hover:shadow-[0_0_14px_#669933dd] hover:-translate-y-0.5 hover:bg-[#669933] no-underline group"
+                        >
+                          Jetzt Bewerben
+                          <ChevronRight className="transition-transform duration-300 group-hover:translate-x-1" />
                         </Link>
-                      </Buttons>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
+                </FadeInView>
               );
             })}
           </div>
         ) : (
-          <div className="bg-white p-6 rounded-xl shadow-lg text-center text-gray-700 flex flex-col items-center space-y-3 border border-gray-200">
-            <MdSentimentDissatisfied className="text-5xl text-yellow-500" />
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
+            className="bg-white p-6 rounded-xl shadow-lg text-center text-gray-700 flex flex-col items-center space-y-3 border border-gray-200"
+          >
+            <Frown className="text-5xl text-yellow-500" />
             <h3 className="text-lg font-semibold">Keine offenen Stellen</h3>
             <p className="text-sm max-w-md">
               Derzeit sind keine offenen Stellen verfügbar. Bitte schauen Sie später wieder vorbei.
             </p>
-          </div>
+          </FadeInView>
         )}
       </div>
     </div>

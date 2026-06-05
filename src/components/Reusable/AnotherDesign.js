@@ -22,7 +22,7 @@ export default function AnotherDesign({ data }) {
         {/* Right - Text */}
         <div className="w-full max-w-5xl text-center lg:text-left">
           <h2 className="text-4xl font-bold text-gray-900 mb-4 leading-tight">
-            {data.title}
+            {data?.title}
           </h2>
           <p className="text-gray-600 mb-6">{data.description}</p>
 

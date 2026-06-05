@@ -26,7 +26,7 @@ const SmartBanner = ({data}) => {
         <div className="container mx-auto px-4">
           <div className="text-white">
             <h1 className="max-w-[660px] text-[28px] md:text-[40px] font-medium mb-4">
-              {data.title}
+              {data?.title}
             </h1>
             <p className="max-w-[560px] text-[20px] font-medium mb-4">
               {data.subtitle}

@@ -2,21 +2,20 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import Slider from "react-slick";
-import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
 import Image from "next/image";
-
 import { generateSlug } from "@/lib/slugify";
 import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
+import FadeInView from "@/components/Reusable/FadeInView";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const CustomPrevArrow = ({ onClick }) => (
   <div
     onClick={onClick}
-    className="absolute left-2 top-1/2 z-50 transform -translate-y-1/2 text-5xl text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-md"
+    className="absolute left-2 top-1/2 z-50 transform -translate-y-1/2 text-5xl text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-md "
   >
-    <FaAngleLeft />
+    <ChevronLeft />
   </div>
 );
 
@@ -25,7 +24,7 @@ const CustomNextArrow = ({ onClick }) => (
     onClick={onClick}
     className="absolute right-2 top-1/2 z-50 transform -translate-y-1/2 text-5xl text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer shadow-md"
   >
-    <FaAngleRight />
+    <ChevronRight />
   </div>
 );
 
@@ -75,11 +74,10 @@ export default function ProjectsSection({ data }) {
   }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.8 }}
+    <FadeInView
+      direction="bottom"
+      distance={50}
+      duration={800}
       className="mb-9 md:mb-17 max-w-7xl mx-auto px-6 md:px-12 overflow-hidden"
     >
       <div className="text-center flex flex-col items-center justify-center">
@@ -122,8 +120,8 @@ export default function ProjectsSection({ data }) {
                 {/* Image container - full width and height */}
                 <div className="absolute inset-0 w-full h-full">
                   <Image
-                    src={project.image ? `/api/image?path=${project.image}` : "/Images/Jobs/jobs3.jpg"}
-                    alt={project.title}
+                    src={project?.image ? `/api/image?path=${project?.image}` : "/Images/Jobs/jobs3.jpg"}
+                    alt={project?.title}
                     fill
                     sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
                     className="object-cover rounded-lg"
@@ -133,7 +131,7 @@ export default function ProjectsSection({ data }) {
                 <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                   <div className="transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0">
                     <h3 className="text-white text-lg font-semibold">
-                      {project.title}
+                      {project?.title}
                     </h3>
                   </div>
                 </div>
@@ -148,9 +146,9 @@ export default function ProjectsSection({ data }) {
           href="/referenzen/projekte"
           className="flex items-center justify-center gap-2 bg-[#669933] hover:bg-[#669933]/90 text-white uppercase px-6 py-3 rounded-lg transition-colors duration-300 text-[14px]"
         >
-          Weitere Projekte <FaAngleRight />
+          Weitere Projekte <ChevronRight />
         </Link>
       </div>
-    </motion.div>
+    </FadeInView>
   );
 }

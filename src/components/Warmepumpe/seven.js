@@ -1,17 +1,26 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image'; // <-- Import Image here
-
-import { FaCogs, FaBolt, FaMapMarkedAlt, FaThumbsUp, FaTools, FaHandsHelping, FaLightbulb, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {
+  Cog,
+  Zap,
+  MapPin,
+  ThumbsUp,
+  Wrench,
+  HandHelping,
+  Lightbulb,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 const iconList = [
-  FaLightbulb,
-  FaBolt,
-  FaHandsHelping,
-  FaThumbsUp,
-  FaCogs,
-  FaMapMarkedAlt,
-  FaTools,
+  Lightbulb,
+  Zap,
+  HandHelping,
+  ThumbsUp,
+  Cog,
+  MapPin,
+  Wrench,
 ];
 
 export default function WaermepumpePartnerSection({ data }) {
@@ -131,7 +140,7 @@ export default function WaermepumpePartnerSection({ data }) {
                   className="p-3 rounded-full bg-white shadow hover:bg-gray-100 transition-transform hover:scale-110"
                   aria-label="Previous slide"
                 >
-                  <FaChevronLeft className="text-gray-600" />
+                  <ChevronLeft className="text-gray-600" />
                 </button>
 
                 <div className="flex gap-2 mx-4">
@@ -158,7 +167,7 @@ export default function WaermepumpePartnerSection({ data }) {
                   className="p-3 rounded-full bg-white shadow hover:bg-gray-100 transition-transform hover:scale-110"
                   aria-label="Next slide"
                 >
-                  <FaChevronRight className="text-gray-600" />
+                  <ChevronRight className="text-gray-600" />
                 </button>
               </div>
             )}

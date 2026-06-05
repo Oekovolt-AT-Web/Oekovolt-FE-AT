@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import Link from "next/link";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 
 const WallboxBanner = ({ data }) => {
   return (
@@ -27,7 +27,7 @@ const WallboxBanner = ({ data }) => {
                   style={{ backgroundColor: "#669933" }}
                 >
                   Kontaktieren
-                  <FaChevronRight />
+                  <ChevronRight />
                 </Link>
               </div>
             </div>

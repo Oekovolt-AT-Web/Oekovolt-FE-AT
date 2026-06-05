@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FiArrowUp } from "react-icons/fi";
+import { ArrowUp } from "lucide-react";
 
 export default function ToTopButton() {
   const [show, setShow] = useState(false);
@@ -47,7 +47,7 @@ export default function ToTopButton() {
       }}
       aria-label="Back to top"
     >
-      <FiArrowUp size={20} style={{ color: "#669933" }} />
+      <ArrowUp size={20} style={{ color: "#669933" }} />
     </button>
   );
 }

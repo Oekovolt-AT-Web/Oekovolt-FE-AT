@@ -1,28 +1,7 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import {  FaCheckCircle, FaSolarPanel } from "react-icons/fa";
-import { motion } from "framer-motion";
-
-
-// Counter hook
-const useCounter = (target, speed = 50) => {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    let current = 0;
-    const step = Math.ceil(target / 40);
-    const interval = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        current = target;
-        clearInterval(interval);
-      }
-      setCount(current);
-    }, speed);
-    return () => clearInterval(interval);
-  }, [target, speed]);
-  return count;
-};
+import { CheckCircle, Sun } from "lucide-react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const SolvixBanner = ({ data }) => {
   if (!data) return null;
@@ -32,82 +11,81 @@ const SolvixBanner = ({ data }) => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
         {/* LEFT CONTENT */}
         <div className="w-full lg:w-1/2 space-y-2">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={600}
             className="text-sm font-semibold text-[#669933] uppercase tracking-wide"
           >
-            {data.photovoltaik_description || ""}
-          </motion.p>
+            {data?.photovoltaik_description || ""}
+          </FadeInView>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+          <FadeInView
+            direction="bottom"
+            distance={30}
+            duration={800}
             className="text-4xl leading-tight text-gray-900"
           >
-            {data.photovoltaik_title || ""}
-          </motion.h1>
+            {data?.photovoltaik_title || ""}
+          </FadeInView>
 
           <div className="space-y-4">
-            {data.photovoltaik_options?.map((opt, index) => (
-              <motion.div
+            {data?.photovoltaik_options?.map((opt, index) => (
+              <FadeInView
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                viewport={{ once: true }}
+                direction="left"
+                distance={20}
+                duration={500}
+                delay={index * 150}
                 className="flex gap-3 items-start"
               >
-                <FaCheckCircle className="text-[#669933] w-5 h-5 mt-1" />
+                <CheckCircle className="text-[#669933] w-5 h-5 mt-1" />
                 <p className="text-gray-700 text-lg leading-relaxed">
-                  {opt.first_header_options || ""}{" "}
-                  {opt.second_text_paragraph || ""}
+                  {opt?.first_header_options || ""}{" "}
+                  {opt?.second_text_paragraph || ""}
                 </p>
-              </motion.div>
+              </FadeInView>
             ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
+          {/* Statistics Cards */}
+          <FadeInView
+            direction="none"
+            scale={0.9}
+            duration={800}
+            delay={300}
             className="bg-[#f5fce9] rounded-xl p-6 mt-8 grid md:grid-cols-3 gap-6 text-center text-[#003473]"
           >
-            <motion.div whileHover={{ scale: 1.05 }}>
+            <div className="transition-transform duration-300 hover:scale-105">
               <h3 className="text-3xl font-semibold text-[#669933]">
                 {data?.first_statistic_value?.toLocaleString("de-DE")}
                 {data?.first_value_suffix || ""}
               </h3>
-              <p>{data.first_statistic_title || ""}</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }}>
+              <p>{data?.first_statistic_title || ""}</p>
+            </div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <h3 className="text-3xl font-semibold text-[#669933]">
                 {data?.second_statistic_value?.toLocaleString("de-DE")}
                 {data?.second_value_suffix || ""}
               </h3>
               <p>{data?.second_statistic_title || ""}</p>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }}>
+            </div>
+            <div className="transition-transform duration-300 hover:scale-105">
               <h3 className="text-3xl font-semibold text-[#669933]">
                 {data?.third_statistic_value?.toLocaleString("de-DE")}{" "}
                 {data?.third_value_suffix || ""}
               </h3>
               <p>{data?.third_statistic_title || ""}</p>
-            </motion.div>
-          </motion.div>
+            </div>
+          </FadeInView>
         </div>
 
         {/* RIGHT IMAGE */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          viewport={{ once: true }}
+        <FadeInView
+          direction="none"
+          scale={0.95}
+          duration={700}
+          delay={300}
           className="w-full lg:w-1/2 relative lg:h-[520px] h-80"
         >
           <Image
@@ -119,34 +97,20 @@ const SolvixBanner = ({ data }) => {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
 
-          <motion.div
-            className="hidden md:flex absolute bottom-4 left-0 bg-white rounded-lg shadow-xl p-4 w-64  items-center gap-4 moving-box"
-            initial={{ opacity: 1, y: 0 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            animate={{ x: ["130%", "150%", "130%"] }}
-            transition={{
-              duration: 4,
-              ease: "easeInOut",
-              repeat: Infinity,
-            }}
-          >
+          {/* Animated moving box - pure CSS animation */}
+          <div className="hidden md:flex absolute bottom-4 left-0 bg-white rounded-lg shadow-xl p-4 w-64 items-center gap-4 animate-slide-x">
             <div className="flex items-center justify-center rounded-full text-white">
-              <FaSolarPanel className="text-xl text-[#669933] w-10 h-10" />
+              <Sun className="text-xl text-[#669933] w-10 h-10" />
             </div>
             <p className="text-sm text-gray-800 font-medium">
               Entdecken Sie die Kraft der Solartechnologie.
             </p>
-          </motion.div>
-        </motion.div>
+          </div>
+        </FadeInView>
       </div>
 
-      {/* Inline animation style */}
+      {/* CSS animations */}
       <style jsx>{`
-        .moving-box {
-          animation: slideX 4s ease-in-out infinite;
-        }
-
         @keyframes slideX {
           0% {
             transform: translateX(130%);
@@ -157,6 +121,10 @@ const SolvixBanner = ({ data }) => {
           100% {
             transform: translateX(130%);
           }
+        }
+        
+        .animate-slide-x {
+          animation: slideX 4s ease-in-out infinite;
         }
       `}</style>
     </section>

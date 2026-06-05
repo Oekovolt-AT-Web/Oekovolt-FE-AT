@@ -1,9 +1,8 @@
 "use client";
 import Image from "next/image";
-
-import { FaLeaf } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { Leaf } from "lucide-react";
 import Link from "next/link";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const PhotovoltaikRegionalNetzSection = ({ data }) => {
   if (
@@ -14,87 +13,66 @@ const PhotovoltaikRegionalNetzSection = ({ data }) => {
     return null;
 
   return (
-    <section className="w-full bg-gray-100 py-10 md:py-16 px-6  md:px-12">
+    <section className="w-full bg-gray-100 py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-7xl mx-auto flex flex-col-reverse lg:flex-row items-center gap-10">
         {/* Left: Image or Map */}
-        <motion.div
+        <FadeInView
+          direction="left"
+          distance={40}
+          duration={600}
           className="w-full lg:w-1/2 relative aspect-[16/11] rounded-xl overflow-hidden shadow-md"
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
         >
           <Image
-            src={data.photovoltaik_image_fourth_card ? `/api/image?path=${data.photovoltaik_image_fourth_card}` : "/Images/Jobs/jobs3.jpg"}
-            alt={data.photovoltaik_image_fourth_card_alt || "Map"}
+            src={data?.photovoltaik_image_fourth_card ? `/api/image?path=${data.photovoltaik_image_fourth_card}` : "/Images/Jobs/jobs3.jpg"}
+            alt={data?.photovoltaik_image_fourth_card_alt || "Map"}
             fill
             className="object-cover"
             sizes="100vw"
-
           />
-        </motion.div>
+        </FadeInView>
 
         {/* Right: Text */}
-        <motion.div
-          className="w-full lg:w-1/2 space-y-6"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.15,
-              },
-            },
-          }}
-        >
-          <motion.h2
+        <div className="w-full lg:w-1/2 space-y-6">
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={400}
             className="text-sm font-semibold uppercase text-[#669933]"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.4 }}
           >
-            {data.photovoltaik_title_fourth_card_first}
-          </motion.h2>
+            {data?.photovoltaik_title_fourth_card_first}
+          </FadeInView>
 
-          <motion.h3
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={500}
             className="text-3xl md:text-4xl text-gray-900"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.5 }}
           >
-            {data.photovoltaik_subtitle_fourth_card_first}
-          </motion.h3>
+            {data?.photovoltaik_subtitle_fourth_card_first}
+          </FadeInView>
 
           <ul className="space-y-3 mt-6">
-            {data.photovoltaik_fourth_table.map((item, idx) => (
-              <motion.li
+            {data?.photovoltaik_fourth_table?.map((item, idx) => (
+              <FadeInView
                 key={idx}
+                direction="right"
+                distance={20}
+                duration={400}
+                delay={idx * 100}
                 className="flex items-start gap-3 text-gray-700 text-[17px]"
-                variants={{
-                  hidden: { opacity: 0, x: 20 },
-                  visible: { opacity: 1, x: 0 },
-                }}
-                transition={{ duration: 0.4, delay: 0.1 * idx }}
               >
-                <FaLeaf className="text-[#669933] mt-1 shrink-0" />
-                <span>{item.options}</span>
-              </motion.li>
+                <Leaf className="text-[#669933] mt-1 shrink-0" />
+                <span>{item?.options}</span>
+              </FadeInView>
             ))}
           </ul>
 
-          <motion.div
+          <FadeInView
+            direction="bottom"
+            distance={20}
+            duration={500}
+            delay={300}
             className="pt-4"
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            transition={{ duration: 0.5 }}
           >
             <Link
               href="/kontakt"
@@ -102,8 +80,8 @@ const PhotovoltaikRegionalNetzSection = ({ data }) => {
             >
               Fachbetrieb in deiner Nähe finden
             </Link>
-          </motion.div>
-        </motion.div>
+          </FadeInView>
+        </div>
       </div>
     </section>
   );

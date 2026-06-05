@@ -1,7 +1,6 @@
-"use client";
-import { motion } from "framer-motion";
-import { CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
+import { CheckCircle2, AlertTriangle } from "lucide-react";
 import Image from "next/image";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 
 const FifthCardSection = ({ data }) => {
@@ -16,10 +15,10 @@ const FifthCardSection = ({ data }) => {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         {/* Section Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+        <FadeInView
+          direction="bottom"
+          distance={30}
+          duration={500}
           className="text-center mb-16"
         >
           <h2 className="text-4xl text-gray-900 mb-4">
@@ -29,17 +28,17 @@ const FifthCardSection = ({ data }) => {
           <p className="text-gray-600 text-lg max-w-3xl mx-auto">
             {data?.second_section_description}
           </p>
-        </motion.div>
+        </FadeInView>
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
 
           {/* Advantages Card - Modern Design */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative bg-white rounded-3xl shadow-xl overflow-hidden "
+          <FadeInView
+            direction="bottom"
+            distance={40}
+            duration={600}
+            className="relative bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#669933] to-[#8ab959]"></div>
 
@@ -64,8 +63,7 @@ const FifthCardSection = ({ data }) => {
                     alt={data?.fourth_card_1st_alt_image || "Vorteile"}
                     fill
                     className="object-cover"
-                    sizes=" 100vw"
-
+                    sizes="100vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
@@ -73,11 +71,13 @@ const FifthCardSection = ({ data }) => {
 
               <ul className="space-y-6 mt-6">
                 {advantages.map((item, index) => (
-                  <motion.li
+                  <FadeInView
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    as="li"
+                    direction="left"
+                    distance={20}
+                    duration={500}
+                    delay={index * 100} // 0ms, 100ms, 200ms, etc.
                     className="flex items-start gap-4"
                   >
                     <div className="bg-[#669933] bg-opacity-10 p-1.5 rounded-full mt-1">
@@ -91,17 +91,18 @@ const FifthCardSection = ({ data }) => {
                         {item?.secondary_paragraph}
                       </p>
                     </div>
-                  </motion.li>
+                  </FadeInView>
                 ))}
               </ul>
             </div>
-          </motion.div>
+          </FadeInView>
 
           {/* Challenges Card - Distinct Style */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          <FadeInView
+            direction="bottom"
+            distance={40}
+            duration={600}
+            delay={200}  // 0.2 seconds delay
             className="relative bg-white rounded-3xl shadow-xl overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-400 to-gray-300"></div>
@@ -123,12 +124,11 @@ const FifthCardSection = ({ data }) => {
               {data?.fourth_card_2nd_image && (
                 <div className="relative h-48 w-full rounded-xl overflow-hidden shadow-md mt-4">
                   <Image
-                    src={data?.fourth_card_2nd_image? `/api/image?path=${data?.fourth_card_2nd_image}` : "/Images/Jobs/jobs3.jpg"}
+                    src={data?.fourth_card_2nd_image ? `/api/image?path=${data?.fourth_card_2nd_image}` : "/Images/Jobs/jobs3.jpg"}
                     alt={data?.fourth_card_2nd_alt_image || "Nachteile"}
                     fill
                     className="object-cover"
-                    sizes=" 100vw"
-
+                    sizes="100vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
                 </div>
@@ -136,11 +136,13 @@ const FifthCardSection = ({ data }) => {
 
               <ul className="space-y-6 mt-6">
                 {challenges.map((item, index) => (
-                  <motion.li
+                  <FadeInView
                     key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+                    as="li"
+                    direction="left"
+                    distance={20}
+                    duration={500}
+                    delay={index * 100} // 0ms, 100ms, 200ms, etc.
                     className="flex items-start gap-4"
                   >
                     <div className="bg-gray-200 p-1.5 rounded-full mt-1">
@@ -154,11 +156,11 @@ const FifthCardSection = ({ data }) => {
                         {item?.secondary_paragraph}
                       </p>
                     </div>
-                  </motion.li>
+                  </FadeInView>
                 ))}
               </ul>
             </div>
-          </motion.div>
+          </FadeInView>
 
         </div>
 

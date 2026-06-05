@@ -1,7 +1,6 @@
 import Image from "next/image";
-
 import Link from "next/link";
-import { FaChevronRight } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 
 const SmartmeterBanner = ({ data }) => {
   return (
@@ -44,7 +43,7 @@ const SmartmeterBanner = ({ data }) => {
                   style={{ backgroundColor: "#669933" }}
                 >
                   Kontaktieren
-                  <FaChevronRight />
+                  <ChevronRight />
                 </Link>
               </div>
             </div>

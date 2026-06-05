@@ -1,5 +1,5 @@
 import React from "react";
-import { FaHandsHelping, FaLeaf, FaSolarPanel } from "react-icons/fa";
+import { HandHelping, LeafyGreen, Sun } from "lucide-react";
 
 const advantages = [
   {
@@ -7,21 +7,21 @@ const advantages = [
     title: "Einfachheit",
     description:
       "Wir kümmern uns um alles – von der Berechnung über die PV-Anlage Inspektion bis zur fachgerechten Umsetzung. Sie haben einen zentralen Ansprechpartner für alle Serviceleistungen.",
-    icon: <FaHandsHelping className="text-white text-2xl" />,
+    icon: <HandHelping className="text-white text-2xl" />,
   },
   {
     id: 2,
     title: "Nachhaltigkeit",
     description:
       "Mit Ihrer Photovoltaikanlage erzeugen Sie saubere Energie direkt aus Sonnenlicht – 100 % erneuerbar, CO₂-frei und effizient.",
-    icon: <FaLeaf className="text-white text-2xl" />,
+    icon: <LeafyGreen className="text-white text-2xl" />,
   },
   {
     id: 3,
     title: "Langlebigkeit",
     description:
       "Regelmäßige Wartung sorgt für maximale Lebensdauer Ihrer Anlage. Photovoltaikanlagen liefern zuverlässige Energie über Jahrzehnte – bei minimalem Wartungsaufwand.",
-    icon: <FaSolarPanel className="text-white text-2xl" />,
+    icon: <Sun className="text-white text-2xl" />,
   },
 ];
 

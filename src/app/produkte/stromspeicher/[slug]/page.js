@@ -4,21 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { FiGlobe, FiMail, FiPhone, FiCheckCircle } from "react-icons/fi";
+import { Globe, Mail, Phone, CheckCircle } from "lucide-react";
+import { generateSlug } from "@/lib/slugify";
 
-// Die gleiche Slug-Funktion wie in StromSecondCardSection
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss"
-};
 
 const createSlug = (title) => {
   return title
     .toLowerCase()
     .split("")
-    .map(char => umlautMap[char] || char)
+    .map(char => generateSlug[char] || char)
     .join("")
     .replace(/\s+/g, "-")
     .replace(/\//g, "-")
@@ -147,7 +141,7 @@ export async function generateMetadata({ params }) {
 
   return {
     title: `${manufacturer.title} Stromspeicher`,
-    description: manufacturer.company_description || `${manufacturer.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+    description: manufacturer.company_description || `${manufacturer.title} `,
     alternates: { 
       canonical: `https://www.oekovolt.de/produkte/stromspeicher/${slug}` 
     },
@@ -155,7 +149,7 @@ export async function generateMetadata({ params }) {
       type: "website",
       url: `https://www.oekovolt.de/produkte/stromspeicher/${slug}`,
       title: `${manufacturer.title} Stromspeicher`,
-      description: manufacturer.company_description || `${manufacturer.title} Stromspeicher bei Ökovolt Solartechnik – intelligente Batteriespeicher für Ihre PV-Anlage.`,
+      description: manufacturer.company_description || `${manufacturer.title}`,
       images: [{ 
         url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", 
         width: 1200, 
@@ -305,7 +299,7 @@ export default async function HerstellerDetailPage({ params }) {
                         <ul className="space-y-2 text-gray-700">
                           {product.options.map((opt, i) => (
                             <li key={i} className="flex items-start gap-2">
-                              <FiCheckCircle className="mt-1 text-[#669933] shrink-0" />
+                              <CheckCircle className="mt-1 text-[#669933] shrink-0" />
                               <span>{opt.options}</span>
                             </li>
                           ))}
@@ -339,7 +333,7 @@ export default async function HerstellerDetailPage({ params }) {
             <div className="space-y-2 text-gray-700">
               {hersteller.website_url && (
                 <p className="flex items-center gap-2">
-                  <FiGlobe className="text-blue-600 shrink-0" />
+                  <Globe className="text-blue-600 shrink-0" />
                   <Link
                     href={hersteller.website_url}
                     className="underline hover:text-blue-800 transition break-all"
@@ -352,7 +346,7 @@ export default async function HerstellerDetailPage({ params }) {
               )}
               {hersteller.email && (
                 <p className="flex items-center gap-2">
-                  <FiMail className="text-red-500 shrink-0" />
+                  <Mail className="text-red-500 shrink-0" />
                   <a href={`mailto:${hersteller.email}`} className="hover:underline break-all">
                     {hersteller.email}
                   </a>
@@ -360,7 +354,7 @@ export default async function HerstellerDetailPage({ params }) {
               )}
               {hersteller.phone_number && (
                 <p className="flex items-center gap-2">
-                  <FiPhone className="text-green-600 shrink-0" />
+                  <Phone className="text-green-600 shrink-0" />
                   <a href={`tel:${hersteller.phone_number}`} className="hover:underline">
                     {hersteller.phone_number}
                   </a>

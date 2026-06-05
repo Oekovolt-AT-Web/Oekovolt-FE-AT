@@ -1,136 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import styled from "styled-components";
-import {
-  MdPerson,
-  MdEmail,
-  MdContactPhone,
-  MdBusiness,
-  MdMessage,
-  MdLocationOn,
-} from "react-icons/md";
+import { User, Mail, Phone, Building, MessageSquare, MapPin } from "lucide-react";
 import { submitContact } from "@/lib/api/contact/create_contact";
-
-const Buttons = styled.div`
-  display: flex;
-  justify-content: center;
-
-  button {
-    width: 100%;
-    padding: 10px;
-    height: 45px;
-    background-color: transparent;
-    color: #30373e;
-    position: relative;
-    overflow: hidden;
-    font-size: 13px;
-    letter-spacing: 1px;
-    font-weight: 500;
-    text-transform: uppercase;
-    transition: all 0.5s ease;
-    cursor: pointer;
-    border: 2px solid #669933;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 3px;
-
-    @media (max-width: 640px) {
-      width: 260px;
-      height: 40px;
-      font-size: 12px;
-    }
-
-    &::before,
-    &::after {
-      content: "";
-      position: absolute;
-      width: 0;
-      height: 2px;
-      background-color: rgb(92, 92, 92);
-      transition: all 0.5s cubic-bezier(0.35, 0.1, 0.25, 1);
-    }
-
-    &::before {
-      right: 0;
-      top: 0;
-    }
-
-    &::after {
-      left: 0;
-      bottom: 0;
-    }
-
-    &:hover::before,
-    &:hover::after {
-      width: 100%;
-    }
-
-    span {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      z-index: 1;
-
-      &::before,
-      &::after {
-        content: "";
-        position: absolute;
-        width: 2px;
-        height: 0;
-        background-color: rgb(92, 92, 92);
-        transition: all 0.5s cubic-bezier(0.35, 0.1, 0.25, 1);
-      }
-
-      &::before {
-        right: 0;
-        top: 0;
-      }
-
-      &::after {
-        left: 0;
-        bottom: 0;
-      }
-    }
-
-    &:hover span::before,
-    &:hover span::after {
-      height: 100%;
-    }
-
-    p {
-      padding: 0;
-      margin: 0;
-      position: relative;
-      z-index: 2;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: color 0.3s ease;
-
-      &::before {
-        content: attr(data-title);
-      }
-
-      &::after {
-        display: none;
-      }
-
-      svg {
-        width: 16px;
-        height: 16px;
-        transition: transform 0.3s ease;
-      }
-    }
-
-    &:hover p svg {
-      transform: translateX(4px);
-    }
-  }
-`;
+import FadeInView from "@/components/Reusable/FadeInView";
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -198,9 +70,7 @@ export default function ContactForm() {
     };
 
     try {
-      // Use the new submitContact function
       await submitContact(payload);
-
       setMessage({ type: "success", text: "Nachricht erfolgreich gesendet!" });
       setFormData({
         firstName: "",
@@ -221,11 +91,11 @@ export default function ContactForm() {
   };
 
   return (
-    <motion.div
+    <FadeInView
+      direction="bottom"
+      distance={40}
+      duration={800}
       className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16 relative mb-[-12px]"
-      initial={{ y: 40, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8 }}
     >
       <div className="flex w-full overflow-hidden relative z-20">
         {/* Left image block */}
@@ -254,25 +124,25 @@ export default function ContactForm() {
           <h2 className="text-3xl font-bold text-center mb-2">Kontaktformular</h2>
           <p className="text-center text-gray-500 mb-6">Senden Sie uns eine Nachricht</p>
 
-          <AnimatePresence>
-            {message && (
-              <Notification
-                key="notification"
-                type={message.type}
-                text={
-                  message.type === "success"
-                    ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
-                    : message.text
-                }
-              />
-            )}
-          </AnimatePresence>
+          {/* Notification Message */}
+          {message && (
+            <div
+              className={`p-3 mb-5 rounded-md text-center transition-all duration-300 animate-fade-in ${message.type === "success"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+                }`}
+            >
+              {message.type === "success"
+                ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
+                : message.text}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* First row: First + Last name */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="relative flex-1">
-                <MdPerson className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <User className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="text"
                   name="firstName"
@@ -280,12 +150,12 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Vorname *"
                   required
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
 
               <div className="relative flex-1">
-                <MdPerson className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <User className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="text"
                   name="lastName"
@@ -293,7 +163,7 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Nachname *"
                   required
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
             </div>
@@ -301,7 +171,7 @@ export default function ContactForm() {
             {/* Second row: Street + ZipCity */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="relative flex-1">
-                <MdBusiness className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <Building className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="text"
                   name="street"
@@ -309,12 +179,12 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="Strasse und Hausnummer *"
                   required
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
 
               <div className="relative flex-1">
-                <MdLocationOn className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <MapPin className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="text"
                   name="zipCity"
@@ -322,15 +192,15 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="PLZ und Ort *"
                   required
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
             </div>
 
-            {/* Third row: Email + Phone (responsive) */}
+            {/* Third row: Email + Phone */}
             <div className="flex flex-col lg:flex-row gap-4">
               <div className="relative flex-1">
-                <MdEmail className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <Mail className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="email"
                   name="email"
@@ -338,26 +208,26 @@ export default function ContactForm() {
                   onChange={handleChange}
                   placeholder="E-Mail-Adresse *"
                   required
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
 
               <div className="relative flex-1">
-                <MdContactPhone className="absolute top-3 left-3 text-gray-400 text-lg" />
+                <Phone className="absolute top-3 left-3 text-gray-400 text-lg" />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Telefonnummer"
-                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300"
+                  className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 outline-none"
                 />
               </div>
             </div>
 
             {/* Message */}
             <div className="relative">
-              <MdMessage className="absolute top-3 left-3 text-gray-400 text-lg" />
+              <MessageSquare className="absolute top-3 left-3 text-gray-400 text-lg" />
               <textarea
                 name="message"
                 value={formData.message}
@@ -365,8 +235,8 @@ export default function ContactForm() {
                 placeholder="Nachricht *"
                 required
                 rows={4}
-                className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 resize-none"
-              ></textarea>
+                className="w-full pl-10 pr-4 py-2 rounded-md bg-gray-100 focus:ring-2 focus:ring-[#669933] border border-gray-300 resize-none outline-none"
+              />
             </div>
 
             {/* Terms & Conditions Checkbox */}
@@ -388,17 +258,33 @@ export default function ContactForm() {
               </label>
             </div>
 
-            {/* Submit Button */}
-            <Buttons>
-              <button type="submit" disabled={loading}>
-                <span></span>
-                <p data-title="Nachricht SENDEN">
+            {/* Submit Button - Pure Tailwind version */}
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                disabled={loading}
+                className="group relative w-full md:w-auto min-w-[200px] px-5 py-2.5 h-[45px] bg-transparent text-[#30373e] text-[13px] font-medium uppercase tracking-[1px] border-2 border-[#669933] rounded-md overflow-hidden cursor-pointer transition-all duration-500 hover:border-[#669933] disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {/* Top and bottom border animations */}
+                <span className="absolute inset-0">
+                  <span className="absolute right-0 top-0 w-0 h-0.5 bg-gray-500 transition-all duration-500 ease-[cubic-bezier(0.35,0.1,0.25,1)] group-hover:w-full"></span>
+                  <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-gray-500 transition-all duration-500 ease-[cubic-bezier(0.35,0.1,0.25,1)] group-hover:w-full"></span>
+                </span>
+
+                {/* Left and right border animations */}
+                <span className="absolute inset-0">
+                  <span className="absolute right-0 top-0 w-0.5 h-0 bg-gray-500 transition-all duration-500 ease-[cubic-bezier(0.35,0.1,0.25,1)] group-hover:h-full"></span>
+                  <span className="absolute left-0 bottom-0 w-0.5 h-0 bg-gray-500 transition-all duration-500 ease-[cubic-bezier(0.35,0.1,0.25,1)] group-hover:h-full"></span>
+                </span>
+
+                <p className="relative z-10 flex items-center justify-center gap-2 m-0 transition-colors duration-300 group-hover:text-[#669933]">
                   {loading ? (
                     "Senden..."
                   ) : (
                     <>
+                      Nachricht SENDEN
                       <svg
-                        className="ml-2"
+                        className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -414,26 +300,28 @@ export default function ContactForm() {
                   )}
                 </p>
               </button>
-            </Buttons>
+            </div>
           </form>
         </div>
       </div>
-    </motion.div>
+
+      {/* Add CSS animation for fade-in */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}</style>
+    </FadeInView>
   );
 }
-
-const Notification = ({ type, text }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={`p-3 mb-5 rounded-md text-center ${type === "success"
-        ? "bg-green-100 text-green-800"
-        : "bg-red-100 text-red-800"
-        }`}
-    >
-      {text}
-    </motion.div>
-  );
-};

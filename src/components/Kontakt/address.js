@@ -1,6 +1,5 @@
-"use client";
 import React from "react";
-import { FaPhone, FaMapMarkerAlt, FaClock, FaEnvelope } from "react-icons/fa";
+import { Phone, MapPin, Clock, Mail } from "lucide-react";
 import Image from "next/image";
 
 const ContactSection = () => {
@@ -9,7 +8,7 @@ const ContactSection = () => {
       {/* Decorative elements */}
       <div className="absolute top-0 left-0 w-full h-32 bg-[#669933] opacity-0"></div>
       <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#669933] opacity-5"></div>
-      
+
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header section */}
         <div className="text-center mb-9 md:mb-19">
@@ -31,16 +30,16 @@ const ContactSection = () => {
               {/* Phone & Email */}
               <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:-translate-y-2">
                 <div className="absolute -top-5 left-6 w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
-                  <FaPhone className="h-5 w-5" />
+                  <Phone className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Telefon & E-Mail</h3>
                 <div className="space-y-3">
                   <a href="tel:+498245967880" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
-                    <FaPhone className="h-4 w-4 opacity-70" />
+                    <Phone className="h-4 w-4 opacity-70" />
                     +49 8245 96 788 0
                   </a>
                   <a href="mailto:office@oekovolt.com" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
-                    <FaEnvelope className="h-4 w-4 opacity-70" />
+                    <Mail className="h-4 w-4 opacity-70" />
                     office@oekovolt.com
                   </a>
                 </div>
@@ -49,7 +48,7 @@ const ContactSection = () => {
               {/* Address */}
               <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:-translate-y-2">
                 <div className="absolute -top-5 left-6 w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
-                  <FaMapMarkerAlt className="h-5 w-5" />
+                  <MapPin className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Adresse</h3>
                 <div className="space-y-3 text-gray-700">
@@ -60,37 +59,33 @@ const ContactSection = () => {
               </div>
 
               {/* Hours */}
-             {/* Hours */}
-<div className="relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:-translate-y-2 md:col-span-2">
-  {/* <div className="absolute -top-5 left-6 w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
-    <FaClock className="h-5 w-5" />
-  </div> */}
-  <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Öffnungszeiten</h3>
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
-    <div className="flex items-start gap-3">
-      <div className="w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
-              <FaClock className="text-white h-5 w-5 " />
-      </div>
-      <div>
-        <h4 className="font-medium text-gray-800">Wochentage</h4>
-        <p>Mo - Do: 08:00 - 16:00</p>
-      </div>
-    </div>
-    <div className="flex items-start gap-3">
-    <div className="w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
-              <FaClock className="text-white h-5 w-5" />
-      </div>
-      <div>
-        <h4 className="font-medium text-gray-800">Freitag</h4>
-        <p>08:00 - 13:00</p>
-      </div>
-    </div>
-  </div>
-</div>
+              <div className="relative bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transform transition-all hover:-translate-y-2 md:col-span-2">
+                <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Öffnungszeiten</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
+                      <Clock className="text-white h-5 w-5 " />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-800">Wochentage</h4>
+                      <p>Mo - Do: 08:00 - 16:00</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#669933] text-white flex items-center justify-center shadow-lg">
+                      <Clock className="text-white h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-gray-800">Freitag</h4>
+                      <p>08:00 - 13:00</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
             </div>
 
-           
+
           </div>
 
           {/* Image with decorative frame */}

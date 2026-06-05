@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const Map = () => {
   const [cookieAccepted, setCookieAccepted] = useState(false);
@@ -80,11 +80,11 @@ const Map = () => {
   }
 
   return (
-    <motion.div
+    <FadeInView
+      direction="none"
+      scale={0.95}
+      duration={800}
       className="relative w-full h-[400px] overflow-hidden shadow-lg group cursor-pointer"
-      initial={{ scale: 0.95, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.8 }}
     >
       {cookieAccepted ? (
         <>
@@ -133,7 +133,7 @@ const Map = () => {
           </button>
         </div>
       )}
-    </motion.div>
+    </FadeInView>
   );
 };
 

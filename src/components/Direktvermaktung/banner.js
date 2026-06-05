@@ -1,8 +1,6 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { FaArrowRight } from "react-icons/fa";
+import { ArrowRight } from "lucide-react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const BannerSection = ({ data }) => {
   return (
@@ -53,18 +51,20 @@ const BannerSection = ({ data }) => {
               {data?.title}
             </h2>
             {data?.direkt_banner_options?.map((item, idx) => (
-              <motion.li
+              <FadeInView
                 key={idx}
+                as="li"
+                direction="right"
+                distance={10}
+                duration={500}
+                delay={idx * 100}  // 0ms, 100ms, 200ms, 300ms...
                 className="flex items-start gap-3"
-                initial={{ opacity: 0, x: 10 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 * idx }}
               >
                 <div className="bg-[#669933] bg-opacity-10 p-1 rounded-full mt-1">
-                  <FaArrowRight className="text-white text-xs" />
+                  <ArrowRight className="text-white text-xs" />
                 </div>
                 <span className="text-gray-700 text-lg">{item?.options}</span>
-              </motion.li>
+              </FadeInView>
             ))}
           </div>
         </div>

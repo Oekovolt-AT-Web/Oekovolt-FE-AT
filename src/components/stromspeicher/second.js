@@ -1,23 +1,13 @@
-"use client";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-import { FiArrowRight } from "react-icons/fi";
-
-
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss"
-};
+import { generateSlug } from "@/lib/slugify"
+import { ArrowRight } from "lucide-react";
 
 const createSlug = (title) => {
   return title
     .toLowerCase()
     .split("")
-    .map(char => umlautMap[char] || char)
+    .map(char => generateSlug[char] || char)
     .join("")
     .replace(/\s+/g, "-")
     .replace(/\//g, "-")
@@ -83,7 +73,7 @@ const StromSecondCardSection = ({ data }) => {
                   href={`/produkte/stromspeicher/${slug}`}
                   className="mt-auto inline-flex items-center gap-2 self-start bg-[#669933] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#557a26] transition"
                 >
-                  Mehr Informationen <FiArrowRight className="text-lg" />
+                  Mehr Informationen <ArrowRight className="text-lg" />
                 </Link>
               </div>
             </div>

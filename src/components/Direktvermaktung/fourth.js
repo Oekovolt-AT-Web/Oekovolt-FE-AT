@@ -1,15 +1,11 @@
-"use client";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { BookOpenCheck, TrendingUp, ArrowRight } from "lucide-react";
-
+import { BookOpenCheck, TrendingUp } from "lucide-react";
+import FadeInView from "@/components/Reusable/FadeInView";
 
 const ThirdCardSection = ({ data }) => {
   return (
     <section className="relative py-10 md:py-16  overflow-hidden">
       {/* Decorative elements */}
-      {/* <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#66993310] to-transparent"></div> */}
-      {/* <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-[#f0f7e6] blur-3xl opacity-40 -mr-32 -mb-32"></div> */}
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
         {/* Main Content */}
@@ -18,10 +14,10 @@ const ThirdCardSection = ({ data }) => {
           {/* Top Section: Modern Split Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Text Content */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <FadeInView
+              direction="bottom"
+              distance={40}
+              duration={600}
               className="space-y-8"
             >
               <div className="inline-flex items-center gap-4">
@@ -40,14 +36,14 @@ const ThirdCardSection = ({ data }) => {
               <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
                 {data?.third_card_description}
               </p>
-
-            </motion.div>
+            </FadeInView>
 
             {/* Image */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+            <FadeInView
+              direction="none"
+              scale={0.95}
+              duration={600}
+              delay={200}
               className="relative rounded-3xl overflow-hidden shadow-2xl group"
             >
               <Image
@@ -58,14 +54,15 @@ const ThirdCardSection = ({ data }) => {
                 className="w-full h-auto aspect-[4/3] object-cover group-hover:scale-105 transition-transform duration-700"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-            </motion.div>
+            </FadeInView>
           </div>
 
           {/* Bottom Highlight Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+          <FadeInView
+            direction="bottom"
+            distance={40}
+            duration={600}
+            delay={200}
             className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100"
           >
             <div className="p-8 md:p-10 lg:p-12">
@@ -73,13 +70,13 @@ const ThirdCardSection = ({ data }) => {
                 <div className="bg-[#669933] p-3 rounded-lg">
                   <TrendingUp className="text-white w-6 h-6" />
                 </div>
-                <h3 className="text-2xl md:text-3xl  text-gray-900">
+                <h3 className="text-2xl md:text-3xl text-gray-900">
                   {data?.first_section_title_field}
                 </h3>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                <div className=" border-2 border-[#669933] p-6 rounded-xl shadow-sm">
+                <div className="border-2 border-[#669933] p-6 rounded-xl shadow-sm">
                   <p className="text-gray-600 text-xl text-center">
                     Marktprämie =<br />
                     Anzulegender Wert –<br />
@@ -94,7 +91,7 @@ const ThirdCardSection = ({ data }) => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </FadeInView>
 
         </div>
       </div>

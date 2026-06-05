@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { FiMenu, FiX, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -241,9 +241,9 @@ const Navbar = () => {
                     >
                       {item.title}
                       {hoverDropdown === item.title ? (
-                        <FiChevronUp size={14} />
+                        <ChevronUp size={14} />
                       ) : (
-                        <FiChevronDown size={14} />
+                        <ChevronDown size={14} />
                       )}
                     </Link>
                     <div
@@ -283,7 +283,7 @@ const Navbar = () => {
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
-          {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
         {/* Mobile Menu Overlay */}
@@ -313,7 +313,7 @@ const Navbar = () => {
               onClick={closeMobileMenu}
               aria-label="Close menu"
             >
-              <FiX size={24} />
+              <X size={24} />
             </button>
           </div>
 
@@ -328,9 +328,9 @@ const Navbar = () => {
                     >
                       {item.title}
                       {openDropdown === item.title ? (
-                        <FiChevronUp size={16} />
+                        <ChevronUp size={16} />
                       ) : (
-                        <FiChevronDown size={16} />
+                        <ChevronDown size={16} />
                       )}
                     </button>
                     <div

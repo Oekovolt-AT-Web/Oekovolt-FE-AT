@@ -1,15 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  FaUser,
-  FaPhoneAlt,
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaCity,
-  FaMailBulk,
-  FaRegCommentDots,
-} from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+  User,
+  Phone,
+  Mail,
+  MapPin,
+  Building2,
+  Mailbox,
+  MessageCircle,
+} from "lucide-react";
 import Image from "next/image";
 import { submitContact } from "@/lib/api/contact/create_contact";
 
@@ -79,9 +78,7 @@ export default function KontaktFormular() {
     };
 
     try {
-      // Use the new submitContact function
       await submitContact(payload);
-
       setMessage({ type: "success", text: "Nachricht erfolgreich gesendet!" });
       setFormData({
         firstName: "",
@@ -107,21 +104,9 @@ export default function KontaktFormular() {
 
   return (
     <section className="bg-[#f9fafb] py-10 md:py-16 px-6 md:px-12">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        viewport={{ once: true }}
-        className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden p-1 md:p-8"
-      >
-          {/* Left Column - Info Box */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-          className="hidden md:block bg-[#669933] p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative"
-        >
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden p-1 md:p-8">
+        {/* Left Column - Info Box */}
+        <div className="hidden md:block bg-[#669933] p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative animate-slide-in-left">
           <div
             className="relative overflow-hidden rounded-xl h-[400px] md:h-[400px] lg:h-full"
             onMouseEnter={() => setIsHovering(true)}
@@ -156,38 +141,35 @@ export default function KontaktFormular() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Right Column - Form */}
-        <motion.form
+        <form
           onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="bg-gray-100 p-8 rounded-2xl space-y-5 text-sm shadow-inner"
+          className="bg-gray-100 p-8 rounded-2xl space-y-5 text-sm shadow-inner animate-slide-in-right"
         >
           <h3 className="text-2xl text-gray-900 mb-2">
             Jetzt unverbindlich anfragen:
           </h3>
 
-          <AnimatePresence>
-            {message && (
-              <Notification
-                key="notification"
-                type={message.type}
-                text={
-                  message.type === "success"
-                    ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
-                    : message.text
-                }
-              />
-            )}
-          </AnimatePresence>
+          {/* Notification Message */}
+          {message && (
+            <div
+              className={`p-3 mb-5 rounded-md text-center animate-fade-in ${
+                message.type === "success"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {message.type === "success"
+                ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
+                : message.text}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className={inputStyle}>
-              <FaUser className="text-[#669933]" />
+              <User className="text-[#669933]" />
               <input
                 type="text"
                 name="firstName"
@@ -199,7 +181,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={inputStyle}>
-              <FaUser className="text-[#669933]" />
+              <User className="text-[#669933]" />
               <input
                 type="text"
                 name="lastName"
@@ -211,7 +193,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2`}>
-              <FaPhoneAlt className="text-[#669933]" />
+              <Phone className="text-[#669933]" />
               <input
                 type="tel"
                 name="phone"
@@ -223,7 +205,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2`}>
-              <FaMapMarkerAlt className="text-[#669933]" />
+              <MapPin className="text-[#669933]" />
               <input
                 type="text"
                 name="street"
@@ -235,7 +217,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={inputStyle}>
-              <FaCity className="text-[#669933]" />
+              <Building2 className="text-[#669933]" />
               <input
                 type="text"
                 name="city"
@@ -247,7 +229,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={inputStyle}>
-              <FaMailBulk className="text-[#669933]" />
+              <Mailbox className="text-[#669933]" />
               <input
                 type="text"
                 name="zipCode"
@@ -259,7 +241,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2`}>
-              <FaEnvelope className="text-[#669933]" />
+              <Mail className="text-[#669933]" />
               <input
                 type="email"
                 name="email"
@@ -271,7 +253,7 @@ export default function KontaktFormular() {
               />
             </div>
             <div className={`${inputStyle} sm:col-span-2 items-start`}>
-              <FaRegCommentDots className="mt-1 text-[#669933]" />
+              <MessageCircle className="mt-1 text-[#669933]" />
               <textarea
                 name="message"
                 value={formData.message}
@@ -312,25 +294,58 @@ export default function KontaktFormular() {
           >
             {loading ? "Wird gesendet..." : "Anfrage absenden"}
           </button>
-        </motion.form>
-      </motion.div>
+        </form>
+      </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes slideInLeft {
+          0% {
+            opacity: 0;
+            transform: translateX(-40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes slideInRight {
+          0% {
+            opacity: 0;
+            transform: translateX(40px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-slide-in-left {
+          animation: slideInLeft 0.7s ease-out forwards;
+        }
+        
+        .animate-slide-in-right {
+          animation: slideInRight 0.7s ease-out 0.2s forwards;
+          opacity: 0;
+          animation-fill-mode: forwards;
+        }
+        
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out forwards;
+        }
+      `}</style>
     </section>
   );
 }
-
-const Notification = ({ type, text }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={`p-3 mb-5 rounded-md text-center ${
-        type === "success"
-          ? "bg-green-100 text-green-800"
-          : "bg-red-100 text-red-800"
-      }`}
-    >
-      {text}
-    </motion.div>
-  );
-};
