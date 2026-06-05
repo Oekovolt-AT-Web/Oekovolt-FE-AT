@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 const PhotovoltaikanlageBannerSection = ({ data }) => {
+
   return (
     <section className="relative h-[300px] w-full overflow-hidden lg:h-[400px]">
       <div className="absolute inset-0">

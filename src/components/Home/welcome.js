@@ -331,7 +331,7 @@ export default function RotatingImageSection({ data = {} }) {
 
           {/* IMAGE */}
           <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full overflow-hidden border-[8px] border-gray-200 shadow-lg"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full overflow-hidden border-8 border-gray-200 shadow-lg"
             style={{
               width: radius * 1.7,
               height: radius * 1.7,
@@ -348,7 +348,7 @@ export default function RotatingImageSection({ data = {} }) {
 
           {/* SVG CIRCLE */}
           <svg
-            className="absolute inset-0 w-full h-full z-[0]"
+            className="absolute inset-0 w-full h-full z-0"
             viewBox={`0 0 ${containerSize} ${containerSize}`}
           >
             <circle

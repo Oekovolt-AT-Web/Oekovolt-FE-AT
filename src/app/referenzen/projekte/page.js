@@ -8,6 +8,7 @@ import ProjekteBenefitsLayout from "@/components/Project/second";
 import Vorteil from "@/components/Project/vorteile";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { generateSlug } from "@/lib/slugify";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
 const PROJECTS_API = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
@@ -88,7 +89,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Referenzprojekte | Ökovolt Deutschland",
+      title: "Referenzprojekte",
       description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
@@ -98,13 +99,13 @@ export async function generateMetadata() {
         locale: "de_DE", 
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
-        title: "Referenzprojekte | Ökovolt Deutschland",
+        title: "Referenzprojekte ",
         description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
       },
       twitter: { 
         card: "summary_large_image", 
-        title: "Referenzprojekte | Ökovolt Deutschland", 
+        title: "Referenzprojekte ", 
         description: "Unsere erfolgreichen Photovoltaik-Projekte.", 
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
       },
@@ -112,7 +113,7 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = seoData?.title || "Referenzprojekte | Ökovolt Deutschland";
+  const title = seoData?.title || "Referenzprojekte ";
   const description = seoData?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.";
 
   return {
@@ -163,7 +164,7 @@ export default async function ProjektePage() {
           "@type": "ListItem",
           position: i + 1,
           name: p.title || p.name,
-          url: `${PAGE_URL}/${(p.title || p.name)?.toLowerCase().replace(/\s+/g, "-")}`,
+          url: `${PAGE_URL}/${(generateSlug(p.title)  || generateSlug(p.name))}`,
         })),
       },
     }),
@@ -174,7 +175,6 @@ export default async function ProjektePage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
-      { "@type": "ListItem", position: 2, name: "Referenzen", item: "https://www.oekovolt.de/referenzen" },
       { "@type": "ListItem", position: 3, name: "Projekte", item: PAGE_URL },
     ],
   };

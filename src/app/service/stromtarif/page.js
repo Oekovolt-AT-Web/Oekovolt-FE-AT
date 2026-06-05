@@ -66,25 +66,25 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+      title: "Dynamischer Stromtarif für PV-Anlagen ",
       description: "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-        locale: "de_DE", 
-        url: PAGE_URL, 
+        type: "website",
+        locale: "de_DE",
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+        title: "Dynamischer Stromtarif für PV-Anlagen ",
         description: "Flexible Stromtarife für Photovoltaik-Besitzer.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromtarif" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland", 
-        description: "Flexible Stromtarife für Photovoltaik-Besitzer.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Dynamischer Stromtarif für PV-Anlagen ",
+        description: "Flexible Stromtarife für Photovoltaik-Besitzer.",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -94,30 +94,30 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland";
-  const description = seoData?.description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.";
+  const title = seoData?.dynami_title || "Dynamischer Stromtarif für PV-Anlagen ";
+  const description = seoData?.dynami_description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.";
   const canonical = PAGE_URL;
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-      locale: "de_DE", 
-      url: canonical, 
+      type: "website",
+      locale: "de_DE",
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Dynamischer Stromtarif" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -130,7 +130,7 @@ export default async function StromtarifPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland",
+    name: data?.title || "Dynamischer Stromtarif für PV-Anlagen ",
     description: data?.description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
     inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },

@@ -141,7 +141,6 @@ export default async function ReferenzkarteSeite() {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Startseite", item: "https://www.oekovolt.de" },
-        { "@type": "ListItem", position: 2, name: "Referenzen", item: "https://www.oekovolt.de/referenzen" },
         { "@type": "ListItem", position: 3, name: "Referenzkarte", item: RK_PAGE_URL },
       ],
     },

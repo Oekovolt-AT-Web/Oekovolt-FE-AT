@@ -81,7 +81,7 @@ export default function SolutionsPage({ data }) {
         duration={800}
         className="text-center mb-16"
       >
-        <h2 className="text-2xl md:text-2xl lg:text-2xl font-[500] text-gray-900 mb-6">
+        <h2 className="text-2xl md:text-2xl lg:text-2xl font-medium text-gray-900 mb-6">
           {data?.photovoltaiklösungen_title}
         </h2>
       </FadeInView>
@@ -101,7 +101,7 @@ export default function SolutionsPage({ data }) {
             className="text-center"
           >
             <div className="flex justify-center mb-2">{item.icon}</div>
-            <div className="text-[40px] font-[500] text-[#669933] mb-2">
+            <div className="text-[40px] font-medium text-[#669933] mb-2">
               {counters[i]?.toLocaleString()}
               {item.suffix && <span>{item.suffix}</span>}
             </div>

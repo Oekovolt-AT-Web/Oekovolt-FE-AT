@@ -56,8 +56,8 @@ const getHomeData = cache(async () => {
 });
 
 const FALLBACK_META = {
-  title: "Photovoltaik & Solaranlagen kaufen – Ökovolt Deutschland",
-  description: "✓ Photovoltaikanlagen ✓ Stromspeicher ✓ Wärmepumpen ✓ Wallbox – Ihr Experte für erneuerbare Energien in Deutschland. Jetzt kostenlose Beratung anfordern!",
+  title: "Photovoltaik Lösungen für Deutschland | Ökovolt",
+  description: "Effiziente Photovoltaiklösungen mit Stromspeicher und smarter Überwachung für Unternehmen und Privatkunden. Jetzt beraten lassen.",
 };
 
 export async function generateMetadata() {

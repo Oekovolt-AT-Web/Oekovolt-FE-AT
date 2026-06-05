@@ -148,7 +148,7 @@ export default async function ProjectDetailPage({ params }) {
     "@type": "Article",
     headline: project.title || project.name,
     description: project.description || `Photovoltaik-Referenzprojekt von Ökovolt Solartechnik.`,
-    url: `${BASE_URL}/referenzen/projekte/${title}`,
+    url: `${BASE_URL}/referenzen/projekte/${generateSlug(title)}`,
     publisher: { "@id": `${BASE_URL}/#organization` },
     dateModified: project.modified || new Date().toISOString(),
     ...(project.bild_anhagen?.[0]?.bild_anhagen && {

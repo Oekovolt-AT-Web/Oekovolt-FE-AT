@@ -201,7 +201,7 @@ const Navbar = () => {
     <header className="static  top-0 bg-white w-full z-150">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-5 px-4">
         {/* Logo - kept exactly as in your original */}
-        <div className="w-[180px]">
+        <div className="w-45">
           <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
             <div style={{ width: 180, height: 64, position: "relative" }}>
               <Image

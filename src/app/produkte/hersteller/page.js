@@ -47,11 +47,12 @@ async function fetchHerstellerData() {
 
 export async function generateMetadata() {
   const seoData = await fetchHerstellerData();
+  console.log("seoData", seoData)
 
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Hersteller & Partner | Ökovolt Deutschland",
+      title: "Photovoltaik Hersteller & Partner ",
       description: "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
       keywords: [
         "Photovoltaik Hersteller",
@@ -64,19 +65,19 @@ export async function generateMetadata() {
         canonical: "https://www.oekovolt.de/produkte/hersteller",
       },
       openGraph: {
-        type: "website", 
+        type: "website",
         locale: "de_DE",
         url: "https://www.oekovolt.de/produkte/hersteller",
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Hersteller & Partner | Ökovolt Deutschland",
+        title: "Photovoltaik Hersteller & Partner ",
         description: "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Hersteller" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Photovoltaik Hersteller & Partner | Ökovolt Deutschland", 
-        description: "Unsere Partner und Hersteller für Photovoltaik-Komponenten.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Photovoltaik Hersteller & Partner ",
+        description: "Unsere Partner und Hersteller für Photovoltaik-Komponenten.",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -85,37 +86,37 @@ export async function generateMetadata() {
   const apiKeywords = seoData?.keywords
     ? seoData.keywords.split(/,\s*/)
     : [
-        "Photovoltaik Hersteller",
-        "Solar Komponenten",
-        "Energietechnik Partner",
-        "Qualitätshersteller",
-        "Solar Marken",
-      ];
+      "Photovoltaik Hersteller",
+      "Solar Komponenten",
+      "Energietechnik Partner",
+      "Qualitätshersteller",
+      "Solar Marken",
+    ];
 
-  const title = seoData?.title || "Photovoltaik Hersteller & Partner | Ökovolt Deutschland";
-  const description = seoData?.description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken wie SMA, Fronius, SolarEdge und mehr.";
+  const title = seoData?.hersteller_title || "Photovoltaik Hersteller & Partner ";
+  const description = seoData?.hersteller_description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken wie SMA, Fronius, SolarEdge und mehr.";
   const canonical = "https://www.oekovolt.de/produkte/hersteller";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-      locale: "de_DE", 
-      url: canonical, 
+      type: "website",
+      locale: "de_DE",
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Hersteller" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -130,7 +131,7 @@ export default async function HerstellerPage() {
     "@type": "WebPage",
     "@id": `${HERSTELLER_PAGE_URL}/#webpage`,
     url: HERSTELLER_PAGE_URL,
-    name: data?.title || "Photovoltaik Hersteller & Partner | Ökovolt Deutschland",
+    name: data?.title || "Photovoltaik Hersteller & Partner ",
     description: data?.description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
     inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },

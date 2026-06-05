@@ -57,7 +57,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland",
+      title: "Photovoltaik Finanzierung & Förderungen ",
       description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
@@ -67,13 +67,13 @@ export async function generateMetadata() {
         locale: "de_DE", 
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland",
+        title: "Photovoltaik Finanzierung & Förderungen ",
         description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Finanzierung" }],
       },
       twitter: { 
         card: "summary_large_image", 
-        title: "Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland", 
+        title: "Photovoltaik Finanzierung & Förderungen ", 
         description: "Attraktive Finanzierungsmöglichkeiten für Photovoltaik.", 
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
       },
@@ -81,8 +81,8 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = seoData?.title || "Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland";
-  const description = seoData?.description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.";
+  const title = seoData?.finanzierung_title || "Photovoltaik Finanzierung & Förderungen ";
+  const description = seoData?.finanzierung_description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.";
 
   return {
     title, 
@@ -116,7 +116,7 @@ export default async function FinanzierungPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland",
+    name: data?.title || "Photovoltaik Finanzierung & Förderungen ",
     description: data?.description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
     inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
