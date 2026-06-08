@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -12,8 +11,8 @@ export default function HomeLoader() {
     // Add timestamp to force fresh load
     setSvgSrc(`/Images/Home/loading.svg?t=${Date.now()}`);
     
-    const fadeTimer = setTimeout(() => setFadeOut(true), 1000);
-    const hideTimer = setTimeout(() => setVisible(false), 1200);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 1500);
+    const hideTimer = setTimeout(() => setVisible(false), 2000);
     
     return () => {
       clearTimeout(fadeTimer);
