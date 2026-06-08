@@ -61,7 +61,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Vorteilswelt | Ökovolt Deutschland",
+      title: "Vorteilswelt",
       description: "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
@@ -71,13 +71,13 @@ export async function generateMetadata() {
         locale: "de_DE",
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Vorteilswelt | Ökovolt Deutschland",
+        title: "Vorteilswelt",
         description: "Exklusive Vorteile und Services für unsere Kunden.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Vorteilswelt | Ökovolt Deutschland",
+        title: "Vorteilswelt",
         description: "Exklusive Vorteile und Services für unsere Kunden.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
@@ -89,7 +89,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Vorteilswelt | Ökovolt Deutschland";
+  const title = seoData?.Title || "Vorteilswelt";
   const description = seoData?.description || "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.";
   const canonical = PAGE_URL;
 
@@ -132,7 +132,7 @@ export default async function VorteilsweltPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Vorteilswelt | Ökovolt Deutschland",
+    name: data?.title || "Vorteilswelt",
     description: data?.description || "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
     inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },

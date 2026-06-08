@@ -67,7 +67,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Repowering | Ökovolt Deutschland",
+      title: "Photovoltaik Repowering",
       description: "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
@@ -77,13 +77,13 @@ export async function generateMetadata() {
         locale: "de_DE", 
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Repowering | Ökovolt Deutschland",
+        title: "Photovoltaik Repowering",
         description: "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Repowering" }],
       },
       twitter: { 
         card: "summary_large_image", 
-        title: "Photovoltaik Repowering | Ökovolt Deutschland", 
+        title: "Photovoltaik Repowering", 
         description: "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage.", 
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
       },
@@ -95,7 +95,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Photovoltaik Repowering | Ökovolt Deutschland";
+  const title = seoData?.photovoltaik_title || "Photovoltaik Repowering";
   const description = seoData?.description || "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.";
   const canonical = PAGE_URL;
 
@@ -131,7 +131,7 @@ export default async function RepoweringPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Photovoltaik Repowering | Ökovolt Deutschland",
+    name: data?.title || "Photovoltaik Repowering",
     description: data?.description || "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.",
     inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },

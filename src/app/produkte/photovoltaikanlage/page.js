@@ -56,7 +56,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaikanlagen kaufen | Ökovolt Deutschland",
+      title: "Photovoltaikanlagen kaufe",
       description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
       keywords: ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"],
       alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage" },
@@ -66,7 +66,7 @@ export async function generateMetadata() {
         locale: "de_DE",
         url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaikanlagen kaufen | Ökovolt Deutschland",
+        title: "Photovoltaikanlagen kaufen",
         description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
         images: [{
           url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp",
@@ -77,14 +77,14 @@ export async function generateMetadata() {
       },
       twitter: {
         card: "summary_large_image",
-        title: "Photovoltaikanlagen kaufen | Ökovolt Deutschland",
+        title: "Photovoltaikanlagen kaufen",
         description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
         images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
   }
 
-  const title = seoData?.photovoltaik_title || "Photovoltaikanlagen kaufen | Ökovolt Deutschland";
+  const title = seoData?.photovoltaik_title || "Photovoltaikanlagen kaufen";
   const description = seoData?.photovoltaik_description || "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.";
   const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"];
 

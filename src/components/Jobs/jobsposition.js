@@ -63,9 +63,9 @@ const JobListings = () => {
           duration={600}
           className="text-center"
         >
-          <h1 className="text-3xl font-bold mb-10 text-gray-900">
+          <h2 className="text-3xl font-bold mb-10 text-gray-900">
             Offene Stellen bei Oekovolt
-          </h1>
+          </h2>
         </FadeInView>
 
         {loading ? (
@@ -88,9 +88,9 @@ const JobListings = () => {
                 >
                   <div className="flex flex-col md:flex-row justify-between gap-6 items-start md:items-center">
                     <div className="flex-1">
-                      <h2 className="text-2xl font-semibold text-[#669933] mb-2">
+                      <h3 className="text-2xl font-semibold text-[#669933] mb-2">
                         {job.title || "Unbenannte Stelle"}
-                      </h2>
+                      </h3>
                       <div className="flex flex-wrap text-gray-600 text-sm gap-x-6 gap-y-2">
                         <span className="flex items-center gap-1">
                           <Briefcase className="text-[#669933]" />

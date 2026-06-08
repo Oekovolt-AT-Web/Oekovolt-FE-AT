@@ -48,7 +48,7 @@ async function fetchLandesforderungenData() {
 
 export async function generateMetadata() {
   const seoDataRaw = await fetchLandesforderungenData();
-  const seoData = seoDataRaw?.[0]; // Assuming first item contains general metadata
+  const seoData = seoDataRaw; // Assuming first item contains general metadata
 
   const defaultKeywords = [
     "Photovoltaik Förderung",
@@ -61,7 +61,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Landesförderungen 2025 | Ökovolt",
+      title: "Photovoltaik Landesförderungen 2025",
       description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL },
@@ -71,13 +71,13 @@ export async function generateMetadata() {
         locale: "de_DE", 
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Landesförderungen 2025 | Ökovolt",
+        title: "Photovoltaik Landesförderungen 2025",
         description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Förderungen" }],
       },
       twitter: { 
         card: "summary_large_image", 
-        title: "Photovoltaik Landesförderungen 2025 | Ökovolt", 
+        title: "Photovoltaik Landesförderungen 2025", 
         description: "Aktuelle Förderprogramme für Photovoltaik und Speicher.", 
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
       },
@@ -89,7 +89,7 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = seoData?.title || "Photovoltaik Landesförderungen 2025 | Ökovolt";
+  const title = seoData?.title || "Photovoltaik Landesförderungen 2025";
   const description = seoData?.description || "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Bis zu 30% Förderung sichern – jetzt Fördercheck machen!";
   const canonical = PAGE_URL;
 

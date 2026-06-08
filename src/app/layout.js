@@ -147,7 +147,7 @@ export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default: "Ökovolt Deutschland – Photovoltaik & Solaranlagen",
-    template: "%s | Ökovolt Deutschland",
+    template: "%s",
   },
   description:
     "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen für Privat und Gewerbe. Jetzt kostenlose Beratung sichern!",
