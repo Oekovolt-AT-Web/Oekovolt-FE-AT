@@ -111,7 +111,7 @@ const Map = () => {
           </div>
           <div className="absolute mt-8 top-[52%] left-1/2 z-30 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <a
-              href="https://www.google.com/maps/dir/?api=1&destination=Landstraße+11,+6911+Lochau,+Austria"
+              href="https://www.google.com/maps/dir/?api=1&destination=Schlingener+Str.+1a,+86842+Türkheim,+Germany"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-[#669933] text-white px-5 py-2 rounded-full shadow-lg hover:bg-[#669933] transition"
