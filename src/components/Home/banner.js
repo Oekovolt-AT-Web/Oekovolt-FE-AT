@@ -67,6 +67,13 @@ const VideoBanner = ({ videoSrc, mobileVideoSrc, mediaSrc, mobileMediaSrc, media
   const mobileSrc = mobileMediaSrc || mobileVideoSrc;
   const hasMobileSpecificSrc = Boolean(mobileSrc);
 
+  const getVideoType = (src) => {
+    if (src.endsWith(".webm")) return "video/webm";
+    if (src.endsWith(".ogg")) return "video/ogg";
+    if (src.endsWith(".mov")) return "video/mp4";
+    return "video/mp4";
+  };
+
   const renderMedia = (src, className) => {
     if (!src) return null;
 
@@ -81,7 +88,7 @@ const VideoBanner = ({ videoSrc, mobileVideoSrc, mediaSrc, mobileMediaSrc, media
           className={className}
           aria-label={mediaAlt}
         >
-          <source src={src} />
+          <source src={src} type={getVideoType(src)} />
           Your browser does not support the video tag.
         </video>
       );
