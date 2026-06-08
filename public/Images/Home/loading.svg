@@ -12,7 +12,7 @@
       }
       .sun-fill {
         fill: #FFD700;
-        animation: fillUp 4s ease-in-out forwards;
+        animation: fillUp 2s ease-in-out forwards;
       }
       @keyframes fillUp {
         from { transform: translateY(100%); }
