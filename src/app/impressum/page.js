@@ -7,7 +7,7 @@ export const metadata = {
   description: "Das Impressum der ÖKOVOLT GmbH Solartechnik enthält alle wichtigen rechtlichen Informationen wie Kontaktadresse, Unternehmensgegenstand, Haftungshinweise und Urheberrechte.",
   keywords: ["Impressum ÖKOVOLT GmbH", "Photovoltaik GmbH Impressum", "Rechtsform ÖKOVOLT", "Kontakt ÖKOVOLT", "Haftungshinweise ÖKOVOLT"],
   alternates: { canonical: "https://www.oekovolt.de/impressum" },
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
   openGraph: {
     type: "website", locale: "de_DE",
     url: "https://www.oekovolt.de/impressum",

@@ -99,6 +99,13 @@ const nextConfig = {
         destination: "https://www.oekovolt.de/referenzen/projekte/salzburg-flachdach-blechfalzdach",
         permanent: true,
       },
+      {
+        // Old WordPress project URL with no exact 1:1 match → safe redirect to the projects list.
+        source: "/bad-woerishofen-flachdach-fassadenanlage/",
+        has: [{ type: "host", value: "oekovolt.de" }],
+        destination: "https://www.oekovolt.de/referenzen/projekte",
+        permanent: true,
+      },
 
 
       {

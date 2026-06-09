@@ -28,7 +28,7 @@ async function fetchAllJobs() {
     const res = await fetch(JOBS_URL, {
       method: "GET",
       headers: headers,
-      next: { revalidate: 3600 } // ISR: Revalidate every hour
+      next: { revalidate: 600 } // ISR: Revalidate every hour
     });
     
     if (!res.ok) {

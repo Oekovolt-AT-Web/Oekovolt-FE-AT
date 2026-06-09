@@ -238,7 +238,7 @@ export default function SolutionsPage({ data }) {
                     .replace(/\//g, "-")
                     .replace(/[ä]/g, "ae")
                     .replace(/[ö]/g, "oe")
-                    .replace(/[ü]/g, "u")
+                    .replace(/[ü]/g, "ue")
                     .replace(/[ß]/g, "ss")
                     .replace(/[^a-z0-9-]/g, "")}`}
                   className="relative group overflow-hidden rounded-lg h-100 transform transition-all duration-700"

@@ -25,7 +25,7 @@ async function fetchLandesforderungenData() {
         const res = await fetch(API_URL, {
             method: "GET",
             headers: headers,
-            next: { revalidate: 3600 }
+            next: { revalidate: 600 }
         });
 
         if (!res.ok) {

@@ -21,7 +21,7 @@ async function fetchSmarthomeData() {
     const response = await fetch(DATA_URL, {
       method: 'GET',
       headers: headers,
-      next: { revalidate: 3600 }
+      next: { revalidate: 600 }
     });
 
     if (!response.ok) {

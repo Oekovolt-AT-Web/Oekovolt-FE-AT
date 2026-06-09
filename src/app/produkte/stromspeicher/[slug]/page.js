@@ -8,16 +8,8 @@ import { Globe, Mail, Phone, CheckCircle } from "lucide-react";
 import { generateSlug } from "@/lib/slugify";
 
 
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .split("")
-    .map(char => generateSlug[char] || char)
-    .join("")
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-};
+// Use the single shared slug function so URLs match the sitemap exactly.
+const createSlug = (title) => generateSlug(title);
 
 // 1. ALLE Stromspeicher Items holen (für generateStaticParams)
 async function fetchAllStromspeicherItems() {
@@ -34,7 +26,7 @@ async function fetchAllStromspeicherItems() {
     const res = await fetch(DATA_URL, {
       method: "GET",
       headers: headers,
-      next: { revalidate: 3600 }
+      next: { revalidate: 600 }
     });
 
     if (!res.ok) {
@@ -70,7 +62,7 @@ async function fetchManufacturerByName(name) {
     const res = await fetch(API_URL, {
       method: "GET",
       headers: headers,
-      next: { revalidate: 3600 }
+      next: { revalidate: 600 }
     });
 
     if (!res.ok) {

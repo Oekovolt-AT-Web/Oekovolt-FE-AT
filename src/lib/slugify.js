@@ -1,10 +1,13 @@
+// German/Austrian umlaut transliteration per DIN 5007-2 / Duden:
+// ä→ae, ö→oe, ü→ue, ß→ss. Must run BEFORE normalize("NFD"), otherwise NFD
+// decomposes ü into "u" + combining mark and we'd lose the "e".
 export function generateSlug(title) {
   if (!title) return "";
   return title
     .toLowerCase()
-    .replace(/ä/g, "a")
-    .replace(/ö/g, "o")
-    .replace(/ü/g, "u")
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
     .replace(/ß/g, "ss")
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
@@ -20,11 +23,11 @@ export function generateJobSlug(title) {
   if (!title) return "";
   return title
     .toLowerCase()
+    .replace(/ä/g, "ae")
+    .replace(/ö/g, "oe")
+    .replace(/ü/g, "ue")
+    .replace(/ß/g, "ss")
     .replace(/\s+/g, "-")
     .replace(/\//g, "-")
-    .replace(/ä/g, "a")
-    .replace(/ö/g, "o")
-    .replace(/ü/g, "u")
-    .replace(/ß/g, "ss")
     .replace(/[^a-z0-9-]/g, "");
 }

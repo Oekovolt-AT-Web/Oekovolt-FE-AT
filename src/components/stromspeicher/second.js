@@ -3,16 +3,8 @@ import Link from "next/link";
 import { generateSlug } from "@/lib/slugify"
 import { ArrowRight } from "lucide-react";
 
-const createSlug = (title) => {
-  return title
-    .toLowerCase()
-    .split("")
-    .map(char => generateSlug[char] || char)
-    .join("")
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-};
+// Use the single shared slug function so links match the sitemap exactly.
+const createSlug = (title) => generateSlug(title);
 
 
 const StromSecondCardSection = ({ data }) => {

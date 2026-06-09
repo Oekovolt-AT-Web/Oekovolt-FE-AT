@@ -4,23 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
-
-// Slug function inside same file
-function generateSlug(title) {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-    .replace(/[\s–—]+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[ä]/g, "ae")
-    .replace(/[ö]/g, "oe")
-    .replace(/[ü]/g, "ue")
-    .replace(/[ß]/g, "ss")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { generateSlug } from "@/lib/slugify";
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);

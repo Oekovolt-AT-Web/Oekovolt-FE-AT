@@ -40,19 +40,25 @@ const STATIC_PAGES = [
   { path: "/agb", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
 ];
 
-// Helper function to make authenticated fetch requests
-async function authenticatedFetch(url) {
+// Helper function to make authenticated fetch requests.
+// A timeout guarantees the sitemap never hangs waiting on a slow backend —
+// Google would otherwise see a "Temporary processing error".
+async function authenticatedFetch(url, timeoutMs = 5000) {
   if (!isApiConfigured()) {
     console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
     return null;
   }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const headers = getApiHeaders();
     const res = await fetch(url, {
       method: "GET",
       headers: headers,
-      next: { revalidate: 3600 }
+      signal: controller.signal,
+      next: { revalidate: 600 }
     });
 
     if (!res.ok) {
@@ -63,8 +69,10 @@ async function authenticatedFetch(url) {
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error(`Error fetching ${url}:`, error);
+    console.error(`Error fetching ${url}:`, error?.name || error);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -109,26 +117,6 @@ async function fetchWarmepumpeManufacturers() {
   return manufacturers;
 }
 
-// Create slug from title (matching your client-side function)
-const umlautMap = {
-  ä: "a",
-  ö: "o",
-  ü: "u",
-  ß: "ss"
-};
-
-function createSlug(title) {
-  if (!title) return "";
-  return title
-    .toLowerCase()
-    .split("")
-    .map(char => umlautMap[char] || char)
-    .join("")
-    .replace(/\s+/g, "-")
-    .replace(/\//g, "-")
-    .replace(/[^a-z0-9-]/g, "");
-}
-
 export default async function sitemap() {
   const staticEntries = STATIC_PAGES.map(({ path, changeFrequency, priority, lastModified }) => ({
     url: `${BASE_URL}${path}`,
@@ -139,8 +127,24 @@ export default async function sitemap() {
 
   const dynamicEntries = [];
 
+  // Fetch every data source in parallel so the sitemap's total time is the
+  // slowest single request (~5s cap), not the sum of all five. Each fetcher
+  // already returns [] on failure, so a partial outage never breaks the sitemap.
+  const [
+    projects,
+    jobs,
+    landesforderungen,
+    stromspeicherManufacturers,
+    warmepumpeManufacturers,
+  ] = await Promise.all([
+    fetchAllProjects(),
+    fetchAllJobs(),
+    fetchAllLandesforderungen(),
+    fetchStromspeicherManufacturers(),
+    fetchWarmepumpeManufacturers(),
+  ]);
+
   // 1. Project pages
-  const projects = await fetchAllProjects();
   projects.forEach((project) => {
     const slug = generateSlug(project.title || project.name);
     if (slug) {
@@ -154,7 +158,6 @@ export default async function sitemap() {
   });
 
   // 2. Job pages
-  const jobs = await fetchAllJobs();
   jobs.forEach((job) => {
     const slug = generateJobSlug(job.name || job.title);
     if (slug) {
@@ -168,7 +171,6 @@ export default async function sitemap() {
   });
 
   // 3. Landesforderungen pages
-  const landesforderungen = await fetchAllLandesforderungen();
   landesforderungen.forEach((item) => {
     const title = item.firstcard_title || item.name || '';
     const slug = generateSlug(title);
@@ -183,9 +185,8 @@ export default async function sitemap() {
   });
 
   // 4. Stromspeicher manufacturer pages (from stromspeicher page API)
-  const stromspeicherManufacturers = await fetchStromspeicherManufacturers();
   stromspeicherManufacturers.forEach((manufacturer) => {
-    const slug = createSlug(manufacturer.title);
+    const slug = generateSlug(manufacturer.title);
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/stromspeicher/${slug}`,
@@ -197,9 +198,8 @@ export default async function sitemap() {
   });
 
   // 5. Warmepumpe manufacturer pages (from warmepumpe page API)
-  const warmepumpeManufacturers = await fetchWarmepumpeManufacturers();
   warmepumpeManufacturers.forEach((manufacturer) => {
-    const slug = createSlug(manufacturer.title);
+    const slug = generateSlug(manufacturer.title);
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/warmepumpe/${slug}`,
