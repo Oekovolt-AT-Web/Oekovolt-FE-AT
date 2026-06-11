@@ -47,9 +47,9 @@ const BannerSection = ({ data }) => {
         {/* Text content */}
         <div className="w-full lg:w-1/2 h-full flex items-center justify-center px-6 py-10 md:px-10 lg:pl-4 lg:pr-36 bg-white/80 lg:bg-transparent">
           <div className="max-w-xl space-y-6 text-center lg:text-left">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {data?.Title}
-            </h2>
+            </h1>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
               {data.description}
             </p>

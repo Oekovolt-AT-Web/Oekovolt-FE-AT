@@ -59,7 +59,7 @@ export async function generateMetadata() {
       title: "Wallbox & Ladestationen | Ökovolt Deutschland",
       description: "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -87,7 +87,7 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 

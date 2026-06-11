@@ -3,17 +3,17 @@ export default function robots() {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/api/image/"],
         disallow: ["/api/"], 
       },
       {
         userAgent: "Googlebot",
-        allow: "/",
+        allow: ["/", "/api/image/"],
         disallow: ["/api/"],
       },
       {
         userAgent: "Googlebot-Image",
-        allow: "/",
+        allow: ["/", "/api/image/"],
       },
     ],
     sitemap: "https://www.oekovolt.de/sitemap.xml",

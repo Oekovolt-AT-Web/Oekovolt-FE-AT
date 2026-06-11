@@ -67,6 +67,7 @@ export async function generateMetadata() {
       keywords: defaultKeywords,
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/mieterstrom",
+        languages: { "de-DE": "https://www.oekovolt.de/produkte/mieterstrom" },
       },
       openGraph: {
         type: "website",

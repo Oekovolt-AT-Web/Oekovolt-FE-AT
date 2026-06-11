@@ -66,6 +66,7 @@ export async function generateMetadata() {
       keywords: defaultKeywords,
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/smartenergyhome",
+        languages: { "de-DE": "https://www.oekovolt.de/produkte/smartenergyhome" },
       },
       robots: { index: true, follow: true },
       openGraph: {
@@ -89,7 +90,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Smart Energy Lösungen | Ökovolt Deutschland";
+  const title = "Smart Energy Lösungen | Ökovolt Deutschland";
   const description = seoData?.description || "Innovative Smart Energy Lösungen für intelligentes Energiemanagement in Ihrem Zuhause. Energieeffizienz, Nachhaltigkeit und Kosteneinsparung durch moderne Technologie.";
   const canonical = "https://www.oekovolt.de/produkte/smartenergyhome";
 

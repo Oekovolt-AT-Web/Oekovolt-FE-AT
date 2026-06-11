@@ -60,7 +60,7 @@ export async function generateMetadata() {
       title: "Photovoltaik Finanzierung & Förderungen ",
       description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -88,7 +88,7 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 

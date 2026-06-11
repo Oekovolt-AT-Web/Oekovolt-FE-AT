@@ -63,6 +63,7 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/steuerlich",
+        languages: { "de-DE": "https://www.oekovolt.de/forderungen/steuerlich" },
       },
       openGraph: {
         type: "website",

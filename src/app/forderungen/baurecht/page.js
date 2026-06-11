@@ -64,6 +64,7 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/baurecht",
+        languages: { "de-DE": "https://www.oekovolt.de/forderungen/baurecht" },
       },
       openGraph: {
         type: "website",

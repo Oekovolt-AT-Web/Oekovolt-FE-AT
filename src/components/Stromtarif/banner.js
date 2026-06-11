@@ -46,9 +46,9 @@ const BannerSection = ({ data }) => {
             <p className="text-md  text-[#669933] uppercase ">
               {data.dynami_subtitle}
             </p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {data.dynami_title}
-            </h2>
+            </h1>
             <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
               {data.dynami_description}
             </p>

@@ -54,7 +54,7 @@ export async function generateMetadata() {
     
   const defaultDescription = "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
    
-  const defaultCanonical ="https://www.oekovolt.de/forderungen/richtlinen";
+  const defaultCanonical ="https://www.oekovolt.de/forderungen/richtlinien";
    
 
   if (!data) {
@@ -71,6 +71,7 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: defaultCanonical,
+        languages: { "de-DE": defaultCanonical },
       },
       openGraph: {
         type: "website",
@@ -123,8 +124,8 @@ export async function generateMetadata() {
 }
 
 const RICHTLINEN_PAGE_URL = process.env.NEXT_PUBLIC_SITE === "de" || process.env.NEXT_PUBLIC_COUNTRY === "deutschland"
-  ? "https://www.oekovolt.de/forderungen/richtlinen"
-  : "https://www.oekovolt.com/forderungen/richtlinen";
+  ? "https://www.oekovolt.de/forderungen/richtlinien"
+  : "https://www.oekovolt.com/forderungen/richtlinien";
 
 export default async function Richtlinen() {
   const response = await fetchRichtlinenData();

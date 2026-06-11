@@ -39,7 +39,7 @@ const Footer = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-4">
-              <Link href="/" className="relative w-50 h-17.5">
+              <Link href="/" className="relative block w-[200px] h-[70px]">
                 <Image
                   src="/Logo-Oekovolt-Gruen-mit-Weiss.webp"
                   alt="Ökovolt GmbH Solartechnik – Logo"

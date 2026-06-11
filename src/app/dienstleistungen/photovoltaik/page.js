@@ -58,7 +58,7 @@ export async function generateMetadata() {
       description:
         "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
       keywords: ["Photovoltaikanlage", "Solarenergie", "Energiekosten senken", "Photovoltaik Förderung", "Solaranlage"],
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik" },
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", languages: { "de-DE": "https://www.oekovolt.de/dienstleistungen/photovoltaik" } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -89,14 +89,14 @@ export async function generateMetadata() {
       "Solaranlage",
     ];
 
-  const title = seoData?.title || "Photovoltaik Dienstleistungen | Ökovolt Deutschland";
+  const title = "Photovoltaik Dienstleistungen | Ökovolt Deutschland";
   const description = seoData?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik" },
+    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", languages: { "de-DE": "https://www.oekovolt.de/dienstleistungen/photovoltaik" } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
