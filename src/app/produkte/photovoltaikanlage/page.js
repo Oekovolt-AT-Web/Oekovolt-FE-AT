@@ -84,7 +84,7 @@ export async function generateMetadata() {
     };
   }
 
-  const title = seoData?.photovoltaik_title || "Photovoltaikanlagen kaufen";
+  const title = "Photovoltaikanlagen kaufen | Ökovolt Deutschland";
   const description = seoData?.photovoltaik_description || "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.";
   const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"];
 

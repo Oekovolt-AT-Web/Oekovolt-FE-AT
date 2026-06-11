@@ -7,6 +7,7 @@ import React from "react";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_page.api.get_forderungen_page`;
+const LIST_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages`;
 const PAGE_URL = "https://www.oekovolt.de/forderungen/landesforderungen";
 
 async function fetchLandesforderungenData() {
@@ -43,6 +44,23 @@ async function fetchLandesforderungenData() {
   } catch (error) {
     console.error("Fetch error details:", error);
     return null;
+  }
+}
+
+async function fetchAllLandesforderungen() {
+  if (!isApiConfigured()) return [];
+  try {
+    const headers = getApiHeaders();
+    const response = await fetch(LIST_URL, {
+      method: "GET",
+      headers,
+      next: { revalidate: 600 }
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return data?.message || [];
+  } catch {
+    return [];
   }
 }
 
@@ -118,7 +136,10 @@ export async function generateMetadata() {
 }
 
 export default async function Page() {
-  const data = await fetchLandesforderungenData();
+  const [data, landesforderungenList] = await Promise.all([
+    fetchLandesforderungenData(),
+    fetchAllLandesforderungen(),
+  ]);
 
   const webPageSchema = {
     "@context": "https://schema.org",
@@ -146,7 +167,7 @@ export default async function Page() {
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <LandesBannerSection data={data} />
-      <ForderungenSection />
+      <ForderungenSection initialData={landesforderungenList} />
       <EndSection />
     </div>
   );

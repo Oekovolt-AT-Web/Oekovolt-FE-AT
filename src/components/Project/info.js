@@ -3,15 +3,16 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
 import { generateSlug } from "@/lib/slugify";
+import { getProjectItem } from "@/lib/api/referenzen/project_item_api";
 
 const ProjectCard = ({ project }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const slug = generateSlug(project.title);
 
   return (
     <Link
-      href={`/referenzen/projekte/${generateSlug(project.location)}`}
+      href={`/referenzen/projekte/${slug}`}
       className="relative w-full h-80 rounded-xl overflow-hidden shadow-lg group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -19,7 +20,7 @@ const ProjectCard = ({ project }) => {
       <div className="relative w-full h-full ">
         <Image
           src={project?.image ? `/api/image?path=${project?.image}` : "/Images/Jobs/jobs3.jpg"}
-          alt={`Project - ${project?.location}`}
+          alt={`Project - ${project?.title}`}
           fill
           className={`transition-all duration-500 object-cover object-center ${isHovered ? "scale-110 blur-[1px]" : "scale-100 blur-0"
             }`}
@@ -33,22 +34,52 @@ const ProjectCard = ({ project }) => {
           className={`transition-all duration-500 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/20 ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
             }`}
         >
-          <h3 className="text-white text-lg font-semibold">{project?.location}</h3>
+          <h3 className="text-white text-lg font-semibold">{project?.title}</h3>
         </div>
       </div>
     </Link>
   );
 };
 
-const ProjectsSection = ({ data }) => {
-  const [marken, setMarken] = useState([]);
+// projects prop is pre-fetched server-side so links appear in SSR HTML for crawlers.
+// Falls back to client-side fetch if server data is unavailable (API timeout etc.).
+const ProjectsSection = ({ data, projects = [] }) => {
+  const initialFormatted = projects.map((p) => ({
+    title: p.title || p.name,
+    image: p?.bild_anhagen?.[0]?.bild_anhagen,
+    status: p?.status,
+    capacity: p?.leistung,
+  }));
+
+  const [formattedProjects, setFormattedProjects] = useState(initialFormatted);
   const [currentPage, setCurrentPage] = useState(1);
   const projectsPerPage = 9;
 
-  const totalPages = Math.ceil(marken.length / projectsPerPage);
+  // Fallback: if server provided no data, fetch client-side
+  useEffect(() => {
+    if (initialFormatted.length > 0) return; // already have SSR data
+    const fetchEvents = async () => {
+      try {
+        const data = await getProjectItem();
+        const formatted = data?.message?.slice().map((marke) => ({
+          title: marke?.title || marke?.name,
+          image: marke?.bild_anhagen?.[0]?.bild_anhagen,
+          status: marke?.status,
+          capacity: marke?.leistung,
+        })) || [];
+        setFormattedProjects(formatted);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchEvents();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const totalPages = Math.ceil(formattedProjects.length / projectsPerPage);
   const indexOfLastProject = currentPage * projectsPerPage;
   const indexOfFirstProject = indexOfLastProject - projectsPerPage;
-  const currentProjects = marken.slice(indexOfFirstProject, indexOfLastProject);
+  const currentProjects = formattedProjects.slice(indexOfFirstProject, indexOfLastProject);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -61,8 +92,7 @@ const ProjectsSection = ({ data }) => {
   // Pagination range helper — returns an array of page numbers and 'DOTS' placeholders
   const getPaginationRange = (total, current, siblingCount = 1) => {
     const DOTS = "DOTS";
-    // Only show all pages when there are 5 or fewer; otherwise always use dots
-    const threshold = siblingCount * 2 + 3; // = 5 with default siblingCount
+    const threshold = siblingCount * 2 + 3;
 
     if (total <= threshold) {
       return Array.from({ length: total }, (_, i) => i + 1);
@@ -90,24 +120,6 @@ const ProjectsSection = ({ data }) => {
 
     return pages;
   };
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const data = await getProjectItem();
-        const formattedEvents = data?.message?.slice().map((marke) => ({
-          location: marke?.title,
-          image: marke?.bild_anhagen[0]?.bild_anhagen,
-          status: marke?.status,
-          capacity: marke?.leistung,
-        }));
-        setMarken(formattedEvents);
-      } catch (error) {
-        console.error("Gabim gjate marrjes se ngjarjeve:", error);
-      }
-    };
-    fetchEvents();
-  }, []);
 
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12" id="projects-section">

@@ -184,7 +184,7 @@ export default async function ProjektePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <ProjekteBannerSection data={data} />
-      <ProjectsHero data={data} />
+      <ProjectsHero data={data} projects={projectsList} />
       <ProjekteTechnologySection data={data} />
       <ProjekteBenefitsLayout data={data} />
       <Vorteil data={data} />

@@ -93,7 +93,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Solarstrom Direktvermarktung | Ökovolt Deutschland";
+  const title = "Solarstrom Direktvermarktung | Ökovolt Deutschland";
   const description = seoData?.description || "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.";
   const canonical = DV_PAGE_URL;
 

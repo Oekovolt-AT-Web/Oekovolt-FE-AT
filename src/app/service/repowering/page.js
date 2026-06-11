@@ -10,7 +10,6 @@ import SystemExpansionSection from "@/components/Repowering/fifth";
 import SixSection from "@/components/Repowering/six";
 import RepoweringSection from "@/components/Repowering/seven";
 import ThirdCardSection from "@/components/Repowering/eight";
-import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import EndSection from "@/components/Reusable/end";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaik_repowering_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
@@ -91,19 +90,14 @@ export async function generateMetadata() {
   }
 
   // Process keywords - use API keywords if available, otherwise fallback
-  const apiKeywords = seoData?.keywords
-    ? seoData.keywords.split(/,\s*/)
-    : defaultKeywords;
+  const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
 
-  const title = seoData?.photovoltaik_title || "Photovoltaik Repowering";
+  const title = "Photovoltaik Repowering | Ökovolt Deutschland";
   const description = seoData?.description || "Modernisierung und Leistungssteigerung Ihrer bestehenden Solaranlage. Erhöhen Sie Effizienz und Ertrag durch professionelles Repowering.";
   const canonical = PAGE_URL;
 
   return {
-    title, 
-    description, 
-    keywords: apiKeywords,
-    alternates: { canonical },
+    title, description, keywords: apiKeywords, alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
