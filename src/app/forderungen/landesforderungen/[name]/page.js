@@ -78,7 +78,7 @@ export async function generateStaticParams() {
     }
 
     const params = allData.map((item) => {
-        const title = item.firstcard_title || item.name || '';
+        const title = item.name || '';
         const slug = generateSlug(title);
         return { name: slug };
     });
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }) {
 
     // Find the specific item based on the slug
     const item = allData.find((item) => {
-        const itemTitle = item.firstcard_title || item.name || '';
+        const itemTitle = item.name || '';
         const itemSlug = generateSlug(itemTitle);
         return itemSlug === name;
     });
@@ -106,9 +106,8 @@ export async function generateMetadata({ params }) {
     }
 
     // Process variables from your dynamic data
-    const title = item.firstcard_title || item.name;
-    const description = item?.forderungen_text?.[0]?.secondary_paragraph ||
-        `Aktuelle Förderprogramme für ${title} im Bereich Photovoltaik und Speicher.`;
+    const title = item?.firstcard_title;
+    const description = item?.forderungen_text?.[0]?.secondary_paragraph;
 
     // Convert comma-separated string to array
     const keywords = item.keywords

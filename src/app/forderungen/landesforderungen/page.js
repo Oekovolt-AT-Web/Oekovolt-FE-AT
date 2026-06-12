@@ -107,8 +107,8 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = seoData?.title || "Photovoltaik Landesförderungen 2025";
-  const description = seoData?.description || "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Bis zu 30% Förderung sichern – jetzt Fördercheck machen!";
+  const title = "Photovoltaik Landesförderungen 2025";
+  const description = "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Bis zu 30% Förderung sichern – jetzt Fördercheck machen!";
   const canonical = PAGE_URL;
 
   return {
