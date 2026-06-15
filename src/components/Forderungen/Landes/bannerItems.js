@@ -46,7 +46,7 @@ const LandesBannerItems = ({data}) => {
             <div className="max-w-xl space-y-2 text-center lg:text-left">
              
               <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg">
-                {data?.primary_paragraph}
+                {data?.forderungen_text[0]?.primary_paragraph}
               </h2>
               <p className="text-base sm:text-lg lg:text-lg leading-relaxed text-gray-700 drop-shadow-lg">
                 {data?.forderungen_text[0]?.secondary_paragraph}
