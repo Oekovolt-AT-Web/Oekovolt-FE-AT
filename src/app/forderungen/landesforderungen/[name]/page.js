@@ -78,7 +78,7 @@ export async function generateStaticParams() {
     }
 
     const params = allData.map((item) => {
-        const title = item.name || '';
+        const title = item.firstcard_title || item.name || '';
         const slug = generateSlug(title);
         return { name: slug };
     });
@@ -92,19 +92,19 @@ export async function generateMetadata({ params }) {
 
     // Find the specific item based on the slug
     const item = allData.find((item) => {
-        const itemTitle = item.name || '';
+        const itemTitle = item.firstcard_title || item.name || '';
         const itemSlug = generateSlug(itemTitle);
         return itemSlug === name;
     });
 
+  
+
     // Fallback if item is not found
     if (!item) {
-        return {
-            title: "Landesförderung nicht gefunden | Ökovolt",
-            description: "Informationen zur gewünschten Landesförderung konnten nicht geladen werden.",
-        };
+       notFound();
     }
 
+  
     // Process variables from your dynamic data
     const title = item?.firstcard_title;
     const description = item?.forderungen_text?.[0]?.secondary_paragraph;
