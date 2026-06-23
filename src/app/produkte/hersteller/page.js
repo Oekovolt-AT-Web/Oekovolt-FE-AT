@@ -63,6 +63,7 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/hersteller",
+        languages: { "de-DE": "https://www.oekovolt.de/produkte/hersteller" },
       },
       openGraph: {
         type: "website",
@@ -93,7 +94,7 @@ export async function generateMetadata() {
       "Solar Marken",
     ];
 
-  const title = seoData?.hersteller_title || "Photovoltaik Hersteller & Partner ";
+  const title = "Photovoltaik Hersteller & Partner ";
   const description = seoData?.hersteller_description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken wie SMA, Fronius, SolarEdge und mehr.";
   const canonical = "https://www.oekovolt.de/produkte/hersteller";
 

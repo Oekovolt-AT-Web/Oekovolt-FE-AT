@@ -9,7 +9,6 @@ import FlexiblePowerSection from "@/components/Stromtarif/fourth";
 import DynamicSteps from "@/components/Stromtarif/fifth";
 import FlexibleBenefitsSection from "@/components/Stromtarif/sixth";
 import RequirementsSection from "@/components/Stromtarif/seventh";
-import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import EndSection from "@/components/Reusable/end";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.dynamischer_stromtarif_service_page.api.get_dynamischer_page_with_keywords`;
@@ -69,7 +68,7 @@ export async function generateMetadata() {
       title: "Dynamischer Stromtarif für PV-Anlagen ",
       description: "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -94,7 +93,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.dynami_title || "Dynamischer Stromtarif für PV-Anlagen ";
+  const title = "Dynamischer Stromtarif für PV-Anlagen | Ökovolt Deutschland";
   const description = seoData?.dynami_description || "Flexible Stromtarife für Photovoltaik-Besitzer. Nutzen Sie dynamische Strompreise und optimieren Sie Ihre Energiekosten mit intelligenten Tarifen.";
   const canonical = PAGE_URL;
 

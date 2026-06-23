@@ -64,6 +64,7 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/baurecht",
+        languages: { "de-DE": "https://www.oekovolt.de/forderungen/baurecht" },
       },
       openGraph: {
         type: "website",
@@ -82,9 +83,8 @@ export async function generateMetadata() {
     };
   }
 
-  const title = bannerData?.title || "Baurecht für Photovoltaik | Ökovolt Deutschland";
-  const description = bannerData?.description ||
-    "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.";
+  const title = "Baurecht für Photovoltaik | Ökovolt Deutschland";
+  const description = "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.";
 
   return {
     title: title,

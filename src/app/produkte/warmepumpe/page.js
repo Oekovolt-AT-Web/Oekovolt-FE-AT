@@ -63,7 +63,7 @@ export async function generateMetadata() {
       title: "Wärmepumpe kaufen | Ökovolt Deutschland",
       description: "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -91,7 +91,7 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 

@@ -4,6 +4,12 @@ import Map from "@/components/Kontakt/map";
 import TeamBanner from "@/components/Reusable/teamBanner";
 
 export const metadata = {
+  alternates: {
+    canonical: "https://www.oekovolt.de/kontakt",
+    languages: {
+      "de-DE": "https://www.oekovolt.de/kontakt",
+    },
+  },
   title: "Kontakt | Ökovolt Deutschland",
   description:
     "Kontaktieren Sie ÖKOVOLT Deutschland für professionelle Beratung und Unterstützung rund um Photovoltaik-Lösungen. Erreichen Sie uns per Telefon, E-Mail oder über unser Kontaktformular. Wir sind Montag bis Freitag für Sie da.",
@@ -14,7 +20,6 @@ export const metadata = {
     "Solaranlagen Kontakt",
     "ÖKOVOLT Deutschland",
   ],
-  alternates: { canonical: "https://www.oekovolt.de/kontakt" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",

@@ -344,7 +344,8 @@ export default async function WaermepumpeDetailPage({ params }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {hersteller.website_url}
+                    Offizielle Website von {hersteller.title}
+
                   </Link>
                 </p>
               )}

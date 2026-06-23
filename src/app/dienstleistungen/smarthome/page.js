@@ -53,7 +53,7 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Smart Home Lösungen | Ökovolt Deutschland",
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome" },
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome", languages: { "de-DE": "https://www.oekovolt.de/dienstleistungen/smarthome" } },
       openGraph: { 
         type: "website", 
         locale: "de_DE", 
@@ -92,7 +92,7 @@ export async function generateMetadata() {
         "Vernetztes Wohnen",
       ];
 
-  const title = seoData?.title || "Smart Home Lösungen | Ökovolt Deutschland";
+  const title = "Smart Home Lösungen | Ökovolt Deutschland";
   const description = seoData?.description || "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.";
   const canonical = "https://www.oekovolt.de/dienstleistungen/smarthome";
 

@@ -114,9 +114,9 @@ const Navbar = () => {
           link: "/service/repowering",
         },
         {
-          name: "Direktvermaktung",
-          slug: "direktvermaktung",
-          link: "/service/direktvermaktung",
+          name: "Direktvermarktung",
+          slug: "direktvermarktung",
+          link: "/service/direktvermarktung",
         },
       ],
     },
@@ -153,8 +153,8 @@ const Navbar = () => {
         },
         {
           name: "Richtlinien",
-          slug: "richtlinen",
-          link: "/forderungen/richtlinen",
+          slug: "richtlinien",
+          link: "/forderungen/richtlinien",
         },
       ],
     },

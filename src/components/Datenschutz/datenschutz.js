@@ -41,11 +41,8 @@ const PrivacyPolicy = () => {
         </p>
         <p>
           Der folgende Link stellt eine Liste der Datenschutzbeauftragten sowie deren Kontaktdaten bereit:
-          <a
-            href="https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html"
-            className="text-[#669933] hover:underline break-words"
-          >
-            https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html
+          <a href="https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html">
+            Liste der Datenschutzbeauftragten in Deutschland
           </a>
           .
         </p>
@@ -166,9 +163,9 @@ const PrivacyPolicy = () => {
           möglich, indem Sie das über folgenden Link erreichbare Browser-Plugin herunterladen und installieren:{" "}
           <a
             href="https://tools.google.com/dlpage/gaoptout?hl=de"
-            className="text-[#669933] hover:underline break-words"
+            className="text-[#669933] hover:underline"
           >
-            https://tools.google.com/dlpage/gaoptout?hl=de
+            Browser-Plugin zur Deaktivierung von Google Analytics
           </a>
           .
         </p>
@@ -188,9 +185,9 @@ const PrivacyPolicy = () => {
           Google:
           <a
             href="https://support.google.com/analytics/answer/6004245?hl=de"
-            className="text-[#669933] hover:underline break-words"
+            className="text-[#669933] hover:underline"
           >
-            https://support.google.com/analytics/answer/6004245?hl=de
+            Datenschutzerklärung von Google Analytics
           </a>
           .
         </p>
@@ -243,10 +240,12 @@ const PrivacyPolicy = () => {
           und unsere Werbung zu optimieren.
         </p>
         <p className="mb-4">
-          Einzelheiten zu Google AdWords und Google Conversion-Tracking finden Sie in den Datenschutzbestimmungen von
-          Google:{" "}
-          <a href="https://www.google.de/policies/privacy/" className="text-[#669933] hover:underline">
-            https://www.google.de/policies/privacy/
+          Einzelheiten zu Google AdWords und Google Conversion-Tracking finden Sie in den Datenschutzbestimmungen von Google:{" "}
+          <a
+            href="https://www.google.de/policies/privacy/"
+            className="text-[#669933] hover:underline"
+          >
+            Datenschutzbestimmungen von Google
           </a>
           .
         </p>

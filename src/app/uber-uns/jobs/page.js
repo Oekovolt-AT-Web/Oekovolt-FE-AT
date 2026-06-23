@@ -98,7 +98,7 @@ export async function generateMetadata() {
       title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
       description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
       keywords: defaultKeywords,
-      alternates: { canonical: JOBS_PAGE_URL },
+      alternates: { canonical: JOBS_PAGE_URL, languages: { "de-DE": JOBS_PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -123,14 +123,14 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = seoData?.title || "Karriere bei Ökovolt | Jobs in der Solarbranche";
+  const title = "Karriere bei Ökovolt | Jobs in der Solarbranche";
   const description = seoData?.description || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: JOBS_PAGE_URL },
+    alternates: { canonical: JOBS_PAGE_URL, languages: { "de-DE": JOBS_PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",

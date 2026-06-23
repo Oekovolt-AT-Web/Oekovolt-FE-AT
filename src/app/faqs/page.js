@@ -54,7 +54,7 @@ export async function generateMetadata() {
       title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
       description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
       keywords: ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"],
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -76,14 +76,14 @@ export async function generateMetadata() {
 
   const defaultKeywords = ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"];
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = seoData?.title || "FAQ Photovoltaik | Häufige Fragen – Ökovolt";
+  const title =  "Häufige Fragen – Ökovolt";
   const description = seoData?.description || "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.";
 
   return {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 

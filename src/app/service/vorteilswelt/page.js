@@ -64,7 +64,7 @@ export async function generateMetadata() {
       title: "Vorteilswelt",
       description: "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -89,7 +89,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.Title || "Vorteilswelt";
+  const title = "Vorteilswelt | Ökovolt Deutschland";
   const description = seoData?.description || "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.";
   const canonical = PAGE_URL;
 

@@ -92,7 +92,7 @@ export async function generateMetadata() {
       title: "Referenzprojekte",
       description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -113,14 +113,14 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = seoData?.title || "Referenzprojekte ";
+  const title = "Referenzprojekte | Ökovolt Deutschland";
   const description = seoData?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.";
 
   return {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
@@ -184,7 +184,7 @@ export default async function ProjektePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <ProjekteBannerSection data={data} />
-      <ProjectsHero data={data} />
+      <ProjectsHero data={data} projects={projectsList} />
       <ProjekteTechnologySection data={data} />
       <ProjekteBenefitsLayout data={data} />
       <Vorteil data={data} />
