@@ -1,5 +1,3 @@
-// service/finanzierung/page.js
-
 import React from "react";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import BannerSection from "@/components/Finanzierung/banner";
@@ -60,7 +58,7 @@ export async function generateMetadata() {
       title: "Photovoltaik Finanzierung & Förderungen ",
       description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL },
+      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -81,14 +79,14 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = seoData?.finanzierung_title || "Photovoltaik Finanzierung & Förderungen ";
+  const title ="Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland";
   const description = seoData?.finanzierung_description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.";
-
+ 
   return {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL },
+    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 

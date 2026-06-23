@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Loader2, Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon } from 'lucide-react';
 
 import Image from 'next/image';
 import { generateSlug } from '@/lib/slugify';
@@ -45,26 +45,28 @@ const ForderungCard = ({ item }) => {
   );
 };
 
-const CompactForderungen = () => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+// initialData is passed from the server page so links appear in SSR HTML for crawlers.
+// Falls back to client-side fetch if server data unavailable (API timeout etc.).
+const CompactForderungen = ({ initialData = [] }) => {
+  const [data, setData] = useState(initialData);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9;
 
+  // Fallback: if server provided no data, fetch client-side
   useEffect(() => {
+    if (initialData.length > 0) return; // already have SSR data
     const fetchData = async () => {
       try {
         const jsonData = await getLandesforderungen();
         setData(jsonData?.message || []);
       } catch (err) {
         console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
       }
     };
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Pagination Logic
@@ -102,11 +104,7 @@ const CompactForderungen = () => {
     return pages;
   };
 
-  if (loading) return (
-    <div className="h-40 flex justify-center items-center">
-      <Loader2 className="h-6 w-6 animate-spin text-[#669933]" />
-    </div>
-  );
+
 
   return (
     <section className="py-10 px-4 bg-white" id="forderungen-grid">

@@ -47,9 +47,9 @@ const BannerSection = ({ data }) => {
             <p className="text-md  text-[#669933] uppercase ">
               {data?.subtitle}
             </p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl text-gray-900 drop-shadow-lg ">
               {data?.title}
-            </h2>
+            </h1>
             {data?.direkt_banner_options?.map((item, idx) => (
               <FadeInView
                 key={idx}

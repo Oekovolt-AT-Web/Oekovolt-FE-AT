@@ -3,6 +3,12 @@ import BannerSection from "@/components/Reusable/banner";
 import EndSection from "@/components/Reusable/end";
 
 export const metadata = {
+  alternates: {
+    canonical: "https://www.oekovolt.de/datenschutz",
+    languages: {
+      "de-DE": "https://www.oekovolt.de/datenschutz",
+    },
+  },
   title: "Datenschutz",
   description:
     "Erfahren Sie alles über die datenschutzrechtlichen Bestimmungen und Ihre Rechte auf der Website von ÖKOVOLT GmbH. Wir erläutern unsere Datenschutzpraktiken, einschließlich der Nutzung von Cookies, Google Analytics und Google AdWords, sowie der Möglichkeit, Ihre Einwilligung zur Datenverarbeitung jederzeit zu widerrufen. Weitere Informationen zu den Rechten auf Auskunft, Berichtigung und Löschung Ihrer personenbezogenen Daten sowie zur SSL-Verschlüsselung für sichere Kommunikation finden Sie hier.",
@@ -13,9 +19,7 @@ export const metadata = {
     "Google Analytics",
     "Cookies",
   ],
-  alternates: {
-    canonical: "https://www.oekovolt.de/datenschutz",
-  },
+
   openGraph: {
     type: "website",
     url: "https://www.oekovolt.de/datenschutz",
@@ -34,7 +38,7 @@ export const metadata = {
 
 export default function DatenschutzPage() {
   const data = {
-    title: "Datenschutz",
+    title: "Datenschutz & Sicherheit",
     img: "/Images/Kontakt/download-2.jpg",
   };
 

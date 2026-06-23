@@ -332,7 +332,7 @@ export default async function HerstellerDetailPage({ params }) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {hersteller.website_url}
+                    Offizielle Website von {hersteller.title}
                   </Link>
                 </p>
               )}

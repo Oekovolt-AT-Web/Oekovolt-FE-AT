@@ -1,121 +1,68 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  trailingSlash: false,
   compress: true,
   poweredByHeader: false,
+ 
   async redirects() {
     return [
-
-      {
-        source: "/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de",
-        permanent: true,
-      },
-      {
-        source: "/faqs",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/faqs",
-        permanent: true,
-      },
-      {
-        source: "/faqs/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/faqs",
-        permanent: true,
-      },
-      {
-        source: "/referenzkarte",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/referenzkarte",
-        permanent: true,
-      },
-      {
-        source: "/jobs",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/uber-uns/jobs",
-        permanent: true,
-      },
-      {
-        source: "/service",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/dienstleistungen/photovoltaik",
-        permanent: true,
-      },
-      {
-        source: "/kontakt",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/kontakt",
-        permanent: true,
-      },
-      {
-        source: "/agb",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/agb",
-        permanent: true,
-      },
-
-
-      {
-        source: "/referenzkarte",
-        has: [{ type: "host", value: "www.oekovolt.de" }],
-        destination: "/referenzen/referenzkarte",
-        permanent: true,
-      },
-      {
-        source: "/jobs",
-        has: [{ type: "host", value: "www.oekovolt.de" }],
-        destination: "/uber-uns/jobs",
-        permanent: true,
-      },
-      {
-        source: "/service",
-        has: [{ type: "host", value: "www.oekovolt.de" }],
-        destination: "/dienstleistungen/photovoltaik",
-        permanent: true,
-      },
-
-
-      {
-        source: "/ravensburg-flachdach/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/projekte/ravensburg-flachdach",
-        permanent: true,
-      },
-      {
-        source: "/buchloe-einfamilienhaus-satteldach/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
-        permanent: true,
-      },
-      {
-        source: "/mering-flachdach-ost-west/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/projekte/mering-flachdach-ost-west",
-        permanent: true,
-      },
-      {
-        source: "/salzburg-flachdach-blechfalzdach/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/projekte/salzburg-flachdach-blechfalzdach",
-        permanent: true,
-      },
-      {
-        // Old WordPress project URL with no exact 1:1 match → safe redirect to the projects list.
-        source: "/bad-woerishofen-flachdach-fassadenanlage/",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/referenzen/projekte",
-        permanent: true,
-      },
-
-
+      // RIDREJTIMET: Nga non-www tek www (kjo është ajo që duhet)
       {
         source: "/:path*",
         has: [{ type: "host", value: "oekovolt.de" }],
         destination: "https://www.oekovolt.de/:path*",
         permanent: true,
       },
+     
+      // Redirectet e tjera pa ndryshime
+      {
+        source: "/jobs",
+        destination: "/uber-uns/jobs",
+        permanent: true,
+      },
+      {
+        source: "/faqs/",
+        destination: "/faqs",
+        permanent: true,
+      },
+      {
+        source: "/service",
+        destination: "/dienstleistungen/photovoltaik",
+        permanent: true,
+      },
+      {
+        source: "/referenzkarte",
+        destination: "/referenzen/referenzkarte",
+        permanent: true,
+      },
+      {
+        source: "/ravensburg-flachdach/",
+        destination: "/referenzen/projekte/ravensburg-flachdach",
+        permanent: true,
+      },
+      {
+        source: "/buchloe-einfamilienhaus-satteldach/",
+        destination: "/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
+        permanent: true,
+      },
+      {
+        source: "/mering-flachdach-ost-west/",
+        destination: "/referenzen/projekte/mering-flachdach-ost-west",
+        permanent: true,
+      },
+      {
+        source: "/salzburg-flachdach-blechfalzdach/",
+        destination: "/referenzen/projekte/salzburg-flachdach-blechfalzdach",
+        permanent: true,
+      },
+      {
+        source: "/bad-woerishofen-flachdach-fassadenanlage/",
+        destination: "/referenzen/projekte",
+        permanent: true,
+      },
     ];
   },
+ 
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,
@@ -133,6 +80,7 @@ const nextConfig = {
       },
     ],
   },
+ 
   async headers() {
     return [
       {
@@ -142,7 +90,6 @@ const nextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-XSS-Protection", value: "1; mode=block" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()" },
         ],
       },
@@ -158,19 +105,16 @@ const nextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
-      // --- VIDEO OPTIMIZATION ADDITIONS ---
       {
-        // Target all common background video formats
         source: "/(.*)\\.(mp4|webm|ogg|mov|m4v)",
         headers: [
-          // 1. Long-term static asset caching
           { key: "Cache-Control", value: "public, max-age=31536000, must-revalidate" },
-          // 2. Explicitly allow byte-range streaming requests
           { key: "Accept-Ranges", value: "bytes" }
         ],
       },
     ];
   },
+ 
   async rewrites() {
     return [
       {
@@ -180,5 +124,5 @@ const nextConfig = {
     ];
   },
 };
-
+ 
 export default nextConfig;

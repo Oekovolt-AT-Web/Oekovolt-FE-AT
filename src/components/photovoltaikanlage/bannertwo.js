@@ -19,15 +19,17 @@ const SolvixBanner = ({ data }) => {
           >
             {data?.photovoltaik_description || ""}
           </FadeInView>
+          <h1>
+            <FadeInView
+              direction="bottom"
+              distance={30}
+              duration={800}
+              className="text-4xl leading-tight text-gray-900"
+            >
+              {data?.photovoltaik_title || ""}
+            </FadeInView>
+          </h1>
 
-          <FadeInView
-            direction="bottom"
-            distance={30}
-            duration={800}
-            className="text-4xl leading-tight text-gray-900"
-          >
-            {data?.photovoltaik_title || ""}
-          </FadeInView>
 
           <div className="space-y-4">
             {data?.photovoltaik_options?.map((opt, index) => (

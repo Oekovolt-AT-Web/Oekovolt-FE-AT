@@ -69,7 +69,7 @@ export async function generateMetadata() {
       title: "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland",
       description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
       keywords: defaultKeywords,
-      alternates: { canonical: RK_PAGE_URL },
+      alternates: { canonical: RK_PAGE_URL, languages: { "de-DE": RK_PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -94,7 +94,7 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = seoData?.title?.trim() || "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland";
+  const title = "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland";
   const description = seoData?.description || "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.";
   const canonical = RK_PAGE_URL;
 

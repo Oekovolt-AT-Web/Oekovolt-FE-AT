@@ -12,7 +12,7 @@ import SixCardSection from "@/components/Direktvermaktung/six";
 import DirektvermaktungFAQ from "@/components/Direktvermaktung/eight";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.direktvermarktung_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
-const DV_PAGE_URL = "https://www.oekovolt.de/service/direktvermaktung";
+const DV_PAGE_URL = "https://www.oekovolt.de/service/direktvermarktung";
 
 async function fetchDirektvermarktungData() {
   if (!isApiConfigured()) {
@@ -68,7 +68,7 @@ export async function generateMetadata() {
       title: "Solarstrom Direktvermarktung | Ökovolt Deutschland",
       description: "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
       keywords: defaultKeywords,
-      alternates: { canonical: DV_PAGE_URL },
+    alternates: { canonical: DV_PAGE_URL, languages: { "de-DE": DV_PAGE_URL } },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
@@ -93,7 +93,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Solarstrom Direktvermarktung | Ökovolt Deutschland";
+  const title = "Solarstrom Direktvermarktung | Ökovolt Deutschland";
   const description = seoData?.description || "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.";
   const canonical = DV_PAGE_URL;
 

@@ -89,11 +89,9 @@ export async function generateMetadata() {
     };
   }
 
-  const title = seoData?.title || FALLBACK_META.title;
+  const title = "Photovoltaik-Lösungen | Ökovolt Deutschland";
   const description = seoData?.first_card_description || FALLBACK_META.description;
-  const apiKeywords = seoData?.keywords
-    ? seoData.keywords.split(/,\s*/)
-    : defaultKeywords;
+  const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
 
   return {
     title,
@@ -120,7 +118,7 @@ export async function generateMetadata() {
 export default async function HomePage() {
   const data = await getHomeData();
 
-  const title = data?.title || FALLBACK_META.title;
+  const title = "Photovoltaik-Lösungen | Ökovolt Deutschland";
   const description = data?.first_card_description || FALLBACK_META.description;
 
   const homePageSchema = {

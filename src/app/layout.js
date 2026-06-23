@@ -223,10 +223,6 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
-  alternates: {
-    canonical: BASE_URL,
-    languages: { "de-DE": BASE_URL, "x-default": BASE_URL },
-  },
   //  verification: {
   //   google: "GTM-WR8PDT7V",
   // },

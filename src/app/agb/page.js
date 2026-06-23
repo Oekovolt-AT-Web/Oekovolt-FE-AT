@@ -3,7 +3,13 @@ import BannerSection from "@/components/Reusable/banner";
 import GreenFeatureSection from "@/components/Reusable/contactInfo";
 
 export const metadata = {
-  title: "Allgemeine Geschäfts­bedingungen",
+  title: "Allgemeine Geschäftsbedingungen",
+  alternates: {
+    canonical: "https://www.oekovolt.de/agb",
+    languages: {
+      "de-DE": "https://www.oekovolt.de/agb",
+    },
+  },
   description:
     "Erfahren Sie mehr über die Allgemeinen Geschäftsbedingungen (AGB) von ÖKOVOLT GmbH, einem führenden Anbieter von Solarenergie-Lösungen. Unsere detaillierten AGB regeln die Bedingungen für Verträge, einschließlich des Verkaufs von Photovoltaikanlagen, Installationsdiensten, Zahlungsmodalitäten, Garantieleistungen und Haftung. Diese Bedingungen gelten sowohl für Privat- als auch Geschäftskunden. Lesen Sie unsere vollständigen AGB, um Ihre Rechte und Pflichten im Umgang mit ÖKOVOLT zu verstehen.",
   keywords: [
@@ -13,9 +19,6 @@ export const metadata = {
     "Photovoltaikanlagen",
     "Installationsdienstleistungen",
   ],
-  alternates: {
-    canonical: "https://www.oekovolt.de/agb",
-  },
   openGraph: {
     type: "website",
     url: "https://www.oekovolt.de/agb",
@@ -34,7 +37,7 @@ export const metadata = {
 
 export default function AgbPage() {
   const data = {
-    title: "Allgemeine Geschäfts­bedingungen",
+    title: "AGB - Photovoltaikanlagen",
     img: "/Images/Kontakt/download-2.jpg",
   };
 
