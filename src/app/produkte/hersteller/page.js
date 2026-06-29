@@ -47,7 +47,6 @@ async function fetchHerstellerData() {
 
 export async function generateMetadata() {
   const seoData = await fetchHerstellerData();
-  console.log("seoData", seoData)
 
   if (!seoData) {
     // Fallback metadata if API fails

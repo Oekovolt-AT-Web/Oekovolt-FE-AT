@@ -4,7 +4,6 @@ import Image from "next/image";
 
 const MieterstromBanner = ({ data }) => {
   if (!data) return null;
-  console.log("image", data)
 
   return (
     <section className="relative h-[360px] md:h-[400px] w-full overflow-hidden">

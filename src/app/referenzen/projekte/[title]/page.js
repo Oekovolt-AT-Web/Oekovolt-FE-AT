@@ -61,7 +61,6 @@ export async function generateStaticParams() {
       title: generateSlug(project.title || project.name)
     })).filter(param => param.title);
 
-    console.log(`✅ Generated ${params.length} project params`);
     return params;
   } catch (error) {
     console.error("Error in generateStaticParams:", error);
