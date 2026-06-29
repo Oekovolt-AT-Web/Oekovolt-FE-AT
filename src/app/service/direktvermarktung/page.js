@@ -68,11 +68,11 @@ export async function generateMetadata() {
       title: "Solarstrom Direktvermarktung | Ökovolt Deutschland",
       description: "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
       keywords: defaultKeywords,
-    alternates: { canonical: DV_PAGE_URL, languages: { "de-DE": DV_PAGE_URL } },
+    alternates: { canonical: DV_PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: DV_PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "Solarstrom Direktvermarktung | Ökovolt Deutschland",
@@ -105,7 +105,7 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: canonical, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -131,7 +131,7 @@ export default async function DirektvermarktungPage() {
     url: DV_PAGE_URL,
     name: data?.title || "Solarstrom Direktvermarktung | Ökovolt Deutschland",
     description: data?.description || "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

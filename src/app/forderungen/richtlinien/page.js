@@ -49,13 +49,13 @@ async function fetchRichtlinenData() {
 export async function generateMetadata() {
   const data = await fetchRichtlinenData();
   const bannerData = data?.message?.banner;
-  
+
   const defaultTitle = "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland";
-    
+
   const defaultDescription = "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
-   
-  const defaultCanonical ="https://www.oekovolt.de/forderungen/richtlinien";
-   
+
+  const defaultCanonical = "https://www.oekovolt.de/forderungen/richtlinien";
+
 
   if (!data) {
     // Fallback metadata if API fails
@@ -71,7 +71,6 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: defaultCanonical,
-        languages: { "de-DE": defaultCanonical },
       },
       openGraph: {
         type: "website",
@@ -90,7 +89,7 @@ export async function generateMetadata() {
     };
   }
 
-  const title = bannerData?.title || defaultTitle;
+  const title = bannerData?.title + " | Ökovolt Solartechnik Deutschland" || defaultTitle;
   const description = bannerData?.description || defaultDescription;
 
   return {
@@ -138,7 +137,6 @@ export default async function Richtlinen() {
     url: RICHTLINEN_PAGE_URL,
     name: data?.banner?.title || "Technische Richtlinien für Photovoltaik | Ökovolt",
     description: data?.banner?.description || "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen.",
-    inLanguage: "de-DE",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

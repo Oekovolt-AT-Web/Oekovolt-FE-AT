@@ -60,11 +60,11 @@ export async function generateMetadata() {
       title: "Stromspeicher kaufen | Ökovolt Deutschland",
       description: "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL,},
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "Stromspeicher kaufen | Ökovolt Deutschland",
@@ -88,11 +88,11 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+    alternates: { canonical: PAGE_URL,},
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: PAGE_URL, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -118,7 +118,7 @@ export default async function StromspeicherPage() {
     url: PAGE_URL,
     name: data?.title || "Stromspeicher kaufen | Ökovolt Deutschland",
     description: data?.description || "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

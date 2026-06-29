@@ -121,7 +121,7 @@ const siteSchema = {
       url: BASE_URL,
       name: "Ökovolt Deutschland",
       description: "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen.",
-      inLanguage: "de-DE",
+
       publisher: { "@id": `${BASE_URL}/#organization` },
       potentialAction: {
         "@type": "SearchAction",
@@ -249,6 +249,7 @@ export default function RootLayout({ children }) {
         <meta name="ICBM" content="48.03858, 10.62765" />
         {/* Language */}
         <meta httpEquiv="content-language" content="de-DE" />
+        <meta name="ahrefs-site-verification" content="e1d71a17817647a67232c6d7f2943114c4d8bb7d08642c44ecc929d005be7401"></meta>
 
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />

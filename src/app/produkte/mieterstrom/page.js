@@ -67,7 +67,6 @@ export async function generateMetadata() {
       keywords: defaultKeywords,
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/mieterstrom",
-        languages: { "de-DE": "https://www.oekovolt.de/produkte/mieterstrom" },
       },
       openGraph: {
         type: "website",
@@ -129,7 +128,7 @@ export default async function MieterstromPage() {
     url: MIETERSTROM_PAGE_URL,
     name: data?.title || "Mieterstrom & Quartierslösungen | Ökovolt Deutschland",
     description: data?.description || "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

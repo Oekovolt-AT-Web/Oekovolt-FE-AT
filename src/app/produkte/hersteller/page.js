@@ -63,11 +63,10 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/hersteller",
-        languages: { "de-DE": "https://www.oekovolt.de/produkte/hersteller" },
       },
       openGraph: {
         type: "website",
-        locale: "de_DE",
+       
         url: "https://www.oekovolt.de/produkte/hersteller",
         siteName: "Ökovolt Deutschland",
         title: "Photovoltaik Hersteller & Partner ",
@@ -106,7 +105,6 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "de_DE",
       url: canonical,
       siteName: "Ökovolt Deutschland",
       title,
@@ -134,7 +132,7 @@ export default async function HerstellerPage() {
     url: HERSTELLER_PAGE_URL,
     name: data?.title || "Photovoltaik Hersteller & Partner ",
     description: data?.description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

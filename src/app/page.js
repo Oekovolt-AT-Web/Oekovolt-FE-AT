@@ -71,7 +71,7 @@ export async function generateMetadata() {
       title: FALLBACK_META.title,
       description: FALLBACK_META.description,
       keywords: defaultKeywords,
-      alternates: { canonical: BASE_URL, languages: { "de-DE": BASE_URL } },
+      alternates: { canonical: BASE_URL},
       robots: {
         index: true, follow: true,
         googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
@@ -97,7 +97,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: BASE_URL, languages: { "de-DE": BASE_URL } },
+    alternates: { canonical: BASE_URL },
     robots: {
       index: true, follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
@@ -128,7 +128,6 @@ export default async function HomePage() {
     url: BASE_URL,
     name: title,
     description,
-    inLanguage: "de-DE",
     isPartOf: { "@id": `${BASE_URL}/#website` },
     about: { "@id": `${BASE_URL}/#organization` },
     datePublished: "2008-01-01",
