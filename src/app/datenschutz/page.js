@@ -5,11 +5,9 @@ import EndSection from "@/components/Reusable/end";
 export const metadata = {
   alternates: {
     canonical: "https://www.oekovolt.de/datenschutz",
-    languages: {
-      "de-DE": "https://www.oekovolt.de/datenschutz",
-    },
+ 
   },
-  title: "Datenschutz",
+  title: "Datenschutz | Ökovolt Solartechnik Deutschland",
   description:
     "Erfahren Sie alles über die datenschutzrechtlichen Bestimmungen und Ihre Rechte auf der Website von ÖKOVOLT GmbH. Wir erläutern unsere Datenschutzpraktiken, einschließlich der Nutzung von Cookies, Google Analytics und Google AdWords, sowie der Möglichkeit, Ihre Einwilligung zur Datenverarbeitung jederzeit zu widerrufen. Weitere Informationen zu den Rechten auf Auskunft, Berichtigung und Löschung Ihrer personenbezogenen Daten sowie zur SSL-Verschlüsselung für sichere Kommunikation finden Sie hier.",
   keywords: [
@@ -23,7 +21,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: "https://www.oekovolt.de/datenschutz",
-    title: "Datenschutz | Ökovolt Deutschland",
+    title: "Datenschutz | Ökovolt Solartechnik Deutschland",
     description: "Datenschutzrechtliche Bestimmungen und Ihre Rechte bei ÖKOVOLT GmbH.",
     images: [
       {

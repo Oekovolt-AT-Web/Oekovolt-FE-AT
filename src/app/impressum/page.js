@@ -5,9 +5,6 @@ import EndSection from "@/components/Reusable/end";
 export const metadata = {
   alternates: {
     canonical: "https://www.oekovolt.de/impressum",
-    languages: {
-      "de-DE": "https://www.oekovolt.de/impressum",
-    },
   },
   title: "Impressum | Ökovolt Deutschland",
   description: "Das Impressum der ÖKOVOLT GmbH Solartechnik enthält alle wichtigen rechtlichen Informationen wie Kontaktadresse, Unternehmensgegenstand, Haftungshinweise und Urheberrechte.",

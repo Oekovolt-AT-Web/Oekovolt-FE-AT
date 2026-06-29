@@ -59,7 +59,7 @@ export async function generateMetadata() {
       title: "Photovoltaikanlagen kaufe",
       description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
       keywords: ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"],
-      alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", languages: { "de-DE": "https://www.oekovolt.de/produkte/photovoltaikanlage" } },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage" },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -92,7 +92,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords,
-    alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", languages: { "de-DE": "https://www.oekovolt.de/produkte/photovoltaikanlage" } },
+    alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -129,7 +129,7 @@ export default async function PhotovoltaikanlagePage() {
     url: PAGE_URL,
     name: data?.photovoltaik_title || "Photovoltaikanlagen kaufen | Ökovolt Deutschland",
     description: data?.photovoltaik_description || "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

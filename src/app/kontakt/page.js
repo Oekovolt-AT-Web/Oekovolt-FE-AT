@@ -6,9 +6,6 @@ import TeamBanner from "@/components/Reusable/teamBanner";
 export const metadata = {
   alternates: {
     canonical: "https://www.oekovolt.de/kontakt",
-    languages: {
-      "de-DE": "https://www.oekovolt.de/kontakt",
-    },
   },
   title: "Kontakt | Ökovolt Deutschland",
   description:
@@ -46,7 +43,7 @@ const contactSchema = {
   url: "https://www.oekovolt.de/kontakt",
   name: "Kontakt | Ökovolt Deutschland",
   description: "Kontaktieren Sie ÖKOVOLT Deutschland für professionelle Beratung rund um Photovoltaik-Lösungen.",
-  inLanguage: "de-DE",
+  
   isPartOf: { "@id": "https://www.oekovolt.de/#website" },
   about: { "@id": "https://www.oekovolt.de/#organization" },
 };
@@ -72,7 +69,7 @@ export default function KontaktPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(contactSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <TeamBanner data={data} />
-      <ContactSection /> 
+      <ContactSection />
       <Map />
       <ContactForm />
     </div>

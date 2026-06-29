@@ -92,11 +92,11 @@ export async function generateMetadata() {
       title: "Referenzprojekte",
       description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "Referenzprojekte ",
@@ -120,11 +120,11 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: PAGE_URL, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -153,7 +153,7 @@ export default async function ProjektePage() {
     url: PAGE_URL,
     name: data?.title || "Referenzprojekte – Ökovolt Deutschland",
     description: data?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     ...(projectsList.length > 0 && {

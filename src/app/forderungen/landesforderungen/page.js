@@ -82,11 +82,11 @@ export async function generateMetadata() {
       title: "Photovoltaik Landesförderungen 2025",
       description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "Photovoltaik Landesförderungen 2025",
@@ -119,7 +119,7 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: canonical, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -148,7 +148,7 @@ export default async function Page() {
     url: PAGE_URL,
     name: data?.[0]?.title || "Photovoltaik Landesförderungen 2025 | Ökovolt",
     description: data?.[0]?.description || "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
