@@ -77,7 +77,7 @@ export async function generateMetadata({ params }) {
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: canonical, 
         siteName: "Ökovolt Deutschland",
         title: `${job.name} | Karriere bei Ökovolt`,

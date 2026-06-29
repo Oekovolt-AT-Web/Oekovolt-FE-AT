@@ -59,22 +59,22 @@ export async function generateMetadata() {
       title: "Unser Team | Ökovolt Deutschland",
       description: "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-        locale: "de_DE", 
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
         title: "Unser Team | Ökovolt Deutschland",
         description: "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Team" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Unser Team | Ökovolt Deutschland", 
-        description: "Lernen Sie unser Expertenteam kennen.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Unser Team | Ökovolt Deutschland",
+        description: "Lernen Sie unser Expertenteam kennen.",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -84,25 +84,24 @@ export async function generateMetadata() {
   const description = seoData?.description || "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-      locale: "de_DE", 
-      url: PAGE_URL, 
+      type: "website",
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Team" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -117,7 +116,7 @@ export default async function TeamPage() {
     url: PAGE_URL,
     name: data?.title || "Unser Team | Ökovolt Deutschland",
     description: data?.description || "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
-    inLanguage: "de-DE",
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

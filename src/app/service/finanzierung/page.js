@@ -58,11 +58,11 @@ export async function generateMetadata() {
       title: "Photovoltaik Finanzierung & Förderungen ",
       description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL,},
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "Photovoltaik Finanzierung & Förderungen ",
@@ -86,11 +86,11 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: PAGE_URL, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -116,7 +116,7 @@ export default async function FinanzierungPage() {
     url: PAGE_URL,
     name: data?.title || "Photovoltaik Finanzierung & Förderungen ",
     description: data?.description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

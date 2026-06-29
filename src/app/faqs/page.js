@@ -54,11 +54,11 @@ export async function generateMetadata() {
       title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
       description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
       keywords: ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"],
-      alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website", 
-        locale: "de_DE", 
+         
         url: PAGE_URL, 
         siteName: "Ökovolt Deutschland",
         title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
@@ -83,11 +83,11 @@ export async function generateMetadata() {
     title, 
     description, 
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: { "de-DE": PAGE_URL } },
+    alternates: { canonical: PAGE_URL,},
     robots: { index: true, follow: true },
     openGraph: {
       type: "website", 
-      locale: "de_DE", 
+       
       url: PAGE_URL, 
       siteName: "Ökovolt Deutschland",
       title, 
@@ -98,7 +98,7 @@ export async function generateMetadata() {
       card: "summary_large_image", 
       title, 
       description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
   };
 }
@@ -120,7 +120,7 @@ export default async function FaqsPage() {
     "@id": `${PAGE_URL}/#faqpage`,
     url: PAGE_URL,
     name: data?.title || "FAQ – Häufige Fragen zu Photovoltaik & Solaranlagen",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     mainEntity: allQuestions.map((item) => ({
       "@type": "Question",

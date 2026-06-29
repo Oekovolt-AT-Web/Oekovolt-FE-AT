@@ -63,7 +63,6 @@ export async function generateMetadata() {
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/steuerlich",
-        languages: { "de-DE": "https://www.oekovolt.de/forderungen/steuerlich" },
       },
       openGraph: {
         type: "website",
@@ -128,7 +127,7 @@ export default async function Steuerlich() {
     url: STEUERLICH_PAGE_URL,
     name: data?.banner?.title || "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
     description: data?.banner?.description || "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland – Einkommensteuer, Umsatzsteuer und steuerliche Vorteile für private und gewerbliche Betreiber.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

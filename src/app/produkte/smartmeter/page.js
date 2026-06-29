@@ -137,7 +137,7 @@ export default async function SmartmeterPage() {
     url: SMARTMETER_PAGE_URL,
     name: data?.title || "Smart Meter & Zähler | Ökovolt Deutschland",
     description: data?.description || "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
-    inLanguage: "de-DE",
+    
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

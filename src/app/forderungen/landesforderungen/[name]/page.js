@@ -97,14 +97,14 @@ export async function generateMetadata({ params }) {
         return itemSlug === name;
     });
 
-  
+
 
     // Fallback if item is not found
     if (!item) {
-       notFound();
+        notFound();
     }
 
-  
+
     // Process variables from your dynamic data
     const title = item?.firstcard_title;
     const description = item?.forderungen_text?.[0]?.secondary_paragraph;
@@ -123,7 +123,6 @@ export async function generateMetadata({ params }) {
         keywords: keywords,
         alternates: {
             canonical: canonicalUrl,
-            languages: { "de-DE": canonicalUrl },
         },
         openGraph: {
             type: "website",
