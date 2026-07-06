@@ -57,53 +57,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Stromspeicher kaufen | Ökovolt Deutschland",
-      description: "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
+      title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+      description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL,},
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Stromspeicher kaufen | Ökovolt Deutschland",
-        description: "Hochwertige Stromspeicher für Photovoltaikanlagen.",
+        title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+        description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
         images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Stromspeicher kaufen | Ökovolt Deutschland", 
-        description: "Hochwertige Stromspeicher für Photovoltaikanlagen.", 
-        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+        description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
+        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = seoData?.title || "Stromspeicher kaufen | Ökovolt Deutschland";
-  const description = seoData?.description || "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.";
+  const title = "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt";
+  const description ="Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL,},
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -118,7 +118,7 @@ export default async function StromspeicherPage() {
     url: PAGE_URL,
     name: data?.title || "Stromspeicher kaufen | Ökovolt Deutschland",
     description: data?.description || "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
@@ -145,7 +145,7 @@ export default async function StromspeicherPage() {
       <StromspeicherBanner data={data} />
       <HeroStromspeicher data={data} />
       <FeaturedLogos data={data} />
-      <StromSecondCardSection data={data}/>
+      <StromSecondCardSection data={data} />
       <StromThirdCardSection data={data} />
       <EndSection data={endd} />
     </div>

@@ -56,8 +56,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaikanlagen kaufe",
-      description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe. Senken Sie Ihre Energiekosten und werden Sie unabhängig mit maßgeschneiderten Solar-Lösungen.",
+      title: "Photovoltaikanlage kaufen – Komplettpaket vom Profi | Ökovolt",
+      description: "Photovoltaikanlage für Ihr Einfamilienhaus: individuell geplant, fachgerecht montiert – Ihr Komplettpaket vom regionalen Spezialisten. Jetzt beraten lassen!",
       keywords: ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"],
       alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage" },
       robots: { index: true, follow: true },
@@ -66,8 +66,8 @@ export async function generateMetadata() {
         locale: "de_DE",
         url: "https://www.oekovolt.de/produkte/photovoltaikanlage",
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaikanlagen kaufen",
-        description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
+        title: "Photovoltaikanlage kaufen – Komplettpaket vom Profi | Ökovolt",
+        description: "Photovoltaikanlage für Ihr Einfamilienhaus: individuell geplant, fachgerecht montiert – Ihr Komplettpaket vom regionalen Spezialisten. Jetzt beraten lassen!",
         images: [{
           url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp",
           width: 1200,
@@ -77,15 +77,15 @@ export async function generateMetadata() {
       },
       twitter: {
         card: "summary_large_image",
-        title: "Photovoltaikanlagen kaufen",
-        description: "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
+        title: "Photovoltaikanlage kaufen – Komplettpaket vom Profi | Ökovolt",
+        description: "Photovoltaikanlage für Ihr Einfamilienhaus: individuell geplant, fachgerecht montiert – Ihr Komplettpaket vom regionalen Spezialisten. Jetzt beraten lassen!",
         images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
   }
 
-  const title = "Photovoltaikanlagen kaufen | Ökovolt Deutschland";
-  const description = seoData?.photovoltaik_description || "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.";
+  const title = "Photovoltaikanlage kaufen – Komplettpaket vom Profi | Ökovolt";
+  const description = "Photovoltaikanlage für Ihr Einfamilienhaus: individuell geplant, fachgerecht montiert – Ihr Komplettpaket vom regionalen Spezialisten. Jetzt beraten lassen!";
   const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"];
 
   return {
@@ -129,7 +129,7 @@ export default async function PhotovoltaikanlagePage() {
     url: PAGE_URL,
     name: data?.photovoltaik_title || "Photovoltaikanlagen kaufen | Ökovolt Deutschland",
     description: data?.photovoltaik_description || "Hochwertige Photovoltaikanlagen für Privathaushalte und Gewerbe.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

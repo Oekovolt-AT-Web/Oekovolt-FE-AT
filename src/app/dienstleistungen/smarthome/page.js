@@ -52,24 +52,24 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Smart Home Lösungen | Ökovolt Deutschland",
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome",},
-      openGraph: { 
-        type: "website", 
-         
-        url: "https://www.oekovolt.de/dienstleistungen/smarthome", 
-        siteName: "Ökovolt Deutschland", 
-        title: "Smart Home Lösungen | Ökovolt Deutschland", 
-        description: "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", 
-        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Smart Home" }] 
+      title: "Smarthome-Lösungen: Speicher, Wallbox & Smartmeter | Ökovolt",
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome", },
+      openGraph: {
+        type: "website",
+
+        url: "https://www.oekovolt.de/dienstleistungen/smarthome",
+        siteName: "Ökovolt Deutschland",
+        title: "Smart Home Lösungen | Ökovolt Deutschland",
+        description: "Smarthome-Lösungen von Ökovolt: Stromspeicher, Wallbox, Notstrombox & Smartmeter – Solarstrom intelligent nutzen und Eigenverbrauch auf bis zu 80 % steigern.",
+        images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Smart Home" }]
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Smart Home Lösungen | Ökovolt Deutschland", 
-        description: "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Smart Home Lösungen | Ökovolt Deutschland",
+        description: "Smarthome-Lösungen von Ökovolt: Stromspeicher, Wallbox, Notstrombox & Smartmeter – Solarstrom intelligent nutzen und Eigenverbrauch auf bis zu 80 % steigern.",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
-      description: "Intelligente Smarthome-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
+      description: "Smarthome-Lösungen von Ökovolt: Stromspeicher, Wallbox, Notstrombox & Smartmeter – Solarstrom intelligent nutzen und Eigenverbrauch auf bis zu 80 % steigern.",
       keywords: [
         "Smarthome",
         "Smart Home",
@@ -85,37 +85,37 @@ export async function generateMetadata() {
   const apiKeywords = seoData?.keywords
     ? seoData.keywords.split(/,\s*/)
     : [
-        "Smarthome",
-        "Smart Home",
-        "Hausautomation",
-        "Energieeffizienz",
-        "Vernetztes Wohnen",
-      ];
+      "Smarthome",
+      "Smart Home",
+      "Hausautomation",
+      "Energieeffizienz",
+      "Vernetztes Wohnen",
+    ];
 
-  const title = "Smart Home Lösungen | Ökovolt Deutschland";
-  const description = seoData?.description || "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.";
+  const title = "Smarthome-Lösungen: Speicher, Wallbox & Smartmeter | Ökovolt";
+  const description = "Smarthome-Lösungen von Ökovolt: Stromspeicher, Wallbox, Notstrombox & Smartmeter – Solarstrom intelligent nutzen und Eigenverbrauch auf bis zu 80 % steigern.";
   const canonical = "https://www.oekovolt.de/dienstleistungen/smarthome";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: canonical, 
+      type: "website",
+
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Smart Home" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -132,7 +132,7 @@ export default async function SmarthomePage() {
     url: SMARTHOME_PAGE_URL,
     name: data?.title || "Smart Home Lösungen | Ökovolt Deutschland",
     description: data?.description || "Intelligente Smart Home-Lösungen für mehr Komfort, Sicherheit und Energieeffizienz in Ihrem Zuhause. Vernetzte Technologie für modernes Wohnen.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

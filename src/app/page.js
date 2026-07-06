@@ -7,6 +7,8 @@ import ServicesBanner from "@/components/Home/about";
 import HomeLoader from "@/components/Home/HomeLoader";
 
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import SeoTextSection from "@/components/Home/SeoTextSection";
+import FaqSection from "@/components/Home/Faqs";
 
 const RotatingCircleSection = dynamic(() => import("@/components/Home/welcome"));
 const SolutionsPage = dynamic(() => import("@/components/Home/info"));
@@ -56,8 +58,8 @@ const getHomeData = cache(async () => {
 });
 
 const FALLBACK_META = {
-  title: "Photovoltaik Lösungen für Deutschland | Ökovolt",
-  description: "Effiziente Photovoltaiklösungen mit Stromspeicher und smarter Überwachung für Unternehmen und Privatkunden. Jetzt beraten lassen.",
+  title: "Solaranlage mit Speicher – Photovoltaik Anbieter | Ökovolt",
+  description: "Solaranlage mit Speicher vom erfahrenen Photovoltaik Anbieter: Planung, Installation & Wartung aus einer Hand. Über 15 Jahre Erfahrung. Jetzt Angebot sichern!",
 };
 
 export async function generateMetadata() {
@@ -71,7 +73,7 @@ export async function generateMetadata() {
       title: FALLBACK_META.title,
       description: FALLBACK_META.description,
       keywords: defaultKeywords,
-      alternates: { canonical: BASE_URL},
+      alternates: { canonical: BASE_URL },
       robots: {
         index: true, follow: true,
         googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
@@ -89,8 +91,8 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "Photovoltaik-Lösungen | Ökovolt Deutschland";
-  const description = seoData?.first_card_description || FALLBACK_META.description;
+  const title = "Solaranlage mit Speicher – Photovoltaik Anbieter | Ökovolt";
+  const description = FALLBACK_META.description;
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
 
   return {
@@ -172,8 +174,11 @@ export default async function HomePage() {
       <div className="content-section-lazy"><RotatingCircleSection data={data} /></div>
       <div className="content-section-lazy"><SolutionsPage data={data} /></div>
       <div className="content-section-lazy"><ProjectsSlider data={data} /></div>
+      <div className="content-section-lazy"><SeoTextSection /></div>
+
       <div className="content-section-lazy"><Partners data={data} /></div>
       <div className="content-section-lazy"><PVInquiryForm data={data} /></div>
+      <div className="content-section-lazy"><FaqSection /></div>
       <div className="content-section-lazy"><EndWhite data={endd} /></div>
     </div>
   );

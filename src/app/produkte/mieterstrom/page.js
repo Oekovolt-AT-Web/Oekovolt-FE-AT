@@ -62,8 +62,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Mieterstrom & Quartierslösungen | Ökovolt Deutschland",
-      description: "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
+      title: "Mieterstrom Modell – PV-Anlage fürs Mehrfamilienhaus | Ökovolt",
+      description: "Mieterstrom mit Ökovolt: PV-Anlage, Messtechnik und Abrechnung als Komplettservice für Ihr Mehrfamilienhaus – Mehrwert für Sie, günstiger Strom für Ihre Mieter.",
       keywords: defaultKeywords,
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/mieterstrom",
@@ -71,8 +71,8 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/mieterstrom",
-        title: "Mieterstrom & Quartierslösungen | Ökovolt Deutschland",
-        description: "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
+        title: "Mieterstrom Modell – PV-Anlage fürs Mehrfamilienhaus | Ökovolt",
+        description: "Mieterstrom mit Ökovolt: PV-Anlage, Messtechnik und Abrechnung als Komplettservice für Ihr Mehrfamilienhaus – Mehrwert für Sie, günstiger Strom für Ihre Mieter.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
     };
@@ -82,8 +82,8 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = seoData?.title || "Mieterstrom & Quartierslösungen | Ökovolt Deutschland";
-  const description = seoData?.description || "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.";
+  const title = "Mieterstrom Modell – PV-Anlage fürs Mehrfamilienhaus | Ökovolt";
+  const description = "Mieterstrom mit Ökovolt: PV-Anlage, Messtechnik und Abrechnung als Komplettservice für Ihr Mehrfamilienhaus – Mehrwert für Sie, günstiger Strom für Ihre Mieter.";
   const canonical = "https://www.oekovolt.de/produkte/mieterstrom";
 
   return {
@@ -128,7 +128,7 @@ export default async function MieterstromPage() {
     url: MIETERSTROM_PAGE_URL,
     name: data?.title || "Mieterstrom & Quartierslösungen | Ökovolt Deutschland",
     description: data?.description || "Innovative Mieterstrom-Modelle für Mehrfamilienhäuser und Wohnanlagen. Profitieren Sie von günstigem Solarstrom direkt vom Dach.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

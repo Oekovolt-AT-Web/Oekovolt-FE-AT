@@ -60,53 +60,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Wärmepumpe kaufen | Ökovolt Deutschland",
-      description: "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
+      title: "Solaranlage mit Wärmepumpe – heizen mit Sonnenstrom | Ökovolt",
+      description: "Wärmepumpe mit Photovoltaik kombinieren: Heizkosten senken, unabhängig von Öl und Gas – Beratung, Installation & Förderservice vom Profi. Jetzt anfragen!",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Wärmepumpe kaufen | Ökovolt Deutschland",
-        description: "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen.",
+        title: "Solaranlage mit Wärmepumpe – heizen mit Sonnenstrom | Ökovolt",
+        description: "Wärmepumpe mit Photovoltaik kombinieren: Heizkosten senken, unabhängig von Öl und Gas – Beratung, Installation & Förderservice vom Profi. Jetzt anfragen!",
         images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Wärmepumpe" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Wärmepumpe kaufen | Ökovolt Deutschland", 
-        description: "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen.", 
-        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Solaranlage mit Wärmepumpe – heizen mit Sonnenstrom | Ökovolt",
+        description: "Wärmepumpe mit Photovoltaik kombinieren: Heizkosten senken, unabhängig von Öl und Gas – Beratung, Installation & Förderservice vom Profi. Jetzt anfragen!",
+        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = seoData?.title || "Wärmepumpe kaufen | Ökovolt Deutschland";
-  const description = seoData?.description || "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.";
+  const title = "Solaranlage mit Wärmepumpe – heizen mit Sonnenstrom | Ökovolt";
+  const description = "Wärmepumpe mit Photovoltaik kombinieren: Heizkosten senken, unabhängig von Öl und Gas – Beratung, Installation & Förderservice vom Profi. Jetzt anfragen!";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL,},
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Wärmepumpe" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -121,7 +121,7 @@ export default async function WarmepumpePage() {
     url: PAGE_URL,
     name: data?.title || "Wärmepumpe kaufen | Ökovolt Deutschland",
     description: data?.description || "Effiziente Wärmepumpen für umweltfreundliche Heizlösungen. Senken Sie Ihre Heizkosten und CO₂-Emissionen mit moderner Wärmepumpentechnologie.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

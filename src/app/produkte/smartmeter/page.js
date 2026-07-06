@@ -63,8 +63,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Smart Meter & Zähler | Ökovolt Deutschland",
-      description: "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
+      title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+      description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
       keywords: defaultKeywords,
       alternates: {
         canonical: "https://www.oekovolt.de/produkte/smartmeter",
@@ -73,14 +73,14 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/smartmeter",
-        title: "Smart Meter & Zähler | Ökovolt Deutschland",
-        description: "Moderne Smart Meter für intelligentes Energiemanagement.",
+        title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+        description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Smart Meter & Zähler | Ökovolt Deutschland",
-        description: "Moderne Smart Meter für intelligentes Energiemanagement.",
+        title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+        description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
@@ -91,8 +91,8 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = seoData?.title || "Smart Meter & Zähler | Ökovolt Deutschland";
-  const description = seoData?.description || "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.";
+  const title = "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt";
+  const description = "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.";
   const canonical = "https://www.oekovolt.de/produkte/smartmeter";
 
   return {
@@ -137,7 +137,7 @@ export default async function SmartmeterPage() {
     url: SMARTMETER_PAGE_URL,
     name: data?.title || "Smart Meter & Zähler | Ökovolt Deutschland",
     description: data?.description || "Moderne Smart Meter für intelligentes Energiemanagement. Optimieren Sie Ihren Energieverbrauch mit digitalen Zählern und Echtzeit-Monitoring.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

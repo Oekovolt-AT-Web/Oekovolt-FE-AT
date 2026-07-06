@@ -41,7 +41,7 @@ const PrivacyPolicy = () => {
         </p>
         <p>
           Der folgende Link stellt eine Liste der Datenschutzbeauftragten sowie deren Kontaktdaten bereit:
-          <a href="https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/anschriften_links-node.html">
+          <a href="https://www.bfdi.bund.de/DE/Service/Anschriften/anschriften_table.html">
             Liste der Datenschutzbeauftragten in Deutschland
           </a>
           .
