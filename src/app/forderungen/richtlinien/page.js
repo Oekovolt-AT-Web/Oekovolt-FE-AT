@@ -50,9 +50,9 @@ export async function generateMetadata() {
   const data = await fetchRichtlinenData();
   const bannerData = data?.message?.banner;
 
-  const defaultTitle = "Technische Richtlinien für Photovoltaik | Ökovolt Deutschland";
+  const defaultTitle = "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt";
 
-  const defaultDescription = "Wesentliche technische Normen, Sicherheitsrichtlinien und Bauvorschriften für Photovoltaikanlagen in Deutschland – VDE-Normen und aktuelle Sicherheitsanforderungen."
+  const defaultDescription = "VDE-Normen, Brandschutz und Arbeitsschutz für PV-Anlagen im Überblick – und warum Sie mit einem Fachbetrieb wie Ökovolt auf der sicheren Seite sind."
 
   const defaultCanonical = "https://www.oekovolt.de/forderungen/richtlinien";
 
@@ -89,8 +89,8 @@ export async function generateMetadata() {
     };
   }
 
-  const title = bannerData?.title + " | Ökovolt Solartechnik Deutschland" || defaultTitle;
-  const description = bannerData?.description || defaultDescription;
+  const title = defaultTitle;
+  const description = defaultDescription;
 
   return {
     title: title,
