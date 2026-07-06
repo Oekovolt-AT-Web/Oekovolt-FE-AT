@@ -95,8 +95,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
-      description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
+      title: "Jobs & Karriere in der Photovoltaik | Ökovolt",
+      description: "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!",
       keywords: defaultKeywords,
       alternates: { canonical: JOBS_PAGE_URL, },
       robots: { index: true, follow: true },
@@ -105,14 +105,14 @@ export async function generateMetadata() {
         locale: "de_DE",
         url: JOBS_PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
-        description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche bei Ökovolt.",
+        title: "Jobs & Karriere in der Photovoltaik | Ökovolt",
+        description: "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Jobs" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Karriere bei Ökovolt | Jobs in der Solarbranche",
-        description: "Starten Sie Ihre Karriere in der Photovoltaik-Branche bei Ökovolt.",
+        title: "Jobs & Karriere in der Photovoltaik | Ökovolt",
+        description: "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
@@ -123,8 +123,8 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = "Karriere bei Ökovolt | Jobs in der Solarbranche";
-  const description = seoData?.description || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.";
+  const title = "Jobs & Karriere in der Photovoltaik | Ökovolt";
+  const description = "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!";
 
   return {
     title,
@@ -188,7 +188,7 @@ export default async function JobsPage() {
     url: JOBS_PAGE_URL,
     name: data?.title || "Karriere bei Ökovolt | Jobs in der Solarbranche",
     description: data?.description || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
