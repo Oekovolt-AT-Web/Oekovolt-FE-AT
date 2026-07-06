@@ -51,53 +51,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
-      description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.",
+      title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
+      description: "Antworten auf die häufigsten Fragen zu Photovoltaik: Kosten, Förderung, Installation, Wartung und Service – klar und verständlich erklärt von Ökovolt.",
       keywords: ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"],
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt",
-        description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen.",
+        title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
+        description: "Antworten auf die häufigsten Fragen zu Photovoltaik: Kosten, Förderung, Installation, Wartung und Service – klar und verständlich erklärt von Ökovolt.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "FAQ Photovoltaik | Häufige Fragen – Ökovolt", 
-        description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
+        description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik.",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const defaultKeywords = ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"];
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title =  "Häufige Fragen – Ökovolt";
-  const description = seoData?.description || "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik, Solaranlagen und Förderungen. Unser FAQ-Bereich klärt alle Themen rund um Solarenergie.";
+  const title = "Häufige Fragen – Ökovolt";
+  const description = "Antworten auf die häufigsten Fragen zu Photovoltaik: Kosten, Förderung, Installation, Wartung und Service – klar und verständlich erklärt von Ökovolt.";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL,},
+    alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
   };
@@ -119,8 +119,8 @@ export default async function FaqsPage() {
     "@type": "FAQPage",
     "@id": `${PAGE_URL}/#faqpage`,
     url: PAGE_URL,
-    name: data?.title || "FAQ – Häufige Fragen zu Photovoltaik & Solaranlagen",
-    
+    name: data?.title || "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     mainEntity: allQuestions.map((item) => ({
       "@type": "Question",
@@ -137,6 +137,10 @@ export default async function FaqsPage() {
       { "@type": "ListItem", position: 2, name: "FAQs", item: PAGE_URL },
     ],
   };
+
+  // Escape "<" so injected JSON can never break out of the script tag
+  const toJsonLd = (obj) => JSON.stringify(obj).replace(/</g, "\\u003c");
+
 
   return (
     <div>

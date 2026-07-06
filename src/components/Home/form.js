@@ -105,7 +105,7 @@ export default function PVInquiryForm({ data }) {
       setAnimatingStep(null);
     }, 200);
   };
-  
+
   const prevStep = () => {
     setAnimatingStep("prev");
     setTimeout(() => {
@@ -142,11 +142,10 @@ export default function PVInquiryForm({ data }) {
   return (
     <div className="px-6 md:px-12 max-w-4xl mx-auto p-6 bg-white overflow-hidden">
       <h2
-        className={`text-[25px] mb-6 text-[#669933] text-center transition-all duration-700 ${
-          hasMounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
-        }`}
+        className={`text-[25px] mb-6 text-[#669933] text-center transition-all duration-700 ${hasMounted ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
+          }`}
       >
-        Unverbindliche Anfrage Photovoltaik Anlage
+        Jetzt kostenloses Angebot für Ihre Solaranlage anfordern
       </h2>
 
       <div className="mb-6">
@@ -154,9 +153,8 @@ export default function PVInquiryForm({ data }) {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className={`flex-1 h-2 mx-1 rounded-full transition-all duration-300 ${
-                i <= step ? "bg-[#669933]" : "bg-gray-200"
-              }`}
+              className={`flex-1 h-2 mx-1 rounded-full transition-all duration-300 ${i <= step ? "bg-[#669933]" : "bg-gray-200"
+                }`}
             />
           ))}
         </div>
@@ -166,9 +164,8 @@ export default function PVInquiryForm({ data }) {
       {step === 1 && (
         <div
           key="step1"
-          className={`transition-all duration-300 ${
-            animatingStep === null ? "animate-slide-in-right" : ""
-          } ${animatingStep === "next" ? "animate-slide-out-left" : ""}`}
+          className={`transition-all duration-300 ${animatingStep === null ? "animate-slide-in-right" : ""
+            } ${animatingStep === "next" ? "animate-slide-out-left" : ""}`}
         >
           <h2 className="text-[20px] lg:text-[24px] mb-4 text-center">
             {data?.first_step_title}
@@ -181,11 +178,10 @@ export default function PVInquiryForm({ data }) {
             {roofTypes.map((type) => (
               <div key={type.id} className="group">
                 <label
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full ${
-                    formData.roofType === type.id
-                      ? "border-[#669933] bg-[#669933]/10"
-                      : "border-gray-200 hover:border-[#669933]/50"
-                  }`}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full ${formData.roofType === type.id
+                    ? "border-[#669933] bg-[#669933]/10"
+                    : "border-gray-200 hover:border-[#669933]/50"
+                    }`}
                 >
                   <input
                     type="radio"
@@ -214,11 +210,9 @@ export default function PVInquiryForm({ data }) {
       {step === 2 && (
         <div
           key="step2"
-          className={`transition-all duration-300 ${
-            animatingStep === null ? "animate-slide-in-right" : ""
-          } ${animatingStep === "next" ? "animate-slide-out-left" : ""} ${
-            animatingStep === "prev" ? "animate-slide-out-right" : ""
-          }`}
+          className={`transition-all duration-300 ${animatingStep === null ? "animate-slide-in-right" : ""
+            } ${animatingStep === "next" ? "animate-slide-out-left" : ""} ${animatingStep === "prev" ? "animate-slide-out-right" : ""
+            }`}
         >
           <h2 className="text-[20px] lg:text-[24px] font-semibold mb-4 text-center">
             {data?.second_step_title}
@@ -233,11 +227,10 @@ export default function PVInquiryForm({ data }) {
             ].map((option) => (
               <div key={option.id} className="group">
                 <label
-                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full ${
-                    formData.isOwner === option.id
-                      ? "border-[#669933] bg-[#669933]/10"
-                      : "border-gray-200 hover:border-[#669933]/50"
-                  }`}
+                  className={`flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all h-full ${formData.isOwner === option.id
+                    ? "border-[#669933] bg-[#669933]/10"
+                    : "border-gray-200 hover:border-[#669933]/50"
+                    }`}
                 >
                   <input
                     type="radio"
@@ -266,11 +259,9 @@ export default function PVInquiryForm({ data }) {
       {step === 3 && (
         <div
           key="step3"
-          className={`transition-all duration-300 ${
-            animatingStep === null ? "animate-slide-in-right" : ""
-          } ${animatingStep === "next" ? "animate-slide-out-left" : ""} ${
-            animatingStep === "prev" ? "animate-slide-out-right" : ""
-          }`}
+          className={`transition-all duration-300 ${animatingStep === null ? "animate-slide-in-right" : ""
+            } ${animatingStep === "next" ? "animate-slide-out-left" : ""} ${animatingStep === "prev" ? "animate-slide-out-right" : ""
+            }`}
         >
           <h2 className="text-[20px] lg:text-[24px] font-semibold mb-4 text-center">
             {data?.third_step_title}
@@ -322,9 +313,8 @@ export default function PVInquiryForm({ data }) {
       {step === 4 && (
         <div
           key="step4"
-          className={`transition-all duration-300 ${
-            animatingStep === null ? "animate-slide-in-right" : ""
-          } ${animatingStep === "prev" ? "animate-slide-out-right" : ""}`}
+          className={`transition-all duration-300 ${animatingStep === null ? "animate-slide-in-right" : ""
+            } ${animatingStep === "prev" ? "animate-slide-out-right" : ""}`}
         >
           <h2 className="text-[20px] lg:text-[24px] font-bold mb-2 text-center">
             {data?.fourth_step_title}
@@ -461,11 +451,10 @@ export default function PVInquiryForm({ data }) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className={`px-6 py-2 rounded-md cursor-pointer text-[16px] ${
-                loading
-                  ? "bg-gray-400 text-white cursor-wait"
-                  : "bg-[#669933]/90 hover:bg-[#669933] text-white"
-              }`}
+              className={`px-6 py-2 rounded-md cursor-pointer text-[16px] ${loading
+                ? "bg-gray-400 text-white cursor-wait"
+                : "bg-[#669933]/90 hover:bg-[#669933] text-white"
+                }`}
             >
               {loading ? "Wird gesendet..." : "JETZT ANGEBOT ANFORDERN"}
             </button>

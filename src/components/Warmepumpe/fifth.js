@@ -53,7 +53,7 @@ export default function KontaktFormular() {
     setMessage(null);
 
     const { firstName, lastName, email, phone, message: msg, zipCode, street, city, acceptTerms } = formData;
-    
+
     if (!firstName || !lastName || !email || !phone || !msg || !zipCode || !street || !city) {
       setMessage({ type: "error", text: "Bitte füllen Sie alle Pflichtfelder aus." });
       setLoading(false);
@@ -121,9 +121,8 @@ export default function KontaktFormular() {
               sizes="100vw"
             />
             <div
-              className={`absolute inset-0 bg-[#669933]/90 flex items-center justify-center p-6 transition-opacity duration-500 ${
-                isHovering ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 bg-[#669933]/90 flex items-center justify-center p-6 transition-opacity duration-500 ${isHovering ? "opacity-100" : "opacity-0"
+                }`}
             >
               <div className="text-white text-center">
                 <p className="text-lg font-semibold mb-2">
@@ -155,11 +154,10 @@ export default function KontaktFormular() {
           {/* Notification Message */}
           {message && (
             <div
-              className={`p-3 mb-5 rounded-md text-center animate-fade-in ${
-                message.type === "success"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-red-100 text-red-800"
-              }`}
+              className={`p-3 mb-5 rounded-md text-center animate-fade-in ${message.type === "success"
+                ? "bg-green-100 text-green-800"
+                : "bg-red-100 text-red-800"
+                }`}
             >
               {message.type === "success"
                 ? "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze bei Ihnen."
@@ -258,7 +256,7 @@ export default function KontaktFormular() {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                placeholder="Deine Nachricht *"
+                placeholder="Ihre Nachricht *"
                 required
                 className="flex-1 outline-none resize-none h-24 bg-transparent"
               />
@@ -279,18 +277,17 @@ export default function KontaktFormular() {
               <a href="/datenschutz" className="text-[#669933] underline hover:text-[#558822]">
                 Datenschutzbestimmungen
               </a>{" "}
-              von Oekovolt gelesen habe. Du kannst deine Einwilligung zur Datennutzung jederzeit widerrufen.
+              von Oekovolt gelesen habe. Sie können diese Einwilligung zur Datennutzung jederzeit widerrufen.
             </label>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className={`mt-4 w-full py-3 px-6 text-white font-semibold rounded-md transition-all ${
-              loading
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-[#669933] hover:bg-[#557a26]"
-            }`}
+            className={`mt-4 w-full py-3 px-6 text-white font-semibold rounded-md transition-all ${loading
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-[#669933] hover:bg-[#557a26]"
+              }`}
           >
             {loading ? "Wird gesendet..." : "Anfrage absenden"}
           </button>

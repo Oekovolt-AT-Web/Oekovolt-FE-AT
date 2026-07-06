@@ -54,11 +54,11 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
+      title: "V-Anlage kaufen fürs Eigenheim – Komplettpaket | Ökovolt",
       description:
-        "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.",
+        "PV-Anlage für Ihr Zuhause: Planung, Lieferung & Montage aus einer Hand – Ihr Komplettpaket vom erfahrenen Installateur. Jetzt kostenloses Angebot anfordern!",
       keywords: ["Photovoltaikanlage", "Solarenergie", "Energiekosten senken", "Photovoltaik Förderung", "Solaranlage"],
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",},
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -89,14 +89,14 @@ export async function generateMetadata() {
       "Solaranlage",
     ];
 
-  const title = "Photovoltaik Dienstleistungen | Ökovolt Deutschland";
-  const description = seoData?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft. Senken Sie Ihre Energiekosten mit nachhaltiger Solarenergie.";
+  const title = "V-Anlage kaufen fürs Eigenheim – Komplettpaket | Ökovolt";
+  const description = "PV-Anlage für Ihr Zuhause: Planung, Lieferung & Montage aus einer Hand – Ihr Komplettpaket vom erfahrenen Installateur. Jetzt kostenloses Angebot anfordern!";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik",},
+    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -128,7 +128,7 @@ export default async function PhotovoltaikPage() {
     url: PV_PAGE_URL,
     name: data?.title || "Photovoltaik Dienstleistungen | Ökovolt Deutschland",
     description: data?.description || "Maßgeschneiderte Photovoltaik-Lösungen für Privathaushalte, Gewerbe und Landwirtschaft.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

@@ -81,7 +81,7 @@ const Footer = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <h3 className="text-[18px] font-normal uppercase tracking-wider">Öffnungzeiten</h3>
+              <h3 className="text-[18px] font-normal uppercase tracking-wider">Öffnungszeiten</h3>
               <hr className="border-t border-[#fffff]/30 my-3 " />
               <div className="space-y-6 text-[16px]">
                 <p>

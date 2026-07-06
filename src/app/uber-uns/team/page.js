@@ -56,8 +56,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Unser Team | Ökovolt Deutschland",
-      description: "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
+      title: "Unser Team – die Photovoltaik-Experten | Ökovolt",
+      description: "Lernen Sie das Ökovolt-Team kennen: erfahrene Photovoltaik-Experten aus Türkheim – von der Planung bis zur Montage Ihrer Solaranlage mit Leidenschaft dabei.",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
@@ -66,13 +66,13 @@ export async function generateMetadata() {
 
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Unser Team | Ökovolt Deutschland",
-        description: "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik.",
+        title: "Unser Team – die Photovoltaik-Experten | Ökovolt",
+        description: "Lernen Sie das Ökovolt-Team kennen: erfahrene Photovoltaik-Experten aus Türkheim – von der Planung bis zur Montage Ihrer Solaranlage mit Leidenschaft dabei.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Team" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Unser Team | Ökovolt Deutschland",
+        title: "Unser Team – die Photovoltaik-Experten | Ökovolt",
         description: "Lernen Sie unser Expertenteam kennen.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -80,8 +80,8 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = "Unser Team | Ökovolt Deutschland";
-  const description = seoData?.description || "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.";
+  const title = "Unser Team – die Photovoltaik-Experten | Ökovolt";
+  const description = "Lernen Sie das Ökovolt-Team kennen: erfahrene Photovoltaik-Experten aus Türkheim – von der Planung bis zur Montage Ihrer Solaranlage mit Leidenschaft dabei.";
 
   return {
     title,

@@ -61,8 +61,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Vorteilswelt",
-      description: "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
+      title: "Vorteilswelt: 250 € Prämie für Ihre Empfehlung | Ökovolt",
+      description: "Ökovolt weiterempfehlen und profitieren: 250 € Prämie für Sie und 250 € für die empfohlene Person – in 4 einfachen Schritten. Jetzt registrieren!",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
@@ -71,14 +71,14 @@ export async function generateMetadata() {
         locale: "de_DE",
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Vorteilswelt",
-        description: "Exklusive Vorteile und Services für unsere Kunden.",
+        title: "Vorteilswelt: 250 € Prämie für Ihre Empfehlung | Ökovolt",
+        description: "Ökovolt weiterempfehlen und profitieren: 250 € Prämie für Sie und 250 € für die empfohlene Person – in 4 einfachen Schritten. Jetzt registrieren!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Vorteilswelt",
-        description: "Exklusive Vorteile und Services für unsere Kunden.",
+        title: "Vorteilswelt: 250 € Prämie für Ihre Empfehlung | Ökovolt",
+        description: "Ökovolt weiterempfehlen und profitieren: 250 € Prämie für Sie und 250 € für die empfohlene Person – in 4 einfachen Schritten. Jetzt registrieren!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
@@ -89,8 +89,8 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = "Vorteilswelt | Ökovolt Deutschland";
-  const description = seoData?.description || "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.";
+  const title = "Vorteilswelt: 250 € Prämie für Ihre Empfehlung | Ökovolt";
+  const description = "Ökovolt weiterempfehlen und profitieren: 250 € Prämie für Sie und 250 € für die empfohlene Person – in 4 einfachen Schritten. Jetzt registrieren!";
   const canonical = PAGE_URL;
 
   return {
@@ -134,7 +134,7 @@ export default async function VorteilsweltPage() {
     url: PAGE_URL,
     name: data?.title || "Vorteilswelt",
     description: data?.description || "Exklusive Vorteile und Services für unsere Kunden. Profitieren Sie von besonderen Konditionen und Services in unserer Ökovolt Vorteilswelt.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

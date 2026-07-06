@@ -61,8 +61,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Smart Energy Lösungen | Ökovolt Deutschland",
-      description: "Smart Energy Home von ÖKOVOLT verbindet Photovoltaik, Speicher und Smart Home zu einem intelligenten Energiesystem für maximale Effizienz und Komfort.",
+      title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+      description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
 
       keywords: defaultKeywords,
       alternates: {
@@ -72,14 +72,14 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/smartenergyhome",
-        title: "Smart Energy Lösungen | Ökovolt Deutschland",
-        description: "Innovative Smart Energy Lösungen für intelligentes Energiemanagement.",
+        title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+        description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Smart Energy Lösungen | Ökovolt Deutschland",
-        description: "Innovative Smart Energy Lösungen für intelligentes Energiemanagement.",
+        title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+        description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
     };
@@ -90,8 +90,8 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = "Smart Energy Lösungen | Ökovolt Deutschland";
-  const description = "Smart Energy Lösungen für intelligentes Energiemanagement im Zuhause – für mehr Effizienz, Nachhaltigkeit und Kosteneinsparung durch moderne Technologie.";
+  const title = "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt";
+  const description = "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!";
   const canonical = "https://www.oekovolt.de/produkte/smartenergyhome";
 
   return {
@@ -134,9 +134,9 @@ export default async function SmartEnergyPage() {
     "@type": "WebPage",
     "@id": `${SMART_ENERGY_PAGE_URL}/#webpage`,
     url: SMART_ENERGY_PAGE_URL,
-    name: data?.title || "Smart Energy Lösungen | Ökovolt Deutschland",
+    name: data?.title || "Energiemanagementsystem für PV & Zuhause – Smart Energy Home | Ökovolt",
     description: data?.description || "Innovative Smart Energy Lösungen für intelligentes Energiemanagement in Ihrem Zuhause. Energieeffizienz, Nachhaltigkeit und Kosteneinsparung durch moderne Technologie.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

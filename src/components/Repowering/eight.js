@@ -17,8 +17,7 @@ export default function ThirdCardSection({ data }) {
             className="text-center mb-16"
           >
             <h2 className="text-4xl text-gray-900 mb-4">
-              <span className="text-[#669933]">{data?.third_sec_title?.split(' ')[0]}</span>{' '}
-              {data?.third_sec_title?.split(' ').slice(1).join(' ')}
+              <span className="text-[#669933]">Modernisierung einer Ü20-Anlage</span>
             </h2>
             <div className="w-24 h-1 bg-[#669933] mx-auto rounded-full"></div>
           </FadeInView>

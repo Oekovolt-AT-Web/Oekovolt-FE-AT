@@ -89,53 +89,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Referenzprojekte",
-      description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.",
+      title: "Referenzen: Photovoltaik-Projekte von Ökovolt",
+      description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Referenzprojekte ",
-        description: "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
+        title: "Referenzen: Photovoltaik-Projekte von Ökovolt ",
+        description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Referenzprojekte ", 
-        description: "Unsere erfolgreichen Photovoltaik-Projekte.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Referenzen: Photovoltaik-Projekte von Ökovolt ",
+        description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = "Referenzprojekte | Ökovolt Deutschland";
-  const description = seoData?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte. Entdecken Sie Referenzen unserer nachhaltigen Energielösungen.";
+  const title = "Referenzen: Photovoltaik-Projekte von Ökovolt";
+  const description = "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -146,6 +146,8 @@ export default async function ProjektePage() {
     fetchProjectsList(),
   ]);
 
+
+
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -153,7 +155,7 @@ export default async function ProjektePage() {
     url: PAGE_URL,
     name: data?.title || "Referenzprojekte – Ökovolt Deutschland",
     description: data?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     ...(projectsList.length > 0 && {
@@ -164,7 +166,7 @@ export default async function ProjektePage() {
           "@type": "ListItem",
           position: i + 1,
           name: p.title || p.name,
-          url: `${PAGE_URL}/${(generateSlug(p.title)  || generateSlug(p.name))}`,
+          url: `${PAGE_URL}/${(generateSlug(p.title) || generateSlug(p.name))}`,
         })),
       },
     }),

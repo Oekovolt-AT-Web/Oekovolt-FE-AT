@@ -65,25 +65,25 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Solarstrom Direktvermarktung | Ökovolt Deutschland",
-      description: "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
+      title: "Direktvermarktung von Solarstrom – mit Marktprämie | Ökovolt",
+      description: "Direktvermarktung für PV-Anlagen bis 100 kWp: höhere Erlöse an der Strombörse, abgesichert durch die Marktprämie – komplette Abwicklung durch Ökovolt!",
       keywords: defaultKeywords,
-    alternates: { canonical: DV_PAGE_URL, },
+      alternates: { canonical: DV_PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: DV_PAGE_URL, 
+        type: "website",
+
+        url: DV_PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Solarstrom Direktvermarktung | Ökovolt Deutschland",
-        description: "Professionelle Direktvermarktung Ihres Solarstroms.",
+        title: "Direktvermarktung von Solarstrom – mit Marktprämie | Ökovolt",
+        description: "Direktvermarktung für PV-Anlagen bis 100 kWp: höhere Erlöse an der Strombörse, abgesichert durch die Marktprämie – komplette Abwicklung durch Ökovolt!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Direktvermarktung" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Solarstrom Direktvermarktung | Ökovolt Deutschland", 
-        description: "Professionelle Direktvermarktung Ihres Solarstroms.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Direktvermarktung von Solarstrom – mit Marktprämie | Ökovolt",
+        description: "Direktvermarktung für PV-Anlagen bis 100 kWp: höhere Erlöse an der Strombörse, abgesichert durch die Marktprämie – komplette Abwicklung durch Ökovolt!",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -93,30 +93,30 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = "Solarstrom Direktvermarktung | Ökovolt Deutschland";
-  const description = seoData?.description || "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.";
+  const title = "Direktvermarktung von Solarstrom – mit Marktprämie | Ökovolt";
+  const description = "Direktvermarktung für PV-Anlagen bis 100 kWp: höhere Erlöse an der Strombörse, abgesichert durch die Marktprämie – komplette Abwicklung durch Ökovolt!";
   const canonical = DV_PAGE_URL;
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: canonical, 
+      type: "website",
+
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Direktvermarktung Solarstrom" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -131,7 +131,7 @@ export default async function DirektvermarktungPage() {
     url: DV_PAGE_URL,
     name: data?.title || "Solarstrom Direktvermarktung | Ökovolt Deutschland",
     description: data?.description || "Professionelle Direktvermarktung Ihres Solarstroms. Maximieren Sie Ihre Erträge durch optimale Vermarktung Ihrer PV-Überschüsse.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

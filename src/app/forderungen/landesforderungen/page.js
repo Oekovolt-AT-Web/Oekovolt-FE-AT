@@ -79,25 +79,25 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Landesförderungen 2025",
-      description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
+      title: "Photovoltaik Förderung 2026 nach Bundesland | Ökovolt",
+      description: "Photovoltaik Förderung und Förderungen für Stromspeicher in allen Bundesländern – neutral, aktuell und verständlich erklärt. Jetzt informieren!",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Landesförderungen 2025",
-        description: "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher.",
+        title: "Photovoltaik Förderung 2026 nach Bundesland | Ökovolt",
+        description: "Photovoltaik Förderung und Förderungen für Stromspeicher in allen Bundesländern – neutral, aktuell und verständlich erklärt. Jetzt informieren!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Förderungen" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Photovoltaik Landesförderungen 2025", 
-        description: "Aktuelle Förderprogramme für Photovoltaik und Speicher.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Photovoltaik Förderung 2026 nach Bundesland | Ökovolt",
+        description: "Photovoltaik Förderung und Förderungen für Stromspeicher in allen Bundesländern – neutral, aktuell und verständlich erklärt. Jetzt informieren!",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -107,30 +107,30 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = "Photovoltaik Landesförderungen 2025";
-  const description = "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Bis zu 30% Förderung sichern – jetzt Fördercheck machen!";
+  const title = "Photovoltaik Förderung 2026 nach Bundesland | Ökovolt";
+  const description = "Photovoltaik Förderung und Förderungen für Stromspeicher in allen Bundesländern – neutral, aktuell und verständlich erklärt. Jetzt informieren!";
   const canonical = PAGE_URL;
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: canonical, 
+      type: "website",
+
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Förderungen" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -141,6 +141,8 @@ export default async function Page() {
     fetchAllLandesforderungen(),
   ]);
 
+
+
   const webPageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -148,7 +150,7 @@ export default async function Page() {
     url: PAGE_URL,
     name: data?.[0]?.title || "Photovoltaik Landesförderungen 2025 | Ökovolt",
     description: data?.[0]?.description || "Aktuelle Förderprogramme der Bundesländer für Photovoltaik und Speicher. Finden Sie die passende Förderung für Ihr Projekt.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

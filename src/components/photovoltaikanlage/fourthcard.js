@@ -78,7 +78,7 @@ const PhotovoltaikRegionalNetzSection = ({ data }) => {
               href="/kontakt"
               className="inline-block border border-[#669933] text-[#669933] px-6 py-3 rounded-md hover:bg-[#669933] hover:text-white transition text-md font-medium"
             >
-              Fachbetrieb in deiner Nähe finden
+              Jetzt Beratung anfragen
             </Link>
           </FadeInView>
         </div>

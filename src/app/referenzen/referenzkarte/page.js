@@ -66,25 +66,25 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland",
-      description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
+      title: "Referenzstandorte – Eigenverbrauch maximieren | Ökovolt",
+      description: "Unsere Referenzstandorte: Photovoltaikanlagen für Privathaushalte in ganz Deutschland – mit Speicher, Wärmepumpe und Wallbox den Eigenverbrauch maximieren. ",
       keywords: defaultKeywords,
-      alternates: { canonical: RK_PAGE_URL,},
+      alternates: { canonical: RK_PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: RK_PAGE_URL, 
+        type: "website",
+
+        url: RK_PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland",
-        description: "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
+        title: "Referenzstandorte – Eigenverbrauch maximieren | Ökovolt",
+        description: "Unsere Referenzstandorte: Photovoltaikanlagen für Privathaushalte in ganz Deutschland – mit Speicher, Wärmepumpe und Wallbox den Eigenverbrauch maximieren. ",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland", 
-        description: "Unsere Photovoltaik-Projekte auf der Karte.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Referenzstandorte – Eigenverbrauch maximieren | Ökovolt",
+        description: "Unsere Referenzstandorte: Photovoltaikanlagen für Privathaushalte in ganz Deutschland – mit Speicher, Wärmepumpe und Wallbox den Eigenverbrauch maximieren. ",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
@@ -94,30 +94,30 @@ export async function generateMetadata() {
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
 
-  const title = "Referenzkarte Photovoltaik Standorte | Ökovolt Deutschland";
-  const description = seoData?.description || "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.";
+  const title = "Referenzstandorte – Eigenverbrauch maximieren | Ökovolt";
+  const description = "Unsere Referenzstandorte: Photovoltaikanlagen für Privathaushalte in ganz Deutschland – mit Speicher, Wärmepumpe und Wallbox den Eigenverbrauch maximieren. ";
   const canonical = RK_PAGE_URL;
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: canonical, 
+      type: "website",
+
+      url: canonical,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzkarte – Photovoltaik Standorte Deutschland" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -132,7 +132,7 @@ export default async function ReferenzkarteSeite() {
     url: RK_PAGE_URL,
     name: data?.title || "Referenzkarte – Ökovolt Photovoltaik Standorte",
     description: data?.description || "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
