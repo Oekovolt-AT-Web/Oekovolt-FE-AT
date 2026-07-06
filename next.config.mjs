@@ -3,7 +3,7 @@ const nextConfig = {
   trailingSlash: false,
   compress: true,
   poweredByHeader: false,
- 
+
   async redirects() {
     return [
       // RIDREJTIMET: Nga non-www tek www (kjo është ajo që duhet)
@@ -13,7 +13,7 @@ const nextConfig = {
         destination: "https://www.oekovolt.de/:path*",
         permanent: true,
       },
-     
+
       // Redirectet e tjera pa ndryshime
       {
         source: "/jobs",
@@ -62,7 +62,7 @@ const nextConfig = {
       },
     ];
   },
- 
+
   images: {
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,
@@ -80,9 +80,18 @@ const nextConfig = {
       },
     ],
   },
- 
+
   async headers() {
     return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains',
+          },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [
@@ -114,7 +123,7 @@ const nextConfig = {
       },
     ];
   },
- 
+
   async rewrites() {
     return [
       {
@@ -124,5 +133,5 @@ const nextConfig = {
     ];
   },
 };
- 
+
 export default nextConfig;

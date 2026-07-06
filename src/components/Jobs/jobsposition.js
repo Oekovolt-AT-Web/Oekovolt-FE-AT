@@ -64,7 +64,7 @@ const JobListings = () => {
           className="text-center"
         >
           <h2 className="text-3xl font-bold mb-10 text-gray-900">
-            Offene Stellen bei Oekovolt
+            Offene Stellen bei Ökovolt
           </h2>
         </FadeInView>
 
@@ -173,7 +173,7 @@ const JobListings = () => {
             <Frown className="text-5xl text-yellow-500" />
             <h3 className="text-lg font-semibold">Keine offenen Stellen</h3>
             <p className="text-sm max-w-md">
-              Derzeit sind keine offenen Stellen verfügbar. Bitte schauen Sie später wieder vorbei.
+              Derzeit sind keine offenen Stellen verfügbar. Du möchtest trotzdem Teil unseres Teams werden? Wir freuen uns über deine Initiativbewerbung an <a href="mailto:office@oekovolt.com!" className="text-yellow-500">office@oekovolt.com!</a>
             </p>
           </FadeInView>
         )}

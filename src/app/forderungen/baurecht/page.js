@@ -53,14 +53,17 @@ export async function generateMetadata() {
   if (!data) {
     // Fallback metadata if API fails
     return {
-      title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
-      description: "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
+      title: "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt",
+      description: "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!",
       keywords: [
         "Photovoltaik Baurecht",
         "PV-Anlage Genehmigung",
         "Bauvorschriften Photovoltaik",
-        "Solaranlage Abstand",
-        "Förderungen Baurecht",
+        "Solarpflicht",
+        "Balkonkraftwerk Anmeldung",
+        "Photovoltaik genehmigungsfrei",
+        "Photovoltaik Vorschriften Bundesländer",
+        "Ökovolt"
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/baurecht",
@@ -68,8 +71,8 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/forderungen/baurecht",
-        title: "Baurecht für Photovoltaik | Ökovolt Deutschland",
-        description: "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland.",
+        title: "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt",
+        description: "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!",
         images: [
           {
             url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
@@ -82,8 +85,8 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "Baurecht für Photovoltaik | Ökovolt Deutschland";
-  const description = "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.";
+  const title = "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt";
+  const description = "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!";
 
   return {
     title: title,
@@ -92,8 +95,11 @@ export async function generateMetadata() {
       "Photovoltaik Baurecht",
       "PV-Anlage Genehmigung",
       "Bauvorschriften Photovoltaik",
-      "Solaranlage Abstand",
-      "Förderungen Baurecht",
+      "Solarpflicht",
+      "Balkonkraftwerk Anmeldung",
+      "Photovoltaik genehmigungsfrei",
+      "Photovoltaik Vorschriften Bundesländer",
+      "Ökovolt"
     ],
     alternates: {
       canonical: "https://www.oekovolt.de/forderungen/baurecht",
@@ -128,7 +134,7 @@ export default async function Baurecht() {
     url: BAURECHT_PAGE_URL,
     name: data?.banner?.title || "Baurecht für Photovoltaik | Ökovolt Deutschland",
     description: data?.banner?.description || "Überblick über die baurechtlichen Vorschriften für Photovoltaikanlagen in Deutschland – Genehmigungspflichten, Bauvorschriften und Abstandsregelungen verständlich erklärt.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

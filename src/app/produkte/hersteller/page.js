@@ -51,8 +51,8 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Hersteller & Partner ",
-      description: "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken.",
+      title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt",
+      description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
       keywords: [
         "Photovoltaik Hersteller",
         "Solar Komponenten",
@@ -65,17 +65,17 @@ export async function generateMetadata() {
       },
       openGraph: {
         type: "website",
-       
+
         url: "https://www.oekovolt.de/produkte/hersteller",
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Hersteller & Partner ",
-        description: "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
+        title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt",
+        description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Hersteller" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Photovoltaik Hersteller & Partner ",
-        description: "Unsere Partner und Hersteller für Photovoltaik-Komponenten.",
+        title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt ",
+        description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
@@ -92,8 +92,8 @@ export async function generateMetadata() {
       "Solar Marken",
     ];
 
-  const title = "Photovoltaik Hersteller & Partner ";
-  const description = seoData?.hersteller_description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen. Qualitätsprodukte führender Marken wie SMA, Fronius, SolarEdge und mehr.";
+  const title = "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt";
+  const description = "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.";
   const canonical = "https://www.oekovolt.de/produkte/hersteller";
 
   return {
@@ -131,7 +131,7 @@ export default async function HerstellerPage() {
     url: HERSTELLER_PAGE_URL,
     name: data?.title || "Photovoltaik Hersteller & Partner ",
     description: data?.description || "Unsere Partner und Hersteller hochwertiger Komponenten für Photovoltaik- und Energielösungen.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

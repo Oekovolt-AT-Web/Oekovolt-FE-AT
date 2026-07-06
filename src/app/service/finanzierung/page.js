@@ -55,53 +55,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Photovoltaik Finanzierung & Förderungen ",
-      description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
+      title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+      description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL,},
+      alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Photovoltaik Finanzierung & Förderungen ",
-        description: "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage.",
+        title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+        description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Finanzierung" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Photovoltaik Finanzierung & Förderungen ", 
-        description: "Attraktive Finanzierungsmöglichkeiten für Photovoltaik.", 
-        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+        description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
+        images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title ="Photovoltaik Finanzierung & Förderungen | Ökovolt Deutschland";
-  const description = seoData?.finanzierung_description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.";
- 
+  const title = "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt";
+  const description = "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!";
+
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Finanzierung" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -116,7 +116,7 @@ export default async function FinanzierungPage() {
     url: PAGE_URL,
     name: data?.title || "Photovoltaik Finanzierung & Förderungen ",
     description: data?.description || "Attraktive Finanzierungsmöglichkeiten und Förderprogramme für Ihre Photovoltaikanlage. Finden Sie die passende Lösung für Ihre Solarinvestition.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

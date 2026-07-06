@@ -13,9 +13,9 @@ const BaurechtPV = ({ data }) => {
 
   return (
     <section className="max-w-7xl mx-auto px-6 md:px-12 pt-9 md:pt-14 ">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">
         {data?.title}
-      </h1>
+      </h2>
 
       <p className="text-gray-700 mb-6">
         {data?.description}

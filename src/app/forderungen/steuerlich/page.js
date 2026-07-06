@@ -52,14 +52,15 @@ export async function generateMetadata() {
   if (!data) {
     // Fallback metadata if API fails
     return {
-      title: "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
-      description: "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland – Einkommensteuer, Umsatzsteuer und steuerliche Vorteile für private und gewerbliche Betreiber.",
+      title: "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt",
+      description: "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.",
       keywords: [
+        "PV-Anlage steuerfrei",
+        "PV-Anlage Steuer",
         "Photovoltaik Steuer",
-        "Solaranlage Steuervorteile",
-        "Einkommensteuer Photovoltaik",
-        "Umsatzsteuer PV-Anlage",
-        "Steuerliche Förderung Solar",
+        "Photovoltaik steuerfrei",
+        " Nullsteuersatz Photovoltaik",
+        " Photovoltaikanlage Steuererklärung", "Jahressteuergesetz 2022", "Ökovolt"
       ],
       alternates: {
         canonical: "https://www.oekovolt.de/forderungen/steuerlich",
@@ -67,8 +68,8 @@ export async function generateMetadata() {
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/forderungen/steuerlich",
-        title: "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
-        description: "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland.",
+        title: "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt",
+        description: "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.",
         images: [
           {
             url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
@@ -81,18 +82,19 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland";
-  const description = "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland – Einkommensteuer, Umsatzsteuer und steuerliche Vorteile für private und gewerbliche Betreiber.";
+  const title = "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt";
+  const description = "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.";
 
   return {
     title: title,
     description: description,
     keywords: [
+      "PV-Anlage steuerfrei",
+      "PV-Anlage Steuer",
       "Photovoltaik Steuer",
-      "Solaranlage Steuervorteile",
-      "Einkommensteuer Photovoltaik",
-      "Umsatzsteuer PV-Anlage",
-      "Steuerliche Förderung Solar",
+      "Photovoltaik steuerfrei",
+      " Nullsteuersatz Photovoltaik",
+      " Photovoltaikanlage Steuererklärung", "Jahressteuergesetz 2022", "Ökovolt"
     ],
     alternates: {
       canonical: "https://www.oekovolt.de/forderungen/steuerlich",
@@ -120,6 +122,7 @@ export default async function Steuerlich() {
   const response = await fetchSteuerlichData();
   const data = response?.message;
 
+
   const webPageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -127,7 +130,7 @@ export default async function Steuerlich() {
     url: STEUERLICH_PAGE_URL,
     name: data?.banner?.title || "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
     description: data?.banner?.description || "Aktuelle steuerrechtliche Bestimmungen für Photovoltaikanlagen in Deutschland – Einkommensteuer, Umsatzsteuer und steuerliche Vorteile für private und gewerbliche Betreiber.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",

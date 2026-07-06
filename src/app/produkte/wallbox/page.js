@@ -56,53 +56,53 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Wallbox & Ladestationen | Ökovolt Deutschland",
-      description: "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
+      title: "Wallbox kaufen & Installation vom Profi | Ökovolt",
+      description: "Wallbox Installation für Ihr Zuhause: E-Auto günstig mit eigenem Solarstrom laden – Beratung, Montage & smarte Steuerung aus einer Hand. Jetzt anfragen!",
       keywords: defaultKeywords,
       alternates: { canonical: PAGE_URL, },
       robots: { index: true, follow: true },
       openGraph: {
-        type: "website", 
-         
-        url: PAGE_URL, 
+        type: "website",
+
+        url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Wallbox & Ladestationen | Ökovolt Deutschland",
-        description: "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge.",
+        title: "Wallbox kaufen & Installation vom Profi | Ökovolt",
+        description: "Wallbox Installation für Ihr Zuhause: E-Auto günstig mit eigenem Solarstrom laden – Beratung, Montage & smarte Steuerung aus einer Hand. Jetzt anfragen!",
         images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Wallbox" }],
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title: "Wallbox & Ladestationen | Ökovolt Deutschland", 
-        description: "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge.", 
-        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+      twitter: {
+        card: "summary_large_image",
+        title: "Wallbox kaufen & Installation vom Profi | Ökovolt",
+        description: "Wallbox Installation für Ihr Zuhause: E-Auto günstig mit eigenem Solarstrom laden – Beratung, Montage & smarte Steuerung aus einer Hand. Jetzt anfragen!",
+        images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
     };
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = seoData?.title || "Wallbox & Ladestationen | Ökovolt Deutschland";
-  const description = seoData?.description || "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.";
+  const title = "Wallbox kaufen & Installation vom Profi | Ökovolt";
+  const description = "Wallbox Installation für Ihr Zuhause: E-Auto günstig mit eigenem Solarstrom laden – Beratung, Montage & smarte Steuerung aus einer Hand. Jetzt anfragen!";
 
   return {
-    title, 
-    description, 
+    title,
+    description,
     keywords: apiKeywords,
     alternates: { canonical: PAGE_URL, },
     robots: { index: true, follow: true },
     openGraph: {
-      type: "website", 
-       
-      url: PAGE_URL, 
+      type: "website",
+
+      url: PAGE_URL,
       siteName: "Ökovolt Deutschland",
-      title, 
+      title,
       description,
       images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Wallbox" }],
     },
-    twitter: { 
-      card: "summary_large_image", 
-      title, 
-      description, 
-      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"] 
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
     },
   };
 }
@@ -117,7 +117,7 @@ export default async function WallboxPage() {
     url: PAGE_URL,
     name: data?.title || "Wallbox & Ladestationen | Ökovolt Deutschland",
     description: data?.description || "Hochwertige Wallboxen und Ladestationen für Elektrofahrzeuge. Schnelles und sicheres Laden mit intelligenten Ladelösungen für Zuhause und Gewerbe.",
-    
+
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
