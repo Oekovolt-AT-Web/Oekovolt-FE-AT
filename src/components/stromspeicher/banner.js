@@ -13,7 +13,7 @@ const StromspeicherBanner = ({ data }) => {
           src={`/api/image?path=${data.strom_banner_image}` || "/Images/Jobs/jobs3.jpg"}
           alt={data.strom_banner_image_alt || "Banner Background"}
           fill
-          quality={100}
+          quality={80}
           className="object-cover object-center w-full h-full"
           loading="eager"
           sizes=" 100vw"

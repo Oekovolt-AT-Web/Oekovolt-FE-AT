@@ -8,6 +8,23 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [hoverDropdown, setHoverDropdown] = useState(null);
+  // Header bleibt beim Scrollen stehen und wird dabei schlanker.
+  const [gescrollt, setGescrollt] = useState(false);
+
+  // Offenes Mobilmenü: Seite dahinter nicht mitscrollen lassen und
+  // schwebende Elemente (CTA-Leiste, Nach-oben-Button) ausblenden – sie
+  // lagen sonst über dem Menü.
+  useEffect(() => {
+    document.body.classList.toggle("ov-menu-offen", isOpen);
+    return () => document.body.classList.remove("ov-menu-offen");
+  }, [isOpen]);
+
+  useEffect(() => {
+    const pruefen = () => setGescrollt(window.scrollY > 12);
+    pruefen();
+    window.addEventListener("scroll", pruefen, { passive: true });
+    return () => window.removeEventListener("scroll", pruefen);
+  }, []);
 
   const toggleDropdown = (name) => {
     setOpenDropdown((prev) => (prev === name ? null : name));
@@ -159,6 +176,15 @@ const Navbar = () => {
       ],
     },
     {
+      title: "Wissen",
+      slug: "wissen",
+      items: [
+        { name: "Solarrechner", slug: "solarrechner", link: "/solarrechner" },
+        { name: "Ratgeber", slug: "ratgeber", link: "/ratgeber" },
+        { name: "FAQs", slug: "faqs", link: "/faqs" },
+      ],
+    },
+    {
       title: "Über Uns",
       slug: "uber-uns",
       items: [
@@ -166,7 +192,6 @@ const Navbar = () => {
         { name: "Jobs", slug: "jobs", link: "/uber-uns/jobs" },
       ],
     },
-    { title: "Faqs", slug: "faqs", link: "/faqs" },
     { title: "Kontakt", slug: "kontakt", link: "/kontakt" },
   ];
 
@@ -198,20 +223,44 @@ const Navbar = () => {
   }, [hoverDropdown]);
 
   return (
-    <header className="static  top-0 bg-white w-full z-150">
-      <div className="max-w-7xl mx-auto flex justify-between items-center py-5 px-4">
+    <header className="sticky top-0 z-[100] w-full">
+      {/* Hintergrund als eigene Ebene: backdrop-filter direkt am <header>
+          würde das fixierte Mobilmenü (ein Kind des Headers) relativ zum
+          Header statt zum Viewport positionieren. */}
+      <div
+        aria-hidden="true"
+        className={`absolute inset-0 -z-10 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
+          gescrollt
+            ? "bg-white/95 shadow-[0_1px_0_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.18)] backdrop-blur-xl backdrop-saturate-150"
+            : "bg-white"
+        }`}
+      />
+      <div
+        className={`max-w-7xl mx-auto flex justify-between items-center px-4 transition-[padding] duration-300 ${
+          gescrollt ? "py-2" : "py-5"
+        }`}
+      >
         {/* Logo - kept exactly as in your original */}
         <div className="w-45">
-          <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-            <div style={{ width: 180, height: 64, position: "relative" }}>
+          <Link
+            href="/"
+            aria-label="Ökovolt Solartechnik – zur Startseite"
+            className="flex items-center h-16 relative"
+            onClick={closeMobileMenu}
+          >
+            <div
+              className={`origin-left transition-transform duration-300 ${gescrollt ? "scale-[0.82]" : "scale-100"}`}
+              style={{ width: 180, height: 64, position: "relative" }}
+            >
               <Image
                 src="/Images/Navbar/logo.png"
-                alt="Logo"
+                alt="Ökovolt Solartechnik Deutschland"
                 fill
-                loading="eager"
+                priority
                 style={{ objectFit: "contain" }}
-                sizes="(max-width: 1280px) 100vw, 1280px"
-
+                // Vorher "100vw, 1280px": für ein 180 px breites Logo wurde
+                // ein bis zu 1280 px breites Bild angefordert.
+                sizes="180px"
               />
             </div>
 
@@ -220,8 +269,8 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center justify-center">
-          <ul className="flex gap-8 list-none m-0 p-0 justify-center">
+        <nav className="hidden xl:flex items-center justify-center pl-8">
+          <ul className="flex gap-6 list-none m-0 p-0 justify-center">
             {navItems.map((item) => (
               <li
                 key={item.title}
@@ -231,13 +280,24 @@ const Navbar = () => {
               >
                 {item.items ? (
                   <>
-                    <Link
-                      href="#"
-                      className="text-gray text-[14px] uppercase hover:text-[#669933] transition-colors flex items-center gap-1"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        toggleDropdown(item.title);
-                      }}
+                    {/* Button statt <a href="#">: der Auslöser navigiert nicht,
+                        sondern klappt nur auf. Als Link erzeugte er einen toten
+                        Treffer pro Menüpunkt und wurde Screenreadern falsch
+                        als Link angesagt. Die Mobil-Variante nutzt schon länger
+                        einen Button. */}
+                    <button
+                      type="button"
+                      aria-expanded={hoverDropdown === item.title}
+                      className="text-gray text-[14px] uppercase whitespace-nowrap hover:text-[#669933] transition-colors flex items-center gap-1 cursor-pointer"
+                      // Sichtbarkeit haengt am hoverDropdown-State. Der Klick
+                      // setzte bisher openDropdown - den liest das Desktop-Menue
+                      // nirgends, deshalb liessen sich die Dropdowns nur per
+                      // Maus-Hover oeffnen, nicht per Klick oder Tastatur.
+                      onClick={() =>
+                        setHoverDropdown((prev) =>
+                          prev === item.title ? null : item.title
+                        )
+                      }
                     >
                       {item.title}
                       {hoverDropdown === item.title ? (
@@ -245,7 +305,7 @@ const Navbar = () => {
                       ) : (
                         <ChevronDown size={14} />
                       )}
-                    </Link>
+                    </button>
                     <div
                       className={`absolute left-1/2 -translate-x-1/2 top-full w-[190px] bg-white rounded shadow-lg py-1 z-50 transition-all duration-300 ${hoverDropdown === item.title
                           ? "opacity-100 visible translate-y-0"
@@ -267,7 +327,7 @@ const Navbar = () => {
                 ) : (
                   <Link
                     href={item.link}
-                    className="text-gray text-[14px]  uppercase hover:text-[#669933] transition-colors"
+                    className="text-gray text-[14px] uppercase whitespace-nowrap hover:text-[#669933] transition-colors"
                   >
                     {item.title}
                   </Link>

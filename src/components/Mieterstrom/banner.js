@@ -13,7 +13,7 @@ const MieterstromBanner = ({ data }) => {
           src={data?.mieterstorm_banner_image ? `/api/image?path=${data.mieterstorm_banner_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.mieterstorm_banner_alt_image || "Banner Background"}
           fill
-          quality={100}
+          quality={80}
           className="object-cover w-full h-full"
           priority
           sizes="100vw"

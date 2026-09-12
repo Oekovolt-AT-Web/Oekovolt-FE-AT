@@ -10,6 +10,8 @@ import ThirdCardSection from "@/components/Direktvermaktung/fourth";
 import FifthCardSection from "@/components/Direktvermaktung/fifth";
 import SixCardSection from "@/components/Direktvermaktung/six";
 import DirektvermaktungFAQ from "@/components/Direktvermaktung/eight";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.direktvermarktung_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
 const DV_PAGE_URL = "https://www.oekovolt.de/service/direktvermarktung";
@@ -68,7 +70,7 @@ export async function generateMetadata() {
       title: "Direktvermarktung von Solarstrom – mit Marktprämie | Ökovolt",
       description: "Direktvermarktung für PV-Anlagen bis 100 kWp: höhere Erlöse an der Strombörse, abgesichert durch die Marktprämie – komplette Abwicklung durch Ökovolt!",
       keywords: defaultKeywords,
-      alternates: { canonical: DV_PAGE_URL, },
+      alternates: { canonical: DV_PAGE_URL, languages: hreflangLanguages(DV_PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -101,7 +103,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -156,6 +158,7 @@ export default async function DirektvermarktungPage() {
       <FifthCardSection data={data} />
       <SixCardSection data={data} />
       <DirektvermaktungFAQ data={data} />
+      <Querverweise pfad="/service/direktvermarktung" />
       <EndSection />
     </div>
   );

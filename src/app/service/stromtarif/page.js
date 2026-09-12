@@ -10,6 +10,8 @@ import DynamicSteps from "@/components/Stromtarif/fifth";
 import FlexibleBenefitsSection from "@/components/Stromtarif/sixth";
 import RequirementsSection from "@/components/Stromtarif/seventh";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.dynamischer_stromtarif_service_page.api.get_dynamischer_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/service/stromtarif";
@@ -68,7 +70,7 @@ export async function generateMetadata() {
       title: "Dynamischer Stromtarif – flexibler Ökostrom | Ökovolt",
       description: "Dynamischer Stromtarif von Ökovolt: Strom nutzen, wenn er günstig ist – ideal mit PV-Anlage, Speicher, Wärmepumpe und E-Auto. Jetzt Angebot anfordern!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -101,7 +103,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -156,6 +158,7 @@ export default async function StromtarifPage() {
       <DynamicSteps data={data} />
       <FlexibleBenefitsSection data={data} />
       <RequirementsSection data={data} />
+      <Querverweise pfad="/service/stromtarif" />
       <EndSection />
     </div>
   );

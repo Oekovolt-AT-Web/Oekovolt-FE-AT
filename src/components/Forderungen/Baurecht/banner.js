@@ -27,7 +27,7 @@ const BaurechtBannerSection = async ({ data }) => {
 
           className="object-cover"
           loading="eager"
-          quality={100}
+          quality={80}
         />
       </div>
 
@@ -49,7 +49,7 @@ const BaurechtBannerSection = async ({ data }) => {
             className="object-cover"
             loading="eager"
             sizes=" 100vw"
-            quality={100}
+            quality={80}
 
           />
         </div>

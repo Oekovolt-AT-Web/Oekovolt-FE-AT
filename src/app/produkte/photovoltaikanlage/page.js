@@ -10,6 +10,9 @@ import PhotovoltaikOverviewSection from "@/components/photovoltaikanlage/fifthca
 import PhotovoltaikSixthCardSection from "@/components/photovoltaikanlage/sixthcard";
 import PhotovoltaikComponentSection from "@/components/photovoltaikanlage/seventhcard";
 import FaqSection from "@/components/photovoltaikanlage/eightcard";
+import { hreflangLanguages } from "@/lib/hreflang";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaikanlage_page.api.get_photovoltaik_page_with_keywords`;
 
@@ -59,7 +62,7 @@ export async function generateMetadata() {
       title: "Photovoltaikanlage kaufen – Komplettpaket vom Profi | Ökovolt",
       description: "Photovoltaikanlage für Ihr Einfamilienhaus: individuell geplant, fachgerecht montiert – Ihr Komplettpaket vom regionalen Spezialisten. Jetzt beraten lassen!",
       keywords: ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "Solarenergie", "PV-Anlage"],
-      alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage" },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", languages: hreflangLanguages("https://www.oekovolt.de/produkte/photovoltaikanlage") },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -92,7 +95,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords,
-    alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", },
+    alternates: { canonical: "https://www.oekovolt.de/produkte/photovoltaikanlage", languages: hreflangLanguages("https://www.oekovolt.de/produkte/photovoltaikanlage") },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -183,7 +186,12 @@ export default async function PhotovoltaikanlagePage() {
       <PhotovoltaikOverviewSection data={data} />
       <PhotovoltaikSixthCardSection data={data} />
       <PhotovoltaikComponentSection data={data} />
+      <SolarrechnerTeaser
+        titel="Was bringt Ihnen diese Anlage konkret?"
+        text="Größe, Verbrauch und Dach eingeben – Sie sehen sofort Jahresertrag, Ersparnis und Amortisation."
+      />
       <FaqSection data={data} />
+      <Querverweise pfad="/produkte/photovoltaikanlage" />
     </div>
   );
 }

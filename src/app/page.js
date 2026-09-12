@@ -2,13 +2,15 @@
 
 import { cache } from "react";
 import dynamic from "next/dynamic";
-import VideoBanner from "@/components/Home/banner";
+import HeroSlider from "@/components/Home/HeroSlider";
 import ServicesBanner from "@/components/Home/about";
 import HomeLoader from "@/components/Home/HomeLoader";
 
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import SeoTextSection from "@/components/Home/SeoTextSection";
 import FaqSection from "@/components/Home/Faqs";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Sektion from "@/components/Reusable/Sektion";
 
 const RotatingCircleSection = dynamic(() => import("@/components/Home/welcome"));
 const SolutionsPage = dynamic(() => import("@/components/Home/info"));
@@ -58,7 +60,7 @@ const getHomeData = cache(async () => {
 });
 
 const FALLBACK_META = {
-  title: "Solaranlage mit Speicher – Photovoltaik Anbieter | Ökovolt",
+  title: "Photovoltaik im Allgäu – Solaranlage mit Speicher | Ökovolt",
   description: "Solaranlage mit Speicher vom erfahrenen Photovoltaik Anbieter: Planung, Installation & Wartung aus einer Hand. Über 15 Jahre Erfahrung. Jetzt Angebot sichern!",
 };
 
@@ -73,7 +75,7 @@ export async function generateMetadata() {
       title: FALLBACK_META.title,
       description: FALLBACK_META.description,
       keywords: defaultKeywords,
-      alternates: { canonical: BASE_URL },
+      alternates: { canonical: BASE_URL, languages: hreflangLanguages(BASE_URL) },
       robots: {
         index: true, follow: true,
         googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
@@ -91,7 +93,7 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "Solaranlage mit Speicher – Photovoltaik Anbieter | Ökovolt";
+  const title = "Photovoltaik im Allgäu – Solaranlage mit Speicher | Ökovolt";
   const description = FALLBACK_META.description;
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
 
@@ -99,7 +101,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: BASE_URL },
+    alternates: { canonical: BASE_URL, languages: hreflangLanguages(BASE_URL) },
     robots: {
       index: true, follow: true,
       googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
@@ -165,21 +167,42 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceListSchema) }} />
       <HomeLoader />
-      <VideoBanner
-        mediaSrc={data?.image ? `/api/image?path=${data.image}` : "/Images/Kontakt/download-2.jpg"}
-        mediaAlt={data?.alt_text || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
-        title={data?.title || "Photovoltaik-Lösungen für Industrie, Gewerbe und Privat"}
-      />
+      <HeroSlider />
       <ServicesBanner data={data} />
-      <div className="content-section-lazy"><RotatingCircleSection data={data} /></div>
-      <div className="content-section-lazy"><SolutionsPage data={data} /></div>
-      <div className="content-section-lazy"><ProjectsSlider data={data} /></div>
-      <div className="content-section-lazy"><SeoTextSection /></div>
+      {/* Abwechselnde Flächen geben der Seite Rhythmus – vorher standen alle
+          Blöcke über 4.000 px auf demselben Weiss. Das Polster gleicht die
+          gemessenen Abstandsunterschiede aus (45 px bis 204 px). */}
+      <Sektion ton="hell">
+        <div className="content-section-lazy"><RotatingCircleSection data={data} /></div>
+      </Sektion>
 
-      <div className="content-section-lazy"><Partners data={data} /></div>
-      <div className="content-section-lazy"><PVInquiryForm data={data} /></div>
-      <div className="content-section-lazy"><FaqSection /></div>
-      <div className="content-section-lazy"><EndWhite data={endd} /></div>
+      <Sektion ton="getoent">
+        <div className="content-section-lazy"><SolutionsPage data={data} /></div>
+      </Sektion>
+
+      <Sektion ton="hell">
+        <div className="content-section-lazy"><ProjectsSlider data={data} /></div>
+      </Sektion>
+
+      <Sektion ton="getoent">
+        <div className="content-section-lazy"><SeoTextSection /></div>
+      </Sektion>
+
+      <Sektion ton="hell" polster="klein">
+        <div className="content-section-lazy"><Partners data={data} /></div>
+      </Sektion>
+
+      <Sektion ton="getoent" polster="gross">
+        <div className="content-section-lazy"><PVInquiryForm data={data} /></div>
+      </Sektion>
+
+      <Sektion ton="hell" polster="gross">
+        <div className="content-section-lazy"><FaqSection /></div>
+      </Sektion>
+
+      <Sektion ton="getoent" polster="klein">
+        <div className="content-section-lazy"><EndWhite data={endd} /></div>
+      </Sektion>
     </div>
   );
 }

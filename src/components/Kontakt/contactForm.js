@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { User, Mail, Phone, Building, MessageSquare, MapPin } from "lucide-react";
 import { submitContact } from "@/lib/api/contact/create_contact";
@@ -99,14 +101,20 @@ export default function ContactForm() {
     >
       <div className="flex w-full overflow-hidden relative z-20">
         {/* Left image block */}
-        <div
-          className="hidden md:flex w-1/2 relative rounded-r-[100px] overflow-hidden"
-          style={{
-            backgroundImage: "url('/Images/Jobs/download.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
+        <div className="hidden md:flex w-1/2 relative rounded-r-[100px] overflow-hidden">
+          {/* War ein CSS-Hintergrundbild: 442 KB JPEG, das weder in WebP/AVIF
+              umgewandelt noch auf die Anzeigegroesse skaliert wurde, weil
+              background-image an next/image vorbeilaeuft. Das Bild liegt unter
+              einem 70-%-Overlay, deshalb reicht niedrige Qualitaet voellig. */}
+          <Image
+            src="/Images/Jobs/download.jpg"
+            alt=""
+            aria-hidden="true"
+            fill
+            quality={55}
+            sizes="(max-width: 768px) 0px, 50vw"
+            className="object-cover object-center"
+          />
           <div className="absolute inset-0 bg-gray-800/70 z-10"></div>
           <div className="text-white flex flex-col justify-center items-center text-center relative z-20 px-5 lg:px-20">
             <h2 className="text-3xl font-bold mb-2 text-white">Willkommen Zurück!</h2>

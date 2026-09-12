@@ -22,7 +22,7 @@ const PhotovoltaikOptimization = ({ data }) => {
           distance={0}
           duration={600}
           delay={300}
-          className="text-gray-700 text-lg leading-relaxed mt-5"
+          className="ov-measure text-gray-700 text-lg leading-relaxed mt-5"
         >
           <p>{data?.second_card_description}</p>
         </FadeInView>

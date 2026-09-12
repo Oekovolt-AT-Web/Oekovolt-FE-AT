@@ -5,6 +5,8 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import HerstellerBanner from "@/components/Hersteller/banner";
 import HerstellerSection from "@/components/Hersteller/second";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller_page.api.get_hersteller_page_with_keywords`;
 
@@ -51,7 +53,7 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt",
+      title: "PV-Hersteller: Fronius, Trina Solar & Huawei | Ökovolt",
       description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
       keywords: [
         "Photovoltaik Hersteller",
@@ -60,21 +62,19 @@ export async function generateMetadata() {
         "Qualitätshersteller",
         "Solar Marken",
       ],
-      alternates: {
-        canonical: "https://www.oekovolt.de/produkte/hersteller",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/hersteller", languages: hreflangLanguages("https://www.oekovolt.de/produkte/hersteller") },
       openGraph: {
         type: "website",
 
         url: "https://www.oekovolt.de/produkte/hersteller",
         siteName: "Ökovolt Deutschland",
-        title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt",
+        title: "PV-Hersteller: Fronius, Trina Solar & Huawei | Ökovolt",
         description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Hersteller" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt ",
+        title: "PV-Hersteller: Fronius, Trina Solar & Huawei | Ökovolt ",
         description: "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -92,7 +92,7 @@ export async function generateMetadata() {
       "Solar Marken",
     ];
 
-  const title = "Hersteller: Fronius, Trina Solar, Huawei LUNA2000 & mehr | Ökovolt";
+  const title = "PV-Hersteller: Fronius, Trina Solar & Huawei | Ökovolt";
   const description = "Geprüfte Hersteller für Ihre Solaranlage: Fronius Wechselrichter, Trina Solar Module, Huawei LUNA2000 Speicher, BYD Battery-Box & mehr – Qualität vom Profi.";
   const canonical = "https://www.oekovolt.de/produkte/hersteller";
 
@@ -100,7 +100,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -151,6 +151,7 @@ export default async function HerstellerPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <HerstellerBanner data={data} />
       <HerstellerSection data={data} />
+      <Querverweise pfad="/produkte/hersteller" />
       <EndSection />
     </div>
   );

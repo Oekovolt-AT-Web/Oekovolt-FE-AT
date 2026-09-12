@@ -7,6 +7,9 @@ import WallboxFeatures2 from "@/components/Wallbox/third";
 import WallboxSecondCard2 from "@/components/Wallbox/second";
 import WallboxThirdCard from "@/components/Wallbox/fourth";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.wallbox_page.api.get_wallbox_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/produkte/wallbox";
@@ -59,7 +62,7 @@ export async function generateMetadata() {
       title: "Wallbox kaufen & Installation vom Profi | Ökovolt",
       description: "Wallbox Installation für Ihr Zuhause: E-Auto günstig mit eigenem Solarstrom laden – Beratung, Montage & smarte Steuerung aus einer Hand. Jetzt anfragen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -87,7 +90,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -139,6 +142,13 @@ export default async function WallboxPage() {
       <WallboxSecondCard2 data={data} />
       <WallboxFeatures2 data={data} />
       <WallboxThirdCard data={data} />
+      <SolarrechnerTeaser
+        href="/ratgeber/wallbox-installation"
+        cta="Zum Ratgeber"
+        titel="Wallbox installieren lassen"
+        text="Kosten, Voraussetzungen und Ablauf – im Ratgeber Schritt für Schritt erklärt."
+      />
+      <Querverweise pfad="/produkte/wallbox" />
       <EndSection />
     </div>
   );

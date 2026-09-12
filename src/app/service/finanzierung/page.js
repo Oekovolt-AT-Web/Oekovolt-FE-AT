@@ -6,6 +6,9 @@ import FinancingBenefitsSection from "@/components/Finanzierung/third";
 import FinanzierungPartnerSection from "@/components/Finanzierung/fourth";
 import FinanzierungFAQ from "@/components/Finanzierung/fifth";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.finanzierung_service_page.api.get_finanzierung_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/service/finanzierung";
@@ -55,23 +58,23 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+      title: "Solaranlage finanzieren – ohne Eigenkapital | Ökovolt",
       description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
 
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+        title: "Solaranlage finanzieren – ohne Eigenkapital | Ökovolt",
         description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Finanzierung" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt",
+        title: "Solaranlage finanzieren – ohne Eigenkapital | Ökovolt",
         description: "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -79,14 +82,14 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = "Solaranlage & Wärmepumpe Finanzierung – ohne Eigenkapital | Ökovolt";
+  const title = "Solaranlage finanzieren – ohne Eigenkapital | Ökovolt";
   const description = "Wärmepumpe oder PV-Anlage ohne Eigenkapital finanzieren: faire Raten, feste Zinsen, KfW-Beratung inklusive – mit dem PSD SolarKredit. Jetzt beraten lassen!";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -139,6 +142,11 @@ export default async function FinanzierungPage() {
       <FinancingBenefitsSection data={data} />
       <FinanzierungPartnerSection data={data} />
       <FinanzierungFAQ data={data} />
+      <SolarrechnerTeaser
+        titel="Was muss die Anlage erwirtschaften?"
+        text="Der Solarrechner zeigt Ihnen den jährlichen Überschuss – eine gute Grundlage für das Finanzierungsgespräch."
+      />
+      <Querverweise pfad="/service/finanzierung" />
       <EndSection />
     </div>
   );

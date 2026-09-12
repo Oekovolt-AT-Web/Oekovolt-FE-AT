@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { Globe, Mail, Phone, CheckCircle } from "lucide-react";
 import { generateSlug } from "@/lib/slugify";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 
 // Use the single shared slug function so URLs match the sitemap exactly.
@@ -134,9 +135,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${manufacturer.title} Wärmepumpen`,
     description: manufacturer.company_description || `${manufacturer.title} `,
-    alternates: {
-      canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`
-    },
+    alternates: { canonical: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`, languages: hreflangLanguages(`https://www.oekovolt.de/produkte/warmepumpe/${slug}`) },
     openGraph: {
       type: "website",
       url: `https://www.oekovolt.de/produkte/warmepumpe/${slug}`,

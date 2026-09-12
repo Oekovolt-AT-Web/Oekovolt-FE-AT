@@ -6,6 +6,7 @@ import { generateSlug } from "@/lib/slugify";
 import ForderungenSectionClient from "@/components/Forderungen/Landes/second-client";
 import LandesBannerItems from "@/components/Forderungen/Landes/bannerItems";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import LandesDetails from "@/components/Forderungen/LandesDetails";
 
 // Global cache to prevent refetching
 let globalDataCache = null;
@@ -163,6 +164,7 @@ export default async function LandesforderungDetailPage({ params }) {
         <div>
             <LandesBannerItems data={currentItem} />
             <ForderungenSectionClient initialData={currentItem} allData={allData} />
+            <LandesDetails slug={name} />
             <EndSection />
         </div>
     );

@@ -2,39 +2,52 @@
 
 import { generateSlug, generateJobSlug } from "@/lib/slugify";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { sitemapLanguages } from "@/lib/hreflang";
+import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
 
 const BASE_URL = "https://www.oekovolt.de";
-// Auto-set to current deploy date
-const LAST_DEPLOY = new Date();
-// Legal pages rarely change — only update if you actually edit their content
+// ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
+// bei jedem Build einen neuen lastmod - Google wurde also bei jedem Deploy
+// gemeldet, saemtliche Seiten haetten sich geaendert. Das entwertet das
+// Signal und kostet Crawl-Vertrauen.
+//
+// Stattdessen feste Daten, die nur angefasst werden, wenn sich der INHALT
+// der jeweiligen Seite wirklich aendert. Dynamische Seiten (Projekte, Jobs,
+// Foerderungen, Hersteller) nutzen weiter den echten `modified`-Zeitstempel
+// aus dem Backoffice.
+const CONTENT_DATE = new Date("2026-06-06");   // letzter groesserer Inhaltsstand
+const UPDATED_2026_09 = new Date("2026-09-12"); // in dieser Runde ueberarbeitet
+// Rechtstexte aendern sich praktisch nie
 const LEGAL_DATE = new Date("2025-01-01");
 const STATIC_PAGES = [
-  { path: "", changeFrequency: "weekly", priority: 1.0, lastModified: LAST_DEPLOY },
-  { path: "/dienstleistungen/photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: LAST_DEPLOY },
-  { path: "/dienstleistungen/smarthome", changeFrequency: "monthly", priority: 0.8, lastModified: LAST_DEPLOY },
-  { path: "/produkte/photovoltaikanlage", changeFrequency: "monthly", priority: 0.9, lastModified: LAST_DEPLOY },
-  { path: "/produkte/stromspeicher", changeFrequency: "monthly", priority: 0.8, lastModified: LAST_DEPLOY },
-  { path: "/produkte/warmepumpe", changeFrequency: "monthly", priority: 0.8, lastModified: LAST_DEPLOY },
-  { path: "/produkte/wallbox", changeFrequency: "monthly", priority: 0.8, lastModified: LAST_DEPLOY },
-  { path: "/produkte/smartmeter", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/produkte/smartenergyhome", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/produkte/mieterstrom", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/produkte/hersteller", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/service/finanzierung", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/service/repowering", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/service/stromtarif", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/service/vorteilswelt", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/service/direktvermarktung", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/referenzen/projekte", changeFrequency: "weekly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/referenzen/referenzkarte", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/forderungen/landesforderungen", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/forderungen/baurecht", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/forderungen/steuerlich", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/forderungen/richtlinien", changeFrequency: "monthly", priority: 0.5, lastModified: LAST_DEPLOY },
-  { path: "/uber-uns/team", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/uber-uns/jobs", changeFrequency: "weekly", priority: 0.6, lastModified: LAST_DEPLOY },
-  { path: "/kontakt", changeFrequency: "monthly", priority: 0.7, lastModified: LAST_DEPLOY },
-  { path: "/faqs", changeFrequency: "monthly", priority: 0.6, lastModified: LAST_DEPLOY },
+  { path: "", changeFrequency: "weekly", priority: 1.0, lastModified: UPDATED_2026_09 },
+  { path: "/dienstleistungen/photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
+  { path: "/dienstleistungen/smarthome", changeFrequency: "monthly", priority: 0.8, lastModified: CONTENT_DATE },
+  { path: "/produkte/photovoltaikanlage", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
+  { path: "/produkte/stromspeicher", changeFrequency: "monthly", priority: 0.8, lastModified: UPDATED_2026_09 },
+  { path: "/produkte/warmepumpe", changeFrequency: "monthly", priority: 0.8, lastModified: CONTENT_DATE },
+  { path: "/produkte/wallbox", changeFrequency: "monthly", priority: 0.8, lastModified: CONTENT_DATE },
+  { path: "/produkte/smartmeter", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/produkte/smartenergyhome", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/produkte/mieterstrom", changeFrequency: "monthly", priority: 0.7, lastModified: CONTENT_DATE },
+  { path: "/produkte/hersteller", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
+  { path: "/service/finanzierung", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/service/repowering", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/service/stromtarif", changeFrequency: "monthly", priority: 0.7, lastModified: CONTENT_DATE },
+  { path: "/service/vorteilswelt", changeFrequency: "monthly", priority: 0.6, lastModified: CONTENT_DATE },
+  { path: "/service/direktvermarktung", changeFrequency: "monthly", priority: 0.7, lastModified: CONTENT_DATE },
+  { path: "/referenzen/projekte", changeFrequency: "weekly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/referenzen/referenzkarte", changeFrequency: "monthly", priority: 0.6, lastModified: CONTENT_DATE },
+  { path: "/forderungen/landesforderungen", changeFrequency: "monthly", priority: 0.7, lastModified: CONTENT_DATE },
+  { path: "/forderungen/baurecht", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
+  { path: "/forderungen/steuerlich", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
+  { path: "/forderungen/richtlinien", changeFrequency: "monthly", priority: 0.5, lastModified: CONTENT_DATE },
+  { path: "/uber-uns/team", changeFrequency: "monthly", priority: 0.6, lastModified: CONTENT_DATE },
+  { path: "/uber-uns/jobs", changeFrequency: "weekly", priority: 0.6, lastModified: CONTENT_DATE },
+  { path: "/kontakt", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/faqs", changeFrequency: "monthly", priority: 0.6, lastModified: CONTENT_DATE },
+  { path: "/ratgeber", changeFrequency: "weekly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/solarrechner", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
   { path: "/impressum", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/datenschutz", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/agb", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
@@ -118,12 +131,18 @@ async function fetchWarmepumpeManufacturers() {
 }
 
 export default async function sitemap() {
-  const staticEntries = STATIC_PAGES.map(({ path, changeFrequency, priority, lastModified }) => ({
-    url: `${BASE_URL}${path}`,
-    lastModified,
-    changeFrequency,
-    priority,
-  }));
+  // alternates nur fuer Seiten, die es auch auf oekovolt.com gibt — sonst
+  // laesst sitemapLanguages() das Feld weg (undefined wird nicht gerendert).
+  const staticEntries = STATIC_PAGES.map(({ path, changeFrequency, priority, lastModified }) => {
+    const languages = sitemapLanguages(path || "/");
+    return {
+      url: `${BASE_URL}${path}`,
+      lastModified,
+      changeFrequency,
+      priority,
+      ...(languages ? { alternates: { languages } } : {}),
+    };
+  });
 
   const dynamicEntries = [];
 
@@ -150,7 +169,7 @@ export default async function sitemap() {
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/referenzen/projekte/${slug}`,
-        lastModified: project.modified ? new Date(project.modified) : LAST_DEPLOY,
+        lastModified: project.modified ? new Date(project.modified) : CONTENT_DATE,
         changeFrequency: "monthly",
         priority: 0.6,
       });
@@ -163,7 +182,7 @@ export default async function sitemap() {
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/uber-uns/jobs/${slug}`,
-        lastModified: job.modified ? new Date(job.modified) : LAST_DEPLOY,
+        lastModified: job.modified ? new Date(job.modified) : CONTENT_DATE,
         changeFrequency: "weekly",
         priority: 0.5,
       });
@@ -177,7 +196,7 @@ export default async function sitemap() {
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/forderungen/landesforderungen/${slug}`,
-        lastModified: item.modified ? new Date(item.modified) : LAST_DEPLOY,
+        lastModified: item.modified ? new Date(item.modified) : CONTENT_DATE,
         changeFrequency: "monthly",
         priority: 0.6,
       });
@@ -188,11 +207,13 @@ export default async function sitemap() {
   stromspeicherManufacturers.forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
     if (slug) {
+      const languages = sitemapLanguages(`/produkte/stromspeicher/${slug}`);
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/stromspeicher/${slug}`,
-        lastModified: manufacturer.modified ? new Date(manufacturer.modified) : LAST_DEPLOY,
+        lastModified: manufacturer.modified ? new Date(manufacturer.modified) : CONTENT_DATE,
         changeFrequency: "monthly",
         priority: 0.6,
+        ...(languages ? { alternates: { languages } } : {}),
       });
     }
   });
@@ -201,16 +222,28 @@ export default async function sitemap() {
   warmepumpeManufacturers.forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
     if (slug) {
+      const languages = sitemapLanguages(`/produkte/warmepumpe/${slug}`);
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/warmepumpe/${slug}`,
-        lastModified: manufacturer.modified ? new Date(manufacturer.modified) : LAST_DEPLOY,
+        lastModified: manufacturer.modified ? new Date(manufacturer.modified) : CONTENT_DATE,
         changeFrequency: "monthly",
         priority: 0.6,
+        ...(languages ? { alternates: { languages } } : {}),
       });
     }
   });
 
-  const allEntries = [...staticEntries, ...dynamicEntries];
+  // 6. Ratgeber-Artikel (aus dem Register, nicht aus der API - deshalb immer
+  //    vorhanden, auch wenn das Backoffice gerade nicht antwortet).
+  //    Deutschlandspezifisch -> bewusst ohne alternates/hreflang.
+  const ratgeberEntries = alleArtikel().map((a) => ({
+    url: `${BASE_URL}${artikelPfad(a.slug)}`,
+    lastModified: new Date(a.aktualisiert),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries];
 
   return allEntries;
 }

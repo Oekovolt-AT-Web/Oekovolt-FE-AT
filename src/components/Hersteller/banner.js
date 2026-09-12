@@ -13,7 +13,7 @@ const HerstellerBanner = ({ data }) => {
           src={data.hersteller_image ? `/api/image?path=${data.hersteller_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.hersteller_alt_image || "Banner Background"}
           fill
-          quality={100}
+          quality={80}
           className="object-cover object-center w-full h-full"
           loading="eager"
           sizes=" 100vw"

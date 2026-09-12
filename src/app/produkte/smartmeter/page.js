@@ -9,6 +9,8 @@ import Smartmetersectionfour from "@/components/Smartmeter/fourth";
 import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import SmartMeterCostSection from "@/components/Smartmeter/fifth";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_meter_page.api.get_smart_meter_page_with_keywords`;
 
@@ -63,23 +65,21 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+      title: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt",
       description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
       keywords: defaultKeywords,
-      alternates: {
-        canonical: "https://www.oekovolt.de/produkte/smartmeter",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/smartmeter", languages: hreflangLanguages("https://www.oekovolt.de/produkte/smartmeter") },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/smartmeter",
-        title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+        title: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt",
         description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt",
+        title: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt",
         description: "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
@@ -91,7 +91,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = "Smart Meter: intelligentes Messsystem – Pflicht & Kosten | Ökovolt";
+  const title = "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt";
   const description = "Smart Meter einfach erklärt: Was das intelligente Messsystem kann, wen die Smart Meter Pflicht betrifft und was es kostet – Beratung & Einbau vom Profi.";
   const canonical = "https://www.oekovolt.de/produkte/smartmeter";
 
@@ -99,7 +99,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -160,6 +160,7 @@ export default async function SmartmeterPage() {
       <Smartmeter data={data} />
       <Smartmetersectionfour data={data} />
       <SmartMeterCostSection data={data} />
+      <Querverweise pfad="/produkte/smartmeter" />
       <EndSection />
     </div>
   );

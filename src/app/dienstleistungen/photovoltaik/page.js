@@ -7,6 +7,14 @@ import ProcessSteps from "@/components/Photovoltaik/Cards";
 import PhotovoltaikanlageBannerSection from "@/components/Photovoltaik/banner";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import Querverweise from "@/components/Reusable/Querverweise";
+import Sektion from "@/components/Reusable/Sektion";
+import Region from "@/components/Photovoltaik/Region";
+import FaqBereich from "@/components/Photovoltaik/FaqBereich";
+import { PV_FAQ } from "@/data/photovoltaik-seite";
+import MobileCta from "@/components/Reusable/MobileCta";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.photovoltaikanlagen_primary_page.api.get_photovoltaikanlagen`;
 
@@ -54,11 +62,11 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "V-Anlage kaufen fürs Eigenheim – Komplettpaket | Ökovolt",
+      title: "PV-Anlage kaufen im Allgäu – Komplettpaket | Ökovolt",
       description:
         "PV-Anlage für Ihr Zuhause: Planung, Lieferung & Montage aus einer Hand – Ihr Komplettpaket vom erfahrenen Installateur. Jetzt kostenloses Angebot anfordern!",
       keywords: ["Photovoltaikanlage", "Solarenergie", "Energiekosten senken", "Photovoltaik Förderung", "Solaranlage"],
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", },
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", languages: hreflangLanguages("https://www.oekovolt.de/dienstleistungen/photovoltaik") },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -89,14 +97,14 @@ export async function generateMetadata() {
       "Solaranlage",
     ];
 
-  const title = "V-Anlage kaufen fürs Eigenheim – Komplettpaket | Ökovolt";
+  const title = "PV-Anlage kaufen im Allgäu – Komplettpaket | Ökovolt";
   const description = "PV-Anlage für Ihr Zuhause: Planung, Lieferung & Montage aus einer Hand – Ihr Komplettpaket vom erfahrenen Installateur. Jetzt kostenloses Angebot anfordern!";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", },
+    alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/photovoltaik", languages: hreflangLanguages("https://www.oekovolt.de/dienstleistungen/photovoltaik") },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -143,15 +151,41 @@ export default async function PhotovoltaikPage() {
     },
   };
 
+
+  // Muss 1:1 dem sichtbaren FAQ-Block entsprechen (Google-Richtlinie).
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: PV_FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.frage,
+      acceptedAnswer: { "@type": "Answer", text: f.antwort },
+    })),
+  };
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <PhotovoltaikanlageBannerSection data={data} />
-      <Tabs data={data} />
-      <AnlageSection data={data} />
-      <KomponentenSlider data={data} />
-      <ProcessSteps data={data} />
+
+      {/* Abwechselnde Flächen gliedern die Seite; vorher lagen die Blöcke
+          ohne erkennbare Zäsur untereinander. */}
+      <Sektion ton="hell"><Tabs data={data} /></Sektion>
+      <Sektion ton="getoent"><AnlageSection data={data} /></Sektion>
+      <Sektion ton="hell"><Region /></Sektion>
+      <Sektion ton="getoent"><KomponentenSlider data={data} /></Sektion>
+      <Sektion ton="hell"><ProcessSteps data={data} /></Sektion>
+      <Sektion ton="getoent">
+        <SolarrechnerTeaser
+          titel="Erst rechnen, dann beraten lassen"
+          text="Verschaffen Sie sich in einer Minute Klarheit über Ertrag, Ersparnis und Amortisation für Ihr Dach."
+        />
+      </Sektion>
+      <Sektion ton="hell"><FaqBereich /></Sektion>
+      <Querverweise pfad="/dienstleistungen/photovoltaik" />
       <EndSection />
+      <MobileCta />
     </div>
   );
 }

@@ -38,9 +38,9 @@ const ContactSection = () => {
                     <Phone className="h-4 w-4 opacity-70" />
                     +49 8245 96 788 0
                   </a>
-                  <a href="mailto:office@oekovolt.com" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
+                  <a href="mailto:office@oekovolt.de" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
                     <Mail className="h-4 w-4 opacity-70" />
-                    office@oekovolt.com
+                    office@oekovolt.de
                   </a>
                 </div>
               </div>

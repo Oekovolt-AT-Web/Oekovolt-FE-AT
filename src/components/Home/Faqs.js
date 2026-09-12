@@ -61,7 +61,7 @@ const FaqItem = ({ item, isOpen, onToggle, panelId }) => {
                     }`}
                 style={{ transitionProperty: "max-height, opacity" }}
             >
-                <div className="pl-9 pb-5 pr-4 text-gray-600 text-[16px]">
+                <div className="ov-measure pl-9 pb-5 pr-4 text-gray-600 text-[16px]">
                     <p>{item.answer}</p>
                 </div>
             </div>

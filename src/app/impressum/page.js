@@ -1,13 +1,12 @@
 import Impressum from "@/components/Impressum/impressum";
 import BannerSection from "@/components/Reusable/banner";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
-  alternates: {
-    canonical: "https://www.oekovolt.de/impressum",
-  },
+  alternates: { canonical: "https://www.oekovolt.de/impressum", languages: hreflangLanguages("https://www.oekovolt.de/impressum") },
   title: "Impressum | Ökovolt Deutschland",
-  description: "Das Impressum der ÖKOVOLT GmbH Solartechnik enthält alle wichtigen rechtlichen Informationen wie Kontaktadresse, Unternehmensgegenstand, Haftungshinweise und Urheberrechte.",
+  description: "Impressum der ÖKOVOLT GmbH Solartechnik in Türkheim: Anschrift, Vertretung, Registereintrag, Umsatzsteuer-ID und Haftungshinweise.",
   keywords: ["Impressum ÖKOVOLT GmbH", "Photovoltaik GmbH Impressum", "Rechtsform ÖKOVOLT", "Kontakt ÖKOVOLT", "Haftungshinweise ÖKOVOLT"],
   robots: { index: true, follow: true },
   openGraph: {

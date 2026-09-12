@@ -10,7 +10,7 @@ const BannerSection = ({ data }) => {
           src={`${data?.img}`}
           alt="Banner Background"
           fill
-          quality={100}
+          quality={80}
           sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
           className="object-cover w-full h-full object-center"
           loading="eager"

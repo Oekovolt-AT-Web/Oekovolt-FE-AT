@@ -11,6 +11,8 @@ import SixSection from "@/components/Repowering/six";
 import RepoweringSection from "@/components/Repowering/seven";
 import ThirdCardSection from "@/components/Repowering/eight";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaik_repowering_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/service/repowering";
@@ -66,23 +68,23 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Repowering & PV-Anlage erweitern vom Profi | Ökovolt",
+      title: "Repowering Photovoltaik – alte PV-Anlage erneuern | Ökovolt",
       description: "PV-Anlage erweitern, Module oder Wechselrichter tauschen, Speicher integrieren: Ökovolt bringt Ihre bestehende Solaranlage auf den neuesten Stand!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
 
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Repowering & PV-Anlage erweitern vom Profi | Ökovolt",
+        title: "Repowering Photovoltaik – alte PV-Anlage erneuern | Ökovolt",
         description: "PV-Anlage erweitern, Module oder Wechselrichter tauschen, Speicher integrieren: Ökovolt bringt Ihre bestehende Solaranlage auf den neuesten Stand!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Repowering" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Repowering & PV-Anlage erweitern vom Profi | Ökovolt",
+        title: "Repowering Photovoltaik – alte PV-Anlage erneuern | Ökovolt",
         description: "PV-Anlage erweitern, Module oder Wechselrichter tauschen, Speicher integrieren: Ökovolt bringt Ihre bestehende Solaranlage auf den neuesten Stand!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -92,12 +94,12 @@ export async function generateMetadata() {
   // Process keywords - use API keywords if available, otherwise fallback
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
 
-  const title = "Repowering & PV-Anlage erweitern vom Profi | Ökovolt";
+  const title = "Repowering Photovoltaik – alte PV-Anlage erneuern | Ökovolt";
   const description = "PV-Anlage erweitern, Module oder Wechselrichter tauschen, Speicher integrieren: Ökovolt bringt Ihre bestehende Solaranlage auf den neuesten Stand!";
   const canonical = PAGE_URL;
 
   return {
-    title, description, keywords: apiKeywords, alternates: { canonical },
+    title, description, keywords: apiKeywords, alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -153,6 +155,7 @@ export default async function RepoweringPage() {
       <SixSection data={data} />
       <RepoweringSection data={data} />
       <ThirdCardSection data={data} />
+      <Querverweise pfad="/service/repowering" />
       <EndSection />
     </div>
   );

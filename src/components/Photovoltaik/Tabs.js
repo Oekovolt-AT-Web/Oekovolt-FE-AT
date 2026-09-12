@@ -1,139 +1,137 @@
 "use client";
-import React, { useState } from "react";
+
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 
+import Fliesstext from "@/components/Reusable/Fliesstext";
+
+const schluessel = (t) => t?.title?.toLowerCase().replace(/\s+/g, "") || "";
+
+/**
+ * Zielgruppen-Tabs (Privathaushalte, Mehrfamilienhäuser, Landwirtschaft).
+ *
+ * Vorher: Der Inhalt startete per Keyframe-Animation bei opacity 0 und blieb
+ * in Screenshots und bei unterbrochener Animation sichtbar ausgewaschen. Die
+ * Buttons hatten keine Tab-Semantik, Screenreader hörten eine lose Liste.
+ *
+ * Jetzt: echtes WAI-ARIA-Tab-Muster (tablist/tab/tabpanel), Pfeiltasten zum
+ * Wechseln, Inhalt immer voll deckend. Ein Wechsel blendet nur weich über –
+ * und nur, wenn keine reduzierte Bewegung eingestellt ist.
+ */
 export default function Tabs({ data }) {
-  const [activeComponent, setActiveComponent] = useState(
-    data?.first_card_table?.[0]?.title?.toLowerCase().replace(/\s+/g, "") || ""
-  );
+  const tabs = data?.first_card_table ?? [];
+  const [aktiv, setAktiv] = useState(schluessel(tabs[0]));
+  const basis = useId();
+  const refs = useRef([]);
+
+  if (tabs.length === 0) return null;
+
+  const onKey = (e, i) => {
+    let ziel = null;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") ziel = (i + 1) % tabs.length;
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") ziel = (i - 1 + tabs.length) % tabs.length;
+    if (e.key === "Home") ziel = 0;
+    if (e.key === "End") ziel = tabs.length - 1;
+    if (ziel === null) return;
+    e.preventDefault();
+    setAktiv(schluessel(tabs[ziel]));
+    refs.current[ziel]?.focus();
+  };
+
+  const aktuellerTab = tabs.find((t) => schluessel(t) === aktiv) ?? tabs[0];
 
   return (
-    <div className="flex justify-center items-center px-6 md:px-12 overflow-hidden">
-      <main className="flex flex-col lg:flex-row max-w-7xl w-full py-10 md:py-16 pl-0 pr-0 md:pr-10 md:pl-10">
-        {/* Sidebar */}
-        <div className="w-full lg:w-84 bg-white">
-          <nav className="lg:p-4 border border-gray-200">
-            <ul className="space-y-4">
-              {data?.first_card_table?.map((tab) => {
-                const tabKey = tab?.title?.toLowerCase().replace(/\s+/g, "");
-                return (
-                  <li key={tabKey}>
-                    <button
-                      onClick={() => setActiveComponent(tabKey)}
-                      className={`flex items-center w-full p-2 text-left rounded cursor-pointer text-[21px] ${activeComponent === tabKey
-                          ? "bg-gray-100 text-[#669933] font-medium"
-                          : "hover:bg-gray-100 text-gray-800"
-                        }`}
-                    >
-                      <div className="mr-3 w-5 h-5 relative">
-                        <Image
-                          src={tab?.icon ? `/api/image?path=${tab?.icon}` : "/Images/Jobs/jobs3.jpg"}
-                          alt={tab?.alt_text || tab?.title}
-                          fill
-                          sizes="100vw"
-                          className="object-contain"
-                          loading="eager"
-                        />
-                      </div>
-                      {tab?.title}
-                    </button>
+    <section className="mx-auto max-w-7xl px-6 py-14 md:px-12 md:py-20">
+      <div className="mb-10 max-w-2xl">
+        <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.15em] text-[#669933]">
+          Für wen wir bauen
+        </p>
+        <h2 className="text-balance text-[26px] font-semibold leading-tight text-gray-900 md:text-[34px]">
+          Die passende Anlage für jedes Gebäude
+        </h2>
+      </div>
 
-                    {/* Mobile Content - uses CSS animation */}
-                    {activeComponent === tabKey && (
-                      <div className="p-4 mt-2 border-b border-gray-200 lg:hidden animate-slide-down">
-                        <TabContent tab={tab} />
-                      </div>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        </div>
-
-        {/* Right Content (desktop only) */}
-        <div className="hidden lg:flex flex-1 p-8 border border-gray-200">
-          {data?.first_card_table?.map((tab) => {
-            const tabKey = tab?.title?.toLowerCase().replace(/\s+/g, "");
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr] lg:gap-12">
+        {/* Tab-Leiste: mobil horizontal scrollbar, ab lg als Spalte */}
+        <div
+          role="tablist"
+          aria-label="Zielgruppen"
+          aria-orientation="vertical"
+          className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0"
+        >
+          {tabs.map((tab, i) => {
+            const k = schluessel(tab);
+            const ist = k === aktiv;
             return (
-              activeComponent === tabKey && (
-                <div
-                  key={`desktop-${tabKey}`}
-                  className="w-full animate-slide-in-right"
+              <button
+                key={k}
+                ref={(el) => (refs.current[i] = el)}
+                id={`${basis}-tab-${k}`}
+                role="tab"
+                type="button"
+                aria-selected={ist}
+                aria-controls={`${basis}-panel`}
+                tabIndex={ist ? 0 : -1}
+                onClick={() => setAktiv(k)}
+                onKeyDown={(e) => onKey(e, i)}
+                className={`flex shrink-0 items-center gap-3 rounded-xl border px-4 py-3.5 text-left text-[16px] transition-colors lg:w-full ${
+                  ist
+                    ? "border-[#669933] bg-[#f0f7e6] font-semibold text-[#3f6b1a]"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`relative h-9 w-9 shrink-0 rounded-lg p-1.5 ${ist ? "bg-white" : "bg-gray-50"}`}
                 >
-                  <TabContent tab={tab} />
-                </div>
-              )
+                  <span className="relative block h-full w-full">
+                    <Image
+                      src={tab?.icon ? `/api/image?path=${tab.icon}` : "/Images/Jobs/jobs3.jpg"}
+                      alt=""
+                      fill
+                      sizes="36px"
+                      className="object-contain"
+                    />
+                  </span>
+                </span>
+                <span className="whitespace-nowrap">{tab?.title}</span>
+              </button>
             );
           })}
         </div>
-      </main>
 
-      {/* Add CSS animations */}
-      <style jsx>{`
-        @keyframes slideDown {
-          0% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        
-        @keyframes slideInRight {
-          0% {
-            opacity: 0;
-            transform: translateX(30px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        
-        .animate-slide-down {
-          animation: slideDown 0.3s ease-out forwards;
-        }
-        
-        .animate-slide-in-right {
-          animation: slideInRight 0.3s ease-out forwards;
-        }
-      `}</style>
-    </div>
-  );
-}
-
-// Dynamic content component
-function TabContent({ tab }) {
-  return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-10 tracking-wide inline-block relative">
-        {tab?.card_title}
-      </h2>
-      <hr className="w-70 h-1 bg-[#669933] text-[#669933] mt-[-30px] mb-5"></hr>
-
-      {/* Image container: relative with fixed height */}
-      <div className="relative w-full h-[400px] mb-6 flex justify-start">
-        <Image
-          src={tab?.card_image ? `/api/image?path=${tab?.card_image}` : "/Images/Jobs/jobs3.jpg"}
-          alt={tab?.card_alt_text || tab?.card_title}
-          fill
-          sizes="100vw"
-          quality={100}
-          className="object-cover object-center"
-          loading="eager"
-        />
+        {/* Panel */}
+        <div
+          id={`${basis}-panel`}
+          role="tabpanel"
+          aria-labelledby={`${basis}-tab-${aktiv}`}
+          tabIndex={0}
+          key={aktiv}
+          className="ov-tab-panel overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm"
+        >
+          <div className="relative aspect-[16/8] w-full bg-gray-100">
+            <Image
+              src={aktuellerTab?.card_image ? `/api/image?path=${aktuellerTab.card_image}` : "/Images/Jobs/jobs3.jpg"}
+              alt={aktuellerTab?.card_alt_text || aktuellerTab?.card_title || ""}
+              fill
+              sizes="(min-width: 1024px) 860px, 100vw"
+              quality={80}
+              className="object-cover object-center"
+            />
+          </div>
+          <div className="p-6 md:p-9">
+            <h3 className="mb-4 text-balance text-[22px] font-semibold leading-snug text-gray-900 md:text-[26px]">
+              {aktuellerTab?.card_title}
+            </h3>
+            {/* Fliesstext gliedert den Backoffice-Text an Satzgrenzen – er kam
+                als ein ungegliederter Block von über 500 Zeichen. */}
+            <Fliesstext
+              text={aktuellerTab?.card_description}
+              absatzClassName="text-[16px] leading-relaxed text-gray-600 md:text-[17px]"
+            />
+          </div>
+        </div>
       </div>
-
-      <div className="space-y-3">
-        {tab?.card_description?.split("\n\n").map((paragraph, index) => (
-          <p key={index} className="text-gray-800 text-[18px]">
-            {paragraph}
-          </p>
-        ))}
-      </div>
-    </div>
+    </section>
   );
 }

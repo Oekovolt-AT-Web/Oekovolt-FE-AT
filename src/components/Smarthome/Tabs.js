@@ -127,7 +127,7 @@ function TabContent({ tab }) {
           src={tab?.card_image ? `/api/image?path=${tab.card_image}` : "/Images/Jobs/jobs3.jpg"}
           alt={tab?.card_alt_text || tab?.card_title}
           fill
-          quality={100}
+          quality={80}
           loading="eager"
           className="object-cover object-center"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"

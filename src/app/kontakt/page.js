@@ -2,14 +2,13 @@ import ContactSection from "@/components/Kontakt/address";
 import ContactForm from "@/components/Kontakt/contactForm";
 import Map from "@/components/Kontakt/map";
 import TeamBanner from "@/components/Reusable/teamBanner";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
-  alternates: {
-    canonical: "https://www.oekovolt.de/kontakt",
-  },
+  alternates: { canonical: "https://www.oekovolt.de/kontakt", languages: hreflangLanguages("https://www.oekovolt.de/kontakt") },
   title: "Kontakt | Ökovolt Deutschland",
   description:
-    "Kontaktieren Sie ÖKOVOLT Deutschland für professionelle Beratung und Unterstützung rund um Photovoltaik-Lösungen. Erreichen Sie uns per Telefon, E-Mail oder über unser Kontaktformular. Wir sind Montag bis Freitag für Sie da.",
+    "Ökovolt Türkheim: Beratung zu Photovoltaik, Speicher und Wärmepumpe. Telefon, E-Mail oder Kontaktformular – Montag bis Freitag für Sie da.",
   keywords: [
     "Kontakt ÖKOVOLT",
     "ÖKOVOLT Anfrage",

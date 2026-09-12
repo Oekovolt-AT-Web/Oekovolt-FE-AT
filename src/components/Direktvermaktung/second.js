@@ -19,7 +19,7 @@ const HeroEnergy = ({ data }) => {
             className="rounded-tl-[140px] w-full h-auto"
             width={570}
             height={300}
-            quality={100}
+            quality={80}
 
           />
         </div>
@@ -49,7 +49,7 @@ const HeroEnergy = ({ data }) => {
             src="/Images/Jobs/solar.png"
             alt="Solar Icon"
             fill
-            quality={100}
+            quality={80}
 
             className="object-contain"
             sizes=" 100vw"

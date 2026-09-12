@@ -2,6 +2,7 @@
 import Navbar from "@/components/Navbar/navbar";
 import Footer from "@/components/Reusable/footer";
 import dynamic from "next/dynamic";
+import EmailChangeNotice from "./EmailChangeNotice";
 
 // const GoogleTagManager = dynamic(
 //   () => import("@next/third-parties/google").then((m) => m.GoogleTagManager),
@@ -17,6 +18,7 @@ export default function LayoutWrapper({ children }) {
       {/* <GoogleTagManager gtmId="GTM-WR8PDT7V" /> */}
       <Navbar />
       <main id="main-content">{children}</main>
+      <EmailChangeNotice />
       <CookieComponentLazy />
       <Footer />
       <ToTopButtonLazy />

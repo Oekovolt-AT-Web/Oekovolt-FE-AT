@@ -1,12 +1,10 @@
 import PrivacyPolicy from "@/components/Datenschutz/datenschutz";
 import BannerSection from "@/components/Reusable/banner";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
-  alternates: {
-    canonical: "https://www.oekovolt.de/datenschutz",
-
-  },
+  alternates: { canonical: "https://www.oekovolt.de/datenschutz", languages: hreflangLanguages("https://www.oekovolt.de/datenschutz") },
   title: "Datenschutzerklärung | Ökovolt GmbH Solartechnik",
   description:
     "Datenschutz bei Ökovolt: Erfahren Sie, wie wir Ihre personenbezogenen Daten schützen, verarbeiten und welche Rechte Ihnen nach DSGVO zustehen.",

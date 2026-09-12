@@ -1,53 +1,85 @@
-import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
+/**
+ * Projektablauf.
+ *
+ * Vorher: sechs gleichwertige Karten ohne Nummer – ein Ablauf, dessen
+ * Reihenfolge man sich selbst zusammenreimen musste, und am Ende kein
+ * Hinweis, wie man anfängt.
+ *
+ * Jetzt: nummerierte Schritte als geordnete Liste (auch für Screenreader als
+ * Reihenfolge erkennbar), eine Verbindungslinie auf schmalen Displays und ein
+ * klarer Einstieg in Schritt 1. Texte und Icons bleiben aus dem Backoffice.
+ */
+export default function ProcessSteps({ data }) {
+  const schritte = data?.fourth_card_information_table ?? [];
+  if (schritte.length === 0) return null;
 
-const ProcessSteps = ({ data }) => {
   return (
-    <section className="relative bg-[#f7f7f7] px-6 md:px-12 py-10 md:py-16 overflow-hidden">
-      <div className="max-w-6xl mx-auto text-center mb-16">
-        <h2 className="text-[#669933] uppercase font-semibold tracking-wide inline-block relative text-lg">
-          {data.fourth_card_title}
-          <span className="absolute left-0 right-0 bottom-0 h-0.5 bg-[#669933] mt-1"></span>
-        </h2>
-        <h2 className="text-3xl font-bold text-gray-800 mt-6">
-          {data.fourth_card_subtitle}
+    <section className="mx-auto max-w-7xl px-6 py-14 md:px-12 md:py-20">
+      <div className="mx-auto mb-14 max-w-2xl text-center">
+        <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.15em] text-[#669933]">
+          {data?.fourth_card_title || "Projektablauf"}
+        </p>
+        <h2 className="text-balance text-[26px] font-semibold leading-tight text-gray-900 md:text-[34px]">
+          {data?.fourth_card_subtitle || "In sechs Schritten zur eigenen PV-Anlage"}
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 max-w-6xl mx-auto">
-        {data.fourth_card_information_table.map((step) => (
-          <div
-            key={step.title}
-            className="relative bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:border-[#669933] transition duration-300"
-          >
-            <div className="absolute -top-5 left-6 bg-[#669933] text-white rounded-full w-13 h-13 flex items-center justify-center shadow-md ring-4 ring-white text-sm font-bold z-10">
-              <Image
-                src={step.image ? `/api/image?path=${step.image}` : "/Images/Jobs/jobs3.jpg"}
-                alt={step.alt_text}
-                width={25}
-                height={25}
-                className="object-cover"
-              />
+      <ol className="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        {schritte.map((schritt, i) => (
+          <li key={schritt.title || i} className="relative flex gap-5">
+            {/* Nummer + Icon; die senkrechte Linie verbindet die Schritte
+                auf schmalen Displays, wo sie untereinander stehen. */}
+            <div className="flex flex-col items-center">
+              <span className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#669933] shadow-md ring-4 ring-white">
+                <Image
+                  src={schritt.image ? `/api/image?path=${schritt.image}` : "/Images/Jobs/jobs3.jpg"}
+                  alt=""
+                  width={26}
+                  height={26}
+                  className="object-contain"
+                />
+                <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[#003473] text-[11px] font-bold tabular-nums text-white ring-2 ring-white">
+                  {i + 1}
+                </span>
+              </span>
+              {i < schritte.length - 1 && (
+                <span aria-hidden="true" className="mt-3 w-px flex-1 bg-gradient-to-b from-[#669933]/40 to-transparent sm:hidden" />
+              )}
             </div>
 
-            {/* <div className="mb-5 mt-5">
-              <div className="w-12 h-12 flex items-center justify-center bg-[#669933] rounded-xl shadow-lg">
-                {step.icon}
-              </div>
-            </div> */}
-
-            <h4 className="text-xl font-semibold text-gray-800 mb-3 mt-5">
-              {step.title}
-            </h4>
-            <p className="text-gray-600 leading-relaxed text-[15px]">
-              {step.description}
-            </p>
-          </div>
+            <div className="pb-2">
+              <p className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-gray-400">
+                Schritt {i + 1}
+              </p>
+              <h3 className="mb-2 text-[19px] font-semibold text-gray-900">{schritt.title}</h3>
+              <p className="text-[15px] leading-relaxed text-gray-600">{schritt.description}</p>
+            </div>
+          </li>
         ))}
+      </ol>
+
+      <div className="mt-14 flex flex-col items-center justify-between gap-5 rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm sm:flex-row sm:text-left md:p-8">
+        <div>
+          <p className="text-[18px] font-semibold text-gray-900">
+            Schritt 1 liegt bei Ihnen
+          </p>
+          <p className="mt-1 text-[15px] text-gray-600">
+            Schicken Sie uns Ihre Anfrage – alles Weitere übernehmen wir.
+          </p>
+        </div>
+        <Link
+          href="/kontakt"
+          className="inline-flex shrink-0 items-center gap-2 rounded-md px-7 py-3.5 text-[14px] font-semibold uppercase tracking-wide text-white transition-colors hover:bg-[#558822]"
+          style={{ backgroundColor: "#669933" }}
+        >
+          Anfrage starten
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
       </div>
     </section>
   );
-};
-
-export default ProcessSteps;
+}

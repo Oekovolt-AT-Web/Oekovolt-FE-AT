@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Fliesstext from "@/components/Reusable/Fliesstext";
 
 const HeroStromspeicher = ({ data }) => {
 
@@ -19,7 +20,7 @@ const HeroStromspeicher = ({ data }) => {
             className="rounded-tl-[140px] w-full h-auto"
             width={570}
             height={300}
-            quality={100}
+            quality={80}
             loading="eager"
           />
         </div>
@@ -32,9 +33,10 @@ const HeroStromspeicher = ({ data }) => {
         <div className="relative pl-4 text-gray-600">
           <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-[#669933] to-[#003473]" />
           <div className="pl-4">
-            <p className="text-gray-700 whitespace-pre-line">
-              {data.strom_first_card_description}
-            </p>
+            <Fliesstext
+              text={data.strom_first_card_description}
+              absatzClassName="text-gray-700"
+            />
 
           </div>
         </div>
@@ -47,7 +49,7 @@ const HeroStromspeicher = ({ data }) => {
             src="/Images/Jobs/solar.png"
             alt="Solar Icon"
             fill
-            quality={100}
+            quality={80}
             loading="eager"
             className="object-contain"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

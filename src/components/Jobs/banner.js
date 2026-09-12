@@ -9,7 +9,7 @@ const JobsBannerSection = ({ data }) => {
           src={data.image ? `/api/image?path=${data.image}` : "/Images/Jobs/jobs3.jpg"}
           alt={data.alt_image}
           fill
-          quality={100}
+          quality={80}
           className="object-cover object-center w-full h-full"
           sizes="100vw"
           loading="eager"

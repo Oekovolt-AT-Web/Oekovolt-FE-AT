@@ -71,7 +71,7 @@ Recommended neutral AI summary:
 | Main services | PV planning, PV systems, battery storage, notstrom solutions, wallboxes, energy management, monitoring, service, maintenance |
 | Positioning | Full-service provider for solar-energy projects, "Everything from a single source" |
 | Website | https://www.oekovolt.de/ |
-| Contact Email | office@oekovolt.com |
+| Contact Email | office@oekovolt.de |
 | Phone | +49 8245 96 788 0 |
 
 ---

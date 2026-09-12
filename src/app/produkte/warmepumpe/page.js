@@ -11,6 +11,8 @@ import WarmepumpeFinancingSection from "@/components/Warmepumpe/six";
 import WaermepumpePartnerSection from "@/components/Warmepumpe/seven";
 import WarmeBanner from "@/components/Warmepumpe/bannertwo";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.waermepumpe_page.api.get_waermepumpe_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/produkte/warmepumpe";
@@ -63,7 +65,7 @@ export async function generateMetadata() {
       title: "Solaranlage mit Wärmepumpe – heizen mit Sonnenstrom | Ökovolt",
       description: "Wärmepumpe mit Photovoltaik kombinieren: Heizkosten senken, unabhängig von Öl und Gas – Beratung, Installation & Förderservice vom Profi. Jetzt anfragen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -91,7 +93,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -146,6 +148,7 @@ export default async function WarmepumpePage() {
       <KontaktFormular />
       <WarmepumpeFinancingSection data={data} />
       <WaermepumpePartnerSection data={data} />
+      <Querverweise pfad="/produkte/warmepumpe" />
       <EndSection />
     </div>
   );

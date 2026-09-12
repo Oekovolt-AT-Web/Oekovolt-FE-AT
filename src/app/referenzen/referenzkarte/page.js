@@ -11,6 +11,8 @@ import ReferenzkarteBannerSection from "@/components/Referenzkarte/banner";
 import EndSection from "@/components/Reusable/end";
 import ReferenzkarteBenefitsLayout from "@/components/Referenzkarte/newsection";
 import ReferenzkarteTechnologySection from "@/components/Referenzkarte/endsection";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzstandorde_page.api.get_referenzstandorde_page`;
 const RK_PAGE_URL = "https://www.oekovolt.de/referenzen/referenzkarte";
@@ -69,7 +71,7 @@ export async function generateMetadata() {
       title: "Referenzstandorte – Eigenverbrauch maximieren | Ökovolt",
       description: "Unsere Referenzstandorte: Photovoltaikanlagen für Privathaushalte in ganz Deutschland – mit Speicher, Wärmepumpe und Wallbox den Eigenverbrauch maximieren. ",
       keywords: defaultKeywords,
-      alternates: { canonical: RK_PAGE_URL, },
+      alternates: { canonical: RK_PAGE_URL, languages: hreflangLanguages(RK_PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -102,7 +104,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -154,6 +156,7 @@ export default async function ReferenzkarteSeite() {
       <MapContainer data={data} />
       <ReferenzkarteBenefitsLayout data={data} />
       <ReferenzkarteTechnologySection data={data} />
+      <Querverweise pfad="/referenzen/referenzkarte" />
       <EndSection />
     </div>
   );

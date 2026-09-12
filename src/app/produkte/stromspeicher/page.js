@@ -8,6 +8,9 @@ import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 import StromSecondCardSection from "@/components/stromspeicher/second";
 import StromThirdCardSection from "@/components/stromspeicher/third";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/produkte/stromspeicher";
@@ -57,23 +60,23 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+      title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
       description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
 
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+        title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
         description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
         images: [{ url: "https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt",
+        title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
         description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
         images: ["https://www.oekovolt.de/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -81,14 +84,14 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = "Batteriespeicher für Solaranlagen – auch zum Nachrüsten | Ökovolt";
+  const title = "Stromspeicher für Photovoltaik nachrüsten | Ökovolt";
   const description ="Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -147,6 +150,11 @@ export default async function StromspeicherPage() {
       <FeaturedLogos data={data} />
       <StromSecondCardSection data={data} />
       <StromThirdCardSection data={data} />
+      <SolarrechnerTeaser
+        titel="Lohnt sich ein Speicher für Sie?"
+        text="Rechnen Sie mit und ohne Speicher durch – der Rechner zeigt, wie sich Autarkie und Amortisation verschieben."
+      />
+      <Querverweise pfad="/produkte/stromspeicher" />
       <EndSection data={endd} />
     </div>
   );

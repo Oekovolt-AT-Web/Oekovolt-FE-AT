@@ -5,6 +5,8 @@ import TaxTreatmentPV from "@/components/Forderungen/Steuerlich/second";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import React from "react";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.steuerlich.api.get_steuerlich_data`;
 
@@ -52,7 +54,7 @@ export async function generateMetadata() {
   if (!data) {
     // Fallback metadata if API fails
     return {
-      title: "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt",
+      title: "PV-Anlage steuerfrei: Nullsteuersatz & Vorteile | Ökovolt",
       description: "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.",
       keywords: [
         "PV-Anlage steuerfrei",
@@ -62,13 +64,11 @@ export async function generateMetadata() {
         " Nullsteuersatz Photovoltaik",
         " Photovoltaikanlage Steuererklärung", "Jahressteuergesetz 2022", "Ökovolt"
       ],
-      alternates: {
-        canonical: "https://www.oekovolt.de/forderungen/steuerlich",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/forderungen/steuerlich", languages: hreflangLanguages("https://www.oekovolt.de/forderungen/steuerlich") },
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/forderungen/steuerlich",
-        title: "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt",
+        title: "PV-Anlage steuerfrei: Nullsteuersatz & Vorteile | Ökovolt",
         description: "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.",
         images: [
           {
@@ -82,7 +82,7 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "PV-Anlage steuerfrei – Nullsteuersatz & Steuervorteile | Ökovolt";
+  const title = "PV-Anlage steuerfrei: Nullsteuersatz & Vorteile | Ökovolt";
   const description = "PV-Anlage steuerfrei betreiben: Nullsteuersatz, Einkommensteuerbefreiung und Steuererklärung einfach erklärt – für private Photovoltaikanlagen in Deutschland.";
 
   return {
@@ -96,9 +96,7 @@ export async function generateMetadata() {
       " Nullsteuersatz Photovoltaik",
       " Photovoltaikanlage Steuererklärung", "Jahressteuergesetz 2022", "Ökovolt"
     ],
-    alternates: {
-      canonical: "https://www.oekovolt.de/forderungen/steuerlich",
-    },
+    alternates: { canonical: "https://www.oekovolt.de/forderungen/steuerlich", languages: hreflangLanguages("https://www.oekovolt.de/forderungen/steuerlich") },
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/forderungen/steuerlich",
@@ -150,6 +148,7 @@ export default async function Steuerlich() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <SteuerlichBannerSection data={data?.banner} />
       <TaxTreatmentPV data={data?.body} />
+      <Querverweise pfad="/forderungen/steuerlich" />
       <EndSection />
     </div>
   );

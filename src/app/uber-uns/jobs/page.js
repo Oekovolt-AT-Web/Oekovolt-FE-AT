@@ -9,6 +9,8 @@ import JobsInfoSection from "@/components/Jobs/info";
 import JobsBenefitsLayout from "@/components/Jobs/newsection";
 import JobsTechnologySection from "@/components/Jobs/jobssection";
 import JobsAnotherDesign from "@/components/Jobs/endsection";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.jobs_page.api.get_jobs_de`;
 const JOBS_LIST_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
@@ -98,7 +100,7 @@ export async function generateMetadata() {
       title: "Jobs & Karriere in der Photovoltaik | Ökovolt",
       description: "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!",
       keywords: defaultKeywords,
-      alternates: { canonical: JOBS_PAGE_URL, },
+      alternates: { canonical: JOBS_PAGE_URL, languages: hreflangLanguages(JOBS_PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -130,7 +132,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: JOBS_PAGE_URL, },
+    alternates: { canonical: JOBS_PAGE_URL, languages: hreflangLanguages(JOBS_PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -209,6 +211,7 @@ export default async function JobsPage() {
       <JobsTechnologySection data={data} />
       <JobsInfo data={data} />
       <JobsAnotherDesign data={data} />
+      <Querverweise pfad="/uber-uns/jobs" />
       <EndSection />
     </div>
   );

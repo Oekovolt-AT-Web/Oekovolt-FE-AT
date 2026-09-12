@@ -6,7 +6,7 @@ const ServicesBanner = ({ data }) => {
   return (
     <div className="bg-white px-6 md:px-12  z-16 ">
       <div className="max-w-7xl mx-auto ">
-        <div className="relative z-20 bg-white mt-[-100px] shadow-[0px_20px_20px_-10px_rgba(0,0,0,0.5)] p-6 md:p-10">
+        <div className="relative z-20 bg-white mt-[-24px] md:mt-[-100px] shadow-[0px_20px_20px_-10px_rgba(0,0,0,0.5)] p-6 md:p-10">
           <div className="grid grid-cols-1 lg:grid-cols-3  md:grid-cols-1 gap-10 animate-fadeInUp">
             {data.cards.map((card, i) => (
               <div

@@ -6,6 +6,8 @@ import SmarthomeBannerSection from "@/components/Smarthome/banner";
 import VorteileSection from "@/components/Smarthome/Smarthomeloesung";
 import Tabs from "@/components/Smarthome/Tabs";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.smarthome_page.api.get_smarthome_page`;
 
@@ -53,7 +55,7 @@ export async function generateMetadata() {
     // Fallback metadata if API fails
     return {
       title: "Smarthome-Lösungen: Speicher, Wallbox & Smartmeter | Ökovolt",
-      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome", },
+      alternates: { canonical: "https://www.oekovolt.de/dienstleistungen/smarthome", languages: hreflangLanguages("https://www.oekovolt.de/dienstleistungen/smarthome") },
       openGraph: {
         type: "website",
 
@@ -100,7 +102,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -153,6 +155,7 @@ export default async function SmarthomePage() {
       <SmarthomeBannerSection data={data} />
       <Tabs data={data} />
       <VorteileSection data={data} />
+      <Querverweise pfad="/dienstleistungen/smarthome" />
       <EndSection />
     </div>
   );

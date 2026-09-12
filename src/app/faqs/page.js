@@ -4,6 +4,8 @@ import SolarInfoAccordion from "@/components/Faqs/faqs";
 import FAQInfoSection from "@/components/Faqs/info";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.faqs_page.api.get_faqs_page`;
 const PAGE_URL = "https://www.oekovolt.de/faqs";
@@ -54,7 +56,7 @@ export async function generateMetadata() {
       title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
       description: "Antworten auf die häufigsten Fragen zu Photovoltaik: Kosten, Förderung, Installation, Wartung und Service – klar und verständlich erklärt von Ökovolt.",
       keywords: ["Photovoltaik FAQ", "Solaranlagen Fragen", "PV-Anlage Antworten", "Solarenergie Fragen", "Solar Förderung FAQ"],
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -83,7 +85,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -149,6 +151,7 @@ export default async function FaqsPage() {
       <BannerSection data={data} />
       <FAQInfoSection data={data} />
       <SolarInfoAccordion data={data} />
+      <Querverweise pfad="/faqs" />
       <EndSection />
     </div>
   );

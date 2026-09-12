@@ -87,27 +87,40 @@ export default function SolutionsPage({ data }) {
       </FadeInView>
 
       {/* Stats Section */}
+      {/* Zahlenband. Das ist der stärkste Vertrauensbeleg der Startseite und
+          war bisher der visuell schwächste Block: nackte Zahlen auf Weiss.
+          Jetzt als eigenes Band mit Trennern und Icon-Badges.
+          Behoben: toLocaleString() lief ohne Locale und gab "4,081" statt
+          "4.081" aus; die Einheit klebte ohne Abstand am Wert. */}
       <div
         ref={countersRef}
-        className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-8 lg:mb-12 relative pb-10"
+        className="relative mb-10 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm lg:mb-12"
       >
-        {stats.map((item, i) => (
-          <FadeInView
-            key={i}
-            direction="bottom"
-            distance={30}
-            duration={800}
-            delay={i * 200} // 0ms, 200ms, 400ms stagger effect
-            className="text-center"
-          >
-            <div className="flex justify-center mb-2">{item.icon}</div>
-            <div className="text-[40px] font-medium text-[#669933] mb-2">
-              {counters[i]?.toLocaleString()}
-              {item.suffix && <span>{item.suffix}</span>}
-            </div>
-            <p className="text-black text-[18px]">{item.label}</p>
-          </FadeInView>
-        ))}
+        <div className="grid grid-cols-1 divide-y divide-gray-200 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          {stats.map((item, i) => (
+            <FadeInView
+              key={i}
+              direction="bottom"
+              distance={24}
+              duration={700}
+              delay={i * 150}
+              className="px-6 py-8 text-center md:py-10"
+            >
+              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#f0f7e6]">
+                {item.icon}
+              </span>
+              <div className="mb-1 text-[34px] font-semibold leading-none tabular-nums text-[#669933] md:text-[42px]">
+                {counters[i]?.toLocaleString("de-DE")}
+                {item.suffix && (
+                  <span className="ml-1 text-[20px] font-medium md:text-[24px]">
+                    {item.suffix}
+                  </span>
+                )}
+              </div>
+              <p className="text-[15px] text-gray-600 md:text-[16px]">{item.label}</p>
+            </FadeInView>
+          ))}
+        </div>
       </div>
     </div>
   );

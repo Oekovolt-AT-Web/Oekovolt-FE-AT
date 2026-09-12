@@ -9,6 +9,8 @@ import Vorteil from "@/components/Project/vorteile";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { generateSlug } from "@/lib/slugify";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
 const PROJECTS_API = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
@@ -89,23 +91,23 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Referenzen: Photovoltaik-Projekte von Ökovolt",
+      title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt",
       description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
 
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
-        title: "Referenzen: Photovoltaik-Projekte von Ökovolt ",
+        title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
         description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Referenzen: Photovoltaik-Projekte von Ökovolt ",
+        title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
         description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"]
       },
@@ -113,14 +115,14 @@ export async function generateMetadata() {
   }
 
   const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = "Referenzen: Photovoltaik-Projekte von Ökovolt";
+  const title = "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt";
   const description = "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!";
 
   return {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -191,6 +193,7 @@ export default async function ProjektePage() {
       <ProjekteBenefitsLayout data={data} />
       <Vorteil data={data} />
       <ProjekteAnotherDesign data={data} />
+      <Querverweise pfad="/referenzen/projekte" />
       <EndSection />
     </div>
   );

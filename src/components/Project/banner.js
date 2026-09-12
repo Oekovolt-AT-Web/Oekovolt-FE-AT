@@ -12,7 +12,7 @@ const ProjekteBannerSection = ({ data }) => {
           alt={data.alt_image}
           fill
           sizes="(max-width: 450px) 100vw, (max-width: 768px) 50vw, 50vw"
-          quality={100}
+          quality={80}
           className="object-cover w-full h-full object-center"
           loading="eager"
           style={{

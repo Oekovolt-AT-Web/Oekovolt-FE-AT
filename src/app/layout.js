@@ -1,16 +1,17 @@
 import "./globals.css";
+import { Open_Sans } from "next/font/google";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
-// import { Open_Sans } from "next/font/google";
 
-// const openSans = Open_Sans({
-//   subsets: ["latin"],
-//   weight: ["400", "500", "600", "700"],
-//   display: "swap",
-//   variable: "--font-open-sans",
-//   preload: true,
-//   fallback: ["system-ui", "arial"],
-
-// });
+// globals.css deklarierte "Open Sans", ohne dass die Schrift je geladen wurde -
+// die Seite lief auf der jeweiligen System-Schrift des Besuchers. next/font
+// hostet sie selbst (kein Google-Request beim Nutzer) und setzt font-display:swap.
+const openSans = Open_Sans({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-open-sans",
+  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
+});
 
 const BASE_URL = "https://www.oekovolt.de";
 
@@ -67,7 +68,7 @@ const siteSchema = {
         },
       ],
       telephone: "+49-8245-96788-0",
-      email: "office@oekovolt.com",
+      email: "office@oekovolt.de",
       priceRange: "€€",
       currenciesAccepted: "EUR",
       paymentAccepted: "Cash, Credit Card, Bank Transfer",
@@ -236,7 +237,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="de" dir="ltr">
+    <html lang="de" dir="ltr" className={openSans.variable}>
       <head>
         {/* Resource hints */}
         {/* <link rel="dns-prefetch" href="https://unpkg.com" /> */}

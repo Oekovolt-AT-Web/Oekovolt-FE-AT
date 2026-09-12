@@ -7,6 +7,8 @@ import MieterstromSection from "@/components/Mieterstrom/second";
 import MieterstromBenefits from "@/components/Mieterstrom/third";
 import MieterstromThirdSection from "@/components/Mieterstrom/fourth";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.mieterstrom_page.api.get_mieterstrom_page_with_keywords`;
 
@@ -65,9 +67,7 @@ export async function generateMetadata() {
       title: "Mieterstrom Modell – PV-Anlage fürs Mehrfamilienhaus | Ökovolt",
       description: "Mieterstrom mit Ökovolt: PV-Anlage, Messtechnik und Abrechnung als Komplettservice für Ihr Mehrfamilienhaus – Mehrwert für Sie, günstiger Strom für Ihre Mieter.",
       keywords: defaultKeywords,
-      alternates: {
-        canonical: "https://www.oekovolt.de/produkte/mieterstrom",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/mieterstrom", languages: hreflangLanguages("https://www.oekovolt.de/produkte/mieterstrom") },
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/mieterstrom",
@@ -90,7 +90,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -150,6 +150,7 @@ export default async function MieterstromPage() {
       <MieterstromSection data={data} />
       <MieterstromBenefits data={data} />
       <MieterstromThirdSection data={data} />
+      <Querverweise pfad="/produkte/mieterstrom" />
       <EndSection />
     </div>
   );

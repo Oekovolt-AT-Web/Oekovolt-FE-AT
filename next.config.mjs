@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Ausgabeverzeichnis umschaltbar: Der Produktionsserver (next start) liest
+  // dauerhaft aus .next. Ein Build oder ein zweiter Dev-Server im selben
+  // Verzeichnis zieht ihm die Dateien unter den Fuessen weg -> 500er.
+  // Mit NEXT_DIST_DIR=.next-verify laeuft beides gefahrlos nebeneinander.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   trailingSlash: false,
   compress: true,
   poweredByHeader: false,
@@ -14,20 +19,61 @@ const nextConfig = {
         permanent: true,
       },
 
-      // Redirectet e tjera pa ndryshime
+      // HINWEIS: trailingSlash ist false -> Next normalisiert "/x/" zu "/x",
+      // BEVOR diese Redirects ausgewertet werden. Alle Quellen daher OHNE
+      // abschliessenden Slash notieren, sonst greifen sie nie.
+
+      // --- Alte WordPress-Projektseiten (Referenzen) ---
+      {
+        source: "/ravensburg-flachdach",
+        destination: "/referenzen/projekte/ravensburg-flachdach",
+        permanent: true,
+      },
+      {
+        source: "/buchloe-einfamilienhaus-satteldach",
+        destination: "/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
+        permanent: true,
+      },
+      {
+        source: "/mering-flachdach-ost-west",
+        destination: "/referenzen/projekte/mering-flachdach-ost-west",
+        permanent: true,
+      },
+      {
+        source: "/salzburg-flachdach-blechfalzdach",
+        destination: "/referenzen/projekte/salzburg-flachdach-blechfalzdach",
+        permanent: true,
+      },
+      {
+        source: "/bad-woerishofen-flachdach-fassadenanlage",
+        destination: "/referenzen/projekte",
+        permanent: true,
+      },
+      {
+        source: "/mindelheim-3",
+        destination: "/referenzen/projekte",
+        permanent: true,
+      },
+      {
+        source: "/logwin-solution-austria-gmbh-traiskirchen-wien",
+        destination: "/referenzen/projekte",
+        permanent: true,
+      },
+
+      // --- Foerderungen: Schreibfehler "ostallgau" -> "ostallgaeu" ---
+      // generateSlug() bildet "Ostallgaeu" aus "Ostallgäu" (ae/oe/ue).
+      {
+        source:
+          "/forderungen/landesforderungen/landesfoerderungen-in-bayern-landkreis-ostallgau",
+        destination:
+          "/forderungen/landesforderungen/landesfoerderungen-in-bayern-landkreis-ostallgaeu",
+        permanent: true,
+      },
+
+      // --- Alte Einzelseiten ---
       {
         source: "/jobs",
         destination: "/uber-uns/jobs",
-        permanent: true,
-      },
-      {
-        source: "/faqs/",
-        destination: "/faqs",
-        permanent: true,
-      },
-      {
-        source: "/service",
-        destination: "/dienstleistungen/photovoltaik",
         permanent: true,
       },
       {
@@ -36,34 +82,73 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/ravensburg-flachdach/",
-        destination: "/referenzen/projekte/ravensburg-flachdach",
+        source: "/smarthome",
+        destination: "/dienstleistungen/smarthome",
         permanent: true,
       },
       {
-        source: "/buchloe-einfamilienhaus-satteldach/",
-        destination: "/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
+        source: "/contact",
+        destination: "/kontakt",
+        permanent: true,
+      },
+
+      // --- Kategorie-Einstiege ohne eigene Seite ---
+      {
+        source: "/service",
+        destination: "/dienstleistungen/photovoltaik",
         permanent: true,
       },
       {
-        source: "/mering-flachdach-ost-west/",
-        destination: "/referenzen/projekte/mering-flachdach-ost-west",
+        source: "/dienstleistungen",
+        destination: "/dienstleistungen/photovoltaik",
         permanent: true,
       },
       {
-        source: "/salzburg-flachdach-blechfalzdach/",
-        destination: "/referenzen/projekte/salzburg-flachdach-blechfalzdach",
+        source: "/produkte",
+        destination: "/produkte/photovoltaikanlage",
+        permanent: true,
+      },
+
+      // --- Generische WordPress-Strukturen (Wildcards zuletzt) ---
+      // ":x*" matcht auch null Segmente, deckt also "/team" bzw. "/referenz" mit ab.
+      {
+        source: "/team/:member*",
+        destination: "/uber-uns/team",
         permanent: true,
       },
       {
-        source: "/bad-woerishofen-flachdach-fassadenanlage/",
+        source: "/ueber-uns/:path*",
+        destination: "/uber-uns/team",
+        permanent: true,
+      },
+      {
+        source: "/referenz/:slug*",
         destination: "/referenzen/projekte",
+        permanent: true,
+      },
+      {
+        source: "/foerderungen/:path*",
+        destination: "/forderungen/landesforderungen",
         permanent: true,
       },
     ];
   },
 
   images: {
+    // Ab Next.js 16 muessen auch LOKALE Bildquellen freigegeben werden, sonst
+    // liefert der Optimizer sie nicht mehr aus. Der Dev-Server warnt bereits:
+    // "Image with src /api/image?path=... is using a query string which is not
+    //  configured in images.localPatterns."
+    //
+    // Ohne `search` ist jeder Query-String erlaubt - noetig, weil der
+    // Backoffice-Proxy den Dateipfad als ?path= uebergibt (54 Bilder).
+    // `search: ""` wuerde dagegen NUR Aufrufe ohne Query zulassen und damit
+    // genau diese Bilder blockieren.
+    localPatterns: [
+      { pathname: "/api/image" },        // Bilder aus dem Frappe-Backoffice
+      { pathname: "/Images/**" },        // statische Bilder aus /public/Images
+      { pathname: "/**", search: "" },   // uebrige Dateien in /public (Logo etc.)
+    ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 2592000,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

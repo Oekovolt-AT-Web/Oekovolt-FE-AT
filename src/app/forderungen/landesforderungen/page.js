@@ -5,6 +5,8 @@ import ForderungenSection from "@/components/Forderungen/Landes/second";
 import EndSection from "@/components/Reusable/end";
 import React from "react";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_page.api.get_forderungen_page`;
 const LIST_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages`;
@@ -82,7 +84,7 @@ export async function generateMetadata() {
       title: "Photovoltaik Förderung 2026 nach Bundesland | Ökovolt",
       description: "Photovoltaik Förderung und Förderungen für Stromspeicher in allen Bundesländern – neutral, aktuell und verständlich erklärt. Jetzt informieren!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -115,7 +117,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -170,6 +172,7 @@ export default async function Page() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <LandesBannerSection data={data} />
       <ForderungenSection initialData={landesforderungenList} />
+      <Querverweise pfad="/forderungen/landesforderungen" />
       <EndSection />
     </div>
   );

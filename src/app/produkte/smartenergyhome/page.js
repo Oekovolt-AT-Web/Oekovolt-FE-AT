@@ -7,6 +7,8 @@ import ThirdPart from "@/components/smartenergyhome/third";
 import EnergyOfferSection from "@/components/smartenergyhome/fourth";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_energy_home_page.api.get_smart_energy_page_with_keywords`;
 
@@ -61,24 +63,22 @@ export async function generateMetadata() {
   if (!seoData) {
     // Fallback metadata if API fails
     return {
-      title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+      title: "Energiemanagement fürs Eigenheim – Smart Energy Home | Ökovolt",
       description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
 
       keywords: defaultKeywords,
-      alternates: {
-        canonical: "https://www.oekovolt.de/produkte/smartenergyhome",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/produkte/smartenergyhome", languages: hreflangLanguages("https://www.oekovolt.de/produkte/smartenergyhome") },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/produkte/smartenergyhome",
-        title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+        title: "Energiemanagement fürs Eigenheim – Smart Energy Home | Ökovolt",
         description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
         images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
       },
       twitter: {
         card: "summary_large_image",
-        title: "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt",
+        title: "Energiemanagement fürs Eigenheim – Smart Energy Home | Ökovolt",
         description: "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!",
         images: ["/Logo-Oekovolt-Gruen-mit-Weiss.webp"],
       },
@@ -90,7 +90,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/)
     : defaultKeywords;
 
-  const title = "Energiemanagementsystem fürs Eigenheim – Smart Energy Home | Ökovolt";
+  const title = "Energiemanagement fürs Eigenheim – Smart Energy Home | Ökovolt";
   const description = "Das Energiemanagementsystem für Ihr Zuhause: Photovoltaik, Wärmepumpe, E-Auto und Speicher intelligent vernetzt – für maximalen Eigenverbrauch. Jetzt informieren!";
   const canonical = "https://www.oekovolt.de/produkte/smartenergyhome";
 
@@ -98,7 +98,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -159,6 +159,7 @@ export default async function SmartEnergyPage() {
       <SmartEnergySection data={data} />
       <EnergyOfferSection data={data} />
       <ThirdPart data={data} />
+      <Querverweise pfad="/produkte/smartenergyhome" />
       <EndSection />
     </div>
   );

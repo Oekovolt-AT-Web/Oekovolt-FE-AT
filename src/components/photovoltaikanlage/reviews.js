@@ -45,7 +45,7 @@ const ReviewsPage = ({ data }) => {
               src={data?.photovoltaik_image_second_card ? `/api/image?path=${data?.photovoltaik_image_second_card}` : "/Images/Jobs/jobs3.jpg"}
               width={600}
               height={300}
-              quality={100}
+              quality={80}
               alt={data?.photovoltaik_image_second_card_alt || "Reviews"}
               className="object-cover object-center rounded-xl"
             />

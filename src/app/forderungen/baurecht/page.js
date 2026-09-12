@@ -5,6 +5,8 @@ import BaurechtPV from "@/components/Forderungen/Baurecht/second";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import React from "react";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.baurecht.api.get_baurecht_data`;
 
@@ -53,7 +55,7 @@ export async function generateMetadata() {
   if (!data) {
     // Fallback metadata if API fails
     return {
-      title: "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt",
+      title: "Baurecht Photovoltaik: Genehmigung nach Bundesland | Ökovolt",
       description: "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!",
       keywords: [
         "Photovoltaik Baurecht",
@@ -65,13 +67,11 @@ export async function generateMetadata() {
         "Photovoltaik Vorschriften Bundesländer",
         "Ökovolt"
       ],
-      alternates: {
-        canonical: "https://www.oekovolt.de/forderungen/baurecht",
-      },
+      alternates: { canonical: "https://www.oekovolt.de/forderungen/baurecht", languages: hreflangLanguages("https://www.oekovolt.de/forderungen/baurecht") },
       openGraph: {
         type: "website",
         url: "https://www.oekovolt.de/forderungen/baurecht",
-        title: "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt",
+        title: "Baurecht Photovoltaik: Genehmigung nach Bundesland | Ökovolt",
         description: "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!",
         images: [
           {
@@ -85,7 +85,7 @@ export async function generateMetadata() {
     };
   }
 
-  const title = "Normen & Richtlinien für Photovoltaikanlagen | Ökovolt";
+  const title = "Baurecht Photovoltaik: Genehmigung nach Bundesland | Ökovolt";
   const description = "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht für Photovoltaik nach Bundesland erklärt – von der Dachanlage bis zum Balkonkraftwerk. Jetzt informieren!";
 
   return {
@@ -101,9 +101,7 @@ export async function generateMetadata() {
       "Photovoltaik Vorschriften Bundesländer",
       "Ökovolt"
     ],
-    alternates: {
-      canonical: "https://www.oekovolt.de/forderungen/baurecht",
-    },
+    alternates: { canonical: "https://www.oekovolt.de/forderungen/baurecht", languages: hreflangLanguages("https://www.oekovolt.de/forderungen/baurecht") },
     openGraph: {
       type: "website",
       url: "https://www.oekovolt.de/forderungen/baurecht",
@@ -154,6 +152,7 @@ export default async function Baurecht() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <BaurechtBannerSection data={data?.banner} />
       <BaurechtPV data={data?.body} />
+      <Querverweise pfad="/forderungen/baurecht" />
       <EndSection />
     </div>
   );

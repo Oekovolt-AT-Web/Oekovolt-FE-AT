@@ -7,6 +7,8 @@ import InfoSectionTeam from "@/components/Team/info";
 import EndSection from "@/components/Reusable/end";
 import TeamBenefitsLayout from "@/components/Team/section";
 import TeamAnotherDesign from "@/components/Team/another";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.team_page.api.get_team_page`;
 const PAGE_URL = "https://www.oekovolt.de/uber-uns/team";
@@ -59,7 +61,7 @@ export async function generateMetadata() {
       title: "Unser Team – die Photovoltaik-Experten | Ökovolt",
       description: "Lernen Sie das Ökovolt-Team kennen: erfahrene Photovoltaik-Experten aus Türkheim – von der Planung bis zur Montage Ihrer Solaranlage mit Leidenschaft dabei.",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -87,7 +89,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, },
+    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -139,6 +141,7 @@ export default async function TeamPage() {
       <TeamSection data={data} />
       <TeamBenefitsLayout data={data} />
       <TeamAnotherDesign data={data} />
+      <Querverweise pfad="/uber-uns/team" />
       <EndSection />
     </div>
   );

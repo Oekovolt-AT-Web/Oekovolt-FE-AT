@@ -13,7 +13,7 @@ const BannerSection = ({ data }) => {
           className="object-cover"
           loading="eager"
           sizes=" 100vw"
-          quality={100}
+          quality={80}
 
         />
       </div>
@@ -36,7 +36,7 @@ const BannerSection = ({ data }) => {
             className="object-cover"
             loading="eager"
             sizes=" 100vw"
-            quality={100}
+            quality={80}
 
           />
         </div>

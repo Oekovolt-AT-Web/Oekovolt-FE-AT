@@ -1,20 +1,254 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------
+   DESIGN-TOKENS FÜR TAILWIND
+   Gemessen standen auf der Startseite 9 verschiedene Schatten und
+   3 verschiedene Animationskurven nebeneinander. Hier werden die
+   Tailwind-Standards überschrieben, damit shadow-sm … shadow-2xl und
+   alle transition-*-Klassen seitenweit dieselbe Handschrift tragen:
+   weiche, mehrlagige Schatten statt eines harten Einzelschattens und
+   eine Kurve, die zügig startet und ruhig ausläuft.
+   ------------------------------------------------------------------ */
+@theme {
+  --default-transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  --default-transition-duration: 220ms;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05), 0 1px 1px rgba(15, 23, 42, 0.03);
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 2px 6px -2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 2px 4px -1px rgba(15, 23, 42, 0.05), 0 6px 16px -4px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 4px 8px -2px rgba(15, 23, 42, 0.05), 0 14px 32px -8px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 8px 16px -4px rgba(15, 23, 42, 0.06), 0 24px 48px -12px rgba(15, 23, 42, 0.16);
+  --shadow-2xl: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 36px 72px -18px rgba(15, 23, 42, 0.22);
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Markenfarben als Variablen – bisher standen die Hex-Werte rund 500×
+     verstreut als arbitrary values im Markup. Neue Komponenten nutzen diese
+     Variablen; bestehende bleiben unangetastet. */
+  --ov-gruen: #669933;
+  --ov-gruen-hover: #558822;
+  --ov-blau: #003473;
+  --ov-gruen-tint: #f0f7e6;
+
+  /* Lesbare Zeilenlänge. 72 Zeichen liegt im Optimum (45–75); ab etwa 85
+     verliert das Auge beim Zeilenrücksprung die Spur. */
+  --ov-measure: 72ch;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: "Open Sans", sans-serif;
-
+  font-family: var(--font-open-sans), system-ui, "Segoe UI", Arial, sans-serif;
+  /* Etwas mehr Durchschuss als der Browser-Standard – deutsche Texte haben
+     lange Komposita, die dichter Satz schwer lesbar macht. */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+/* Horizontales Überlaufen weiter unterbinden – aber mit `clip` statt
+   `hidden`. `hidden` macht html/body zum Scroll-Container, und dann
+   funktioniert position: sticky nicht mehr (der Header blieb nicht stehen).
+   Ältere Browser ohne `clip` fallen auf `hidden` zurück. */
 html, body {
-  
-  overflow-x: hidden; /* Keep this */
+  overflow-x: hidden;
+  overflow-x: clip;
+}
 
+/* Sprungziele nicht unter dem (jetzt fixierten) Seitenkopf verstecken.
+   Header: 104 px oben, 80 px beim Scrollen. */
+html {
+  scroll-padding-top: 7rem;
+}
+
+/* ------------------------------------------------------------------
+   FEINHEITEN, AN DENEN MAN SORGFALT ERKENNT
+   ------------------------------------------------------------------ */
+
+/* Textmarkierung in Markenfarbe statt Browser-Blau. */
+::selection {
+  background: rgba(102, 153, 51, 0.24);
+  color: inherit;
+}
+
+/* Tailwind 4 setzt Buttons auf den normalen Pfeil-Cursor. Gemessen zeigten
+   21 von 37 Buttons keine Hand – Klickbares muss sich klickbar anfühlen. */
+button:not(:disabled),
+[role="button"],
+[role="tab"],
+summary,
+label[for],
+select {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Überschriften gleichmäßig umbrechen, Fließtext ohne einzelnes Wort in
+   der letzten Zeile. Progressive Verbesserung – ältere Browser umbrechen
+   wie bisher. */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+p, li, figcaption, blockquote, dd {
+  text-wrap: pretty;
+}
+/* Ausnahme Akkordeon-Fragen: `balance` hält dort jede Zeile künstlich kurz,
+   mobil stand die Frage in einer schmalen Spalte neben viel Leerraum. */
+h3:has(> button),
+summary {
+  text-wrap: pretty;
+}
+
+/* Deutsche Komposita ("Einspeisevergütungssätze") sprengen sonst schmale
+   Spalten. Silbentrennung nur im Fließtext, nie in Überschriften, und
+   erst ab längeren Wörtern. */
+main p {
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  hyphenate-limit-chars: 10 4 4;
+}
+
+/* Kerning und typografische Ligaturen der Schrift aktiv nutzen. */
+body {
+  font-kerning: normal;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+/* Unterstreichungen mit Luft zur Grundlinie und in Schriftstärke. */
+a {
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+
+/* Kein grauer Tap-Blitz auf Mobilgeräten. */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Spürbares Drücken auf den Haupt-Handlungsaufrufen. `scale` statt
+   `transform`, damit bestehende translate-Hover-Effekte erhalten bleiben. */
+@media (prefers-reduced-motion: no-preference) {
+  a[style*="669933"],
+  button[style*="669933"] {
+    transition-property: background-color, color, scale, box-shadow;
+  }
+  a[style*="669933"]:active,
+  button[style*="669933"]:active {
+    scale: 0.98;
+  }
+}
+
+/* Dezente Scrollleiste im Markenton (dort, wo das System sie zeigt). */
+html {
+  scrollbar-color: #b9cda3 transparent;
+}
+
+/* Aufzählungszeichen in Markenfarbe, wo Listen welche zeigen. */
+main li::marker {
+  color: var(--ov-gruen);
+}
+
+/* ------------------------------------------------------------------
+   SICHTBARER TASTATURFOKUS
+
+   Vorher hatte KEIN einziges fokussierbares Element einen sichtbaren
+   Fokusring (gemessen: 0 von 40). Wer per Tastatur navigiert, sah nicht,
+   wo er steht – ein Verstoß gegen WCAG 2.4.7.
+
+   :focus-visible greift nur bei Tastatur-/Programmfokus, nicht beim
+   Mausklick. Der weiße Schatten unter dem grünen Ring sorgt dafür, dass
+   der Fokus auch auf grünen und dunkelblauen Flächen sichtbar bleibt.
+   ------------------------------------------------------------------ */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--ov-gruen);
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.9);
+}
+
+/* Auf dunklen Flächen den Ring aufhellen, damit er nicht im Grün verschwindet. */
+:where(.bg-\[\#669933\], .bg-\[\#003473\], .bg-\[\#0a1e35\])
+  :where(a, button):focus-visible {
+  outline-color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.45);
+}
+
+/* ------------------------------------------------------------------
+   LESBARE ZEILENLÄNGE
+   Gemessen wurden bis zu 142 Zeichen pro Zeile – rund doppelt so viel
+   wie lesbar ist. .ov-measure begrenzt den Fließtext, ohne das Layout
+   der umgebenden Container anzufassen.
+   ------------------------------------------------------------------ */
+.ov-measure {
+  max-width: var(--ov-measure);
+}
+
+/* ------------------------------------------------------------------
+   BEWEGUNG REDUZIEREN
+   114 Elemente animieren. Wer im Betriebssystem „Bewegung reduzieren"
+   eingestellt hat, bekam das bisher trotzdem zu sehen.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ------------------------------------------------------------------
+   FORTSCHRITTSBALKEN DES HERO-SLIDERS
+   Zeigt, wie lange der aktuelle Slide noch steht. Unter
+   prefers-reduced-motion läuft kein Autoplay, also auch kein Balken –
+   der Block oben setzt die Dauer dort ohnehin auf 0.
+   ------------------------------------------------------------------ */
+@keyframes ov-hero-fortschritt {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+.ov-hero-fortschritt {
+  animation-name: ov-hero-fortschritt;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Weicher Tab-Wechsel. Startet bei 0.001 statt 0 Deckkraft und endet
+   garantiert voll deckend – die alte Animation konnte bei opacity 0 hängen. */
+@media (prefers-reduced-motion: no-preference) {
+  .ov-tab-panel { animation: ov-tab-ein 220ms ease-out both; }
+}
+@keyframes ov-tab-ein {
+  from { opacity: 0.001; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Mobile CTA-Leiste sichtbar: Zurück-nach-oben-Button darüber anheben.
+   Der Button setzt seine Position inline, deshalb !important. */
+@media (max-width: 1023px) {
+  body.ov-cta-sichtbar button[aria-label="Back to top"] {
+    bottom: 96px !important;
+  }
+}
+
+/* Mobilmenü offen: Hintergrund sperren, schwebende Elemente ausblenden. */
+body.ov-menu-offen {
+  overflow: hidden;
+}
+body.ov-menu-offen .ov-mobile-cta,
+body.ov-menu-offen button[aria-label="Back to top"] {
+  display: none !important;
 }

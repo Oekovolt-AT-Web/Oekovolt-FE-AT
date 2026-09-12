@@ -6,6 +6,8 @@ import VorteilsweltBanner from "@/components/Vorteilswelt/banner";
 import RecommendationSection2 from "@/components/Vorteilswelt/second";
 import ReferralStepsSection from "@/components/Vorteilswelt/third";
 import EndSection from "@/components/Reusable/end";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.oekovolt_vorteilswelt_service_page.api.get_vorteilswelt_page_with_keywords`;
 const PAGE_URL = "https://www.oekovolt.de/service/vorteilswelt";
@@ -64,7 +66,7 @@ export async function generateMetadata() {
       title: "Vorteilswelt: 250 € Prämie für Ihre Empfehlung | Ökovolt",
       description: "Ökovolt weiterempfehlen und profitieren: 250 € Prämie für Sie und 250 € für die empfohlene Person – in 4 einfachen Schritten. Jetzt registrieren!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, },
+      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -97,7 +99,7 @@ export async function generateMetadata() {
     title,
     description,
     keywords: apiKeywords,
-    alternates: { canonical },
+    alternates: { canonical, languages: hreflangLanguages(canonical) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
@@ -155,6 +157,7 @@ export default async function VorteilsweltPage() {
       <VorteilsweltBanner data={data} />
       <RecommendationSection2 data={data} />
       <ReferralStepsSection data={data} />
+      <Querverweise pfad="/service/vorteilswelt" />
       <EndSection />
     </div>
   );

@@ -5,6 +5,8 @@ import RichtlinienPV from "@/components/Forderungen/Richtlinen/second";
 import EndSection from "@/components/Reusable/end";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import React from "react";
+import { hreflangLanguages } from "@/lib/hreflang";
+import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.richtlinen.api.get_richtlinen_data`;
 
@@ -69,9 +71,7 @@ export async function generateMetadata() {
         "Technische Normen Photovoltaik",
         "VDE Richtlinien",
       ],
-      alternates: {
-        canonical: defaultCanonical,
-      },
+      alternates: { canonical: defaultCanonical, languages: hreflangLanguages(defaultCanonical) },
       openGraph: {
         type: "website",
         url: defaultCanonical,
@@ -102,9 +102,7 @@ export async function generateMetadata() {
       "Technische Normen Photovoltaik",
       "VDE Richtlinien",
     ],
-    alternates: {
-      canonical: defaultCanonical,
-    },
+    alternates: { canonical: defaultCanonical, languages: hreflangLanguages(defaultCanonical) },
     openGraph: {
       type: "website",
       url: defaultCanonical,
@@ -156,6 +154,7 @@ export default async function Richtlinen() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <RichtlinenBannerSection data={data?.banner} />
       <RichtlinienPV data={data?.body} />
+      <Querverweise pfad="/forderungen/richtlinien" />
       <EndSection />
     </div>
   );

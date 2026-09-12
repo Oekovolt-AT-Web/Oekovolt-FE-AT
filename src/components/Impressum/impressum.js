@@ -19,10 +19,10 @@ const Impressum = () => {
         <p>
           Email:
           <a
-            href="mailto:office@oekovolt.com"
+            href="mailto:office@oekovolt.de"
             className="text-[#669933] hover:underline"
           >
-            office@oekovolt.com
+            office@oekovolt.de
           </a>
         </p>
       </section>

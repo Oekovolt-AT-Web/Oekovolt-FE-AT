@@ -1,12 +1,11 @@
 import AGComponent from "@/components/Agb/agb";
 import BannerSection from "@/components/Reusable/banner";
 import GreenFeatureSection from "@/components/Reusable/contactInfo";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
   title: "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt",
-  alternates: {
-    canonical: "https://www.oekovolt.de/agb",
-  },
+  alternates: { canonical: "https://www.oekovolt.de/agb", languages: hreflangLanguages("https://www.oekovolt.de/agb") },
   description:
     "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
   keywords: [
