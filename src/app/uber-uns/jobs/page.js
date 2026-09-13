@@ -108,7 +108,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   const title = "Jobs & Karriere in der Photovoltaik | Ökovolt";
-  const description = "Jobs in der Photovoltaik: Elektromeister, Elektroplaner, Ingenieure, SPS-Programmierer, DC-Monteure & Vertrieb bei Ökovolt in Türkheim. Jetzt bewerben!";
+  const description = "Jobs in der Energiewende: Elektromeister, Ingenieure, SPS- & KI-Entwickler, Cyber Security, Energy Trader, Juristen, CFO & Monteure bei Ökovolt in Türkheim.";
 
   return {
     title,
@@ -147,6 +147,9 @@ const FELDER = [
   { icon: Compass, title: "Planung & Engineering", text: "Elektroplanung in AutoCAD, Projektierung bis Mittelspannung, Ladeinfrastruktur und Netzanschluss – für Anlagen vom Eigenheim bis zum Industriedach." },
   { icon: Zap, title: "Elektrotechnik & Meister", text: "Verantwortung für Nieder- und Mittelspannung, Übergabestationen, Zählerplätze und Inbetriebnahmen." },
   { icon: ClipboardList, title: "Automatisierung & Software", text: "SPS, Niagara Framework, Java und Monitoring: Energiesysteme intelligent regeln und überwachen." },
+  { icon: ShieldCheck, title: "IT-Sicherheit, Daten & KI", text: "Cyber Security mit dem SOC der Ökovolt Gruppe, Machine Learning, KI-Algorithmen und Softwareentwicklung in Python, C und C++." },
+  { icon: TrendingUp, title: "Energiehandel & Klima", text: "Stromhandel am Spotmarkt, Direktvermarktung sowie CO₂-Bilanzen, Emissionshandel und Nachhaltigkeitsberichte." },
+  { icon: Briefcase, title: "Recht, Compliance & Finanzen", text: "Energierecht mit der Rechtsabteilung der Ökovolt Gruppe, Datenschutz, NIS2 und Regulierung – und die Finanzleitung als CFO." },
   { icon: HardHat, title: "Montage, Service & Vertrieb", text: "DC-Montage durch Dachdecker, Speicher- und Wärmepumpentechnik sowie Vertrieb für Privat- und Gewerbekunden." },
 ];
 
@@ -237,7 +240,7 @@ export default async function JobsPage() {
         breadcrumbs={[{ name: "Über uns", href: "/uber-uns/team" }, { name: "Jobs" }]}
         eyebrow="Karriere bei Ökovolt"
         title={<>Jobs mit Zukunft: Machen Sie die <span className="ov-text-gradient-light">Energiewende</span> zum Beruf</>}
-        lead="Wir suchen ganzjährig die besten Köpfe der Branche: Ingenieure, Meister, Planer, Automatisierer, Monteure und Vertriebsprofis, die Energiesysteme auf höchstem Niveau bauen wollen."
+        lead="Wir suchen ganzjährig die besten Köpfe der Branche: Ingenieure, Meister, Planer, Software- und KI-Experten, Security-Analysten, Trader, Juristen, Monteure und Vertriebsprofis, die Energiesysteme auf höchstem Niveau bauen wollen."
         image={{ src: bildUrl(data?.image, "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg"), alt: data?.alt_image || "Solarmodule einer Photovoltaikanlage" }}
         points={[`${jobs.length} offene Stellen ganzjährig`, "Firmensitz in Türkheim", "Premium-Partner wie Fronius, Huawei & BYD", "Herstellerschulungen & Weiterbildung"]}
         actions={[
@@ -300,7 +303,7 @@ export default async function JobsPage() {
               <ShieldCheck aria-hidden="true" className="h-5 w-5" />
             </span>
             <p className="text-[15px] leading-relaxed text-ink-700">
-              <strong className="text-ink-900">Für Spitzenkräfte:</strong> Wir suchen ganzjährig Meister, Ingenieure, Techniker und erfahrene Fachkräfte – und bieten dafür anspruchsvolle Projekte und echte Verantwortung.
+              <strong className="text-ink-900">Für Spitzenkräfte:</strong> Wir suchen ganzjährig Meister, Ingenieure, Informatiker, Juristen und erfahrene Fachkräfte – und bieten dafür anspruchsvolle Projekte und echte Verantwortung.
             </p>
           </div>
         </div>
