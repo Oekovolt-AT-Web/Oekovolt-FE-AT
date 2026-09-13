@@ -13,6 +13,7 @@ import MobileCta from "@/components/Reusable/MobileCta";
 
 const CookieComponentLazy = dynamic(() => import("@/components/Cookies/cookiecomponent"), { ssr: false });
 const ToTopButtonLazy = dynamic(() => import("@/components/Home/BackToTop"), { ssr: false });
+const RueckrufWidgetLazy = dynamic(() => import("@/components/Rueckruf/RueckrufWidget"), { ssr: false });
 
 export default function LayoutWrapper({ children }) {
   return (
@@ -26,6 +27,7 @@ export default function LayoutWrapper({ children }) {
       <Footer />
       <MobileCta />
       <ToTopButtonLazy />
+      <RueckrufWidgetLazy />
     </>
   );
 }

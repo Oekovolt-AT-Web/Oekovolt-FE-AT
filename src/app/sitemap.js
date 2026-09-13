@@ -46,6 +46,7 @@ const STATIC_PAGES = [
   { path: "/uber-uns/team", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
   { path: "/uber-uns/jobs", changeFrequency: "weekly", priority: 0.6, lastModified: UPDATED_2026_09 },
   { path: "/kontakt", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
+  { path: "/termin", changeFrequency: "monthly", priority: 0.8, lastModified: UPDATED_2026_09 },
   { path: "/faqs", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
   { path: "/ratgeber", changeFrequency: "weekly", priority: 0.7, lastModified: UPDATED_2026_09 },
   { path: "/solarrechner", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Phone } from "lucide-react";
+import { ArrowRight, PhoneCall } from "lucide-react";
+import { oeffneRueckruf } from "@/components/Rueckruf/oeffnen";
 
 // Auf diesen Seiten ist die Leiste überflüssig oder stört den Ablauf.
 const AUSGENOMMEN = ["/angebot", "/kontakt", "/impressum", "/datenschutz", "/agb", "/hinweisgebersystem"];
@@ -62,14 +63,16 @@ export default function MobileCta({ href = "/angebot", label = "Angebot anfragen
       style={{ marginBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="mx-auto flex max-w-md items-center gap-2 rounded-full bg-navy-950/95 p-1.5 shadow-[0_20px_40px_-12px_rgba(3,18,43,0.6)] ring-1 ring-white/10 backdrop-blur-xl">
-        <a
-          href="tel:+498245967880"
+        <button
+          type="button"
+          onClick={() => oeffneRueckruf()}
           tabIndex={sichtbar ? 0 : -1}
-          aria-label="Anrufen: +49 8245 96 788 0"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-white"
+          aria-label="Kostenlosen Rückruf anfordern oder anrufen"
+          className="flex h-12 shrink-0 items-center gap-2 rounded-full bg-white/10 pl-3.5 pr-4 text-[14px] font-semibold text-white"
         >
-          <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
-        </a>
+          <PhoneCall aria-hidden="true" className="h-[18px] w-[18px]" />
+          Rückruf
+        </button>
         <Link
           href={href}
           tabIndex={sichtbar ? 0 : -1}

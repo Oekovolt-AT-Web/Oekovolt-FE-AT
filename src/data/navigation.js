@@ -140,6 +140,7 @@ export const NAVIGATION = [
           { name: "Team", href: "/uber-uns/team", icon: "Users", text: "Die Menschen hinter Ökovolt" },
           { name: "Jobs & Karriere", href: "/uber-uns/jobs", icon: "Briefcase", text: "Werden Sie Teil der Energiewende" },
           { name: "Kontakt", href: "/kontakt", icon: "MessageCircle", text: "Beratung, Anfahrt & Öffnungszeiten" },
+          { name: "Termin buchen", href: "/termin", icon: "CalendarDays", text: "Telefon, Video oder vor Ort – online" },
         ],
       },
     ],

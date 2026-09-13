@@ -255,6 +255,53 @@ const PrivacyPolicy = () => {
         </p>
       </section>
 
+      <section id="rueckruf" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Rückruf, Online-Terminbuchung und CloudTalk</h2>
+        <p className="mb-4">
+          Wenn Sie über unsere Website einen Rückruf anfordern oder einen Beratungstermin buchen, verarbeiten wir die von
+          Ihnen angegebenen Daten (Telefonnummer, optional Name und Thema; bei Terminen zusätzlich E-Mail-Adresse,
+          Postleitzahl, bei Vor-Ort-Terminen die Adresse sowie Ihre Nachricht) sowie den gewählten Zeitpunkt und die Seite,
+          auf der Sie die Anfrage gestellt haben. Zweck ist die Bearbeitung Ihrer Anfrage, die Durchführung des Gesprächs oder
+          Termins und die Terminbestätigung per E-Mail. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche
+          Maßnahmen auf Ihre Anfrage) sowie Ihre Einwilligung in den Anruf nach Art. 6 Abs. 1 lit. a DSGVO, die Sie jederzeit
+          mit Wirkung für die Zukunft widerrufen können.
+        </p>
+        <p className="mb-4">
+          Die Daten werden in unserem Backoffice-System gespeichert. Erledigte Rückrufwünsche löschen wir nach 90 Tagen,
+          Termindaten zwölf Monate nach dem Termin – es sei denn, daraus entsteht ein Angebot oder Auftrag; dann gelten die
+          gesetzlichen Aufbewahrungsfristen. Zum Schutz vor Missbrauch nehmen wir nur Rufnummern aus Deutschland, Österreich
+          und der Schweiz an und begrenzen die Zahl der Anfragen je Rufnummer.
+        </p>
+        <p className="mb-4">
+          Für den automatischen Sofort-Rückruf nutzen wir den Telefoniedienst CloudTalk (CloudTalk s.r.o., Bratislava,
+          Slowakei) als Auftragsverarbeiter nach Art. 28 DSGVO. Dabei wird Ihre Telefonnummer an CloudTalk übermittelt, damit
+          eine freie Beraterin oder ein freier Berater automatisch mit Ihnen verbunden wird; CloudTalk verarbeitet dabei die
+          üblichen Verbindungsdaten des Anrufs. Gespräche werden nicht ohne Ihre ausdrückliche, am Telefon eingeholte
+          Einwilligung aufgezeichnet. Einzelheiten:{" "}
+          <a href="https://www.cloudtalk.io/privacy-policy" target="_blank" rel="noopener noreferrer" className="text-[#669933] hover:underline">
+            Datenschutzerklärung von CloudTalk
+          </a>
+          .
+        </p>
+        <p>
+          Die Schaltflächen „Zum Kalender hinzufügen“ erzeugen die Kalenderdatei direkt in Ihrem Browser; bei Google Kalender
+          oder Outlook öffnen Sie die Seite des jeweiligen Anbieters erst durch Ihren Klick.
+        </p>
+      </section>
+
+      <section id="teilen" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Teilen-Funktionen und „Mit KI zusammenfassen“</h2>
+        <p>
+          Unter Ratgeber-Artikeln und Stellenanzeigen bieten wir Schaltflächen zum Teilen (z. B. LinkedIn, XING, WhatsApp,
+          Facebook, X, Telegram, E-Mail) und zum Zusammenfassen mit KI-Assistenten (z. B. ChatGPT, Perplexity, Claude, Google,
+          Grok). Es handelt sich um einfache Links: Beim Aufruf unserer Seite werden keine Skripte, Pixel oder Cookies dieser
+          Anbieter geladen und keine Daten an sie übertragen. Erst wenn Sie eine Schaltfläche anklicken, öffnet sich die Seite
+          des Anbieters und dieser erhält die Adresse unserer Seite sowie die üblichen Verbindungsdaten Ihres Browsers; dafür
+          gelten die Datenschutzbestimmungen des jeweiligen Anbieters. Geteilte Links enthalten Kampagnenparameter
+          (utm_source, utm_medium, utm_campaign) ohne personenbezogene Daten.
+        </p>
+      </section>
+
       <section className="mb-12">
         <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Hinweisgebersystem</h2>
         <p className="mb-4">
