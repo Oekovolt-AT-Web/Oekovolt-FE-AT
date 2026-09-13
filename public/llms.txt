@@ -41,6 +41,62 @@ Purpose: Provide structured, factual, LLM-readable context about Ökovolt Solart
 - [Ratgeber](https://www.oekovolt.de/ratgeber)
 - [Photovoltaik-Lexikon (Fachbegriffe A–Z)](https://www.oekovolt.de/wissen/lexikon)
 
+### Ratgeber – Fachartikel (mit Quellen, Rechenbeispielen und FAQ)
+
+**Förderung, Steuern & Recht**
+- [Einspeisevergütung 2026: aktuelle Sätze](https://www.oekovolt.de/ratgeber/einspeiseverguetung-2026)
+- [§ 14a EnWG: Netzentgelt-Rabatt für Wärmepumpe und Wallbox](https://www.oekovolt.de/ratgeber/paragraf-14a-enwg)
+- [KfW-Kredit 270: Konditionen, Antrag und Voraussetzungen 2026](https://www.oekovolt.de/ratgeber/kfw-kredit-270)
+- [Photovoltaik im Mehrfamilienhaus: Mieterstrom oder Gebäudeversorgung?](https://www.oekovolt.de/ratgeber/photovoltaik-mehrfamilienhaus)
+- [Photovoltaik und Steuern 2026: Was für Ihre PV-Anlage gilt](https://www.oekovolt.de/ratgeber/photovoltaik-steuern)
+- [Photovoltaik-Genehmigung: Wann Sie einen Antrag brauchen](https://www.oekovolt.de/ratgeber/photovoltaik-genehmigung)
+- [PV-Anlage anmelden 2026: Netzbetreiber, Register und Fristen](https://www.oekovolt.de/ratgeber/photovoltaik-anmelden)
+- [Smart-Meter-Pflicht 2026: Wer muss, was kostet es?](https://www.oekovolt.de/ratgeber/smart-meter-pflicht)
+- [Solarpflicht 2026: Was in allen 16 Bundesländern gilt](https://www.oekovolt.de/ratgeber/solarpflicht-bundeslaender)
+- [Solarspitzengesetz: 60-%-Regel und negative Preise erklärt](https://www.oekovolt.de/ratgeber/solarspitzengesetz)
+- [Ü20-Photovoltaik: Was nach 20 Jahren EEG-Förderung gilt](https://www.oekovolt.de/ratgeber/photovoltaik-nach-20-jahren)
+
+**Kosten & Wirtschaftlichkeit**
+- [Solaranlage Kosten 2026](https://www.oekovolt.de/ratgeber/solaranlage-kosten)
+- [Amortisation Photovoltaik: Formel, Beispiele und echte Rendite](https://www.oekovolt.de/ratgeber/photovoltaik-amortisation)
+- [Lohnt sich Photovoltaik 2026? Ehrliche Rechnung mit Beispielen](https://www.oekovolt.de/ratgeber/photovoltaik-lohnt-sich)
+- [Photovoltaik für Gewerbe: Wirtschaftlichkeit, Steuern und Planung](https://www.oekovolt.de/ratgeber/photovoltaik-gewerbe)
+- [Photovoltaik mieten oder kaufen? Gesamtkosten über 20 Jahre](https://www.oekovolt.de/ratgeber/photovoltaik-mieten-oder-kaufen)
+- [Photovoltaik-Angebot vergleichen: Checkliste und Warnsignale 2026](https://www.oekovolt.de/ratgeber/photovoltaik-angebot-vergleichen)
+- [Photovoltaik-Versicherung: Sinnvoller Schutz und Kosten 2026](https://www.oekovolt.de/ratgeber/photovoltaik-versicherung)
+
+**Speicher & Eigenverbrauch**
+- [Dynamischer Stromtarif: Lohnt er sich? Rechenbeispiele 2026](https://www.oekovolt.de/ratgeber/dynamischer-stromtarif-lohnt-sich)
+- [Eigenverbrauch erhöhen: 10 Maßnahmen für mehr Solarstrom im Haus](https://www.oekovolt.de/ratgeber/eigenverbrauch-erhoehen)
+- [Energiemanagementsystem für Photovoltaik: Funktionen & Standards](https://www.oekovolt.de/ratgeber/energiemanagementsystem)
+- [Negative Strompreise: Ursachen, Häufigkeit und Folgen für PV](https://www.oekovolt.de/ratgeber/negative-strompreise)
+- [Notstrom mit Photovoltaik: Ersatzstrom, Inselbetrieb & Kosten](https://www.oekovolt.de/ratgeber/notstrom-photovoltaik)
+- [Stromspeicher Kosten 2026: Preise pro kWh und Wirtschaftlichkeit](https://www.oekovolt.de/ratgeber/stromspeicher-kosten)
+- [Stromspeicher Lebensdauer: Wie lange hält ein PV-Speicher?](https://www.oekovolt.de/ratgeber/stromspeicher-lebensdauer)
+- [Stromspeicher-Größe berechnen: Faustregeln, Tabelle & Beispiele](https://www.oekovolt.de/ratgeber/stromspeicher-groesse)
+
+**Technik & Planung**
+- [Balkonkraftwerk 2026: Regeln, Ertrag und wann Dach-PV mehr bringt](https://www.oekovolt.de/ratgeber/balkonkraftwerk)
+- [Photovoltaik auf dem Flachdach: Aufständerung, Statik, Ertrag](https://www.oekovolt.de/ratgeber/photovoltaik-flachdach)
+- [Photovoltaik im Winter: Ertrag, Schnee und Kälte im Faktencheck](https://www.oekovolt.de/ratgeber/photovoltaik-im-winter)
+- [Photovoltaik Ost-West: Ertrag, Eigenverbrauch und Wirtschaftlichkeit](https://www.oekovolt.de/ratgeber/photovoltaik-ost-west)
+- [Photovoltaik reinigen und warten: Was nötig ist, was es kostet](https://www.oekovolt.de/ratgeber/photovoltaik-reinigung-wartung)
+- [Photovoltaik und Verschattung: Was Schatten kostet und was hilft](https://www.oekovolt.de/ratgeber/photovoltaik-verschattung)
+- [Photovoltaik-Ertrag pro kWp: Werte nach Region, Monat und Dach](https://www.oekovolt.de/ratgeber/photovoltaik-ertrag-pro-kwp)
+- [PV-Anlage Ablauf: Von der Anfrage bis zur Inbetriebnahme 2026](https://www.oekovolt.de/ratgeber/photovoltaik-ablauf)
+- [PV-Anlage: Größe berechnen – so viel kWp brauchen Sie wirklich](https://www.oekovolt.de/ratgeber/pv-anlage-groesse-berechnen)
+- [Solarcarport: Kosten, Ertrag, Genehmigung und Statik 2026](https://www.oekovolt.de/ratgeber/solarcarport)
+- [Solarmodule im Vergleich 2026: TOPCon, HJT, Back Contact & Co.](https://www.oekovolt.de/ratgeber/solarmodule-vergleich)
+- [Wechselrichter für Photovoltaik: Arten, Auslegung und Kosten 2026](https://www.oekovolt.de/ratgeber/wechselrichter-photovoltaik)
+
+**Wärmepumpe & E-Mobilität**
+- [Wallbox-Installation: Kosten, Anmeldung und Ablauf](https://www.oekovolt.de/ratgeber/wallbox-installation)
+- [Bidirektionales Laden 2026: Was V2H und V2G heute können](https://www.oekovolt.de/ratgeber/bidirektionales-laden)
+- [Heizstab mit Photovoltaik: Warmwasser aus Solarüberschuss](https://www.oekovolt.de/ratgeber/heizstab-photovoltaik)
+- [PV-Überschussladen: So lädt Ihr E-Auto mit reinem Solarstrom](https://www.oekovolt.de/ratgeber/pv-ueberschussladen)
+- [Wärmepumpe Kosten 2026: Anschaffung, Einbau, Betrieb, Förderung](https://www.oekovolt.de/ratgeber/waermepumpe-kosten)
+- [Wärmepumpe mit Photovoltaik: Wie viel Heizstrom liefert die Sonne?](https://www.oekovolt.de/ratgeber/waermepumpe-mit-photovoltaik)
+
 ### Interaktive Werkzeuge & Live-Daten
 
 - [Angebots-Konfigurator – Ersteinschätzung in 2 Minuten](https://www.oekovolt.de/angebot)

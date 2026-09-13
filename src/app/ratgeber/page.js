@@ -1,7 +1,7 @@
 // src/app/ratgeber/page.js
 
 import Link from "next/link";
-import { ArrowUpRight, BookOpen, Calculator, HelpCircle } from "lucide-react";
+import { ArrowUpRight, BatteryCharging, BookOpen, Calculator, Cpu, Euro, HelpCircle, Scale, Thermometer } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -10,17 +10,26 @@ import FeatureGrid from "@/components/ui/FeatureGrid";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import { ArtikelKarte } from "@/components/Ratgeber/Bausteine";
-import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
+import RatgeberListe from "@/components/Ratgeber/RatgeberListe";
+import { KATEGORIEN, alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
 import { WALLBOX, spanne } from "@/data/wallbox";
 import { BEGRIFFE } from "@/data/lexikon";
 
+const KATEGORIE_ICONS = {
+  "Kosten & Wirtschaftlichkeit": Euro,
+  "Technik & Planung": Cpu,
+  "Speicher & Eigenverbrauch": BatteryCharging,
+  "Wärmepumpe & E-Mobilität": Thermometer,
+  "Förderung, Steuern & Recht": Scale,
+};
+
 const BASE_URL = "https://www.oekovolt.de";
 const PAGE_URL = `${BASE_URL}/ratgeber`;
 
 const DESCRIPTION =
-  "Photovoltaik verständlich erklärt: Einspeisevergütung 2026, Kosten je kWp, Stromspeicher und Wallbox – fundierte Ratgeber vom Fachbetrieb aus dem Allgäu.";
+  "Photovoltaik verständlich erklärt: Kosten, Speicher, Wärmepumpe, Förderung und Recht 2026 – über 40 fundierte Ratgeber vom Fachbetrieb aus dem Allgäu.";
 
 // Deutschlandspezifischer Content -> kein hreflang, nur Canonical.
 export const metadata = {
@@ -41,7 +50,10 @@ export const metadata = {
 
 export default function RatgeberPage() {
   const artikel = alleArtikel();
-  const [top, ...rest] = artikel;
+  // Redaktionell empfohlene Artikel (suchstärkste Themen); Fallback: neueste
+  const EMPFOHLEN = ["photovoltaik-lohnt-sich", "stromspeicher-kosten", "waermepumpe-mit-photovoltaik"];
+  const empfohlen = EMPFOHLEN.map((s) => artikel.find((a) => a.slug === s)).filter(Boolean);
+  const [top, ...rest] = empfohlen.length === EMPFOHLEN.length ? empfohlen : artikel;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -99,19 +111,55 @@ export default function RatgeberPage() {
       />
 
       <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Neu & aktualisiert" title="Aktuelle Artikel" className="mb-10" />
-        {artikel.length === 0 ? (
-          <p className="text-[16px] text-ink-600">Die ersten Beiträge erscheinen in Kürze.</p>
-        ) : (
-          <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
-            {top && <ArtikelKarte artikel={top} gross />}
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-              {rest.map((a, i) => (
-                <ArtikelKarte key={a.slug} artikel={a} delay={(i + 1) * 90} />
-              ))}
+        <SectionHeading eyebrow="Themenbereiche" title="Wählen Sie Ihr Thema" className="mb-10" />
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {KATEGORIEN.map((k, i) => {
+            const liste = artikel.filter((a) => a.kategorie === k);
+            const Icon = KATEGORIE_ICONS[k] || BookOpen;
+            return (
+              <Reveal as="li" key={k} delay={i * 60} className="flex">
+                <div className="flex w-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/60">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                    <Icon aria-hidden="true" className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-5 font-display text-[17px] font-bold leading-snug text-ink-900">{k}</h3>
+                  <p className="mt-1 text-[13.5px] text-ink-500">{liste.length} {liste.length === 1 ? "Artikel" : "Artikel"}</p>
+                  <ul className="mt-4 space-y-2 text-[14px]">
+                    {liste.slice(0, 4).map((a) => (
+                      <li key={a.slug}>
+                        <Link href={artikelPfad(a.slug)} className="text-ink-700 underline-offset-2 hover:text-ov-700 hover:underline">
+                          {a.kurzTitel || a.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Reveal>
+            );
+          })}
+        </ul>
+
+        {top && (
+          <div className="mt-14">
+            <SectionHeading eyebrow="Neu & aktualisiert" title="Empfohlener Artikel" className="mb-8" />
+            <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
+              <ArtikelKarte artikel={top} gross />
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+                {rest.slice(0, 2).map((a, i) => (
+                  <ArtikelKarte key={a.slug} artikel={a} delay={(i + 1) * 90} />
+                ))}
+              </div>
             </div>
           </div>
         )}
+      </Section>
+
+      <Section tone="white" space="lg" id="alle-artikel">
+        <SectionHeading eyebrow="Alle Ratgeber" title="Alle Artikel durchsuchen" className="mb-10" />
+        <RatgeberListe
+          kategorien={KATEGORIEN}
+          artikel={artikel.map(({ slug, title, excerpt, kategorie, bild, bildAlt, lesezeit, keywords }) => ({ slug, title, excerpt, kategorie, bild, bildAlt, lesezeit, keywords: keywords || [] }))}
+        />
       </Section>
 
       <Section tone="navy" space="lg" className="overflow-hidden">

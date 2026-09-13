@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowRight, ArrowUpRight, BadgeCheck, CalendarClock, Che
 
 import { cn } from "@/components/ui/cn";
 import Reveal from "@/components/ui/Reveal";
+import InlineText from "./InlineText";
 import { artikelPfad, datumLang, weitereArtikel } from "@/lib/ratgeber";
 
 /* ------------------------------------------------------------------
@@ -62,8 +63,8 @@ export function KurzFazit({ punkte = [], id = "kurz", titel = "Das Wichtigste in
           {titel}
         </h2>
         <ul className="relative mt-5 space-y-3.5">
-          {punkte.map((p) => (
-            <li key={p} className="flex gap-3 text-[16px] leading-relaxed text-ink-700">
+          {punkte.map((p, i) => (
+            <li key={typeof p === "string" ? p : i} className="flex gap-3 text-[16px] leading-relaxed text-ink-700">
               <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-ov-600 ring-1 ring-ov-200">
                 <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
               </span>
@@ -168,7 +169,7 @@ export function Tabelle({ caption, kopf = [], zeilen = [], hervorheben, fussnote
           </tbody>
         </table>
       </div>
-      {fussnote && <figcaption className="mt-3 text-[13px] leading-relaxed text-ink-500">{fussnote}</figcaption>}
+      {fussnote && <figcaption className="mt-3 text-[13px] leading-relaxed text-ink-500">{typeof fussnote === "string" ? <InlineText text={fussnote} /> : fussnote}</figcaption>}
     </figure>
   );
 }

@@ -10,9 +10,21 @@
 // Ratgeber-Inhalte sind deutschlandspezifisch und existieren NICHT auf
 // oekovolt.com -> sie bekommen bewusst kein hreflang (siehe @/lib/hreflang).
 
+import { INHALTE } from "@/content/ratgeber";
+
 export const RATGEBER_BASE = "/ratgeber";
 
-export const ARTIKEL = [
+// Feste Themenbereiche – für Filter auf der Übersicht und thematische Cluster.
+export const KATEGORIEN = [
+  "Kosten & Wirtschaftlichkeit",
+  "Technik & Planung",
+  "Speicher & Eigenverbrauch",
+  "Wärmepumpe & E-Mobilität",
+  "Förderung, Steuern & Recht",
+];
+
+// Handgebaute Artikel mit eigener Seite unter src/app/ratgeber/<slug>/page.js
+const STATISCHE_ARTIKEL = [
   {
     slug: "wallbox-installation",
     title: "Wallbox Installation: Kosten, Voraussetzungen & Ablauf",
@@ -24,7 +36,7 @@ export const ARTIKEL = [
     veroeffentlicht: "2026-09-12",
     aktualisiert: "2026-09-13",
     lesezeit: 10,
-    kategorie: "Technik & Installation",
+    kategorie: "Wärmepumpe & E-Mobilität",
     bild: "/Images/Dienstleistungen/Smartphone/wallbox-scaled.jpg",
     bildAlt: "Wallbox an der Außenwand eines modernen Einfamilienhauses",
     keywords: [
@@ -71,7 +83,7 @@ export const ARTIKEL = [
     veroeffentlicht: "2026-09-11",
     aktualisiert: "2026-09-13",
     lesezeit: 9,
-    kategorie: "Förderung & Vergütung",
+    kategorie: "Förderung, Steuern & Recht",
     // Bild aus /public
     bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
     bildAlt: "Photovoltaikanlage auf mehreren Dachflächen – Luftaufnahme",
@@ -87,6 +99,26 @@ export const ARTIKEL = [
   },
 ];
 
+// Inhaltsgetriebene Artikel (src/content/ratgeber/*.js) – gerendert über
+// src/app/ratgeber/[slug]/page.js. Lesezeit wird aus der Wortzahl berechnet.
+function zaehleWoerter(x) {
+  if (typeof x === "string") return x.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").split(/\s+/).filter(Boolean).length;
+  if (Array.isArray(x)) return x.reduce((s, y) => s + zaehleWoerter(y), 0);
+  if (x && typeof x === "object") {
+    return Object.entries(x).reduce((s, [k, v]) => (["id", "typ", "variant", "href", "url"].includes(k) ? s : s + zaehleWoerter(v)), 0);
+  }
+  return 0;
+}
+
+export const INHALTS_ARTIKEL = INHALTE.map((a) => ({
+  ...a,
+  inhaltsgetrieben: true,
+  woerter: zaehleWoerter([a.kurzFazit, a.abschnitte, a.faq]),
+  lesezeit: Math.max(3, Math.round(zaehleWoerter([a.kurzFazit, a.abschnitte, a.faq]) / 200)),
+}));
+
+export const ARTIKEL = [...STATISCHE_ARTIKEL, ...INHALTS_ARTIKEL];
+
 /** Alle Artikel, neueste zuerst */
 export function alleArtikel() {
   return [...ARTIKEL].sort(
@@ -100,9 +132,17 @@ export function artikelNachSlug(slug) {
 
 /** Andere Artikel fuer die "Das könnte Sie auch interessieren"-Box */
 export function weitereArtikel(slug, limit = 3) {
-  return alleArtikel()
-    .filter((a) => a.slug !== slug)
-    .slice(0, limit);
+  // Zuerst Artikel aus demselben Themenbereich (thematisches Cluster), dann die neuesten.
+  const eigener = artikelNachSlug(slug);
+  const andere = alleArtikel().filter((a) => a.slug !== slug);
+  const gleich = eigener ? andere.filter((a) => a.kategorie === eigener.kategorie) : [];
+  const rest = andere.filter((a) => !gleich.includes(a));
+  return [...gleich, ...rest].slice(0, limit);
+}
+
+/** Artikel eines Themenbereichs (für Cluster-Seiten und Übersicht). */
+export function artikelNachKategorie(kategorie) {
+  return alleArtikel().filter((a) => a.kategorie === kategorie);
 }
 
 export function artikelPfad(slug) {
