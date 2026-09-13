@@ -14,6 +14,8 @@ const GONE_PATTERNS = [
   /^\/wp-cron\.php/,
   /^\/wp-signup\.php/,
   /^\/wp-trackback\.php/,
+  // Alte WordPress-Permalinks ohne Rewrite (z. B. /index.php/2019/…)
+  /^\/index\.php(\/|$)/,
   /\/feed\/?$/,
 ];
 
@@ -44,6 +46,8 @@ export const config = {
     "/wp-signup.php",
     "/wp-trackback.php",
     "/xmlrpc.php",
+    "/index.php",
+    "/index.php/:path*",
     "/wp-admin/:path*",
     "/wp-content/:path*",
     "/wp-includes/:path*",
