@@ -42,9 +42,9 @@ export async function generateMetadata({ params }) {
       publishedTime: a.veroeffentlicht,
       modifiedTime: a.aktualisiert,
       section: a.kategorie,
-      images: [{ url: `${BASE_URL}${a.bild}`, width: 1200, height: 630, alt: a.bildAlt }],
+      images: [{ url: `${BASE_URL}/og/ratgeber/${a.slug}.jpg`, width: 1200, height: 630, alt: a.bildAlt }],
     },
-    twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [`${BASE_URL}${a.bild}`] },
+    twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [`${BASE_URL}/og/ratgeber/${a.slug}.jpg`] },
   };
 }
 
@@ -73,7 +73,7 @@ export default async function RatgeberArtikelPage({ params }) {
       author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },
       publisher: { "@id": `${BASE_URL}/#organization` },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
-      image: `${BASE_URL}${a.bild}`,
+      image: [`${BASE_URL}${a.bild}`, `${BASE_URL}/og/ratgeber/${a.slug}.jpg`],
       articleSection: a.kategorie,
       keywords: (a.keywords || []).join(", "),
       wordCount: a.woerter,

@@ -7,7 +7,13 @@ import CtaBand from "@/components/ui/CtaBand";
 import Button from "@/components/ui/Button";
 import ReadingProgress from "./ReadingProgress";
 import TableOfContents from "./TableOfContents";
+import Teilen from "@/components/ui/Teilen";
+import { artikelPfad } from "@/lib/ratgeber";
 import { ArtikelMeta, Autorenbox, WeitereArtikel } from "./Bausteine";
+import KiZusammenfassen from "./KiZusammenfassen";
+
+const BASE_URL = "https://www.oekovolt.de";
+const TEILEN_NETZE = ["whatsapp", "linkedin", "facebook", "xing", "x", "telegram"];
 
 /**
  * Gemeinsames Gerüst aller Ratgeber-Artikel (Magazin-Look):
@@ -23,6 +29,9 @@ import { ArtikelMeta, Autorenbox, WeitereArtikel } from "./Bausteine";
  *  cta       Props für <CtaBand/>
  */
 export default function ArtikelLayout({ artikel, toc, titel, badge, seitenCta, cta = {}, children }) {
+  const url = `${BASE_URL}${artikelPfad(artikel.slug)}`;
+  const teilenText = artikel.excerpt || artikel.description;
+
   return (
     <>
       <ReadingProgress />
@@ -43,7 +52,12 @@ export default function ArtikelLayout({ artikel, toc, titel, badge, seitenCta, c
           <article className="min-w-0">
             <TableOfContents items={toc} variant="mobile" />
             <div className="max-w-[52rem]">
+              <KiZusammenfassen url={url} titel={artikel.title} className="mb-10 rounded-2xl bg-sand-50 px-4 py-3.5 ring-1 ring-ink-200/60 md:px-5" />
               {children}
+              <div className="mt-14 flex flex-col gap-3 rounded-3xl border border-ink-200 p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
+                <p className="font-display text-[17px] font-bold text-ink-900">Hilfreich? Teilen Sie den Artikel.</p>
+                <Teilen url={url} titel={artikel.title} text={teilenText} netze={TEILEN_NETZE} kampagne="ratgeber" kompakt />
+              </div>
               <Autorenbox artikel={artikel} />
             </div>
           </article>
@@ -51,6 +65,7 @@ export default function ArtikelLayout({ artikel, toc, titel, badge, seitenCta, c
           <aside className="hidden lg:block">
             <div className="sticky top-28 space-y-6">
               <TableOfContents items={toc} variant="desktop" />
+              <Teilen url={url} titel={artikel.title} text={teilenText} netze={["whatsapp", "linkedin", "facebook"]} kampagne="ratgeber" label="Artikel teilen" className="border-t border-ink-100 pt-5" />
               {seitenCta && (
                 <div className="ov-noise relative overflow-hidden rounded-3xl bg-navy-950 p-6 text-white">
                   <div aria-hidden="true" className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-ov-500/35 blur-3xl" />

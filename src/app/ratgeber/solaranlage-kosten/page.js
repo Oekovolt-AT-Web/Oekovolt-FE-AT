@@ -43,13 +43,13 @@ export const metadata = {
     description: artikel.description,
     publishedTime: artikel.veroeffentlicht,
     modifiedTime: artikel.aktualisiert,
-    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: artikel.title }],
+    images: [{ url: `${BASE_URL}/og/ratgeber/solaranlage-kosten.jpg`, width: 1200, height: 630, alt: artikel.title }],
   },
   twitter: {
     card: "summary_large_image",
     title: artikel.title,
     description: artikel.description,
-    images: [`${BASE_URL}/og-image.jpg`],
+    images: [`${BASE_URL}/og/ratgeber/solaranlage-kosten.jpg`],
   },
 };
 

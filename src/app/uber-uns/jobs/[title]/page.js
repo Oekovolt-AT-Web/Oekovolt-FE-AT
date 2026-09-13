@@ -8,6 +8,7 @@ import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
+import Teilen from "@/components/ui/Teilen";
 import Fliesstext from "@/components/Reusable/Fliesstext";
 import Querverweise from "@/components/Reusable/Querverweise";
 import KurzBewerbung from "@/components/JobDetails/KurzBewerbung";
@@ -81,6 +82,8 @@ export async function generateMetadata({ params }) {
     const canonical = `${BASE_URL}/uber-uns/jobs/${title}`;
     const seitenTitel = `${j.kurz || j.titel} (m/w/d) – Job in ${j.ort} | Ökovolt`;
     const description = `${j.titel} bei Ökovolt in ${j.ort}${j.anstellung ? ` (${j.anstellung})` : ""}. Aufgaben, Anforderungen & Vorteile – jetzt direkt bewerben.`.slice(0, 160);
+    // Eigenes Vorschaubild je Stelle (scripts/og-bilder.mjs), sonst Standardbild
+    const ogBild = STELLEN.some((s) => s.slug === j.slug) ? `${BASE_URL}/og/jobs/${j.slug}.jpg` : `${BASE_URL}/og-image.jpg`;
 
     return {
       title: seitenTitel,
@@ -93,18 +96,19 @@ export async function generateMetadata({ params }) {
         siteName: "Ökovolt Deutschland",
         title: seitenTitel,
         description,
+        locale: "de_DE",
         images: [{
-          url: "https://www.oekovolt.de/og-image.jpg",
+          url: ogBild,
           width: 1200,
           height: 630,
-          alt: `${j.titel} – Ökovolt`
+          alt: `Wir suchen: ${j.titel} – Ökovolt`
         }],
       },
       twitter: {
         card: "summary_large_image",
         title: seitenTitel,
         description,
-        images: ["https://www.oekovolt.de/og-image.jpg"],
+        images: [ogBild],
       },
     };
   } catch (error) {
@@ -256,6 +260,14 @@ export default async function JobDetailPage({ params }) {
               </div>
             )}
 
+            <Reveal className="mt-5 flex flex-col gap-4 rounded-3xl border border-dashed border-ov-300 bg-ov-50/50 p-6 md:p-7">
+              <div>
+                <p className="font-display text-[19px] font-extrabold text-ink-900">Kennen Sie jemanden, der perfekt passt?</p>
+                <p className="mt-1.5 text-[15px] leading-relaxed text-ink-600">Teilen Sie die Stelle mit Kolleginnen und Kollegen oder in Ihrem Netzwerk – ein Klick genügt.</p>
+              </div>
+              <Teilen url={canonicalUrl} titel={`Wir suchen: ${j.titel}`} text={`Ökovolt sucht: ${j.titel} in ${j.arbeitsort || j.ort}.`} netze={["linkedin", "xing", "whatsapp", "facebook", "x", "telegram"]} kampagne="jobs" kompakt />
+            </Reveal>
+
             <Reveal className="mt-14 rounded-3xl bg-navy-950 p-7 text-white md:p-9">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Über Ökovolt</p>
               <h2 className="mt-3 font-display text-[24px] font-extrabold tracking-tight">Photovoltaik aus einer Hand – seit über 15 Jahren</h2>
@@ -303,6 +315,7 @@ export default async function JobDetailPage({ params }) {
                 <Phone aria-hidden="true" className="h-4 w-4 text-ov-600" />
                 Fragen vorab? <a href="tel:+498245967880" className="font-semibold text-ink-900 hover:text-ov-700">08245 96 788 0</a>
               </p>
+              <Teilen url={canonicalUrl} titel={`Wir suchen: ${j.titel}`} text={`Ökovolt sucht: ${j.titel} in ${j.arbeitsort || j.ort}.`} netze={["linkedin", "xing", "whatsapp", "facebook"]} kampagne="jobs" label="Stelle teilen" className="mt-5 border-t border-ink-100 pt-5" />
             </div>
           </aside>
         </div>
