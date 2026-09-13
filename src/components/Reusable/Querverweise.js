@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 import { querverweiseFuer } from "@/data/verlinkung";
+import Reveal from "@/components/ui/Reveal";
 
 /**
  * Thematische Querverweise am Ende einer Seite.
@@ -18,46 +19,30 @@ export default function Querverweise({ pfad, ueberschrift = "Das könnte Sie auc
   if (verweise.length === 0) return null;
 
   return (
-    <section
-      aria-labelledby="querverweise-titel"
-      className="border-t border-gray-100 bg-[#f7f9f4]"
-    >
-      <div className="mx-auto max-w-7xl px-6 py-12 md:px-12 md:py-16">
-        <h2
-          id="querverweise-titel"
-          className="mb-7 text-[22px] font-semibold text-gray-900 md:text-[26px]"
-        >
-          {ueberschrift}
-        </h2>
+    <section aria-labelledby="querverweise-titel" className="bg-white">
+      <div className="ov-container py-16 md:py-20">
+        <div className="mb-8 flex items-end justify-between gap-6 border-b border-ink-200 pb-6">
+          <h2 id="querverweise-titel" className="ov-h3 text-ink-900 md:text-[28px]">
+            {ueberschrift}
+          </h2>
+        </div>
 
-        {/* Spalten nach Anzahl: bei vier Verweisen stand sonst eine Karte
-            allein in der zweiten Reihe. */}
-        <ul
-          className={`grid gap-4 sm:grid-cols-2 ${
-            verweise.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"
-          }`}
-        >
-          {verweise.map((v) => (
-            <li key={v.href} className="contents">
-              <article className="group relative flex flex-col rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md focus-within:ring-2 focus-within:ring-[#669933] focus-within:ring-offset-2">
-                <h3 className="mb-1.5 text-[17px] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-[#669933]">
+        <ul className={`grid gap-4 sm:grid-cols-2 ${verweise.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+          {verweise.map((v, i) => (
+            <Reveal as="li" key={v.href} delay={i * 70} className="flex">
+              <article className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 focus-within:ring-2 focus-within:ring-ov-500 hover:bg-white">
+                <span className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink-400 ring-1 ring-ink-200 transition-all duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
+                  <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45" />
+                </span>
+                <h3 className="font-display text-[18px] font-bold leading-snug text-ink-900">
                   {/* Stretched Link: genau EIN Link je Karte auf die Ziel-URL. */}
-                  <Link
-                    href={v.href}
-                    className="outline-none after:absolute after:inset-0 after:content-['']"
-                  >
+                  <Link href={v.href} className="outline-none after:absolute after:inset-0 after:rounded-3xl after:content-['']">
                     {v.titel}
                   </Link>
-                  {/* Inline statt Flex: bricht der Titel um, bleibt der Pfeil
-                      am letzten Wort statt am rechten Kartenrand zu stehen. */}
-                  <ArrowRight
-                    aria-hidden="true"
-                    className="ml-1.5 inline-block h-4 w-4 align-[-2px] transition-transform group-hover:translate-x-1"
-                  />
                 </h3>
-                <p className="text-[15px] leading-relaxed text-gray-600">{v.text}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{v.text}</p>
               </article>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </div>

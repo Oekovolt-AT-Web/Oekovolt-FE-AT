@@ -1,0 +1,61 @@
+import { Phone, Calculator, ShieldCheck, Clock, BadgeCheck } from "lucide-react";
+import { cn } from "./cn";
+import Button from "./Button";
+import Reveal from "./Reveal";
+
+/**
+ * Abschluss-Handlungsaufruf für jede Seite. Dunkle, leuchtende Fläche mit
+ * zwei Wegen: Online-Anfrage (niedrige Schwelle) und Telefon (direkt).
+ */
+export default function CtaBand({
+  eyebrow = "Kostenlos & unverbindlich",
+  title = "Ihr Dach kann mehr. Wir zeigen Ihnen, wie viel.",
+  text = "Persönliche Beratung vom Fachbetrieb aus Türkheim – mit ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner von der Planung bis zur Inbetriebnahme.",
+  primary = { label: "Angebot in 2 Minuten anfragen", href: "/angebot" },
+  secondary = { label: "Ertrag berechnen", href: "/solarrechner" },
+  className,
+}) {
+  return (
+    <section className={cn("relative px-4 py-16 md:px-8 md:py-24", className)}>
+      <Reveal dir="scale" className="ov-noise relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-navy-950 px-6 py-14 text-white md:rounded-[2.5rem] md:px-16 md:py-20">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-24 -top-32 h-[460px] w-[460px] rounded-full bg-ov-500/35 blur-[110px]" />
+        <div aria-hidden="true" className="absolute -bottom-40 left-1/4 h-[360px] w-[360px] rounded-full bg-sun-400/15 blur-[110px]" />
+
+        <div className="relative grid items-center gap-12 lg:grid-cols-[1.4fr_1fr]">
+          <div>
+            <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">{eyebrow}</p>
+            <h2 className="ov-h2 mt-4 text-white">{title}</h2>
+            <p className="ov-lead mt-5 max-w-2xl text-white/70">{text}</p>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <Button href={primary.href} size="lg" pfeil>
+                {primary.label}
+              </Button>
+              {secondary && (
+                <Button href={secondary.href} size="lg" variant="outlineLight" icon={secondary.icon === undefined ? Calculator : secondary.icon}>
+                  {secondary.label}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="ov-glass rounded-3xl p-6 md:p-8">
+            <p className="text-[13px] font-medium text-white/60">Lieber direkt sprechen?</p>
+            <a href="tel:+498245967880" className="group mt-2 flex items-center gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
+                <Phone aria-hidden="true" className="h-5 w-5" />
+              </span>
+              <span className="font-display text-[22px] font-extrabold tracking-tight md:text-[26px]">08245 96 788 0</span>
+            </a>
+            <p className="mt-2 text-[13.5px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
+            <ul className="mt-6 space-y-3 border-t border-white/10 pt-6 text-[14.5px] text-white/80">
+              <li className="flex items-center gap-2.5"><BadgeCheck aria-hidden="true" className="h-4 w-4 text-ov-300" />Fachbetrieb mit über 15 Jahren Erfahrung</li>
+              <li className="flex items-center gap-2.5"><ShieldCheck aria-hidden="true" className="h-4 w-4 text-ov-300" />Planung, Montage & Anmeldung aus einer Hand</li>
+              <li className="flex items-center gap-2.5"><Clock aria-hidden="true" className="h-4 w-4 text-ov-300" />Fester Ansprechpartner bis zur Inbetriebnahme</li>
+            </ul>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}

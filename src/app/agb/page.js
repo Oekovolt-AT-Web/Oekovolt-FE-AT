@@ -1,6 +1,5 @@
 import AGComponent from "@/components/Agb/agb";
-import BannerSection from "@/components/Reusable/banner";
-import GreenFeatureSection from "@/components/Reusable/contactInfo";
+import LegalShell from "@/components/Reusable/LegalShell";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
@@ -22,7 +21,7 @@ export const metadata = {
     description: "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
     images: [
       {
-        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        url: "https://www.oekovolt.de/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Ökovolt Deutschland",
@@ -32,23 +31,9 @@ export const metadata = {
 };
 
 export default function AgbPage() {
-  const data = {
-    title: "AGB - Photovoltaikanlagen",
-    img: "/Images/Kontakt/download-2.jpg",
-  };
-
-  const end = {
-    greentitle: "Solarenergie",
-    title: "Ihr Einstieg in Solarenergie",
-    description:
-      "Möchten Sie Ihre Energiekosten senken und nachhaltig leben? Füllen Sie unser Kontaktformular aus – wir melden uns bei Ihnen!",
-  };
-
   return (
-    <div>
-      <BannerSection data={data} />
+    <LegalShell titel="Allgemeine Geschäftsbedingungen" pfad="/agb" lead="Die Vertragsbedingungen der ÖKOVOLT GmbH Solartechnik.">
       <AGComponent />
-      <GreenFeatureSection data={end} />
-    </div>
+    </LegalShell>
   );
 }

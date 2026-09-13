@@ -22,11 +22,11 @@ export const ARTIKEL = [
     excerpt:
       "Eine 11-kW-Wallbox kostet mit Installation 1.000–2.700 €. Warum die Montage meist mehr ausmacht als das Gerät, wann 22 kW sinnvoll sind und was Sie melden müssen.",
     veroeffentlicht: "2026-09-12",
-    aktualisiert: "2026-09-12",
+    aktualisiert: "2026-09-13",
     lesezeit: 10,
     kategorie: "Technik & Installation",
-    bild: "/Images/Home/contactImage.jpg",
-    bildAlt: "Wallbox-Installation durch einen Elektrofachbetrieb",
+    bild: "/Images/Dienstleistungen/Smartphone/wallbox-scaled.jpg",
+    bildAlt: "Wallbox an der Außenwand eines modernen Einfamilienhauses",
     keywords: [
       "Wallbox Installation",
       "Wallbox Installation Kosten",
@@ -45,11 +45,11 @@ export const ARTIKEL = [
     excerpt:
       "Rund 980 bis 1.450 Euro je kWp – aber woraus setzt sich der Preis zusammen, und was kommt an laufenden Kosten dazu? Mit Preistabelle nach Anlagengröße.",
     veroeffentlicht: "2026-09-12",
-    aktualisiert: "2026-09-12",
+    aktualisiert: "2026-09-13",
     lesezeit: 9,
     kategorie: "Kosten & Wirtschaftlichkeit",
-    bild: "/Images/Home/contactImage.jpg",
-    bildAlt: "Montage einer Photovoltaikanlage auf einem Satteldach",
+    bild: "/Images/Dienstleistungen/Service/solar-panel-7518786_1280.jpg",
+    bildAlt: "Monteur befestigt ein Solarmodul an der Unterkonstruktion",
     keywords: [
       "Solaranlage Kosten",
       "Photovoltaik Kosten",
@@ -65,16 +65,16 @@ export const ARTIKEL = [
     // Kurzform fuer Karten und Breadcrumbs
     kurzTitel: "Einspeisevergütung 2026",
     description:
-      "Wie hoch ist die Einspeisevergütung 2026? Alle aktuellen Sätze für Teil- und Volleinspeisung, wie lange sie gelten und was sich 2027 ändert – verständlich erklärt.",
+      "Einspeisevergütung 2026: 7,70 ct/kWh bis 10 kWp. Alle Sätze für Teil- und Volleinspeisung, Solarspitzengesetz und was die EEG-Novelle 2027 plant.",
     excerpt:
       "Seit dem 1. August 2026 gelten neue Sätze. Was Sie pro eingespeister Kilowattstunde bekommen, wie lange die Vergütung garantiert ist und warum 2027 alles anders werden könnte.",
     veroeffentlicht: "2026-09-11",
-    aktualisiert: "2026-09-11",
-    lesezeit: 8,
+    aktualisiert: "2026-09-13",
+    lesezeit: 9,
     kategorie: "Förderung & Vergütung",
     // Bild aus /public
-    bild: "/Images/Home/contactImage.jpg",
-    bildAlt: "Photovoltaikanlage auf einem Wohnhausdach",
+    bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
+    bildAlt: "Photovoltaikanlage auf mehreren Dachflächen – Luftaufnahme",
     keywords: [
       "Einspeisevergütung 2026",
       "Einspeisevergütung",

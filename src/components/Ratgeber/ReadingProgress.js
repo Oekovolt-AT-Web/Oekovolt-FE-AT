@@ -41,7 +41,7 @@ export default function ReadingProgress() {
       className="fixed inset-x-0 top-0 z-[120] h-[3px] bg-transparent"
     >
       <div
-        className="h-full bg-[#669933] motion-safe:transition-[width] motion-safe:duration-150"
+        className="h-full bg-gradient-to-r from-ov-400 to-ov-600 motion-safe:transition-[width] motion-safe:duration-150"
         style={{ width: `${progress}%` }}
       />
     </div>

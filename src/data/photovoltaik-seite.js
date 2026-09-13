@@ -48,4 +48,19 @@ export const PV_FAQ = [
     antwort:
       "Mit Ökosys überwachen wir Ihre Anlage laufend und erkennen Leistungsabfälle, bevor sie Ihnen auffallen. Für Wartung und Störungen ist unser eigenes Serviceteam zuständig – kein Subunternehmer, den Sie erst suchen müssen.",
   },
+  {
+    frage: "Wie hoch ist die Einspeisevergütung für neue PV-Anlagen 2026?",
+    antwort:
+      "Für Anlagen mit Inbetriebnahme ab dem 1. August 2026 gilt bei Teileinspeisung bis 10 kWp eine Vergütung von 7,70 Cent je kWh, festgeschrieben für 20 Jahre. Die Sätze sinken halbjährlich leicht. Weil Netzstrom ein Vielfaches kostet, lohnt sich vor allem der selbst verbrauchte Solarstrom (Stand September 2026, Orientierung).",
+  },
+  {
+    frage: "Was bedeutet das Solarspitzengesetz für meine neue Anlage?",
+    antwort:
+      "Neue Anlagen ohne Smart Meter und Steuerbox dürfen höchstens 60 % ihrer Modulleistung ins Netz einspeisen. Zudem gibt es in Zeiten negativer Börsenstrompreise keine Einspeisevergütung – diese Zeiten werden an das Ende des Förderzeitraums angehängt. Mit Speicher und gutem Energiemanagement fällt die Begrenzung kaum ins Gewicht; wir berücksichtigen sie bereits in der Planung.",
+  },
+  {
+    frage: "Muss ich auf die PV-Anlage Mehrwertsteuer zahlen?",
+    antwort:
+      "In der Regel nicht. Nach § 12 Abs. 3 UStG gilt für Lieferung und Montage von PV-Anlagen auf oder in der Nähe von Wohngebäuden ein Steuersatz von 0 %, typischerweise für Anlagen bis 30 kWp. Die Angebotspreise sind damit Endpreise. Im Einzelfall, etwa bei Gewerbe- oder Hallendächern, klären wir die steuerliche Einordnung mit Ihnen.",
+  },
 ];

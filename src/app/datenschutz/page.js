@@ -1,6 +1,5 @@
 import PrivacyPolicy from "@/components/Datenschutz/datenschutz";
-import BannerSection from "@/components/Reusable/banner";
-import EndSection from "@/components/Reusable/end";
+import LegalShell from "@/components/Reusable/LegalShell";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
@@ -22,7 +21,7 @@ export const metadata = {
     description: "Datenschutzrechtliche Bestimmungen und Ihre Rechte bei ÖKOVOLT GmbH.",
     images: [
       {
-        url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp",
+        url: "https://www.oekovolt.de/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Ökovolt Deutschland",
@@ -32,16 +31,9 @@ export const metadata = {
 };
 
 export default function DatenschutzPage() {
-  const data = {
-    title: "Datenschutz & Sicherheit",
-    img: "/Images/Kontakt/download-2.jpg",
-  };
-
   return (
-    <div>
-      <BannerSection data={data} />
+    <LegalShell titel="Datenschutzerklärung" pfad="/datenschutz" lead="Wie wir Ihre personenbezogenen Daten verarbeiten und welche Rechte Ihnen nach der DSGVO zustehen.">
       <PrivacyPolicy />
-      <EndSection />
-    </div>
+    </LegalShell>
   );
 }

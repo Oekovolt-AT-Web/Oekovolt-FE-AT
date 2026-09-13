@@ -42,11 +42,25 @@ export const ANNAHMEN = {
   // eigenen Anlage kommt), nicht ueber den Erzeugungsanteil. Sonst kommen bei
   // ueberdimensionierten Anlagen unrealistische 100 % heraus - im Winter
   // liefert keine PV-Anlage genug, 100 % Autarkie gibt es praktisch nie.
-  autarkieOhneSpeicher: 0.3,
-  // Mit Speicher: Grundwert + Zuschlag je kWh, gedeckelt.
-  autarkieMitSpeicherBasis: 0.3,
-  autarkieProKwhSpeicher: 0.05,
+  //
+  // Seit 09/2026 haengt die Autarkie vom VERHAELTNIS aus Erzeugung und
+  // Verbrauch sowie Speicher und Verbrauch ab (Saettigungskurven, angelehnt
+  // an die Simulationsergebnisse des HTW-Berlin-Unabhaengigkeitsrechners):
+  //   ohne Speicher:  a0   = autarkieOhneSpeicherMax * (1 - e^(-k * Erzeugung/Verbrauch))
+  //   Obergrenze:     amax = autarkieMitSpeicherMax  * (1 - e^(-k * Erzeugung/Verbrauch))
+  //   mit Speicher:   a    = a0 + (amax - a0) * (1 - e^(-k * kWh Speicher je MWh Verbrauch))
+  // Beispiel 10 kWp / 4.500 kWh: ohne Speicher ~36 %, mit 8 kWh ~72 %.
+  // Vorteil gegenueber einem festen Prozentwert: Eine zu kleine Anlage oder
+  // ein ueberdimensionierter Speicher bringt realistisch wenig zusaetzlich.
+  autarkieOhneSpeicherMax: 0.38,
+  autarkieOhneSpeicherK: 1.3,
+  autarkieMitSpeicherMax: 0.8,
+  autarkieMitSpeicherK: 1.4,
+  speicherK: 1.2,
   autarkieMax: 0.8,
+  // Mit Speicher geht ein Teil der Energie als Lade-/Entladeverlust verloren;
+  // der Eigenverbrauch kann daher hoechstens diesen Anteil der Erzeugung erreichen.
+  eigenverbrauchMaxAnteil: 0.92,
 
   // Strompreis, den der Eigenverbrauch ersetzt (EUR/kWh).
   // BDEW nennt fuer 2026 im Schnitt 37,0 ct; Bestandskunden zahlen im
@@ -58,6 +72,16 @@ export const ANNAHMEN = {
   // Reinigung und Ruecklage fuer den Wechselrichtertausch. Fuer eine
   // 10-kWp-Anlage werden 200-400 EUR/Jahr genannt.
   betriebskostenProKwp: 25,
+
+  // --- Entwicklung ueber 20 Jahre (Cashflow) ---------------------------
+  // Leistungsverlust der Module pro Jahr (Herstellergarantien typ. 0,4-0,5 %).
+  degradationProJahr: 0.005,
+  // Jaehrliche Steigerung des Netzstrompreises (waehlbar im Rechner).
+  // 2 % liegt unter dem langjaehrigen Mittel und ist bewusst vorsichtig.
+  strompreisSteigerungOptionen: [0, 0.02, 0.04],
+  strompreisSteigerung: 0.02,
+  // Kostensteigerung Betrieb (Inflation) pro Jahr
+  betriebskostenSteigerung: 0.02,
 };
 
 // Ausrichtung: Faktor auf den Sued-Ertrag

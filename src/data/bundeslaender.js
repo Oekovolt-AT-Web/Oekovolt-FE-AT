@@ -641,3 +641,115 @@ export function bundeslandFuerSlug(slug) {
   );
   return treffer ?? null;
 }
+
+// ---------------------------------------------------------------------------
+// KARTEN- UND FÖRDER-CHECK-PROFIL
+//
+// Verdichtete Einordnung je Land für die interaktive Deutschlandkarte und den
+// Förder-Check (/foerdercheck). Die Werte leiten sich aus den Texten oben ab –
+// bei jeder inhaltlichen Änderung eines Landes hier mitpflegen.
+//
+// foerderart:
+//   "zuschuss"  Landesweiter Zuschuss für private Anlagen verfügbar
+//   (Einordnung jeweils aus Sicht privater Eigenheimbesitzer)
+//   "darlehen"  Land fördert über zinsverbilligte Darlehen
+//   "kommunal"  Kein Landesprogramm, aber aktive kommunale Programme
+//   "bund"      Nur Bundesinstrumente (Steuer, EEG, KfW)
+// ertrag:       typischer spezifischer Jahresertrag in kWh je kWp [von, bis]
+// themen:       Vorhaben, die das Landesprogramm abdeckt (pv, speicher)
+// zielgruppen:  eigen = selbst genutztes Wohneigentum, vermieter = Vermieter/MFH/WEG,
+//               gewerbe = Unternehmen, Landwirtschaft, Vereine
+// ---------------------------------------------------------------------------
+
+export const FOERDERARTEN = {
+  zuschuss: { label: "Landeszuschuss", kurz: "Zuschuss" },
+  darlehen: { label: "Landesdarlehen", kurz: "Darlehen" },
+  kommunal: { label: "Kommunale Programme", kurz: "Kommunal" },
+  bund: { label: "Nur Bundesförderung", kurz: "Bund" },
+};
+
+export const LAENDER_PROFIL = {
+  "baden-wuerttemberg": { kuerzel: "BW", hauptstadt: "Stuttgart", foerderart: "darlehen", ertrag: [950, 1050], programm: { name: "L-Bank „Wohnen mit Zukunft: Photovoltaik“", art: "Darlehen", themen: ["pv", "speicher"], zielgruppen: ["eigen"] } },
+  bayern: { kuerzel: "BY", hauptstadt: "München", foerderart: "kommunal", ertrag: [950, 1050], programm: null },
+  berlin: { kuerzel: "BE", hauptstadt: "Berlin", foerderart: "zuschuss", ertrag: [950, 1020], programm: { name: "SolarPLUS (IBB)", art: "Zuschuss", themen: ["pv", "speicher"], zielgruppen: ["eigen", "vermieter", "gewerbe"] } },
+  brandenburg: { kuerzel: "BB", hauptstadt: "Potsdam", foerderart: "kommunal", ertrag: [950, 1030], programm: null },
+  bremen: { kuerzel: "HB", hauptstadt: "Bremen", foerderart: "bund", ertrag: [850, 930], programm: null },
+  hamburg: { kuerzel: "HH", hauptstadt: "Hamburg", foerderart: "zuschuss", ertrag: [850, 930], programm: { name: "Förderung Solar auf Gründach", art: "Zuschuss", themen: ["pv"], zielgruppen: ["eigen", "vermieter", "gewerbe"] } },
+  hessen: { kuerzel: "HE", hauptstadt: "Wiesbaden", foerderart: "darlehen", ertrag: [900, 980], programm: { name: "Landesdarlehen (WIBank)", art: "Darlehen", themen: ["pv", "speicher"], zielgruppen: ["eigen", "vermieter"] } },
+  "mecklenburg-vorpommern": { kuerzel: "MV", hauptstadt: "Schwerin", foerderart: "bund", ertrag: [900, 1000], programm: { name: "Speicherförderung für Unternehmen, Vereine und Kommunen", art: "Zuschuss", themen: ["speicher"], zielgruppen: ["gewerbe"] } },
+  niedersachsen: { kuerzel: "NI", hauptstadt: "Hannover", foerderart: "kommunal", ertrag: [850, 950], programm: null },
+  "nordrhein-westfalen": { kuerzel: "NW", hauptstadt: "Düsseldorf", foerderart: "kommunal", ertrag: [900, 950], programm: { name: "progres.NRW (teilweise ausgesetzt)", art: "Zuschuss", themen: ["pv", "speicher"], zielgruppen: ["gewerbe", "vermieter"] } },
+  "rheinland-pfalz": { kuerzel: "RP", hauptstadt: "Mainz", foerderart: "kommunal", ertrag: [950, 1020], programm: null },
+  saarland: { kuerzel: "SL", hauptstadt: "Saarbrücken", foerderart: "bund", ertrag: [950, 1030], programm: null },
+  sachsen: { kuerzel: "SN", hauptstadt: "Dresden", foerderart: "darlehen", ertrag: [950, 1020], programm: { name: "Sachsenkredit Energie und Speicher (SAB)", art: "Darlehen", themen: ["pv", "speicher"], zielgruppen: ["eigen", "vermieter", "gewerbe"] } },
+  "sachsen-anhalt": { kuerzel: "ST", hauptstadt: "Magdeburg", foerderart: "kommunal", ertrag: [930, 1000], programm: null },
+  "schleswig-holstein": { kuerzel: "SH", hauptstadt: "Kiel", foerderart: "darlehen", ertrag: [850, 950], programm: { name: "Zinsverbilligtes Darlehen (IB.SH)", art: "Darlehen", themen: ["pv", "speicher"], zielgruppen: ["eigen", "vermieter", "gewerbe"] } },
+  thueringen: { kuerzel: "TH", hauptstadt: "Erfurt", foerderart: "bund", ertrag: [930, 1000], programm: null },
+};
+
+/** Alle Länder als sortierte Liste mit Schlüssel, Stammdaten und Profil. */
+export function alleBundeslaender() {
+  return Object.entries(BUNDESLAENDER)
+    .map(([key, land]) => ({ key, ...land, ...LAENDER_PROFIL[key], slug: land.slugs[0] }))
+    .sort((a, b) => a.name.localeCompare(b.name, "de"));
+}
+
+/** Themen eines kommunalen Programms aus dem Freitext ableiten (pv, speicher, balkon). */
+export function themenFuerProgramm(k) {
+  const t = `${k.programm} ${k.was}`.toLowerCase();
+  const themen = [];
+  const nurBalkon = /steckersolar|balkon/.test(t) && !/dach|photovoltaikanlage|pv-anlage|pv-dach|fassade|anlagen im/.test(t);
+  if (/speicher/.test(t)) themen.push("speicher");
+  if (/steckersolar|balkon/.test(t)) themen.push("balkon");
+  if (!nurBalkon && /photovoltaik|pv|dach|solar|fassade|anlage|zählerschrank|begleitmaßnahmen/.test(t.replace(/steckersolargeräte/g, ""))) themen.push("pv");
+  return themen;
+}
+
+// Regionale Unterseiten (Landkreis / Gemeinde) – im Backoffice als eigene
+// Einträge geführt. Sie gehören zu einem Land, haben aber keinen eigenen
+// Landesdatensatz. `landkreis` steuert, welche regionalen Anlaufstellen passen,
+// `geo` [Länge, Breite] die Markierung auf der Mini-Karte.
+export const REGIONALSEITEN = {
+  "landesfoerderungen-in-bayern-landkreis-ostallgaeu": { name: "Landkreis Ostallgäu", geo: [10.62, 47.78], land: "bayern", landkreis: "Ostallgäu", plz: ["86807", "87616", "87629", "87645"] },
+  "landesfoerderungen-in-tuerkheim": { name: "Türkheim", geo: [10.64, 48.06], land: "bayern", landkreis: "Unterallgäu", plz: ["86842"] },
+  "landesfoerderungen-in-buchloe": { name: "Buchloe", geo: [10.72, 48.03], land: "bayern", landkreis: "Ostallgäu", plz: ["86807"] },
+  "landesfoerderungen-in-bad-woerishofen": { name: "Bad Wörishofen", geo: [10.6, 48.01], land: "bayern", landkreis: "Unterallgäu", plz: ["86825"] },
+  "landesfoerderungen-in-landsberg-am-lech": { name: "Landsberg am Lech", geo: [10.88, 48.05], land: "bayern", landkreis: "Landsberg am Lech", plz: ["86899"] },
+};
+
+/**
+ * Seite zu einem Slug auflösen: Landesseite ODER Regionalseite.
+ * { typ: "land" | "region", key, land, region? } – null, wenn unbekannt.
+ */
+export function seiteFuerSlug(slug) {
+  const land = bundeslandFuerSlug(slug);
+  if (land) {
+    const key = Object.keys(BUNDESLAENDER).find((k) => BUNDESLAENDER[k] === land);
+    return { typ: "land", key, land, profil: LAENDER_PROFIL[key] };
+  }
+  const region = REGIONALSEITEN[slug];
+  if (region) {
+    return { typ: "region", key: region.land, land: BUNDESLAENDER[region.land], profil: LAENDER_PROFIL[region.land], region };
+  }
+  return null;
+}
+
+/** Angrenzende Bundesländer – für „Förderung in den Nachbarländern“. */
+export const NACHBARN = {
+  "baden-wuerttemberg": ["bayern", "hessen", "rheinland-pfalz"],
+  bayern: ["baden-wuerttemberg", "hessen", "thueringen", "sachsen"],
+  berlin: ["brandenburg"],
+  brandenburg: ["berlin", "mecklenburg-vorpommern", "niedersachsen", "sachsen-anhalt", "sachsen"],
+  bremen: ["niedersachsen"],
+  hamburg: ["schleswig-holstein", "niedersachsen"],
+  hessen: ["nordrhein-westfalen", "niedersachsen", "thueringen", "bayern", "baden-wuerttemberg", "rheinland-pfalz"],
+  "mecklenburg-vorpommern": ["schleswig-holstein", "niedersachsen", "brandenburg"],
+  niedersachsen: ["schleswig-holstein", "hamburg", "bremen", "mecklenburg-vorpommern", "brandenburg", "sachsen-anhalt", "thueringen", "hessen", "nordrhein-westfalen"],
+  "nordrhein-westfalen": ["niedersachsen", "hessen", "rheinland-pfalz"],
+  "rheinland-pfalz": ["nordrhein-westfalen", "hessen", "baden-wuerttemberg", "saarland"],
+  saarland: ["rheinland-pfalz"],
+  sachsen: ["brandenburg", "sachsen-anhalt", "thueringen", "bayern"],
+  "sachsen-anhalt": ["niedersachsen", "brandenburg", "sachsen", "thueringen"],
+  "schleswig-holstein": ["hamburg", "niedersachsen", "mecklenburg-vorpommern"],
+  thueringen: ["niedersachsen", "sachsen-anhalt", "sachsen", "bayern", "hessen"],
+};

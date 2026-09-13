@@ -1,18 +1,27 @@
 // src/app/ratgeber/einspeiseverguetung-2026/page.js
 
-import Link from "next/link";
-import { ArrowRight, CalendarClock, CheckCircle2, Clock, TrendingDown } from "lucide-react";
+import { CalendarClock, TrendingDown } from "lucide-react";
 
-import Breadcrumbs from "@/components/Ratgeber/Breadcrumbs";
-import FaqAccordion from "@/components/Ratgeber/FaqAccordion";
-import ReadingProgress from "@/components/Ratgeber/ReadingProgress";
-import TableOfContents from "@/components/Ratgeber/TableOfContents";
+import ArtikelLayout from "@/components/Ratgeber/ArtikelLayout";
+import {
+  Abschnitt,
+  Checkliste,
+  KartenRaster,
+  Kennzahlband,
+  KurzFazit,
+  LinkKarten,
+  Merkkasten,
+  Prosa,
+  Tabelle,
+  TextLink,
+  Zwischentitel,
+} from "@/components/Ratgeber/Bausteine";
 import VerguetungsTabelle from "@/components/Ratgeber/VerguetungsTabelle";
+import Faq from "@/components/ui/Faq";
 import Solarrechner from "@/components/Solarrechner/Rechner";
-import EndSection from "@/components/Reusable/end";
 import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 import { ANNAHMEN } from "@/data/solarrechner";
-import { artikelNachSlug, artikelPfad, datumLang } from "@/lib/ratgeber";
+import { artikelNachSlug, artikelPfad } from "@/lib/ratgeber";
 
 const BASE_URL = "https://www.oekovolt.de";
 const SLUG = "einspeiseverguetung-2026";
@@ -35,20 +44,13 @@ export const metadata = {
     description: artikel.description,
     publishedTime: artikel.veroeffentlicht,
     modifiedTime: artikel.aktualisiert,
-    images: [
-      {
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
-        width: 1200,
-        height: 630,
-        alt: artikel.title,
-      },
-    ],
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: artikel.title }],
   },
   twitter: {
     card: "summary_large_image",
     title: artikel.title,
     description: artikel.description,
-    images: [`${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`],
+    images: [`${BASE_URL}/og-image.jpg`],
   },
 };
 
@@ -58,67 +60,61 @@ const TOC = [
   { id: "modelle", label: "Überschuss- oder Volleinspeisung?" },
   { id: "dauer", label: "Wie lange gilt mein Satz?" },
   { id: "degression", label: "Warum die Vergütung sinkt" },
+  { id: "solarspitzen", label: "Solarspitzengesetz: neue Regeln" },
   { id: "rechnung", label: "Beispielrechnung 10 kWp" },
   { id: "rechner", label: "Selbst durchrechnen" },
-  { id: "aenderung-2027", label: "Was sich 2027 ändert" },
+  { id: "aenderung-2027", label: "Was sich 2027 ändern soll" },
   { id: "faq", label: "Häufige Fragen" },
 ];
 
+const satz10 = ct(VERGUETUNG.saetze[0].teileinspeisung);
+const voll10 = ct(VERGUETUNG.saetze[0].volleinspeisung);
+
 const FAQ = [
   {
-    frage: "Wie hoch ist die Einspeisevergütung 2026?",
-    antwort: `Für Anlagen bis 10 kWp, die ab dem ${VERGUETUNG.gueltigAbLabel} in Betrieb gehen, liegt die Einspeisevergütung bei ${ct(
-      VERGUETUNG.saetze[0].teileinspeisung
-    )} ct/kWh bei Überschusseinspeisung und ${ct(
-      VERGUETUNG.saetze[0].volleinspeisung
-    )} ct/kWh bei Volleinspeisung. Größere Anlagenteile werden gestaffelt niedriger vergütet.`,
+    q: "Wie hoch ist die Einspeisevergütung 2026?",
+    a: `Für Anlagen bis 10 kWp, die ab dem ${VERGUETUNG.gueltigAbLabel} in Betrieb gehen, liegt die Einspeisevergütung bei ${satz10} ct/kWh bei Überschusseinspeisung und ${voll10} ct/kWh bei Volleinspeisung. Anlagenteile zwischen 10 und 40 kWp erhalten ${ct(VERGUETUNG.saetze[1].teileinspeisung)} bzw. ${ct(VERGUETUNG.saetze[1].volleinspeisung)} ct/kWh – die Staffelung wirkt anteilig.`,
   },
   {
-    frage: "Wie lange bekomme ich die Einspeisevergütung?",
-    antwort: `Der bei Inbetriebnahme gültige Satz ist für ${VERGUETUNG.garantieJahre} volle Kalenderjahre plus den Rest des Inbetriebnahmejahres garantiert. Eine Anlage, die im September 2026 ans Netz geht, wird also bis Ende 2046 mit dem heutigen Satz vergütet – unabhängig davon, wie sich die Sätze für Neuanlagen entwickeln.`,
+    q: "Wie lange bekomme ich die Einspeisevergütung?",
+    a: `Der bei Inbetriebnahme gültige Satz ist für ${VERGUETUNG.garantieJahre} volle Kalenderjahre plus den Rest des Inbetriebnahmejahres garantiert. Eine Anlage, die im September 2026 ans Netz geht, wird also bis Ende 2046 mit dem heutigen Satz vergütet – unabhängig davon, wie sich die Sätze für Neuanlagen entwickeln.`,
   },
   {
-    frage: "Lohnt sich Volleinspeisung oder Überschusseinspeisung mehr?",
-    antwort:
-      "Für Privathaushalte lohnt sich in aller Regel die Überschusseinspeisung, weil jede selbst verbrauchte Kilowattstunde rund 30 bis 35 Cent Netzbezug ersetzt – deutlich mehr als die Einspeisevergütung einbringt. Volleinspeisung ist vor allem dann interessant, wenn kaum Eigenverbrauch möglich ist, etwa bei einem zweiten Dach ohne nennenswerten Stromverbrauch.",
+    q: "Lohnt sich Volleinspeisung oder Überschusseinspeisung mehr?",
+    a: "Für Privathaushalte lohnt sich in aller Regel die Überschusseinspeisung, weil jede selbst verbrauchte Kilowattstunde rund 30 bis 35 Cent Netzbezug ersetzt – deutlich mehr als die Einspeisevergütung einbringt. Volleinspeisung ist vor allem dann interessant, wenn kaum Eigenverbrauch möglich ist, etwa auf einer Scheune oder einem zweiten Dach ohne nennenswerten Verbrauch.",
   },
   {
-    frage: "Sinkt meine Einspeisevergütung nachträglich?",
-    antwort:
-      "Nein. Die halbjährliche Degression betrifft ausschließlich Anlagen, die nach dem jeweiligen Stichtag neu in Betrieb gehen. Bestehende Anlagen behalten ihren Satz über die gesamte Vergütungsdauer.",
+    q: "Sinkt meine Einspeisevergütung nachträglich?",
+    a: "Nein. Die halbjährliche Degression betrifft ausschließlich Anlagen, die nach dem jeweiligen Stichtag neu in Betrieb gehen. Bestehende Anlagen behalten ihren Satz über die gesamte Vergütungsdauer. Auch die geplante EEG-Novelle 2027 sieht Bestandsschutz vor.",
   },
   {
-    frage: "Muss ich die Einspeisevergütung versteuern?",
-    antwort:
-      "Seit 2023 sind Photovoltaikanlagen bis 30 kWp auf Einfamilienhäusern von der Einkommensteuer befreit, und beim Kauf fällt keine Umsatzsteuer an (Nullsteuersatz). Für größere Anlagen oder gewerbliche Konstellationen gelten abweichende Regeln – das sollten Sie steuerlich prüfen lassen.",
+    q: "Bekomme ich bei negativen Strompreisen eine Vergütung?",
+    a: "Für Anlagen, die seit dem 25. Februar 2025 in Betrieb gehen, entfällt die Vergütung in Zeiträumen mit negativen Börsenstrompreisen (Solarspitzengesetz). Diese Zeiträume werden jedoch am Ende der 20-jährigen Förderdauer angehängt. Mit Speicher und hohem Eigenverbrauch fällt der Effekt für Privathaushalte gering aus.",
   },
   {
-    frage: "Was passiert nach 20 Jahren?",
-    antwort:
-      "Nach dem Ende der EEG-Vergütung kann die Anlage weiterlaufen. Üblich sind dann die sogenannte Anschlussvergütung zum Marktwert, ein Wechsel in die Direktvermarktung oder ein Repowering, bei dem alte Module gegen leistungsstärkere getauscht werden.",
+    q: "Muss ich die Einspeisevergütung versteuern?",
+    a: "Einnahmen aus Photovoltaikanlagen bis 30 kWp je Wohn- oder Gewerbeeinheit sind nach § 3 Nr. 72 EStG von der Einkommensteuer befreit; beim Kauf gilt nach § 12 Abs. 3 UStG ein Umsatzsteuersatz von 0 %. Für größere Anlagen oder gewerbliche Konstellationen gelten abweichende Regeln – lassen Sie das im Zweifel steuerlich prüfen.",
+  },
+  {
+    q: "Was passiert nach 20 Jahren?",
+    a: "Nach dem Ende der EEG-Vergütung darf die Anlage weiterlaufen. Üblich sind dann eine Anschlussvergütung zum Marktwert, der Wechsel in die Direktvermarktung oder die Umstellung auf maximalen Eigenverbrauch mit Speicher. Alternativ lohnt sich oft ein Repowering mit leistungsstärkeren Modulen.",
   },
 ];
 
-// Beispielrechnung – Annahmen bewusst offengelegt, damit die Zahl
-// nachvollziehbar bleibt. Ertrag und Strompreis kommen aus @/data/solarrechner,
-// damit dieser Artikel nie andere Werte zeigt als der Rechner weiter unten
-// auf derselben Seite.
-const BEISPIEL = {
-  kwp: 10,
-  ertragProKwp: ANNAHMEN.ertragProKwpSued,
-  eigenverbrauchsquote: 0.3,
-  strompreis: ANNAHMEN.strompreis,
-};
+// Beispielrechnung – Annahmen bewusst offengelegt. Ertrag und Strompreis
+// kommen aus @/data/solarrechner, damit dieser Artikel nie andere Werte zeigt
+// als der Rechner weiter unten auf derselben Seite.
+const BEISPIEL = { kwp: 10, ertragProKwp: ANNAHMEN.ertragProKwpSued, eigenverbrauchsquote: 0.3, strompreis: ANNAHMEN.strompreis };
 const jahresertrag = BEISPIEL.kwp * BEISPIEL.ertragProKwp;
 const eigenverbrauch = jahresertrag * BEISPIEL.eigenverbrauchsquote;
 const eingespeist = jahresertrag - eigenverbrauch;
 const satz = VERGUETUNG.saetze[0].teileinspeisung / 100;
 const einspeiseErloes = eingespeist * satz;
 const eigenverbrauchsErsparnis = eigenverbrauch * BEISPIEL.strompreis;
+const vollErloes = jahresertrag * (VERGUETUNG.saetze[0].volleinspeisung / 100);
 
-const eur = (n) =>
-  n.toLocaleString("de-DE", { maximumFractionDigits: 0 }) + " €";
-const kwh = (n) => n.toLocaleString("de-DE", { maximumFractionDigits: 0 });
+const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
+const kwh = (n) => Math.round(n).toLocaleString("de-DE");
 
 export default function EinspeiseverguetungPage() {
   const jsonLd = {
@@ -132,427 +128,237 @@ export default function EinspeiseverguetungPage() {
         inLanguage: "de-DE",
         datePublished: artikel.veroeffentlicht,
         dateModified: artikel.aktualisiert,
-        author: { "@id": `${BASE_URL}/#organization` },
+        author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },
         publisher: { "@id": `${BASE_URL}/#organization` },
         mainEntityOfPage: { "@type": "WebPage", "@id": PAGE_URL },
-        image: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
+        image: `${BASE_URL}${artikel.bild}`,
         articleSection: artikel.kategorie,
         keywords: artikel.keywords.join(", "),
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${PAGE_URL}/#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-          { "@type": "ListItem", position: 2, name: "Ratgeber", item: `${BASE_URL}/ratgeber` },
-          { "@type": "ListItem", position: 3, name: artikel.kurzTitel, item: PAGE_URL },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        "@id": `${PAGE_URL}/#faq`,
-        mainEntity: FAQ.map((f) => ({
-          "@type": "Question",
-          name: f.frage,
-          acceptedAnswer: { "@type": "Answer", text: f.antwort },
-        })),
+        timeRequired: `PT${artikel.lesezeit}M`,
       },
     ],
   };
 
   return (
     <>
-      <ReadingProgress />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      {/* ---------- Kopfbereich ---------- */}
-      <header className="border-b border-gray-200 bg-gray-100">
-        <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-14">
-          <Breadcrumbs
-            className="mb-6"
+      <ArtikelLayout
+        artikel={artikel}
+        toc={TOC}
+        titel={
+          <>
+            Einspeisevergütung 2026: <span className="ov-text-gradient">aktuelle Sätze</span> in ct/kWh
+          </>
+        }
+        badge={
+          <div className="flex items-center gap-4">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
+              <CalendarClock aria-hidden="true" className="h-6 w-6" />
+            </span>
+            <div>
+              <p className="ov-num font-display text-[22px] font-extrabold leading-none text-ink-900">
+                {satz10} ct <span className="text-[14px] font-semibold text-ink-500">/ kWh</span>
+              </p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">bis 10 kWp, Inbetriebnahme ab {VERGUETUNG.gueltigAbLabel}</p>
+            </div>
+          </div>
+        }
+        seitenCta={{ titel: "Was bringt Ihre Anlage?", text: "Ertrag, Eigenverbrauch und Amortisation mit den aktuellen EEG-Sätzen.", href: "/solarrechner", label: "Zum Solarrechner" }}
+        cta={{
+          title: "2026 in Betrieb gehen und den Satz für 20 Jahre sichern.",
+          text: "Wir planen Ihre Anlage auf maximalen Eigenverbrauch, übernehmen Netzanmeldung und Marktstammdatenregister – und nennen Ihnen einen realistischen Inbetriebnahmetermin.",
+          primary: { label: "Angebot anfragen", href: "/angebot" },
+          secondary: { label: "Ertrag berechnen", href: "/solarrechner" },
+        }}
+      >
+        <KurzFazit
+          punkte={[
+            `Seit dem ${VERGUETUNG.gueltigAbLabel} gibt es für Anlagen bis 10 kWp ${satz10} ct/kWh bei Überschusseinspeisung.`,
+            `Bei Volleinspeisung sind es ${voll10} ct/kWh – dafür entfällt der Eigenverbrauch.`,
+            `Der Satz ist ab Inbetriebnahme ${VERGUETUNG.garantieJahre} Jahre plus Restjahr garantiert und sinkt nachträglich nicht.`,
+            "Seit dem Solarspitzengesetz (Februar 2025) gibt es bei negativen Börsenpreisen keine Vergütung – die Zeit wird hinten angehängt.",
+            "Die EEG-Novelle 2027 soll die feste Vergütung für neue kleine Anlagen ab 2027 ablösen; wer 2026 in Betrieb geht, ist geschützt.",
+          ]}
+        />
+
+        <Abschnitt id="saetze" titel="Aktuelle Einspeisevergütung 2026 im Überblick">
+          <Prosa>
+            <p>
+              <strong>Die Einspeisevergütung ist der gesetzlich festgelegte Betrag, den Ihr Netzbetreiber für jede ins öffentliche Netz eingespeiste
+              Kilowattstunde Solarstrom zahlt.</strong> Wie hoch sie ausfällt, hängt von zwei Dingen ab: von der Größe Ihrer Anlage und davon, ob Sie nur
+              den Überschuss oder die gesamte Erzeugung einspeisen.
+            </p>
+          </Prosa>
+
+          <VerguetungsTabelle />
+
+          <Prosa>
+            <p>
+              Die Staffelung wirkt anteilig, nicht nach dem Alles-oder-nichts-Prinzip. Eine 20-kWp-Anlage bekommt für die ersten 10 kWp den höheren Satz
+              und erst für die zweiten 10 kWp den niedrigeren – der Mischsatz liegt bei rund{" "}
+              {ct((VERGUETUNG.saetze[0].teileinspeisung + VERGUETUNG.saetze[1].teileinspeisung) / 2)} ct/kWh.
+            </p>
+          </Prosa>
+        </Abschnitt>
+
+        <Abschnitt id="modelle" titel="Überschusseinspeisung oder Volleinspeisung?">
+          <Prosa>
+            <p>
+              Auf den ersten Blick wirkt die Volleinspeisung attraktiver – der Satz ist deutlich höher. Der Haken: Sie verzichten damit vollständig auf den
+              Eigenverbrauch. Und genau der ist für Privathaushalte der eigentliche Hebel.
+            </p>
+          </Prosa>
+          <KartenRaster
             items={[
-              { name: "Startseite", href: "/" },
-              { name: "Ratgeber", href: "/ratgeber" },
-              { name: artikel.kurzTitel },
+              { titel: "Überschusseinspeisung", text: `Sie verbrauchen so viel Solarstrom wie möglich selbst und speisen nur den Rest für ${satz10} ct ein. Jede selbst genutzte kWh spart den vollen Netzstrompreis. Der Standard für Ein- und Zweifamilienhäuser.` },
+              { titel: "Volleinspeisung", text: `Der gesamte Ertrag geht für ${voll10} ct ins Netz. Sinnvoll, wenn am Standort kaum Strom verbraucht wird. Muss dem Netzbetreiber vor Inbetriebnahme – danach jeweils vor dem 1. Dezember für das Folgejahr – mitgeteilt werden.` },
             ]}
           />
+          <Merkkasten variant="tipp" titel="Beides kombinieren">
+            Wer ein großes Dach hat, kann zwei getrennt gemessene Anlagen betreiben: eine für den Eigenverbrauch mit Überschusseinspeisung und eine
+            zweite in Volleinspeisung. Ob sich der zusätzliche Aufwand für Zähler und Anmeldung lohnt, rechnen wir im Einzelfall durch.
+          </Merkkasten>
+        </Abschnitt>
 
-          <p className="mb-3 inline-block text-[13px] font-semibold uppercase tracking-wide text-[#669933]">
-            {artikel.kategorie}
-          </p>
+        <Abschnitt id="dauer" titel="Wie lange gilt mein Vergütungssatz?">
+          <Prosa>
+            <p>
+              Entscheidend ist das Datum der Inbetriebnahme. Der an diesem Tag gültige Satz wird Ihnen für {VERGUETUNG.garantieJahre} volle Kalenderjahre
+              plus den Rest des Inbetriebnahmejahres garantiert. Eine Anlage, die im September 2026 ans Netz geht, erhält den heutigen Satz also bis Ende
+              2046.
+            </p>
+          </Prosa>
+          <Merkkasten variant="wichtig">
+            Spätere Absenkungen oder Gesetzesänderungen wirken sich nicht rückwirkend aus. Maßgeblich ist die technische Inbetriebnahme – nicht der
+            Vertragsabschluss. Planen Sie bei Stichtagen genügend Puffer für Lieferung, Montage und Zählersetzung ein.
+          </Merkkasten>
+        </Abschnitt>
 
-          <h1 className="max-w-[20ch] text-[30px] font-semibold leading-tight text-gray-900 md:text-[44px]">
-            Einspeisevergütung 2026: aktuelle Sätze in ct/kWh
-          </h1>
+        <Abschnitt id="degression" titel="Warum die Einspeisevergütung immer weiter sinkt">
+          <Prosa>
+            <p>
+              Das EEG sieht eine feste Degression vor: Alle sechs Monate – jeweils zum 1. Februar und zum 1. August – sinken die Sätze für Neuanlagen um{" "}
+              {VERGUETUNG.degressionProHalbjahr} %. Der Gedanke dahinter: Photovoltaik ist über die Jahre deutlich günstiger geworden, die Förderung soll
+              entsprechend mitwandern.
+            </p>
+          </Prosa>
+          <Kennzahlband
+            icon={TrendingDown}
+            wert={`−${VERGUETUNG.degressionProHalbjahr} %`}
+            titel={`Nächste planmäßige Absenkung: ${VERGUETUNG.naechsteAnpassungLabel}`}
+            text={`Wer vorher in Betrieb geht, sichert sich ${satz10} ct/kWh für die volle Laufzeit. Ob es 2027 überhaupt noch eine feste Vergütung für Neuanlagen gibt, entscheidet die EEG-Novelle.`}
+          />
+        </Abschnitt>
 
-          <p className="mt-5 max-w-[65ch] text-[18px] leading-relaxed text-gray-600">
-            {artikel.excerpt}
-          </p>
+        <Abschnitt id="solarspitzen" titel="Solarspitzengesetz: Was seit 2025 zusätzlich gilt">
+          <Prosa>
+            <p>
+              <strong>Das Solarspitzengesetz ist seit dem 25. Februar 2025 in Kraft und soll Netzüberlastungen an sonnigen Mittagen verhindern.</strong>{" "}
+              Für neue Anlagen bringt es drei wesentliche Änderungen:
+            </p>
+          </Prosa>
+          <Checkliste
+            punkte={[
+              "Keine Einspeisevergütung in Zeiträumen mit negativen Börsenstrompreisen. Die ausgefallenen Zeiten werden am Ende der 20-jährigen Förderdauer angehängt.",
+              "Solange kein intelligentes Messsystem mit Steuerbox eingebaut ist, darf die Anlage höchstens 60 % ihrer Modulleistung ins Netz einspeisen.",
+              "Bestandsanlagen können freiwillig in das neue Modell wechseln und erhalten dafür einen kleinen Bonus auf den Vergütungssatz.",
+            ]}
+          />
+          <Merkkasten variant="info" titel="Was das für Sie bedeutet">
+            Die 60-%-Grenze betrifft nur die Einspeisung, nicht die Erzeugung. Mit Speicher, Wallbox oder Wärmepumpe verbrauchen Sie die Mittagsspitze
+            ohnehin selbst – der Ertragsverlust liegt dann meist bei wenigen Prozent. Mehr zu Begriffen wie{" "}
+            <TextLink href="/wissen/lexikon#solarspitzengesetz">Solarspitzengesetz</TextLink> und{" "}
+            <TextLink href="/wissen/lexikon#imsys">intelligentes Messsystem</TextLink> im Lexikon.
+          </Merkkasten>
+        </Abschnitt>
 
-          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] text-gray-500">
-            <span className="flex items-center gap-2">
-              <CalendarClock aria-hidden="true" className="h-4 w-4 text-[#669933]" />
-              Aktualisiert am{" "}
-              <time dateTime={artikel.aktualisiert}>
-                {datumLang(artikel.aktualisiert)}
-              </time>
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock aria-hidden="true" className="h-4 w-4 text-[#669933]" />
-              {artikel.lesezeit} Min. Lesezeit
-            </span>
+        <Abschnitt id="rechnung" titel="Beispielrechnung: 10-kWp-Anlage im Allgäu">
+          <Prosa>
+            <p>
+              Die folgende Rechnung zeigt, warum der Eigenverbrauch für Privathaushalte so viel schwerer wiegt als die Einspeisung. Angenommen ist eine{" "}
+              {BEISPIEL.kwp}-kWp-Anlage mit {kwh(BEISPIEL.ertragProKwp)} kWh Ertrag je kWp – ein realistischer Wert für Süddeutschland – und eine
+              Eigenverbrauchsquote von {BEISPIEL.eigenverbrauchsquote * 100} % ohne Speicher.
+            </p>
+          </Prosa>
+          <Tabelle
+            caption="Beispielrechnung Einspeiseerlös gegenüber Eigenverbrauch bei 10 kWp"
+            kopf={["Position", "Menge", "Wert pro Jahr"]}
+            zeilen={[
+              ["Jahresertrag", `${kwh(jahresertrag)} kWh`, "–"],
+              [`Eigenverbrauch (${(BEISPIEL.strompreis * 100).toFixed(0)} ct/kWh gespart)`, `${kwh(eigenverbrauch)} kWh`, eur(eigenverbrauchsErsparnis)],
+              [`Überschusseinspeisung (${satz10} ct/kWh)`, `${kwh(eingespeist)} kWh`, eur(einspeiseErloes)],
+              ["Summe Überschussmodell", "", eur(eigenverbrauchsErsparnis + einspeiseErloes)],
+              [`Zum Vergleich: Volleinspeisung (${voll10} ct/kWh)`, `${kwh(jahresertrag)} kWh`, eur(vollErloes)],
+            ]}
+            hervorheben={2}
+            markierteZeile={3}
+            minBreite={480}
+            fussnote="Beispielrechnung mit gerundeten Werten, ohne Betriebskosten. Der tatsächliche Ertrag hängt von Dachneigung, Ausrichtung, Verschattung und Verbrauchsverhalten ab."
+          />
+          <Prosa>
+            <p>
+              Der selbst verbrauchte Strom bringt in diesem Beispiel rund {eur(eigenverbrauchsErsparnis)} im Jahr, die Einspeisung dagegen nur etwa{" "}
+              {eur(einspeiseErloes)} – und das bei weniger als der Hälfte der Strommenge. Genau deshalb rechnet sich ein{" "}
+              <TextLink href="/produkte/stromspeicher">Stromspeicher</TextLink> für die meisten Haushalte: Er verschiebt Kilowattstunden von der schlecht
+              vergüteten Einspeisung in den gut bezahlten Eigenverbrauch.
+            </p>
+          </Prosa>
+        </Abschnitt>
+
+        <Abschnitt id="rechner" titel="Rechnen Sie es für Ihr Dach durch">
+          <Prosa>
+            <p>
+              Die Beispielrechnung passt selten exakt. Im Rechner setzen Sie Ihre eigene Anlagengröße, Ihren Verbrauch und Ihr Dach ein – die
+              Einspeisesätze sind dieselben wie in der Tabelle, inklusive anteiliger Staffelung.
+            </p>
+          </Prosa>
+          <div className="mt-8 lg:-mr-8 xl:-mr-16">
+            <Solarrechner className="shadow-xl" />
           </div>
-        </div>
-      </header>
+        </Abschnitt>
 
-      {/* ---------- Inhalt ---------- */}
-      <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-16">
-        <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
-          <article className="min-w-0 flex-1">
-            <TableOfContents items={TOC} variant="mobile" />
+        <Abschnitt id="aenderung-2027" titel="Was sich 2027 ändern soll">
+          <Prosa>
+            <p>
+              <strong>Am 29. Juli 2026 hat das Bundeskabinett den Entwurf einer EEG-Novelle beschlossen, nach der die feste Einspeisevergütung für neue
+              kleine Dachanlagen ab dem 1. Januar 2027 entfallen soll.</strong> An ihre Stelle sollen befristete Übergangszahlungen und ein stärkerer
+              Weg in die <TextLink href="/service/direktvermarktung">Direktvermarktung</TextLink> treten.
+            </p>
+            <p>
+              Stand September 2026 ist das Gesetz noch nicht verabschiedet: Bundestag und Bundesrat beraten, außerdem ist eine beihilferechtliche
+              Genehmigung der EU-Kommission nötig. Höhe und Dauer der Übergangszahlungen können sich im Verfahren noch ändern.
+            </p>
+          </Prosa>
+          <Zwischentitel>Was schon heute feststeht</Zwischentitel>
+          <Checkliste
+            punkte={[
+              "Bestandsanlagen behalten ihren Vergütungssatz für die volle Laufzeit.",
+              "Nach dem Kabinettsentwurf behalten Anlagen, die bis zum 31. Dezember 2026 in Betrieb gehen, die feste Vergütung für 20 Jahre.",
+              "Der wirtschaftliche Hebel liegt ohnehin im Eigenverbrauch – daran ändert die Novelle nichts.",
+            ]}
+          />
+          <Merkkasten variant="recht" titel="Unsere Einschätzung">
+            Wer ohnehin bauen möchte, sollte die Inbetriebnahme nicht unnötig aufschieben. Wir informieren Sie im Beratungsgespräch über den aktuellen
+            Stand des Gesetzgebungsverfahrens und planen einen realistischen Termin.
+          </Merkkasten>
+        </Abschnitt>
 
-            {/* Kurzfassung – gezielt fuer Featured Snippets */}
-            <section aria-labelledby="kurz-heading" className="scroll-mt-28" id="kurz">
-              <h2
-                id="kurz-heading"
-                className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]"
-              >
-                Das Wichtigste in Kürze
-              </h2>
-              <ul className="space-y-3 rounded-xl bg-[#f0f7e6] p-6">
-                {[
-                  `Seit dem ${VERGUETUNG.gueltigAbLabel} gibt es für Anlagen bis 10 kWp ${ct(
-                    VERGUETUNG.saetze[0].teileinspeisung
-                  )} ct/kWh bei Überschusseinspeisung.`,
-                  `Bei Volleinspeisung sind es ${ct(
-                    VERGUETUNG.saetze[0].volleinspeisung
-                  )} ct/kWh – dafür entfällt der Eigenverbrauch.`,
-                  `Der Satz ist ab Inbetriebnahme ${VERGUETUNG.garantieJahre} Jahre plus Restjahr garantiert und sinkt nachträglich nicht.`,
-                  `Die nächste Absenkung um ${VERGUETUNG.degressionProHalbjahr} % erfolgt am ${VERGUETUNG.naechsteAnpassungLabel}.`,
-                  "Für Privathaushalte ist der Eigenverbrauch fast immer wertvoller als die Einspeisung.",
-                ].map((punkt) => (
-                  <li key={punkt} className="flex gap-3">
-                    <CheckCircle2
-                      aria-hidden="true"
-                      className="mt-0.5 h-5 w-5 shrink-0 text-[#669933]"
-                    />
-                    <span className="text-[16px] leading-relaxed text-gray-700">
-                      {punkt}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+        <Abschnitt id="faq" titel="Häufige Fragen zur Einspeisevergütung">
+          <Faq items={FAQ} />
+        </Abschnitt>
 
-            {/* Sätze */}
-            <section className="mt-12 scroll-mt-28" id="saetze">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Aktuelle Einspeisevergütung 2026 im Überblick
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Die Einspeisevergütung ist der Betrag, den Ihr Netzbetreiber
-                Ihnen für jede Kilowattstunde zahlt, die Sie nicht selbst
-                verbrauchen, sondern ins öffentliche Netz abgeben. Wie hoch sie
-                ausfällt, hängt von zwei Dingen ab: von der Größe Ihrer Anlage
-                und davon, ob Sie überschüssigen Strom einspeisen oder die
-                gesamte Erzeugung.
-              </p>
-
-              <VerguetungsTabelle />
-
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Die Staffelung wirkt anteilig, nicht nach dem
-                Alles-oder-nichts-Prinzip. Eine 20-kWp-Anlage bekommt für die
-                ersten 10 kWp den höheren Satz und erst für die zweiten 10 kWp
-                den niedrigeren – der Mischsatz liegt also dazwischen.
-              </p>
-            </section>
-
-            {/* Modelle */}
-            <section className="mt-12 scroll-mt-28" id="modelle">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Überschusseinspeisung oder Volleinspeisung?
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Auf den ersten Blick wirkt die Volleinspeisung attraktiver – der
-                Satz ist deutlich höher. Der Haken: Sie verzichten damit
-                vollständig auf den Eigenverbrauch. Und genau der ist für
-                Privathaushalte der eigentliche Hebel.
-              </p>
-
-              <div className="mt-6 grid gap-5 sm:grid-cols-2">
-                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-md">
-                  <h3 className="mb-2 text-[18px] font-semibold text-gray-900">
-                    Überschusseinspeisung
-                  </h3>
-                  <p className="mb-4 text-[15px] leading-relaxed text-gray-600">
-                    Sie verbrauchen so viel Solarstrom wie möglich selbst und
-                    speisen nur den Rest ein. Jede selbst genutzte Kilowattstunde
-                    spart den vollen Netzstrompreis.
-                  </p>
-                  <p className="text-[14px] font-medium text-[#669933]">
-                    Der Standard für Ein- und Zweifamilienhäuser.
-                  </p>
-                </div>
-                <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-md">
-                  <h3 className="mb-2 text-[18px] font-semibold text-gray-900">
-                    Volleinspeisung
-                  </h3>
-                  <p className="mb-4 text-[15px] leading-relaxed text-gray-600">
-                    Der gesamte Ertrag geht ins Netz, dafür gibt es den höheren
-                    Satz. Sinnvoll, wenn am Standort kaum Strom verbraucht wird
-                    oder ein zweites Dach separat belegt werden soll.
-                  </p>
-                  <p className="text-[14px] font-medium text-[#669933]">
-                    Muss vor Inbetriebnahme gemeldet werden.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Dauer */}
-            <section className="mt-12 scroll-mt-28" id="dauer">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Wie lange gilt mein Vergütungssatz?
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Entscheidend ist das Datum der Inbetriebnahme. Der an diesem Tag
-                gültige Satz wird Ihnen für {VERGUETUNG.garantieJahre} volle
-                Kalenderjahre plus den Rest des Inbetriebnahmejahres garantiert.
-                Eine Anlage, die im September 2026 ans Netz geht, erhält den
-                heutigen Satz also bis Ende 2046.
-              </p>
-              <div className="mt-6 rounded-xl border-l-4 border-[#669933] bg-gray-50 p-5">
-                <p className="text-[15px] leading-relaxed text-gray-700">
-                  <strong className="font-semibold text-gray-900">
-                    Wichtig:
-                  </strong>{" "}
-                  Spätere Absenkungen wirken sich nicht rückwirkend aus. Wer
-                  heute baut, ist von der Degression im Februar 2027 nicht
-                  betroffen.
-                </p>
-              </div>
-            </section>
-
-            {/* Degression */}
-            <section className="mt-12 scroll-mt-28" id="degression">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Warum die Einspeisevergütung immer weiter sinkt
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Das EEG sieht eine feste Degression vor: Alle sechs Monate –
-                jeweils zum 1. Februar und zum 1. August – sinken die Sätze für
-                Neuanlagen um {VERGUETUNG.degressionProHalbjahr} %. Der Gedanke
-                dahinter ist, dass Photovoltaik über die Jahre günstiger
-                geworden ist und die Förderung entsprechend mitwandern soll.
-              </p>
-              <div className="mt-6 flex items-start gap-4 rounded-xl bg-[#003473] p-6 text-white">
-                <TrendingDown aria-hidden="true" className="mt-1 h-6 w-6 shrink-0" />
-                <div>
-                  <p className="mb-1 text-[17px] font-semibold">
-                    Nächste Absenkung: {VERGUETUNG.naechsteAnpassungLabel}
-                  </p>
-                  <p className="text-[15px] leading-relaxed text-white/80">
-                    Wer die Inbetriebnahme bis dahin abschließt, sichert sich
-                    noch die aktuellen {ct(VERGUETUNG.saetze[0].teileinspeisung)}{" "}
-                    ct/kWh für die volle Laufzeit.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {/* Beispielrechnung */}
-            <section className="mt-12 scroll-mt-28" id="rechnung">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Beispielrechnung: 10-kWp-Anlage im Allgäu
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Die folgende Rechnung zeigt, warum der Eigenverbrauch für
-                Privathaushalte so viel schwerer wiegt als die Einspeisung.
-                Angenommen ist eine {BEISPIEL.kwp}-kWp-Anlage mit{" "}
-                {kwh(BEISPIEL.ertragProKwp)} kWh Ertrag je kWp – ein realistischer
-                Wert für Süddeutschland – und einer Eigenverbrauchsquote von{" "}
-                {BEISPIEL.eigenverbrauchsquote * 100} %.
-              </p>
-
-              <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                <table className="w-full min-w-[480px] border-collapse text-left text-[15px]">
-                  <tbody className="divide-y divide-gray-200">
-                    <tr className="bg-white">
-                      <th scope="row" className="px-4 py-3 font-medium text-gray-900">
-                        Jahresertrag
-                      </th>
-                      <td className="px-4 py-3 tabular-nums text-gray-700">
-                        {kwh(jahresertrag)} kWh
-                      </td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <th scope="row" className="px-4 py-3 font-medium text-gray-900">
-                        davon selbst verbraucht
-                      </th>
-                      <td className="px-4 py-3 tabular-nums text-gray-700">
-                        {kwh(eigenverbrauch)} kWh
-                      </td>
-                    </tr>
-                    <tr className="bg-white">
-                      <th scope="row" className="px-4 py-3 font-medium text-gray-900">
-                        davon eingespeist
-                      </th>
-                      <td className="px-4 py-3 tabular-nums text-gray-700">
-                        {kwh(eingespeist)} kWh
-                      </td>
-                    </tr>
-                    <tr className="bg-gray-50">
-                      <th scope="row" className="px-4 py-3 font-medium text-gray-900">
-                        Einspeiseerlös ({ct(VERGUETUNG.saetze[0].teileinspeisung)} ct/kWh)
-                      </th>
-                      <td className="px-4 py-3 tabular-nums font-semibold text-gray-900">
-                        {eur(einspeiseErloes)} / Jahr
-                      </td>
-                    </tr>
-                    <tr className="bg-[#f0f7e6]">
-                      <th scope="row" className="px-4 py-3 font-medium text-gray-900">
-                        Ersparnis Eigenverbrauch ({(BEISPIEL.strompreis * 100).toFixed(0)} ct/kWh)
-                      </th>
-                      <td className="px-4 py-3 tabular-nums font-semibold text-[#669933]">
-                        {eur(eigenverbrauchsErsparnis)} / Jahr
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <p className="mt-4 max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Der selbst verbrauchte Strom bringt in diesem Beispiel rund{" "}
-                {eur(eigenverbrauchsErsparnis)} im Jahr, die Einspeisung dagegen
-                nur etwa {eur(einspeiseErloes)} – und das bei weniger als der
-                Hälfte der Strommenge. Genau deshalb rechnet sich ein{" "}
-                <Link
-                  href="/produkte/stromspeicher"
-                  className="font-medium text-[#669933] underline underline-offset-2 hover:no-underline"
-                >
-                  Stromspeicher
-                </Link>{" "}
-                für die meisten Haushalte: Er verschiebt Kilowattstunden von der
-                schlecht vergüteten Einspeisung in den gut bezahlten
-                Eigenverbrauch.
-              </p>
-              <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
-                Beispielrechnung mit gerundeten Werten. Der tatsächliche Ertrag
-                hängt von Dachneigung, Ausrichtung, Verschattung und
-                Verbrauchsverhalten ab.
-              </p>
-            </section>
-
-            {/* Rechner */}
-            <section className="mt-12 scroll-mt-28" id="rechner">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Rechnen Sie es für Ihr Dach durch
-              </h2>
-              <p className="mb-6 max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Die Beispielrechnung oben passt selten exakt. Im Rechner setzen
-                Sie Ihre eigene Anlagengröße, Ihren Verbrauch und Ihr Dach ein –
-                die Einspeisesätze sind dieselben wie in der Tabelle.
-              </p>
-              <Solarrechner />
-            </section>
-
-            {/* 2027 */}
-            <section className="mt-12 scroll-mt-28" id="aenderung-2027">
-              <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Was sich 2027 ändern soll
-              </h2>
-              <p className="max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Ende Juli 2026 hat das Bundeskabinett den Entwurf einer
-                EEG-Novelle beschlossen. Vorgesehen ist, die feste
-                Einspeisevergütung für neue Anlagen auslaufen zu lassen und
-                stärker auf marktnahe Modelle wie die Direktvermarktung zu
-                setzen. Das Gesetzgebungsverfahren ist noch nicht abgeschlossen,
-                Details können sich also ändern.
-              </p>
-              <p className="mt-4 max-w-[70ch] text-[16px] leading-relaxed text-gray-600">
-                Für Sie heißt das vor allem eines: Wer ohnehin bauen möchte,
-                sollte die Inbetriebnahme nicht unnötig aufschieben. Der heute
-                geltende Satz bleibt über die gesamte Laufzeit bestehen – auch
-                wenn es ihn für Neuanlagen später nicht mehr gibt. Wie die{" "}
-                <Link
-                  href="/service/direktvermarktung"
-                  className="font-medium text-[#669933] underline underline-offset-2 hover:no-underline"
-                >
-                  Direktvermarktung
-                </Link>{" "}
-                funktioniert und wann sie sich lohnt, erklären wir separat.
-              </p>
-            </section>
-
-            {/* FAQ */}
-            <section className="mt-12 scroll-mt-28" id="faq">
-              <h2 className="mb-6 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Häufige Fragen zur Einspeisevergütung
-              </h2>
-              <FaqAccordion items={FAQ} />
-            </section>
-
-            {/* Weiterführend */}
-            <section className="mt-12">
-              <h2 className="mb-5 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-                Passend dazu
-              </h2>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[
-                  {
-                    href: "/produkte/stromspeicher",
-                    titel: "Stromspeicher nachrüsten",
-                    text: "Mehr Eigenverbrauch statt schlecht vergüteter Einspeisung.",
-                  },
-                  {
-                    href: "/forderungen/landesforderungen",
-                    titel: "Förderung nach Bundesland",
-                    text: "Welche Zuschüsse es zusätzlich zur EEG-Vergütung gibt.",
-                  },
-                  {
-                    href: "/service/repowering",
-                    titel: "Repowering nach 20 Jahren",
-                    text: "Was mit der Anlage passiert, wenn die Vergütung ausläuft.",
-                  },
-                  {
-                    href: "/produkte/photovoltaikanlage",
-                    titel: "PV-Anlage im Allgäu",
-                    text: "Planung, Montage und Anmeldung aus einer Hand.",
-                  },
-                ].map((l) => (
-                  <Link
-                    key={l.href}
-                    href={l.href}
-                    className="group rounded-xl border border-gray-100 bg-white p-5 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                  >
-                    <p className="mb-1 flex items-center gap-2 text-[17px] font-semibold text-gray-900 transition-colors group-hover:text-[#669933]">
-                      {l.titel}
-                      <ArrowRight
-                        aria-hidden="true"
-                        className="h-4 w-4 transition-transform group-hover:translate-x-1"
-                      />
-                    </p>
-                    <p className="text-[15px] leading-relaxed text-gray-600">
-                      {l.text}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          </article>
-
-          {/* Sidebar – nur ab lg, mobil uebernimmt das <details> im Artikel */}
-          <aside className="hidden shrink-0 lg:block lg:w-[260px]">
-            <TableOfContents items={TOC} variant="desktop" />
-          </aside>
-        </div>
-      </div>
-
-      <EndSection />
+        <Abschnitt id="passend" titel="Passend dazu">
+          <LinkKarten
+            links={[
+              { href: "/produkte/stromspeicher", titel: "Stromspeicher nachrüsten", text: "Mehr Eigenverbrauch statt schlecht vergüteter Einspeisung." },
+              { href: "/forderungen/landesforderungen", titel: "Förderung nach Bundesland", text: "Welche Zuschüsse es zusätzlich zur EEG-Vergütung gibt." },
+              { href: "/service/repowering", titel: "Repowering nach 20 Jahren", text: "Was mit der Anlage passiert, wenn die Vergütung ausläuft." },
+              { href: "/ratgeber/solaranlage-kosten", titel: "Was kostet eine Solaranlage?", text: "Preise je kWp und was im Komplettpreis steckt." },
+            ]}
+          />
+        </Abschnitt>
+      </ArtikelLayout>
     </>
   );
 }

@@ -1,432 +1,390 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, ChevronUp } from "lucide-react";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { ArrowRight, ChevronDown, Menu, Phone, X, Mail, Sparkles } from "lucide-react";
 
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(null);
-  const [hoverDropdown, setHoverDropdown] = useState(null);
-  // Header bleibt beim Scrollen stehen und wird dabei schlanker.
+import { NAVIGATION, KONTAKT } from "@/data/navigation";
+import { iconFor } from "@/components/ui/icons";
+import LiveTicker, { LiveDot } from "@/components/ui/LiveTicker";
+import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
+
+/**
+ * Seitenkopf 2026
+ *
+ *  - Schmale Live-Leiste (Börsenstrompreis, Erneuerbare) – klappt beim Scrollen weg
+ *  - Mega-Menü: Icons, Kurzbeschreibungen, hervorgehobene Aktion je Bereich
+ *  - Öffnet per Hover mit kurzer Absichtsverzögerung, per Klick und per Tastatur;
+ *    Escape schließt und gibt den Fokus an den Auslöser zurück
+ *  - Mobil: Vollbild-Menü mit Akkordeons und fester Aktionsleiste
+ */
+export default function Navbar() {
+  const pfad = usePathname();
+  const [offen, setOffen] = useState(null); // Titel des offenen Mega-Menüs
+  const [mobil, setMobil] = useState(false);
+  const [mobilGruppe, setMobilGruppe] = useState(null);
   const [gescrollt, setGescrollt] = useState(false);
-
-  // Offenes Mobilmenü: Seite dahinter nicht mitscrollen lassen und
-  // schwebende Elemente (CTA-Leiste, Nach-oben-Button) ausblenden – sie
-  // lagen sonst über dem Menü.
-  useEffect(() => {
-    document.body.classList.toggle("ov-menu-offen", isOpen);
-    return () => document.body.classList.remove("ov-menu-offen");
-  }, [isOpen]);
+  const schliessTimer = useRef(null);
+  const oeffnenTimer = useRef(null);
+  const ausloeser = useRef({});
 
   useEffect(() => {
-    const pruefen = () => setGescrollt(window.scrollY > 12);
+    const pruefen = () => setGescrollt(window.scrollY > 24);
     pruefen();
     window.addEventListener("scroll", pruefen, { passive: true });
     return () => window.removeEventListener("scroll", pruefen);
   }, []);
 
-  const toggleDropdown = (name) => {
-    setOpenDropdown((prev) => (prev === name ? null : name));
-  };
-
-  const closeMobileMenu = () => {
-    setIsOpen(false);
-    setOpenDropdown(null);
-  };
-
-  const handleMouseLeave = () => {
-    setHoverDropdown(null);
-  };
-
-  const handleMouseEnter = (name) => {
-    setHoverDropdown(name);
-  };
-
-  const navItems = [
-    {
-      title: "Dienstleistungen",
-      slug: "dienstleistungen",
-      items: [
-        {
-          name: "Photovoltaik",
-          slug: "photovoltaik",
-          link: "/dienstleistungen/photovoltaik",
-        },
-        {
-          name: "Smarthome",
-          slug: "smarthome",
-          link: "/dienstleistungen/smarthome",
-        },
-      ],
-    },
-    {
-      title: "Produkte",
-      slug: "produkte",
-      items: [
-        {
-          name: "Smart Energy Home",
-          slug: "smartenergyhome",
-          link: "/produkte/smartenergyhome",
-        },
-        {
-          name: "Photovoltaikanlage",
-          slug: "photovoltaikanlage",
-          link: "/produkte/photovoltaikanlage",
-        },
-        {
-          name: "Stromspeicher",
-          slug: "stromspeicher",
-          link: "/produkte/stromspeicher",
-        },
-        {
-          name: "Wärmepumpe",
-          slug: "warmepumpe",
-          link: "/produkte/warmepumpe",
-        },
-        {
-          name: "Wallbox",
-          slug: "wallbox",
-          link: "/produkte/wallbox",
-        },
-        {
-          name: "Smart Meter",
-          slug: "smartmeter",
-          link: "/produkte/smartmeter",
-        },
-        {
-          name: "Mieterstrom",
-          slug: "mieterstrom",
-          link: "/produkte/mieterstrom",
-        },
-        {
-          name: "Hersteller",
-          slug: "hersteller",
-          link: "/produkte/hersteller",
-        },
-      ],
-    },
-    {
-      title: "Service",
-      slug: "service",
-      items: [
-        {
-          name: "Oekovolt Vorteilswelt",
-          slug: "vorteilswelt",
-          link: "/service/vorteilswelt",
-        },
-        {
-          name: "Finanzierung",
-          slug: "finanzierung",
-          link: "/service/finanzierung",
-        },
-        {
-          name: "Dynamischer Stromtarif",
-          slug: "stromtarif",
-          link: "/service/stromtarif",
-        },
-        {
-          name: "Photovoltaik Repowering",
-          slug: "repowering",
-          link: "/service/repowering",
-        },
-        {
-          name: "Direktvermarktung",
-          slug: "direktvermarktung",
-          link: "/service/direktvermarktung",
-        },
-      ],
-    },
-    {
-      title: "Referenzen",
-      slug: "referenzen",
-      items: [
-        { name: "Projekte", slug: "projekte", link: "/referenzen/projekte" },
-        {
-          name: "Referenzkarte",
-          slug: "referenzkarte",
-          link: "/referenzen/referenzkarte",
-        },
-      ],
-    },
-    {
-      title: "Förderungen",
-      slug: "forderungen",
-      items: [
-        {
-          name: "Landesförderungen",
-          slug: "landes",
-          link: "/forderungen/landesforderungen",
-        },
-        {
-          name: "Steuerlich",
-          slug: "steuerlich",
-          link: "/forderungen/steuerlich",
-        },
-        {
-          name: "Baurecht",
-          slug: "baurecht",
-          link: "/forderungen/baurecht",
-        },
-        {
-          name: "Richtlinien",
-          slug: "richtlinien",
-          link: "/forderungen/richtlinien",
-        },
-      ],
-    },
-    {
-      title: "Wissen",
-      slug: "wissen",
-      items: [
-        { name: "Solarrechner", slug: "solarrechner", link: "/solarrechner" },
-        { name: "Ratgeber", slug: "ratgeber", link: "/ratgeber" },
-        { name: "FAQs", slug: "faqs", link: "/faqs" },
-      ],
-    },
-    {
-      title: "Über Uns",
-      slug: "uber-uns",
-      items: [
-        { name: "Team", slug: "team", link: "/uber-uns/team" },
-        { name: "Jobs", slug: "jobs", link: "/uber-uns/jobs" },
-      ],
-    },
-    { title: "Kontakt", slug: "kontakt", link: "/kontakt" },
-  ];
+  // Routenwechsel schließt alles
+  useEffect(() => {
+    setOffen(null);
+    setMobil(false);
+    setMobilGruppe(null);
+  }, [pfad]);
 
   useEffect(() => {
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      document.body.style.overscrollBehavior = "none";
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    } else {
-      document.body.style.overflow = "";
-      document.body.style.overscrollBehavior = "";
-      document.body.style.paddingRight = "";
-    }
-  }, [isOpen]);
-
+    document.body.classList.toggle("ov-menu-offen", mobil);
+    return () => document.body.classList.remove("ov-menu-offen");
+  }, [mobil]);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (hoverDropdown && !event.target.closest(".nav-item")) {
-        setHoverDropdown(null);
+    const onKey = (e) => {
+      if (e.key !== "Escape") return;
+      if (offen) {
+        ausloeser.current[offen]?.focus();
+        setOffen(null);
       }
+      if (mobil) setMobil(false);
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [hoverDropdown]);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [offen, mobil]);
+
+  const hoverRein = useCallback((titel) => {
+    clearTimeout(schliessTimer.current);
+    clearTimeout(oeffnenTimer.current);
+    oeffnenTimer.current = setTimeout(() => setOffen(titel), 90);
+  }, []);
+
+  const hoverRaus = useCallback(() => {
+    clearTimeout(oeffnenTimer.current);
+    schliessTimer.current = setTimeout(() => setOffen(null), 180);
+  }, []);
+
+  const aktivBereich = (item) =>
+    item.groups?.some((g) => g.items.some((s) => pfad === s.href || pfad.startsWith(s.href + "/")));
+
+  const offenesItem = NAVIGATION.find((n) => n.title === offen);
 
   return (
     <header className="sticky top-0 z-[100] w-full">
-      {/* Hintergrund als eigene Ebene: backdrop-filter direkt am <header>
-          würde das fixierte Mobilmenü (ein Kind des Headers) relativ zum
-          Header statt zum Viewport positionieren. */}
+      {/* ---------- Live-Leiste ---------- */}
       <div
-        aria-hidden="true"
-        className={`absolute inset-0 -z-10 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
-          gescrollt
-            ? "bg-white/95 shadow-[0_1px_0_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.18)] backdrop-blur-xl backdrop-saturate-150"
-            : "bg-white"
-        }`}
-      />
-      <div
-        className={`max-w-7xl mx-auto flex justify-between items-center px-4 transition-[padding] duration-300 ${
-          gescrollt ? "py-2" : "py-5"
+        className={`hidden overflow-hidden bg-navy-950 transition-[max-height,opacity] duration-500 md:block ${
+          gescrollt ? "max-h-0 opacity-0" : "max-h-10 opacity-100"
         }`}
       >
-        {/* Logo - kept exactly as in your original */}
-        <div className="w-45">
-          <Link
-            href="/"
-            aria-label="Ökovolt Solartechnik – zur Startseite"
-            className="flex items-center h-16 relative"
-            onClick={closeMobileMenu}
-          >
-            <div
-              className={`origin-left transition-transform duration-300 ${gescrollt ? "scale-[0.82]" : "scale-100"}`}
-              style={{ width: 180, height: 64, position: "relative" }}
-            >
-              <Image
-                src="/Images/Navbar/logo.png"
-                alt="Ökovolt Solartechnik Deutschland"
-                fill
-                priority
-                style={{ objectFit: "contain" }}
-                // Vorher "100vw, 1280px": für ein 180 px breites Logo wurde
-                // ein bis zu 1280 px breites Bild angefordert.
-                sizes="180px"
-              />
-            </div>
-
-
-          </Link>
-        </div>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center justify-center pl-8">
-          <ul className="flex gap-6 list-none m-0 p-0 justify-center">
-            {navItems.map((item) => (
-              <li
-                key={item.title}
-                className="nav-item relative flex items-center gap-1"
-                onMouseEnter={() => handleMouseEnter(item.title)}
-                onMouseLeave={handleMouseLeave}
-              >
-                {item.items ? (
-                  <>
-                    {/* Button statt <a href="#">: der Auslöser navigiert nicht,
-                        sondern klappt nur auf. Als Link erzeugte er einen toten
-                        Treffer pro Menüpunkt und wurde Screenreadern falsch
-                        als Link angesagt. Die Mobil-Variante nutzt schon länger
-                        einen Button. */}
-                    <button
-                      type="button"
-                      aria-expanded={hoverDropdown === item.title}
-                      className="text-gray text-[14px] uppercase whitespace-nowrap hover:text-[#669933] transition-colors flex items-center gap-1 cursor-pointer"
-                      // Sichtbarkeit haengt am hoverDropdown-State. Der Klick
-                      // setzte bisher openDropdown - den liest das Desktop-Menue
-                      // nirgends, deshalb liessen sich die Dropdowns nur per
-                      // Maus-Hover oeffnen, nicht per Klick oder Tastatur.
-                      onClick={() =>
-                        setHoverDropdown((prev) =>
-                          prev === item.title ? null : item.title
-                        )
-                      }
-                    >
-                      {item.title}
-                      {hoverDropdown === item.title ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      )}
-                    </button>
-                    <div
-                      className={`absolute left-1/2 -translate-x-1/2 top-full w-[190px] bg-white rounded shadow-lg py-1 z-50 transition-all duration-300 ${hoverDropdown === item.title
-                          ? "opacity-100 visible translate-y-0"
-                          : "opacity-0 invisible translate-y-2"
-                        }`}
-                    >
-                      {item.items.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          href={subItem.link}
-                          className="block px-4 py-2 text-gray text-[14px]   border-b border-white/10 hover:text-[#669933] transition-colors"
-                          onClick={() => setHoverDropdown(null)}
-                        >
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <Link
-                    href={item.link}
-                    className="text-gray text-[14px] uppercase whitespace-nowrap hover:text-[#669933] transition-colors"
-                  >
-                    {item.title}
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="xl:hidden p-2 text-gray"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="Toggle menu"
-        >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-
-        {/* Mobile Menu Overlay */}
-        <div
-          className={`fixed inset-0 bg-white top-[-5] z-40 transition-transform duration-300 ${isOpen ? "translate-x-0" : "translate-x-full"
-            } xl:hidden`}
-        >
-          <div className="flex justify-between items-center p-5 border-b border-white/10">
-            <div className="w-[180px]">
-              <Link href="/" className="flex items-center h-16 relative" onClick={closeMobileMenu}>
-                <div style={{ width: 180, height: 64, position: "relative" }}>
-                  <Image
-                    src="/Images/Navbar/logo.png"
-                    alt="Logo"
-                    fill
-                    style={{ objectFit: "contain" }}
-                    sizes="(max-width: 1280px) 100vw, 1280px"
-
-                  />
-                </div>
-
-
-              </Link>
-            </div>
-            <button
-              className="text-gray p-1"
-              onClick={closeMobileMenu}
-              aria-label="Close menu"
-            >
-              <X size={24} />
-            </button>
-          </div>
-
-          <div className="p-5 overflow-y-auto h-[calc(100vh-95px)] bg-white">
-            {navItems.map((item) => (
-              <div key={item.title} className="mb-2 border-b border-white/10">
-                {item.items ? (
-                  <>
-                    <button
-                      onClick={() => toggleDropdown(item.title)}
-                      className="flex justify-between items-center w-full py-3 text-gray uppercase text-[15px]"
-                    >
-                      {item.title}
-                      {openDropdown === item.title ? (
-                        <ChevronUp size={16} />
-                      ) : (
-                        <ChevronDown size={16} />
-                      )}
-                    </button>
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ${openDropdown === item.title ? "max-h-[500px]" : "max-h-0"
-                        }`}
-                    >
-                      <div className="pb-2 pl-3">
-                        {item.items.map((subItem) => (
-                          <Link
-                            key={subItem.name}
-                            href={subItem.link}
-                            className="block py-3 text-gray  text-[15px] hover:text-[#669933]"
-                            onClick={closeMobileMenu}
-                          >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <Link
-                    href={item.link}
-                    className="block py-3 text-gray uppercase  text-[15px]"
-                    onClick={closeMobileMenu}
-                  >
-                    {item.title}
-                  </Link>
-                )}
-              </div>
-            ))}
+        <div className="ov-container flex h-10 items-center justify-between gap-6">
+          <LiveTicker />
+          <div className="flex shrink-0 items-center gap-5 text-[12.5px] text-white/70">
+            <a href={`mailto:${KONTAKT.email}`} className="hidden items-center gap-1.5 transition-colors hover:text-white lg:flex">
+              <Mail aria-hidden="true" className="h-3.5 w-3.5" />
+              {KONTAKT.email}
+            </a>
+            <a href={KONTAKT.telefonHref} className="flex items-center gap-1.5 font-medium text-white transition-colors hover:text-ov-300">
+              <Phone aria-hidden="true" className="h-3.5 w-3.5" />
+              {KONTAKT.telefon}
+            </a>
           </div>
         </div>
       </div>
+
+      {/* ---------- Hauptleiste ---------- */}
+      <div className="relative" onMouseLeave={hoverRaus}>
+        <div
+          aria-hidden="true"
+          className={`absolute inset-0 -z-10 transition-all duration-500 ${
+            gescrollt || offen
+              ? "bg-white/90 shadow-[0_1px_0_rgba(21,26,36,0.06),0_10px_30px_-18px_rgba(21,26,36,0.25)] backdrop-blur-xl backdrop-saturate-150"
+              : "bg-white"
+          }`}
+        />
+        <div className={`ov-container flex items-center justify-between gap-6 transition-[height] duration-500 ${gescrollt ? "h-[68px]" : "h-[84px]"}`}>
+          <Link href="/" aria-label="Ökovolt Solartechnik – zur Startseite" className="relative shrink-0">
+            <div className={`relative origin-left transition-transform duration-500 ${gescrollt ? "scale-[0.86]" : ""}`} style={{ width: 168, height: 56 }}>
+              <Image src="/Images/Navbar/logo.png" alt="Ökovolt Solartechnik Deutschland" fill priority sizes="168px" className="object-contain object-left" />
+            </div>
+          </Link>
+
+          <nav aria-label="Hauptnavigation" className="hidden xl:block">
+            <ul className="flex items-center gap-0.5">
+              {NAVIGATION.map((item) => {
+                const istOffen = offen === item.title;
+                const aktiv = aktivBereich(item);
+                return (
+                  <li key={item.title} onMouseEnter={() => hoverRein(item.title)}>
+                    <button
+                      ref={(el) => (ausloeser.current[item.title] = el)}
+                      type="button"
+                      aria-expanded={istOffen}
+                      aria-controls="ov-mega"
+                      onClick={() => setOffen(istOffen ? null : item.title)}
+                      className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[14.5px] font-medium transition-colors ${
+                        istOffen ? "bg-ink-100 text-ink-900" : aktiv ? "text-ov-700" : "text-ink-700 hover:text-ink-900"
+                      }`}
+                    >
+                      {item.title}
+                      <ChevronDown aria-hidden="true" className={`h-3.5 w-3.5 transition-transform duration-300 ${istOffen ? "rotate-180" : ""}`} />
+                      {aktiv && !istOffen && <span aria-hidden="true" className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-ov-500" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <div className="flex shrink-0 items-center gap-2">
+            <a
+              href={KONTAKT.telefonHref}
+              aria-label={`Anrufen: ${KONTAKT.telefon}`}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-ink-700 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 hover:text-ov-700 md:hidden"
+            >
+              <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
+            </a>
+            <Link
+              href="/kontakt"
+              className="hidden h-11 items-center rounded-full px-4 text-[14.5px] font-medium text-ink-700 transition-colors hover:text-ink-900 2xl:flex"
+            >
+              Kontakt
+            </Link>
+            <Link
+              href="/angebot"
+              className="group hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ov-500 pl-5 pr-4 text-[14.5px] font-semibold text-white shadow-[0_8px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-600 sm:flex"
+            >
+              Angebot anfragen
+              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobil(true)}
+              aria-label="Menü öffnen"
+              aria-expanded={mobil}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-900 text-white transition-colors hover:bg-ink-800 xl:hidden"
+            >
+              <Menu aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* ---------- Mega-Menü ---------- */}
+        <div
+          id="ov-mega"
+          onMouseEnter={() => clearTimeout(schliessTimer.current)}
+          className={`absolute inset-x-0 top-full hidden xl:block ${offen ? "pointer-events-auto" : "pointer-events-none"}`}
+        >
+          <div
+            className={`ov-container transition-all duration-300 ${
+              offen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"
+            }`}
+          >
+            {offenesItem && <MegaPanel item={offenesItem} pfad={pfad} onNavigate={() => setOffen(null)} />}
+          </div>
+        </div>
+      </div>
+
+      {/* Abdunkelung hinter dem Mega-Menü */}
+      <div
+        aria-hidden="true"
+        onClick={() => setOffen(null)}
+        className={`fixed inset-0 top-0 -z-20 hidden bg-navy-950/20 backdrop-blur-[2px] transition-opacity duration-300 xl:block ${
+          offen ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      <MobileMenu
+        offen={mobil}
+        schliessen={() => setMobil(false)}
+        gruppe={mobilGruppe}
+        setGruppe={setMobilGruppe}
+        pfad={pfad}
+      />
     </header>
   );
+}
+
+function MegaPanel({ item, pfad, onNavigate }) {
+  const vieleGruppen = item.groups.length > 1;
+  return (
+    <div className="mt-2 overflow-hidden rounded-3xl bg-white shadow-[0_30px_80px_-30px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
+      <div className="grid grid-cols-[260px_1fr_300px]">
+        <div className="border-r border-ink-100 bg-sand-50 p-8">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-600">{item.title}</p>
+          <p className="mt-3 font-display text-[21px] font-bold leading-snug tracking-tight text-ink-900">{item.intro}</p>
+        </div>
+
+        <div className={`grid gap-x-4 gap-y-6 p-6 ${vieleGruppen ? "grid-cols-2" : "grid-cols-2"}`}>
+          {item.groups.map((g) => (
+            <div key={g.label} className={vieleGruppen ? "" : "col-span-2"}>
+              {vieleGruppen && <p className="mb-2 px-3 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-400">{g.label}</p>}
+              <ul className={vieleGruppen ? "space-y-0.5" : "grid grid-cols-2 gap-0.5"}>
+                {g.items.map((s) => {
+                  const Icon = iconFor(s.icon);
+                  const aktiv = pfad === s.href;
+                  return (
+                    <li key={s.href + s.name}>
+                      <Link
+                        href={s.href}
+                        onClick={onNavigate}
+                        aria-current={aktiv ? "page" : undefined}
+                        className={`group flex items-start gap-3.5 rounded-2xl p-3 transition-colors ${aktiv ? "bg-ov-50" : "hover:bg-ink-50"}`}
+                      >
+                        <span className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 ${aktiv ? "bg-ov-500 text-white" : "bg-ov-50 text-ov-600 group-hover:bg-ov-500 group-hover:text-white"}`}>
+                          <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />
+                        </span>
+                        <span>
+                          <span className="block text-[14.5px] font-semibold text-ink-900">{s.name}</span>
+                          <span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{s.text}</span>
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="p-4">
+          {item.feature ? <FeatureKachel feature={item.feature} onNavigate={onNavigate} /> : <FeatureKachel feature={STANDARD_FEATURE} onNavigate={onNavigate} />}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const STANDARD_FEATURE = {
+  title: "Anlage in 2 Minuten konfigurieren",
+  text: "Dach, Verbrauch, Wünsche – und Sie erhalten eine fundierte Ersteinschätzung.",
+  href: "/angebot",
+  cta: "Konfigurator starten",
 };
 
-export default Navbar;
+function FeatureKachel({ feature, onNavigate }) {
+  return (
+    <Link
+      href={feature.href}
+      onClick={onNavigate}
+      className="ov-noise group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl bg-navy-950 p-6 text-white"
+    >
+      <div aria-hidden="true" className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-ov-500/40 blur-3xl transition-transform duration-700 group-hover:scale-125" />
+      <div className="relative">
+        {feature.live ? <LivePreis /> : <Sparkles aria-hidden="true" className="h-6 w-6 text-ov-300" />}
+        <p className="mt-4 font-display text-[19px] font-bold leading-snug">{feature.title}</p>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-white/65">{feature.text}</p>
+      </div>
+      <span className="relative mt-6 inline-flex items-center gap-2 text-[14px] font-semibold text-ov-300">
+        {feature.cta}
+        <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </span>
+    </Link>
+  );
+}
+
+function LivePreis() {
+  const d = useEnergyLive();
+  const p = d?.preis?.aktuell;
+  return (
+    <div className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">
+      <LiveDot />
+      {p ? <span className="ov-num normal-case tracking-normal text-white">{fmtCt(p.eurMwh)} ct/kWh jetzt</span> : "Live"}
+    </div>
+  );
+}
+
+function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad }) {
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menü"
+      className={`fixed inset-0 z-[120] flex flex-col bg-white transition-[opacity,transform] duration-400 xl:hidden ${
+        offen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-3 opacity-0"
+      }`}
+    >
+      <div className="flex h-[72px] items-center justify-between border-b border-ink-100 px-5">
+        <Link href="/" onClick={schliessen} className="relative" style={{ width: 150, height: 50 }} aria-label="Startseite">
+          <Image src="/Images/Navbar/logo.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
+        </Link>
+        <button type="button" onClick={schliessen} aria-label="Menü schließen" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-900">
+          <X aria-hidden="true" className="h-5 w-5" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto overscroll-contain px-5 pb-6 pt-3">
+        <div className="mb-3 rounded-2xl bg-navy-950 px-4 py-3">
+          <LiveTicker />
+        </div>
+        <ul>
+          {NAVIGATION.map((item) => {
+            const auf = gruppe === item.title;
+            return (
+              <li key={item.title} className="border-b border-ink-100">
+                <button
+                  type="button"
+                  onClick={() => setGruppe(auf ? null : item.title)}
+                  aria-expanded={auf}
+                  className="flex w-full items-center justify-between py-4 text-left font-display text-[19px] font-bold text-ink-900"
+                >
+                  {item.title}
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${auf ? "rotate-180 bg-ov-500 text-white" : "bg-ink-100 text-ink-600"}`}>
+                    <ChevronDown aria-hidden="true" className="h-4 w-4" />
+                  </span>
+                </button>
+                <div className={`grid transition-[grid-template-rows] duration-300 ${auf ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
+                  <div className="overflow-hidden">
+                    <ul className="grid gap-1 pb-4 sm:grid-cols-2">
+                      {item.groups.flatMap((g) => g.items).map((s) => {
+                        const Icon = iconFor(s.icon);
+                        return (
+                          <li key={s.href + s.name}>
+                            <Link
+                              href={s.href}
+                              onClick={schliessen}
+                              tabIndex={auf ? 0 : -1}
+                              className={`flex items-center gap-3 rounded-xl p-2.5 ${pfad === s.href ? "bg-ov-50" : "active:bg-ink-50"}`}
+                            >
+                              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-50 text-ov-600">
+                                <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />
+                              </span>
+                              <span>
+                                <span className="block text-[15px] font-semibold text-ink-900">{s.name}</span>
+                                <span className="block text-[12.5px] text-ink-500">{s.text}</span>
+                              </span>
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 border-t border-ink-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <a href={KONTAKT.telefonHref} className="flex h-12 items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200">
+          <Phone aria-hidden="true" className="h-4 w-4" />
+          Anrufen
+        </a>
+        <Link href="/angebot" onClick={schliessen} className="flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 text-[15px] font-semibold text-white">
+          Angebot
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
+      </div>
+    </div>
+  );
+}
