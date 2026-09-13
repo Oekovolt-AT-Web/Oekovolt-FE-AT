@@ -172,7 +172,7 @@ export default function KontaktPage() {
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ink-200 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
                 <Mail aria-hidden="true" className="h-6 w-6" />
               </span>
-              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-500">E-Mail schreiben</h3>
+              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">E-Mail schreiben</h3>
               <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">office@oekovolt.de</p>
               <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">Ideal für Unterlagen, Fotos vom Dach oder Ihre Stromrechnung.</p>
               <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-200/70 pt-6 text-[14px] font-semibold text-ov-700">
@@ -190,7 +190,7 @@ export default function KontaktPage() {
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ov-200 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
                 <CalendarCheck aria-hidden="true" className="h-6 w-6" />
               </span>
-              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-500">Vor-Ort-Termin</h3>
+              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">Vor-Ort-Termin</h3>
               <p className="mt-2 font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">Wir kommen zu Ihnen</p>
               <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">
                 Dach, Zählerschrank und Verbrauch gemeinsam ansehen – für ein Angebot ohne Überraschungen.
@@ -232,7 +232,7 @@ export default function KontaktPage() {
               </p>
               <Link
                 href="/angebot"
-                className="group relative mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white hover:bg-ov-600"
+                className="group relative mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white hover:bg-ov-700"
               >
                 Zur Angebotsanfrage
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />

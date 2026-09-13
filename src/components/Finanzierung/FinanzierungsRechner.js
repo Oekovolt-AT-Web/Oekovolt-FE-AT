@@ -117,19 +117,18 @@ export default function FinanzierungsRechner() {
       <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         {/* Eingaben */}
         <div className="space-y-6 border-b border-ink-100 p-6 md:p-8 lg:border-b-0 lg:border-r">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-400">Finanzierung</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Finanzierung</p>
           <Regler id="fr-preis" label="Finanzierungsbetrag" wert={preis} anzeige={eur(preis)} min={10000} max={75000} step={500} onChange={setPreis} />
           <div>
             <p id="fr-laufzeit" className="text-[14px] font-medium text-ink-700">Laufzeit</p>
-            <div role="radiogroup" aria-labelledby="fr-laufzeit" className="mt-3 grid grid-cols-4 gap-1 rounded-full bg-ink-100 p-1">
+            <div role="group" aria-labelledby="fr-laufzeit" className="mt-3 grid grid-cols-4 gap-1 rounded-full bg-ink-100 p-1">
               {LAUFZEITEN.map((l) => (
                 <button
                   key={l}
                   type="button"
-                  role="radio"
-                  aria-checked={laufzeit === l}
+                  aria-pressed={laufzeit === l}
                   onClick={() => setLaufzeit(l)}
-                  className={`h-11 rounded-full text-[14px] font-semibold transition-all duration-300 ${laufzeit === l ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"}`}
+                  className={`h-11 rounded-full text-[14px] font-semibold transition-all duration-300 ${laufzeit === l ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"}`}
                 >
                   {l} J.
                 </button>
@@ -138,7 +137,7 @@ export default function FinanzierungsRechner() {
           </div>
           <Regler id="fr-zins" label="Sollzins (Beispielwert)" wert={zins} anzeige={`${zahl(zins, 1)} %`} min={1} max={9} step={0.1} onChange={setZins} hinweis="Ihr tatsächlicher Zins hängt von Bonität, Laufzeit und Bank ab." />
 
-          <p className="border-t border-ink-100 pt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-400">Ihre Anlage</p>
+          <p className="border-t border-ink-100 pt-6 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ihre Anlage</p>
           <Regler id="fr-kwp" label="Anlagengröße" wert={kwp} anzeige={`${zahl(kwp)} kWp`} min={4} max={20} step={1} onChange={setKwp} />
           <Regler id="fr-verbrauch" label="Stromverbrauch pro Jahr" wert={verbrauch} anzeige={`${zahl(verbrauch)} kWh`} min={2000} max={12000} step={250} onChange={setVerbrauch} />
           <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl bg-sand-50 px-4 py-3 ring-1 ring-ink-200/60">
@@ -155,14 +154,14 @@ export default function FinanzierungsRechner() {
         <div className="flex flex-col p-6 md:p-8">
           <div aria-live="polite" className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-3xl bg-ink-50 p-5 ring-1 ring-ink-200/60">
-              <p className="flex items-center gap-2 text-[13px] text-ink-500"><Wallet aria-hidden="true" className="h-4 w-4 text-navy-600" />Monatsrate</p>
+              <p className="flex items-center gap-2 text-[13px] text-ink-600"><Wallet aria-hidden="true" className="h-4 w-4 text-navy-600" />Monatsrate</p>
               <p className="ov-num mt-1 font-display text-[32px] font-extrabold leading-tight tracking-tight text-ink-900">{eur(r.monatsrate)}</p>
-              <p className="text-[12.5px] text-ink-500">{laufzeit} Jahre · Zinsen gesamt {eur(r.gesamtZinsen)}</p>
+              <p className="text-[12.5px] text-ink-600">{laufzeit} Jahre · Zinsen gesamt {eur(r.gesamtZinsen)}</p>
             </div>
             <div className="rounded-3xl bg-ov-50 p-5 ring-1 ring-ov-200/70">
               <p className="flex items-center gap-2 text-[13px] text-ink-600"><PiggyBank aria-hidden="true" className="h-4 w-4 text-ov-600" />Ersparnis pro Monat</p>
               <p className="ov-num mt-1 font-display text-[32px] font-extrabold leading-tight tracking-tight text-ov-700">{eur(r.vorteilMonat)}</p>
-              <p className="text-[12.5px] text-ink-500">{zahl(r.eigen)} kWh selbst genutzt · {zahl(r.einsp)} kWh eingespeist</p>
+              <p className="text-[12.5px] text-ink-600">{zahl(r.eigen)} kWh selbst genutzt · {zahl(r.einsp)} kWh eingespeist</p>
             </div>
           </div>
 

@@ -106,7 +106,7 @@ function FensterKarte({ icon: Icon, eyebrow, fenster, tagWort, text, jetzt }) {
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
           <Icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
         </span>
-        <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">{eyebrow}</p>
+        <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-600">{eyebrow}</p>
       </div>
       {ok ? (
         <>
@@ -164,7 +164,7 @@ function LinkKarte({ icon: Icon, eyebrow, titel, text, links, dunkel }) {
         <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${dunkel ? "bg-white/10 text-ov-300" : "bg-white text-ov-600"}`}>
           <Icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
         </span>
-        <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${dunkel ? "text-white/60" : "text-ink-500"}`}>{eyebrow}</p>
+        <p className={`text-[12.5px] font-semibold uppercase tracking-[0.14em] ${dunkel ? "text-white/60" : "text-ink-600"}`}>{eyebrow}</p>
       </div>
       <h3 className={`relative mt-6 font-display text-[clamp(1.35rem,1.1rem+0.9vw,1.75rem)] font-extrabold leading-tight tracking-tight ${dunkel ? "text-white" : "text-ink-900"}`}>
         {titel}
@@ -177,7 +177,7 @@ function LinkKarte({ icon: Icon, eyebrow, titel, text, links, dunkel }) {
             href={l.href}
             className={`group inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold transition-all ${
               l.primaer
-                ? "bg-ov-500 text-white hover:bg-ov-600"
+                ? "bg-ov-600 text-white hover:bg-ov-700"
                 : dunkel
                   ? "text-white ring-1 ring-inset ring-white/35 hover:bg-white/10"
                   : "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 hover:ring-ink-300"

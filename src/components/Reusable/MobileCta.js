@@ -76,7 +76,7 @@ export default function MobileCta({ href = "/angebot", label = "Angebot anfragen
         <Link
           href={href}
           tabIndex={sichtbar ? 0 : -1}
-          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-500 text-[15px] font-semibold text-white"
+          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-600 text-[15px] font-semibold text-white"
         >
           {label}
           <ArrowRight aria-hidden="true" className="h-4 w-4" />

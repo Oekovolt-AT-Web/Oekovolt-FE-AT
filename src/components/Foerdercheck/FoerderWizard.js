@@ -18,7 +18,7 @@ const VORHABEN_ICON = { pv: Sun, speicher: BatteryCharging, wallbox: PlugZap, wa
 const ROLLEN_ICON = { eigen: Home, vermieter: Building2, gewerbe: Factory };
 const ART_ICON = { zuschuss: BadgeEuro, kredit: Banknote, steuer: Percent, verguetung: Sun, entlastung: Zap, beratung: Info };
 const ART_TON = {
-  zuschuss: "bg-ov-500 text-white",
+  zuschuss: "bg-ov-600 text-white",
   kredit: "bg-navy-600 text-white",
   steuer: "bg-ov-100 text-ov-800",
   verguetung: "bg-sun-300 text-ink-900",
@@ -133,11 +133,11 @@ export default function FoerderWizard({ laender = [] }) {
                   className="flex min-w-0 items-center gap-2 rounded-full text-left disabled:cursor-default"
                 >
                   <span
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition-colors ${fertig ? "bg-ov-500 text-white" : aktiv ? "bg-navy-950 text-white" : "bg-white text-ink-400 ring-1 ring-ink-200"}`}
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition-colors ${fertig ? "bg-ov-600 text-white" : aktiv ? "bg-navy-950 text-white" : "bg-white text-ink-500 ring-1 ring-ink-200"}`}
                   >
                     {fertig ? <Check aria-hidden="true" className="h-4 w-4" strokeWidth={3} /> : i + 1}
                   </span>
-                  <span className={`hidden truncate text-[14px] font-semibold sm:block ${aktiv ? "text-ink-900" : fertig ? "text-ink-700" : "text-ink-400"}`}>{s}</span>
+                  <span className={`hidden truncate text-[14px] font-semibold sm:block ${aktiv ? "text-ink-900" : fertig ? "text-ink-700" : "text-ink-500"}`}>{s}</span>
                 </button>
                 {i < 3 && <span aria-hidden="true" className={`h-px flex-1 ${fertig ? "bg-ov-400" : "bg-ink-200"}`} />}
               </li>
@@ -164,7 +164,7 @@ export default function FoerderWizard({ laender = [] }) {
                   placeholder="PLZ (optional)"
                   value={plz}
                   onChange={(e) => plzEingabe(e.target.value)}
-                  className="ov-num h-13 w-full rounded-full bg-sand-50 pl-11 pr-4 text-[16px] font-semibold text-ink-900 ring-1 ring-ink-200 placeholder:font-normal placeholder:text-ink-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-ov-500"
+                  className="ov-num h-13 w-full rounded-full bg-sand-50 pl-11 pr-4 text-[16px] font-semibold text-ink-900 ring-1 ring-ink-200 placeholder:font-normal placeholder:text-ink-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-ov-500"
                 />
               </label>
               <p className="text-[13.5px] leading-snug text-ink-500" aria-live="polite">
@@ -183,7 +183,7 @@ export default function FoerderWizard({ laender = [] }) {
                     className={`flex min-h-[52px] cursor-pointer items-center gap-2.5 rounded-2xl px-3 py-2.5 transition-all focus-within:ring-2 focus-within:ring-ov-500 ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white hover:ring-ink-300"}`}
                   >
                     <input type="radio" name="land" value={l.key} checked={an} onChange={() => setLand(l.key)} className="sr-only" />
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-display text-[12px] font-extrabold ${an ? "bg-ov-500 text-white" : "bg-white text-ink-600 ring-1 ring-ink-200"}`}>{l.kuerzel}</span>
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-display text-[12px] font-extrabold ${an ? "bg-ov-600 text-white" : "bg-white text-ink-600 ring-1 ring-ink-200"}`}>{l.kuerzel}</span>
                     <span className={`text-[14px] font-semibold leading-tight ${an ? "text-ov-800" : "text-ink-800"}`}>{l.name}</span>
                   </label>
                 );
@@ -272,7 +272,7 @@ export default function FoerderWizard({ laender = [] }) {
               type="button"
               disabled={!weiterOk}
               onClick={() => setSchritt(schritt + 1)}
-              className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-600 disabled:cursor-not-allowed disabled:bg-ink-200 disabled:text-ink-500 disabled:shadow-none"
+              className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700 disabled:cursor-not-allowed disabled:bg-ink-200 disabled:text-ink-500 disabled:shadow-none"
             >
               {schritt === 2 ? "Förderung anzeigen" : "Weiter"}
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-enabled:group-hover:translate-x-1" />
@@ -339,7 +339,7 @@ function Ergebnis({ ergebnis, land, vorhaben, rolle, region, onNeu, onKopieren, 
             </ul>
           </div>
           <div className="flex flex-col gap-2.5 sm:flex-row">
-            <Link href="/angebot" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] hover:bg-ov-600">
+            <Link href="/angebot" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] hover:bg-ov-700">
               <span className="sm:hidden">Angebot anfragen</span>
               <span className="hidden sm:inline">Angebot mit Förderprüfung</span>
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />

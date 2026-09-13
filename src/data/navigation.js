@@ -42,6 +42,7 @@ export const NAVIGATION = [
           { name: "Smarthome", href: "/dienstleistungen/smarthome", icon: "Cpu", text: "Energiemanagement im ganzen Haus" },
           { name: "Photovoltaik Repowering", href: "/service/repowering", icon: "RefreshCw", text: "Altanlagen modernisieren" },
           { name: "Direktvermarktung", href: "/service/direktvermarktung", icon: "TrendingUp", text: "Mehr Erlös nach dem EEG" },
+          { name: "Kommunen & Stadtwerke", href: "/kommunen", icon: "Landmark", text: "Schulen, Freiflächen, Quartiere" },
         ],
       },
       {
@@ -125,6 +126,7 @@ export const NAVIGATION = [
           { name: "Solaranlage Kosten 2026", href: "/ratgeber/solaranlage-kosten", icon: "Euro", text: "Preise je kWp im Überblick" },
           { name: "Einspeisevergütung 2026", href: "/ratgeber/einspeiseverguetung-2026", icon: "TrendingUp", text: "Aktuelle Sätze nach EEG" },
           { name: "FAQs", href: "/faqs", icon: "HelpCircle", text: "Häufige Fragen, kurz beantwortet" },
+          { name: "Presse & Neuigkeiten", href: "/presse", icon: "Newspaper", text: "Newsroom, RSS & Fediverse" },
         ],
       },
     ],

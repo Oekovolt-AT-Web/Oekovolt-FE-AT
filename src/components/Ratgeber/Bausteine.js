@@ -89,7 +89,8 @@ export function Merkkasten({ variant = "info", titel, children, className }) {
   const k = KASTEN[variant] || KASTEN.info;
   const Icon = k.icon;
   return (
-    <aside className={cn("my-8 flex gap-4 rounded-2xl p-5 ring-1 md:p-6", k.rahmen, className)}>
+    // role="note" statt <aside>: Merkkästen stehen im Artikel, keine eigenständige Landmark
+    <div role="note" className={cn("my-8 flex gap-4 rounded-2xl p-5 ring-1 md:p-6", k.rahmen, className)}>
       <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl", k.icon_c)}>
         <Icon aria-hidden="true" className="h-[18px] w-[18px]" />
       </span>
@@ -99,7 +100,7 @@ export function Merkkasten({ variant = "info", titel, children, className }) {
           {children}
         </div>
       </div>
-    </aside>
+    </div>
   );
 }
 
@@ -136,15 +137,16 @@ export function Kennzahlband({ icon: Icon, titel, text, wert }) {
 export function Tabelle({ caption, kopf = [], zeilen = [], hervorheben, fussnote, minBreite = 520, markierteZeile }) {
   return (
     <figure className="my-8">
-      <div className="overflow-x-auto rounded-2xl bg-white ring-1 ring-ink-200/80">
+      {/* Scrollbarer Bereich per Tastatur erreichbar (WCAG 2.1.1) */}
+      <div tabIndex={0} role="region" aria-label={caption || "Tabelle"} className="overflow-x-auto rounded-2xl bg-white ring-1 ring-ink-200/80">
         <table className="w-full border-collapse text-left text-[15px]" style={{ minWidth: minBreite }}>
           <caption className="sr-only">{caption}</caption>
           {kopf.length > 0 && (
             <thead>
               <tr className="border-b border-ink-200 bg-sand-50">
                 {kopf.map((k) => (
-                  <th key={k} scope="col" className="px-5 py-3.5 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-ink-500">
-                    {k}
+                  <th key={k} scope="col" className="px-5 py-3.5 text-[12.5px] font-semibold uppercase tracking-[0.08em] text-ink-600">
+                    {k || <span className="sr-only">Merkmal</span>}
                   </th>
                 ))}
               </tr>
@@ -264,7 +266,7 @@ export function Autorenbox({ artikel }) {
     <div className="mt-16 flex flex-col gap-5 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 sm:flex-row sm:items-start md:p-8">
       <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-950 font-display text-[20px] font-extrabold text-white">ÖV</span>
       <div>
-        <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Über die Redaktion</p>
+        <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Über die Redaktion</p>
         <p className="mt-1.5 font-display text-[19px] font-extrabold text-ink-900">Ökovolt-Redaktion</p>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
           Geschrieben von unseren Fachleuten aus Planung und Montage – dem Fachbetrieb für Photovoltaik aus Türkheim mit über 15 Jahren Erfahrung.

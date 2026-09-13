@@ -52,7 +52,7 @@ const SixSection = ({ data }) => {
               distance={20}
               duration={600}
               delay={600}
-              className="bg-[#669933] p-6 rounded-xl shadow-lg text-white"
+              className="bg-ov-600 p-6 rounded-xl shadow-lg text-white"
             >
               <h3 className="text-xl mb-2">{data?.third_sec_1st_card_second_title}</h3>
               <p>{data?.third_sec_1st_card_second_description}</p>

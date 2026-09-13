@@ -331,7 +331,7 @@ export default async function ProjectDetailPage({ params }) {
             <ul className="mt-8 space-y-4">
               {wissen.punkte.map((w, i) => (
                 <Reveal as="li" key={w.t} delay={i * 90} className="flex gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-200/60">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-500 font-display text-[15px] font-extrabold text-white">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-600 font-display text-[15px] font-extrabold text-white">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>

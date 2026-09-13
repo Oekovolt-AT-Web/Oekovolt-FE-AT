@@ -41,7 +41,7 @@ export default function NormenExplorer() {
 
   return (
     <div>
-      <div role="radiogroup" aria-label="Projektphase filtern" className="ov-no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:justify-center md:px-0">
+      <div role="group" aria-label="Projektphase filtern" className="ov-no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:justify-center md:px-0">
         {PHASEN.map((p) => {
           const an = phase === p.id;
           const anzahl = p.id === "alle" ? NORMEN.length : NORMEN.filter((n) => n.phase === p.id).length;
@@ -49,14 +49,13 @@ export default function NormenExplorer() {
             <button
               key={p.id}
               type="button"
-              role="radio"
-              aria-checked={an}
+              aria-pressed={an}
               onClick={() => setPhase(p.id)}
               className={`inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-[14.5px] font-semibold transition-all ${an ? "bg-navy-950 text-white shadow-lg" : "bg-white text-ink-700 ring-1 ring-ink-200 hover:ring-ink-300"}`}
             >
               {p.icon && <p.icon aria-hidden="true" className={`h-4 w-4 ${an ? "text-ov-300" : "text-ov-600"}`} />}
               {p.label}
-              <span className={`ov-num rounded-full px-1.5 text-[12px] ${an ? "bg-white/15 text-white" : "bg-ink-100 text-ink-500"}`}>{anzahl}</span>
+              <span className={`ov-num rounded-full px-1.5 text-[12px] ${an ? "bg-white/15 text-white" : "bg-ink-100 text-ink-600"}`}>{anzahl}</span>
             </button>
           );
         })}
@@ -77,7 +76,7 @@ export default function NormenExplorer() {
                     <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" /> verbindlich
                   </span>
                 ) : (
-                  <span className="text-[12px] font-medium text-ink-400">je nach Fall</span>
+                  <span className="text-[12px] font-medium text-ink-500">je nach Fall</span>
                 )}
               </div>
               <h3 className="mt-5 font-display text-[17.5px] font-extrabold leading-snug tracking-tight text-ink-900">{n.code}</h3>

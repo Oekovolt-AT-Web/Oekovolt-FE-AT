@@ -158,7 +158,7 @@ export default function BoersenpreisChart({ initial }) {
           </h3>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
-          <div role="radiogroup" aria-label="Tag" className="inline-flex rounded-full bg-ink-100 p-1">
+          <div role="group" aria-label="Tag" className="inline-flex rounded-full bg-ink-100 p-1">
             {[
               { v: "heute", l: "Heute", ok: true },
               { v: "morgen", l: "Morgen", ok: hatMorgen },
@@ -166,22 +166,21 @@ export default function BoersenpreisChart({ initial }) {
               <button
                 key={o.v}
                 type="button"
-                role="radio"
-                aria-checked={tagWahl === o.v || (o.v === "heute" && tagWahl === "morgen" && !hatMorgen)}
+                aria-pressed={tagWahl === o.v || (o.v === "heute" && tagWahl === "morgen" && !hatMorgen)}
                 disabled={!o.ok}
                 title={!o.ok ? "Die Preise für morgen werden ab ca. 13 Uhr veröffentlicht" : undefined}
                 onClick={() => setTagWahl(o.v)}
                 className={`h-10 flex-1 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-45 ${
                   (tagWahl === o.v && (o.v === "heute" || hatMorgen)) || (o.v === "heute" && !hatMorgen && tagWahl === "morgen")
                     ? "bg-white text-ink-900 shadow-md"
-                    : "text-ink-500 hover:text-ink-800"
+                    : "text-ink-600 hover:text-ink-800"
                 }`}
               >
                 {o.l}
               </button>
             ))}
           </div>
-          <div role="radiogroup" aria-label="Preisbasis" className="inline-flex rounded-full bg-ink-100 p-1">
+          <div role="group" aria-label="Preisbasis" className="inline-flex rounded-full bg-ink-100 p-1">
             {[
               { v: "boerse", l: "Börsenpreis" },
               { v: "endpreis", l: "Endpreis ca." },
@@ -189,11 +188,10 @@ export default function BoersenpreisChart({ initial }) {
               <button
                 key={o.v}
                 type="button"
-                role="radio"
-                aria-checked={modus === o.v}
+                aria-pressed={modus === o.v}
                 onClick={() => setModus(o.v)}
                 className={`h-10 flex-1 whitespace-nowrap rounded-full px-4 text-[14px] font-semibold transition-all duration-300 ${
-                  modus === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                  modus === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                 }`}
               >
                 {o.l}
@@ -303,7 +301,7 @@ export default function BoersenpreisChart({ initial }) {
                 {modus === "endpreis" && <li className="flex items-center gap-2"><span className="h-0 w-4 border-t-2 border-dashed border-navy-700" />Durchschnittlicher Festpreis</li>}
               </ul>
               {!hatMorgen && (
-                <p className="mt-2 px-1 text-[12.5px] text-ink-400">Die Preise für morgen veröffentlicht die Börse täglich ab ca. 13 Uhr.</p>
+                <p className="mt-2 px-1 text-[12.5px] text-ink-500">Die Preise für morgen veröffentlicht die Börse täglich ab ca. 13 Uhr.</p>
               )}
             </>
           )}

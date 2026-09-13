@@ -237,7 +237,7 @@ export default function LandesDetails({ slug }) {
                   </span>
                   <h3 className="mt-5 font-display text-[18px] font-bold leading-snug text-ink-900">{pkt.titel}</h3>
                   <p className="mt-2 flex-1 text-[15px] leading-relaxed text-ink-600">{pkt.text}</p>
-                  <p className="mt-4 text-[12.5px] font-medium uppercase tracking-wider text-ink-400">Quelle: {pkt.quelle}</p>
+                  <p className="mt-4 text-[12.5px] font-medium uppercase tracking-wider text-ink-500">Quelle: {pkt.quelle}</p>
                 </div>
               </Reveal>
             ))}
@@ -335,7 +335,7 @@ function RegionDetails({ land, region }) {
               <Reveal as="li" key={p.titel} delay={i * 70} className="rounded-3xl bg-white p-5 ring-1 ring-ink-200/70 md:p-6">
                 <p className="font-display text-[17px] font-bold text-ink-900">{p.titel}</p>
                 <p className="mt-1.5 text-[15px] leading-relaxed text-ink-600">{p.text}</p>
-                <p className="mt-2 text-[12.5px] font-medium uppercase tracking-wider text-ink-400">Quelle: {p.quelle}</p>
+                <p className="mt-2 text-[12.5px] font-medium uppercase tracking-wider text-ink-500">Quelle: {p.quelle}</p>
               </Reveal>
             ))}
             {land.portal && (

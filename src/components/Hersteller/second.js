@@ -29,7 +29,7 @@ const HerstellerSection = ({ data }) => {
                     key={i}
                     onClick={() => setActiveIndex(i)}
                     className={`cursor-pointer group flex justify-between items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${i === activeIndex
-                      ? "bg-[#669933] text-white shadow-md"
+                      ? "bg-ov-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
                   >

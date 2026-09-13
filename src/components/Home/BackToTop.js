@@ -32,7 +32,7 @@ export default function ToTopButton() {
     <button
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Back to top"
+      aria-label="Nach oben"
       tabIndex={sichtbar ? 0 : -1}
       className={`fixed bottom-6 right-5 z-[9500] flex h-12 w-12 items-center justify-center rounded-full bg-white text-ink-800 shadow-[0_10px_30px_-10px_rgba(3,18,43,0.45)] ring-1 ring-ink-200 transition-all duration-500 hover:-translate-y-0.5 hover:text-ov-700 md:bottom-8 md:right-8 ${
         sichtbar ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"

@@ -125,7 +125,7 @@ export default function EnergieflussHaus() {
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Interaktiv · Beispielhaushalt</p>
           <h3 className="ov-h3 mt-2 text-white">Wählen Sie eine Situation</h3>
         </div>
-        <div role="radiogroup" aria-label="Situation wählen" className="grid grid-cols-2 gap-1.5 rounded-3xl bg-white/[0.06] p-1.5 sm:inline-grid sm:grid-cols-4 sm:rounded-full">
+        <div role="group" aria-label="Situation wählen" className="grid grid-cols-2 gap-1.5 rounded-3xl bg-white/[0.06] p-1.5 sm:inline-grid sm:grid-cols-4 sm:rounded-full">
           {SZENARIEN.map((o) => {
             const Icon = o.icon;
             const an = o.id === aktivId;
@@ -133,8 +133,7 @@ export default function EnergieflussHaus() {
               <button
                 key={o.id}
                 type="button"
-                role="radio"
-                aria-checked={an}
+                aria-pressed={an}
                 onClick={() => setAktivId(o.id)}
                 className={`flex h-11 items-center justify-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 ${
                   an ? "bg-white text-navy-950 shadow-lg" : "text-white/70 hover:bg-white/10 hover:text-white"

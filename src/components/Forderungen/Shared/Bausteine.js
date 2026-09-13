@@ -64,7 +64,7 @@ export function Tabelle({ caption, spalten, zeilen, className, dicht = false }) 
             <dl className="mt-3 space-y-2.5">
               {rest.map((s) => (
                 <div key={s.key}>
-                  <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-400">{s.label}</dt>
+                  <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">{s.label}</dt>
                   <dd className="mt-0.5 text-[15px] leading-relaxed text-ink-700">{z[s.key]}</dd>
                 </div>
               ))}
@@ -89,7 +89,7 @@ export function Checkliste({ items = [], variante = "ja", className, dark = fals
             <span
               className={cn(
                 "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-                ja ? (dark ? "bg-ov-500/20 text-ov-300" : "bg-ov-100 text-ov-700") : dark ? "bg-white/10 text-white/60" : "bg-ink-100 text-ink-500"
+                ja ? (dark ? "bg-ov-500/20 text-ov-300" : "bg-ov-100 text-ov-700") : dark ? "bg-white/10 text-white/60" : "bg-ink-100 text-ink-600"
               )}
             >
               {ja ? <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} /> : <X aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />}

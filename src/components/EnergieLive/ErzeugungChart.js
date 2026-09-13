@@ -273,7 +273,7 @@ export default function ErzeugungChart({ initial }) {
         <div className="max-h-80 overflow-auto px-4 pb-4">
           <table className="ov-num w-full min-w-[720px] text-left text-[13px]">
             <caption className="sr-only">Stromerzeugung je Quelle und Verbrauch in Gigawatt, volle Stunden</caption>
-            <thead className="sticky top-0 bg-ink-50 text-ink-500">
+            <thead className="sticky top-0 bg-ink-50 text-ink-600">
               <tr>
                 <th scope="col" className="py-2 pr-3 font-medium">Uhrzeit</th>
                 {[...QUELLEN].reverse().map((q) => (

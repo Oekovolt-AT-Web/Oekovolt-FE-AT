@@ -38,7 +38,7 @@ export default function KurzBewerbung({ titel, email = "office@oekovolt.de" }) {
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(`Bewerbung: ${titel}`)}&body=${encodeURIComponent(text)}`;
   };
 
-  const feld = "h-12 w-full rounded-2xl bg-white px-4 text-[15.5px] text-ink-900 ring-1 ring-inset ring-ink-200 placeholder:text-ink-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500";
+  const feld = "h-12 w-full rounded-2xl bg-white px-4 text-[15.5px] text-ink-900 ring-1 ring-inset ring-ink-200 placeholder:text-ink-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500";
 
   return (
     <form onSubmit={senden} className="grid gap-4" noValidate>
@@ -61,7 +61,7 @@ export default function KurzBewerbung({ titel, email = "office@oekovolt.de" }) {
           {fehler}
         </p>
       )}
-      <button type="submit" className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-600">
+      <button type="submit" className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-700">
         <Mail aria-hidden="true" className="h-5 w-5" />
         E-Mail-Bewerbung vorbereiten
       </button>

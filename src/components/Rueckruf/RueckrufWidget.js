@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, CalendarDays, MapPin, Phone, PhoneCall, Video, X } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { TERMIN_ARTEN, oeffnungsStatus } from "@/data/erreichbarkeit";
+import useFokusFalle from "@/components/ui/useFokusFalle";
 import RueckrufFormular from "./RueckrufFormular";
 
 import { RUECKRUF_EVENT } from "./oeffnen";
@@ -22,12 +23,13 @@ export default function RueckrufWidget() {
   const [geoeffnet, setGeoeffnet] = useState(null);
   const ausloeser = useRef(null);
   const panel = useRef(null);
+  const titel = useRef(null);
   const ausgenommen = OHNE_WIDGET.some((p) => pfad === p || pfad.startsWith(`${p}/`));
 
-  const schliessen = useCallback(() => {
-    setOffen(false);
-    requestAnimationFrame(() => ausloeser.current?.focus());
-  }, []);
+  // Fokus wird von useFokusFalle an das zuvor fokussierte Element zurückgegeben
+  // (mobil ist der Launcher ausgeblendet – Auslöser ist dann z. B. die Handlungsleiste).
+  const schliessen = useCallback(() => setOffen(false), []);
+  useFokusFalle(offen, panel, { beiEscape: schliessen, startRef: titel });
 
   // Öffnen per Event (MobileCta, Buttons auf Seiten)
   useEffect(() => {
@@ -50,18 +52,15 @@ export default function RueckrufWidget() {
     };
   }, []);
 
-  // Escape, Scroll-Sperre auf Mobilgeräten
+  // Scroll-Sperre auf Mobilgeräten
   useEffect(() => {
     if (!offen) return undefined;
-    const taste = (e) => e.key === "Escape" && schliessen();
-    document.addEventListener("keydown", taste);
     const mobil = window.matchMedia("(max-width: 1023px)").matches;
     if (mobil) document.documentElement.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", taste);
       document.documentElement.style.overflow = "";
     };
-  }, [offen, schliessen]);
+  }, [offen]);
 
   useEffect(() => setOffen(false), [pfad]);
 
@@ -99,6 +98,7 @@ export default function RueckrufWidget() {
           <div
             id="ov-rueckruf-panel"
             ref={panel}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby="ov-rueckruf-titel"
@@ -109,7 +109,7 @@ export default function RueckrufWidget() {
               <div aria-hidden="true" className="absolute -right-10 -top-16 h-40 w-40 rounded-full bg-ov-500/30 blur-3xl" />
               <div className="relative flex items-start justify-between gap-3">
                 <div>
-                  <p id="ov-rueckruf-titel" className="font-display text-[19px] font-extrabold leading-tight">
+                  <p ref={titel} id="ov-rueckruf-titel" tabIndex={-1} className="font-display text-[19px] font-extrabold leading-tight focus:outline-none">
                     Persönlich beraten lassen
                   </p>
                   <p className="mt-1 text-[13.5px] text-white/65">Kostenlos und unverbindlich – vom Fachbetrieb aus Türkheim.</p>
@@ -118,7 +118,7 @@ export default function RueckrufWidget() {
                   <X aria-hidden="true" className="h-4 w-4" />
                 </button>
               </div>
-              <div role="tablist" aria-label="Kontaktweg" className="relative mt-4 grid grid-cols-2 gap-1 rounded-full bg-white/10 p-1">
+              <div role="group" aria-label="Kontaktweg" className="relative mt-4 grid grid-cols-2 gap-1 rounded-full bg-white/10 p-1">
                 {[
                   { id: "rueckruf", label: "Rückruf", icon: PhoneCall },
                   { id: "termin", label: "Termin buchen", icon: CalendarDays },
@@ -126,8 +126,7 @@ export default function RueckrufWidget() {
                   <button
                     key={x.id}
                     type="button"
-                    role="tab"
-                    aria-selected={tab === x.id}
+                    aria-pressed={tab === x.id}
                     onClick={() => setTab(x.id)}
                     className={cn("flex h-9 items-center justify-center gap-1.5 rounded-full text-[13.5px] font-semibold transition", tab === x.id ? "bg-white text-navy-950" : "text-white/75 hover:text-white")}
                   >
@@ -140,7 +139,7 @@ export default function RueckrufWidget() {
 
             <div className="overflow-y-auto overscroll-contain px-5 py-5">
               {tab === "rueckruf" ? (
-                <RueckrufFormular autoFokus />
+                <RueckrufFormular />
               ) : (
                 <div className="space-y-3">
                   <p className="text-[14px] text-ink-600">Wählen Sie, wie wir uns kennenlernen – freie Zeiten sehen Sie im nächsten Schritt.</p>
@@ -161,7 +160,7 @@ export default function RueckrufWidget() {
                             {a.titel}
                             {a.empfohlen && <span className="rounded-full bg-ov-100 px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-ov-700">beliebt</span>}
                           </span>
-                          <span className="block text-[13px] text-ink-500">{a.dauer} Minuten · kostenlos</span>
+                          <span className="block text-[13px] text-ink-600">{a.dauer} Minuten · kostenlos</span>
                         </span>
                         <ArrowRight aria-hidden="true" className="h-4 w-4 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-ov-600" />
                       </Link>

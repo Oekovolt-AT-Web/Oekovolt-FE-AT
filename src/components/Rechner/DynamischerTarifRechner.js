@@ -138,7 +138,7 @@ export default function DynamischerTarifRechner({ start, annahmen }) {
             <h2 className="font-display text-[22px] font-extrabold tracking-tight text-ink-900 md:text-[26px]">
               Ihre Stromkosten {tageLabel}
             </h2>
-            <div role="radiogroup" aria-label="Tag" className="inline-flex rounded-full bg-ink-100 p-1">
+            <div role="group" aria-label="Tag" className="inline-flex rounded-full bg-ink-100 p-1">
               {[
                 { id: "heute", l: "Heute" },
                 { id: "morgen", l: "Morgen", aus: !hatMorgen },
@@ -146,14 +146,13 @@ export default function DynamischerTarifRechner({ start, annahmen }) {
                 <button
                   key={o.id}
                   type="button"
-                  role="radio"
-                  aria-checked={tagWahl === o.id && !o.aus}
+                  aria-pressed={tagWahl === o.id && !o.aus}
                   disabled={o.aus}
                   onClick={() => setTagWahl(o.id)}
                   title={o.aus ? "Preise für morgen erscheinen ab ca. 13 Uhr" : undefined}
                   className={cn(
                     "h-10 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-45",
-                    (tagWahl === o.id && !o.aus) || (o.id === "heute" && tagWahl === "morgen" && !hatMorgen) ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                    (tagWahl === o.id && !o.aus) || (o.id === "heute" && tagWahl === "morgen" && !hatMorgen) ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                   )}
                 >
                   {o.l}

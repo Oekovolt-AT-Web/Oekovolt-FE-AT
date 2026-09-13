@@ -62,7 +62,8 @@ export default function ArtikelLayout({ artikel, toc, titel, badge, seitenCta, c
             </div>
           </article>
 
-          <aside className="hidden lg:block">
+          {/* kein <aside>: Seitenleiste liegt innerhalb des Hauptinhalts (landmark-complementary-is-top-level) */}
+          <div className="hidden lg:block">
             <div className="sticky top-28 space-y-6">
               <TableOfContents items={toc} variant="desktop" />
               <Teilen url={url} titel={artikel.title} text={teilenText} netze={["whatsapp", "linkedin", "facebook"]} kampagne="ratgeber" label="Artikel teilen" className="border-t border-ink-100 pt-5" />
@@ -80,7 +81,7 @@ export default function ArtikelLayout({ artikel, toc, titel, badge, seitenCta, c
                 </div>
               )}
             </div>
-          </aside>
+          </div>
         </div>
       </Section>
 

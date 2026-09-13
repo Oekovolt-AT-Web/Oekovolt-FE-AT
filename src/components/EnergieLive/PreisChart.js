@@ -126,7 +126,7 @@ export default function PreisChart({ initial }) {
           <h3 className="ov-h3 mt-2 text-ink-900">Börsenstrompreis {istHeute ? "heute" : "morgen"}, {tagLang(tag.start)}</h3>
         </div>
         <div className="flex flex-col items-start gap-2 md:items-end">
-          <div role="radiogroup" aria-label="Tag wählen" className="inline-flex rounded-full bg-ink-100 p-1">
+          <div role="group" aria-label="Tag wählen" className="inline-flex rounded-full bg-ink-100 p-1">
             {[
               { v: "heute", l: "Heute", ok: !!tage.heute },
               { v: "morgen", l: "Morgen", ok: !!tage.morgen },
@@ -136,15 +136,14 @@ export default function PreisChart({ initial }) {
                 <button
                   key={o.v}
                   type="button"
-                  role="radio"
-                  aria-checked={aktiv}
+                  aria-pressed={aktiv}
                   disabled={!o.ok}
                   onClick={() => {
                     setWahl(o.v);
                     setHover(null);
                   }}
                   className={`h-11 min-w-[96px] rounded-full px-5 text-[14px] font-semibold transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-45 ${
-                    aktiv ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                    aktiv ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                   }`}
                 >
                   {o.l}
@@ -341,7 +340,7 @@ export default function PreisChart({ initial }) {
         <div className="max-h-80 overflow-auto px-4 pb-4">
           <table className="ov-num w-full text-left text-[13.5px]">
             <caption className="sr-only">Börsenstrompreis je Stunde in Cent pro Kilowattstunde</caption>
-            <thead className="sticky top-0 bg-ink-50 text-ink-500">
+            <thead className="sticky top-0 bg-ink-50 text-ink-600">
               <tr>
                 <th scope="col" className="py-2 pr-3 font-medium">Stunde</th>
                 <th scope="col" className="py-2 pr-3 text-right font-medium">Ø ct/kWh</th>

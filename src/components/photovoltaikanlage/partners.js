@@ -20,7 +20,7 @@ const FeaturedLogos = ({ titel = "Wir verbauen Premium-Komponenten führender He
 
   return (
     <div className={`border-y border-ink-100 bg-white py-8 ${className}`}>
-      <p className="ov-container mb-5 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ink-400">{titel}</p>
+      <p className="ov-container mb-5 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ink-500">{titel}</p>
       <div className="min-h-14">
         {logos.length > 0 && (
           <Marquee speed={45}>

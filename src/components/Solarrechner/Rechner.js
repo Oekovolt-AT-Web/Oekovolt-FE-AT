@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
+import PdfAnalyse from "@/components/Analyse/PdfAnalyse";
 import {
   ArrowRight,
   BatteryCharging,
@@ -253,7 +254,7 @@ export default function Solarrechner({ className = "" }) {
                     onClick={() => setVerbrauch(p.v)}
                     aria-pressed={verbrauch === p.v}
                     className={`min-h-[36px] rounded-full px-3 text-[12.5px] font-semibold transition-colors ${
-                      verbrauch === p.v ? "bg-ov-500 text-white" : "bg-ov-50 text-ov-800 hover:bg-ov-100"
+                      verbrauch === p.v ? "bg-ov-600 text-white" : "bg-ov-50 text-ov-800 hover:bg-ov-100"
                     }`}
                   >
                     {p.l} · {zahl(p.v / 1000, p.v % 1000 ? 1 : 0)} MWh
@@ -293,7 +294,7 @@ export default function Solarrechner({ className = "" }) {
                   <label
                     key={o}
                     className={`flex min-h-[40px] cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${
-                      steigerung === o ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                      steigerung === o ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                     }`}
                   >
                     <input type="radio" name="steigerung" checked={steigerung === o} onChange={() => setSteigerung(o)} className="sr-only" />
@@ -399,12 +400,15 @@ export default function Solarrechner({ className = "" }) {
           <div className="mt-6 flex flex-col gap-3 @xl:flex-row @xl:items-center">
             <Link
               href={angebotHref}
-              className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-500 px-7 text-[15.5px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-600"
+              className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-7 text-[15.5px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700"
             >
-              <span className="@md:hidden">Mit diesen Werten anfragen</span>
-              <span className="hidden @md:inline">Angebot mit diesen Werten anfragen</span>
+              <span className="whitespace-nowrap @3xl:hidden">Mit diesen Werten anfragen</span>
+              <span className="hidden whitespace-nowrap @3xl:inline">Angebot mit diesen Werten anfragen</span>
               <ArrowRight aria-hidden="true" className="h-[1.05em] w-[1.05em] transition-transform group-hover:translate-x-1" />
             </Link>
+            <PdfAnalyse eingaben={{ kwp, ausrichtung, neigung, verbrauch, speicherKwh: speicher, preissteigerung: steigerung }} className="h-14 px-6" />
+          </div>
+          <div className="mt-3">
             <p className="flex items-center gap-2 text-[13px] text-ink-500">
               <Leaf aria-hidden="true" className="h-4 w-4 text-ov-600" />
               spart rund <Animiert wert={r.co2ProJahr / 1000} format={(v) => zahl(v, 1)} className="font-semibold text-ink-800" /> t CO₂ pro Jahr

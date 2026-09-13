@@ -264,7 +264,7 @@ export default async function TeamPage() {
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200 transition-colors group-hover:bg-ov-500 group-hover:text-white">
                       <r.icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
                     </span>
-                    <span className="ov-num font-display text-[30px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
+                    <span aria-hidden="true" className="ov-num font-display text-[30px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
                   </div>
                   <h3 className="ov-h3 mt-5 text-ink-900">{r.title}</h3>
                   <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">{r.text}</p>

@@ -62,16 +62,15 @@ export default function ModellVergleich() {
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Interaktiv · Modellvergleich</p>
           <p className="mt-2 font-display text-[20px] font-bold text-ink-900 md:text-[22px]">Zwei Wege, Solarstrom im Haus zu teilen</p>
         </div>
-        <div role="radiogroup" aria-label="Modell" className="grid grid-cols-2 rounded-full bg-ink-100 p-1">
+        <div role="group" aria-label="Modell" className="grid grid-cols-2 rounded-full bg-ink-100 p-1">
           {Object.entries(MODELLE).map(([k, v]) => (
             <button
               key={k}
               type="button"
-              role="radio"
-              aria-checked={m === k}
+              aria-pressed={m === k}
               onClick={() => setM(k)}
               className={`h-11 whitespace-nowrap rounded-full px-4 text-[14px] font-semibold transition-all duration-300 md:px-5 ${
-                m === k ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                m === k ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
               }`}
             >
               {v.tab}

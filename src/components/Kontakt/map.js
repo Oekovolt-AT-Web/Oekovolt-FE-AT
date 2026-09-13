@@ -89,7 +89,7 @@ const Map = () => {
       {cookieAccepted ? (
         <>
           <iframe
-            title="Platzhirsch Map"
+            title="Standort Ökovolt Türkheim auf Google Maps"
             src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d2667.7124246800313!2d10.62765887671906!3d48.03858070804748!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1s%C3%96KOVOLT%20GmbH%20Solartechnik%2C%20Schlingener%20Str.%201a%2C%2086842%20T%C3%BCrkheim%2C%20Germany!5e0!3m2!1sen!2s!4v1747904135484!5m2!1sen!2s"
             width="100%"
             height="100%"
@@ -109,12 +109,12 @@ const Map = () => {
               className="w-[60px] h-auto drop-shadow-md"
             />
           </div>
-          <div className="absolute mt-8 top-[52%] left-1/2 z-30 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute mt-8 top-[52%] left-1/2 z-30 -translate-x-1/2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-300">
             <a
               href="https://www.google.com/maps/dir/?api=1&destination=Schlingener+Str.+1a,+86842+Türkheim,+Germany"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center rounded-full bg-ov-500 px-5 text-[15px] font-semibold text-white shadow-lg transition-colors hover:bg-ov-600"
+              className="inline-flex h-11 items-center rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-lg transition-colors hover:bg-ov-700"
             >
               Route planen
             </a>
@@ -127,7 +127,7 @@ const Map = () => {
           </p>
           <button
             onClick={handleAcceptCookie}
-            className="inline-flex h-11 items-center rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white transition-colors hover:bg-ov-600"
+            className="inline-flex h-11 items-center rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white transition-colors hover:bg-ov-700"
           >
             Karte aktivieren
           </button>

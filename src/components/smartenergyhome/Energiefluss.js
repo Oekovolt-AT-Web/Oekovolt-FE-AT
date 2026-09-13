@@ -92,13 +92,12 @@ export default function Energiefluss() {
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Interaktiv · Energiefluss</p>
           <p className="mt-1 font-display text-[20px] font-bold text-white md:text-[22px]">{s.zeit}</p>
         </div>
-        <div role="radiogroup" aria-label="Tageszeit" className="grid grid-cols-3 rounded-full bg-white/10 p-1">
+        <div role="group" aria-label="Tageszeit" className="grid grid-cols-3 rounded-full bg-white/10 p-1">
           {Object.entries(SZENARIEN).map(([k, v]) => (
             <button
               key={k}
               type="button"
-              role="radio"
-              aria-checked={key === k}
+              aria-pressed={key === k}
               onClick={() => setKey(k)}
               className={`inline-flex h-11 items-center justify-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 md:px-5 ${
                 key === k ? "bg-white text-navy-950 shadow-lg" : "text-white/70 hover:text-white"

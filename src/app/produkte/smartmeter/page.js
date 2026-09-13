@@ -333,7 +333,7 @@ export default async function SmartmeterPage() {
             </Reveal>
           </div>
           <Reveal delay={100}>
-            <div className="overflow-x-auto rounded-3xl bg-white ring-1 ring-ink-200/70">
+            <div tabIndex={0} role="region" aria-label="Preisobergrenzen für Messstellen" className="overflow-x-auto rounded-3xl bg-white ring-1 ring-ink-200/70">
               <table className="w-full text-left text-[14.5px] sm:min-w-[520px] sm:text-[15px]">
                 <caption className="sr-only">Preisobergrenzen für Messstellen nach § 30 MsbG, Anteil Anschlussnutzer, brutto pro Jahr, Stand 2026</caption>
                 <thead className="border-b border-ink-100 text-[13px] uppercase tracking-wider text-ink-500">

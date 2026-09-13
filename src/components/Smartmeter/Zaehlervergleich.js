@@ -150,7 +150,7 @@ export default function Zaehlervergleich() {
             aria-selected={aktiv === x.id}
             aria-controls="zv-panel"
             onClick={() => setAktiv(x.id)}
-            className={`relative min-h-16 px-2 py-4 text-center transition-colors md:px-6 ${aktiv === x.id ? "bg-white text-ink-900" : "bg-sand-50 text-ink-500 hover:text-ink-800"}`}
+            className={`relative min-h-16 px-2 py-4 text-center transition-colors md:px-6 ${aktiv === x.id ? "bg-white text-ink-900" : "bg-sand-50 text-ink-600 hover:text-ink-800"}`}
           >
             <span className="block text-[11.5px] font-semibold uppercase tracking-[0.12em] text-ov-600">{x.kurz}</span>
             <span className="mt-1 block font-display text-[13.5px] font-bold leading-tight md:text-[16px]">{x.tab}</span>

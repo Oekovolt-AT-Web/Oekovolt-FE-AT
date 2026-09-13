@@ -307,12 +307,12 @@ export default async function SmarthomePage() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-4 flex items-center gap-4 rounded-2xl bg-ov-500 px-4 py-3.5 shadow-lg">
+                <div className="mt-4 flex items-center gap-4 rounded-2xl bg-ov-600 px-4 py-3.5 shadow-lg">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
                     <Cpu aria-hidden="true" className="h-5 w-5" />
                   </span>
                   <span className="font-display text-[16px] font-bold">Energiemanagement</span>
-                  <span className="ml-auto hidden text-right text-[13.5px] text-white/85 sm:block">entscheidet in Echtzeit</span>
+                  <span className="ml-auto hidden text-right text-[13.5px] text-white sm:block">entscheidet in Echtzeit</span>
                 </div>
               </div>
             </div>

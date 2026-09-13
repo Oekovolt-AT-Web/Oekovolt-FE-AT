@@ -137,7 +137,7 @@ export default function ZielgruppenWahl({ gruppen }) {
                 <span className="block text-[12.5px] font-semibold leading-tight sm:hidden">{ERGAENZUNG[schluessel(t)]?.mobil || t.title}</span>
                 <span className="hidden text-[15.5px] font-semibold leading-tight sm:block">{t.title}</span>
                 {ERGAENZUNG[schluessel(t)]?.kurz && (
-                  <span className={`hidden text-[12.5px] leading-tight sm:block ${ist ? "text-white/60" : "text-ink-400"}`}>
+                  <span className={`hidden text-[12.5px] leading-tight sm:block ${ist ? "text-white/60" : "text-ink-500"}`}>
                     {ERGAENZUNG[schluessel(t)].kurz}
                   </span>
                 )}

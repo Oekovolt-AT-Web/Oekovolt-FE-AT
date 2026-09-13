@@ -109,7 +109,7 @@ export default function HeroRechner() {
 
         <Link
           href={ziel}
-          className="group mt-6 flex h-13 items-center justify-center gap-2 rounded-full bg-ov-500 py-3.5 text-[15.5px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.9)] transition-all hover:bg-ov-400"
+          className="group mt-6 flex h-13 items-center justify-center gap-2 rounded-full bg-ov-600 py-3.5 text-[15.5px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.9)] transition-all hover:bg-ov-400"
         >
           Angebot mit diesen Werten
           <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />

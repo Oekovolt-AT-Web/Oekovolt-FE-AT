@@ -56,7 +56,7 @@ export default function TableOfContents({ items, variant = "desktop" }) {
               }`}
             >
               <span
-                className={`ov-num mt-px w-5 shrink-0 text-[12px] font-semibold ${ist ? "text-ov-600" : gelesen ? "text-ov-500" : "text-ink-300"}`}
+                className={`ov-num mt-px w-5 shrink-0 text-[12px] font-semibold ${ist ? "text-ov-700" : gelesen ? "text-ov-700" : "text-ink-600"}`}
               >
                 {String(i + 1).padStart(2, "0")}
               </span>
@@ -92,7 +92,7 @@ export default function TableOfContents({ items, variant = "desktop" }) {
           <List aria-hidden="true" className="h-4 w-4 text-ov-600" />
           Inhalt
         </span>
-        <span className="ov-num text-ink-400">
+        <span className="ov-num text-ink-500">
           {aktivIndex + 1}/{items.length}
         </span>
       </p>

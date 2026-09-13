@@ -184,7 +184,7 @@ export default function TerminBuchung() {
                 aria-current={i === schritt ? "step" : undefined}
                 className="flex items-center gap-2 disabled:cursor-default"
               >
-                <span className={cn("ov-num flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition", i < schritt ? "bg-ov-500 text-white" : i === schritt ? "bg-navy-950 text-white" : "bg-ink-100 text-ink-500")}>
+                <span className={cn("ov-num flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition", i < schritt ? "bg-ov-600 text-white" : i === schritt ? "bg-navy-950 text-white" : "bg-ink-100 text-ink-600")}>
                   {i < schritt ? <Check aria-hidden="true" className="h-4 w-4" /> : i + 1}
                 </span>
                 <span className={cn("hidden text-[14px] font-semibold sm:inline", i === schritt ? "text-ink-900" : "text-ink-500")}>{s}</span>
@@ -199,7 +199,7 @@ export default function TerminBuchung() {
           <div>
             <h2 className="font-display text-[24px] font-extrabold tracking-tight text-ink-900 md:text-[28px]">Wie möchten Sie beraten werden?</h2>
             <p className="mt-2 text-[15.5px] text-ink-600">Alle Termine sind kostenlos und unverbindlich.</p>
-            <div role="radiogroup" aria-label="Terminart" className="mt-7 grid gap-3 md:grid-cols-3">
+            <div role="group" aria-label="Terminart" className="mt-7 grid gap-3 md:grid-cols-3">
               {TERMIN_ARTEN.map((a) => {
                 const Icon = ICONS[a.icon];
                 const aktiv = artId === a.id;
@@ -207,20 +207,19 @@ export default function TerminBuchung() {
                   <button
                     key={a.id}
                     type="button"
-                    role="radio"
-                    aria-checked={aktiv}
+                    aria-pressed={aktiv}
                     onClick={() => setArtId(a.id)}
                     className={cn(
                       "relative flex h-full flex-col rounded-3xl p-5 text-left ring-1 transition",
                       aktiv ? "bg-ov-50/70 ring-2 ring-ov-500" : "bg-white ring-ink-200 hover:ring-ov-300"
                     )}
                   >
-                    {a.empfohlen && <span className="absolute right-4 top-4 rounded-full bg-ov-500 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-white">Beliebt</span>}
+                    {a.empfohlen && <span className="absolute right-4 top-4 rounded-full bg-ov-600 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-white">Beliebt</span>}
                     <span className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", aktiv ? "bg-ov-500 text-white" : "bg-sand-100 text-ov-600")}>
                       <Icon aria-hidden="true" className="h-5 w-5" />
                     </span>
                     <span className="mt-4 text-[17px] font-bold text-ink-900">{a.titel}</span>
-                    <span className="mt-1 inline-flex items-center gap-1.5 text-[13px] font-medium text-ink-500">
+                    <span className={cn("mt-1 inline-flex items-center gap-1.5 text-[13px] font-medium", aktiv ? "text-ink-600" : "text-ink-500")}>
                       <Clock aria-hidden="true" className="h-3.5 w-3.5" />
                       {a.dauer} Minuten
                     </span>
@@ -230,7 +229,7 @@ export default function TerminBuchung() {
               })}
             </div>
             <div className="mt-8 flex justify-end">
-              <button type="button" onClick={() => zu(1)} className="inline-flex h-13 items-center gap-2 rounded-full bg-ov-500 px-7 py-3.5 text-[16px] font-semibold text-white transition hover:bg-ov-600">
+              <button type="button" onClick={() => zu(1)} className="inline-flex h-13 items-center gap-2 rounded-full bg-ov-600 px-7 py-3.5 text-[16px] font-semibold text-white transition hover:bg-ov-700">
                 Freie Termine ansehen
                 <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </button>
@@ -272,7 +271,7 @@ export default function TerminBuchung() {
               </div>
             ) : (
               <>
-                <div className="ov-no-scrollbar -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 pb-2" role="listbox" aria-label="Tag wählen">
+                <div className="ov-no-scrollbar -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 pb-2" role="group" aria-label="Tag wählen">
                   {daten.tage.map((d, i) => {
                     const [, mo, ta] = d.ymd.split("-");
                     const aktiv = i === tagIndex;
@@ -280,8 +279,7 @@ export default function TerminBuchung() {
                       <button
                         key={d.ymd}
                         type="button"
-                        role="option"
-                        aria-selected={aktiv}
+                        aria-pressed={aktiv}
                         onClick={() => {
                           setTagIndex(i);
                           setSlot("");
@@ -313,7 +311,7 @@ export default function TerminBuchung() {
                           onClick={() => setSlot(s.start)}
                           className={cn(
                             "ov-num h-11 rounded-xl text-[15px] font-semibold ring-1 ring-inset transition",
-                            slot === s.start ? "bg-ov-500 text-white ring-ov-500 shadow-[0_8px_20px_-8px_rgba(102,153,51,0.8)]" : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-400"
+                            slot === s.start ? "bg-ov-600 text-white ring-ov-600 shadow-[0_8px_20px_-8px_rgba(102,153,51,0.8)]" : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-400"
                           )}
                         >
                           {s.zeit}
@@ -330,7 +328,7 @@ export default function TerminBuchung() {
                 <ArrowLeft aria-hidden="true" className="h-4 w-4" />
                 Zurück
               </button>
-              <button type="button" disabled={!slot} onClick={() => zu(2)} className="inline-flex h-13 items-center gap-2 rounded-full bg-ov-500 px-7 py-3.5 text-[16px] font-semibold text-white transition hover:bg-ov-600 disabled:cursor-not-allowed disabled:opacity-50">
+              <button type="button" disabled={!slot} onClick={() => zu(2)} className="inline-flex h-13 items-center gap-2 rounded-full bg-ov-600 px-7 py-3.5 text-[16px] font-semibold text-white transition hover:bg-ov-700 disabled:cursor-not-allowed disabled:opacity-50">
                 Weiter
                 <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </button>
@@ -382,7 +380,7 @@ export default function TerminBuchung() {
                 value={werte.nachricht}
                 onChange={setze("nachricht")}
                 placeholder="z. B. Dachart, Jahresverbrauch, Wunsch nach Speicher oder Wallbox"
-                className="w-full rounded-2xl bg-white px-4 py-3 text-[16px] text-ink-900 ring-1 ring-inset ring-ink-200 placeholder:text-ink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
+                className="w-full rounded-2xl bg-white px-4 py-3 text-[16px] text-ink-900 ring-1 ring-inset ring-ink-200 placeholder:text-ink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
               />
             </label>
 
@@ -411,7 +409,7 @@ export default function TerminBuchung() {
                 <ArrowLeft aria-hidden="true" className="h-4 w-4" />
                 Zurück
               </button>
-              <button type="submit" disabled={senden} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ov-500 px-8 py-3.5 text-[16px] font-semibold text-white shadow-[0_10px_26px_-10px_rgba(102,153,51,0.8)] transition hover:bg-ov-600 disabled:opacity-60">
+              <button type="submit" disabled={senden} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ov-600 px-8 py-3.5 text-[16px] font-semibold text-white shadow-[0_10px_26px_-10px_rgba(102,153,51,0.8)] transition hover:bg-ov-700 disabled:opacity-60">
                 {senden ? <Loader2 aria-hidden="true" className="h-5 w-5 animate-spin" /> : <CalendarCheck2 aria-hidden="true" className="h-5 w-5" />}
                 {senden ? "Wird gebucht …" : "Termin verbindlich anfragen"}
               </button>
@@ -425,35 +423,36 @@ export default function TerminBuchung() {
         <div className="rounded-[1.75rem] bg-navy-950 p-6 text-white">
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Ihr Termin</p>
           <dl className="mt-4 space-y-4">
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-ov-300">
-                {(() => {
-                  const Icon = ICONS[art.icon];
-                  return <Icon aria-hidden="true" className="h-4 w-4" />;
-                })()}
-              </span>
-              <div>
-                <dt className="text-[12.5px] text-white/55">Art</dt>
-                <dd className="text-[15px] font-semibold">{art.titel}</dd>
-              </div>
+            {/* dl-Gruppen enthalten nur dt/dd – Symbol steckt (dekorativ) im dt */}
+            <div className="relative min-h-10 pl-13">
+              <dt className="text-[12.5px] text-white/55">
+                <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
+                  {(() => {
+                    const Icon = ICONS[art.icon];
+                    return <Icon className="h-4 w-4" />;
+                  })()}
+                </span>
+                Art
+              </dt>
+              <dd className="text-[15px] font-semibold">{art.titel}</dd>
             </div>
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-ov-300">
-                <CalendarDays aria-hidden="true" className="h-4 w-4" />
-              </span>
-              <div>
-                <dt className="text-[12.5px] text-white/55">Datum & Uhrzeit</dt>
-                <dd className="text-[15px] font-semibold">{slot ? `${langDatum(slot)}, ${uhrzeit(slot)} Uhr` : "noch nicht gewählt"}</dd>
-              </div>
+            <div className="relative min-h-10 pl-13">
+              <dt className="text-[12.5px] text-white/55">
+                <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
+                  <CalendarDays className="h-4 w-4" />
+                </span>
+                Datum & Uhrzeit
+              </dt>
+              <dd className="text-[15px] font-semibold">{slot ? `${langDatum(slot)}, ${uhrzeit(slot)} Uhr` : "noch nicht gewählt"}</dd>
             </div>
-            <div className="flex gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-ov-300">
-                <Clock aria-hidden="true" className="h-4 w-4" />
-              </span>
-              <div>
-                <dt className="text-[12.5px] text-white/55">Dauer</dt>
-                <dd className="text-[15px] font-semibold">{art.dauer} Minuten · kostenlos</dd>
-              </div>
+            <div className="relative min-h-10 pl-13">
+              <dt className="text-[12.5px] text-white/55">
+                <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
+                  <Clock className="h-4 w-4" />
+                </span>
+                Dauer
+              </dt>
+              <dd className="text-[15px] font-semibold">{art.dauer} Minuten · kostenlos</dd>
             </div>
           </dl>
           <ul className="mt-6 space-y-2 border-t border-white/10 pt-5 text-[13.5px] text-white/70">
@@ -488,7 +487,7 @@ function Feld({ label, name, type = "text", wert, setze, verlasse, fehler, class
         aria-invalid={Boolean(fehler)}
         aria-describedby={fehler ? `${id}-fehler` : undefined}
         className={cn(
-          "h-12 w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 ring-1 ring-inset transition placeholder:text-ink-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500",
+          "h-12 w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 ring-1 ring-inset transition placeholder:text-ink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500",
           fehler ? "ring-red-400" : "ring-ink-200"
         )}
         {...rest}

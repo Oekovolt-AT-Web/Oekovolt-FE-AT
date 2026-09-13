@@ -24,8 +24,8 @@ export default function LiveTicker({ className }) {
     <Link
       href="/energie-live"
       className={cn("group flex min-w-0 items-center gap-4 text-[12.5px] text-white/75 transition-colors hover:text-white", className)}
-      aria-label="Live-Strommarktdaten ansehen"
     >
+      <span className="sr-only">Zum Live-Dashboard: </span>
       <span className="flex items-center gap-2 font-semibold uppercase tracking-[0.14em] text-ov-300">
         <LiveDot />
         Live
@@ -61,7 +61,7 @@ export default function LiveTicker({ className }) {
               )}
             </span>
           )}
-          <span className="hidden text-white/45 underline-offset-2 group-hover:underline xl:inline">Zum Dashboard →</span>
+          <span className="hidden text-white/60 underline-offset-2 group-hover:underline xl:inline">Zum Dashboard →</span>
         </span>
       )}
     </Link>

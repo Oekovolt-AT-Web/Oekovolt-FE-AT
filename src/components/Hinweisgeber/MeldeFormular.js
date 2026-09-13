@@ -117,7 +117,7 @@ export default function MeldeFormular() {
         <ol className="mt-4 hidden gap-2 sm:flex">
           {SCHRITTE.map((s, i) => (
             <li key={s} className="flex-1">
-              <button type="button" disabled={i > schritt} onClick={() => gehe(i)} className={`w-full text-left text-[12.5px] font-medium ${i === schritt ? "text-ink-900" : i < schritt ? "text-ov-700" : "text-ink-400"}`}>
+              <button type="button" disabled={i > schritt} onClick={() => gehe(i)} className={`w-full text-left text-[12.5px] font-medium ${i === schritt ? "text-ink-900" : i < schritt ? "text-ov-700" : "text-ink-500"}`}>
                 {i < schritt && <Check aria-hidden="true" className="-mt-0.5 mr-1 inline h-3.5 w-3.5" />}
                 {s}
               </button>
@@ -148,13 +148,13 @@ export default function MeldeFormular() {
                           {aktiv && <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} />}
                         </span>
                       </span>
-                      <span className="mt-1 block text-[13px] leading-snug text-ink-500">{k.text}</span>
+                      <span className={`mt-1 block text-[13px] leading-snug ${aktiv ? "text-ink-600" : "text-ink-500"}`}>{k.text}</span>
                     </button>
                   );
                 })}
               </div>
               <Fehler text={fehler.kategorie} />
-              <label htmlFor="hw-beziehung" className="mb-2 mt-8 block text-[15px] font-semibold text-ink-900">In welcher Beziehung stehen Sie zu Ökovolt? <span className="font-normal text-ink-400">(optional)</span></label>
+              <label htmlFor="hw-beziehung" className="mb-2 mt-8 block text-[15px] font-semibold text-ink-900">In welcher Beziehung stehen Sie zu Ökovolt? <span className="font-normal text-ink-500">(optional)</span></label>
               <select id="hw-beziehung" value={f.beziehung} onChange={(e) => setze("beziehung", e.target.value)} className="h-12 w-full max-w-sm rounded-xl border-2 border-ink-200 bg-white px-4 text-[16px] text-ink-900 outline-none focus:border-ov-500">
                 {BEZIEHUNG.map((b) => <option key={b}>{b}</option>)}
               </select>
@@ -164,15 +164,18 @@ export default function MeldeFormular() {
           {schritt === 1 && (
             <Frage titel="Was ist passiert?" hinweis="Beschreiben Sie den Sachverhalt so konkret wie möglich: Was, wann, wo, wer? Nennen Sie nur Informationen, die Sie zur Aufklärung für notwendig halten.">
               <div className="grid gap-5">
-                <Feld id="betreff" label="Betreff" wert={f.betreff} setze={setze} fehler={fehler.betreff} maxLength={140} />
+                <PflichtHinweis />
+                <Feld id="betreff" label="Betreff" wert={f.betreff} setze={setze} fehler={fehler.betreff} maxLength={140} pflicht />
                 <div>
-                  <label htmlFor="hw-beschreibung" className="mb-1.5 block text-[14px] font-semibold text-ink-800">Beschreibung</label>
+                  <label htmlFor="hw-beschreibung" className="mb-1.5 block text-[14px] font-semibold text-ink-800">Beschreibung <Stern /></label>
                   <textarea id="hw-beschreibung" rows={8} value={f.beschreibung} maxLength={20000} onChange={(e) => setze("beschreibung", e.target.value)}
+                    aria-required="true"
                     aria-invalid={!!fehler.beschreibung}
+                    aria-describedby={fehler.beschreibung ? "hw-beschreibung-fehler" : undefined}
                     className={`w-full rounded-xl border-2 bg-white px-4 py-3 text-[16px] leading-relaxed text-ink-900 outline-none focus:border-ov-500 ${fehler.beschreibung ? "border-red-400" : "border-ink-200"}`} />
                   <div className="mt-1 flex justify-between text-[12.5px]">
-                    <Fehler text={fehler.beschreibung} klein />
-                    <span className="ml-auto text-ink-400">{f.beschreibung.length.toLocaleString("de-DE")} / 20.000</span>
+                    <Fehler id="hw-beschreibung-fehler" text={fehler.beschreibung} klein />
+                    <span className="ml-auto text-ink-500">{f.beschreibung.length.toLocaleString("de-DE")} / 20.000</span>
                   </div>
                 </div>
                 <div className="grid gap-5 sm:grid-cols-2">
@@ -180,12 +183,12 @@ export default function MeldeFormular() {
                   <Feld id="ort" label="Wo? (optional)" wert={f.ort} setze={setze} placeholder="z. B. Baustelle, Abteilung" maxLength={140} />
                 </div>
                 <div>
-                  <label htmlFor="hw-beteiligte" className="mb-1.5 block text-[14px] font-semibold text-ink-800">Beteiligte Personen oder Bereiche <span className="font-normal text-ink-400">(optional)</span></label>
+                  <label htmlFor="hw-beteiligte" className="mb-1.5 block text-[14px] font-semibold text-ink-800">Beteiligte Personen oder Bereiche <span className="font-normal text-ink-500">(optional)</span></label>
                   <textarea id="hw-beteiligte" rows={3} value={f.beteiligte} maxLength={2000} onChange={(e) => setze("beteiligte", e.target.value)} className="w-full rounded-xl border-2 border-ink-200 bg-white px-4 py-3 text-[16px] text-ink-900 outline-none focus:border-ov-500" />
                 </div>
                 <div>
-                  <p className="mb-2 text-[14px] font-semibold text-ink-800">Haben Sie den Verstoß bereits an anderer Stelle gemeldet?</p>
-                  <Segment optionen={["Nein", "Ja, intern", "Ja, extern / bei einer Behörde"]} wert={f.bereitsGemeldet} onChange={(v) => setze("bereitsGemeldet", v)} />
+                  <p id="hw-gemeldet-frage" className="mb-2 text-[14px] font-semibold text-ink-800">Haben Sie den Verstoß bereits an anderer Stelle gemeldet?</p>
+                  <Segment labelId="hw-gemeldet-frage" optionen={["Nein", "Ja, intern", "Ja, extern / bei einer Behörde"]} wert={f.bereitsGemeldet} onChange={(v) => setze("bereitsGemeldet", v)} />
                 </div>
                 <p className="flex gap-2 rounded-2xl bg-sand-50 p-4 text-[13.5px] leading-relaxed text-ink-600 ring-1 ring-ink-100">
                   <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sun-500" />
@@ -203,8 +206,9 @@ export default function MeldeFormular() {
               </div>
               {!f.anonym && (
                 <div className="ov-step-vor mt-8 grid gap-4 sm:grid-cols-2">
-                  <Feld id="name" label="Name" wert={f.name} setze={setze} fehler={fehler.name} autoComplete="name" />
-                  <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" />
+                  <PflichtHinweis className="sm:col-span-2" />
+                  <Feld id="name" label="Name" wert={f.name} setze={setze} fehler={fehler.name} autoComplete="name" pflicht />
+                  <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" pflicht />
                   <Feld id="telefon" label="Telefon (optional)" type="tel" wert={f.telefon} setze={setze} autoComplete="tel" />
                 </div>
               )}
@@ -222,7 +226,7 @@ export default function MeldeFormular() {
                   ["Identität", f.anonym ? "Anonym" : [f.name, f.email, f.telefon].filter(Boolean).join(" · ")],
                 ].map(([k, v]) => (
                   <div key={k} className="grid gap-1 py-3.5 sm:grid-cols-[150px_1fr] sm:gap-4">
-                    <dt className="text-[13px] font-semibold text-ink-500">{k}</dt>
+                    <dt className="text-[13px] font-semibold text-ink-600">{k}</dt>
                     <dd className="whitespace-pre-line break-words text-[14.5px] text-ink-800">{v}</dd>
                   </div>
                 ))}
@@ -250,7 +254,7 @@ export default function MeldeFormular() {
           <ArrowLeft aria-hidden="true" className="h-4 w-4" /> Zurück
         </button>
         {schritt < SCHRITTE.length - 1 ? (
-          <button type="button" onClick={() => gehe(schritt + 1)} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-500 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] hover:bg-ov-600">
+          <button type="button" onClick={() => gehe(schritt + 1)} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-600 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] hover:bg-ov-700">
             Weiter <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </button>
         ) : (
@@ -328,7 +332,7 @@ function Bestaetigung({ ergebnis }) {
 
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link href="/hinweisgebersystem/postfach" aria-disabled={!gesichert}
-            className={`inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold ${gesichert ? "bg-ov-500 text-white hover:bg-ov-600" : "pointer-events-none bg-ink-100 text-ink-400"}`}>
+            className={`inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold ${gesichert ? "bg-ov-600 text-white hover:bg-ov-700" : "pointer-events-none bg-ink-100 text-ink-400"}`}>
             Zum Postfach <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
           <Link href="/" className="inline-flex h-12 items-center justify-center rounded-full px-6 text-[15px] font-semibold text-ink-800 ring-1 ring-inset ring-ink-200 hover:bg-ink-50">Zur Startseite</Link>
@@ -361,18 +365,18 @@ function WahlKarte({ aktiv, onClick, icon: Icon, titel, text, empfohlen }) {
           {titel}
           {empfohlen && <span className="rounded-full bg-navy-950 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white">Standard</span>}
         </span>
-        <span className="mt-1 block text-[13.5px] leading-relaxed text-ink-500">{text}</span>
+        <span className={`mt-1 block text-[13.5px] leading-relaxed ${aktiv ? "text-ink-600" : "text-ink-500"}`}>{text}</span>
       </span>
     </button>
   );
 }
 
-function Segment({ optionen, wert, onChange }) {
+function Segment({ optionen, wert, onChange, labelId }) {
   return (
-    <div role="radiogroup" className="flex flex-wrap gap-2">
+    <div role="group" aria-labelledby={labelId} className="flex flex-wrap gap-2">
       {optionen.map((o) => (
-        <button key={o} type="button" role="radio" aria-checked={wert === o} onClick={() => onChange(o)}
-          className={`h-11 rounded-full border-2 px-4 text-[14px] font-semibold transition-all ${wert === o ? "border-ov-500 bg-ov-500 text-white" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"}`}>
+        <button key={o} type="button" aria-pressed={wert === o} onClick={() => onChange(o)}
+          className={`h-11 rounded-full border-2 px-4 text-[14px] font-semibold transition-all ${wert === o ? "border-ov-600 bg-ov-600 text-white" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"}`}>
           {o}
         </button>
       ))}
@@ -380,18 +384,33 @@ function Segment({ optionen, wert, onChange }) {
   );
 }
 
-function Feld({ id, label, wert, setze, fehler, type = "text", ...rest }) {
+function Feld({ id, label, wert, setze, fehler, type = "text", pflicht = false, ...rest }) {
   return (
     <div>
-      <label htmlFor={`hw-${id}`} className="mb-1.5 block text-[14px] font-semibold text-ink-800">{label}</label>
+      <label htmlFor={`hw-${id}`} className="mb-1.5 block text-[14px] font-semibold text-ink-800">{label}{pflicht && <> <Stern /></>}</label>
       <input id={`hw-${id}`} type={type} value={wert} onChange={(e) => setze(id, e.target.value)} aria-invalid={!!fehler}
-        className={`h-12 w-full rounded-xl border-2 bg-white px-4 text-[16px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-ov-500 ${fehler ? "border-red-400" : "border-ink-200"}`} {...rest} />
-      <Fehler text={fehler} klein />
+        aria-required={pflicht || undefined}
+        aria-describedby={fehler ? `hw-${id}-fehler` : undefined}
+        className={`h-12 w-full rounded-xl border-2 bg-white px-4 text-[16px] text-ink-900 outline-none placeholder:text-ink-500 focus:border-ov-500 ${fehler ? "border-red-400" : "border-ink-200"}`} {...rest} />
+      <Fehler id={`hw-${id}-fehler`} text={fehler} klein />
     </div>
   );
 }
 
-function Fehler({ text, klein }) {
+/** Sichtbare Pflichtfeld-Markierung (für Screenreader über aria-required) */
+function Stern() {
+  return <span aria-hidden="true" className="text-red-700">*</span>;
+}
+
+function PflichtHinweis({ className = "" }) {
+  return (
+    <p className={`text-[13px] text-ink-500 ${className}`}>
+      <span aria-hidden="true" className="text-red-700">*</span> Pflichtfeld
+    </p>
+  );
+}
+
+function Fehler({ id, text, klein }) {
   if (!text) return null;
-  return <p role="alert" className={`${klein ? "mt-1.5 text-[13px]" : "mt-3 text-[13.5px]"} font-medium text-red-700`}>{text}</p>;
+  return <p id={id} role="alert" className={`${klein ? "mt-1.5 text-[13px]" : "mt-3 text-[13.5px]"} font-medium text-red-700`}>{text}</p>;
 }

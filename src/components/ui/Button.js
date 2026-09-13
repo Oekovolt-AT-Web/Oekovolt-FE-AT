@@ -4,7 +4,7 @@ import { cn } from "./cn";
 
 const VARIANTEN = {
   primary:
-    "bg-ov-500 text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] hover:bg-ov-600 hover:shadow-[0_12px_32px_-8px_rgba(102,153,51,0.75)]",
+    "bg-ov-600 text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] hover:bg-ov-700 hover:shadow-[0_12px_32px_-8px_rgba(102,153,51,0.75)]",
   navy: "bg-navy-700 text-white hover:bg-navy-800 shadow-[0_8px_24px_-10px_rgba(0,52,115,0.6)]",
   secondary:
     "bg-white text-ink-900 ring-1 ring-inset ring-ink-200 hover:ring-ink-300 hover:bg-ink-50",

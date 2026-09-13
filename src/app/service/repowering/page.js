@@ -468,7 +468,7 @@ function Fallbeispiel({ bildVorher, bildNachher, titelVorher, titelNachher, vorh
           <dl className="grid grid-cols-1 gap-px border-t border-ink-200/70 bg-ink-200/70 sm:grid-cols-3">
             {kennzahlen.map((k) => (
               <div key={k.l} className="bg-white px-6 py-5">
-                <dt className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-400">{k.l}</dt>
+                <dt className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">{k.l}</dt>
                 <dd className="ov-num mt-1 font-display text-[20px] font-extrabold tracking-tight text-ink-900">{k.v}</dd>
               </div>
             ))}
@@ -486,7 +486,7 @@ function Seite({ bild, titel, punkte, icon: Icon, ton }) {
       <div className="relative">
         <div className="relative aspect-video overflow-hidden bg-ink-100">
           <Image src={bild.src} alt={bild.alt || ""} fill sizes="(max-width: 1024px) 100vw, 45vw" className={`object-cover ${neu ? "" : "grayscale-35"}`} />
-          <span className={`absolute left-4 top-4 rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wider shadow ${neu ? "bg-ov-500 text-white" : "bg-white/95 text-ink-700"}`}>
+          <span className={`absolute left-4 top-4 rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wider shadow ${neu ? "bg-ov-600 text-white" : "bg-white/95 text-ink-700"}`}>
             {neu ? "Nachher" : "Vorher"}
           </span>
         </div>

@@ -85,7 +85,7 @@ export default function PraemienRechner() {
             style={{ "--ov-fill": `${fill}%` }}
             aria-valuetext={`${anzahl} erfolgreiche ${anzahl === 1 ? "Empfehlung" : "Empfehlungen"}`}
           />
-          <div className="mt-2 flex justify-between text-[12.5px] text-ink-400" aria-hidden="true">
+          <div className="mt-2 flex justify-between text-[12.5px] text-ink-500" aria-hidden="true">
             <span>1</span>
             <span>5</span>
             <span>10</span>
@@ -121,7 +121,7 @@ export default function PraemienRechner() {
             <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Textvorschlag</p>
             <h3 className="ov-h3 mt-2 text-white">Einfach teilen</h3>
           </div>
-          <div role="radiogroup" aria-label="Anrede" className="inline-flex rounded-full bg-white/10 p-1">
+          <div role="group" aria-label="Anrede" className="inline-flex rounded-full bg-white/10 p-1">
             {[
               ["du", "Du"],
               ["sie", "Sie"],
@@ -129,8 +129,7 @@ export default function PraemienRechner() {
               <button
                 key={v}
                 type="button"
-                role="radio"
-                aria-checked={anrede === v}
+                aria-pressed={anrede === v}
                 onClick={() => setAnrede(v)}
                 className={`h-10 min-w-[56px] rounded-full px-4 text-[14px] font-semibold transition-all ${anrede === v ? "bg-white text-navy-950 shadow" : "text-white/70 hover:text-white"}`}
               >
@@ -157,7 +156,7 @@ export default function PraemienRechner() {
             type="button"
             onClick={kopieren}
             className={`inline-flex h-12 items-center justify-center gap-2 rounded-full px-4 text-[14.5px] font-semibold transition-all ${
-              kopiert ? "bg-ov-500 text-white" : "bg-white text-navy-950 hover:bg-ov-50"
+              kopiert ? "bg-ov-600 text-white" : "bg-white text-navy-950 hover:bg-ov-50"
             }`}
           >
             {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : <Copy aria-hidden="true" className="h-4 w-4" />}
@@ -190,7 +189,7 @@ export default function PraemienRechner() {
           </p>
           <Link
             href="/kontakt"
-            className="group mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-500 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-colors hover:bg-ov-600 sm:w-auto"
+            className="group mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-colors hover:bg-ov-700 sm:w-auto"
           >
             <UserPlus aria-hidden="true" className="h-4 w-4" />
             Jetzt als Empfehlungsgeber melden
@@ -202,7 +201,7 @@ export default function PraemienRechner() {
 }
 
 function Muenzreihe({ label, icon: Icon, anzahl, farbe }) {
-  const voll = farbe === "sun" ? "bg-sun-400 text-navy-950 ring-sun-500/40" : "bg-ov-500 text-white ring-ov-600/40";
+  const voll = farbe === "sun" ? "bg-sun-400 text-navy-950 ring-sun-500/40" : "bg-ov-600 text-white ring-ov-700/40";
   return (
     <div>
       <p className="flex items-center gap-2 text-[13px] font-medium text-ink-600">

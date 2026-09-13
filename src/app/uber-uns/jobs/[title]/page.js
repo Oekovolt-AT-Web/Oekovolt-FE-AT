@@ -286,20 +286,21 @@ export default async function JobDetailPage({ params }) {
             </Reveal>
           </div>
 
-          {/* Sticky Bewerbungs-Karte */}
-          <aside className="lg:sticky lg:top-28 lg:self-start">
+          {/* Sticky Bewerbungs-Karte (kein <aside>: liegt innerhalb des Hauptinhalts) */}
+          <div className="lg:sticky lg:top-28 lg:self-start">
             <div className="rounded-3xl bg-white p-6 shadow-[0_30px_60px_-35px_rgba(15,23,42,0.4)] ring-1 ring-ink-200/70 md:p-7">
               <p className="font-display text-[19px] font-bold text-ink-900">Auf einen Blick</p>
               <dl className="mt-5 divide-y divide-ink-100">
                 {fakten.map((f) => (
-                  <div key={f.label} className="flex items-center gap-3 py-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-50 text-ov-600">
-                      <f.icon aria-hidden="true" className="h-4 w-4" />
-                    </span>
-                    <div className="min-w-0">
-                      <dt className="text-[12.5px] text-ink-500">{f.label}</dt>
-                      <dd className="text-[15px] font-semibold text-ink-900">{f.wert}</dd>
-                    </div>
+                  <div key={f.label} className="relative flex min-h-16 min-w-0 flex-col justify-center py-3 pl-13">
+                    {/* dl-Gruppe enthält nur dt/dd – Symbol steckt (dekorativ) im dt */}
+                    <dt className="text-[12.5px] text-ink-500">
+                      <span aria-hidden="true" className="absolute left-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-xl bg-ov-50 text-ov-600">
+                        <f.icon className="h-4 w-4" />
+                      </span>
+                      {f.label}
+                    </dt>
+                    <dd className="text-[15px] font-semibold text-ink-900">{f.wert}</dd>
                   </div>
                 ))}
               </dl>
@@ -317,7 +318,7 @@ export default async function JobDetailPage({ params }) {
               </p>
               <Teilen url={canonicalUrl} titel={`Wir suchen: ${j.titel}`} text={`Ökovolt sucht: ${j.titel} in ${j.arbeitsort || j.ort}.`} netze={["linkedin", "xing", "whatsapp", "facebook"]} kampagne="jobs" label="Stelle teilen" className="mt-5 border-t border-ink-100 pt-5" />
             </div>
-          </aside>
+          </div>
         </div>
       </Section>
 
@@ -342,7 +343,7 @@ export default async function JobDetailPage({ params }) {
                   </span>
                   <div>
                     <p className="font-display text-[17px] font-bold text-ink-900">
-                      <span className="mr-2 text-ov-500">{String(i + 1).padStart(2, "0")}</span>
+                      <span className="mr-2 text-ov-700">{String(i + 1).padStart(2, "0")}</span>
                       {s.t}
                     </p>
                     <p className="mt-1 text-[15.5px] leading-relaxed text-ink-600">{s.x}</p>

@@ -151,7 +151,7 @@ const JobListings = () => {
                       <div className="flex justify-end">
                         <Link
                           href={`/uber-uns/jobs/${slug}`}
-                          className="flex items-center gap-2 px-5 py-2.5 bg-[#669933] text-white font-semibold rounded-lg shadow-[0_0_8px_#669933aa] transition-all duration-300 hover:shadow-[0_0_14px_#669933dd] hover:-translate-y-0.5 hover:bg-[#669933] no-underline group"
+                          className="flex items-center gap-2 px-5 py-2.5 bg-ov-600 text-white font-semibold rounded-lg shadow-[0_0_8px_#669933aa] transition-all duration-300 hover:shadow-[0_0_14px_#669933dd] hover:-translate-y-0.5 hover:bg-[#669933] no-underline group"
                         >
                           Jetzt Bewerben
                           <ChevronRight className="transition-transform duration-300 group-hover:translate-x-1" />

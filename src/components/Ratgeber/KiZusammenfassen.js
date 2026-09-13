@@ -13,9 +13,9 @@ const ASSISTENTEN = [
   { name: "Grok", link: (q) => `https://grok.com/?q=${q}` },
 ];
 
-export default function KiZusammenfassen({ url, titel, className }) {
+export default function KiZusammenfassen({ url, titel, art = "Ratgeber-Artikel", className }) {
   const prompt = encodeURIComponent(
-    `Fasse den Ratgeber-Artikel „${titel}" von Ökovolt (Fachbetrieb für Photovoltaik) verständlich zusammen: die wichtigsten Punkte, Zahlen und konkrete Tipps. Artikel: ${url}`
+    `Fasse den ${art} „${titel}" von Ökovolt (Fachbetrieb für Photovoltaik) verständlich zusammen: die wichtigsten Punkte, Zahlen und konkrete Tipps. Artikel: ${url}`
   );
 
   return (

@@ -106,7 +106,7 @@ export default function KontaktFormular() {
     <section className="bg-[#f9fafb] py-10 md:py-16 px-6 md:px-12">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white rounded-3xl shadow-xl overflow-hidden p-1 md:p-8">
         {/* Left Column - Info Box */}
-        <div className="hidden md:block bg-[#669933] p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative animate-slide-in-left">
+        <div className="hidden md:block bg-ov-600 p-1 rounded-2xl text-white text-[15px] space-y-6 leading-relaxed relative animate-slide-in-left">
           <div
             className="relative overflow-hidden rounded-xl h-[400px] md:h-[400px] lg:h-full"
             onMouseEnter={() => setIsHovering(true)}
@@ -286,7 +286,7 @@ export default function KontaktFormular() {
             disabled={loading}
             className={`mt-4 w-full py-3 px-6 text-white font-semibold rounded-md transition-all ${loading
               ? "bg-gray-300 cursor-not-allowed"
-              : "bg-[#669933] hover:bg-[#557a26]"
+              : "bg-ov-600 hover:bg-[#557a26]"
               }`}
           >
             {loading ? "Wird gesendet..." : "Anfrage absenden"}

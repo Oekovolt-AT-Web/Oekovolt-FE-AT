@@ -48,7 +48,7 @@ export default function RatgeberListe({ artikel, kategorien }) {
                 }`}
               >
                 {k}
-                <span className={`ov-num rounded-full px-1.5 text-[12px] ${aktiv ? "bg-white/15 text-white" : "bg-ink-100 text-ink-500"}`}>{zaehler[k] || 0}</span>
+                <span className={`ov-num rounded-full px-1.5 text-[12px] ${aktiv ? "bg-white/15 text-white" : "bg-ink-100 text-ink-600"}`}>{zaehler[k] || 0}</span>
               </button>
             );
           })}
@@ -61,7 +61,7 @@ export default function RatgeberListe({ artikel, kategorien }) {
             value={suche}
             onChange={(e) => setSuche(e.target.value)}
             placeholder="Thema suchen, z. B. Speicher"
-            className="h-11 w-full rounded-full border-2 border-ink-200 bg-white pl-11 pr-10 text-[15px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-ov-500"
+            className="h-11 w-full rounded-full border-2 border-ink-200 bg-white pl-11 pr-10 text-[15px] text-ink-900 outline-none placeholder:text-ink-500 focus:border-ov-500"
           />
           {suche && (
             <button type="button" onClick={() => setSuche("")} aria-label="Suche leeren" className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-ink-400 hover:bg-ink-100">

@@ -254,7 +254,7 @@ main li::marker {
 }
 
 /* Auf dunklen Flächen den Ring aufhellen, damit er nicht im Grün verschwindet. */
-:where(.bg-\[\#669933\], .bg-\[\#003473\], .bg-\[\#0a1e35\])
+:where(.bg-\[\#669933\], .bg-ov-600, .bg-\[\#003473\], .bg-\[\#0a1e35\])
   :where(a, button):focus-visible {
   outline-color: #ffffff;
   box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.45);
@@ -321,7 +321,7 @@ main li::marker {
 /* Mobile CTA-Leiste sichtbar: Zurück-nach-oben-Button darüber anheben.
    Der Button setzt seine Position inline, deshalb !important. */
 @media (max-width: 1023px) {
-  body.ov-cta-sichtbar button[aria-label="Back to top"] {
+  body.ov-cta-sichtbar button[aria-label="Nach oben"] {
     bottom: 96px !important;
   }
 }
@@ -331,7 +331,7 @@ body.ov-menu-offen {
   overflow: hidden;
 }
 body.ov-menu-offen .ov-mobile-cta,
-body.ov-menu-offen button[aria-label="Back to top"] {
+body.ov-menu-offen button[aria-label="Nach oben"] {
   display: none !important;
 }
 
@@ -501,7 +501,12 @@ h1, h2, h3, h4, .font-display {
   box-shadow: 0 2px 10px rgba(21, 26, 36, 0.2);
   cursor: grab;
 }
-.ov-range:focus-visible { box-shadow: 0 0 0 4px rgba(102, 153, 51, 0.3); }
+.ov-range:focus-visible {
+  box-shadow: 0 0 0 4px rgba(102, 153, 51, 0.3);
+  /* sichtbarer Fokusring (WCAG 2.4.7) – überschreibt `outline: none` oben */
+  outline: 3px solid var(--color-ov-600);
+  outline-offset: 4px;
+}
 
 /* Zahlen in Kennzahlen immer gleich breit */
 .ov-num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }

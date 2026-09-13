@@ -342,7 +342,7 @@ export default async function PhotovoltaikanlagePage() {
             </ul>
           </Reveal>
           <Reveal delay={100}>
-            <div className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+            <div tabIndex={0} role="region" aria-label="Richtpreise für Photovoltaikanlagen" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
               <table className="w-full min-w-[520px] border-collapse text-left text-[15px]">
                 <caption className="sr-only">Richtpreise für Photovoltaikanlagen nach Anlagengröße, Stand 2026</caption>
                 <thead>
@@ -357,7 +357,7 @@ export default async function PhotovoltaikanlagePage() {
                   {PREIS_GROESSEN.map((g) => (
                     <tr key={g} className={g === 10 ? "bg-ov-50/60" : undefined}>
                       <th scope="row" className="whitespace-nowrap px-5 py-3.5 font-semibold text-ink-900">
-                        {g} kWp{g === 10 && <span className="ml-2 rounded-full bg-ov-500 px-2 py-0.5 text-[11px] font-semibold text-white">typisch</span>}
+                        {g} kWp{g === 10 && <span className="ml-2 rounded-full bg-ov-600 px-2 py-0.5 text-[11px] font-semibold text-white">typisch</span>}
                       </th>
                       <td className="ov-num px-5 py-3.5 text-ink-600">{eur(preisProKwp(g))}</td>
                       <td className="ov-num px-5 py-3.5 font-semibold text-ov-700">{eur(g * preisProKwp(g))}</td>

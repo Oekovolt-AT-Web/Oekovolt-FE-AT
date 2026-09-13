@@ -144,7 +144,7 @@ export default function ProjectsSection({ data }) {
       <div className="text-center flex flex-row items-center justify-center mt-4">
         <Link
           href="/referenzen/projekte"
-          className="flex items-center justify-center gap-2 bg-[#669933] hover:bg-[#669933]/90 text-white uppercase px-6 py-3 rounded-lg transition-colors duration-300 text-[14px]"
+          className="flex items-center justify-center gap-2 bg-ov-600 hover:bg-ov-700 text-white uppercase px-6 py-3 rounded-lg transition-colors duration-300 text-[14px]"
         >
           Weitere Projekte <ChevronRight />
         </Link>

@@ -433,7 +433,7 @@ export default async function HomePage() {
                 <Link href={w.href} className="group ov-card-hover flex h-full flex-col justify-between rounded-[2rem] bg-white p-7 ring-1 ring-ink-200/60">
                   <w.icon aria-hidden="true" className="h-6 w-6 text-ov-600" />
                   <div className="mt-6">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-400">Ratgeber</p>
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ratgeber</p>
                     <h3 className="mt-1.5 font-display text-[20px] font-bold text-ink-900 group-hover:text-ov-700">{w.titel}</h3>
                     <p className="mt-1.5 text-[14.5px] text-ink-500">{w.text}</p>
                   </div>

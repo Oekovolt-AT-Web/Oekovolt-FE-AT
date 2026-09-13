@@ -44,7 +44,7 @@ const AdvantagesSection = () => {
             key={adv.id}
             className="relative bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:border-[#669933] transition duration-300"
           >
-            <div className="absolute -top-5 left-6 bg-[#669933] text-white rounded-full w-13 h-13 flex items-center justify-center shadow-md ring-4 ring-white text-sm font-bold z-10">
+            <div className="absolute -top-5 left-6 bg-ov-600 text-white rounded-full w-13 h-13 flex items-center justify-center shadow-md ring-4 ring-white text-sm font-bold z-10">
               {adv.icon}
             </div>
 

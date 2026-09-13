@@ -114,7 +114,7 @@ export function Auswahl({ legende, optionen, wert, onChange, spalten, klein = fa
               className={cn(
                 "relative flex min-h-11 cursor-pointer flex-col items-center justify-center rounded-xl px-2 py-1.5 text-center leading-tight transition-all duration-200 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ov-500",
                 klein ? "text-[13px]" : "text-[14px]",
-                aktiv ? "bg-white font-semibold text-ink-900 shadow-[0_2px_8px_-2px_rgba(21,26,36,0.18)] ring-1 ring-ink-200/70" : "text-ink-500 hover:text-ink-800"
+                aktiv ? "bg-white font-semibold text-ink-900 shadow-[0_2px_8px_-2px_rgba(21,26,36,0.18)] ring-1 ring-ink-200/70" : "text-ink-600 hover:text-ink-800"
               )}
             >
               <input type="radio" name={name} value={o.id} checked={aktiv} onChange={() => onChange(o.id)} className="sr-only" />
@@ -190,19 +190,19 @@ export function useBreite(standard = 720) {
 export function Kennzahl({ label, children, zusatz, icon: Icon, ton = "hell", className }) {
   const toene = {
     hell: "bg-white ring-1 ring-ink-200/70 text-ink-900",
-    gruen: "bg-ov-500 text-white",
+    gruen: "bg-ov-600 text-white",
     navy: "bg-navy-950 text-white",
     sand: "bg-sand-50 ring-1 ring-ink-200/60 text-ink-900",
   };
   const dunkel = ton === "gruen" || ton === "navy";
   return (
     <div className={cn("relative overflow-hidden rounded-2xl p-4 md:p-5", toene[ton], className)}>
-      <p className={cn("flex items-center gap-1.5 text-[12.5px] font-medium", dunkel ? "text-white/75" : "text-ink-500")}>
+      <p className={cn("flex items-center gap-1.5 text-[12.5px] font-medium", ton === "gruen" ? "text-white" : dunkel ? "text-white/75" : "text-ink-500")}>
         {Icon && <Icon aria-hidden="true" className={cn("h-3.5 w-3.5", dunkel ? "text-white/80" : "text-ov-600")} />}
         {label}
       </p>
       <p className="mt-1 whitespace-nowrap font-display text-[clamp(1.4rem,1.15rem+0.7vw,1.85rem)] font-extrabold leading-tight tracking-tight">{children}</p>
-      {zusatz && <p className={cn("mt-1 text-[12.5px] leading-snug", dunkel ? "text-white/70" : "text-ink-500")}>{zusatz}</p>}
+      {zusatz && <p className={cn("mt-1 text-[12.5px] leading-snug", ton === "gruen" ? "text-white" : dunkel ? "text-white/70" : "text-ink-500")}>{zusatz}</p>}
     </div>
   );
 }

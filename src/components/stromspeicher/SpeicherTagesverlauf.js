@@ -84,7 +84,7 @@ export default function SpeicherTagesverlauf() {
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Interaktiv · Beispieltag im Frühjahr</p>
           <h3 className="ov-h3 mt-2 text-ink-900">Wohin fließt Ihr Solarstrom?</h3>
         </div>
-        <div role="radiogroup" aria-label="Szenario" className="inline-flex rounded-full bg-ink-100 p-1">
+        <div role="group" aria-label="Szenario" className="inline-flex rounded-full bg-ink-100 p-1">
           {[
             { v: false, l: "Ohne Speicher" },
             { v: true, l: "Mit 8-kWh-Speicher" },
@@ -92,11 +92,10 @@ export default function SpeicherTagesverlauf() {
             <button
               key={o.l}
               type="button"
-              role="radio"
-              aria-checked={mitSpeicher === o.v}
+              aria-pressed={mitSpeicher === o.v}
               onClick={() => setMitSpeicher(o.v)}
               className={`h-10 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 ${
-                mitSpeicher === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                mitSpeicher === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
               }`}
             >
               {o.l}

@@ -97,11 +97,11 @@ export default function Postfach() {
           </div>
         </div>
         {meldung && <p role="alert" className="mt-4 rounded-xl bg-red-50 p-3 text-[14px] text-red-800">{meldung}</p>}
-        <button type="submit" disabled={laden || !zugang.referenz || !zugang.schluessel} className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-500 text-[15px] font-semibold text-white hover:bg-ov-600 disabled:opacity-60">
+        <button type="submit" disabled={laden || !zugang.referenz || !zugang.schluessel} className="mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-600 text-[15px] font-semibold text-white hover:bg-ov-700 disabled:opacity-60">
           {laden ? <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" /> : <Lock aria-hidden="true" className="h-4 w-4" />}
           Sicher anmelden
         </button>
-        <p className="mt-4 text-center text-[12.5px] text-ink-400">Ihre Zugangsdaten werden nicht im Browser gespeichert.</p>
+        <p className="mt-4 text-center text-[12.5px] text-ink-500">Ihre Zugangsdaten werden nicht im Browser gespeichert.</p>
       </form>
     );
   }
@@ -117,7 +117,7 @@ export default function Postfach() {
         <ol className="mt-7 space-y-3.5">
           {STATUS_REIHE.map((s, i) => (
             <li key={s} className="flex items-center gap-3 text-[14px]">
-              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${i <= stufe ? "bg-ov-500 text-white" : "bg-white/10 text-white/40"}`}>{i + 1}</span>
+              <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${i <= stufe ? "bg-ov-600 text-white" : "bg-white/10 text-white/40"}`}>{i + 1}</span>
               <span className={i <= stufe ? "text-white" : "text-white/40"}>{s}</span>
             </li>
           ))}
@@ -141,7 +141,7 @@ export default function Postfach() {
             const eigene = n.absender === "Meldende Person";
             return (
               <li key={i} className={`flex ${eigene ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[85%] rounded-3xl px-5 py-4 ${eigene ? "rounded-br-lg bg-ov-500 text-white" : "rounded-bl-lg bg-ink-100 text-ink-900"}`}>
+                <div className={`max-w-[85%] rounded-3xl px-5 py-4 ${eigene ? "rounded-br-lg bg-ov-600 text-white" : "rounded-bl-lg bg-ink-100 text-ink-900"}`}>
                   <p className={`text-[12px] font-semibold ${eigene ? "text-white/75" : "text-ink-500"}`}>{eigene ? "Sie" : "Meldestelle"} · {fmt(n.zeitpunkt)}</p>
                   <p className="mt-1 whitespace-pre-line break-words text-[15px] leading-relaxed">{n.nachricht}</p>
                 </div>
@@ -156,7 +156,7 @@ export default function Postfach() {
               className="w-full rounded-2xl border-2 border-ink-200 bg-white px-4 py-3 text-[16px] text-ink-900 outline-none focus:border-ov-500" />
             {meldung && <p role="alert" className="mt-2 text-[13.5px] text-red-700">{meldung}</p>}
             <div className="mt-3 flex justify-end">
-              <button type="submit" disabled={senden || antwort.trim().length < 2} className="inline-flex h-11 items-center gap-2 rounded-full bg-ov-500 px-6 text-[14.5px] font-semibold text-white hover:bg-ov-600 disabled:opacity-60">
+              <button type="submit" disabled={senden || antwort.trim().length < 2} className="inline-flex h-11 items-center gap-2 rounded-full bg-ov-600 px-6 text-[14.5px] font-semibold text-white hover:bg-ov-700 disabled:opacity-60">
                 {senden ? <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" /> : <Send aria-hidden="true" className="h-4 w-4" />}
                 Senden
               </button>

@@ -351,7 +351,7 @@ export default function AnlagenExplorer() {
                   <span
                     aria-hidden="true"
                     className={`relative flex h-5 w-5 items-center justify-center rounded-full font-display text-[10px] font-extrabold shadow-lg ring-2 transition-all duration-300 sm:h-8 sm:w-8 sm:text-[13px] ${
-                      an ? "scale-110 bg-ov-500 text-white ring-white" : "bg-white text-ov-700 ring-ov-500 group-hover:bg-ov-50"
+                      an ? "scale-110 bg-ov-600 text-white ring-white" : "bg-white text-ov-700 ring-ov-500 group-hover:bg-ov-50"
                     }`}
                   >
                     {i + 1}

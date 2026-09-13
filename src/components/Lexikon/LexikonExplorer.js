@@ -122,7 +122,7 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
               onChange={(e) => setSuche(e.target.value)}
               placeholder="Begriff suchen, z. B. Autarkie"
               autoComplete="off"
-              className="h-12 w-full rounded-full bg-white pl-11 pr-11 text-[15px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-ov-500 lg:bg-ink-50 [&::-webkit-search-cancel-button]:hidden"
+              className="h-12 w-full rounded-full bg-white pl-11 pr-11 text-[15px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-ov-500 lg:bg-ink-50 [&::-webkit-search-cancel-button]:hidden"
             />
             {suche && (
               <button
@@ -226,14 +226,18 @@ function Eintrag({ b, namen, kategorien }) {
       id={b.id}
       className="group relative flex scroll-mt-[220px] flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 transition-shadow duration-300 target:ring-2 target:ring-ov-500 target:shadow-[0_0_0_6px_rgba(102,153,51,0.15)] hover:ring-ov-200 lg:scroll-mt-[170px] md:p-7"
     >
-      <div className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
-        <dt className="font-display text-[19px] font-extrabold leading-snug tracking-tight text-ink-900">
-          <a href={`#${b.id}`} className="hover:text-ov-700">
-            {b.begriff}
-          </a>
-        </dt>
-        {kat && <span className="mt-0.5 shrink-0 rounded-full bg-sand-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-500">{kat}</span>}
-      </div>
+      {/* dl-Gruppe enthält nur dt/dd – Themen-Chip steckt mit im dt */}
+      <dt className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
+        <a href={`#${b.id}`} className="font-display text-[19px] font-extrabold leading-snug tracking-tight text-ink-900 hover:text-ov-700">
+          {b.begriff}
+        </a>
+        {kat && (
+          <span className="mt-0.5 shrink-0 rounded-full bg-sand-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-600">
+            <span className="sr-only">Thema: </span>
+            {kat}
+          </span>
+        )}
+      </dt>
       <dd className="mt-3 flex flex-1 flex-col">
         <p className="text-[15.5px] font-medium leading-relaxed text-ink-800">{b.kurz}</p>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-600">{b.text}</p>

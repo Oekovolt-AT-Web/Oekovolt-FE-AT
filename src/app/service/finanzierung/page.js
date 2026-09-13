@@ -245,13 +245,13 @@ export default async function FinanzierungPage() {
             { icon: Sparkles, wert: "kostenfrei", label: "Sondertilgung & vorzeitige Rückzahlung" },
             { icon: Landmark, wert: "0 % MwSt.", label: "auf PV-Anlage & Speicher (§ 12 Abs. 3 UStG)" },
           ].map((k, i) => (
-            <Reveal key={k.label} delay={i * 70} className="flex items-start gap-3 px-2 md:border-l md:border-ink-200 md:px-6 md:first:border-l-0 md:first:pl-0">
-              <k.icon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
-              <div>
-                <dt className="sr-only">{k.label}</dt>
-                <dd className="font-display text-[20px] font-extrabold leading-tight tracking-tight text-ink-900 md:text-[24px]">{k.wert}</dd>
-                <dd className="mt-1 text-[13px] leading-snug text-ink-500">{k.label}</dd>
-              </div>
+            <Reveal key={k.label} delay={i * 70} className="flex flex-col px-2 md:border-l md:border-ink-200 md:px-6 md:first:border-l-0 md:first:pl-0">
+              {/* dl-Gruppe enthält nur dt/dd; Bezeichnung optisch unter dem Wert (order) */}
+              <dt className="order-2 mt-1 pl-8 text-[13px] leading-snug text-ink-500">{k.label}</dt>
+              <dd className="order-1 flex items-start gap-3">
+                <k.icon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
+                <span className="font-display text-[20px] font-extrabold leading-tight tracking-tight text-ink-900 md:text-[24px]">{k.wert}</span>
+              </dd>
             </Reveal>
           ))}
         </dl>
@@ -310,12 +310,12 @@ export default async function FinanzierungPage() {
                     <w.icon aria-hidden="true" className={`h-5 w-5 ${w.hervorgehoben ? "text-ov-300" : "text-ov-600"}`} />
                     {w.name}
                   </p>
-                  <span className={`rounded-full px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider ${w.hervorgehoben ? "bg-ov-500 text-white" : "bg-ink-100 text-ink-600"}`}>{w.tag}</span>
+                  <span className={`rounded-full px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider ${w.hervorgehoben ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-600"}`}>{w.tag}</span>
                 </div>
                 <dl className="mt-5 space-y-3">
                   {ZEILEN.map(([k, l]) => (
                     <div key={k}>
-                      <dt className={`text-[12px] font-semibold uppercase tracking-[0.12em] ${w.hervorgehoben ? "text-white/50" : "text-ink-400"}`}>{l}</dt>
+                      <dt className={`text-[12px] font-semibold uppercase tracking-[0.12em] ${w.hervorgehoben ? "text-white/50" : "text-ink-500"}`}>{l}</dt>
                       <dd className={`mt-0.5 text-[15px] leading-relaxed ${w.hervorgehoben ? "text-white/85" : "text-ink-700"}`}>{w.zeilen[k]}</dd>
                     </div>
                   ))}
@@ -329,14 +329,16 @@ export default async function FinanzierungPage() {
             <caption className="sr-only">Vergleich der Finanzierungswege für Photovoltaikanlagen</caption>
             <thead>
               <tr>
-                <th scope="col" className="w-[18%] pb-4" />
+                <th scope="col" className="w-[18%] pb-4">
+                  <span className="sr-only">Kriterium</span>
+                </th>
                 {WEGE.map((w) => (
                   <th
                     key={w.name}
                     scope="col"
                     className={`px-6 pb-5 pt-6 align-top ${w.hervorgehoben ? "rounded-t-3xl bg-navy-950 text-white" : ""}`}
                   >
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider ${w.hervorgehoben ? "bg-ov-500 text-white" : "bg-ink-100 text-ink-600"}`}>{w.tag}</span>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider ${w.hervorgehoben ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-600"}`}>{w.tag}</span>
                     <span className="mt-3 flex items-center gap-2.5 font-display text-[22px] font-extrabold tracking-tight">
                       <w.icon aria-hidden="true" className={`h-5 w-5 ${w.hervorgehoben ? "text-ov-300" : "text-ov-600"}`} />
                       {w.name}
@@ -348,7 +350,7 @@ export default async function FinanzierungPage() {
             <tbody>
               {ZEILEN.map(([k, l], zi) => (
                 <tr key={k}>
-                  <th scope="row" className="border-t border-ink-200 py-5 pr-4 align-top text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-400">{l}</th>
+                  <th scope="row" className="border-t border-ink-200 py-5 pr-4 align-top text-[13px] font-semibold uppercase tracking-[0.12em] text-ink-500">{l}</th>
                   {WEGE.map((w) => (
                     <td
                       key={w.name}

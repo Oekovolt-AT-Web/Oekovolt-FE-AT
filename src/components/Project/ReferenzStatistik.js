@@ -119,19 +119,18 @@ export default function ReferenzStatistik({ projekte = [] }) {
 }
 
 function Kpi({ wert, suffix, label, href }) {
-  const inhalt = (
-    <>
-      <dt className="sr-only">{label}</dt>
-      <dd className="font-display text-[clamp(1.6rem,1.2rem+1.4vw,2.5rem)] font-extrabold leading-none tracking-tight text-white">
+  // dl-Gruppe enthält nur dt/dd; Bezeichnung optisch unter dem Wert (order)
+  return (
+    <div className="group relative flex flex-col rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 transition hover:bg-white/[0.07]">
+      <dt className="order-2 mt-2 text-[13px] leading-snug text-white/60">{label}</dt>
+      <dd className="order-1 font-display text-[clamp(1.6rem,1.2rem+1.4vw,2.5rem)] font-extrabold leading-none tracking-tight text-white">
         <CountUp value={wert} suffix={suffix} />
+        {href && (
+          <Link href={href} aria-label={`${label} ansehen`} className="absolute inset-0 rounded-2xl">
+            <ArrowUpRight aria-hidden="true" className="absolute right-4 top-4 h-4 w-4 text-white/40 transition group-hover:text-ov-300" />
+          </Link>
+        )}
       </dd>
-      <dd className="mt-2 text-[13px] leading-snug text-white/60">{label}</dd>
-      {href && (
-        <Link href={href} aria-label={`${label} ansehen`} className="absolute inset-0 rounded-2xl">
-          <ArrowUpRight aria-hidden="true" className="absolute right-4 top-4 h-4 w-4 text-white/40 transition group-hover:text-ov-300" />
-        </Link>
-      )}
-    </>
+    </div>
   );
-  return <div className="group relative rounded-2xl bg-white/[0.04] p-5 ring-1 ring-white/10 transition hover:bg-white/[0.07]">{inhalt}</div>;
 }

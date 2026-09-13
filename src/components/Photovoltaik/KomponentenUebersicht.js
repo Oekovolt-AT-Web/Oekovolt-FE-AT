@@ -94,7 +94,7 @@ export default function KomponentenUebersicht({ komponenten: roh }) {
             )}
             <article className="group ov-card-hover relative flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200">
               <div className="relative h-52 border-b border-ink-100 bg-white">
-                <span className="ov-num absolute left-4 top-4 z-10 font-display text-[13px] font-bold text-ink-400">
+                <span className="ov-num absolute left-4 top-4 z-10 font-display text-[13px] font-bold text-ink-500">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {w?.gruppe && (

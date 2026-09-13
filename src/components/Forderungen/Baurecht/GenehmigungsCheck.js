@@ -30,7 +30,7 @@ const JA_NEIN = [
 ];
 
 const STATUS = {
-  frei: { label: "Verfahrensfrei", ton: "bg-ov-500 text-white", ring: "ring-ov-200", icon: CircleCheck, farbe: "text-ov-600" },
+  frei: { label: "Verfahrensfrei", ton: "bg-ov-600 text-white", ring: "ring-ov-200", icon: CircleCheck, farbe: "text-ov-600" },
   pruefen: { label: "Verfahrensfrei – Vorgaben prüfen", ton: "bg-sun-400 text-ink-900", ring: "ring-sun-400/60", icon: CircleAlert, farbe: "text-sun-500" },
   antrag: { label: "Genehmigung oder Erlaubnis nötig", ton: "bg-navy-700 text-white", ring: "ring-navy-200", icon: FileSignature, farbe: "text-navy-700" },
 };
@@ -43,7 +43,7 @@ function Auswahl({ legend, name, optionen, wert, onChange }) {
         {optionen.map((o) => (
           <label
             key={o.id}
-            className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${wert === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-500 hover:text-ink-800"}`}
+            className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${wert === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-600 hover:text-ink-800"}`}
           >
             <input type="radio" name={name} value={o.id} checked={wert === o.id} onChange={() => onChange(o.id)} className="sr-only" />
             {o.label}

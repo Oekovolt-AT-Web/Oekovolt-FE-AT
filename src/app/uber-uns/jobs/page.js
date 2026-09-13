@@ -321,7 +321,7 @@ export default async function JobsPage() {
         />
         <Steps items={ABLAUF} />
         <Reveal className="mt-14 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <a href={bewerbungsLink()} className="inline-flex h-14 items-center gap-2.5 rounded-full bg-ov-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-600">
+          <a href={bewerbungsLink()} className="inline-flex h-14 items-center gap-2.5 rounded-full bg-ov-600 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-700">
             <Mail aria-hidden="true" className="h-5 w-5" />
             Bewerbung per E-Mail senden
           </a>

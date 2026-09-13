@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-09-14 09:00:00.000000",
+ "description": "Follower eines Fediverse-Kontos der Website (Mastodon, Threads …).",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["konto", "handle", "anzeigename", "actor_url", "inbox", "shared_inbox", "seit"],
+ "fields": [
+  { "fieldname": "konto", "fieldtype": "Select", "label": "Konto", "options": "oekovolt\nratgeber", "reqd": 1, "in_list_view": 1, "in_standard_filter": 1 },
+  { "fieldname": "handle", "fieldtype": "Data", "label": "Handle", "read_only": 1, "in_list_view": 1 },
+  { "fieldname": "anzeigename", "fieldtype": "Data", "label": "Name", "read_only": 1, "in_list_view": 1 },
+  { "fieldname": "actor_url", "fieldtype": "Data", "label": "Actor-URL", "read_only": 1, "search_index": 1 },
+  { "fieldname": "inbox", "fieldtype": "Data", "label": "Inbox", "read_only": 1 },
+  { "fieldname": "shared_inbox", "fieldtype": "Data", "label": "Shared Inbox", "read_only": 1 },
+  { "fieldname": "seit", "fieldtype": "Datetime", "label": "Folgt seit", "read_only": 1, "in_list_view": 1 }
+ ],
+ "in_create": 1,
+ "modified": "2026-09-14 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Fediverse Follower",
+ "owner": "Administrator",
+ "permissions": [
+  { "role": "Marketing", "read": 1, "report": 1 },
+  { "role": "System Manager", "read": 1, "write": 1, "delete": 1, "report": 1 }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "handle"
+}

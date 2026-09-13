@@ -184,7 +184,7 @@ export default function ReferenzKarte({ projekteJeOrt = {} }) {
                 {aktiv && n > 0 && (
                   <Link
                     href={`/referenzen/projekte?ort=${encodeURIComponent(s.label)}`}
-                    className="mx-3 mb-2 mt-1 flex items-center justify-between rounded-xl bg-ov-500 px-4 py-2.5 text-[14px] font-semibold text-white transition hover:bg-ov-600"
+                    className="mx-3 mb-2 mt-1 flex items-center justify-between rounded-xl bg-ov-600 px-4 py-2.5 text-[14px] font-semibold text-white transition hover:bg-ov-700"
                   >
                     {n === 1 ? "Projekt" : `${n} Projekte`} in {s.label} ansehen
                     <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
@@ -281,7 +281,7 @@ export default function ReferenzKarte({ projekteJeOrt = {} }) {
                 <p className="mt-1.5 text-[13px] leading-snug text-ink-600">
                   Für die Detailkarte laden wir Kartenmaterial von OpenStreetMap. Dabei wird Ihre IP-Adresse an deren Server übertragen.
                 </p>
-                <button type="button" onClick={laden} className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-full bg-ov-500 px-5 text-[14.5px] font-semibold text-white transition hover:bg-ov-600">
+                <button type="button" onClick={laden} className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-full bg-ov-600 px-5 text-[14.5px] font-semibold text-white transition hover:bg-ov-700">
                   Interaktive Karte laden
                 </button>
               </div>

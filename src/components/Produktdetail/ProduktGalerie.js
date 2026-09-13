@@ -50,7 +50,7 @@ export default function ProduktGalerie({ produkte = [], hersteller, ctaHref = "/
                 />
               ) : (
                 i === aktiv && (
-                  <div key={`${i}-${p.name}`} className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ink-400">
+                  <div key={`${i}-${p.name}`} className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-ink-500">
                     <ImageOff aria-hidden="true" className="h-10 w-10" />
                     <span className="text-[14px]">Kein Produktbild hinterlegt</span>
                   </div>

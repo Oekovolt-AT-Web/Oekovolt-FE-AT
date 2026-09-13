@@ -75,7 +75,7 @@ export default function WarmepumpeHerstellerList({ data }) {
                   {/* Button */}
                   <Link
                     href={`/produkte/warmepumpe/${slug}`}
-                    className="mt-auto inline-flex items-center gap-2 self-start bg-[#669933] text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#557a26] transition"
+                    className="mt-auto inline-flex items-center gap-2 self-start bg-ov-600 text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-[#557a26] transition"
                   >
                     Mehr Informationen <ArrowRight className="text-lg" />
                   </Link>

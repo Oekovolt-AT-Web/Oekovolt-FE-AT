@@ -35,11 +35,14 @@ const SPALTEN = [
       { name: "Ratgeber", href: "/ratgeber" },
       { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon" },
       { name: "FAQs", href: "/faqs" },
+      { name: "Presse & Neuigkeiten", href: "/presse" },
+      { name: "RSS-Feed", href: "/rss.xml" },
       { name: "Landesförderungen", href: "/forderungen/landesforderungen" },
       { name: "Steuerliche Vorteile", href: "/forderungen/steuerlich" },
       { name: "Referenzprojekte", href: "/referenzen/projekte" },
       { name: "Team", href: "/uber-uns/team" },
       { name: "Jobs", href: "/uber-uns/jobs" },
+      { name: "Termin buchen", href: "/termin" },
     ],
   },
 ].filter(Boolean);
@@ -65,7 +68,7 @@ export default function Footer() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/angebot" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold transition-colors hover:bg-ov-600">
+            <Link href="/angebot" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold transition-colors hover:bg-ov-700">
               Angebot anfragen
               <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
@@ -121,7 +124,8 @@ export default function Footer() {
 
           {SPALTEN.map((s) => (
             <nav key={s.titel} aria-label={s.titel}>
-              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/45">{s.titel}</p>
+              {/* role="heading" statt <h2>: globale h2-Regeln (Display-Schrift, Laufweite) würden das Aussehen ändern */}
+              <p role="heading" aria-level={2} className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/60">{s.titel}</p>
               <ul className="mt-5 space-y-3">
                 {s.links.map((l) => (
                   <li key={l.href + l.name}>
@@ -138,7 +142,7 @@ export default function Footer() {
         {/* Live-Leiste */}
         <div className="flex flex-col gap-4 rounded-2xl bg-white/[0.04] px-5 py-4 ring-1 ring-white/10 md:flex-row md:items-center md:justify-between">
           <LiveTicker />
-          <p className="text-[12px] text-white/40">Daten: Fraunhofer ISE Energy-Charts (CC BY 4.0)</p>
+          <p className="text-[12px] text-white/60">Daten: Fraunhofer ISE Energy-Charts (CC BY 4.0)</p>
         </div>
 
         {/* Rechtliches */}
@@ -151,6 +155,7 @@ export default function Footer() {
               <li><Link href="/datenschutz" className="transition-colors hover:text-white">Datenschutz</Link></li>
               <li><Link href="/agb" className="transition-colors hover:text-white">AGB</Link></li>
               <li><Link href="/hinweisgebersystem" className="transition-colors hover:text-white">Hinweisgebersystem</Link></li>
+              <li><Link href="/barrierefreiheit" className="transition-colors hover:text-white">Barrierefreiheit</Link></li>
             </ul>
           </nav>
         </div>

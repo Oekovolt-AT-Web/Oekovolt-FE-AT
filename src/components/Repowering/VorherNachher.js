@@ -148,7 +148,7 @@ export default function VorherNachher() {
               <strong className="block font-display text-[18px] text-ink-900">{zahl(r.altKwp, 1)} kWp</strong>
               <span className="hidden sm:inline">{r.altAnzahl} Module à ~{zahl(r.altWp)} Wp</span><span className="sm:hidden">{r.altAnzahl} Module</span>
             </span>
-            <span className="ov-num pointer-events-none absolute bottom-3 right-3 rounded-xl bg-ov-500 px-3 py-2 text-right text-[13px] leading-tight text-white shadow md:bottom-4 md:right-4">
+            <span className="ov-num pointer-events-none absolute bottom-3 right-3 rounded-xl bg-ov-600 px-3 py-2 text-right text-[13px] leading-tight text-white shadow md:bottom-4 md:right-4">
               <strong className="block font-display text-[18px]">{zahl(r.neuKwp, 1)} kWp</strong>
               <span className="hidden sm:inline">{r.neuAnzahl} Module à ~{zahl(r.neuWp)} Wp</span><span className="sm:hidden">{r.neuAnzahl} Module</span>
             </span>

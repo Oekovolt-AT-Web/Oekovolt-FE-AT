@@ -118,7 +118,7 @@ export default function KontaktFormular() {
     return (
       <div ref={erfolgRef} tabIndex={-1} role="status" className="flex flex-col items-center px-2 py-10 text-center outline-none md:py-16">
         <ErfolgsHaken />
-        <h3 className="ov-h2 mt-8 text-ink-900">Vielen Dank{gesendetAn ? `, ${gesendetAn}` : ""}!</h3>
+        <h2 className="ov-h2 mt-8 text-ink-900">Vielen Dank{gesendetAn ? `, ${gesendetAn}` : ""}!</h2>
         <p className="ov-lead mt-4 max-w-md text-ink-600">
           Ihre Nachricht ist bei uns angekommen. Wir melden uns so schnell wie möglich persönlich bei Ihnen.
         </p>
@@ -129,7 +129,7 @@ export default function KontaktFormular() {
             ["Auf Wunsch kommen wir vorbei", "und schauen uns Dach, Zählerschrank und Verbrauch vor Ort an."],
           ].map(([t, s], i) => (
             <li key={t} className="flex gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ov-500 font-display text-[14px] font-bold text-white">{i + 1}</span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ov-600 font-display text-[14px] font-bold text-white">{i + 1}</span>
               <span className="text-[15px] leading-snug text-ink-600">
                 <strong className="text-ink-900">{t}</strong> {s}
               </span>
@@ -137,7 +137,7 @@ export default function KontaktFormular() {
           ))}
         </ol>
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-          <Link href="/solarrechner" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white hover:bg-ov-600">
+          <Link href="/solarrechner" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white hover:bg-ov-700">
             Solarertrag schon mal berechnen
             <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
@@ -170,7 +170,7 @@ export default function KontaktFormular() {
                 aria-pressed={aktiv}
                 onClick={() => setThema(aktiv ? "" : t)}
                 className={`h-11 rounded-full px-4 text-[14px] font-medium transition-all ${
-                  aktiv ? "bg-ov-500 text-white shadow-[0_6px_16px_-6px_rgba(102,153,51,0.7)]" : "bg-white text-ink-700 ring-1 ring-inset ring-ink-200 hover:ring-ov-300"
+                  aktiv ? "bg-ov-600 text-white shadow-[0_6px_16px_-6px_rgba(102,153,51,0.7)]" : "bg-white text-ink-700 ring-1 ring-inset ring-ink-200 hover:ring-ov-300"
                 }`}
               >
                 {t}
@@ -186,7 +186,7 @@ export default function KontaktFormular() {
         <Feld name="email" label="E-Mail-Adresse" type="email" autoComplete="email" inputMode="email" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="phone" label="Telefonnummer" type="tel" autoComplete="tel" inputMode="tel" hinweis="Für kurze Rückfragen" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="street" label="Straße und Hausnummer" autoComplete="street-address" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
-        <Feld name="zipCity" label="PLZ und Ort" autoComplete="postal-code" placeholder="86842 Türkheim" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="zipCity" label="PLZ und Ort" placeholder="86842 Türkheim" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
       </div>
 
       <Feld
@@ -244,7 +244,7 @@ export default function KontaktFormular() {
         <button
           type="submit"
           disabled={sendet}
-          className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-500 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-600 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
+          className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700 active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
         >
           {sendet ? (
             <>
@@ -266,7 +266,7 @@ export default function KontaktFormular() {
 function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, onChange, onBlur, ...rest }) {
   const f = fehler[name];
   const ok = !f && String(werte[name]).trim() && !pruefe(name, werte[name]);
-  const klassen = `peer w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-inset transition-all placeholder:text-ink-400 focus:ring-2 ${
+  const klassen = `peer w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-inset transition-all placeholder:text-ink-500 focus:ring-2 ${
     f ? "ring-red-400 focus:ring-red-500" : "ring-ink-200 hover:ring-ink-300 focus:ring-ov-500"
   }`;
   const beschreibung = [f ? `${name}-fehler` : null, hinweis ? `${name}-hinweis` : null].filter(Boolean).join(" ") || undefined;

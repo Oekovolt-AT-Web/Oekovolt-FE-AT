@@ -7,6 +7,7 @@ const RECHTLICHES = [
   { name: "Impressum", href: "/impressum" },
   { name: "Datenschutz", href: "/datenschutz" },
   { name: "AGB", href: "/agb" },
+  { name: "Barrierefreiheit", href: "/barrierefreiheit" },
 ];
 
 /**
@@ -36,7 +37,7 @@ export default function LegalShell({ titel, pfad, lead, children }) {
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <nav aria-label="Rechtstexte" className="rounded-3xl bg-white p-5 ring-1 ring-ink-200/60">
-              <p className="px-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-400">Rechtstexte</p>
+              <p className="px-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Rechtstexte</p>
               <ul className="mt-3 space-y-1">
                 {RECHTLICHES.map((r) => (
                   <li key={r.href}>

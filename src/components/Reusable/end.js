@@ -78,7 +78,7 @@ export default function EndSection() {
         </div>
 
         {/* Floating Box 2 */}
-        <div className="absolute bottom-2 left-2 lg:bottom-10 lg:left-0 bg-[#669933] text-white rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-lg z-20 transition-all duration-1000 group-hover:lg:top-10 group-hover:lg:right-0 group-hover:lg:bottom-auto group-hover:lg:left-auto">
+        <div className="absolute bottom-2 left-2 lg:bottom-10 lg:left-0 bg-ov-600 text-white rounded-xl px-3 py-2 text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-lg z-20 transition-all duration-1000 group-hover:lg:top-10 group-hover:lg:right-0 group-hover:lg:bottom-auto group-hover:lg:left-auto">
           <span className="text-gray-800">{info?.second_percentage + "%" || "100%"}</span>
           {info?.second_option_title || "Grüne Energie"}
         </div>

@@ -95,7 +95,7 @@ export default function JobsListe({ jobs = [] }) {
                     </span>
                   )}
                 </div>
-                <span className="inline-flex h-11 items-center gap-2 rounded-full bg-ov-500 px-5 text-[14.5px] font-semibold text-white transition group-hover:bg-ov-600">
+                <span className="inline-flex h-11 items-center gap-2 rounded-full bg-ov-600 px-5 text-[14.5px] font-semibold text-white transition group-hover:bg-ov-700">
                   Ansehen & bewerben
                   <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -163,7 +163,7 @@ function KeineStellen({ kompakt = false }) {
             Gerade ist keine Stelle online – das heißt nicht, dass wir niemanden suchen. Als wachsendes Unternehmen freuen wir uns über Menschen, die mit uns an der Energiewende arbeiten wollen. Schicken Sie uns Ihren Lebenslauf und ein paar Sätze zu Ihnen.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a href={bewerbungsLink()} className="inline-flex h-14 items-center justify-center gap-2.5 whitespace-nowrap rounded-full bg-ov-500 px-6 text-[16px] font-semibold text-white sm:px-8 shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-600">
+            <a href={bewerbungsLink()} className="inline-flex h-14 items-center justify-center gap-2.5 whitespace-nowrap rounded-full bg-ov-600 px-6 text-[16px] font-semibold text-white sm:px-8 shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-700">
               <Mail aria-hidden="true" className="h-5 w-5" />
               Jetzt initiativ bewerben
             </a>

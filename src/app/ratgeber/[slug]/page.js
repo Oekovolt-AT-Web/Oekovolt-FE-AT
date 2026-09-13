@@ -45,6 +45,8 @@ export async function generateMetadata({ params }) {
       images: [{ url: `${BASE_URL}/og/ratgeber/${a.slug}.jpg`, width: 1200, height: 630, alt: a.bildAlt }],
     },
     twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [`${BASE_URL}/og/ratgeber/${a.slug}.jpg`] },
+    // Autorenzeile bei Link-Vorschauen in Mastodon, Verknüpfung zum Fediverse-Beitrag
+    other: { "fediverse:creator": "@ratgeber@oekovolt.de" },
   };
 }
 

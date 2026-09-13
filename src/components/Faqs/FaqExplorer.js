@@ -65,7 +65,7 @@ export default function FaqExplorer({ gruppen }) {
               onChange={(e) => setSuche(e.target.value)}
               placeholder="Frage suchen, z. B. Speicher"
               autoComplete="off"
-              className="h-14 w-full rounded-full bg-white pl-14 pr-14 text-[16px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-ov-500 lg:bg-ink-50 [&::-webkit-search-cancel-button]:hidden"
+              className="h-14 w-full rounded-full bg-white pl-14 pr-14 text-[16px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-ov-500 lg:bg-ink-50 [&::-webkit-search-cancel-button]:hidden"
             />
             {suche && (
               <button
@@ -93,7 +93,7 @@ export default function FaqExplorer({ gruppen }) {
                     }`}
                   >
                     {c.label}
-                    <span className={`ov-num rounded-full px-1.5 text-[11.5px] ${ist ? "bg-white/15 text-white" : "bg-ink-100 text-ink-500"}`}>{c.n}</span>
+                    <span className={`ov-num rounded-full px-1.5 text-[11.5px] ${ist ? "bg-white/15 text-white" : "bg-ink-100 text-ink-600"}`}>{c.n}</span>
                   </button>
                 );
               })}
@@ -138,7 +138,7 @@ export default function FaqExplorer({ gruppen }) {
               <section key={g.id} id={g.id} aria-labelledby={`${g.id}-titel`} className="scroll-mt-[220px] rounded-3xl bg-white px-6 pb-3 pt-6 ring-1 ring-ink-200/70 md:px-8 md:pt-8">
                 <h2 id={`${g.id}-titel`} className="flex items-baseline justify-between gap-4 font-display text-[22px] font-extrabold tracking-tight text-ink-900 md:text-[26px]">
                   {g.label}
-                  <span className="ov-num text-[13px] font-semibold text-ink-400">{g.items.length}</span>
+                  <span className="ov-num text-[13px] font-semibold text-ink-500">{g.items.length}</span>
                 </h2>
                 <Faq items={g.items} schema={false} className="mt-2" />
               </section>

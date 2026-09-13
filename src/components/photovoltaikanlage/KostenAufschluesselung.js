@@ -99,7 +99,7 @@ export default function KostenAufschluesselung() {
             aria-valuetext={`${kwp} Kilowatt-Peak`}
             className="mt-2 h-11 w-full cursor-pointer accent-ov-500"
           />
-          <div className="flex justify-between text-[12px] text-ink-400" aria-hidden="true">
+          <div className="flex justify-between text-[12px] text-ink-500" aria-hidden="true">
             <span>4 kWp</span>
             <span>30 kWp</span>
           </div>
@@ -122,16 +122,15 @@ export default function KostenAufschluesselung() {
 
         <div>
           <p id={`${sliderId}-sp`} className="text-[15px] font-semibold text-ink-900">Stromspeicher</p>
-          <div role="radiogroup" aria-labelledby={`${sliderId}-sp`} className="mt-3 grid grid-cols-5 gap-1 rounded-2xl bg-ink-100 p-1">
+          <div role="group" aria-labelledby={`${sliderId}-sp`} className="mt-3 grid grid-cols-5 gap-1 rounded-2xl bg-ink-100 p-1">
             {SPEICHER_OPTIONEN.map((s) => (
               <button
                 key={s}
                 type="button"
-                role="radio"
-                aria-checked={speicher === s}
+                aria-pressed={speicher === s}
                 onClick={() => setSpeicher(s)}
                 className={`h-11 whitespace-nowrap rounded-xl px-0.5 text-[13px] font-semibold sm:text-[13.5px] transition-all duration-300 ${
-                  speicher === s ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                  speicher === s ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                 }`}
               >
                 {s === 0 ? "ohne" : `${s} kWh`}
@@ -176,7 +175,7 @@ export default function KostenAufschluesselung() {
               <li key={t.k} className="flex items-center gap-3 border-b border-ink-100 py-2.5 text-[14.5px]">
                 <span aria-hidden="true" className="h-3 w-3 shrink-0 rounded-[4px]" style={{ background: t.farbe }} />
                 <span className="min-w-0 flex-1 leading-snug text-ink-700">{t.label}</span>
-                <span className="ov-num w-9 shrink-0 text-right text-[13px] text-ink-400">{Math.round((t.wert / summe) * 100)} %</span>
+                <span className="ov-num w-9 shrink-0 text-right text-[13px] text-ink-500">{Math.round((t.wert / summe) * 100)} %</span>
                 <span className="ov-num w-[4.6rem] shrink-0 text-right font-semibold text-ink-900">{eur(t.wert)}</span>
               </li>
             ))}
@@ -217,7 +216,7 @@ function Kachel({ icon: Icon, label, wert, hinweis }) {
         {label}
       </p>
       <p className="ov-num mt-1.5 font-display text-[19px] font-extrabold leading-tight tracking-tight text-ink-900 md:text-[22px]">{wert}</p>
-      {hinweis && <p className="mt-1 text-[12px] text-ink-400">{hinweis}</p>}
+      {hinweis && <p className="mt-1 text-[12px] text-ink-500">{hinweis}</p>}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { NAVIGATION, KONTAKT } from "@/data/navigation";
 import { iconFor } from "@/components/ui/icons";
 import LiveTicker, { LiveDot } from "@/components/ui/LiveTicker";
 import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
+import useFokusFalle from "@/components/ui/useFokusFalle";
 
 /**
  * Seitenkopf 2026
@@ -29,6 +30,9 @@ export default function Navbar() {
   const schliessTimer = useRef(null);
   const oeffnenTimer = useRef(null);
   const ausloeser = useRef({});
+  const menueKnopf = useRef(null);
+  const megaPanel = useRef(null);
+  const perTastatur = useRef(false); // Mega-Menü per Enter/Leertaste geöffnet → Fokus ins Panel
 
   useEffect(() => {
     const pruefen = () => setGescrollt(window.scrollY > 24);
@@ -61,6 +65,19 @@ export default function Navbar() {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [offen, mobil]);
+
+  // Per Tastatur geöffnet: Fokus auf den ersten Link im Panel
+  useEffect(() => {
+    if (!offen || !perTastatur.current) return undefined;
+    perTastatur.current = false;
+    const raf = requestAnimationFrame(() => megaPanel.current?.querySelector("a[href]")?.focus());
+    return () => cancelAnimationFrame(raf);
+  }, [offen]);
+
+  // Mega-Menü schließen, sobald der Fokus den Kopfbereich verlässt
+  const fokusRaus = useCallback((e) => {
+    if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) setOffen(null);
+  }, []);
 
   const hoverRein = useCallback((titel) => {
     clearTimeout(schliessTimer.current);
@@ -102,7 +119,7 @@ export default function Navbar() {
       </div>
 
       {/* ---------- Hauptleiste ---------- */}
-      <div className="relative" onMouseLeave={hoverRaus}>
+      <div className="relative" onMouseLeave={hoverRaus} onBlur={fokusRaus}>
         <div
           aria-hidden="true"
           className={`absolute inset-0 -z-10 transition-all duration-500 ${
@@ -130,7 +147,11 @@ export default function Navbar() {
                       type="button"
                       aria-expanded={istOffen}
                       aria-controls="ov-mega"
-                      onClick={() => setOffen(istOffen ? null : item.title)}
+                      onClick={(e) => {
+                        // detail === 0: Auslösung per Tastatur (Enter/Leertaste)
+                        perTastatur.current = !istOffen && e.detail === 0;
+                        setOffen(istOffen ? null : item.title);
+                      }}
                       className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[14.5px] font-medium transition-colors ${
                         istOffen ? "bg-ink-100 text-ink-900" : aktiv ? "text-ov-700" : "text-ink-700 hover:text-ink-900"
                       }`}
@@ -161,12 +182,13 @@ export default function Navbar() {
             </Link>
             <Link
               href="/angebot"
-              className="group hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ov-500 pl-5 pr-4 text-[14.5px] font-semibold text-white shadow-[0_8px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-600 sm:flex"
+              className="group hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ov-600 pl-5 pr-4 text-[14.5px] font-semibold text-white shadow-[0_8px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-700 sm:flex"
             >
               Angebot anfragen
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <button
+              ref={menueKnopf}
               type="button"
               onClick={() => setMobil(true)}
               aria-label="Menü öffnen"
@@ -181,6 +203,7 @@ export default function Navbar() {
         {/* ---------- Mega-Menü ---------- */}
         <div
           id="ov-mega"
+          ref={megaPanel}
           onMouseEnter={() => clearTimeout(schliessTimer.current)}
           className={`absolute inset-x-0 top-full hidden xl:block ${offen ? "pointer-events-auto" : "pointer-events-none"}`}
         >
@@ -209,6 +232,7 @@ export default function Navbar() {
         gruppe={mobilGruppe}
         setGruppe={setMobilGruppe}
         pfad={pfad}
+        rueckgabeRef={menueKnopf}
       />
     </header>
   );
@@ -220,14 +244,14 @@ function MegaPanel({ item, pfad, onNavigate }) {
     <div className="mt-2 overflow-hidden rounded-3xl bg-white shadow-[0_30px_80px_-30px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
       <div className="grid grid-cols-[260px_1fr_300px]">
         <div className="border-r border-ink-100 bg-sand-50 p-8">
-          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-600">{item.title}</p>
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-700">{item.title}</p>
           <p className="mt-3 font-display text-[21px] font-bold leading-snug tracking-tight text-ink-900">{item.intro}</p>
         </div>
 
         <div className={`grid gap-x-4 gap-y-6 p-6 ${vieleGruppen ? "grid-cols-2" : "grid-cols-2"}`}>
           {item.groups.map((g) => (
             <div key={g.label} className={vieleGruppen ? "" : "col-span-2"}>
-              {vieleGruppen && <p className="mb-2 px-3 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-400">{g.label}</p>}
+              {vieleGruppen && <p className="mb-2 px-3 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">{g.label}</p>}
               <ul className={vieleGruppen ? "space-y-0.5" : "grid grid-cols-2 gap-0.5"}>
                 {g.items.map((s) => {
                   const Icon = iconFor(s.icon);
@@ -245,7 +269,7 @@ function MegaPanel({ item, pfad, onNavigate }) {
                         </span>
                         <span>
                           <span className="block text-[14.5px] font-semibold text-ink-900">{s.name}</span>
-                          <span className="mt-0.5 block text-[13px] leading-snug text-ink-500">{s.text}</span>
+                          <span className={`mt-0.5 block text-[13px] leading-snug ${aktiv ? "text-ink-600" : "text-ink-500"}`}>{s.text}</span>
                         </span>
                       </Link>
                     </li>
@@ -303,9 +327,15 @@ function LivePreis() {
   );
 }
 
-function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad }) {
+function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }) {
+  const dialog = useRef(null);
+  const schliessKnopf = useRef(null);
+  useFokusFalle(offen, dialog, { beiEscape: schliessen, startRef: schliessKnopf, rueckgabeRef });
+
   return (
     <div
+      ref={dialog}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Menü"
@@ -317,7 +347,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad }) {
         <Link href="/" onClick={schliessen} className="relative" style={{ width: 150, height: 50 }} aria-label="Startseite">
           <Image src="/Images/Navbar/logo.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
         </Link>
-        <button type="button" onClick={schliessen} aria-label="Menü schließen" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-900">
+        <button ref={schliessKnopf} type="button" onClick={schliessen} aria-label="Menü schließen" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-900">
           <X aria-hidden="true" className="h-5 w-5" />
         </button>
       </div>
@@ -360,7 +390,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad }) {
                               </span>
                               <span>
                                 <span className="block text-[15px] font-semibold text-ink-900">{s.name}</span>
-                                <span className="block text-[12.5px] text-ink-500">{s.text}</span>
+                                <span className={`block text-[12.5px] ${pfad === s.href ? "text-ink-600" : "text-ink-500"}`}>{s.text}</span>
                               </span>
                             </Link>
                           </li>
@@ -380,7 +410,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad }) {
           <Phone aria-hidden="true" className="h-4 w-4" />
           Anrufen
         </a>
-        <Link href="/angebot" onClick={schliessen} className="flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 text-[15px] font-semibold text-white">
+        <Link href="/angebot" onClick={schliessen} className="flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 text-[15px] font-semibold text-white">
           Angebot
           <ArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>

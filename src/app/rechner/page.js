@@ -241,10 +241,10 @@ export default async function RechnerHub() {
             lead="Kurz beantwortet: Wählen Sie das Werkzeug nach Ihrem Vorhaben – alle Ergebnisse lassen sich direkt in eine Angebotsanfrage übernehmen."
           />
           <Reveal className="min-w-0">
-            <div className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+            <div tabIndex={0} role="region" aria-label="Wegweiser: Vorhaben und passender Rechner" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
               <table className="w-full min-w-[520px] text-left text-[15px]">
                 <caption className="sr-only">Wegweiser: Vorhaben und passender Rechner</caption>
-                <thead className="bg-sand-50 text-[12.5px] uppercase tracking-[0.12em] text-ink-500">
+                <thead className="bg-sand-50 text-[12.5px] uppercase tracking-[0.12em] text-ink-600">
                   <tr>
                     <th scope="col" className="px-5 py-3.5 font-semibold">Ihr Vorhaben</th>
                     <th scope="col" className="px-5 py-3.5 font-semibold">Passender Rechner</th>

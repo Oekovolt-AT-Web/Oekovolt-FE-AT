@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import useFokusFalle from "@/components/ui/useFokusFalle";
 
 // Bump the version suffix to show the notice again to everyone who already
 // dismissed it (e.g. if the wording or the addresses change).
@@ -11,9 +12,10 @@ const NEW_EMAIL = "office@oekovolt.de";
 
 // Static colors on purpose — this notice must look identical no matter what
 // theme or CSS variables the surrounding page happens to be running.
-const GREEN = "#669933";
-const GREEN_DARK = "#669933";
-const GREEN_HOVER = "#1A9A4F";
+// Barrierefreiheit: weiße Schrift braucht mind. 4,5:1 → ov-600/ov-700 statt #669933
+const GREEN = "#558227";
+const GREEN_DARK = "#558227";
+const GREEN_HOVER = "#436621";
 const WHITE = "#FFFFFF";
 const TEXT = "#121721";
 const TEXT_MUTED = "#5A6472";
@@ -43,6 +45,7 @@ export default function EmailChangeNotice() {
     const [mounted, setMounted] = useState(false);
     const [shown, setShown] = useState(false);
     const [copied, setCopied] = useState(false);
+    const card = useRef(null);
 
     // Staggered after CookieConsent (800ms) and OfferModal (1400ms) so the
     // three don't animate in on top of each other.
@@ -82,6 +85,9 @@ export default function EmailChangeNotice() {
             // clipboard blocked — the address is visible on screen anyway
         }
     };
+
+    // Modaler Dialog: Fokus hinein, Tab bleibt drin, Escape schließt, Fokus zurück
+    useFokusFalle(mounted, card, { beiEscape: close });
 
     if (!mounted) return null;
 
@@ -155,7 +161,7 @@ export default function EmailChangeNotice() {
           border-radius: 9999px;
           font-size: 12px;
           font-weight: 500;
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(3, 18, 43, 0.2);
         }
         .ovn-title {
           margin: 0;
@@ -244,10 +250,11 @@ export default function EmailChangeNotice() {
                 data-shown={shown}
                 onClick={close}
                 role="dialog"
+                aria-modal="true"
                 aria-labelledby="email-change-title"
                 aria-describedby="email-change-desc"
             >
-                <div className="ovn-card" onClick={(e) => e.stopPropagation()}>
+                <div ref={card} tabIndex={-1} className="ovn-card" onClick={(e) => e.stopPropagation()}>
                     <button className="ovn-close" onClick={close} aria-label="Hinweis schließen">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                             <path d="M18 6 6 18M6 6l12 12" />
@@ -262,9 +269,9 @@ export default function EmailChangeNotice() {
                             </svg>
                             Wichtiger Hinweis
                         </div>
-                        <h3 id="email-change-title" className="ovn-title">
+                        <h2 id="email-change-title" className="ovn-title">
                             Unsere E-Mail-Adressen haben sich geändert
-                        </h3>
+                        </h2>
                     </div>
 
                     <div className="ovn-body">

@@ -112,7 +112,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
             <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">
               {ebene === "foerderung" ? "Förderlage für Eigenheime" : "Solarertrag in kWh je kWp"}
             </p>
-            <div role="radiogroup" aria-label="Kartenebene" className="inline-flex rounded-full bg-ink-100 p-1">
+            <div role="group" aria-label="Kartenebene" className="inline-flex rounded-full bg-ink-100 p-1">
               {[
                 { id: "foerderung", label: "Förderlage", icon: BadgeEuro },
                 { id: "ertrag", label: "Solarertrag", icon: Sun },
@@ -123,10 +123,9 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
                   <button
                     key={o.id}
                     type="button"
-                    role="radio"
-                    aria-checked={an}
+                    aria-pressed={an}
                     onClick={() => setEbene(o.id)}
-                    className={`inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all ${an ? "bg-white text-ink-900 shadow-sm" : "text-ink-500 hover:text-ink-800"}`}
+                    className={`inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold transition-all ${an ? "bg-white text-ink-900 shadow-sm" : "text-ink-600 hover:text-ink-800"}`}
                   >
                     <Icon aria-hidden="true" className={`h-4 w-4 ${an ? (o.id === "ertrag" ? "text-sun-500" : "text-ov-600") : ""}`} />
                     {o.label}
@@ -212,7 +211,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
               ? Object.keys(FOERDER_FARBEN).map((k) => (
                   <li key={k} className="flex items-center gap-2">
                     <span aria-hidden="true" className={`h-3 w-3 shrink-0 rounded-[4px] ${FOERDER_FARBEN[k].punkt}`} />
-                    {FOERDER_LABEL[k]} <span className="ov-num text-ink-400">({zaehler[k]})</span>
+                    {FOERDER_LABEL[k]} <span className="ov-num text-ink-500">({zaehler[k]})</span>
                   </li>
                 ))
               : ERTRAG_STUFEN.map((s) => (
@@ -321,7 +320,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
           <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row lg:flex-col xl:flex-row">
             <Link
               href={aktiv.href}
-              className="group inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-500 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-600"
+              className="group inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700"
             >
               Förderung in {aktiv.name.length > 14 ? aktiv.kuerzel : aktiv.name}
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />

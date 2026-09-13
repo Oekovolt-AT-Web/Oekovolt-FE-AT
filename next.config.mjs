@@ -6,6 +6,11 @@ const nextConfig = {
   // Mit NEXT_DIST_DIR=.next-verify laeuft beides gefahrlos nebeneinander.
   distDir: process.env.NEXT_DIST_DIR || ".next",
   trailingSlash: false,
+  // PDF-Analyse: react-pdf serverseitig ungebündelt laden, Schriften & Logo ins Deployment aufnehmen
+  serverExternalPackages: ["@react-pdf/renderer"],
+  outputFileTracingIncludes: {
+    "/api/analyse/pdf": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
+  },
   compress: true,
   poweredByHeader: false,
 
@@ -199,6 +204,22 @@ const nextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
+      // Info-Bildschirm und Feeds: Einbettung in SCADA-/Signage-Systeme erlauben
+      // (frame-ancestors hat in modernen Browsern Vorrang vor X-Frame-Options).
+      {
+        source: "/tv/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "ALLOWALL" },
+          { key: "Content-Security-Policy", value: "frame-ancestors *" },
+        ],
+      },
+      {
+        source: "/tv",
+        headers: [
+          { key: "X-Frame-Options", value: "ALLOWALL" },
+          { key: "Content-Security-Policy", value: "frame-ancestors *" },
+        ],
+      },
       {
         source: "/(.*)\\.(mp4|webm|ogg|mov|m4v)",
         headers: [
@@ -211,6 +232,10 @@ const nextConfig = {
 
   async rewrites() {
     return [
+      // Fediverse (ActivityPub): @oekovolt@oekovolt.de, @ratgeber@oekovolt.de
+      { source: "/.well-known/webfinger", destination: "/api/ap/webfinger" },
+      { source: "/.well-known/nodeinfo", destination: "/api/ap/nodeinfo" },
+      { source: "/.well-known/host-meta", destination: "/api/ap/host-meta" },
       {
         source: '/api/backoffice/:path*',
         destination: 'https://backoffice.oekovolt.de/:path*',

@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { setCookie, getCookie } from "cookies-next";
 import CookieDetails from "./coookieItem";
 import Link from "next/link";
 import { Circle } from "lucide-react";
+import useFokusFalle from "@/components/ui/useFokusFalle";
 
 
 // cookieData.js
@@ -378,7 +379,24 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     setIsShown(true);
   };
 
-  if (!forceShow && !showBanner) return null;
+  // Tastatur & Screenreader: Detailansicht ist ein modaler Dialog
+  const sichtbar = forceShow || showBanner;
+  const kompaktTitel = useRef(null);
+  const individuellKnopf = useRef(null);
+  const detailDialog = useRef(null);
+  const detailTitel = useRef(null);
+  useFokusFalle(sichtbar && !isCompact, detailDialog, {
+    beiEscape: () => setIsCompact(true),
+    startRef: detailTitel,
+    rueckgabeRef: individuellKnopf,
+  });
+
+  // Über „Privatsphäre-Einstellungen“ geöffnet: Fokus direkt in den Banner
+  useEffect(() => {
+    if (forceShow) kompaktTitel.current?.focus({ preventScroll: true });
+  }, [forceShow]);
+
+  if (!sichtbar) return null;
   if (isCompact) {
     return (
       <div
@@ -390,7 +408,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
           <div className="flex items-start gap-3">
             <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-ov-50 text-[20px]">🍪</span>
             <div>
-              <h3 className="font-display text-[16.5px] font-bold text-ink-900">Ihre Privatsphäre zählt</h3>
+              <h2 ref={kompaktTitel} tabIndex={-1} className="font-display text-[16.5px] font-bold text-ink-900 focus:outline-none">Ihre Privatsphäre zählt</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-ink-600">
                 Wir verwenden Cookies, um Ihnen das beste Nutzererlebnis bieten zu können. Sie entscheiden, was erlaubt ist.
               </p>
@@ -411,7 +429,9 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             </button>
           </div>
           <button
+            ref={individuellKnopf}
             onClick={toggleCompact}
+            aria-haspopup="dialog"
             className="mt-3 w-full text-center text-[13px] font-medium text-ink-500 underline-offset-2 transition-colors hover:text-ink-800 hover:underline cursor-pointer"
           >
             Individuelle Einstellungen
@@ -425,8 +445,15 @@ export default function CookieBanner({ forceShow = false, onClose }) {
     <>
       <div className="fixed inset-0 bg-black/50 z-60 backdrop-blur-sm" />
       <div className={`fixed inset-0 flex items-center justify-center z-60 pointer-events-none`}>
-        <div className="max-h-[100dvh] h-full lg:max-w-[800px] lg:max-h-[80vh] bg-white lg:rounded-xl shadow-2xl overflow-hidden flex flex-col pointer-events-auto overflow-y-auto relative lg:h-auto">
-          <h2 className="text-2xl font-bold text-gray-800 p-6 sticky bg-white z-10 pb-4 top-0 md:relative">
+        <div
+          ref={detailDialog}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="ov-cookie-detail-titel"
+          tabIndex={-1}
+          className="max-h-[100dvh] h-full lg:max-w-[800px] lg:max-h-[80vh] bg-white lg:rounded-xl shadow-2xl overflow-hidden flex flex-col pointer-events-auto overflow-y-auto relative lg:h-auto focus:outline-none"
+        >
+          <h2 ref={detailTitel} id="ov-cookie-detail-titel" tabIndex={-1} className="text-2xl font-bold text-gray-800 p-6 sticky bg-white z-10 pb-4 top-0 md:relative focus:outline-none">
             Individuelle Privatsphäre-Präferenzen
           </h2>
           <div className="p-6 border-b border-gray-200 flex justify-between flex-col-reverse items-start md:flex-row relative">
@@ -744,7 +771,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
           <div className="border-t border-gray-200 bg-gray-50 p-2 sticky bottom-0">
             <p className="text-center text-sm text-gray-600 gap-1 flex justify-center items-center">
               <Link href={"/datenschutz"} className="cursor-pointer">Datenschutzerklärung</Link>
-              <Circle />
+              <Circle aria-hidden="true" />
               <Link href={"/impressum"} className="cursor-pointer">Impressum</Link>
             </p>
           </div>

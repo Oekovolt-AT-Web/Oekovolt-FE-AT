@@ -64,20 +64,19 @@ export default function HerstellerFilter({ kategorien = [] }) {
   return (
     <div>
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div role="radiogroup" aria-label="Kategorie filtern" className="ov-no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
+        <div role="group" aria-label="Kategorie filtern" className="ov-no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
           {[{ name: "alle", label: "Alle Hersteller", n: gesamt }, ...kategorien.map((k) => ({ name: k.name, label: k.name, n: k.hersteller.length }))].map((c) => (
             <button
               key={c.name}
               type="button"
-              role="radio"
-              aria-checked={aktiv === c.name}
+              aria-pressed={aktiv === c.name}
               onClick={() => setAktiv(c.name)}
               className={`inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-5 text-[14.5px] font-semibold transition-all duration-300 ${
                 aktiv === c.name ? "bg-navy-950 text-white shadow-lg" : "bg-white text-ink-700 ring-1 ring-ink-200 hover:ring-ink-300"
               }`}
             >
               {c.label}
-              <span className={`ov-num rounded-full px-2 py-0.5 text-[12px] ${aktiv === c.name ? "bg-white/15 text-white" : "bg-ink-100 text-ink-500"}`}>{c.n}</span>
+              <span className={`ov-num rounded-full px-2 py-0.5 text-[12px] ${aktiv === c.name ? "bg-white/15 text-white" : "bg-ink-100 text-ink-600"}`}>{c.n}</span>
             </button>
           ))}
         </div>

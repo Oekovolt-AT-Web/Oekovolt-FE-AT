@@ -47,7 +47,7 @@ const FaqItem = ({ item, isOpen, onToggle, panelId }) => {
                 aria-expanded={isOpen}
                 aria-controls={panelId}
             >
-                <span className="text-2xl text-white mt-0.5 bg-[#669933] px-2 rounded min-w-[28px] flex items-center justify-center">
+                <span className="text-2xl text-white mt-0.5 bg-ov-600 px-2 rounded min-w-[28px] flex items-center justify-center">
                     {isOpen ? "−" : "+"}
                 </span>
                 <h3 className="text-[18px] font-medium text-gray-900 flex-1">

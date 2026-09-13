@@ -23,13 +23,13 @@ export default function Steps({ items = [], tone = "light", cols, className }) {
             <div
               className={cn(
                 "relative z-10 flex h-14 w-14 items-center justify-center rounded-2xl font-display text-[18px] font-extrabold shadow-lg",
-                dunkel ? "bg-ov-500 text-white shadow-ov-900/40" : "bg-white text-ov-600 ring-1 ring-ov-200"
+                dunkel ? "bg-ov-600 text-white shadow-ov-900/40" : "bg-white text-ov-600 ring-1 ring-ov-200"
               )}
             >
               {Icon ? <Icon aria-hidden="true" className="h-6 w-6" /> : String(i + 1).padStart(2, "0")}
             </div>
             <h3 className={cn("ov-h3 mt-6", dunkel ? "text-white" : "text-ink-900")}>
-              {Icon && <span className={cn("mr-2 font-display text-[14px] font-bold", dunkel ? "text-ov-300" : "text-ov-500")}>{String(i + 1).padStart(2, "0")}</span>}
+              {Icon && <span className={cn("mr-2 font-display text-[14px] font-bold", dunkel ? "text-ov-300" : "text-ov-700")}>{String(i + 1).padStart(2, "0")}</span>}
               {s.title}
             </h3>
             <p className={cn("mt-3 text-[15.5px] leading-relaxed", dunkel ? "text-white/65" : "text-ink-600")}>{s.text}</p>

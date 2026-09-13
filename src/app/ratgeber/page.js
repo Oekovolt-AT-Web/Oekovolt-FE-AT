@@ -11,6 +11,7 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import { ArtikelKarte } from "@/components/Ratgeber/Bausteine";
 import RatgeberListe from "@/components/Ratgeber/RatgeberListe";
+import FolgenBox from "@/components/Kanaele/FolgenBox";
 import { KATEGORIEN, alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
@@ -36,7 +37,14 @@ export const metadata = {
   title: "PV-Ratgeber 2026: Kosten, Förderung & Technik | Ökovolt",
   description: DESCRIPTION,
   keywords: ["Photovoltaik Ratgeber", "Solaranlage Ratgeber", "Einspeisevergütung", "Photovoltaik Kosten", "Photovoltaik Förderung", "Wallbox Installation"],
-  alternates: { canonical: PAGE_URL },
+  alternates: {
+    canonical: PAGE_URL,
+    types: {
+      "application/rss+xml": [{ url: "/ratgeber/rss.xml", title: "Ökovolt Ratgeber" }],
+      "application/activity+json": [{ url: `${BASE_URL}/api/ap/users/ratgeber`, title: "@ratgeber@oekovolt.de" }],
+    },
+  },
+  other: { "fediverse:creator": "@ratgeber@oekovolt.de" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -160,6 +168,17 @@ export default function RatgeberPage() {
           kategorien={KATEGORIEN}
           artikel={artikel.map(({ slug, title, excerpt, kategorie, bild, bildAlt, lesezeit, keywords }) => ({ slug, title, excerpt, kategorie, bild, bildAlt, lesezeit, keywords: keywords || [] }))}
         />
+      </Section>
+
+      <Section tone="sand" space="lg">
+        <div className="grid items-start gap-10 lg:grid-cols-[1fr_440px] lg:gap-16">
+          <SectionHeading
+            eyebrow="Nichts verpassen"
+            title="Neue Fachartikel direkt in Ihren Feed"
+            lead="Folgen Sie dem Ratgeber im Fediverse – zum Beispiel über Mastodon oder Threads, auch mit dem Konto Ihrer Kommune oder Ihres Stadtwerks –, abonnieren Sie den RSS-Feed oder aktivieren Sie Push-Benachrichtigungen. Ohne Algorithmus, ohne Werbung."
+          />
+          <FolgenBox konten={["ratgeber"]} pushThema="ratgeber" />
+        </div>
       </Section>
 
       <Section tone="navy" space="lg" className="overflow-hidden">

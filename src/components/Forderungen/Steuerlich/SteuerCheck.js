@@ -204,7 +204,7 @@ function Ergebnis({ ok, titel, wert, text, extra, norm }) {
       </div>
       <p className="mt-2.5 text-[14.5px] leading-relaxed text-ink-600">{text}</p>
       {extra && <p className="mt-2 text-[14.5px] font-semibold text-ov-700">{extra}</p>}
-      <p className="mt-2 text-[12px] font-medium uppercase tracking-wider text-ink-400">{norm}</p>
+      <p className="mt-2 text-[12px] font-medium uppercase tracking-wider text-ink-500">{norm}</p>
     </div>
   );
 }

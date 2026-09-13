@@ -203,7 +203,7 @@ function Balken({ label, ohne, mit, speicher }) {
     <div>
       <div className="mb-2 flex items-baseline justify-between gap-3 text-[13.5px]">
         <span className="font-semibold text-ink-800">{label}</span>
-        <span className="ov-num text-ink-500">
+        <span className="ov-num text-ink-600">
           {pct(ohne)} % <span aria-hidden="true">→</span> <strong className="text-ink-900">{pct(mit)} %</strong>
         </span>
       </div>
@@ -220,7 +220,7 @@ function Vergleich({ r, speicher }) {
     <div className="mt-5 grid gap-4 rounded-3xl bg-ink-50 p-5 md:grid-cols-2 md:gap-8 md:p-6">
       <Balken label="Autarkie" ohne={r.ohne.autarkie} mit={r.mit.autarkie} speicher={speicher} />
       <Balken label="Eigenverbrauchsquote" ohne={r.ohne.eigenverbrauchsquote} mit={r.mit.eigenverbrauchsquote} speicher={speicher} />
-      <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-ink-500 md:col-span-2">
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-ink-600 md:col-span-2">
         <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ov-200" aria-hidden="true" />Ohne Speicher</span>
         <span className="inline-flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ov-500" aria-hidden="true" />{speicher > 0 ? `Mit ${speicher} kWh` : "Mit Speicher"}</span>
         <span className="ov-num">Netzbezug {fmt(r.ohne.netz)} → {fmt(r.mit.netz)} kWh/Jahr</span>

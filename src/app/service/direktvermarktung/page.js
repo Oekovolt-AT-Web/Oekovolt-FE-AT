@@ -228,7 +228,7 @@ export default async function DirektvermarktungPage() {
           />
           <Reveal delay={100}>
             <div className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-7">
-              <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-400">Die Formel</p>
+              <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">Die Formel</p>
               <p className="mt-3 font-display text-[18px] font-bold leading-snug text-ink-900 md:text-[20px]">
                 Ihr Erlös = <span className="text-ov-700">Börsenerlös</span> + <span className="text-ov-600">Marktprämie</span> − Vermarktungsentgelt
               </p>

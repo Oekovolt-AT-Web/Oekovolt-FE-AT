@@ -218,7 +218,7 @@ export default function Konfigurator() {
                   type="button"
                   disabled={i > schritt || status === "ok"}
                   onClick={() => gehe(i)}
-                  className={`w-full text-left text-[12.5px] font-medium transition-colors ${i === schritt ? "text-ink-900" : i < schritt ? "text-ov-700 hover:text-ov-800" : "text-ink-400"}`}
+                  className={`w-full text-left text-[12.5px] font-medium transition-colors ${i === schritt ? "text-ink-900" : i < schritt ? "text-ov-700 hover:text-ov-800" : "text-ink-500"}`}
                 >
                   {i < schritt && <Check aria-hidden="true" className="-mt-0.5 mr-1 inline h-3.5 w-3.5" />}
                   {s}
@@ -255,7 +255,7 @@ export default function Konfigurator() {
                       <Kachel key={g.id} aktiv={f.gebaeude === g.id} onClick={() => setze("gebaeude", g.id)} icon={g.icon} titel={g.id} />
                     ))}
                   </div>
-                  <p className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Sind Sie Eigentümer der Immobilie?</p>
+                  <p id="ov-eigentuemer-frage" className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Sind Sie Eigentümer der Immobilie?</p>
                   <Segment
                     optionen={[{ id: "yes", label: "Ja, Eigentümer" }, { id: "no", label: "Nein" }]}
                     wert={f.eigentuemer}
@@ -287,7 +287,7 @@ export default function Konfigurator() {
                       );
                     })}
                   </div>
-                  <p className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Ausrichtung der größten Dachfläche</p>
+                  <p id="ov-ausrichtung-frage" className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Ausrichtung der größten Dachfläche</p>
                   <Segment optionen={AUSRICHTUNG} wert={f.ausrichtung} onChange={(v) => setze("ausrichtung", v)} name="ausrichtung" umbrechen />
                 </Frage>
               )}
@@ -316,7 +316,7 @@ export default function Konfigurator() {
                     <div className="flex items-baseline justify-between">
                       <label htmlFor="ov-verbrauch" className="text-[15px] font-semibold text-ink-900">Jahresverbrauch (ohne neue Geräte)</label>
                       <output htmlFor="ov-verbrauch" className="ov-num font-display text-[28px] font-extrabold text-ink-900">
-                        {f.verbrauch.toLocaleString("de-DE")} <span className="text-[16px] font-bold text-ink-500">kWh</span>
+                        {f.verbrauch.toLocaleString("de-DE")} <span className="text-[16px] font-bold text-ink-600">kWh</span>
                       </output>
                     </div>
                     <input
@@ -327,10 +327,11 @@ export default function Konfigurator() {
                       step={250}
                       value={f.verbrauch}
                       onChange={(e) => setze("verbrauch", Number(e.target.value))}
+                      aria-valuetext={`${f.verbrauch.toLocaleString("de-DE")} Kilowattstunden pro Jahr`}
                       className="ov-range mt-5"
                       style={{ "--ov-fill": `${((f.verbrauch - 1500) / 28500) * 100}%` }}
                     />
-                    <div className="mt-2 flex justify-between text-[12px] text-ink-400"><span>1.500</span><span>30.000 kWh</span></div>
+                    <div className="mt-2 flex justify-between text-[12px] text-ink-600"><span>1.500</span><span>30.000 kWh</span></div>
                     {schaetzung.zusatz > 0 && (
                       <p className="mt-4 flex items-start gap-2 text-[13.5px] leading-relaxed text-ink-600">
                         <Sparkles aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
@@ -338,7 +339,7 @@ export default function Konfigurator() {
                       </p>
                     )}
                   </div>
-                  <p className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Wann möchten Sie starten?</p>
+                  <p id="ov-zeitplan-frage" className="mb-3 mt-8 text-[15px] font-semibold text-ink-900">Wann möchten Sie starten?</p>
                   <Segment optionen={ZEITPLAN.map((z) => ({ id: z, label: z }))} wert={f.zeitplan} onChange={(v) => setze("zeitplan", v)} name="zeitplan" umbrechen />
                 </Frage>
               )}
@@ -346,13 +347,16 @@ export default function Konfigurator() {
               {schritt === 4 && (
                 <Frage titel="Wohin dürfen wir Ihre Einschätzung schicken?" hinweis="Ein Energieberater meldet sich persönlich bei Ihnen – kein Callcenter, keine Weitergabe an Dritte.">
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Feld id="vorname" label="Vorname" wert={f.vorname} setze={setze} fehler={fehler.vorname} autoComplete="given-name" />
-                    <Feld id="nachname" label="Nachname" wert={f.nachname} setze={setze} fehler={fehler.nachname} autoComplete="family-name" />
-                    <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" />
-                    <Feld id="telefon" label="Telefon" type="tel" wert={f.telefon} setze={setze} fehler={fehler.telefon} autoComplete="tel" />
+                    <p className="text-[13px] text-ink-500 sm:col-span-2">
+                      <span aria-hidden="true" className="text-red-700">*</span> Pflichtfeld
+                    </p>
+                    <Feld id="vorname" label="Vorname" wert={f.vorname} setze={setze} fehler={fehler.vorname} autoComplete="given-name" pflicht />
+                    <Feld id="nachname" label="Nachname" wert={f.nachname} setze={setze} fehler={fehler.nachname} autoComplete="family-name" pflicht />
+                    <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" pflicht />
+                    <Feld id="telefon" label="Telefon" type="tel" wert={f.telefon} setze={setze} fehler={fehler.telefon} autoComplete="tel" pflicht />
                     <div className="grid grid-cols-[120px_1fr] gap-4 sm:col-span-2">
-                      <Feld id="plz" label="PLZ" wert={f.plz} setze={setze} fehler={fehler.plz} autoComplete="postal-code" inputMode="numeric" maxLength={5} />
-                      <Feld id="ort" label="Ort" wert={f.ort} setze={setze} fehler={fehler.ort} autoComplete="address-level2" />
+                      <Feld id="plz" label="PLZ" wert={f.plz} setze={setze} fehler={fehler.plz} autoComplete="postal-code" inputMode="numeric" maxLength={5} pflicht />
+                      <Feld id="ort" label="Ort" wert={f.ort} setze={setze} fehler={fehler.ort} autoComplete="address-level2" pflicht />
                     </div>
                   </div>
                   <label className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl p-4 ring-1 transition-colors ${fehler.agb ? "bg-red-50 ring-red-200" : "bg-sand-50 ring-ink-100"}`}>
@@ -386,11 +390,11 @@ export default function Konfigurator() {
               <ArrowLeft aria-hidden="true" className="h-4 w-4" /> Zurück
             </button>
             {schritt < SCHRITTE.length - 1 ? (
-              <button type="button" onClick={() => gehe(schritt + 1)} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-500 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-600 active:scale-[0.98]">
+              <button type="button" onClick={() => gehe(schritt + 1)} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-600 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-700 active:scale-[0.98]">
                 Weiter <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
             ) : (
-              <button type="button" onClick={absenden} disabled={status === "senden"} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-500 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-600 active:scale-[0.98] disabled:opacity-70">
+              <button type="button" onClick={absenden} disabled={status === "senden"} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-600 px-7 text-[15px] font-semibold text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-700 active:scale-[0.98] disabled:opacity-70">
                 {status === "senden" ? <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" /> : <CheckCircle2 aria-hidden="true" className="h-4 w-4" />}
                 Kostenlose Einschätzung anfordern
               </button>
@@ -432,7 +436,7 @@ function Kachel({ aktiv, onClick, icon: Icon, titel, text, mehrfach }) {
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[15.5px] font-semibold text-ink-900">{titel}</span>
-        {text && <span className="block text-[13px] text-ink-500">{text}</span>}
+        {text && <span className={`block text-[13px] ${aktiv ? "text-ink-600" : "text-ink-500"}`}>{text}</span>}
       </span>
       <span className={`flex h-6 w-6 shrink-0 items-center justify-center ${mehrfach ? "rounded-md" : "rounded-full"} border-2 transition-all ${aktiv ? "border-ov-500 bg-ov-500 text-white" : "border-ink-300 bg-white text-transparent"}`}>
         <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
@@ -443,17 +447,16 @@ function Kachel({ aktiv, onClick, icon: Icon, titel, text, mehrfach }) {
 
 function Segment({ optionen, wert, onChange, name, umbrechen }) {
   return (
-    <div role="radiogroup" aria-label={name} className={`flex gap-2 ${umbrechen ? "flex-wrap" : ""}`}>
+    <div role="group" aria-labelledby={`ov-${name}-frage`} className={`flex gap-2 ${umbrechen ? "flex-wrap" : ""}`}>
       {optionen.map((o) => {
         const aktiv = wert === o.id;
         return (
           <button
             key={o.id}
             type="button"
-            role="radio"
-            aria-checked={aktiv}
+            aria-pressed={aktiv}
             onClick={() => onChange(o.id)}
-            className={`h-12 rounded-full border-2 px-5 text-[14.5px] font-semibold transition-all ${aktiv ? "border-ov-500 bg-ov-500 text-white shadow-md" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"}`}
+            className={`h-12 rounded-full border-2 px-5 text-[14.5px] font-semibold transition-all ${aktiv ? "border-ov-600 bg-ov-600 text-white shadow-md" : "border-ink-200 bg-white text-ink-700 hover:border-ink-300"}`}
           >
             {o.label}
           </button>
@@ -463,18 +466,22 @@ function Segment({ optionen, wert, onChange, name, umbrechen }) {
   );
 }
 
-function Feld({ id, label, wert, setze, fehler, type = "text", ...rest }) {
+function Feld({ id, label, wert, setze, fehler, type = "text", pflicht = false, ...rest }) {
   return (
     <div>
-      <label htmlFor={`ov-${id}`} className="mb-1.5 block text-[14px] font-semibold text-ink-800">{label}</label>
+      <label htmlFor={`ov-${id}`} className="mb-1.5 block text-[14px] font-semibold text-ink-800">
+        {label}
+        {pflicht && <span aria-hidden="true" className="text-red-700"> *</span>}
+      </label>
       <input
         id={`ov-${id}`}
         type={type}
         value={wert}
         onChange={(e) => setze(id, e.target.value)}
+        aria-required={pflicht || undefined}
         aria-invalid={!!fehler}
         aria-describedby={fehler ? `ov-${id}-fehler` : undefined}
-        className={`h-12 w-full rounded-xl border-2 bg-white px-4 text-[16px] text-ink-900 outline-none transition-colors placeholder:text-ink-400 focus:border-ov-500 ${fehler ? "border-red-400" : "border-ink-200"}`}
+        className={`h-12 w-full rounded-xl border-2 bg-white px-4 text-[16px] text-ink-900 outline-none transition-colors placeholder:text-ink-500 focus:border-ov-500 ${fehler ? "border-red-400" : "border-ink-200"}`}
         {...rest}
       />
       {fehler && <p id={`ov-${id}-fehler`} className="mt-1.5 text-[13px] text-red-700">{fehler}</p>}

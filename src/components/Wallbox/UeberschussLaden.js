@@ -98,7 +98,7 @@ export default function UeberschussLaden() {
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Interaktiv · Ein Ladetag</p>
           <h3 className="ov-h3 mt-2 text-ink-900">Wann lädt Ihr Auto – und womit?</h3>
         </div>
-        <div role="radiogroup" aria-label="Lademodus" className="grid grid-cols-2 rounded-full bg-ink-100 p-1 sm:inline-flex sm:self-start lg:self-auto">
+        <div role="group" aria-label="Lademodus" className="grid grid-cols-2 rounded-full bg-ink-100 p-1 sm:inline-flex sm:self-start lg:self-auto">
           {[
             { v: "abend", l: "Sofort abends" },
             { v: "sonne", l: "Solarüberschuss" },
@@ -106,11 +106,10 @@ export default function UeberschussLaden() {
             <button
               key={o.v}
               type="button"
-              role="radio"
-              aria-checked={modus === o.v}
+              aria-pressed={modus === o.v}
               onClick={() => setModus(o.v)}
               className={`h-11 whitespace-nowrap rounded-full px-3 text-[13.5px] font-semibold transition-all duration-300 sm:px-5 sm:text-[14px] ${
-                modus === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                modus === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
               }`}
             >
               {o.l}
@@ -192,7 +191,7 @@ export default function UeberschussLaden() {
               onChange={setKm}
               anzeige={`${km} km · ${fmt((km * WALLBOX.verbrauchProHundert) / 100)} kWh`}
             />
-            <div role="radiogroup" aria-label="Wetter" className="inline-flex self-start rounded-full bg-ink-100 p-1 md:mb-3">
+            <div role="group" aria-label="Wetter" className="inline-flex self-start rounded-full bg-ink-100 p-1 md:mb-3">
               {[
                 { v: true, l: "Sonnig", i: Sun },
                 { v: false, l: "Bewölkt", i: CloudSun },
@@ -200,11 +199,10 @@ export default function UeberschussLaden() {
                 <button
                   key={o.l}
                   type="button"
-                  role="radio"
-                  aria-checked={sonnig === o.v}
+                  aria-pressed={sonnig === o.v}
                   onClick={() => setSonnig(o.v)}
                   className={`inline-flex h-11 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 ${
-                    sonnig === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"
+                    sonnig === o.v ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"
                   }`}
                 >
                   <o.i aria-hidden="true" className="h-4 w-4" />

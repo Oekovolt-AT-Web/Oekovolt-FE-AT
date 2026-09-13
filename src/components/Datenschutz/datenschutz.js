@@ -302,6 +302,54 @@ const PrivacyPolicy = () => {
         </p>
       </section>
 
+      <section id="analyse" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">PDF-Analyse aus dem Solarrechner</h2>
+        <p>
+          Wenn Sie sich Ihre Berechnung als persönliche PDF-Analyse erstellen lassen, verarbeiten wir Ihren Namen, Ihre
+          E-Mail-Adresse, optional Postleitzahl und Telefonnummer sowie Ihre Angaben im Rechner (Anlagengröße, Ausrichtung,
+          Neigung, Stromverbrauch, Speicher) und die berechneten Ergebnisse. Das PDF wird auf unserem Server erzeugt, in unserem
+          Backoffice gespeichert, Ihnen per E-Mail zugesandt und unserem Vertrieb zur Beratung bereitgestellt. Rechtsgrundlage
+          ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen auf Ihre Anfrage) sowie Ihre Einwilligung in die
+          Kontaktaufnahme (Art. 6 Abs. 1 lit. a DSGVO), die Sie jederzeit widerrufen können. Entsteht aus der Analyse kein
+          Angebot oder Auftrag, löschen wir die Daten nach zwölf Monaten.
+        </p>
+      </section>
+
+      <section id="push" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Push-Benachrichtigungen</h2>
+        <p className="mb-4">
+          Sie können sich über neue Beiträge zu selbst gewählten Themen per Push-Benachrichtigung informieren lassen. Dazu
+          erteilen Sie in Ihrem Browser die Erlaubnis; der Browser erzeugt ein Abonnement mit einer technischen
+          Zustelladresse (Endpoint) des Push-Dienstes Ihres Browserherstellers (z. B. Google, Mozilla, Apple, Microsoft) und
+          zwei Schlüsseln zur Verschlüsselung. Wir speichern diese Angaben zusammen mit den gewählten Themen und dem
+          Zeitpunkt der Anmeldung – ohne Namen, E-Mail-Adresse oder IP-Adresse. Die Nachrichten werden Ende-zu-Ende
+          verschlüsselt über den Push-Dienst Ihres Browsers zugestellt.
+        </p>
+        <p>
+          Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG). Sie können die
+          Benachrichtigungen jederzeit über „Abbestellen“ auf unserer Website oder in den Einstellungen Ihres Browsers
+          beenden; das Abonnement wird dann gelöscht. Abonnements, die der Push-Dienst als abgelaufen meldet, löschen wir
+          automatisch.
+        </p>
+      </section>
+
+      <section id="fediverse" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Fediverse-Konten (Mastodon, Threads u. a.) und RSS-Feeds</h2>
+        <p className="mb-4">
+          Unsere Website betreibt eigene Konten im Fediverse (@oekovolt@oekovolt.de und @ratgeber@oekovolt.de), denen Sie
+          z. B. über Mastodon oder Threads folgen können. Wenn Sie einem Konto folgen, übermittelt Ihr Server uns die
+          öffentlichen Angaben Ihres Profils (Profiladresse, Benutzername, Anzeigename und die Adresse Ihres Posteingangs).
+          Wir speichern diese Angaben, um Ihnen neue Beiträge zuzustellen (Art. 6 Abs. 1 lit. b DSGVO – Sie fordern die
+          Zustellung durch das Folgen an). Die Liste unserer Follower veröffentlichen wir nicht. Wenn Sie nicht mehr folgen
+          oder Ihr Konto löschen, entfernen wir die Angaben. Reaktionen wie Likes, geteilte Beiträge oder Antworten
+          verarbeiten wir nicht.
+        </p>
+        <p>
+          Unsere RSS- und JSON-Feeds sowie der Info-Bildschirm (/tv) können ohne Anmeldung abgerufen werden; dabei werden nur
+          die technisch notwendigen Server-Log-Daten verarbeitet (siehe unten).
+        </p>
+      </section>
+
       <section className="mb-12">
         <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Hinweisgebersystem</h2>
         <p className="mb-4">

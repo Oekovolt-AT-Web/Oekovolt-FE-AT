@@ -139,7 +139,7 @@ export default function HomeLive({ initial }) {
         ) : (
           <Kachel icon={Wind} label="Windleistung im Netz" wert={e.windMw != null ? `${fmtGw(e.windMw)} GW` : "–"} farbe="text-navy-200" />
         )}
-        <Link href="/energie-live" className="group flex flex-col justify-between rounded-[1.5rem] bg-ov-500 p-6 text-white transition-colors hover:bg-ov-600">
+        <Link href="/energie-live" className="group flex flex-col justify-between rounded-[1.5rem] bg-ov-600 p-6 text-white transition-colors hover:bg-ov-700">
           <p className="font-display text-[18px] font-bold leading-snug">Alle Live-Daten: Preise, Erzeugung, Prognose</p>
           <span className="mt-4 inline-flex items-center gap-2 text-[14.5px] font-semibold">
             Zum Dashboard <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />

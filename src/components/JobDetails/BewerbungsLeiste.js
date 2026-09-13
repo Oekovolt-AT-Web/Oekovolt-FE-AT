@@ -40,7 +40,7 @@ export default function BewerbungsLeiste({ href, titel }) {
         <a href="tel:+498245967880" tabIndex={sichtbar ? 0 : -1} aria-label="Anrufen" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-ink-200">
           <Phone aria-hidden="true" className="h-5 w-5 text-ov-600" />
         </a>
-        <a href={href} tabIndex={sichtbar ? 0 : -1} className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-ov-500 px-5 text-[15px] font-semibold text-white">
+        <a href={href} tabIndex={sichtbar ? 0 : -1} className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white">
           <Mail aria-hidden="true" className="h-4 w-4" />
           Jetzt bewerben
         </a>

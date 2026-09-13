@@ -231,7 +231,7 @@ export default async function PhotovoltaikPage() {
             <ol className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-[13.5px] font-semibold text-ink-800">
               {["Planung", "Montage", "Anmeldung", "Service"].map((s, i) => (
                 <li key={s} className="flex items-center gap-2">
-                  <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ov-500 text-[10px] font-bold text-white">
+                  <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ov-600 text-[10px] font-bold text-white">
                     {i + 1}
                   </span>
                   {s}

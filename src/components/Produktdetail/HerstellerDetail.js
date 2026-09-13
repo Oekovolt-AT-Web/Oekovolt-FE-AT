@@ -246,7 +246,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
                 </tbody>
               </table>
               <div className="border-t border-ink-100 bg-sand-50 p-5">
-                <Link href="/angebot" className="group flex min-h-12 items-center justify-between gap-3 rounded-2xl bg-ov-500 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-ov-600">
+                <Link href="/angebot" className="group flex min-h-12 items-center justify-between gap-3 rounded-2xl bg-ov-600 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-ov-700">
                   Angebot mit {titel} anfragen
                   <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
                 </Link>

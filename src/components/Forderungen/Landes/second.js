@@ -150,7 +150,7 @@ const CompactForderungen = ({ initialData = [] }) => {
                     key={item}
                     onClick={() => paginate(item)}
                     className={`flex items-center justify-center w-9 h-9 rounded-md text-sm font-medium transition-colors duration-150 cursor-pointer select-none focus:outline-none ${currentPage === item
-                      ? "bg-[#669933] text-white border border-[#669933]"
+                      ? "bg-ov-600 text-white border border-[#669933]"
                       : "bg-white border border-gray-300 text-gray-600 hover:border-[#669933] hover:text-[#669933]"
                       }`}
                   >

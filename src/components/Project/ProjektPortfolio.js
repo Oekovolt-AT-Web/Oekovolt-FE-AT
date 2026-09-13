@@ -183,7 +183,7 @@ export default function ProjektPortfolio({ projekte = [] }) {
           <button
             type="button"
             onClick={zuruecksetzen}
-            className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white transition hover:bg-ov-600"
+            className="mt-6 inline-flex h-12 items-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white transition hover:bg-ov-700"
           >
             <RotateCcw aria-hidden="true" className="h-4 w-4" />
             Alle Projekte zeigen
@@ -228,7 +228,7 @@ function ChipGruppe({ titel, name, optionen, aktiv, onWahl }) {
           return (
             <Chip key={w} aktiv={aktiv === w} disabled={!zahl && aktiv !== w} onClick={() => onWahl(name, w)}>
               {w}
-              <span className={cn("ov-num ml-1.5 rounded-full px-1.5 text-[11.5px]", aktiv === w ? "bg-white/20 text-white" : "bg-ink-100 text-ink-500")}>{zahl}</span>
+              <span className={cn("ov-num ml-1.5 rounded-full px-1.5 text-[11.5px]", aktiv === w ? "bg-white/20 text-white" : "bg-ink-100 text-ink-600")}>{zahl}</span>
             </Chip>
           );
         })}

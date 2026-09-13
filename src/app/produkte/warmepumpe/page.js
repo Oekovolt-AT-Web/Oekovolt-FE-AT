@@ -343,8 +343,8 @@ export default async function WarmepumpePage() {
                   <p className="text-[12.5px] text-ink-500">Förderfähige Kosten</p>
                   <p className="ov-num mt-1 font-display text-[20px] font-extrabold text-ink-900">bis 28.000 €</p>
                 </div>
-                <div className="rounded-2xl bg-ov-500 p-4 text-white">
-                  <p className="text-[12.5px] text-white/80">Maximaler Zuschuss</p>
+                <div className="rounded-2xl bg-ov-600 p-4 text-white">
+                  <p className="text-[12.5px] text-white">Maximaler Zuschuss</p>
                   <p className="ov-num mt-1 font-display text-[20px] font-extrabold">22.400 €*</p>
                 </div>
               </div>

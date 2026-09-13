@@ -111,15 +111,14 @@ export default function Heizkostenvergleich() {
 
           <div className="mt-7">
             <p id={`${id}-jaz`} className="text-[15px] font-semibold text-ink-900">Jahresarbeitszahl (JAZ)</p>
-            <div role="radiogroup" aria-labelledby={`${id}-jaz`} className="mt-3 grid grid-cols-3 gap-1 rounded-2xl bg-ink-100 p-1">
+            <div role="group" aria-labelledby={`${id}-jaz`} className="mt-3 grid grid-cols-3 gap-1 rounded-2xl bg-ink-100 p-1">
               {JAZ_OPTIONEN.map((o) => (
                 <button
                   key={o.wert}
                   type="button"
-                  role="radio"
-                  aria-checked={jaz === o.wert}
+                  aria-pressed={jaz === o.wert}
                   onClick={() => setJaz(o.wert)}
-                  className={`flex min-h-14 flex-col items-center justify-center rounded-xl px-1 py-1.5 transition-all duration-300 ${jaz === o.wert ? "bg-white text-ink-900 shadow-md" : "text-ink-500 hover:text-ink-800"}`}
+                  className={`flex min-h-14 flex-col items-center justify-center rounded-xl px-1 py-1.5 transition-all duration-300 ${jaz === o.wert ? "bg-white text-ink-900 shadow-md" : "text-ink-600 hover:text-ink-800"}`}
                 >
                   <span className="ov-num text-[15px] font-bold">{o.label}</span>
                   <span className="max-w-full break-words text-[11.5px] leading-tight">{o.hinweis}</span>

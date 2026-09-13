@@ -108,7 +108,16 @@ Purpose: Provide structured, factual, LLM-readable context about Ökovolt Solart
 - [Dynamischer-Stromtarif-Rechner – mit Live-Börsenpreisen](https://www.oekovolt.de/rechner/dynamischer-stromtarif)
 - [Förder-Check – Förderprogramme nach Bundesland](https://www.oekovolt.de/foerdercheck)
 - [Energie live – Day-Ahead-Strompreis & Stromerzeugung in Deutschland in Echtzeit](https://www.oekovolt.de/energie-live)
+- [Beratungstermin online buchen – Telefon, Video, vor Ort](https://www.oekovolt.de/termin)
+- [Presse & Neuigkeiten (Newsroom)](https://www.oekovolt.de/presse)
 - [Hinweisgebersystem (HinSchG, anonym möglich)](https://www.oekovolt.de/hinweisgebersystem)
+
+### Feeds & Fediverse
+
+- [RSS: alle Neuigkeiten und Fachartikel](https://www.oekovolt.de/rss.xml)
+- [RSS: Presse & Neuigkeiten](https://www.oekovolt.de/presse/rss.xml) · [JSON Feed](https://www.oekovolt.de/presse/feed.json)
+- [RSS: Ratgeber](https://www.oekovolt.de/ratgeber/rss.xml)
+- Fediverse (ActivityPub, folgbar über Mastodon, Threads u. a.): @oekovolt@oekovolt.de (News & Presse), @ratgeber@oekovolt.de (Fachartikel)
 - [Impressum](https://www.oekovolt.de/impressum)
 - [Datenschutz](https://www.oekovolt.de/datenschutz)
 - [AGB](https://www.oekovolt.de/agb)

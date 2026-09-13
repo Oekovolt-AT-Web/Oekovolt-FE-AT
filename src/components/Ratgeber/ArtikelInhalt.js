@@ -37,13 +37,13 @@ export default function ArtikelInhalt({ artikel }) {
 
       {artikel.quellen?.length > 0 && (
         <Abschnitt id="quellen" titel="Quellen">
-          <ol className="list-decimal space-y-2 pl-5 text-[14.5px] leading-relaxed text-ink-600 marker:text-ink-400">
+          <ol className="list-decimal space-y-2 pl-5 text-[14.5px] leading-relaxed text-ink-600 marker:text-ink-500">
             {artikel.quellen.map((q) => (
               <li key={q.url}>
                 <a href={q.url} target="_blank" rel="noopener noreferrer" className="text-ink-700 underline decoration-ink-300 underline-offset-2 hover:text-ov-700">
                   {q.titel}
                 </a>
-                {q.stand && <span className="text-ink-400"> · abgerufen {q.stand}</span>}
+                {q.stand && <span className="text-ink-500"> · abgerufen {q.stand}</span>}
               </li>
             ))}
           </ol>

@@ -363,10 +363,10 @@ export default async function WallboxPage() {
             </Link>
           </SectionHeading>
           <Reveal delay={100}>
-            <div className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+            <div tabIndex={0} role="region" aria-label="Wallbox-Kosten nach Variante" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
               <table className="w-full text-left text-[15px] sm:min-w-[520px]">
                 <caption className="sr-only">Wallbox-Kosten nach Variante, Orientierungswerte 2026</caption>
-                <thead className="bg-sand-50 text-[13px] uppercase tracking-wider text-ink-500">
+                <thead className="bg-sand-50 text-[13px] uppercase tracking-wider text-ink-600">
                   <tr>
                     <th scope="col" className="px-5 py-4 font-semibold">Variante</th>
                     <th scope="col" className="hidden px-5 py-4 font-semibold sm:table-cell">Gerät</th>
