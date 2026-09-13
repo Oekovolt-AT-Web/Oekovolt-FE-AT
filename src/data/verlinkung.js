@@ -25,8 +25,10 @@ export const QUERVERWEISE = {
     { href: "/faqs", titel: "Häufige Fragen", text: "Ertrag, Dauer der Montage, Wartung – kurz beantwortet." },
   ],
   "/dienstleistungen/smarthome": [
+    { href: "/produkte/stromspeicher", titel: "Stromspeicher", text: "Welcher Speicher zu welcher Anlagengröße passt." },
+    { href: "/ratgeber/wallbox-installation", titel: "Wallbox installieren", text: "Kosten, Anmeldung und PV-Überschussladen im Überblick." },
     { href: "/produkte/smartenergyhome", titel: "Smart Energy Home", text: "Erzeugung, Speicher und Verbrauch in einem System." },
-    { href: "/produkte/smartmeter", titel: "Smart Meter", text: "Die Messtechnik, auf der die Steuerung aufsetzt." },
+    { href: "/ratgeber/einspeiseverguetung-2026", titel: "Einspeisevergütung 2026", text: "Warum Eigenverbrauch heute mehr bringt als Einspeisung." },
   ],
 
   "/produkte/photovoltaikanlage": [

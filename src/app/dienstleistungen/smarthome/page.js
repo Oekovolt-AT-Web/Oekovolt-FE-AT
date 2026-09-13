@@ -1,10 +1,16 @@
 // dienstleistungen/smarthome/page.js
-import GreenFeatureSection from "@/components/Reusable/contactInfo";
 import EndSection from "@/components/Reusable/end";
-import TeamBanner from "@/components/Reusable/teamBanner";
+import Sektion from "@/components/Reusable/Sektion";
+import MobileCta from "@/components/Reusable/MobileCta";
 import SmarthomeBannerSection from "@/components/Smarthome/banner";
-import VorteileSection from "@/components/Smarthome/Smarthomeloesung";
-import Tabs from "@/components/Smarthome/Tabs";
+import Energiefluss from "@/components/Smarthome/Energiefluss";
+// Tabs, Vorteile und FAQ teilen sich Datenformat und Gestaltung mit der
+// Photovoltaik-Seite – eine Komponente statt zweier, die auseinanderlaufen.
+import Tabs from "@/components/Photovoltaik/Tabs";
+import VorteileSection from "@/components/Photovoltaik/Anlage";
+import FaqBereich from "@/components/Photovoltaik/FaqBereich";
+import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import { SMARTHOME_FAQ, SMARTHOME_TAB_LINKS } from "@/data/smarthome-seite";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -138,7 +144,9 @@ export default async function SmarthomePage() {
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
+    // Festes Datum statt new Date(): sonst meldet die Seite bei jedem Abruf
+    // eine Änderung, die es nicht gab.
+    dateModified: "2026-09-12",
     breadcrumb: {
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -149,14 +157,51 @@ export default async function SmarthomePage() {
     },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: SMARTHOME_FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.frage,
+      acceptedAnswer: { "@type": "Answer", text: f.antwort },
+    })),
+  };
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <SmarthomeBannerSection data={data} />
-      <Tabs data={data} />
-      <VorteileSection data={data} />
+
+      <Sektion ton="hell">
+        <Tabs
+          data={data}
+          dachzeile="Die Bausteine"
+          titel="Vier Komponenten, ein intelligentes System"
+          ariaLabel="Smarthome-Komponenten"
+          links={SMARTHOME_TAB_LINKS}
+        />
+      </Sektion>
+      <Sektion ton="getoent"><Energiefluss /></Sektion>
+      {data?.second_card_table?.length > 0 && (
+        <Sektion ton="hell"><VorteileSection data={data} /></Sektion>
+      )}
+      <Sektion ton="getoent">
+        <SolarrechnerTeaser
+          titel="Mit oder ohne Speicher?"
+          text="Vergleichen Sie im Solarrechner, wie sich ein Speicher auf Autarkie, Ersparnis und Amortisation Ihrer Anlage auswirkt."
+          cta="Jetzt vergleichen"
+        />
+      </Sektion>
+      <Sektion ton="hell">
+        <FaqBereich
+          items={SMARTHOME_FAQ}
+          titel="Speicher, Wallbox & Smartmeter – kurz erklärt"
+        />
+      </Sektion>
       <Querverweise pfad="/dienstleistungen/smarthome" />
       <EndSection />
+      <MobileCta label="Beratung anfragen" />
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useId, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import Fliesstext from "@/components/Reusable/Fliesstext";
 
@@ -18,7 +20,14 @@ const schluessel = (t) => t?.title?.toLowerCase().replace(/\s+/g, "") || "";
  * Wechseln, Inhalt immer voll deckend. Ein Wechsel blendet nur weich über –
  * und nur, wenn keine reduzierte Bewegung eingestellt ist.
  */
-export default function Tabs({ data }) {
+export default function Tabs({
+  data,
+  dachzeile = "Für wen wir bauen",
+  titel = "Die passende Anlage für jedes Gebäude",
+  ariaLabel = "Zielgruppen",
+  // Optional: { [Tab-Titel]: { href, label } } – Weiterführender Link im Panel.
+  links = {},
+}) {
   const tabs = data?.first_card_table ?? [];
   const [aktiv, setAktiv] = useState(schluessel(tabs[0]));
   const basis = useId();
@@ -44,10 +53,10 @@ export default function Tabs({ data }) {
     <section className="mx-auto max-w-7xl px-6 py-14 md:px-12 md:py-20">
       <div className="mb-10 max-w-2xl">
         <p className="mb-3 text-[13px] font-semibold uppercase tracking-[0.15em] text-[#669933]">
-          Für wen wir bauen
+          {dachzeile}
         </p>
         <h2 className="text-balance text-[26px] font-semibold leading-tight text-gray-900 md:text-[34px]">
-          Die passende Anlage für jedes Gebäude
+          {titel}
         </h2>
       </div>
 
@@ -55,9 +64,11 @@ export default function Tabs({ data }) {
         {/* Tab-Leiste: mobil horizontal scrollbar, ab lg als Spalte */}
         <div
           role="tablist"
-          aria-label="Zielgruppen"
+          aria-label={ariaLabel}
           aria-orientation="vertical"
-          className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0"
+          /* Ab lg mitlaufend: das Panel ist deutlich höher als die Leiste,
+             so bleibt der Wechsel zum nächsten Baustein immer in Reichweite. */
+          className="-mx-6 flex gap-2 overflow-x-auto px-6 pb-1 lg:sticky lg:top-28 lg:mx-0 lg:flex-col lg:self-start lg:overflow-visible lg:px-0"
         >
           {tabs.map((tab, i) => {
             const k = schluessel(tab);
@@ -120,7 +131,7 @@ export default function Tabs({ data }) {
             />
           </div>
           <div className="p-6 md:p-9">
-            <h3 className="mb-4 text-balance text-[22px] font-semibold leading-snug text-gray-900 md:text-[26px]">
+            <h3 className="mb-4 text-pretty text-[22px] sm:text-balance font-semibold leading-snug text-gray-900 md:text-[26px]">
               {aktuellerTab?.card_title}
             </h3>
             {/* Fliesstext gliedert den Backoffice-Text an Satzgrenzen – er kam
@@ -129,6 +140,18 @@ export default function Tabs({ data }) {
               text={aktuellerTab?.card_description}
               absatzClassName="text-[16px] leading-relaxed text-gray-600 md:text-[17px]"
             />
+            {links[aktuellerTab?.title] && (
+              <Link
+                href={links[aktuellerTab.title].href}
+                className="group mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-[#669933] hover:text-[#558822]"
+              >
+                {links[aktuellerTab.title].label}
+                <ArrowRight
+                  aria-hidden="true"
+                  className="h-4 w-4 transition-transform group-hover:translate-x-1"
+                />
+              </Link>
+            )}
           </div>
         </div>
       </div>

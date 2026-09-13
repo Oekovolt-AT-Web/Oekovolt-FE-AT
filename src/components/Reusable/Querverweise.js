@@ -55,7 +55,7 @@ export default function Querverweise({ pfad, ueberschrift = "Das könnte Sie auc
                     className="ml-1.5 inline-block h-4 w-4 align-[-2px] transition-transform group-hover:translate-x-1"
                   />
                 </h3>
-                <p className="text-[15px] leading-relaxed text-gray-600">{v.text}</p>
+                <p className="text-[15px] leading-relaxed text-gray-600 [hyphens:manual]">{v.text}</p>
               </article>
             </li>
           ))}

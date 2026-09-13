@@ -12,7 +12,11 @@ const ohneDachzeile = (titel = "", dachzeile = "") => {
     const prefix = dachzeile.trim().toLowerCase();
     const t = titel.trim();
     if (!prefix || !t.toLowerCase().startsWith(prefix)) return t;
-    const rest = t.slice(prefix.length).replace(/^\s*[:–-]\s*/, "");
+    // Nur bei echtem Trenner kürzen: "Vorteile mit einer Smarthome-Lösung"
+    // ist ein Satz und bleibt ganz.
+    const trenner = t.slice(prefix.length).match(/^\s*[:–-]\s*/);
+    if (!trenner) return t;
+    const rest = t.slice(prefix.length + trenner[0].length);
     return rest ? rest.charAt(0).toUpperCase() + rest.slice(1) : t;
 };
 
@@ -35,7 +39,7 @@ function AnlageSection({ data }) {
                     {data.second_card_table.map((card, index) => (
                         <li
                             key={index}
-                            className="flex gap-5 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-7"
+                            className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:flex-row sm:gap-5 md:p-7"
                         >
                             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#f0f7e6]">
                                 <span className="relative h-7 w-7">

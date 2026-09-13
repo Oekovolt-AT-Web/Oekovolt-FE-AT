@@ -10,7 +10,16 @@ const VERTRAUEN = [
   "Planung bis Netzanmeldung",
 ];
 
-const PhotovoltaikanlageBannerSection = ({ data }) => {
+const PhotovoltaikanlageBannerSection = ({
+  data,
+  // Die Smarthome-Seite nutzt denselben Hero mit eigenen Texten.
+  dachzeile = ["Photovoltaik vom Fachbetrieb", "Allgäu & Bayern"],
+  titelFallback = "Photovoltaik vom Fachbetrieb im Allgäu",
+  textFallback = "Planung, Installation und Service für PV-Anlagen in Bayern und im Allgäu – alles aus einer Hand.",
+  cta = { href: "/kontakt", label: "Kostenloses Angebot" },
+  zweitCta = { href: "/solarrechner", label: "Ertrag berechnen" },
+  vertrauen = VERTRAUEN,
+}) => {
   return (
     // min-h statt fester Höhe: längerer Backoffice-Text wurde sonst oben und
     // unten abgeschnitten. Der Banner wächst mit dem Inhalt.
@@ -38,40 +47,43 @@ const PhotovoltaikanlageBannerSection = ({ data }) => {
         <div className="max-w-[680px] text-white">
           <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-[#a7e255] sm:text-[13px]">
             {/* Mobil sauber zweizeilig statt Umbruch mitten in "Allgäu & Bayern". */}
-            <span className="block sm:inline">Photovoltaik vom Fachbetrieb</span>
-            <span aria-hidden="true" className="hidden sm:inline"> · </span>
-            <span className="block sm:inline">Allgäu & Bayern</span>
+            <span className="block sm:inline">{dachzeile[0]}</span>
+            {dachzeile[1] && (
+              <>
+                <span aria-hidden="true" className="hidden sm:inline"> · </span>
+                <span className="block sm:inline">{dachzeile[1]}</span>
+              </>
+            )}
           </p>
 
           {/* H1 bleibt aus dem Backoffice – dort wird es gepflegt. */}
-          <h1 className="text-balance text-[28px] font-semibold leading-[1.15] tracking-tight sm:text-[36px] lg:text-[46px]">
-            {data?.title || "Photovoltaik vom Fachbetrieb im Allgäu"}
+          <h1 className="text-pretty text-[28px] sm:text-balance font-semibold leading-[1.15] tracking-tight sm:text-[36px] lg:text-[46px]">
+            {data?.title || titelFallback}
           </h1>
 
           <p className="mt-5 max-w-[58ch] text-[16px] leading-relaxed text-white/85 sm:text-[18px]">
-            {data?.description ||
-              "Planung, Installation und Service für PV-Anlagen in Bayern und im Allgäu – alles aus einer Hand."}
+            {data?.description || textFallback}
           </p>
 
           <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <Link
-              href="/kontakt"
+              href={cta.href}
               className="inline-flex items-center justify-center gap-2 rounded-md px-7 py-3.5 text-[14px] font-semibold uppercase tracking-wide text-white transition-colors hover:bg-[#558822]"
               style={{ backgroundColor: "#669933" }}
             >
-              Kostenloses Angebot
+              {cta.label}
               <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
             <Link
-              href="/solarrechner"
+              href={zweitCta.href}
               className="inline-flex items-center justify-center rounded-md border border-white/70 px-7 py-3.5 text-[14px] font-semibold uppercase tracking-wide text-white backdrop-blur-sm transition-colors hover:bg-white hover:text-gray-900"
             >
-              Ertrag berechnen
+              {zweitCta.label}
             </Link>
           </div>
 
           <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 border-t border-white/15 pt-6">
-            {VERTRAUEN.map((v) => (
+            {vertrauen.map((v) => (
               <li key={v} className="flex items-center gap-2 text-[14px] text-white/90">
                 <CheckCircle2 aria-hidden="true" className="h-4 w-4 shrink-0 text-[#a7e255]" />
                 {v}

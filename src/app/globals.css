@@ -90,27 +90,33 @@ button:disabled {
 
 /* Überschriften gleichmäßig umbrechen, Fließtext ohne einzelnes Wort in
    der letzten Zeile. Progressive Verbesserung – ältere Browser umbrechen
-   wie bisher. */
-h1, h2, h3, h4 {
-  text-wrap: balance;
-}
-p, li, figcaption, blockquote, dd {
-  text-wrap: pretty;
-}
-/* Ausnahme Akkordeon-Fragen: `balance` hält dort jede Zeile künstlich kurz,
-   mobil stand die Frage in einer schmalen Spalte neben viel Leerraum. */
-h3:has(> button),
-summary {
-  text-wrap: pretty;
-}
+   wie bisher.
 
-/* Deutsche Komposita ("Einspeisevergütungssätze") sprengen sonst schmale
-   Spalten. Silbentrennung nur im Fließtext, nie in Überschriften, und
-   erst ab längeren Wörtern. */
-main p {
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  hyphenate-limit-chars: 10 4 4;
+   In @layer base, damit Tailwind-Utilities gewinnen: Unlayered hatte
+   `text-wrap` (ein Teil der `white-space`-Kurzform) jedes `whitespace-nowrap`
+   ausgehebelt und `hyphens: auto` jedes `[hyphens:manual]`. */
+@layer base {
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+  p, li, figcaption, blockquote, dd {
+    text-wrap: pretty;
+  }
+  /* Ausnahme Akkordeon-Fragen: `balance` hält dort jede Zeile künstlich kurz,
+     mobil stand die Frage in einer schmalen Spalte neben viel Leerraum. */
+  h3:has(> button),
+  summary {
+    text-wrap: pretty;
+  }
+
+  /* Deutsche Komposita ("Einspeisevergütungssätze") sprengen sonst schmale
+     Spalten. Silbentrennung nur im Fließtext, nie in Überschriften, und
+     erst ab längeren Wörtern. */
+  main p {
+    -webkit-hyphens: auto;
+    hyphens: auto;
+    hyphenate-limit-chars: 10 4 4;
+  }
 }
 
 /* Kerning und typografische Ligaturen der Schrift aktiv nutzen. */

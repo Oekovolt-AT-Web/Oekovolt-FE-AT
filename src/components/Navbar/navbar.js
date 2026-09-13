@@ -231,7 +231,7 @@ const Navbar = () => {
         aria-hidden="true"
         className={`absolute inset-0 -z-10 transition-[background-color,box-shadow,backdrop-filter] duration-300 ${
           gescrollt
-            ? "bg-white/95 shadow-[0_1px_0_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.18)] backdrop-blur-xl backdrop-saturate-150"
+            ? "bg-white md:bg-white/95 shadow-[0_1px_0_rgba(15,23,42,0.06),0_8px_24px_-12px_rgba(15,23,42,0.18)] backdrop-blur-xl backdrop-saturate-150"
             : "bg-white"
         }`}
       />
