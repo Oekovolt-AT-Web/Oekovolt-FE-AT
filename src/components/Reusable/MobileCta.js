@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, Phone } from "lucide-react";
 
 // Auf diesen Seiten ist die Leiste überflüssig oder stört den Ablauf.
-const AUSGENOMMEN = ["/angebot", "/kontakt", "/impressum", "/datenschutz", "/agb"];
+const AUSGENOMMEN = ["/angebot", "/kontakt", "/impressum", "/datenschutz", "/agb", "/hinweisgebersystem"];
 
 /**
  * Feste Handlungsleiste am unteren Rand – nur auf Mobilgeräten, global.
