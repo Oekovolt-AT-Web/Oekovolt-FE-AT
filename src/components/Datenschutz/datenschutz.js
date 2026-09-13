@@ -345,7 +345,7 @@ const PrivacyPolicy = () => {
           verarbeiten wir nicht.
         </p>
         <p>
-          Unsere RSS- und JSON-Feeds sowie der Info-Bildschirm (/tv) können ohne Anmeldung abgerufen werden; dabei werden nur
+          Unsere RSS- und JSON-Feeds sowie die Info-Bildschirme können ohne Anmeldung abgerufen werden; dabei werden nur
           die technisch notwendigen Server-Log-Daten verarbeitet (siehe unten).
         </p>
       </section>
