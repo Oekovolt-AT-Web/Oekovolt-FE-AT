@@ -103,7 +103,7 @@ const Map = () => {
           <div className="absolute top-[45%] left-1/2 z-20 -translate-x-1/2 -translate-y-full pointer-events-none animate-bounce-slow">
             <Image
               src="/Images/Home/newpreview2.png"
-              alt="Custom Marker"
+              alt="Standort Ökovolt in Türkheim"
               width={60}
               height={60}
               className="w-[60px] h-auto drop-shadow-md"
@@ -114,20 +114,20 @@ const Map = () => {
               href="https://www.google.com/maps/dir/?api=1&destination=Schlingener+Str.+1a,+86842+Türkheim,+Germany"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-[#669933] text-white px-5 py-2 rounded-full shadow-lg hover:bg-[#669933] transition"
+              className="inline-flex h-11 items-center rounded-full bg-ov-500 px-5 text-[15px] font-semibold text-white shadow-lg transition-colors hover:bg-ov-600"
             >
-              Get Directions
+              Route planen
             </a>
           </div>
         </>
       ) : (
-        <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center">
-          <p className="mb-4 text-gray-700 text-center max-w-md">
+        <div className="flex h-full w-full flex-col items-center justify-center bg-sand-50 px-6">
+          <p className="mb-5 max-w-md text-center text-[15px] leading-relaxed text-ink-600">
             Um die Karte anzuzeigen, müssen Sie die Verwendung von Google Maps bestätigen.
           </p>
           <button
             onClick={handleAcceptCookie}
-            className="px-4 py-2 bg-[#669933] text-white rounded-lg hover:bg-[#669933] transition-colors"
+            className="inline-flex h-11 items-center rounded-full bg-ov-500 px-6 text-[15px] font-semibold text-white transition-colors hover:bg-ov-600"
           >
             Karte aktivieren
           </button>

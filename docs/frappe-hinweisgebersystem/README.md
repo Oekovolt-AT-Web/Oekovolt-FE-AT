@@ -67,6 +67,15 @@ Fehlen die Variablen, nutzt die Website die allgemeinen Zugangsdaten (`API_KEY`)
    - Mit *Aufbewahrung verlängert* und einem Grund lässt sie sich aussetzen.
    - Beim Löschen wird auch die Versionshistorie entfernt.
 
+## 4a. Meldungen per Post, Telefon oder Gespräch
+
+Die Meldestelle legt solche Fälle im Desk selbst an: **Hinweis → Neu**, Eingangskanal wählen. Die Fall-Nummer wird automatisch vergeben. Einen Postfach-Zugang gibt es dafür nicht; die Kommunikation läuft über den vereinbarten Weg. Details und Textvorlagen stehen in docs/datenschutz/Meldestelle-Handbuch.md.
+
+## 4b. Monitoring und Schutz
+
+- **Überwachung:** `https://www.oekovolt.de/api/hinweis/health` liefert 200, wenn Website-Konfiguration, Frappe und DocType erreichbar sind, sonst 503. Keine Falldaten. Diesen Endpunkt in einem Uptime-Dienst überwachen.
+- **Sperre gegen Durchprobieren:** Nach 10 falschen Schlüsseln wird eine Fall-Nummer 30 Minuten gesperrt (Redis-Cache), und die Meldestelle wird ohne Inhalte benachrichtigt.
+
 ## 5. Sicherheit – Checkliste vor Go-live
 
 - [ ] HTTPS durchgängig. `backoffice.oekovolt.de` nur über TLS erreichbar.
@@ -76,6 +85,8 @@ Fehlen die Variablen, nutzt die Website die allgemeinen Zugangsdaten (`API_KEY`)
 - [ ] Rollen und Rechte wie oben – ein Test mit dem Web-User ergibt `403` beim direkten Lesen von `/api/resource/Hinweis`.
 - [ ] Datenschutzerklärung und Verzeichnis der Verarbeitungstätigkeiten ergänzt. Den Hinweistext auf der Seite prüft der DSB.
 - [ ] Meldestelle nach § 15 HinSchG benannt, Vertretung geregelt.
+- [ ] Uptime-Check auf `/api/hinweis/health` eingerichtet.
+- [ ] 2FA für alle Konten mit Rolle `Hinweis Meldestelle` und `System Manager` aktiv.
 
 ## 6. Test
 

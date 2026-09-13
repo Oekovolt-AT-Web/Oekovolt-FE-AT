@@ -8,6 +8,15 @@ from frappe.utils import add_days, add_months, add_years, getdate, now_datetime
 
 class Hinweis(Document):
 	def before_insert(self):
+		# Von der Meldestelle manuell angelegte Fälle (Post, Telefon, Gespräch)
+		# bekommen ebenfalls eine Fall-Nummer. Einen Postfach-Zugang gibt es
+		# dafür nicht – die Kommunikation läuft über den vereinbarten Weg.
+		if not self.referenz:
+			from oekovoltdeutchland.oekovoltdeutchland.doctype.hinweis.api import _neue_referenz
+
+			self.referenz = _neue_referenz()
+		if not self.quelle:
+			self.quelle = "Website"
 		jetzt = now_datetime()
 		self.eingegangen_am = jetzt
 		self.status = self.status or "Eingegangen"

@@ -70,7 +70,7 @@
   { "fieldname": "beteiligte", "fieldtype": "Small Text", "label": "Beteiligte Personen / Bereiche" },
 
   { "fieldname": "sec_person", "fieldtype": "Section Break", "label": "Meldende Person (vertraulich, § 8 HinSchG)" },
-  { "fieldname": "anonym", "fieldtype": "Check", "label": "Anonyme Meldung", "default": "1", "read_only": 1 },
+  { "fieldname": "anonym", "fieldtype": "Check", "label": "Anonyme Meldung", "default": "1" },
   { "fieldname": "name_meldende", "fieldtype": "Data", "label": "Name", "depends_on": "eval:!doc.anonym" },
   { "fieldname": "column_break_person", "fieldtype": "Column Break" },
   { "fieldname": "email", "fieldtype": "Data", "label": "E-Mail", "options": "Email", "depends_on": "eval:!doc.anonym" },
@@ -89,8 +89,8 @@
   { "fieldname": "aufbewahrung_verlaengert", "fieldtype": "Check", "label": "Aufbewahrung verlängert (Löschung aussetzen)", "default": "0" },
   { "fieldname": "aufbewahrung_grund", "fieldtype": "Small Text", "label": "Grund der Verlängerung", "depends_on": "aufbewahrung_verlaengert", "mandatory_depends_on": "aufbewahrung_verlaengert" },
 
-  { "fieldname": "sec_technik", "fieldtype": "Section Break", "label": "Technik", "collapsible": 1 },
-  { "fieldname": "quelle", "fieldtype": "Data", "label": "Eingangskanal", "default": "Website", "read_only": 1 },
+  { "fieldname": "sec_technik", "fieldtype": "Section Break", "label": "Technik", "collapsible": 0 },
+  { "fieldname": "quelle", "fieldtype": "Select", "label": "Eingangskanal", "options": "Website\nPost\nTelefon\nPersönliches Gespräch", "default": "Website" },
   { "fieldname": "zugang_hash", "fieldtype": "Data", "label": "Zugangs-Hash", "hidden": 1, "read_only": 1, "no_copy": 1, "print_hide": 1, "report_hide": 1 }
  ],
  "index_web_pages_for_search": 0,
@@ -102,7 +102,7 @@
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
-  { "role": "Hinweis Meldestelle", "read": 1, "write": 1, "create": 0, "delete": 0, "report": 1, "export": 0, "print": 1, "email": 0, "share": 0 }
+  { "role": "Hinweis Meldestelle", "read": 1, "write": 1, "create": 1, "delete": 0, "report": 1, "export": 0, "print": 1, "email": 0, "share": 0 }
  ],
  "sort_field": "creation",
  "sort_order": "DESC",

@@ -63,14 +63,14 @@ Telefon +49 8245 96 788 0 · office@oekovolt.de
 | `[OFFEN: Hosting-Anbieter des Next.js-Website-Servers]` | Betrieb der Website und der API-Routen `/api/hinweis*` | `[OFFEN]` | `[OFFEN]` |
 | `[OFFEN: Hosting-Anbieter des Frappe-Backoffice]` | Datenbank und Anwendung, Speicherung der Meldungen | `[OFFEN]` | `[OFFEN]` |
 | IT Engineers LLC (Website-/Backoffice-Entwicklung) | Wartung, ggf. Administrationszugriff | `[OFFEN: Sitz und Zugriffsumfang prüfen]` | `[OFFEN]` |
-| Cloudflare, Inc. | CDN, DDoS-Schutz, TLS-Terminierung für `www.oekovolt.de` und `backoffice.oekovolt.de` | USA / weltweit | Cloudflare DPA (online abgeschlossen?) `[OFFEN: prüfen]` |
+| Cloudflare, Inc. | CDN, DDoS-Schutz, TLS-Terminierung für `www.oekovolt.de` und `backoffice.oekovolt.de` (IP-Bereiche 104.21.x / 172.67.x, geprüft 13.09.2026) | USA / weltweit | Cloudflare Customer DPA gilt mit Nutzung des Dienstes (cloudflare.com/cloudflare-customer-dpa) `[OFFEN: Einbeziehung im Cloudflare-Konto dokumentieren]` |
 | `[OFFEN: E-Mail-Versanddienst des Backoffice]` | Benachrichtigungs-E-Mails an die Meldestelle, ohne Inhalte | `[OFFEN]` | `[OFFEN]` |
 
 ### 5. Übermittlung in Drittländer (lit. e)
 
 - **USA (Cloudflare, Inc.):** Cloudflare terminiert TLS und kann Inhalte technisch im Klartext verarbeiten.
   - Grundlage: Angemessenheitsbeschluss EU-US Data Privacy Framework (Art. 45 DSGVO) sowie EU-Standardvertragsklauseln im Cloudflare DPA.
-  - `[OFFEN: DPF-Zertifizierung zum Freigabezeitpunkt unter dataprivacyframework.gov verifizieren]`
+  - DPF-Zertifizierung am 13.09.2026 geprüft: Cloudflare ist aktiver Teilnehmer (EU-US DPF, UK Extension, Swiss-US DPF), Quelle: dataprivacyframework.gov und cloudflare.com/privacypolicy. Jährlich erneut prüfen.
 - **Weitere Drittlandbezüge:** `[OFFEN: Standort der Server und Fernwartungszugriffe der Dienstleister klären, insbesondere außerhalb EU/EWR]`
 
 ### 6. Löschfristen (lit. f)

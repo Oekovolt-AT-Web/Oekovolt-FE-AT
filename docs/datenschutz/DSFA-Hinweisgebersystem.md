@@ -59,12 +59,12 @@ Skala: Eintrittswahrscheinlichkeit (W) und Schwere (S) jeweils 1 (gering) bis 4 
 |---|---|---|---|---|---|---|---|
 | R1 | Identität der anonym meldenden Person wird über technische Metadaten (IP, Gerät) aufgedeckt | Meldende | 3 | 4 | 12 | ✔ Keine IP-/Header-Weitergabe an Frappe · ✔ keine Inhalts-Logs · ✔ keine Cookies/Analytics im Formularablauf · ☐ Access-Logs des Website-Hostings für `/api/hinweis*` deaktivieren oder anonymisieren · ☐ Cloudflare-Logs (Logpush) für diese Pfade prüfen | 4 |
 | R2 | Unbefugte Beschäftigte (z. B. Vorgesetzte, Admins) lesen Meldungen | Meldende, Beschuldigte | 3 | 4 | 12 | ✔ Rollenmodell „Hinweis Meldestelle“ · ✔ Web-API-User ohne Leserecht · ✔ E-Mails ohne Inhalte · ✔ Änderungsprotokoll · ☐ 2FA für Meldestelle/Admins · ☐ Zahl der System-Manager minimieren, Zugriffe regelmäßig prüfen | 4 |
-| R3 | Fremde erlangen Zugriff auf ein Postfach (Erraten/Brute Force) | Meldende | 2 | 4 | 8 | ✔ 24-stelliger Zufallsschlüssel (Alphabet 32 Zeichen, ca. 120 Bit) · ✔ PBKDF2-Hash · ✔ einheitliche Fehlerantwort · ✔ Drosselung · ☐ Sperre/Alarm bei vielen Fehlversuchen im Backend | 2 |
+| R3 | Fremde erlangen Zugriff auf ein Postfach (Erraten/Brute Force) | Meldende | 2 | 4 | 8 | ✔ 24-stelliger Zufallsschlüssel (Alphabet 32 Zeichen, ca. 120 Bit) · ✔ PBKDF2-Hash · ✔ einheitliche Fehlerantwort · ✔ Drosselung · ✔ Sperre der Fall-Nummer nach 10 Fehlversuchen für 30 Min. mit Benachrichtigung der Meldestelle | 2 |
 | R4 | Kompromittierung von Server, Datenbank oder Backups | alle | 2 | 4 | 8 | ✔ TLS · ☐ Datenbank- und Backup-Verschlüsselung · ☐ Patch-Management Frappe/Next.js · ☐ Backup-Zugriff beschränkt und protokolliert | 4 |
-| R5 | Offenlegung gegenüber Drittanbietern (Cloudflare mit TLS-Terminierung, Dienstleister mit Fernwartung) bzw. Drittlandzugriff | alle | 2 | 3 | 6 | ✔ Transparenz in den Datenschutzhinweisen · ☐ Cloudflare DPA/DPF prüfen · ☐ AV-Verträge mit Hosting und IT Engineers · ☐ optional: Backoffice-API nicht über Cloudflare-Proxy, sondern direkt per TLS aus dem Website-Netz | 3 |
+| R5 | Offenlegung gegenüber Drittanbietern (Cloudflare mit TLS-Terminierung, Dienstleister mit Fernwartung) bzw. Drittlandzugriff | alle | 2 | 3 | 6 | ✔ Transparenz in den Datenschutzhinweisen · ✔ Cloudflare DPF-Zertifizierung geprüft (13.09.2026) · ☐ DPA-Einbeziehung dokumentieren · ☐ AV-Verträge mit Hosting und IT Engineers · ☐ optional: Backoffice-API nicht über Cloudflare-Proxy, sondern direkt per TLS aus dem Website-Netz | 3 |
 | R6 | Fristen (7 Tage / 3 Monate) werden versäumt → Rechtsverstoß, Vertrauensverlust | Meldende | 2 | 3 | 6 | ✔ Fristfelder automatisch · ✔ Benachrichtigung bei Eingang/Nachricht · ☐ Vertretungsregelung · ☐ wöchentliche Fristenkontrolle | 2 |
 | R7 | Beschuldigte Personen werden zu Unrecht belastet, Daten zu lange gespeichert | Beschuldigte | 2 | 3 | 6 | ✔ Prüfung der Stichhaltigkeit dokumentiert · ✔ Löschautomatik · ✔ Information nach Art. 14 mit dokumentiertem Aufschub | 3 |
-| R8 | Meldung geht technisch verloren (Backend-Ausfall) | Meldende | 2 | 3 | 6 | ✔ Eingaben bleiben im Formular bei Fehler · ✔ Hinweis auf Postweg und externe Meldestelle · ☐ Monitoring der API-Endpunkte | 3 |
+| R8 | Meldung geht technisch verloren (Backend-Ausfall) | Meldende | 2 | 3 | 6 | ✔ Eingaben bleiben im Formular bei Fehler · ✔ Hinweis auf Postweg und externe Meldestelle · ✔ Monitoring-Endpunkt `/api/hinweis/health` · ☐ externen Uptime-Check darauf einrichten | 3 |
 | R9 | Beschuldigte oder Dritte identifizieren die meldende Person über den Inhalt | Meldende | 3 | 3 | 9 | ✔ Warnhinweis im Formular · ✔ Vertraulichkeitspflicht § 8 · ☐ Schulung der Meldestelle zur Anonymisierung bei Weitergabe | 6 |
 | R10 | Missbrauch (Spam, gezielte Falschmeldungen) | Beschuldigte, Unternehmen | 2 | 2 | 4 | ✔ Honeypot, Mindestdauer, Drosselung · ✔ Prüfung vor Folgemaßnahmen | 2 |
 
@@ -90,8 +90,8 @@ Vor Umsetzung der offenen Maßnahmen (☐) besteht in R1, R2 und R4 ein **hohes 
 | Telefonischen Meldeweg einrichten und in `src/data/hinweisgeber.js` (`MELDESTELLE.telefon`) eintragen | `[OFFEN]` | `[OFFEN]` | ☐ |
 | Meldestelle benennen, Vertretung, Schulung, Verpflichtung auf Vertraulichkeit | Geschäftsführung | `[OFFEN]` | ☐ |
 | Beschäftigte über Meldewege informieren (§ 13 Abs. 2 HinSchG) | Geschäftsführung / HR | `[OFFEN]` | ☐ |
-| Fehlversuch-Überwachung Postfach im Backend | `[OFFEN]` | `[OFFEN]` | ☐ |
-| Monitoring API-Endpunkte | `[OFFEN]` | `[OFFEN]` | ☐ |
+| Fehlversuch-Sperre Postfach im Backend | umgesetzt in `api.py` | 13.09.2026 | ✔ |
+| Monitoring: externen Uptime-Check auf `https://www.oekovolt.de/api/hinweis/health` (erwartet HTTP 200) | `[OFFEN]` | nach Go-live | ☐ |
 | Offene Fälle aus IntegrityLine übernehmen/abschließen, Datenexport und Löschbestätigung des Anbieters archivieren | Meldestelle | `[OFFEN]` | ☐ |
 | Überprüfung dieser DSFA | DSB | 12 Monate nach Go-live | ☐ |
 

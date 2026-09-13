@@ -79,15 +79,50 @@ def _schluessel_ok(schluessel, gespeichert):
 	return hmac.compare_digest(vergleich, digest)
 
 
+MAX_FEHLVERSUCHE = 10  # je Fall-Nummer
+SPERRE_SEKUNDEN = 30 * 60
+
+
+def _fehlversuch_schluessel(referenz):
+	return f"hinweis_fehlversuche::{referenz}"
+
+
+def _gesperrt(referenz):
+	return cint(frappe.cache().get_value(_fehlversuch_schluessel(referenz))) >= MAX_FEHLVERSUCHE
+
+
+def _fehlversuch_merken(referenz):
+	schluessel = _fehlversuch_schluessel(referenz)
+	anzahl = cint(frappe.cache().get_value(schluessel)) + 1
+	frappe.cache().set_value(schluessel, anzahl, expires_in_sec=SPERRE_SEKUNDEN)
+	if anzahl == MAX_FEHLVERSUCHE:
+		name = frappe.db.get_value("Hinweis", {"referenz": referenz}, "name")
+		if name:
+			_meldestelle_benachrichtigen(referenz, "Postfach nach wiederholten Fehlversuchen vorübergehend gesperrt")
+
+
 def _fall_laden(referenz, schluessel):
-	"""Liefert den Namen des Hinweises oder None – immer mit gleichem Rechenaufwand."""
+	"""Liefert den Namen des Hinweises oder None – immer mit gleichem Rechenaufwand.
+
+	Nach MAX_FEHLVERSUCHE falschen Schlüsseln wird die Fall-Nummer für
+	SPERRE_SEKUNDEN gesperrt (Schutz gegen Durchprobieren). Die Antwort bleibt
+	dieselbe wie bei falschen Zugangsdaten, damit die Sperre nichts verrät.
+	"""
 	referenz = _text(referenz, 20).upper()
 	schluessel = _text(schluessel, 80)
+	if _gesperrt(referenz):
+		_hash(schluessel or "x")
+		return None
 	treffer = frappe.db.get_value("Hinweis", {"referenz": referenz}, ["name", "zugang_hash"], as_dict=True)
 	if not treffer:
 		_hash(schluessel or "x")  # gleiche Laufzeit wie ein echter Vergleich
+		_fehlversuch_merken(referenz)
 		return None
-	return treffer.name if _schluessel_ok(schluessel, treffer.zugang_hash) else None
+	if _schluessel_ok(schluessel, treffer.zugang_hash):
+		frappe.cache().delete_value(_fehlversuch_schluessel(referenz))
+		return treffer.name
+	_fehlversuch_merken(referenz)
+	return None
 
 
 def _meldestelle_benachrichtigen(referenz, anlass):
@@ -132,6 +167,13 @@ def _postfach(name):
 
 
 # ---------------------------------------------------------------- API
+
+@frappe.whitelist(methods=["GET", "POST"])
+def ping(**kwargs):
+	"""Erreichbarkeit für das Monitoring – liefert keine Daten über Fälle."""
+	_nur_webformular()
+	return {"ok": True, "doctype": bool(frappe.db.exists("DocType", "Hinweis"))}
+
 
 @frappe.whitelist(methods=["POST"])
 def create_hinweis(**kwargs):
