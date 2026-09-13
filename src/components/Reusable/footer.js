@@ -1,168 +1,162 @@
 "use client";
-import React, { useState } from "react";
+
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import Image from "next/image";
+import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
+
 import CookieBanner from "../Cookies/cookiecomponent";
-import Link from "next/link";
+import { NAVIGATION, KONTAKT } from "@/data/navigation";
+import LiveTicker from "@/components/ui/LiveTicker";
 
-const Footer = () => {
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const handleShowPopup = () => setIsPopupVisible(true);
+const SOCIAL = [
+  { href: "https://www.facebook.com/oekovoltdeutschland", label: "Facebook", Icon: FaFacebookF },
+  { href: "https://x.com/Oekovolt_De", label: "X (Twitter)", Icon: FaXTwitter },
+  { href: "https://www.instagram.com/oekovoltdeutschland/", label: "Instagram", Icon: FaInstagram },
+  { href: "https://de.pinterest.com/oekovoltdeutschland/", label: "Pinterest", Icon: FaPinterestP },
+  { href: "https://www.linkedin.com/company/%C3%B6kovoltdeutchland", label: "LinkedIn", Icon: FaLinkedinIn },
+];
 
-
-  const currentYear = new Date().getFullYear();
-  return (
-    <div className="relative">
-      <div className="w-full flex flex-wrap bg-pattern bg-mask">
-        <div className="w-full  flex justify-end ">
-          <div className="w-full h-25 relative overflow-hidden">
-            <svg
-              className="absolute top-0 left-0 w-full h-full"
-              xmlns="http://www.w3.org/2000/svg"
-              version="1.1"
-              viewBox="0 -0.5 1024 178"
-              preserveAspectRatio="none"
-              fill="rgba(#669933)"
-              aria-hidden="true"
-              role="presentation"
-            >
-              <path d="M1024 177.371H0V.219l507.699 133.939L1024 .219v177.152z" fill="#e0f0d1" />
-              <path d="M1024 177.781H0V39.438l507.699 94.925L1024 39.438v138.343z" fill="#c2e0a3" />
-              <path d="M1024 177.781H0v-67.892l507.699 24.474L1024 109.889v67.892z" fill="#94c95e" />
-              <path d="M1024 177.781H0v-3.891l507.699-39.526L1024 173.889v3.892z" fill="#669933" />
-            </svg>
-          </div>
-        </div>
-      </div>
-      <footer className="bg-[#003473] text-white pt-8 pb-12" role="contentinfo" aria-label="Fußbereich Ökovolt Deutschland">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-4">
-              <Link href="/" className="relative block w-[200px] h-[70px]">
-                <Image
-                  src="/Logo-Oekovolt-Gruen-mit-Weiss.webp"
-                  alt="Ökovolt GmbH Solartechnik – Logo"
-                  fill
-                  sizes="200px"
-                  className="object-contain"
-                  title="Ökovolt Deutschland – Photovoltaik & Solaranlagen"
-                />
-              </Link>
-              <address className="not-italic text-[16px]">
-                Schlingener Straße 1a
-                <br />
-                86842 Türkheim
-                <br />
-                Deutschland
-              </address>
-              <div className="border-t border-[#003473]/20">
-                <p>&copy; {currentYear} ÖKOVOLT GmbH Solartechnik</p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-[18px] font-normal uppercase tracking-wider">Kontakt</h3>
-              <hr className="border-t border-[#fffff]/30 my-3 " />
-              <div className="space-y-6">
-                <p>
-                  <span className="font-medium text-[16px] ">Telefon</span>
-                  <br />
-                  <a href="tel:+498245967880" className=" hover:text-[#669933] transition-colors text-[16px]">
-                    +49 8245 96 788 0
-                  </a>
-                </p>
-                <p>
-                  <span className="font-medium">E-Mail</span>
-                  <br />
-                  <a href="mailto:office@oekovolt.de" className="hover:text-[#669933] transition-colors text-[16px]">
-                    office@oekovolt.de
-                  </a>
-                </p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-[18px] font-normal uppercase tracking-wider">Öffnungszeiten</h3>
-              <hr className="border-t border-[#fffff]/30 my-3 " />
-              <div className="space-y-6 text-[16px]">
-                <p>
-                  Montag - Donnerstag
-                  <br />
-                  08:00 - 16:00
-                </p>
-                <p>
-                  Freitag
-                  <br />
-                  08:00 - 13:00
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-4">
-                <h3 className="text-[18px] font-normal uppercase tracking-wider ">Folgen Sie Uns</h3>
-                <hr className="border-t border-[#fffff]/30 my-3 " />
-                <div className="flex space-y-2 space-x-5 my-6">
-                  <a href="https://www.facebook.com/oekovoltdeutschland" target="_blank" rel="noopener noreferrer" aria-label="Ökovolt auf Facebook" className="text-xl hover:text-[#669933] transition-colors">
-                    <FaFacebookF />
-                  </a>
-                  <a href="https://x.com/Oekovolt_De" target="_blank" rel="noopener noreferrer" aria-label="Ökovolt auf X (Twitter)" className="text-xl hover:text-[#669933] transition-colors">
-                    <FaXTwitter />
-                  </a>
-                  <a href="https://www.instagram.com/oekovoltdeutschland/" target="_blank" rel="noopener noreferrer" aria-label="Ökovolt auf Instagram" className="text-xl hover:text-[#669933] transition-colors">
-                    <FaInstagram />
-                  </a>
-                  <a href="https://de.pinterest.com/oekovoltdeutschland/" target="_blank" rel="noopener noreferrer" aria-label="Ökovolt auf Pinterest" className="text-xl hover:text-[#669933] transition-colors">
-                    <FaPinterestP />
-                  </a>
-                  <a href="https://www.linkedin.com/company/%C3%B6kovoltdeutchland" target="_blank" rel="noopener noreferrer" aria-label="Ökovolt auf LinkedIn" className="text-xl hover:text-[#669933] transition-colors">
-                    <FaLinkedinIn />
-                  </a>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-[18px] font-normal uppercase tracking-wider">Weiterführende Links</h3>
-                <hr className="border-t border-[#fffff]/30 my-3 " />
-                <nav aria-label="Rechtliche Links">
-                  <ul className="space-y-2 text-[16px]">
-                    <li>
-                      <button onClick={handleShowPopup} className="hover:text-white cursor-pointer transition">Privatsphäre-Einstellungen</button>
-
-
-                    </li>
-                    <li>
-                      <a href="/agb" className="hover:text-[#669933] transition-colors">
-                        AGB
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/datenschutz" className="hover:text-[#669933] transition-colors">
-                        Datenschutz
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/impressum" className="hover:text-[#669933] transition-colors">
-                        Impressum
-                      </a>
-                    </li>
-                    <li>
-                      <a href="https://oekovolt.integrityline.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#669933] transition-colors">
-                        Hinweisgebersystem
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
-      {isPopupVisible && (
-        <CookieBanner forceShow={isPopupVisible} onClose={() => setIsPopupVisible(false)} />
-      )}
-    </div>
-
-  );
+// Spalten aus der zentralen Navigation ableiten
+const spalte = (titel) => {
+  const n = NAVIGATION.find((x) => x.title === titel);
+  return n ? { titel: n.title, links: n.groups.flatMap((g) => g.items).map(({ name, href }) => ({ name, href })) } : null;
 };
 
-export default Footer;
+const SPALTEN = [
+  spalte("Produkte"),
+  spalte("Service"),
+  spalte("Rechner & Tools"),
+  {
+    titel: "Wissen & Förderung",
+    links: [
+      { name: "Ratgeber", href: "/ratgeber" },
+      { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon" },
+      { name: "FAQs", href: "/faqs" },
+      { name: "Landesförderungen", href: "/forderungen/landesforderungen" },
+      { name: "Steuerliche Vorteile", href: "/forderungen/steuerlich" },
+      { name: "Referenzprojekte", href: "/referenzen/projekte" },
+      { name: "Team", href: "/uber-uns/team" },
+      { name: "Jobs", href: "/uber-uns/jobs" },
+    ],
+  },
+].filter(Boolean);
+
+export default function Footer() {
+  const [popup, setPopup] = useState(false);
+  const jahr = new Date().getFullYear();
+
+  return (
+    <footer role="contentinfo" aria-label="Fußbereich Ökovolt Deutschland" className="ov-noise relative isolate overflow-hidden bg-navy-950 text-white">
+      <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10 opacity-60" />
+      <div aria-hidden="true" className="absolute -left-40 top-0 -z-10 h-[500px] w-[500px] rounded-full bg-ov-500/15 blur-[140px]" />
+
+      <div className="ov-container pt-16 md:pt-20">
+        {/* Kopfzeile */}
+        <div className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-xl">
+            <Link href="/" className="relative block h-[62px] w-[200px]" aria-label="Zur Startseite">
+              <Image src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt GmbH Solartechnik" fill sizes="200px" className="object-contain object-left" />
+            </Link>
+            <p className="mt-5 font-display text-[clamp(1.4rem,1.1rem+1vw,2rem)] font-bold leading-tight tracking-tight">
+              Solarenergie für alle – <span className="ov-text-gradient-light">einfach, sicher, wirtschaftlich.</span>
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link href="/angebot" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-500 px-6 text-[15px] font-semibold transition-colors hover:bg-ov-600">
+              Angebot anfragen
+              <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+            <a href={KONTAKT.telefonHref} className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold ring-1 ring-inset ring-white/25 transition-colors hover:bg-white/10">
+              <Phone aria-hidden="true" className="h-4 w-4" />
+              {KONTAKT.telefon}
+            </a>
+          </div>
+        </div>
+
+        {/* Linkspalten */}
+        <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
+          <div className="space-y-6 text-[15px] text-white/70">
+            <div className="flex gap-3">
+              <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
+              <address className="not-italic">
+                ÖKOVOLT GmbH Solartechnik<br />
+                {KONTAKT.strasse}<br />
+                {KONTAKT.ort}, Deutschland
+              </address>
+            </div>
+            <p className="flex gap-3">
+              <Mail aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
+              <a href={`mailto:${KONTAKT.email}`} className="transition-colors hover:text-white">{KONTAKT.email}</a>
+            </p>
+            <div className="flex gap-3">
+              <Clock aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+                {KONTAKT.oeffnungszeiten.map((o) => (
+                  <div key={o.tage} className="contents">
+                    <dt>{o.tage}</dt>
+                    <dd className="ov-num text-white">{o.zeit}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <ul className="flex gap-2 pt-2">
+              {SOCIAL.map(({ href, label, Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Ökovolt auf ${label}`}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/80 ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:bg-ov-500 hover:text-white"
+                  >
+                    <Icon aria-hidden="true" className="h-4 w-4" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {SPALTEN.map((s) => (
+            <nav key={s.titel} aria-label={s.titel}>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-white/45">{s.titel}</p>
+              <ul className="mt-5 space-y-3">
+                {s.links.map((l) => (
+                  <li key={l.href + l.name}>
+                    <Link href={l.href} className="text-[14.5px] text-white/75 transition-colors hover:text-ov-300">
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        {/* Live-Leiste */}
+        <div className="flex flex-col gap-4 rounded-2xl bg-white/[0.04] px-5 py-4 ring-1 ring-white/10 md:flex-row md:items-center md:justify-between">
+          <LiveTicker />
+          <p className="text-[12px] text-white/40">Daten: Fraunhofer ISE Energy-Charts (CC BY 4.0)</p>
+        </div>
+
+        {/* Rechtliches */}
+        <div className="flex flex-col gap-4 py-8 text-[13.5px] text-white/50 md:flex-row md:items-center md:justify-between">
+          <p>© {jahr} ÖKOVOLT GmbH Solartechnik · Alle Rechte vorbehalten</p>
+          <nav aria-label="Rechtliche Links">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              <li><button type="button" onClick={() => setPopup(true)} className="transition-colors hover:text-white">Privatsphäre-Einstellungen</button></li>
+              <li><Link href="/impressum" className="transition-colors hover:text-white">Impressum</Link></li>
+              <li><Link href="/datenschutz" className="transition-colors hover:text-white">Datenschutz</Link></li>
+              <li><Link href="/agb" className="transition-colors hover:text-white">AGB</Link></li>
+              <li><Link href="/hinweisgebersystem" className="transition-colors hover:text-white">Hinweisgebersystem</Link></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      {popup && <CookieBanner forceShow={popup} onClose={() => setPopup(false)} />}
+    </footer>
+  );
+}

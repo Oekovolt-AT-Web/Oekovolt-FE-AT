@@ -255,6 +255,26 @@ const PrivacyPolicy = () => {
         </p>
       </section>
 
+      <section className="mb-12">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Hinweisgebersystem</h2>
+        <p className="mb-4">
+          Über unser internes Hinweisgebersystem nach dem Hinweisgeberschutzgesetz (HinSchG) können Verstöße vertraulich
+          und auf Wunsch anonym gemeldet werden. Die Verarbeitung erfolgt zur Entgegennahme, Prüfung und Dokumentation von
+          Meldungen sowie zur Ergreifung von Folgemaßnahmen auf Grundlage von Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit
+          §§ 10, 12 und 17 HinSchG. Zugriff haben ausschließlich die Personen der internen Meldestelle. Beim Absenden einer
+          Meldung werden keine IP-Adressen gespeichert; die Dokumentation wird drei Jahre nach Abschluss des Verfahrens
+          gelöscht (§ 11 Abs. 5 HinSchG).
+        </p>
+        <p>
+          Ausführliche Informationen nach Art. 13 und 14 DSGVO – auch für Personen, die in einer Meldung genannt werden –
+          finden Sie in den{" "}
+          <a href="/hinweisgebersystem#datenschutz" className="text-[#669933] hover:underline">
+            Datenschutzhinweisen zum Hinweisgebersystem
+          </a>
+          .
+        </p>
+      </section>
+
       <section>
         <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Server-Log-Dateien</h2>
         <p className="mb-4">

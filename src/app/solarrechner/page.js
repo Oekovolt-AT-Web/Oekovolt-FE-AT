@@ -1,23 +1,32 @@
 // src/app/solarrechner/page.js
 
-import Link from "next/link";
-import { Calculator, CheckCircle2 } from "lucide-react";
+import { BatteryCharging, Calculator, Compass, Euro, Gauge, PlugZap, Sun, Thermometer, TrendingDown, Wrench, Zap } from "lucide-react";
 
-import Breadcrumbs from "@/components/Ratgeber/Breadcrumbs";
-import FaqAccordion from "@/components/Ratgeber/FaqAccordion";
+import PageHero from "@/components/ui/PageHero";
+import Section from "@/components/ui/Section";
+import SectionHeading from "@/components/ui/SectionHeading";
+import SplitMedia from "@/components/ui/SplitMedia";
+import FeatureGrid from "@/components/ui/FeatureGrid";
+import Steps from "@/components/ui/Steps";
+import Faq from "@/components/ui/Faq";
+import CtaBand from "@/components/ui/CtaBand";
+import Reveal from "@/components/ui/Reveal";
+import Querverweise from "@/components/Reusable/Querverweise";
 import Solarrechner from "@/components/Solarrechner/Rechner";
-import EndSection from "@/components/Reusable/end";
-import { ANNAHMEN } from "@/data/solarrechner";
+import { ANNAHMEN, AUSRICHTUNGEN, preisProKwp } from "@/data/solarrechner";
 import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 
 const BASE_URL = "https://www.oekovolt.de";
 const PAGE_URL = `${BASE_URL}/solarrechner`;
 
+const TITLE = "Solarrechner 2026: Ertrag & Amortisation | Ökovolt";
+const DESCRIPTION =
+  "Kostenloser PV-Rechner: Ertrag, Ersparnis, Autarkie und 20-Jahres-Cashflow Ihrer Solaranlage mit EEG-Sätzen 2026 berechnen – und direkt ein Angebot anfragen.";
+
 // Deutschlandspezifisch (EEG-Vergütung, deutscher Strompreis) -> kein hreflang.
 export const metadata = {
-  title: "Solarrechner: Was bringt eine PV-Anlage? | Ökovolt",
-  description:
-    "Solarrechner kostenlos: Ertrag, Ersparnis, Autarkie und Amortisation Ihrer PV-Anlage in Sekunden berechnen – mit den Sätzen von 2026.",
+  title: TITLE,
+  description: DESCRIPTION,
   keywords: [
     "Solarrechner",
     "Photovoltaik Rechner",
@@ -25,7 +34,7 @@ export const metadata = {
     "Solaranlage Kosten berechnen",
     "Photovoltaik Ertrag berechnen",
     "Amortisation Photovoltaik",
-    "Stromspeicher Größe berechnen",
+    "Autarkie berechnen",
   ],
   alternates: { canonical: PAGE_URL },
   robots: { index: true, follow: true },
@@ -33,41 +42,49 @@ export const metadata = {
     type: "website",
     url: PAGE_URL,
     siteName: "Ökovolt Deutschland",
-    title: "Solarrechner: Was bringt eine PV-Anlage?",
-    description:
-      "Ertrag, Ersparnis, Autarkie und Amortisation Ihrer Photovoltaikanlage berechnen – mit aktuellen Einspeisesätzen.",
-    images: [
-      {
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Solarrechner",
-      },
-    ],
+    title: "Solarrechner: Was bringt Ihnen eine PV-Anlage?",
+    description: DESCRIPTION,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Solarrechner" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Solarrechner: Was bringt Ihnen eine PV-Anlage?",
+    description: DESCRIPTION,
+    images: [`${BASE_URL}/og-image.jpg`],
   },
 };
 
+const satz10 = ct(VERGUETUNG.saetze[0].teileinspeisung);
+const strompreisCt = String(Math.round(ANNAHMEN.strompreis * 100));
+
 const FAQ = [
   {
-    frage: "Wie genau ist der Solarrechner?",
-    antwort:
-      "Der Rechner liefert eine belastbare erste Orientierung auf Basis von Erfahrungswerten für Süddeutschland. Verschattung durch Bäume oder Nachbargebäude, der konkrete Dachaufbau und Ihr Verbrauchsverhalten über den Tag können das Ergebnis spürbar verschieben. Für eine verbindliche Aussage schauen wir uns Ihr Dach an.",
+    q: "Wie genau ist der Solarrechner?",
+    a: "Der Rechner liefert eine belastbare erste Orientierung auf Basis von Erfahrungswerten für Süddeutschland. Verschattung durch Bäume oder Nachbargebäude, der konkrete Dachaufbau und Ihr Verbrauchsverhalten über den Tag können das Ergebnis um 10–20 % verschieben. Für eine verbindliche Aussage schauen wir uns Ihr Dach an.",
   },
   {
-    frage: "Welche Anlagengröße passt zu meinem Verbrauch?",
-    antwort:
-      "Als Faustregel gilt rund 1 kWp je 1.000 kWh Jahresverbrauch. Eine deutlich größere Anlage produziert vor allem Strom, der zum niedrigen Einspeisesatz ins Netz geht – das rechnet sich langsamer. Der Rechner weist Sie darauf hin, wenn Ihre Eingabe stark über dem Bedarf liegt.",
+    q: "Welche Anlagengröße passt zu meinem Verbrauch?",
+    a: "Als Faustregel gilt mindestens 1 kWp je 1.000 kWh Jahresverbrauch; mit Blick auf E-Auto oder Wärmepumpe darf es heute gern das 1,5-Fache sein, weil Module günstig sind. Deutlich größere Anlagen erzeugen vor allem Strom, der zum niedrigen Einspeisesatz ins Netz geht – das rechnet sich langsamer. Der Rechner weist Sie darauf hin.",
   },
   {
-    frage: "Lohnt sich ein Stromspeicher?",
-    antwort:
-      "Ein Speicher hebt die Autarkie typischerweise von rund 30 % auf 60 bis 80 %. Weil jede selbst genutzte Kilowattstunde rund 35 Cent Netzstrom ersetzt, die Einspeisung aber nur wenige Cent bringt, steigt der jährliche Nutzen deutlich. Gleichzeitig steigt die Investition – probieren Sie im Rechner beide Varianten durch.",
+    q: "Wie berechnet der Rechner die Autarkie?",
+    a: "Die Autarkie hängt vom Verhältnis zwischen Jahresertrag und Verbrauch sowie zwischen Speichergröße und Verbrauch ab. Der Rechner nutzt dafür Sättigungskurven, die sich an Simulationen typischer Haushaltslastprofile orientieren: Ohne Speicher sind meist 25–38 % möglich, mit passendem Speicher 55–75 %. 100 % Autarkie sind im Winter praktisch nicht erreichbar.",
   },
   {
-    frage: "Warum ist die Amortisation länger als früher?",
-    antwort: `Die Einspeisevergütung ist über die Jahre stark gesunken und liegt aktuell bei ${ct(
-      VERGUETUNG.saetze[0].teileinspeisung
-    )} ct/kWh. Der wirtschaftliche Hebel liegt heute nicht mehr in der Einspeisung, sondern im Eigenverbrauch. Anlagen, die gut auf den eigenen Bedarf abgestimmt sind, amortisieren sich deshalb weiterhin zügig.`,
+    q: "Lohnt sich ein Stromspeicher?",
+    a: `Ein Speicher hebt die Autarkie typischerweise von rund 30 % auf 60 bis 75 %. Jede zusätzlich selbst genutzte Kilowattstunde ersetzt rund ${strompreisCt} Cent Netzstrom, eingespeist brächte sie nur ${satz10} Cent. Gleichzeitig steigt die Investition – schalten Sie den Speicher im Rechner ein und aus, um beide Varianten zu vergleichen.`,
+  },
+  {
+    q: "Warum ist die Amortisation länger als früher?",
+    a: `Die Einspeisevergütung ist über die Jahre stark gesunken und liegt für Anlagen bis 10 kWp aktuell bei ${satz10} ct/kWh. Der wirtschaftliche Hebel liegt heute im Eigenverbrauch. Gut auf den Bedarf abgestimmte Anlagen amortisieren sich deshalb weiterhin meist in 10 bis 14 Jahren – bei einer Lebensdauer von 25 Jahren und mehr.`,
+  },
+  {
+    q: "Was bedeutet die Strompreis-Entwicklung im Rechner?",
+    a: "Sie legt fest, um wie viel Prozent der Netzstrompreis jährlich steigt, den Ihr Solarstrom ersetzt. „Gleichbleibend“ ist die vorsichtigste Annahme; 2 % liegen unter dem langjährigen Mittel. Die Einspeisevergütung bleibt dagegen 20 Jahre fest.",
+  },
+  {
+    q: "Ändert sich die Einspeisevergütung 2027?",
+    a: "Das Bundeskabinett hat am 29. Juli 2026 den Entwurf einer EEG-Novelle beschlossen, nach dem die feste Einspeisevergütung für neue kleine Dachanlagen ab 2027 durch befristete Übergangsmodelle und Direktvermarktung ersetzt werden soll. Das Gesetz ist noch nicht verabschiedet. Wer 2026 in Betrieb geht, behält den heutigen Satz für 20 Jahre.",
   },
 ];
 
@@ -83,127 +100,172 @@ export default function SolarrechnerPage() {
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         inLanguage: "de-DE",
+        isAccessibleForFree: true,
         description:
-          "Berechnet Ertrag, Eigenverbrauch, Autarkie, Ersparnis und Amortisation einer Photovoltaikanlage.",
+          "Berechnet Ertrag, Eigenverbrauch, Autarkie, Ersparnis, Amortisation und den 20-Jahres-Cashflow einer Photovoltaikanlage mit den EEG-Sätzen 2026.",
+        featureList: [
+          "Jahresertrag nach Ausrichtung und Dachneigung",
+          "Autarkie und Eigenverbrauchsquote mit und ohne Stromspeicher",
+          "Einspeisevergütung anteilig nach EEG",
+          "Amortisation und kumulierter Cashflow über 20 Jahre",
+        ],
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
         publisher: { "@id": `${BASE_URL}/#organization` },
       },
       {
-        "@type": "BreadcrumbList",
-        "@id": `${PAGE_URL}/#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-          { "@type": "ListItem", position: 2, name: "Solarrechner", item: PAGE_URL },
-        ],
-      },
-      {
-        "@type": "FAQPage",
-        "@id": `${PAGE_URL}/#faq`,
-        mainEntity: FAQ.map((f) => ({
-          "@type": "Question",
-          name: f.frage,
-          acceptedAnswer: { "@type": "Answer", text: f.antwort },
-        })),
+        "@type": "WebPage",
+        "@id": `${PAGE_URL}/#webpage`,
+        url: PAGE_URL,
+        name: TITLE,
+        description: DESCRIPTION,
+        inLanguage: "de-DE",
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+        mainEntity: { "@id": `${PAGE_URL}/#app` },
+        dateModified: VERGUETUNG.gueltigAb,
       },
     ],
   };
 
+  const annahmen = [
+    { icon: Sun, title: `${ANNAHMEN.ertragProKwpSued.toLocaleString("de-DE")} kWh je kWp`, text: "Spezifischer Jahresertrag bei Südausrichtung – belastbar für das Allgäu und Schwaben. Norddeutschland liegt eher bei 900 kWh." },
+    { icon: Compass, title: "Ausrichtung & Neigung", text: `Ost/West bringt rund ${Math.round((1 - AUSRICHTUNGEN.find((a) => a.id === "ost-west").faktor) * 100)} % weniger Ertrag als Süd, verteilt ihn aber besser über den Tag. Flachdächer rechnen wir mit 10 % Abschlag.` },
+    { icon: Zap, title: `${strompreisCt} ct/kWh Netzstrom`, text: "Bewusst vorsichtiger Mittelwert zwischen Neukunden- und Bestandstarifen 2026. Jede selbst genutzte kWh spart diesen Betrag." },
+    { icon: TrendingDown, title: `${satz10} ct/kWh Einspeisung`, text: `Vergütung nach EEG für Inbetriebnahmen ab ${VERGUETUNG.gueltigAbLabel}, über 10 kWp anteilig mit ${ct(VERGUETUNG.saetze[1].teileinspeisung)} ct – 20 Jahre fest.` },
+    { icon: Euro, title: `${Math.round(preisProKwp(30)).toLocaleString("de-DE")}–${Math.round(preisProKwp(5)).toLocaleString("de-DE")} € je kWp`, text: `Schlüsselfertig inkl. Montage und Anmeldung, 0 % USt. Speicher mit ${ANNAHMEN.speicherPreisProKwh} € je kWh, gemeinsam installiert.` },
+    { icon: Wrench, title: `${ANNAHMEN.betriebskostenProKwp} € je kWp im Jahr`, text: "Versicherung, Wartung, Zählermiete und Rücklage für den Wechselrichtertausch – steigt im Rechner mit 2 % Inflation." },
+  ];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <header className="border-b border-gray-200 bg-gray-100">
-        <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-14">
-          <Breadcrumbs
-            className="mb-6"
-            items={[{ name: "Startseite", href: "/" }, { name: "Solarrechner" }]}
+      <PageHero
+        variant="dark"
+        breadcrumbs={[{ name: "Rechner & Tools", href: "/rechner" }, { name: "Solarrechner" }]}
+        eyebrow="Kostenlos · ohne Anmeldung · Stand September 2026"
+        title={
+          <>
+            Solarrechner: Was bringt Ihnen eine <span className="ov-text-gradient-light">PV-Anlage</span>?
+          </>
+        }
+        lead={`Größe, Verbrauch und Dach einstellen – Sie sehen sofort Ertrag, Autarkie, Ersparnis und den Cashflow über 20 Jahre. Gerechnet wird mit den Einspeisesätzen ab dem ${VERGUETUNG.gueltigAbLabel}.`}
+      >
+        <Reveal dir="scale" className="relative mt-12 md:mt-14">
+          <div aria-hidden="true" className="absolute -inset-2 rounded-[2.4rem] bg-gradient-to-br from-white/15 via-white/5 to-ov-400/20 blur-[1px] md:-inset-3" />
+          <div className="ov-glass relative rounded-[2.25rem] p-1.5 md:p-2.5">
+            <Solarrechner />
+          </div>
+        </Reveal>
+      </PageHero>
+
+      <Section tone="white" space="lg">
+        <SectionHeading
+          eyebrow="Transparente Annahmen"
+          title={<>Womit der Rechner <span className="ov-text-gradient">rechnet</span></>}
+          lead="Keine Blackbox: Alle Werte stammen aus einer zentralen Datei und werden bei jeder Änderung von EEG-Sätzen oder Marktpreisen aktualisiert. Stand: September 2026."
+          className="mb-12"
+        />
+        <FeatureGrid items={annahmen} cols={3} />
+      </Section>
+
+      <Section tone="sand" space="lg">
+        <SplitMedia
+          eyebrow="Der wichtigste Hebel"
+          title="Warum der Eigenverbrauch entscheidet"
+          text={[
+            `Eine selbst verbrauchte Kilowattstunde spart Ihnen rund ${strompreisCt} Cent Netzstrom. Dieselbe Kilowattstunde ins Netz gespeist bringt ${satz10} Cent – also etwa ein Viertel.`,
+            "Darum rechnet sich heute die Anlage am besten, die zu Ihrem Verbrauch passt: mit Speicher, der den Mittagsüberschuss in den Abend verschiebt, und mit Wallbox oder Wärmepumpe, die Solarstrom direkt nutzen.",
+          ]}
+          points={[
+            { title: "Speicher", text: "hebt die Autarkie typischerweise auf 60–75 %" },
+            { title: "Überschussladen", text: "macht aus Einspeisung Fahrstrom für wenige Cent" },
+            { title: "Energiemanagement", text: "startet Verbraucher, wenn die Sonne scheint" },
+          ]}
+          action={{ label: "Ratgeber Einspeisevergütung 2026", href: "/ratgeber/einspeiseverguetung-2026", variant: "secondary" }}
+          aside={
+            <div className="rounded-[2rem] bg-white p-7 shadow-xl ring-1 ring-ink-200/70 md:p-10">
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Wert einer Kilowattstunde</p>
+              <div className="mt-8 space-y-7">
+                <div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[15px] font-semibold text-ink-800">Selbst genutzt</span>
+                    <span className="ov-num font-display text-[34px] font-extrabold text-ov-600">~{strompreisCt} ct</span>
+                  </div>
+                  <div className="mt-2 h-4 rounded-full bg-gradient-to-r from-ov-400 to-ov-600" />
+                </div>
+                <div>
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-[15px] font-semibold text-ink-800">Eingespeist</span>
+                    <span className="ov-num font-display text-[34px] font-extrabold text-ink-500">{satz10} ct</span>
+                  </div>
+                  <div className="mt-2 h-4 rounded-full bg-ink-100">
+                    <div className="h-full rounded-full bg-ink-300" style={{ width: `${(VERGUETUNG.saetze[0].teileinspeisung / (ANNAHMEN.strompreis * 100)) * 100}%` }} />
+                  </div>
+                </div>
+              </div>
+              <p className="mt-8 border-t border-ink-100 pt-5 text-[13.5px] leading-relaxed text-ink-500">
+                Netzstrom-Mittelwert 2026 gegenüber EEG-Satz für Anlagen bis 10 kWp, Inbetriebnahme ab {VERGUETUNG.gueltigAbLabel}.
+              </p>
+            </div>
+          }
+        />
+      </Section>
+
+      <Section tone="white" space="lg">
+        <SectionHeading
+          eyebrow="Vom Ergebnis zur Anlage"
+          title="In drei Schritten zu Ihrer Solaranlage"
+          align="center"
+          className="mb-14"
+        />
+        <Steps
+          items={[
+            { icon: Calculator, title: "Durchrechnen", text: "Mit dem Rechner die sinnvolle Größe finden – mit oder ohne Speicher, mit Ihrem echten Verbrauch." },
+            { icon: Gauge, title: "Angebot anfragen", text: "Ihre Werte werden direkt übernommen. Wir prüfen Dach, Zählerschrank und Verschattung und rechnen exakt nach." },
+            { icon: Sun, title: "Planung & Montage", text: "Planung, Montage, Netzanmeldung und Marktstammdatenregister aus einer Hand – vom Fachbetrieb aus Türkheim." },
+          ]}
+        />
+      </Section>
+
+      <Section tone="navy" space="lg" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="relative">
+          <SectionHeading dark eyebrow="Weitere Rechner" title="Einzelne Fragen genauer beantworten" className="mb-12" />
+          <FeatureGrid
+            tone="dark"
+            cols={3}
+            items={[
+              { icon: BatteryCharging, title: "Stromspeicher-Rechner", text: "Welche Kapazität sich für Ihren Haushalt wirklich rechnet – inklusive Wallbox und Wärmepumpe.", href: "/rechner/stromspeicher" },
+              { icon: PlugZap, title: "E-Auto-Laderechner", text: "Was Laden mit eigenem Solarstrom gegenüber Netzstrom und Tankstelle spart.", href: "/rechner/wallbox" },
+              { icon: Thermometer, title: "Wärmepumpen-Rechner", text: "Heizkosten mit Wärmepumpe und PV im Vergleich zu Gas und Öl.", href: "/rechner/waermepumpe" },
+            ]}
           />
-          <h2 className="mb-3 flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-[#669933]">
-            <Calculator aria-hidden="true" className="h-4 w-4" />
-            Kostenlos & ohne Anmeldung
-          </h2>
-          <h1 className="max-w-[22ch] text-[30px] font-semibold leading-tight text-gray-900 md:text-[44px]">
-            Solarrechner: Was bringt Ihnen eine PV-Anlage?
-          </h1>
-          <p className="mt-5 max-w-[65ch] text-[18px] leading-relaxed text-gray-600">
-            Anlagengröße, Verbrauch und Dach eingeben – Sie sehen sofort
-            Jahresertrag, Ersparnis, Autarkie und Amortisation. Gerechnet wird
-            mit den Einspeisesätzen, die seit dem{" "}
-            {VERGUETUNG.gueltigAbLabel} gelten.
-          </p>
         </div>
-      </header>
+      </Section>
 
-      <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-16">
-        <Solarrechner />
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading
+            eyebrow="Häufige Fragen"
+            title="Solarrechner – kurz & ehrlich erklärt"
+            lead="Fachbegriffe wie Autarkie, kWp oder Amortisation erklären wir ausführlich im Photovoltaik-Lexikon."
+          >
+            <a href="/wissen/lexikon" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+              Zum Photovoltaik-Lexikon
+            </a>
+          </SectionHeading>
+          <Faq items={FAQ} />
+        </div>
+      </Section>
 
-        {/* Erläuterung – gibt der Seite Textsubstanz für die Suche */}
-        <section className="mt-14 grid gap-10 lg:grid-cols-2">
-          <div>
-            <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-              Womit der Rechner arbeitet
-            </h2>
-            <ul className="space-y-3">
-              {[
-                `${ANNAHMEN.ertragProKwpSued} kWh Ertrag je kWp bei Südausrichtung – ein belastbarer Wert für das Allgäu und Schwaben.`,
-                `Rund ${ANNAHMEN.qmProKwp} m² Dachfläche je kWp mit heutigen Modulen.`,
-                `${String(ANNAHMEN.strompreis * 100).replace(".", ",")} ct/kWh als Netzstrompreis, den jede selbst genutzte Kilowattstunde ersetzt.`,
-                `Einspeisevergütung nach EEG, gestaffelt nach Anlagengröße – aktuell ${ct(
-                  VERGUETUNG.saetze[0].teileinspeisung
-                )} ct/kWh bis 10 kWp.`,
-                `${ANNAHMEN.betriebskostenProKwp} € je kWp und Jahr für Versicherung, Wartung und Zählermiete.`,
-              ].map((p) => (
-                <li key={p} className="flex gap-3">
-                  <CheckCircle2
-                    aria-hidden="true"
-                    className="mt-0.5 h-5 w-5 shrink-0 text-[#669933]"
-                  />
-                  <span className="text-[16px] leading-relaxed text-gray-700">
-                    {p}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="mb-4 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-              Warum der Eigenverbrauch entscheidet
-            </h2>
-            <p className="mb-4 max-w-[65ch] text-[16px] leading-relaxed text-gray-600">
-              Eine Kilowattstunde, die Sie selbst verbrauchen, spart Ihnen den
-              vollen Netzstrompreis. Dieselbe Kilowattstunde ins Netz gespeist
-              bringt nur einen Bruchteil davon. Der Unterschied ist der Grund,
-              warum sich ein Speicher heute für die meisten Haushalte rechnet –
-              und warum eine sehr große Anlage ohne passenden Verbrauch nicht
-              automatisch die bessere ist.
-            </p>
-            <p className="max-w-[65ch] text-[16px] leading-relaxed text-gray-600">
-              Wie sich die Vergütung entwickelt und was ab 2027 geplant ist,
-              erklären wir im{" "}
-              <Link
-                href="/ratgeber/einspeiseverguetung-2026"
-                className="font-medium text-[#669933] underline underline-offset-2 hover:no-underline"
-              >
-                Ratgeber zur Einspeisevergütung
-              </Link>
-              .
-            </p>
-          </div>
-        </section>
-
-        <section className="mt-14">
-          <h2 className="mb-6 text-[24px] font-semibold text-gray-900 md:text-[28px]">
-            Häufige Fragen zum Solarrechner
-          </h2>
-          <FaqAccordion items={FAQ} />
-        </section>
-      </div>
-
-      <EndSection />
+      <Querverweise pfad="/solarrechner" />
+      <CtaBand
+        title="Ihre Zahlen stehen. Jetzt prüfen wir Ihr Dach."
+        text="Wir übernehmen die Werte aus dem Rechner, sehen uns Dach, Zählerschrank und Verschattung an und machen daraus ein verbindliches Angebot – mit ehrlicher Wirtschaftlichkeitsrechnung."
+        primary={{ label: "Angebot anfragen", href: "/angebot" }}
+        secondary={{ label: "Speichergröße berechnen", href: "/rechner/stromspeicher" }}
+      />
     </>
   );
 }

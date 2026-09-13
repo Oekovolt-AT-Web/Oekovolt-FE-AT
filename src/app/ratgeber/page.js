@@ -1,27 +1,32 @@
 // src/app/ratgeber/page.js
 
 import Link from "next/link";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowUpRight, BookOpen, Calculator, HelpCircle } from "lucide-react";
 
-import Breadcrumbs from "@/components/Ratgeber/Breadcrumbs";
-import EndSection from "@/components/Reusable/end";
-import { alleArtikel, artikelPfad, datumLang } from "@/lib/ratgeber";
+import PageHero from "@/components/ui/PageHero";
+import Section from "@/components/ui/Section";
+import SectionHeading from "@/components/ui/SectionHeading";
+import FeatureGrid from "@/components/ui/FeatureGrid";
+import CtaBand from "@/components/ui/CtaBand";
+import Reveal from "@/components/ui/Reveal";
+import { ArtikelKarte } from "@/components/Ratgeber/Bausteine";
+import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
+import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
+import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
+import { WALLBOX, spanne } from "@/data/wallbox";
+import { BEGRIFFE } from "@/data/lexikon";
 
 const BASE_URL = "https://www.oekovolt.de";
 const PAGE_URL = `${BASE_URL}/ratgeber`;
 
+const DESCRIPTION =
+  "Photovoltaik verständlich erklärt: Einspeisevergütung 2026, Kosten je kWp, Stromspeicher und Wallbox – fundierte Ratgeber vom Fachbetrieb aus dem Allgäu.";
+
 // Deutschlandspezifischer Content -> kein hreflang, nur Canonical.
 export const metadata = {
-  title: "Photovoltaik-Ratgeber: Kosten, Förderung & Technik | Ökovolt",
-  description:
-    "Verständliche Antworten rund um Photovoltaik: Einspeisevergütung, Kosten, Förderung und Stromspeicher – von den Fachleuten aus dem Allgäu.",
-  keywords: [
-    "Photovoltaik Ratgeber",
-    "Solaranlage Ratgeber",
-    "Einspeisevergütung",
-    "Photovoltaik Kosten",
-    "Photovoltaik Förderung",
-  ],
+  title: "PV-Ratgeber 2026: Kosten, Förderung & Technik | Ökovolt",
+  description: DESCRIPTION,
+  keywords: ["Photovoltaik Ratgeber", "Solaranlage Ratgeber", "Einspeisevergütung", "Photovoltaik Kosten", "Photovoltaik Förderung", "Wallbox Installation"],
   alternates: { canonical: PAGE_URL },
   robots: { index: true, follow: true },
   openGraph: {
@@ -29,21 +34,14 @@ export const metadata = {
     url: PAGE_URL,
     siteName: "Ökovolt Deutschland",
     title: "Photovoltaik-Ratgeber | Ökovolt",
-    description:
-      "Verständliche Antworten rund um Photovoltaik: Einspeisevergütung, Kosten, Förderung und Stromspeicher.",
-    images: [
-      {
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Photovoltaik-Ratgeber",
-      },
-    ],
+    description: DESCRIPTION,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Ratgeber" }],
   },
 };
 
 export default function RatgeberPage() {
   const artikel = alleArtikel();
+  const [top, ...rest] = artikel;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -52,19 +50,11 @@ export default function RatgeberPage() {
         "@type": "CollectionPage",
         "@id": `${PAGE_URL}/#collection`,
         name: "Photovoltaik-Ratgeber",
-        description:
-          "Verständliche Antworten rund um Photovoltaik: Einspeisevergütung, Kosten, Förderung und Stromspeicher.",
+        description: DESCRIPTION,
         inLanguage: "de-DE",
         isPartOf: { "@id": `${BASE_URL}/#website` },
         publisher: { "@id": `${BASE_URL}/#organization` },
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${PAGE_URL}/#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-          { "@type": "ListItem", position: 2, name: "Ratgeber", item: PAGE_URL },
-        ],
+        mainEntity: { "@id": `${PAGE_URL}/#list` },
       },
       {
         "@type": "ItemList",
@@ -79,84 +69,93 @@ export default function RatgeberPage() {
     ],
   };
 
+  // Zitierfähige Kennzahlen – alle aus den zentralen Datenquellen.
+  const fakten = [
+    { wert: `${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct`, text: `Einspeisevergütung je kWh für Anlagen bis 10 kWp (Inbetriebnahme ab ${VERGUETUNG.gueltigAbLabel})`, href: "/ratgeber/einspeiseverguetung-2026" },
+    { wert: `~${Math.round((10 * preisProKwp(10)) / 1000)}.000 €`, text: "kostet eine schlüsselfertige 10-kWp-Anlage 2026 ohne Speicher", href: "/ratgeber/solaranlage-kosten" },
+    { wert: "0 %", text: "Umsatzsteuer auf PV-Anlagen und Speicher an Wohngebäuden (§ 12 Abs. 3 UStG)", href: "/forderungen/steuerlich" },
+    { wert: spanne([WALLBOX.gesamtVon, WALLBOX.gesamtBis]).replace(" €", ""), text: "Euro kostet eine 11-kW-Wallbox inklusive Installation im Einfamilienhaus", href: "/ratgeber/wallbox-installation" },
+  ];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      <PageHero
+        variant="dark"
+        breadcrumbs={[{ name: "Ratgeber" }]}
+        eyebrow="Wissen vom Fachbetrieb · Stand September 2026"
+        title={
+          <>
+            Photovoltaik-<span className="ov-text-gradient-light">Ratgeber</span>
+          </>
+        }
+        lead="Was kostet eine Anlage, wie viel bringt die Einspeisung, welche Wallbox passt? Hier beantworten wir die Fragen, die uns in der Beratung am häufigsten gestellt werden – ehrlich, gründlich und ohne Fachchinesisch."
+        stats={[
+          { value: artikel.length, label: "ausführliche Ratgeber" },
+          { value: BEGRIFFE.length, label: "Begriffe im Lexikon" },
+          { value: 15, suffix: "+", label: "Jahre Praxiserfahrung" },
+        ]}
       />
 
-      <header className="border-b border-gray-200 bg-gray-100">
-        <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-14">
-          <Breadcrumbs
-            className="mb-6"
-            items={[{ name: "Startseite", href: "/" }, { name: "Ratgeber" }]}
-          />
-          <h2 className="mb-3 inline-block text-[13px] font-semibold uppercase tracking-wide text-[#669933]">
-            Wissen
-          </h2>
-          <h1 className="max-w-[20ch] text-[30px] font-semibold leading-tight text-gray-900 md:text-[44px]">
-            Photovoltaik-Ratgeber
-          </h1>
-          <p className="mt-5 max-w-[65ch] text-[18px] leading-relaxed text-gray-600">
-            Was kostet eine Anlage, wie viel bringt die Einspeisung, welche
-            Förderung gibt es? Hier beantworten wir die Fragen, die uns in der
-            Beratung am häufigsten gestellt werden – ohne Fachchinesisch.
-          </p>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-6 py-10 md:px-12 md:py-16">
+      <Section tone="sand" space="lg">
+        <SectionHeading eyebrow="Neu & aktualisiert" title="Aktuelle Artikel" className="mb-10" />
         {artikel.length === 0 ? (
-          <p className="text-[16px] text-gray-600">
-            Die ersten Beiträge erscheinen in Kürze.
-          </p>
+          <p className="text-[16px] text-ink-600">Die ersten Beiträge erscheinen in Kürze.</p>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {artikel.map((a) => (
-              <article
-                key={a.slug}
-                className="group relative flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl focus-within:ring-2 focus-within:ring-[#669933] focus-within:ring-offset-2"
-              >
-                <p className="mb-3 text-[12px] font-semibold uppercase tracking-wide text-[#669933]">
-                  {a.kategorie}
-                </p>
-                <h2 className="mb-3 text-[20px] font-semibold leading-snug text-gray-900 transition-colors group-hover:text-[#669933]">
-                  {/* Stretched Link: deckt die ganze Karte ab, damit pro Karte
-                      nur EIN Link auf die Ziel-URL zeigt. */}
-                  <Link
-                    href={artikelPfad(a.slug)}
-                    className="outline-none after:absolute after:inset-0 after:content-['']"
-                  >
-                    {a.title}
-                  </Link>
-                </h2>
-                <p className="mb-6 flex-1 text-[15px] leading-relaxed text-gray-600">
-                  {a.excerpt}
-                </p>
-                <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-gray-500">
-                  <time dateTime={a.aktualisiert}>{datumLang(a.aktualisiert)}</time>
-                  <span className="flex items-center gap-1.5">
-                    <Clock aria-hidden="true" className="h-3.5 w-3.5" />
-                    {a.lesezeit} Min.
-                  </span>
-                </div>
-                {/* Rein visuelle Affordance – der Link liegt bereits ueber der
-                    gesamten Karte, ein zweiter waere ein doppelter Treffer. */}
-                <span
-                  aria-hidden="true"
-                  className="inline-flex items-center gap-2 text-[14px] font-semibold uppercase tracking-wide text-[#669933]"
-                >
-                  Weiterlesen
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </span>
-              </article>
-            ))}
+          <div className="grid gap-5 lg:grid-cols-[1.35fr_1fr]">
+            {top && <ArtikelKarte artikel={top} gross />}
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+              {rest.map((a, i) => (
+                <ArtikelKarte key={a.slug} artikel={a} delay={(i + 1) * 90} />
+              ))}
+            </div>
           </div>
         )}
-      </div>
+      </Section>
 
-      <EndSection />
+      <Section tone="navy" space="lg" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-32 top-0 h-[420px] w-[420px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="relative">
+          <SectionHeading dark eyebrow="Mehr Wissen" title="Kurz nachschlagen oder selbst rechnen" className="mb-12" />
+          <FeatureGrid
+            tone="dark"
+            cols={3}
+            items={[
+              { icon: BookOpen, title: "Photovoltaik-Lexikon", text: `${BEGRIFFE.length} Fachbegriffe von Autarkiegrad bis Zyklenfestigkeit – jeweils mit Definition in einem Satz.`, href: "/wissen/lexikon" },
+              { icon: HelpCircle, title: "Häufige Fragen", text: "Kurze Antworten zu Planung, Kosten, Speicher, Anmeldung und Service – mit Suche.", href: "/faqs" },
+              { icon: Calculator, title: "Solarrechner", text: `Ertrag, Autarkie und Amortisation mit ${Math.round(ANNAHMEN.strompreis * 100)} ct Strompreis und den EEG-Sätzen 2026.`, href: "/solarrechner" },
+            ]}
+          />
+        </div>
+      </Section>
+
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading
+            eyebrow="Auf einen Blick"
+            title="Zahlen, die Sie 2026 kennen sollten"
+            lead="Die wichtigsten Richtwerte aus unseren Ratgebern – regelmäßig geprüft und mit der ausführlichen Erklärung verlinkt."
+          />
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {fakten.map((f, i) => (
+              <Reveal as="li" key={f.href} delay={i * 70} className="flex">
+                <Link href={f.href} className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-200 md:p-7">
+                  <ArrowUpRight aria-hidden="true" className="absolute right-5 top-5 h-5 w-5 text-ink-300 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ov-600" />
+                  <span className="ov-num font-display text-[clamp(1.9rem,1.5rem+1.2vw,2.6rem)] font-extrabold leading-none tracking-tight text-ink-900">{f.wert}</span>
+                  <span className="mt-3 text-[15px] leading-relaxed text-ink-600">{f.text}</span>
+                </Link>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      <CtaBand
+        title="Genug gelesen? Wir rechnen Ihr Projekt konkret durch."
+        text="Aus Richtwerten wird ein Angebot: Wir prüfen Dach, Zählerschrank und Verbrauch und planen die Anlage, die zu Ihnen passt – vom Fachbetrieb aus Türkheim."
+      />
     </>
   );
 }

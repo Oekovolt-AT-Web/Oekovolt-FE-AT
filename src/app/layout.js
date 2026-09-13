@@ -1,15 +1,22 @@
 import "./globals.css";
-import { Open_Sans } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
 
-// globals.css deklarierte "Open Sans", ohne dass die Schrift je geladen wurde -
-// die Seite lief auf der jeweiligen System-Schrift des Besuchers. next/font
-// hostet sie selbst (kein Google-Request beim Nutzer) und setzt font-display:swap.
-const openSans = Open_Sans({
+// Zwei Schriften, klar getrennte Rollen: Inter trägt den Fließtext (hohe
+// Lesbarkeit auch bei langen deutschen Komposita), Manrope die Überschriften
+// (geometrisch, markant, gute Umlaute). next/font hostet beide selbst.
+const inter = Inter({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-open-sans",
+  variable: "--font-inter",
+  fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
+});
+
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-manrope",
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
@@ -86,9 +93,11 @@ const siteSchema = {
         geoRadius: "600000",
       },
       sameAs: [
-        "https://www.facebook.com/oekovolt",
-        "https://www.instagram.com/oekovolt",
-        "https://www.linkedin.com/company/oekovolt/",
+        "https://www.facebook.com/oekovoltdeutschland",
+        "https://www.instagram.com/oekovoltdeutschland/",
+        "https://www.linkedin.com/company/%C3%B6kovoltdeutchland",
+        "https://x.com/Oekovolt_De",
+        "https://de.pinterest.com/oekovoltdeutschland/",
       ],
       knowsAbout: [
         "Photovoltaik",
@@ -124,14 +133,6 @@ const siteSchema = {
       description: "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen.",
 
       publisher: { "@id": `${BASE_URL}/#organization` },
-      potentialAction: {
-        "@type": "SearchAction",
-        target: {
-          "@type": "EntryPoint",
-          urlTemplate: `${BASE_URL}/?s={search_term_string}`,
-        },
-        "query-input": "required name=search_term_string",
-      },
       copyrightYear: new Date().getFullYear(),
       copyrightHolder: { "@id": `${BASE_URL}/#organization` },
     },
@@ -194,11 +195,11 @@ export const metadata = {
       "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen. Kostenlose Beratung!",
     images: [
       {
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
+        url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: "Ökovolt Deutschland – Photovoltaik & Solartechnik",
-        type: "image/webp",
+        type: "image/jpeg",
       },
     ],
   },
@@ -209,7 +210,7 @@ export const metadata = {
     title: "Ökovolt Deutschland – Photovoltaik & Solaranlagen",
     description:
       "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen.",
-    images: [`${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`],
+    images: [`${BASE_URL}/og-image.jpg`],
   },
   robots: {
     index: true,
@@ -237,7 +238,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="de" dir="ltr" className={openSans.variable}>
+    <html lang="de" dir="ltr" className={`${inter.variable} ${manrope.variable}`}>
       <head>
         {/* Resource hints */}
         {/* <link rel="dns-prefetch" href="https://unpkg.com" /> */}
@@ -259,7 +260,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://www.google-analytics.com" />
         <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       </head>
-      <body className={`bg-white text-black`}>
+      <body className="bg-white text-ink-900">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#669933] focus:text-white focus:rounded">Zum Hauptinhalt springen</a>
         <script
           type="application/ld+json"

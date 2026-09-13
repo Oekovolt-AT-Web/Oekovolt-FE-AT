@@ -2,33 +2,32 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Calculator, Phone } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ArrowRight, Phone } from "lucide-react";
+
+// Auf diesen Seiten ist die Leiste überflüssig oder stört den Ablauf.
+const AUSGENOMMEN = ["/angebot", "/kontakt", "/impressum", "/datenschutz", "/agb", "/hinweisgebersystem"];
 
 /**
- * Feste Handlungsleiste am unteren Rand – nur auf Mobilgeräten.
+ * Feste Handlungsleiste am unteren Rand – nur auf Mobilgeräten, global.
  *
- * Auf dem Handy ist der Hero-Button nach dem ersten Wischen weg, der nächste
- * Kontaktweg kommt oft erst tausende Pixel später. Die Leiste erscheint erst,
- * wenn der Hero verlassen ist, und verschwindet wieder, sobald der Footer mit
- * seinen eigenen Kontaktdaten ins Bild kommt – sie soll helfen, nicht stören.
- *
- * Solange sie sichtbar ist, bekommt <body> eine Klasse, über die globals.css
- * den Zurück-nach-oben-Button anhebt; sonst lägen beide übereinander.
+ * Erscheint erst, wenn der Hero verlassen ist, und verschwindet, sobald der
+ * Footer mit seinen eigenen Kontaktdaten ins Bild kommt. Solange sie sichtbar
+ * ist, bekommt <body> eine Klasse, über die globals.css den
+ * Zurück-nach-oben-Button anhebt.
  */
-export default function MobileCta({
-  href = "/kontakt",
-  label = "Angebot anfragen",
-  zweitHref = "/solarrechner",
-  zweitLabel = "Rechner",
-}) {
+export default function MobileCta({ href = "/angebot", label = "Angebot anfragen" }) {
+  const pfad = usePathname();
   const [sichtbar, setSichtbar] = useState(false);
+  const aus = AUSGENOMMEN.some((p) => pfad === p || pfad.startsWith(p + "/")) || pfad.startsWith("/uber-uns/jobs");
 
   useEffect(() => {
+    if (aus) {
+      setSichtbar(false);
+      return undefined;
+    }
     let footerSichtbar = false;
-    const aktualisieren = () => {
-      const zeigen = window.scrollY > 520 && !footerSichtbar;
-      setSichtbar(zeigen);
-    };
+    const aktualisieren = () => setSichtbar(window.scrollY > 640 && !footerSichtbar);
 
     const footer = document.querySelector("footer");
     const io = footer
@@ -46,37 +45,38 @@ export default function MobileCta({
       io?.disconnect();
       document.body.classList.remove("ov-cta-sichtbar");
     };
-  }, []);
+  }, [aus, pfad]);
 
   useEffect(() => {
     document.body.classList.toggle("ov-cta-sichtbar", sichtbar);
   }, [sichtbar]);
 
+  if (aus) return null;
+
   return (
     <div
       aria-hidden={!sichtbar}
-      className={`ov-mobile-cta fixed inset-x-0 bottom-0 z-[9000] border-t border-gray-200 bg-white/95 px-4 pt-3 shadow-[0_-6px_20px_rgba(0,0,0,0.08)] backdrop-blur transition-transform duration-300 lg:hidden ${
-        sichtbar ? "translate-y-0" : "pointer-events-none translate-y-full"
+      className={`ov-mobile-cta fixed inset-x-3 bottom-3 z-[9000] transition-all duration-500 lg:hidden ${
+        sichtbar ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-[130%] opacity-0"
       }`}
-      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      style={{ marginBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="mx-auto flex max-w-md gap-2">
-        <Link
-          href={zweitHref}
+      <div className="mx-auto flex max-w-md items-center gap-2 rounded-full bg-navy-950/95 p-1.5 shadow-[0_20px_40px_-12px_rgba(3,18,43,0.6)] ring-1 ring-white/10 backdrop-blur-xl">
+        <a
+          href="tel:+498245967880"
           tabIndex={sichtbar ? 0 : -1}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-md border border-gray-300 px-3 py-3 text-[14px] font-semibold text-gray-800"
+          aria-label="Anrufen: +49 8245 96 788 0"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white/10 text-white"
         >
-          <Calculator aria-hidden="true" className="h-4 w-4 text-[#669933]" />
-          {zweitLabel}
-        </Link>
+          <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
+        </a>
         <Link
           href={href}
           tabIndex={sichtbar ? 0 : -1}
-          className="inline-flex flex-[1.6] items-center justify-center gap-2 rounded-md px-3 py-3 text-[14px] font-semibold text-white"
-          style={{ backgroundColor: "#669933" }}
+          className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-500 text-[15px] font-semibold text-white"
         >
-          <Phone aria-hidden="true" className="h-4 w-4" />
           {label}
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
         </Link>
       </div>
     </div>

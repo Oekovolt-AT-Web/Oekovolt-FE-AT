@@ -1,6 +1,5 @@
 import Impressum from "@/components/Impressum/impressum";
-import BannerSection from "@/components/Reusable/banner";
-import EndSection from "@/components/Reusable/end";
+import LegalShell from "@/components/Reusable/LegalShell";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
@@ -15,21 +14,14 @@ export const metadata = {
     siteName: "Ökovolt Deutschland",
     title: "Impressum | Ökovolt Deutschland",
     description: "Rechtliche Informationen der ÖKOVOLT GmbH Solartechnik.",
-    images: [{ url: "/Logo-Oekovolt-Gruen-mit-Weiss.webp", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
+    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
   },
 };
 
 export default function ImpressumPage() {
-  const data = {
-    title: "Impressum",
-    img: "/Images/Kontakt/download-2.jpg",
-  };
-
   return (
-    <div>
-      <BannerSection data={data} />
+    <LegalShell titel="Impressum" pfad="/impressum" lead="Angaben gemäß § 5 DDG zur ÖKOVOLT GmbH Solartechnik.">
       <Impressum />
-      <EndSection />
-    </div>
+    </LegalShell>
   );
 }

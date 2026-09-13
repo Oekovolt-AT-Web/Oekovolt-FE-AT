@@ -2,52 +2,46 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 
+/** Nach-oben-Button mit Lesefortschritt als Ring. */
 export default function ToTopButton() {
-  const [show, setShow] = useState(false);
+  const [fortschritt, setFortschritt] = useState(0);
+  const [sichtbar, setSichtbar] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const shouldShow = window.scrollY > 100;
-      setShow(shouldShow);
+    let raf = 0;
+    const pruefen = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        setFortschritt(max > 0 ? window.scrollY / max : 0);
+        setSichtbar(window.scrollY > 600);
+      });
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    pruefen();
+    window.addEventListener("scroll", pruefen, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", pruefen);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+  const r = 22;
+  const umfang = 2 * Math.PI * r;
 
   return (
     <button
-      onClick={scrollToTop}
-      style={{
-        position: "fixed",
-        bottom: "24px",
-        right: "24px",
-        zIndex: 99999, // Increased to avoid conflicts
-        padding: "12px",
-        backgroundColor: "#ffffff",
-        borderRadius: "50%",
-        border: "4px solid #669933",
-        width: "50px",
-        height: "50px",
-        display: show ? "flex" : "none",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        transition: "opacity 0.3s ease-in-out, transform 0.3s ease-in-out",
-        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)", // Added for visibility
-        opacity: show ? 1 : 0,
-        transform: show ? "translateY(0)" : "translateY(20px)",
-      }}
+      type="button"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
       aria-label="Back to top"
+      tabIndex={sichtbar ? 0 : -1}
+      className={`fixed bottom-6 right-5 z-[9500] flex h-12 w-12 items-center justify-center rounded-full bg-white text-ink-800 shadow-[0_10px_30px_-10px_rgba(3,18,43,0.45)] ring-1 ring-ink-200 transition-all duration-500 hover:-translate-y-0.5 hover:text-ov-700 md:bottom-8 md:right-8 ${
+        sichtbar ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
+      }`}
     >
-      <ArrowUp size={20} style={{ color: "#669933" }} />
+      <svg aria-hidden="true" viewBox="0 0 48 48" className="absolute inset-0 h-full w-full -rotate-90">
+        <circle cx="24" cy="24" r={r} fill="none" stroke="#669933" strokeWidth="2.5" strokeLinecap="round" strokeDasharray={umfang} strokeDashoffset={umfang * (1 - fortschritt)} />
+      </svg>
+      <ArrowUp aria-hidden="true" className="h-[18px] w-[18px]" />
     </button>
   );
 }
