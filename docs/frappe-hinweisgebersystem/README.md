@@ -1,6 +1,6 @@
 # Hinweisgebersystem (HinSchG) – Frappe-Backend
 
-Das Hinweisgebersystem ersetzt den externen Anbieter `oekovolt.integrityline.com`.
+Das Hinweisgebersystem ersetzt den gekündigten externen Anbieter IntegrityLine.
 Die Oberfläche liegt auf der Website (`/hinweisgebersystem` und `/hinweisgebersystem/postfach`).
 Die Daten werden im Frappe-Backoffice gespeichert. Dieses Verzeichnis enthält alles, was im Backend installiert werden muss.
 
@@ -96,10 +96,10 @@ curl ".../api/resource/Hinweis" -H "Authorization: token KEY:SECRET"
 
 Danach im Browser `/hinweisgebersystem` durchspielen: Meldung abgeben → Postfach öffnen → im Desk antworten → Antwort erscheint im Postfach.
 
-## 7. Umstellung vom bisherigen Anbieter
+## 7. Umstellung vom bisherigen Anbieter (IntegrityLine gekündigt)
 
-1. Backend installieren und die Tests aus Abschnitt 6 bestehen.
-2. Die Website ist bereits umgestellt: Der Footer verlinkt `/hinweisgebersystem`.
-   - Bis zum Go-live verweist das Formular bei einem Backend-Fehler auf den bisherigen Kanal.
-   - Diese Konstante `ALTERNATIVER_MELDEWEG` in `src/components/Hinweisgeber/MeldeFormular.js` entfernen, sobald der Vertrag mit IntegrityLine endet.
-3. **IntegrityLine erst kündigen, wenn alle offenen Fälle dort abgeschlossen oder übertragen sind.** Die Fristen laufen weiter.
+1. Backend installieren und die Tests aus Abschnitt 6 bestehen – **vor** dem Ende des IntegrityLine-Vertrags. Die Website verlinkt IntegrityLine nicht mehr.
+2. Offene Fälle aus IntegrityLine bis Vertragsende abschließen oder als Fall im Backoffice übernehmen. Die Fristen laufen weiter. Datenexport und Löschbestätigung des Anbieters archivieren.
+3. Anonym Meldenden bei IntegrityLine vor Vertragsende über deren Postfach mitteilen, wie der Kontakt weitergeführt wird.
+4. Datenschutz: Das Verzeichnis von Verarbeitungstätigkeiten und die DSFA liegen unter `docs/datenschutz/`. Ihre offenen Punkte `[OFFEN: …]` sind Voraussetzung für den Produktivbetrieb.
+5. Den telefonischen Meldeweg (§ 16 Abs. 3 HinSchG) einrichten und die Nummer in `src/data/hinweisgeber.js` → `MELDESTELLE.telefon` eintragen. Die Seite zeigt ihn dann automatisch an.

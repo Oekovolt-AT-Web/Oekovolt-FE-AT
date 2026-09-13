@@ -5,14 +5,10 @@ import Link from "next/link";
 import {
   AlertTriangle, ArrowLeft, ArrowRight, Check, CheckCircle2, Copy, Download, EyeOff, KeyRound, Loader2, Lock, ShieldCheck, UserRound,
 } from "lucide-react";
-import { KATEGORIEN, BEZIEHUNG } from "@/data/hinweisgeber";
+import { KATEGORIEN, BEZIEHUNG, EXTERNE_MELDESTELLE_URL } from "@/data/hinweisgeber";
 
 const SCHRITTE = ["Thema", "Sachverhalt", "Identität", "Absenden"];
 
-// Übergangsweise zweiter Meldeweg, falls das Backend nicht erreichbar ist.
-// Entfernen, sobald der bisherige Anbieter gekündigt ist.
-const ALTERNATIVER_MELDEWEG = "https://oekovolt.integrityline.com/";
-const EXTERNE_MELDESTELLE = "https://www.bundesjustizamt.de/DE/MeldestelledesBundes/MeldestelledesBundes_node.html";
 
 export default function MeldeFormular() {
   const [schritt, setSchritt] = useState(0);
@@ -241,7 +237,7 @@ export default function MeldeFormular() {
               {status === "fehler" && (
                 <div role="alert" className="mt-5 rounded-2xl bg-red-50 p-5 text-[14px] leading-relaxed text-red-900 ring-1 ring-red-200">
                   <p className="font-semibold">Die Meldung konnte gerade nicht übermittelt werden.</p>
-                  <p className="mt-1">Ihre Eingaben sind noch da – bitte versuchen Sie es in einigen Minuten erneut. Alternativ können Sie den <a href={ALTERNATIVER_MELDEWEG} target="_blank" rel="noopener noreferrer" className="font-semibold underline">bisherigen Meldekanal</a> oder die <a href={EXTERNE_MELDESTELLE} target="_blank" rel="noopener noreferrer" className="font-semibold underline">externe Meldestelle des Bundes</a> nutzen.</p>
+                  <p className="mt-1">Ihre Eingaben sind noch da – bitte versuchen Sie es in einigen Minuten erneut. Alternativ erreichen Sie die Meldestelle auf den <a href="#meldewege" className="font-semibold underline">weiteren Meldewegen</a> (z. B. per Post) oder wenden sich an die <a href={EXTERNE_MELDESTELLE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold underline">externe Meldestelle des Bundes</a>.</p>
                 </div>
               )}
             </Frage>
