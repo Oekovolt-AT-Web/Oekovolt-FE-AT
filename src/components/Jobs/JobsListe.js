@@ -14,17 +14,20 @@ const TAETIGKEITEN = ["Projektplanung", "Montage", "Elektrotechnik", "Technische
  */
 export default function JobsListe({ jobs = [] }) {
   const [ort, setOrt] = useState("");
+  const [bereich, setBereich] = useState("");
   const [art, setArt] = useState("");
   const [suche, setSuche] = useState("");
 
   const orte = useMemo(() => [...new Set(jobs.map((j) => j.ort).filter(Boolean))], [jobs]);
+  const bereiche = useMemo(() => [...new Set(jobs.map((j) => j.bereich).filter(Boolean))], [jobs]);
   const arten = useMemo(() => [...new Set(jobs.map((j) => j.anstellung).filter(Boolean))], [jobs]);
 
   const treffer = jobs.filter(
     (j) =>
       (!ort || j.ort === ort) &&
+      (!bereich || j.bereich === bereich) &&
       (!art || j.anstellung === art) &&
-      (!suche.trim() || `${j.titel} ${j.beschreibung}`.toLowerCase().includes(suche.trim().toLowerCase()))
+      (!suche.trim() || `${j.titel} ${j.beschreibung} ${(j.skills || []).join(" ")}`.toLowerCase().includes(suche.trim().toLowerCase()))
   );
 
   if (jobs.length === 0) return <KeineStellen />;
@@ -32,22 +35,27 @@ export default function JobsListe({ jobs = [] }) {
   return (
     <div>
       {(jobs.length > 3 || orte.length > 1 || arten.length > 1) && (
-        <div className="mb-6 flex flex-col gap-3 rounded-3xl bg-white p-4 ring-1 ring-ink-200/70 md:flex-row md:items-center md:p-5">
+        <div className="mb-6 flex flex-col gap-3 rounded-3xl bg-white p-4 ring-1 ring-ink-200/70 md:p-5">
           {jobs.length > 3 && (
-            <label className="relative flex-1">
+            <label className="relative block w-full">
               <span className="sr-only">Stellen durchsuchen</span>
               <Search aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-400" />
               <input
                 type="search"
                 value={suche}
                 onChange={(e) => setSuche(e.target.value)}
-                placeholder="Stelle suchen, z. B. Monteur"
+                placeholder="Stelle oder Fähigkeit suchen, z. B. AutoCAD"
                 className="h-11 w-full rounded-full bg-ink-50 pl-11 pr-4 text-[15px] ring-1 ring-inset ring-ink-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
               />
             </label>
           )}
-          {orte.length > 1 && <Chips titel="Ort" werte={orte} aktiv={ort} setze={setOrt} />}
-          {arten.length > 1 && <Chips titel="Anstellung" werte={arten} aktiv={art} setze={setArt} />}
+          {bereiche.length > 1 && <Chips titel="Bereich" werte={bereiche} aktiv={bereich} setze={setBereich} />}
+          {(orte.length > 1 || arten.length > 1) && (
+            <div className="flex flex-col gap-3 border-t border-ink-100 pt-3 lg:flex-row lg:items-center lg:gap-6">
+              {orte.length > 1 && <Chips titel="Ort" werte={orte} aktiv={ort} setze={setOrt} />}
+              {arten.length > 1 && <Chips titel="Anstellung" werte={arten} aktiv={art} setze={setArt} />}
+            </div>
+          )}
         </div>
       )}
 
@@ -63,6 +71,7 @@ export default function JobsListe({ jobs = [] }) {
               className="group ov-card-hover relative flex h-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 hover:ring-ov-300 md:p-7"
             >
               <div className="flex flex-wrap items-center gap-2">
+                {j.bereich && <span className="rounded-full bg-navy-50 px-3 py-1 text-[12.5px] font-semibold text-navy-700">{j.bereich}</span>}
                 {j.anstellung && <span className="rounded-full bg-ov-50 px-3 py-1 text-[12.5px] font-semibold text-ov-700">{j.anstellung}</span>}
                 {j.datum && (
                   <span className="inline-flex items-center gap-1.5 text-[12.5px] text-ink-500">
@@ -105,7 +114,7 @@ export default function JobsListe({ jobs = [] }) {
 
 function Chips({ titel, werte, aktiv, setze }) {
   return (
-    <div role="group" aria-label={titel} className="ov-no-scrollbar flex gap-2 overflow-x-auto">
+    <div role="group" aria-label={titel} className="ov-no-scrollbar flex min-w-0 gap-2 overflow-x-auto md:flex-wrap md:overflow-visible">
       {["", ...werte].map((w) => (
         <button
           key={w || "alle"}
@@ -117,7 +126,7 @@ function Chips({ titel, werte, aktiv, setze }) {
             aktiv === w ? "bg-navy-900 text-white" : "bg-ink-50 text-ink-700 ring-1 ring-inset ring-ink-200 hover:ring-ov-300"
           )}
         >
-          {w || `Alle ${titel === "Ort" ? "Orte" : ""}`.trim()}
+          {w || (titel === "Ort" ? "Alle Orte" : titel === "Bereich" ? "Alle Bereiche" : "Alle Arten")}
         </button>
       ))}
     </div>

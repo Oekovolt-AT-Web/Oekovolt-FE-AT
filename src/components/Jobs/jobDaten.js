@@ -1,5 +1,6 @@
 // Aufbereitung der Stellenanzeigen (doctype "Jobs") – nutzbar in Server- und Client-Komponenten.
 import { generateJobSlug } from "@/lib/slugify";
+import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
 
 const ANSTELLUNG = {
   FULL_TIME: "Vollzeit",
@@ -60,6 +61,39 @@ export function normalisiereJob(job) {
     vorteile: liste(job?.deine_vorteile).length ? liste(job?.deine_vorteile) : liste(job?.vorteile),
     modified: job?.modified || null,
   };
+}
+
+/** Ganzjährige Stellen aus src/data/stellen.js im normalisierten Format. */
+export function stellenAusDaten() {
+  return STELLEN.map((s) => ({
+    slug: s.slug,
+    titel: s.titel,
+    kurz: s.kurz,
+    bereich: s.bereich,
+    ort: s.ort,
+    arbeitsort: s.arbeitsort,
+    gehalt: s.gehalt || "",
+    anstellung: s.anstellung,
+    anstellungSchema: s.anstellungSchema,
+    datum: STELLEN_DATUM,
+    beschreibung: s.beschreibung,
+    firma: "",
+    aufgaben: s.aufgaben,
+    qualifikationen: s.qualifikationen,
+    vorteile: s.vorteile,
+    bildung: s.bildung,
+    erfahrungMonate: s.erfahrungMonate,
+    skills: s.skills,
+    modified: STELLEN_DATUM,
+    ganzjaehrig: true,
+  }));
+}
+
+/** Backoffice-Stellen + ganzjährige Stellen; bei gleichem Slug gewinnt das Backoffice. */
+export function alleStellen(apiJobs = []) {
+  const api = apiJobs.map(normalisiereJob).filter((j) => j.slug);
+  const slugs = new Set(api.map((j) => j.slug));
+  return [...api, ...stellenAusDaten().filter((s) => !slugs.has(s.slug))];
 }
 
 export const fmtDatum = (d) => (d ? new Date(String(d).replace(" ", "T")).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" }) : "");

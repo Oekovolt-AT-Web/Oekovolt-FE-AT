@@ -42,3 +42,4 @@ next-env.d.ts
 
 # isoliertes Build-Verzeichnis fuer Verifikation
 .next-verify/
+.next-dev2/

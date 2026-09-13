@@ -14,7 +14,7 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import JobsListe from "@/components/Jobs/JobsListe";
-import { bewerbungsLink, normalisiereJob } from "@/components/Jobs/jobDaten";
+import { alleStellen, bewerbungsLink } from "@/components/Jobs/jobDaten";
 import { bildUrl } from "@/components/Project/projektDaten";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -108,7 +108,7 @@ export async function generateMetadata() {
     : defaultKeywords;
 
   const title = "Jobs & Karriere in der Photovoltaik | Ökovolt";
-  const description = "Arbeiten in der Solarbranche: Karrieremöglichkeiten bei Ökovolt in Türkheim – von Montage bis Projektplanung. Jetzt informieren und Teil des Teams werden!";
+  const description = "Jobs in der Photovoltaik: Elektromeister, Elektroplaner, Ingenieure, SPS-Programmierer, DC-Monteure & Vertrieb bei Ökovolt in Türkheim. Jetzt bewerben!";
 
   return {
     title,
@@ -144,10 +144,10 @@ const VORTEIL_TEXT = {
 const VORTEIL_ICONS = [Leaf, GraduationCap, Zap, TrendingUp];
 
 const FELDER = [
-  { icon: Compass, title: "Planung & Projektierung", text: "Anlagen auslegen, Modulbelegung und Wirtschaftlichkeit berechnen, Projekte vom Angebot bis zur Übergabe steuern." },
-  { icon: HardHat, title: "Montage & Installation", text: "Unterkonstruktion und Module auf dem Dach montieren – handwerklich, im Team und mit sichtbarem Ergebnis." },
-  { icon: Wrench, title: "Technik & Wartung", text: "Wechselrichter, Speicher und Elektrik anschließen, Anlagen in Betrieb nehmen und optimieren." },
-  { icon: Headset, title: "Vertrieb & Beratung", text: "Kundinnen und Kunden verständlich beraten und gemeinsam die passende Lösung finden." },
+  { icon: Compass, title: "Planung & Engineering", text: "Elektroplanung in AutoCAD, Projektierung bis Mittelspannung, Ladeinfrastruktur und Netzanschluss – für Anlagen vom Eigenheim bis zum Industriedach." },
+  { icon: Zap, title: "Elektrotechnik & Meister", text: "Verantwortung für Nieder- und Mittelspannung, Übergabestationen, Zählerplätze und Inbetriebnahmen." },
+  { icon: ClipboardList, title: "Automatisierung & Software", text: "SPS, Niagara Framework, Java und Monitoring: Energiesysteme intelligent regeln und überwachen." },
+  { icon: HardHat, title: "Montage, Service & Vertrieb", text: "DC-Montage durch Dachdecker, Speicher- und Wärmepumpentechnik sowie Vertrieb für Privat- und Gewerbekunden." },
 ];
 
 const ABLAUF = [
@@ -163,8 +163,8 @@ const FAQ = [
     a: "Ja. Wir freuen uns jederzeit über Initiativbewerbungen an office@oekovolt.de. Schreiben Sie kurz, welcher Bereich Sie interessiert – Planung, Montage, Technik, Vertrieb oder Verwaltung.",
   },
   {
-    q: "Brauche ich Erfahrung in der Photovoltaik?",
-    a: "Nicht zwingend. Ob mit oder ohne Branchenerfahrung: Mit Schulungen und Einarbeitung im Team finden auch Quereinsteigerinnen und Quereinsteiger bei uns einen Einstieg. Handwerkliche, elektrotechnische oder kaufmännische Vorkenntnisse sind je nach Aufgabe hilfreich.",
+    q: "Welche Qualifikation erwarten Sie?",
+    a: "Wir suchen ausgewiesene Fachkräfte: abgeschlossene Ausbildung, Meister, Techniker oder Studium (Dipl.-Ing., M.Sc., B.Eng.) und Berufserfahrung in der jeweiligen Disziplin. Photovoltaik-Erfahrung ist ein Plus – wer in Elektrotechnik, Automatisierung, SHK oder im Dachdeckerhandwerk exzellent ist, lernt die PV-spezifischen Themen bei uns mit Herstellerschulungen schnell.",
   },
   {
     q: "Welche Unterlagen soll ich schicken?",
@@ -186,7 +186,7 @@ export default async function JobsPage() {
     fetchJobsList(),
   ]);
 
-  const jobs = jobsList.map(normalisiereJob).filter((j) => j.slug);
+  const jobs = alleStellen(jobsList);
 
   const jobListingSchema = jobs.length > 0 ? {
     "@context": "https://schema.org",
@@ -237,9 +237,9 @@ export default async function JobsPage() {
         breadcrumbs={[{ name: "Über uns", href: "/uber-uns/team" }, { name: "Jobs" }]}
         eyebrow="Karriere bei Ökovolt"
         title={<>Jobs mit Zukunft: Machen Sie die <span className="ov-text-gradient-light">Energiewende</span> zum Beruf</>}
-        lead="Werden Sie Teil unseres Teams in Türkheim und gestalten Sie die Energieversorgung von morgen – in Planung, Montage, Technik oder Vertrieb."
+        lead="Wir suchen ganzjährig die besten Köpfe der Branche: Ingenieure, Meister, Planer, Automatisierer, Monteure und Vertriebsprofis, die Energiesysteme auf höchstem Niveau bauen wollen."
         image={{ src: bildUrl(data?.image, "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg"), alt: data?.alt_image || "Solarmodule einer Photovoltaikanlage" }}
-        points={["Firmensitz in Türkheim", "Mit oder ohne Branchenerfahrung", "Schulungen & Weiterbildung", "Zukunftsbranche Photovoltaik"]}
+        points={[`${jobs.length} offene Stellen ganzjährig`, "Firmensitz in Türkheim", "Premium-Partner wie Fronius, Huawei & BYD", "Herstellerschulungen & Weiterbildung"]}
         actions={[
           { label: jobs.length ? "Offene Stellen ansehen" : "Jetzt bewerben", href: "#stellen" },
           { label: "Initiativ bewerben", href: bewerbungsLink(), icon: Mail },
@@ -300,7 +300,7 @@ export default async function JobsPage() {
               <ShieldCheck aria-hidden="true" className="h-5 w-5" />
             </span>
             <p className="text-[15px] leading-relaxed text-ink-700">
-              <strong className="text-ink-900">Ob mit oder ohne Erfahrung:</strong> Mit Schulungen und Teamgeist finden Sie bei uns eine sinnvolle Karriere in der Photovoltaik.
+              <strong className="text-ink-900">Für Spitzenkräfte:</strong> Wir suchen ganzjährig Meister, Ingenieure, Techniker und erfahrene Fachkräfte – und bieten dafür anspruchsvolle Projekte und echte Verantwortung.
             </p>
           </div>
         </div>

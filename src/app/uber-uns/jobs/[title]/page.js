@@ -12,9 +12,10 @@ import Fliesstext from "@/components/Reusable/Fliesstext";
 import Querverweise from "@/components/Reusable/Querverweise";
 import KurzBewerbung from "@/components/JobDetails/KurzBewerbung";
 import BewerbungsLeiste from "@/components/JobDetails/BewerbungsLeiste";
-import { bewerbungsLink, fmtDatum, normalisiereJob } from "@/components/Jobs/jobDaten";
+import { alleStellen, bewerbungsLink, fmtDatum } from "@/components/Jobs/jobDaten";
+import { STELLEN } from "@/data/stellen";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { generateJobSlug } from "@/lib/slugify";
+
 
 const JOBS_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
 const BASE_URL = "https://www.oekovolt.de";
@@ -56,7 +57,12 @@ async function fetchAllJobs() {
   }
 }
 
-const findeJob = (jobs, slug) => jobs.find((p) => generateJobSlug(p.name) === slug || generateJobSlug(p.title) === slug);
+const findeJob = (jobs, slug) => alleStellen(jobs).find((j) => j.slug === slug);
+
+// Ganzjährige Stellen vorab rendern; Backoffice-Stellen werden bei Bedarf erzeugt.
+export function generateStaticParams() {
+  return STELLEN.map((s) => ({ title: s.slug }));
+}
 
 export async function generateMetadata({ params }) {
   try {
@@ -71,10 +77,10 @@ export async function generateMetadata({ params }) {
       };
     }
 
-    const j = normalisiereJob(job);
+    const j = job;
     const canonical = `${BASE_URL}/uber-uns/jobs/${title}`;
-    const seitenTitel = `${j.titel} in ${j.ort} | Jobs Ökovolt`;
-    const description = `Stellenangebot: ${j.titel}${j.anstellung ? ` (${j.anstellung})` : ""} bei Ökovolt in ${j.ort}. Aufgaben, Anforderungen & Vorteile – jetzt unkompliziert per E-Mail bewerben.`;
+    const seitenTitel = `${j.kurz || j.titel} (m/w/d) – Job in ${j.ort} | Ökovolt`;
+    const description = `${j.titel} bei Ökovolt in ${j.ort}${j.anstellung ? ` (${j.anstellung})` : ""}. Aufgaben, Anforderungen & Vorteile – jetzt direkt bewerben.`.slice(0, 160);
 
     return {
       title: seitenTitel,
@@ -120,8 +126,12 @@ export default async function JobDetailPage({ params }) {
 
   if (!job) notFound();
 
-  const j = normalisiereJob(job);
-  const weitere = jobs.map(normalisiereJob).filter((x) => x.slug && x.slug !== j.slug).slice(0, 3);
+  const j = job;
+  const alle = alleStellen(jobs);
+  const weitere = [
+    ...alle.filter((x) => x.slug !== j.slug && x.bereich && x.bereich === j.bereich),
+    ...alle.filter((x) => x.slug !== j.slug && x.bereich !== j.bereich),
+  ].slice(0, 3);
   const canonicalUrl = `${BASE_URL}/uber-uns/jobs/${title}`;
   const mailLink = bewerbungsLink(j.titel);
 
@@ -134,7 +144,7 @@ export default async function JobDetailPage({ params }) {
       j.vorteile.length && `<h3>Ihre Vorteile</h3><ul>${j.vorteile.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>`,
     ]
       .filter(Boolean)
-      .join("") || job.description || `Stellenangebot bei Ökovolt Solartechnik: ${job.name}`;
+      .join("") || `Stellenangebot bei Ökovolt Solartechnik: ${j.titel}`;
 
   const jobSchema = {
     "@context": "https://schema.org",
@@ -161,25 +171,26 @@ export default async function JobDetailPage({ params }) {
       },
     },
     url: canonicalUrl,
-    datePosted: job.creation ? new Date(String(job.creation).replace(" ", "T")).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    datePosted: j.datum ? new Date(String(j.datum).replace(" ", "T")).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+    // Ganzjährig ausgeschrieben: Gültigkeit rollierend 90 Tage ab Seitenerzeugung
+    ...(j.ganzjaehrig && { validThrough: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0] }),
     employmentType: j.anstellungSchema,
-    directApply: true,
+    directApply: false,
+    industry: "Erneuerbare Energien / Photovoltaik",
+    ...(j.bereich && { occupationalCategory: j.bereich }),
+    ...(j.skills?.length && { skills: j.skills.join(", ") }),
+    ...(j.bildung && { educationRequirements: { "@type": "EducationalOccupationalCredential", credentialCategory: j.bildung } }),
+    ...(j.erfahrungMonate && { experienceRequirements: { "@type": "OccupationalExperienceRequirements", monthsOfExperience: j.erfahrungMonate } }),
+    ...(j.qualifikationen?.length && { qualifications: j.qualifikationen.join("; ") }),
+    ...(j.aufgaben?.length && { responsibilities: j.aufgaben.join("; ") }),
+    ...(j.vorteile?.length && { jobBenefits: j.vorteile.join("; ") }),
     applicantLocationRequirements: { "@type": "Country", name: "DE" },
-    ...(job.salary && {
-      baseSalary: {
-        "@type": "MonetaryAmount",
-        currency: "EUR",
-        value: {
-          "@type": "QuantitativeValue",
-          value: job.salary,
-          unitText: "YEAR"
-        }
-      }
-    }),
+    ...(j.gehalt && { baseSalary: { "@type": "MonetaryAmount", currency: "EUR", value: { "@type": "QuantitativeValue", value: j.gehalt, unitText: "YEAR" } } }),
   };
 
   const fakten = [
-    { icon: MapPin, label: "Arbeitsort", wert: j.ort },
+    { icon: MapPin, label: "Arbeitsort", wert: j.arbeitsort || j.ort },
+    j.bereich && { icon: Sparkles, label: "Bereich", wert: j.bereich },
     j.anstellung && { icon: Briefcase, label: "Anstellung", wert: j.anstellung },
     j.gehalt && { icon: Euro, label: "Vergütung", wert: j.gehalt },
     j.datum && { icon: CalendarDays, label: "Veröffentlicht", wert: fmtDatum(j.datum) },
@@ -203,7 +214,7 @@ export default async function JobDetailPage({ params }) {
         breadcrumbs={[{ name: "Über uns", href: "/uber-uns/team" }, { name: "Jobs", href: "/uber-uns/jobs" }, { name: j.titel }]}
         eyebrow="Stellenangebot · Ökovolt"
         title={j.titel}
-        lead={`Werden Sie Teil unseres Teams in ${j.ort} und bringen Sie die Energiewende auf die Dächer der Region.`}
+        lead={j.ganzjaehrig ? `Ganzjährig ausgeschrieben: Wir suchen Spitzenkräfte, die Energiesysteme auf höchstem Niveau bauen – in ${j.arbeitsort || j.ort}.` : `Werden Sie Teil unseres Teams in ${j.ort} und bringen Sie die Energiewende voran.`}
         points={[j.ort, j.anstellung, j.gehalt].filter(Boolean)}
         actions={[
           { label: "Jetzt bewerben", href: "#bewerben" },

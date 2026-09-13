@@ -4,6 +4,7 @@ import { generateSlug, generateJobSlug } from "@/lib/slugify";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { sitemapLanguages } from "@/lib/hreflang";
 import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
+import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
 
 const BASE_URL = "https://www.oekovolt.de";
 // ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
@@ -188,7 +189,18 @@ export default async function sitemap() {
     }
   });
 
-  // 2. Job pages
+  // 2. Job pages – ganzjährige Stellen aus src/data/stellen.js …
+  const jobSlugs = new Set(jobs.map((job) => generateJobSlug(job.name || job.title)).filter(Boolean));
+  STELLEN.filter((s) => !jobSlugs.has(s.slug)).forEach((s) => {
+    dynamicEntries.push({
+      url: `${BASE_URL}/uber-uns/jobs/${s.slug}`,
+      lastModified: new Date(STELLEN_DATUM),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+  });
+
+  // … und Stellen aus dem Backoffice
   jobs.forEach((job) => {
     const slug = generateJobSlug(job.name || job.title);
     if (slug) {
