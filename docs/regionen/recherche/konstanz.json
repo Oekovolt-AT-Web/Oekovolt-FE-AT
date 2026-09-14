@@ -1,0 +1,104 @@
+{
+  "name": "Konstanz",
+  "slug": "konstanz",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "Landkreis Konstanz",
+  "einwohner": {
+    "wert": 86919,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugQ/AuszugGV4QAktuell.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Konstanz GmbH",
+    "hinweis": "Die Stadtwerke Konstanz nennen sich als Netzbetreiber für die PV-Anmeldung ('In Konstanz sind das wir'); eine Gebietsabgrenzung für alle Ortsteile wurde nicht geprüft. Anmeldung beim Netzbetreiber bestenfalls 4–8 Wochen vor Installationsbeginn, digital über das Netzportal; Eintrag im Marktstammdatenregister innerhalb von 4 Wochen nach Inbetriebnahme.",
+    "anmeldung_url": "https://www.stadtwerke-konstanz.de/netze/einspeisung/anschluss-pv-anlage/",
+    "url": "https://www.stadtwerke-konstanz.de/netze/einspeisung/anschluss-pv-anlage/"
+  },
+  "solarkataster": [
+    {
+      "name": "Solardachkataster im Energieatlas Baden-Württemberg (LUBW)",
+      "traeger": "Land (LUBW / Umweltministerium Baden-Württemberg)",
+      "url": "https://www.energieatlas-bw.de/sonne/dachflachen"
+    },
+    {
+      "name": "Altstadt-Solarkataster Konstanz",
+      "traeger": "Stadt",
+      "url": "https://www.konstanz.de/altstadt-solarkataster"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Breitenförderung – Maßnahme B.3 Photovoltaik in Kombination mit Wärmepumpe",
+      "traeger": "Stadt Konstanz (Amt für Klimaschutz)",
+      "gegenstand": "Zubau einer PV-Anlage auf dem eigenen Haus/Grundstück bis zu 12 Monate vor oder nach dem Ersatz der Heizung durch eine Wärmepumpe; nur in Kombination mit Maßnahme B.2 (Heizungstausch) beantragbar",
+      "konditionen": "Pauschal 1.000 Euro pro Gebäude; 2.000 Euro, wenn mindestens 80 % der zur Solarnutzung geeigneten Dachfläche belegt werden oder zusätzlich Module an Fassade oder Norddach installiert werden; Antrag spätestens 6 Monate nach Abschluss der Maßnahme",
+      "status": "laufend 2026 (Programmseite Stand 06.07.2026, kein Hinweis auf Antragsstopp)",
+      "url": "https://www.konstanz.de/stadtwandel/foerderprogramme/breitenfoerderung"
+    },
+    {
+      "name": "Breitenförderung – Maßnahme B.8 Balkon-Photovoltaikanlage",
+      "traeger": "Stadt Konstanz (Amt für Klimaschutz)",
+      "gegenstand": "Balkon-PV-Anlagen am Balkon, an der Fassade oder auf kleineren Nebengebäuden; seit 2025 keine Förderung mehr für auf dem Hausdach montierte Anlagen; antragsberechtigt u. a. alle Mieterinnen und Mieter im Stadtgebiet",
+      "konditionen": "Pauschaler Zuschuss zu Anschlusskosten: 150 Euro pro Anlage und Wohneinheit; Antrag spätestens 6 Monate nach Abschluss der Maßnahme",
+      "status": "laufend 2026 (Programmseite Stand 06.07.2026, kein Hinweis auf Antragsstopp)",
+      "url": "https://www.konstanz.de/stadtwandel/foerderprogramme/breitenfoerderung"
+    },
+    {
+      "name": "300 Euro für jede neue PV-Anlage",
+      "traeger": "Stadtwerke Konstanz",
+      "gegenstand": "Pauschaler Zuschuss für eine neue PV-Anlage (Wechselrichterleistung mindestens 1,5 kW laut Voraussetzungen) für Kundinnen und Kunden im Stromtarif SeeEnergie ÖkostromFairPlus",
+      "konditionen": "300 Euro pauschal; Belieferung im Tarif ohne Unterbrechung bis 31.12. des Folgejahres; einmal je Kundennummer; Online-Antrag",
+      "status": "laufend 2026 (Angebotsseite abrufbar, kein Enddatum genannt)",
+      "url": "https://www.stadtwerke-konstanz.de/blog/300-euro-fuer-jede-neue-pv-anlage/"
+    }
+  ],
+  "klimaziel": {
+    "text": "Der Gemeinderat hat am 11. März 2021 beschlossen, das 'Klima-Plus-Szenario' zu verfolgen, und am 25. November 2021 die Klimaschutzstrategie verabschiedet: Konstanz soll bis 2035 weitgehend klimaneutral werden (schnelle Absenkung der Treibhausgasemissionen im Stadtgebiet nach BISKO bis 2035).",
+    "url": "https://www.konstanz.de/stadtwandel/konzepte+und+chronologie/klimaschutzstrategie"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Version 07.02.2023), Blatt BW: LK Konstanz 'Alle Gemeinden' = Zone 1. Charakteristische Schneelast abhängig von der Geländehöhe des Standorts (DIN EN 1991-1-3/NA); verbindlich sind die amtlichen Bekanntmachungen.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "Die Konstanzer Altstadt steht seit 1982 als Gesamtanlage gemäß § 19 Denkmalschutzgesetz Baden-Württemberg unter Denkmalschutz (ca. 500 Kulturdenkmale, ca. 400 erhaltenswerte Gebäude); die spätmittelalterlich bis frühneuzeitlich geprägte Dachlandschaft gilt als wesentliches Schutzmerkmal.",
+      "url": "https://www.konstanz.de/altstadt-solarkataster"
+    },
+    {
+      "text": "Das im Technischen und Umweltausschuss am 9. November 2023 vorgestellte Altstadt-Solarkataster bewertet alle Altstadt-Dachflächen nach ihrer Bedeutung für die Dachlandschaft (u. a. Sichtachsen, Straßen- und Platzbilder) und ordnet sie Fallgruppen zu (Kartendarstellung rot, gelb, grün); Ziel ist, Solaranlagen in der Altstadt zu ermöglichen, ohne das historische Bild wesentlich zu beeinträchtigen.",
+      "url": "https://www.konstanz.de/altstadt-solarkataster"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Auf städtischen Dächern werden seit mehr als 20 Jahren PV-Anlagen installiert; aktuell erzeugen 32 Anlagen mit rund 4.000 Modulen (ca. 6.400 qm) jährlich rund 1.340.000 kWh, der Strom wird überwiegend in den Gebäuden verbraucht.",
+      "url": "https://www.konstanz.de/leben+in+konstanz/umwelt/klima+_+energie/photovoltaik-ausbau"
+    },
+    {
+      "text": "Solaroffensive der Stadt Konstanz: anbieterunabhängige, aufsuchende Photovoltaik-Beratung über die Energieagentur Kreis Konstanz (Online-Formular; für Balkonsolar Beratung in Stützpunkten mit der Verbraucherzentrale).",
+      "url": "https://www.energieagentur-kreis-konstanz.de/privatpersonen/solaroffensive-privatpersonen/"
+    },
+    {
+      "text": "Die Stadtwerke Konstanz bieten mit 'SeeEnergie Sonnenkraft' ein Beteiligungsmodell für regionale Photovoltaikprojekte an (Beitrag zuletzt geändert 05.09.2025).",
+      "url": "https://www.stadtwerke-konstanz.de/blog/regionale-energiewende-gemeinsam-in-die-zukunft/"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieagentur Kreis Konstanz gGmbH",
+    "url": "https://www.energieagentur-kreis-konstanz.de/privatpersonen/solaroffensive-privatpersonen/"
+  },
+  "offen": [
+    "Geländehöhe: keine offizielle städtische oder amtliche Quelle mit Höhenangabe eingesehen.",
+    "Altstadt-Solarkataster: Pressemitteilung vom November 2023 kündigte eine digitale Bereitstellung an; ob und unter welcher URL es heute online abrufbar ist, wurde nicht geprüft.",
+    "Netzgebiet: nicht geprüft, ob die Stadtwerke Konstanz in allen Ortsteilen (z. B. Dingelsdorf, Dettingen-Wallhausen, Litzelstetten) Verteilnetzbetreiber sind.",
+    "Förderstatus: kein ausdrücklicher Hinweis 'laufend' – Einstufung beruht auf fehlendem Antragsstopp-Hinweis auf den im Jahr 2026 aktualisierten Seiten; Haushaltsmittel nicht bekannt.",
+    "Einwohner: Destatis-Stand 31.12.2024; ein Wert zum 31.12.2025 des Statistischen Landesamts BW wurde nicht eingesehen."
+  ],
+  "abgerufen": "2026-09-14"
+}

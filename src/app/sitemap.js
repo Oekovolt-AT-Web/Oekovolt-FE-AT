@@ -5,6 +5,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { sitemapLanguages } from "@/lib/hreflang";
 import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
+import { REGIONEN } from "@/data/regionen";
 
 const BASE_URL = "https://www.oekovolt.de";
 // ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
@@ -20,6 +21,8 @@ const CONTENT_DATE = new Date("2026-06-06");   // letzter groesserer Inhaltsstan
 const UPDATED_2026_09 = new Date("2026-09-13"); // Redesign 2026 (alle Hauptseiten neu gestaltet)
 // Rechtstexte aendern sich praktisch nie
 const LEGAL_DATE = new Date("2025-01-01");
+// Regionalseiten: Stand der Recherche (Förderprogramme, Netzbetreiber)
+const REGIONEN_DATUM = new Date("2026-09-14");
 const STATIC_PAGES = [
   { path: "", changeFrequency: "weekly", priority: 1.0, lastModified: UPDATED_2026_09 },
   { path: "/dienstleistungen/photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
@@ -52,6 +55,7 @@ const STATIC_PAGES = [
   { path: "/kommunen", changeFrequency: "monthly", priority: 0.8, lastModified: UPDATED_2026_09 },
   { path: "/gewerbe", changeFrequency: "monthly", priority: 0.8, lastModified: UPDATED_2026_09 },
   { path: "/landwirtschaft", changeFrequency: "monthly", priority: 0.8, lastModified: UPDATED_2026_09 },
+  { path: "/photovoltaik", changeFrequency: "monthly", priority: 0.8, lastModified: REGIONEN_DATUM },
   { path: "/faqs", changeFrequency: "monthly", priority: 0.6, lastModified: UPDATED_2026_09 },
   { path: "/ratgeber", changeFrequency: "weekly", priority: 0.7, lastModified: UPDATED_2026_09 },
   { path: "/solarrechner", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
@@ -273,7 +277,15 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries];
+  // 7. Regionalseiten /photovoltaik/[stadt]
+  const regionEntries = Object.entries(REGIONEN).map(([slug, r]) => ({
+    url: `${BASE_URL}/photovoltaik/${slug}`,
+    lastModified: new Date(r.fakten?.stand || REGIONEN_DATUM),
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
+  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries];
 
   return allEntries;
 }

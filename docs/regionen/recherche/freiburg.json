@@ -1,0 +1,87 @@
+{
+  "name": "Freiburg im Breisgau",
+  "slug": "freiburg",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 237460,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/05-staedte.html"
+  },
+  "netzbetreiber": {
+    "name": "badenovaNETZE GmbH",
+    "hinweis": "Freiburg im Breisgau ist in der Netzgebietskarte Strom der badenovaNETZE aufgeführt. Die Stadt Freiburg führt badenovaNETZE (Tullastraße 61, 79108 Freiburg) unter Eigenbetrieben/stadtnahen Einrichtungen. Anmeldung von Erzeugungsanlagen digital über das Netzportal von badenovaNETZE. Ob in einzelnen Ortsteilen ein anderer Betreiber zuständig ist, geht aus der Karte nicht im Detail hervor.",
+    "anmeldung_url": "https://badenovanetze.de/netzkunden/einspeiser/erzeugungsanlage-anmelden",
+    "url": "https://a.storyblok.com/f/307935/x/8883ff0459/badenova-netze_strom_netzgebiet.pdf"
+  },
+  "solarkataster": [
+    {
+      "name": "Energieatlas Baden-Württemberg – Solarpotenzial auf Dachflächen",
+      "traeger": "Land (LUBW); von der Stadt Freiburg auf ihrer Solarseite als Potenzial-Check empfohlen",
+      "url": "https://www.energieatlas-bw.de/sonne/dachflachen/solarpotenzial-auf-dachflachen"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Förderprogramm Netzanschlusserweiterung für PV-Anlagen (Zukunftsfonds Klimaschutz)",
+      "traeger": "Stadt Freiburg in Kooperation mit badenova",
+      "gegenstand": "Kosten der Netzanschlusserweiterung (von der Anlage bis zum Netzverknüpfungspunkt) für PV-Anlagen über 30 kWp im Stadtgebiet, sofern keine gesetzliche PV-Pflicht greift",
+      "konditionen": "bis 1.000 Euro je kWp installierter Leistung, max. 50.000 Euro je Anlage; Voraussetzung: abgeschlossene Netzverträglichkeitsprüfung und Kostenschätzung von badenovaNETZE; Antrag an netzanschlussfoerderung@badenova.de; Bearbeitung in Reihenfolge des Eingangs. Laut Pressemitteilung standen insgesamt 399.000 Euro zur Verfügung, davon 278.867 Euro ausgezahlt.",
+      "status": "laufend 2026 (laut Programmseite der Stadt)",
+      "url": "https://www.freiburg.de/pb/2088466.html"
+    },
+    {
+      "name": "Förderprogramm Klimafreundlich Wohnen – Baustein 3 „Stromerzeugung erneuerbar“ (u. a. 3.3 Photovoltaik Dachvollbelegung, 3.5 Balkonmodule)",
+      "traeger": "Stadt Freiburg (Umweltschutzamt)",
+      "gegenstand": "Neue PV-Anlagen auf Dächern/Fassaden bestehender, überwiegend zu Wohnzwecken genutzter Gebäude (Baugenehmigung vor 31.12.2021), gefördert wird nur die Leistung oberhalb 0,06 kWp je m² überbauter Grundstücksfläche; Boni für PV auf Gründach, PVT, Fassaden-PV, Denkmal und Mieterstrom; Balkonmodule nur für Mieter_innen. Batteriespeicher-Förderung seit 01.06.2025 entfallen.",
+      "konditionen": "150 Euro/kWp, max. 1.500 Euro, Mindestförderung 200 Euro; Innovationsbonus 150 Euro/kWp, max. 1.500 Euro; Mieterstrombonus 15 Euro/kWp je teilnehmender Wohneinheit, max. 3.000 Euro; Antrag spätestens 6 Monate nach Maßnahme; Ausführung durch Fachbetrieb (Richtlinie gültig ab 01.06.2025)",
+      "status": "Mittel erschöpft – laut Stadt für 2026 vollständig ausgeschöpft, neue Anträge erst ab 01.01.2027",
+      "url": "https://www.freiburg.de/pb/232441.html"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2035; der Gemeinderat hat das Zieljahr 2022 von 2050 auf 2035 vorgezogen.",
+    "url": "https://www.freiburg.de/pb/1193584.html"
+  },
+  "schneelastzone": {
+    "zone": "2",
+    "hinweis": "DIBt-Tabelle „Zuordnung der Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Blatt BW: „SK Freiburg im Breisgau – 2“ (einheitlich für den Stadtkreis). Die Schneelast hängt zusätzlich von der Geländehöhe ab; das Stadtgebiet reicht laut Stadt von 196 m (Waltershofen) bis 1.284 m (Schauinsland). Verbindlich sind die amtlichen Bekanntmachungen des Landes; Nachweis im Einzelfall durch Statiker.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": "https://www.freiburg.de/pb/1649670.html"
+  },
+  "ortsbild": [
+    {
+      "text": "Satzung über den Schutz der Gesamtanlage „Historische Altstadt und Innenstadtbereich“ (1987, Fassung 2009): Veränderungen bedürfen der Genehmigung der Unteren Denkmalschutzbehörde, ausdrücklich auch „Photovoltaik-Anlagen und sonstige Anlagen zur Nutzung der Sonnenenergie“, auch wenn baugenehmigungsfrei. Die zugehörigen Richtlinien nennen u. a.: Anpassung der Farbe an die Dachfläche, keine reflektierenden Materialien, keine drehbaren Elemente, PV/Kollektoren samt Dachaufbauten max. 50 % der Dachfläche, mindestens vier Ziegelreihen am First sichtbar; geprüft wird auch die Einsehbarkeit vom Münsterturm und Schlossberg.",
+      "url": "https://www.freiburg.de/pb/site/Freiburg/get/documents_E1619767552/freiburg/daten/ortsrecht/10%20Denkmalschutz/OrtsR_10_03.pdf"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Städtisches Ziel: PV-Stromerzeugung bis 2030 gegenüber 2020 verfünffachen (von 96 auf 280 Gigawattstunden pro Jahr).",
+      "url": "https://www.freiburg.de/pb/2593982.html"
+    },
+    {
+      "text": "Kampagne „Dein Dach kann mehr!“ der Stadt (seit 2017) mit kostenlosen Beratungen für Hauseigentümer und Gewerbe; Solarsommer 2026 (Start 18.05.2026, Veranstaltungen bis Ende Oktober, u. a. Solarmobil mit Vor-Ort-Beratung).",
+      "url": "https://www.freiburg.de/pb/1071692.html"
+    },
+    {
+      "text": "Kostenlose, unabhängige Photovoltaik-Einstiegsberatung durch Freiburger PV-Expert_innen im Auftrag der Stadt (Anmeldung über www.freiburg.de/pv).",
+      "url": "https://www.freiburg.de/servicebw/Foerderrichtlinie-Stromerzeugung_erneuerbar-06-2025.pdf"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieagentur Regio Freiburg (Kompetenzzentrum KESS) sowie städtische Hotline Umweltschutzamt 0761 214 300-90",
+    "url": "https://www.freiburg.de/pb/232453.html"
+  },
+  "offen": [
+    "Einwohnerzahl Stand 31.12.2025 nicht geprüft; verwendet wurde Destatis-Gemeindeverzeichnis 31.12.2024 (Basis Zensus 2022).",
+    "Geländehöhe: keine einzelne amtliche Höhenangabe gefunden, nur Spanne 196 m (Waltershofen) bis 1.284 m (Schauinsland) laut Stadt Freiburg; daher kein Einzelwert.",
+    "Kein städtisches Solarkataster mit aktueller Datenbasis belegt (im Geoportal BW nur Metadaten zum Kataster „FreeSun“ von 2010); die Stadt verweist auf den Energieatlas BW.",
+    "Ob die Denkmalschutz-Richtlinien von 2009 nach Änderungen des Landesdenkmalrechts noch unverändert angewendet werden, wurde nicht geprüft.",
+    "Mieterstromangebot der Stadtwerke/badenova für Freiburg nicht geprüft."
+  ],
+  "abgerufen": "2026-09-14"
+}

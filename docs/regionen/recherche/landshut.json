@@ -1,0 +1,72 @@
+{
+  "name": "Landshut",
+  "slug": "landshut",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 71863,
+    "stand": "31.12.2024",
+    "url": "https://www.statistik.bayern.de/mam/produkte/statistik_kommunal/2025/09261.pdf"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Landshut",
+    "hinweis": "Stadtwerke Landshut sind Stromnetzbetreiber im Netzgebiet Landshut (laut Netzstrukturdaten: 72.946 Einwohner im Netzgebiet, geographische Fläche 52,635 km²). Ob das gesamte Stadtgebiet abgedeckt ist, geht aus der Quelle nicht hervor; im Einzelfall Netzbetreiber prüfen. Anmeldung von PV-Anlagen und Batteriespeichern über das Anlagenportal; Elektrofachbetriebe nutzen das Installateursportal; Kontakt Einspeisung@stadtwerke-landshut.de.",
+    "anmeldung_url": "https://www.stadtwerke-landshut.de/en/netze/erzeugungsanlagen/",
+    "url": "https://www.stadtwerke-landshut.de/netze/"
+  },
+  "solarkataster": [],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Der Umweltsenat beschloss im April 2021 die Erstellung eines Klimaaktionsplans; laut Stadtratsbeschluss zum Klimaaktionsplan wird untersucht, wie Landshut binnen zehn Jahren nach Veröffentlichung des Konzepts (Zieljahr 2034) klimaneutral werden kann, alternativ bis spätestens 2040. Der Klimaaktionsplan wurde 2023/2024 erstellt.",
+    "url": "https://landshut.de/sites/default/files/filemanager/Benutzerdaten/La31/Klimaaktionsplan/Klimaaktionsplan.pdf"
+  },
+  "schneelastzone": {
+    "zone": "1a",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt BY, Gemeindeschlüssel 09261000: Schneelastzone 1a; zusätzlich sind laut Tabelle die Ergebnisse des bayerischen Forschungsprojekts zu Schneelastmesswerten (Rundschreiben StMI vom 19.01.2018) zu berücksichtigen. Verbindlich sind die amtlichen Bekanntmachungen des Landes. Geländehöhe nicht aus amtlicher Quelle belegt.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": null,
+  "ortsbild": [
+    {
+      "text": "Gestaltungssatzung der Stadt Landshut vom 29.03.2021 (mittelalterlicher Innenstadtbereich sowie bauzeitliche Einzeldenkmäler und Ensembles): Photovoltaik- und Solaranlagen sind grundsätzlich unzulässig. Ausnahmsweise zulässig sind eine liegende thermische Solaranlage bis 10 m² oder eine Dach-PV-Anlage mit ziegelroten, bündig mit der Dachdeckung verlegten Modulen, wenn sie weder von öffentlichen Verkehrsflächen noch von den touristischen Aussichtspunkten auf dem Burgberg einsehbar ist; Aufständerung ist unzulässig. Der Einbau von PV- und Solaranlagen ist dort erlaubnispflichtig.",
+      "url": "https://landshut.de/sites/default/files/filemanager/Benutzerdaten/La17/2021_03_29%20Gestaltungssatzung.pdf"
+    },
+    {
+      "text": "Ensembleschutz: Das Ensemble Altstadt Landshut umfasst die Stadt in den Grenzen der ehemaligen Stadtbefestigung einschließlich Burg Trausnitz mit Herzogs- und Hofgarten, Vorstadt 'Zwischen den Brücken' und Abtei Seligenthal; weitere Ensembles sind Luitpoldstraße und Seligenthalerstraße. Im Ensemble stehen Fassade und Dach unter Schutz; von außen sichtbare Maßnahmen benötigen eine denkmalschutzrechtliche Erlaubnis (Art. 6 BayDSchG).",
+      "url": "https://landshut.de/leben/planen-bauen-wohnen/untere-denkmalschutzbehoerde"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Die Globalstrahlung auf horizontaler Fläche beträgt in Landshut laut Stadt circa 1.160 kWh/m². 2018 wurden im Stadtgebiet 54.151 MWh PV-Strom ins Netz eingespeist.",
+      "url": "https://landshut.de/umwelt/klimaschutzmanagement/klima-infoplattform"
+    },
+    {
+      "text": "Die Stadt Landshut (ohne Stadtwerke) hat auf 29 Gebäuden PV-Anlagen mit 1.483,77 kWp; die Stadtwerke Landshut betreiben zusätzlich 21 Anlagen auf eigenen Dächern mit 762,35 kWp (Stand 6.9.2021).",
+      "url": "https://landshut.de/umwelt/klimaschutzmanagement/klima-infoplattform"
+    },
+    {
+      "text": "Laut Klimaaktionsplan wäre für eine Dekarbonisierung des lokalen Strommixes bis 2034 ein jährlicher Zubau von 44 MW (bis 2040: 37 MW) nötig; Flächen auf Dächern und Freiflächen seien vorhanden, das Stromnetz verfüge jedoch nicht über genügend Kapazität für Strommengen dieser Größenordnung.",
+      "url": "https://landshut.de/sites/default/files/filemanager/Benutzerdaten/La31/Klimaaktionsplan/Klimaaktionsplan.pdf"
+    },
+    {
+      "text": "Die Stadt Landshut ist seit 1993 Mitglied im Klima-Bündnis; eine kommunale Wärmeplanung ist bis Juni 2028 abzuschließen.",
+      "url": "https://landshut.de/umwelt/klimaschutzmanagement/klimaschutz"
+    }
+  ],
+  "energieberatung": {
+    "name": "Stadtwerke Landshut – Energie- und Umweltberatung (kostenlos für Stromkunden, u. a. zu Solarthermie und Photovoltaik); die Stadt verweist außerdem auf die Verbraucherzentrale Bayern, Beratungsstelle Landshut",
+    "url": "https://www.stadtwerke-landshut.de/energie/energiedienste/"
+  },
+  "offen": [
+    "Solarkataster: Der Landkreis Landshut betreibt ein Solarkataster (solarkataster-landkreis-landshut.de), die Quelle sagt aber nicht, ob die kreisfreie Stadt Landshut enthalten ist. Die Stadt verweist nur auf den nicht-amtlichen SolardachCheck von co2online und auf den Energie-Atlas Bayern. Deshalb kein Eintrag.",
+    "Förderprogramme: Auf den Seiten der Stadt (Klimaschutz, Klima-Infoplattform, Angebote für Bürger) und der Stadtwerke (Energiedienste, Netze) wurde kein kommunales PV-, Speicher- oder Balkonkraftwerk-Förderprogramm gefunden.",
+    "Geländehöhe: Keine amtliche Angabe gesehen; 'Statistik kommunal' des Landesamts und die Statistikseite der Stadt nennen keine Höhe.",
+    "Klimaziel: Kein fester Stadtratsbeschluss 'klimaneutral bis Jahr X' belegt. Belegt ist nur der Beschluss, die Klimaneutralität binnen 10 Jahren nach Veröffentlichung des Konzepts (2034) bzw. alternativ bis 2040 zu untersuchen. Laut Klimaaktionsplan ist das Null-Ziel unter den derzeitigen Rahmenbedingungen nicht vollständig erreichbar (69 % Reduktion bis 2034).",
+    "Netzbetreiber: Die Netzfläche von 52,635 km² und die 72.946 Einwohner im Netzgebiet deuten darauf hin, dass sich Netzgebiet und Stadtgebiet nicht decken. Ein anderer Betreiber für Randbereiche ist nicht belegt.",
+    "Einwohner: Die Stadt nennt eigene abweichende Zahlen: 76.095 zum 30.06.2026 (Fortschreibung auf Basis Zensus 2011) und 71.995 zum 31.03.2026 (Basis Zensus 2022). Verwendet wurde der amtliche Wert des Landesamts (Basis Zensus 2022).",
+    "Mieterstrom, PV-Pacht oder eine Solaroffensive der Stadtwerke bzw. der Stadt: nicht belegt.",
+    "Hinweis zur Methode: Die Inhalte von landshut.de lieferte WebFetch nur als Navigation; sie wurden in dieser Sitzung direkt per HTTP abgerufen und gelesen."
+  ],
+  "abgerufen": "2026-09-14"
+}

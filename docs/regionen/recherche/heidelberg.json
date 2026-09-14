@@ -1,0 +1,92 @@
+{
+  "name": "Heidelberg",
+  "slug": "heidelberg",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 155756,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Heidelberg Netze GmbH",
+    "hinweis": "Laut eigener Angabe Netzbetreiber in Heidelberg und Eppelheim. Anmeldung von Erzeugungsanlagen online über das Netzportal; unterschieden werden Balkonkraftwerke, Anlagen unter 135 kW und Anlagen über 135 kW. Abdeckung einzelner Stadtteile nicht separat geprüft.",
+    "anmeldung_url": "https://www.netze-heidelberg.de/einspeiser",
+    "url": "https://www.netze-heidelberg.de/einspeiser"
+  },
+  "solarkataster": [
+    {
+      "name": "Solardachkataster im Energieatlas Baden-Württemberg (LUBW)",
+      "traeger": "Land",
+      "url": "https://www.energieatlas-bw.de/sonne/gebaeude/karten?activeLayer=solarkataster"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Förderprogramm Rationelle Energieverwendung – Photovoltaikanlagen auf Dach- und an Fassadenflächen",
+      "traeger": "Stadt Heidelberg",
+      "gegenstand": "Netzgebundene PV-Anlagen auf Dach- und an Fassadenflächen im Stadtgebiet; bei Anlagen, für die die PV-Pflicht-Verordnung Baden-Württemberg gilt, nur der Anlagenteil über der Mindestanforderung (Pauschalnachweis 0,06 kWp je m² überbauter Grundstücksfläche). Ausgeschlossen: steckerfertige Anlagen; nicht gefördert werden Batteriespeicher und Wallboxen.",
+      "konditionen": "Dachanlagen 100 EUR/kWp (förderbar bis 100 kWp); Fassadenanlagen sowie aufgeständerte Anlagen auf extensiv begrünten Dächern oder über Parkplätzen 200 EUR/kWp (bis 50 kWp); max. 10.000 EUR je Objekt; Zuschüsse unter 150 EUR werden nicht bewilligt; Betrieb mind. 15 Jahre; Bewilligung vor Maßnahmenbeginn; Förderung solange Haushaltsmittel verfügbar.",
+      "status": "laufend 2026 (Richtlinie gültig für Anträge ab 01.07.2026; zuvor Förderstopp). Hinweis: Die Übersichtsseite 'Energieberatung & Förderung' zeigt beim Abruf noch 'Derzeit Förderstopp!', die Programmseite und die Seite 'Umwelt Förderprogramme' nennen die Wiederaufnahme zum 01.07.2026.",
+      "url": "https://www.heidelberg.de/HD/Leben/foerderrichtlinien.html"
+    },
+    {
+      "name": "Förderprogramm Rationelle Energieverwendung – Mieterstrommodell oder gemeinschaftliche Gebäudeversorgung",
+      "traeger": "Stadt Heidelberg",
+      "gegenstand": "Investive Maßnahmen (z. B. Zähler, Zählerschrank, Verkabelung) für Mehrfamilienhäuser oder WEG, die ein Mieterstrommodell oder eine gemeinschaftliche Gebäudeversorgung mit einer neu zu installierenden PV-Anlage umsetzen.",
+      "konditionen": "50 % der investiven Kosten, max. 2.500 EUR je Objekt.",
+      "status": "laufend 2026 (Richtlinie gültig für Anträge ab 01.07.2026)",
+      "url": "https://www.heidelberg.de/site/Heidelberg2021/get/documents_E-1333003641/heidelberg/Objektdatenbank/31/PDF/Energie%20und%20Klimaschutz/Foerderprogramm%20Rationelle%20Energieverwendung/31_pdf_2026_F%C3%B6Pro_RatEn_ab-01-07-2026.pdf"
+    }
+  ],
+  "klimaziel": {
+    "text": "Als Modellstadt der EU-Mission '100 klimaneutrale und intelligente Städte' (seit 2022) hat sich Heidelberg verpflichtet, in allen Handlungsfeldern auf das Ziel einer Klimaneutralität bis 2030 hinzuarbeiten. Die Förderrichtlinie 2026 formuliert: Die Stadt hat sich verpflichtet, bis spätestens 2040 vollständig klimaneutral zu werden und den Energiebedarf um 50 % zu reduzieren.",
+    "url": "https://www.heidelberg.de/HD/Leben/Energie+und+Klimaschutz.html"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt Baden-Württemberg, Regierungsbezirk Karlsruhe: 'SK Heidelberg' Schneelastzone 1. Keine amtliche Höhenangabe gefunden; maßgeblich ist die Geländehöhe des Standorts (laut Stadt liegt Heidelberg am Austritt des Neckars aus dem Odenwald in die Rheinebene, https://www.heidelberg.de/1348853.html).",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "In Alt-Heidelberg und in der Weststadt gelten Gesamtanlagenschutzsatzungen: Für PV-Anlagen auf Kulturdenkmalen oder im Geltungsbereich dieser Satzungen ist eine denkmalschutzrechtliche Genehmigung notwendig; ansonsten sind PV-Anlagen grundsätzlich ohne Baugenehmigung möglich. Für beide Gebiete hat die Stadt Richtlinien zur Genehmigungsfähigkeit von PV-Anlagen veröffentlicht.",
+      "url": "https://www.heidelberg.de/HD/Leben/Sonnenenergie.html"
+    },
+    {
+      "text": "Richtlinie Alt-Heidelberg (vom 01.02.2024): Die Altstadt ist in vier Zonen eingeteilt. Kernzone 1: auf ziegelgedeckten geneigten Dächern nur Solarziegel in Farbe der Dachhaut. Kernzone 2: ausnahmsweise auch PV in Dachfarbe und gleicher Neigung, i. d. R. genehmigungsfähig, wenn weder von Fernpunkten noch vom öffentlichen Straßenraum sichtbar. Zone 3: PV in Dachfarbe; nicht einsehbare Flächen auch andersfarbig. Zone 4: handelsübliche Module. Allgemein matte, nicht spiegelnde, rahmenlose Module (oder Rahmen in Zellfarbe), Abstand zur Dachkante; auf Flachdächern (bis 11°) nicht spiegelnde All-in-Black-Module zulässig. Versagung auf Kulturdenkmalen, wenn der historische Dachstuhl ersetzt oder eine schützenswerte Eindeckung entfernt werden müsste.",
+      "url": "https://www.heidelberg.de/site/Heidelberg2021/get/documents_E305690521/heidelberg/Objektdatenbank/30/PDF/30_pdf_ortsr_6-13-1_Richtlinie_Genehmigung_Photovoltaik_Alt-Heidelberg.pdf"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Städtische Solarkampagne 'Heidelberger Sonnenstrom – Energie vom Dach' mit PV-Eignungscheck der KLiBA (individueller Bericht zu Anlagengröße, Ertrag, Kosten und Amortisation; Eigenanteil 30 EUR).",
+      "url": "https://www.heidelberg.de/HD/Leben/heidelberger+sonnenstrom+_++energie+vom+dach.html"
+    },
+    {
+      "text": "Handlungsleitfaden 'Dachbegrünung und Photovoltaik in Heidelberg' (2024): Bei Dächern mit Begrünungsauflage aus Bebauungsplänen soll der Leitfaden eingehalten werden; Abweichungen von alten Gründachanforderungen können über Bau-Online beantragt werden. Die Einhaltung ist Voraussetzung für den höheren Fördersatz bei PV auf extensiv begrünten Dächern.",
+      "url": "https://www.heidelberg.de/HD/Leben/Sonnenenergie.html"
+    },
+    {
+      "text": "Die PV-Förderung der Stadt setzt ausdrücklich auf Anlagen, die über die Photovoltaik-Pflicht-Verordnung des Landes Baden-Württemberg hinausgehen (Gemeinderatsbeschluss vom 18.12.2025).",
+      "url": "https://www.heidelberg.de/site/Heidelberg2021/get/documents_E-1333003641/heidelberg/Objektdatenbank/31/PDF/Energie%20und%20Klimaschutz/Foerderprogramm%20Rationelle%20Energieverwendung/31_pdf_2026_F%C3%B6Pro_RatEn_ab-01-07-2026.pdf"
+    }
+  ],
+  "energieberatung": {
+    "name": "Kostenlose Energieberatungs-Hotline der Stadt Heidelberg (06221 58-18141, Mo–Do) mit Unterstützung der Klimaschutz- und Energieberatungsagentur Heidelberg – Rhein-Neckar-Kreis gGmbH (KLiBA)",
+    "url": "https://www.heidelberg.de/HD/Leben/Energieberatung.html"
+  },
+  "offen": [
+    "Geländehöhe: keine amtliche Angabe auf heidelberg.de (Heidelberger Statistik, Heidelberg in Zahlen) gefunden.",
+    "Klimaziel: Stadtseiten nennen 2030 (EU-Mission), die Förderrichtlinie 2026 nennt 'bis spätestens 2040 vollständig klimaneutral'; ein eindeutiger aktueller Gemeinderatsbeschluss wurde nicht geprüft.",
+    "Förderstatus: widersprüchliche Angaben auf zwei Stadtseiten (Förderstopp-Hinweis vs. Wiederaufnahme ab 01.07.2026); die Richtlinie ab 01.07.2026 und die Online-Antragsformulare liegen vor. Aktueller Mittelstand nicht belegt.",
+    "Solarkataster: kein eigenes städtisches Kataster gefunden; die Stadt verweist auf den kostenpflichtigen KLiBA-Eignungscheck. Das landesweite LUBW-Kataster ist nicht von einer Heidelberger Stadtseite verlinkt gesehen worden.",
+    "Richtlinie Weststadt (Gesamtanlagenschutzsatzung) nicht im Detail ausgewertet.",
+    "Mieterstrom-Angebote der Stadtwerke Heidelberg nicht geprüft; Websuche-Kontingent war während der Recherche erschöpft."
+  ],
+  "abgerufen": "2026-09-14"
+}

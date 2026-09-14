@@ -1,0 +1,71 @@
+{
+  "name": "Rosenheim",
+  "slug": "rosenheim",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 65274,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugQ/AuszugGV4QAktuell.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Rosenheim Netze GmbH",
+    "hinweis": "Netzbetreiber im Stadtgebiet Rosenheim (Strom, Gas, Wasser, Fernwärme); eine textliche Gebietsabgrenzung wurde nicht gefunden. PV-Anlagen sind über das Netzanschlussportal anzumelden; danach Netzverträglichkeitsprüfung, ggf. Hausanschlussplanung, Einspeisezusage (6 Monate gültig), Inbetriebnahme. Balkonkraftwerke (Wechselrichter max. 800 W, Module max. 2000 Wp) müssen nur im Marktstammdatenregister eingetragen werden.",
+    "anmeldung_url": "https://www.swro-netze.de/einspeiser/arbeitsschritte",
+    "url": "https://www.swro-netze.de/einspeiser"
+  },
+  "solarkataster": [
+    {
+      "name": "Solardachkataster für Stadt und Landkreis Rosenheim",
+      "traeger": "Stadt Rosenheim und Landkreis Rosenheim",
+      "url": "https://www.solarkataster-rosenheim.de/"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Mit der Klimaschutzinitiative greift die Stadt die Empfehlung des Bayerischen Klimaschutzgesetzes auf, bis 2030 Klimaneutralität im eigenen Bereich der Verwaltung zu erreichen. Ein stadtweites Zieljahr wurde auf der Seite nicht genannt.",
+    "url": "https://www.rosenheim.de/buergerservice/umwelt/klimaschutzinitiative/"
+  },
+  "schneelastzone": {
+    "zone": "2",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Version 07.02.2023), Blatt BY, Gemeindeschlüssel 09163000: Zone 2; zusätzlich sind laut Tabelle die Ergebnisse des bayerischen Forschungsprojekts zu berücksichtigen. Charakteristische Schneelast abhängig von der Geländehöhe (DIN EN 1991-1-3/NA); die Stadt gibt 440–470 m ü. NN an. Mehrere Gemeinden im Landkreis Rosenheim (z. B. Raubling, Brannenburg, Oberaudorf, Kiefersfelden) sind in derselben Tabelle Zone 3 zugeordnet. Verbindlich sind die amtlichen Bekanntmachungen.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": "https://www.rosenheim.de/politik-verwaltung/daten-fakten/"
+  },
+  "ortsbild": [
+    {
+      "text": "Die Bayerische Denkmalliste führt für Rosenheim mehrere Ensembles, u. a. 'Äußerer Markt', 'Max-Josefs-Platz', 'Heilig-Geist-Straße' und 'Am Roßacker'. In Ensembles ist eine denkmalrechtliche Erlaubnis nötig, wenn eine Maßnahme ein Einzeldenkmal betrifft oder sich auf das Erscheinungsbild des Ensembles auswirken kann.",
+      "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_163000.pdf"
+    },
+    {
+      "text": "Art. 6 Abs. 2 BayDSchG: Dient eine Maßnahme der Gewinnung erneuerbarer Energien überwiegend für den Energiebedarf im Baudenkmal oder zu seiner energetischen Verbesserung, kann die Erlaubnis nur versagt werden, soweit überwiegende Gründe des Denkmalschutzes entgegenstehen und diesen nicht durch Nebenbestimmungen Rechnung getragen werden kann.",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayDSchG-6"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Laut Faltblatt der Stadt (Stand Mai 2019) wurde für Rosenheim ein Photovoltaik-Potenzial von rund 87 GWh ermittelt; der Gesamtstromverbrauch lag 2017 bei 241 GWh. Auf dem Rathaus Königstraße 15 ist eine PV-Anlage installiert.",
+      "url": "https://www.rosenheim.de/fileadmin/Buergerservice/Umwelt/Klimaschutz/Solardachkataster.pdf"
+    },
+    {
+      "text": "Neben der Verbraucherzentrale verweist die Stadt auf die Energieberatung der Stadtwerke Rosenheim und auf die Initiative Energiezukunft Rosenheim als Partner der Klimaschutzinitiative.",
+      "url": "https://www.rosenheim.de/buergerservice/umwelt/klima-schuetzen-selbst-aktiv-werden/"
+    }
+  ],
+  "energieberatung": {
+    "name": "Kostenlose Erstberatung der Verbraucherzentrale Bayern im Rathaus Königstraße 15 (jeden 2. Freitag im Monat, 45 Minuten, Anmeldung 0800 809 802 400)",
+    "url": "https://www.rosenheim.de/buergerservice/umwelt/klima-schuetzen-selbst-aktiv-werden/"
+  },
+  "offen": [
+    "Kommunale PV-/Speicher-Förderprogramme 2025/2026: auf den Klimaschutzseiten der Stadt keines genannt; Stadtwerke-Programme nicht geprüft.",
+    "Geländehöhe: Stadt nennt nur eine Spanne (440–470 m ü. NN), daher kein Einzelwert.",
+    "Mieterstrom-Angebot der Stadtwerke Rosenheim: Seite (swro.de) war beim Abruf gesperrt (HTTP 403), nicht verifiziert.",
+    "Gestaltungssatzung mit Regeln zu Solaranlagen: nicht gefunden/nicht geprüft.",
+    "Offiziell dokumentierte Hochwasser-/Hagelereignisse: nicht recherchiert (Suchkontingent erschöpft).",
+    "Einwohner: Destatis-Stand 31.12.2024 (65.274); Bayerisches Landesamt für Statistik meldet 65.808 zum 31.12.2025 (Statistischer Bericht A1210C 202500)."
+  ],
+  "abgerufen": "2026-09-14"
+}

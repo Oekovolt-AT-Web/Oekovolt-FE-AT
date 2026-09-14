@@ -1,0 +1,82 @@
+{
+  "name": "Erlangen",
+  "slug": "erlangen",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 115928,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.html"
+  },
+  "netzbetreiber": {
+    "name": "Erlanger Stadtwerke AG (ESTW), Bereich Netze",
+    "hinweis": "Laut Netzstrukturdaten der ESTW beträgt die geographische Fläche des Stromnetzgebiets 76,97 km²; die Stadtfläche laut Destatis liegt bei 76,96 km². Das spricht für eine Zuständigkeit im gesamten Stadtgebiet, im Einzelfall beim Netzbetreiber bestätigen. Seit 01.04.2026 sind neue Erzeugungsanlagen über das neue Installateurportal anzumelden.",
+    "anmeldung_url": "https://netze.estw.de/de/Installateure/Strom/",
+    "url": "https://netze.estw.de/de/Stromnetz/Netzstrukturdaten/"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarpotenzialkataster Erlangen (solare-stadt.de/erlangen)",
+      "traeger": "Stadt (Umweltamt der Stadt Erlangen) gemeinsam mit dem Landkreis Erlangen-Höchstadt (Regional- und Klimaschutzmanagement)",
+      "url": "https://www.solare-stadt.de/erlangen/"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Klimaneutralität vor 2030. Im November 2020 beschloss der Stadtrat die Aufstellung des 'Fahrplans Klima-Aufbruch' (31/040/2020) mit dem Ziel, das 1,5-Grad-Ziel auf städtischer Ebene einzuhalten, das CO2-Restbudget als Steuerungsgröße zu verwenden und damit die Klimaneutralität vor 2030 zu erreichen.",
+    "url": "https://erlangen.de/uwao-api/faila/files/bypath/Dokumente/PDF-Formulare/31_Umweltamt/fahrplan_klima-aufbruch_-_kurzbericht.pdf"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt Bayern, Gemeindeschlüssel 09562000: Schneelastzone 1. Für Bayern ist laut Tabelle zusätzlich das Forschungsprojekt zu Schneelastmesswerten (Rundschreiben StMI vom 19.01.2018) zu berücksichtigen. Der charakteristische Wert ergibt sich erst mit der Geländehöhe des Standorts (DIN EN 1991-1-3/NA); keine amtliche Höhenangabe für Erlangen gefunden.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "Die Planungshinweise des gemeinsamen Solarpotenzialkatasters von Stadt und Landkreis weisen darauf hin, dass auf denkmalgeschützten Gebäuden eine Solaranlage nur in Ausnahmefällen mit denkmalpflegerischer Erlaubnis möglich ist und dass sich der Schutz ggf. auch auf Nachbargebäude eines Denkmals erstreckt; vor der Planung soll die Untere Denkmalbehörde kontaktiert werden.",
+      "url": "https://www.solare-stadt.de/erlangen/Planungshinweise"
+    },
+    {
+      "text": "Die städtische Energieberatung nennt eine eigene Telefonnummer für Fragen zu denkmalgeschützten Gebäuden (09131 86-3435).",
+      "url": "https://erlangen.de/aktuelles/energieberatung"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Die Stadt Erlangen verweist auf ihren Informationsseiten zur Photovoltaik bei Förderungen auf Programme von Freistaat Bayern und Bund; ein eigenes städtisches PV-Förderprogramm ist dort nicht aufgeführt.",
+      "url": "https://erlangen.de/aktuelles/solarpotential-in-erlangen"
+    },
+    {
+      "text": "Das städtische Förderprogramm 'Klimabudget' (Klimaschutz-Projekte von Bürgerinnen und Bürgern, z. B. Info-Veranstaltungen; keine PV-Anlagenförderung) ist laut Stadt wegen der Haushaltslage derzeit nicht beantragbar (Seitenstand 09.12.2025).",
+      "url": "https://erlangen.de/aktuelles/klimabudget"
+    },
+    {
+      "text": "Die Erlanger Stadtwerke betreiben laut eigener Angabe 85 PV-Anlagen im Stadtgebiet mit ca. 1.754,80 kWp Gesamt-Nennleistung, darunter Mieterstromprojekte; das erste Mieterstromprojekt startete 2020 in der Goeschelstraße (85,76 kWp).",
+      "url": "https://www.estw.de/de/Die-ESTW/Energiewende/Photovoltaik/Mieterstromprojekte/Mieterstromprojekte.html"
+    },
+    {
+      "text": "Kommunaler Wärmeplan liegt seit Januar 2026 vor; er zeigt, wie eine fossilfreie Wärmeversorgung im Jahr 2040 aussehen kann (nicht rechtlich bindend).",
+      "url": "https://erlangen.de/aktuelles/energieberatung"
+    },
+    {
+      "text": "Das ESTW-Energieberatungszentrum (Äußere Brucker Str. 33) bietet Beratung zu Photovoltaik und Solarthermie fürs Eigenheim an.",
+      "url": "https://www.estw.de/photovoltaik"
+    }
+  ],
+  "energieberatung": {
+    "name": "Städtische Energieberatung (Umweltamt), kostenfrei und unabhängig, telefonisch, im Umweltamt oder vor Ort; zusätzlich mobil mit dem Klimamobil",
+    "url": "https://erlangen.de/aktuelles/energieberatung"
+  },
+  "offen": [
+    "Kein aktuelles kommunales Förderprogramm für Photovoltaik belegbar: Die frühere Service-Seite 'Beantragung einer kommunalen Förderung' (erlangen.de/service/98103) leitet inzwischen auf die Energieberatungsseite weiter.",
+    "Geländehöhe: keine amtliche Angabe auf erlangen.de oder bei Landesamt/Destatis gefunden.",
+    "Ortsbild: keine Gestaltungs- oder Denkmalsatzung mit konkreten Regeln zu Solaranlagen gefunden; eine Ratsvorlage 'Denkmalschutz; hier: Photovoltaik-Anlagen' im Ratsinformationssystem war beim Abruf nicht erreichbar.",
+    "Netzbetreiber: vollständige Abdeckung aller Ortsteile nur indirekt über Flächenvergleich abgeleitet, nicht ausdrücklich belegt.",
+    "Websuche-Kontingent war während der Recherche erschöpft; weitere Quellen (z. B. Mieterstrom-Angebote für Dritte, lokale Solarpflicht in Bebauungsplänen) konnten nicht mehr gesucht werden."
+  ],
+  "abgerufen": "2026-09-14"
+}

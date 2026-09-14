@@ -1,0 +1,78 @@
+{
+  "name": "Garmisch-Partenkirchen",
+  "slug": "garmisch-partenkirchen",
+  "bundesland": "Bayern",
+  "kreis": "Landkreis Garmisch-Partenkirchen",
+  "einwohner": {
+    "wert": 28305,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugQ/AuszugGV4QAktuell.html"
+  },
+  "netzbetreiber": {
+    "name": "Gemeindewerke Garmisch-Partenkirchen",
+    "hinweis": "Die Gemeindewerke bezeichnen sich als 'Betreiber von Elektrizitätsversorgungsnetzen'; eine ausdrückliche Gebietsabgrenzung für alle Ortsteile wurde nicht gefunden. Anmeldung von Erzeugungsanlagen nach VDE-AR-N 4100/4105 und TAB; Formulare u. a. vereinfachter Anschlussprozess für Kleinsterzeugungsanlagen (F.1.2).",
+    "anmeldung_url": "https://www.gw-gap.de/strom/stromnetz/hausanschluss-strom?view=article&id=617:anmeldeverfahren-fuer-erzeugungsanlagen&catid=15",
+    "url": "https://www.gw-gap.de/strom/stromnetz/hausanschluss-strom/technische-mindestanforderungen"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarpotenzialkataster Landkreis Garmisch-Partenkirchen",
+      "traeger": "Landkreis Garmisch-Partenkirchen mit seinen Gemeinden; Herausgeber laut Impressum: Zugspitz Region GmbH",
+      "url": "https://www.solare-stadt.de/garmisch-partenkirchen/Start"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Landkreisebene: Der Landkreis Garmisch-Partenkirchen hat sich im Rahmen der Energiewende Oberland mit den Nachbarlandkreisen zum Ziel gesetzt, bis 2035 frei von fossilen Energien zu sein. Der Markt selbst verweist (Stand 3.11.2025) auf die gesetzlichen Zieljahre des Bayerischen Klimaschutzgesetzes (2040, Anpassung auf 2045 in Planung) und bereitet die kommunale Wärmeplanung vor.",
+    "url": "https://www.lra-gap.de/de/klimaschutz.html"
+  },
+  "schneelastzone": {
+    "zone": "2a",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Version 07.02.2023), Blatt BY, Gemeindeschlüssel 09180117: Zone 2a, 'neue Schneelastzone aus dem Forschungsprojekt'. Die charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab (DIN EN 1991-1-3/NA); Rathaus liegt auf 708 m ü. NN, Ortsteile deutlich höher möglich. Verbindlich sind die amtlichen Bekanntmachungen des Landes.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 708,
+    "url": "https://markt.gapa.de/zahlen-und-fakten/"
+  },
+  "ortsbild": [
+    {
+      "text": "Die Bayerische Denkmalliste führt für Garmisch-Partenkirchen neun Ensembles (u. a. Ludwigstraße, Sonnenbergstraße, Fürstenstraße, Loisachgries, Ortskern Wamberg). In Ensembles ist eine denkmalrechtliche Erlaubnis nötig, wenn eine Maßnahme ein Einzeldenkmal betrifft oder sich auf das Erscheinungsbild des Ensembles auswirken kann.",
+      "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_180117.pdf"
+    },
+    {
+      "text": "Art. 6 Abs. 2 BayDSchG: Dient eine Maßnahme der Gewinnung erneuerbarer Energien überwiegend für den Energiebedarf im Baudenkmal oder zu seiner energetischen Verbesserung, kann die Erlaubnis nur versagt werden, soweit überwiegende Gründe des Denkmalschutzes entgegenstehen und diesen nicht durch Nebenbestimmungen Rechnung getragen werden kann.",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayDSchG-6"
+    },
+    {
+      "text": "Der Markt hat eine Ortsgestaltungssatzung (in Merkblättern des Bauamts als einzuhaltende Vorschrift genannt). Das Solarpotenzialkataster weist darauf hin, dass PV- und Solarthermieanlagen im Geltungsbereich einer Gestaltungssatzung ganz oder teilweise untersagt sein können und die Bauverwaltung früh einbezogen werden sollte. Konkrete Solarregeln der Ortsgestaltungssatzung wurden nicht eingesehen.",
+      "url": "https://markt.gapa.de/wp-content/uploads/2025/03/Merkblatt-Stadel-fuer-die-Landwirtschaft.pdf"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Die Gemeindewerke Garmisch-Partenkirchen haben 2023 bis zum 2. Quartal 2024 PV-Anlagen mit zusammen rund 194 kW auf eigenen Dächern in Betrieb genommen; an zwei Projekten am Betriebsgelände Adlerstraße wurden Batteriespeicher installiert (Pressemitteilung vom 19.07.2024).",
+      "url": "https://www.gemeindewerke-garmisch-partenkirchen.de/pressemitteilung/464-neue-pv-anlagen-der-gemeindewerke-in-betrieb-genommen"
+    },
+    {
+      "text": "Laut Gemeindewerken wurden 2025 im eigenen Netz insgesamt ca. 49.116.400 kWh Strom selbst erzeugt.",
+      "url": "https://www.gw-gap.de/strom/stromlieferant/eigenerzeugung/eigenanlagen"
+    },
+    {
+      "text": "Die Energiewende Oberland ist eine Bürgerstiftung der vier Oberland-Landkreise, zu denen der Landkreis Garmisch-Partenkirchen gehört; sie wird in der Förderübersicht des Landratsamts aufgeführt.",
+      "url": "https://www.lra-gap.de/de/foerderprogramme.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieberatung des Landkreises Garmisch-Partenkirchen in Zusammenarbeit mit der Verbraucherzentrale Bayern (Beratungen in Garmisch-Partenkirchen und Murnau)",
+    "url": "https://www.lra-gap.de/de/klimaschutz.html"
+  },
+  "offen": [
+    "Kommunale PV-/Speicher-Förderprogramme: auf den Seiten von Markt, Landkreis (Förderprogramme-Übersicht) und Gemeindewerken kein aktuelles Programm gefunden.",
+    "Eigenes beschlossenes Klimaziel des Marktes (Zieljahr, Beschluss) nicht belegbar; nur Landkreisziel und Verweis auf Landesgesetz.",
+    "Wortlaut der Ortsgestaltungssatzung zu Solaranlagen nicht online eingesehen.",
+    "Ausdrückliche Bestätigung, dass die Gemeindewerke das Netz im gesamten Gemeindegebiet (alle Ortsteile) betreiben, nicht gefunden.",
+    "Einwohner: Destatis-Stand 31.12.2024 (28.305); Bayerisches Landesamt für Statistik meldet 28.088 zum 31.12.2025 (Statistischer Bericht A1210C 202500); Markt nennt 28.259 Hauptwohnsitze laut Melderegister zum 31.12.2025."
+  ],
+  "abgerufen": "2026-09-14"
+}

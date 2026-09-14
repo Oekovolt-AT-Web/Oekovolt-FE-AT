@@ -1,0 +1,79 @@
+{
+  "name": "Memmingen",
+  "slug": "memmingen",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 44192,
+    "stand": "31.12.2024",
+    "url": "https://statistik.bayern.de/mam/produkte/statistik_kommunal/2025/09764.pdf"
+  },
+  "netzbetreiber": {
+    "name": "LEW Verteilnetz GmbH (LVN)",
+    "hinweis": "Die Stadtwerke Memmingen führen Wasser und Gas; für Störungen im Stromnetz verweisen sie auf LEW Verteilnetz. Eine ausdrückliche Netzgebietsliste des Netzbetreibers für das Stadtgebiet wurde nicht eingesehen – vor Anmeldung per Adresse beim Netzbetreiber prüfen.",
+    "anmeldung_url": "https://www.lew-verteilnetz.de/lew-verteilnetz/fuer-einspeiser/in-das-oeffentliche-netz-einspeisen/photovoltaikanlage-anmelden",
+    "url": "https://stadtwerke-memmingen.de/produkte/neue-energien"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarpotenzialkataster Landkreis Unterallgäu (umfasst auch die Stadt Memmingen)",
+      "traeger": "Landkreis Unterallgäu",
+      "url": "https://www.solare-stadt.de/landkreis-unterallgaeu/Solarpotenzialkataster"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Förderprogramm „Klimaschutz“ der Stadt Memmingen 2026",
+      "traeger": "Stadt Memmingen, Amt für Umwelt und Klima",
+      "gegenstand": "Balkonsolaranlagen (steckerfertige PV), Eigenstromspeicher, Ladeinfrastruktur an Wohngebäuden (Gebäude mit PV-Eigenstromversorgung oder 100 % Ökostrom), Energie- und Speicherberatung",
+      "konditionen": "Balkonsolaranlage 50 %, max. 100 €; Eigenstromspeicher 20 %, max. 750 €; Ladeinfrastruktur 20 %, max. 750 €; Energieberatung (Schwerpunkt PV/Speicher) 50 %, max. 200 €. Fördertopf 2026: 12.000 €. Antrag vor Maßnahmenbeginn, Anträge bis 01.12.2026; nur Mieter/Eigentümer von Wohnungen in Memmingen.",
+      "status": "Mittel erschöpft (Stadt: „Fördertopf für 2026 ist ausgeschöpft. Bitte stellen Sie keine Anträge mehr.“)",
+      "url": "https://www.memmingen.de/hier-leben/umwelt-klimaschutz/foerderung.html"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2040 (Klimaschutzkonzept 2040, vom Stadtrat am 12.12.2022 zustimmend zur Kenntnis genommen; Verwaltung mit Umsetzung der Maßnahmen beauftragt)",
+    "url": "https://www.memmingen.de/aktuelles/archiv/singlenews-archiv/news/detail/News/memmingen-soll-bis-2040-klimaneutral-werden.html"
+  },
+  "schneelastzone": {
+    "zone": "2",
+    "hinweis": "Zuordnung nach DIN EN 1991-1-3 laut DIBt-Tabelle „Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Gemeindeschlüssel 09764000; Tabelle verweist für Bayern zusätzlich auf die Ergebnisse eines Forschungsprojekts (StMI-Schreiben vom 19.01.2018). Verbindlich sind die amtlichen Bekanntmachungen des Landes; charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": null,
+  "ortsbild": [
+    {
+      "text": "Die Memminger Altstadt ist ein Ensemble nach Art. 1 Abs. 3 Denkmalschutzgesetz; bei Gebäuden innerhalb des Ensembles stehen alle Außenfassaden einschließlich Dach und Dachstuhl unter Denkmalschutz. Jede Veränderung bedarf einer denkmalrechtlichen Erlaubnis.",
+      "url": "https://www.memmingen.de/digitales-amt/anliegen-a-z/dienstleistung/show/denkmalschutz.html"
+    },
+    {
+      "text": "Gestaltungssatzung Altstadt vom 13.03.2024, § 16 „Thermische Sonnenkollektoren und Photovoltaikanlagen“: Solaranlagen auf/in Dachflächen zulässig unter Auflagen – u. a. in einsehbaren Dachbereichen als Solarziegel in Biberschwanzdoppeldeckung oder als Aufdachanlage nur monochrom in Farbe der Dachziegel (max. 15 cm über Dachfläche, nicht bei Baudenkmälern); parallel zur Dachneigung, blendarm, keine Überschreitung von First/Traufe/Ortgang; aufgeständerte Anlagen nur auf Flachdächern; Anlagen an Balkongeländern/Fassaden nur, wenn von öffentlichen Straßen und Plätzen nicht einsehbar. Geltungsbereich: Altstadt innerhalb der Stadtmauern einschließlich Wall- und Grabenanlagen.",
+      "url": "https://stadtrecht.memmingen.de/fileadmin/Stadtrecht/MStR/6000/6114.pdf"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Das Klimaschutzkonzept 2040 nennt als zentrale Maßnahme den Ausbau der Photovoltaik um 2,5 m² pro Einwohner pro Jahr auf Dächern sowie einen Zubau von jährlich 5 MWp Freiflächen-Photovoltaik.",
+      "url": "https://www.memmingen.de/fileadmin/civserv/9764000/forms/Amt56/2022-12-01_KSK_Memmingen_mit_Foerderhinweis.pdf"
+    },
+    {
+      "text": "Die Stadtwerke Memmingen betreiben eigene PV-Anlagen, u. a. auf dem Parkhaus ZOB (47 kWp, seit Mai 2016, für Betriebsstrom und vier E-Ladesäulen) und eine Freiflächenanlage an der Brunnenanlage (126,5 kWp) zur Versorgung der Pumpen.",
+      "url": "https://stadtwerke-memmingen.de/produkte/neue-energien"
+    },
+    {
+      "text": "Kostenlose, neutrale Energieberatung der Verbraucherzentrale Bayern in Kooperation mit eza! in Memmingen (Lindauer Str. 7), Terminvereinbarung unter 0831 960286-0.",
+      "url": "https://www.eza-allgaeu.de/bau-energieberatung/fachleute-finden/detail/partner-432/"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieberatung Memmingen der Verbraucherzentrale Bayern / eza! (Energie- und Umweltzentrum Allgäu), Lindauer Str. 7, 87700 Memmingen – kostenlos, Termin unter 0831 960286-0",
+    "url": "https://www.eza-allgaeu.de/bau-energieberatung/fachleute-finden/detail/partner-432/"
+  },
+  "offen": [
+    "Geländehöhe: keine amtliche Angabe (Stadt/Landesamt) gefunden – daher null.",
+    "Netzbetreiber: Zuordnung LEW Verteilnetz stützt sich auf den Verweis der Stadtwerke Memmingen (Störungsmeldung Stromnetz); eine Netzgebietsliste von LVN mit Memmingen wurde nicht eingesehen. Die LVN-Anmeldeseite ist erreichbar (HTTP 200), ihr Inhalt konnte aber wegen eines Header-Fehlers nicht gelesen werden.",
+    "Kein laufendes kommunales Förderprogramm für Dach-PV 2026 gefunden; eine ältere PV-Förderrichtlinie (Datei 240610_Foerderrichtlinie_PV.pdf) ist auf der aktuellen Förderseite nicht mehr aufgeführt und wurde nicht aufgenommen.",
+    "Keine Solarpflicht-/Mieterstrom-Beschlüsse der Stadt belegt."
+  ],
+  "abgerufen": "2026-09-14"
+}

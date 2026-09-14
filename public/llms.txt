@@ -25,6 +25,7 @@ Purpose: Provide structured, factual, LLM-readable context about Ökovolt Solart
 - [Photovoltaik für Gewerbe & Industrie](https://www.oekovolt.de/gewerbe)
 - [Photovoltaik für Landwirtschaft & Agri-PV](https://www.oekovolt.de/landwirtschaft)
 - [Photovoltaik für Kommunen & Stadtwerke](https://www.oekovolt.de/kommunen)
+- [Einzugsgebiet: Photovoltaik je Stadt (Ertrag, Netzbetreiber, Förderung)](https://www.oekovolt.de/photovoltaik)
 - [Hersteller](https://www.oekovolt.de/produkte/hersteller)
 - [Direktvermarktung](https://www.oekovolt.de/service/direktvermarktung)
 - [Finanzierung](https://www.oekovolt.de/service/finanzierung)

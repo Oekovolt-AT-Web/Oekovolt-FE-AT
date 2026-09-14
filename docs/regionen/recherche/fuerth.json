@@ -1,0 +1,83 @@
+{
+  "name": "Fürth",
+  "slug": "fuerth",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 132036,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.html"
+  },
+  "netzbetreiber": {
+    "name": "infra fürth gmbh",
+    "hinweis": "infra bezeichnet sich auf ihrer Netzanschluss-Seite als Netzbetreiber des 'infra-Verteilnetzes' und führt Netzverträglichkeitsprüfung, Anmeldung vor Baubeginn und Inbetriebsetzung durch. Eine Karte/Liste des Netzgebiets wurde nicht geprüft; Zuständigkeit im Einzelfall beim Netzbetreiber bestätigen lassen. Hinweis zur Quelle: infra-fuerth.de war beim Abruf nicht direkt erreichbar, Inhalte wurden über den Web-Archive-Snapshot vom 08.06.2026 eingesehen.",
+    "anmeldung_url": "https://www.infra-fuerth.de/privatkunden/produkte/solar/netzanschluss/",
+    "url": "https://web.archive.org/web/20260608203955/https://www.infra-fuerth.de/privatkunden/produkte/solar/netzanschluss"
+  },
+  "solarkataster": [
+    {
+      "name": "Solar- und Gründachkataster der Stadt Fürth",
+      "traeger": "Stadt",
+      "url": "https://www.fuerth.de/umwelt-abfall/klima/gebaeude-und-energie/solar-und-gruendachkataster/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "KlimaOffensive",
+      "traeger": "infra fürth gmbh (Stadtwerke)",
+      "gegenstand": "Zuschüsse für private CO2-Einsparmaßnahmen im Stadtgebiet Fürth; im Solarbereich wird Solarthermie gefördert (Anlagen auf bestehenden Wohngebäuden, errichtet bis 31.12.2010). Photovoltaik ist auf der Seite nicht als eigener Förderbaustein aufgeführt; PV-Anlagen und Stromspeicher werden nur in der Ausnahmeregel für Neubauten erwähnt.",
+      "konditionen": "Solarthermie 50 EUR/m²; Antrag vor Beauftragung bzw. Kauf; Liegenschaft im Stadtgebiet Fürth (PLZ 90762, 90763, 90765, 90766, 90768); Bewilligung im Rahmen verfügbarer Mittel, kein Rechtsanspruch.",
+      "status": "Programm wird auf der infra-Website beworben (Archiv-Snapshot 04.09.2026); ein ausdrücklicher Hinweis auf Laufzeit oder Mittelstand 2026 fehlt.",
+      "url": "https://web.archive.org/web/20260904114331/https://www.infra-fuerth.de/privatkunden/infothek/klimaoffensive"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutral bis 2040. Das Integrierte Klimaschutzkonzept wurde im Dezember 2021 vom Stadtrat beschlossen und dient als Fahrplan, um die Klimaziele der Stadt bis 2040 zu erreichen.",
+    "url": "https://www.fuerth.de/umwelt-abfall/klima/konzept-und-weg-zur-klimaschutzstadt/"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt Bayern, Gemeindeschlüssel 09563000: Schneelastzone 1. Für Bayern ist laut Tabelle zusätzlich das Forschungsprojekt zu Schneelastmesswerten (Rundschreiben StMI vom 19.01.2018) zu berücksichtigen. Die Zone gilt ohne Höhenkorrektur; der charakteristische Wert ergibt sich erst mit der Geländehöhe des Standorts (DIN EN 1991-1-3/NA).",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 294,
+    "url": "https://www.nuernberg.de/imperia/md/statistik/dokumente/veroeffentlichungen/berichte/fiz/fiz_2023_v1-0_seiten.pdf"
+  },
+  "ortsbild": [
+    {
+      "text": "Kommunales Denkmalkonzept für Solaranlagen im Altstadtquartier zwischen Gustavstraße, Oberer und Unterer Fischerstraße und Heiligenstraße: Ein Kriterienkatalog mit Solarrahmenplan legt gebäude- und ortsspezifisch fest, auf welchen Dachflächen und in welcher Form und Größe Anlagen zur Eigennutzung zulässig sind. Jede Solaranlage bleibt erlaubnispflichtig durch die Untere Denkmalbehörde. Die Übertragung auf die Gesamtstadt ist als nächster Schritt angekündigt; Kurzübersicht und Leitfaden stehen als Download bereit.",
+      "url": "https://www.fuerth.de/bauen-mobilitaet/privates-bauen/denkmalschutz/solaranlagen-auf-denkmalgeschuetzten-daechern/"
+    },
+    {
+      "text": "Die Gebäude in der Innenstadt sind laut Stadt bis zu 300 Jahre alt und stehen größtenteils als Einzeldenkmal oder als Teil eines Ensembles unter Denkmalschutz; Veränderungen an Baudenkmälern bedürfen der Erlaubnis der Denkmalschutzbehörde.",
+      "url": "https://www.fuerth.de/bauen-mobilitaet/privates-bauen/denkmalschutz/"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Solarbilanz 2025: Die Zahl der PV-Anlagen im Stadtgebiet stieg von 3941 auf 4812, mit zusammen 53.677 Kilowattpeak (Anstieg 22 Prozent); die Stadt spricht von einer fortgesetzten 'Solaroffensive'.",
+      "url": "https://www.fuerth.de/service-fuerther-rathaus/aktuelles/detail/das-war-2025-markante-zahlen-aus-der-kleeblattstadt/"
+    },
+    {
+      "text": "Kostenlose Energie-Initialberatung der Stadt Fürth für Eigentümerinnen und Eigentümer: 45-minütiger Vor-Ort-Termin mit zertifizierter Energieberatung, u. a. zu Photovoltaik, Solarthermie und Energiespeichern; auf 250 Beratungen pro Jahr begrenzt.",
+      "url": "https://www.fuerth.de/umwelt-abfall/klima/gebaeude-und-energie/energieberatung/"
+    },
+    {
+      "text": "PV-Freiflächenkonzept: Der Stadtrat stimmte am 20.12.2023 einstimmig dem 'Standortkonzept für Photovoltaik-Freiflächenanlagen' zu; Schwerpunkt auf vorbelasteten, nach EEG 2023 geförderten Flächen entlang von Autobahnen und Schienenwegen.",
+      "url": "https://www.fuerth.de/bauen-mobilitaet/stadtplanung-und-stadterneuerung/pv-freiflaechenkonzept/"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieberatung der Verbraucherzentrale Bayern und der Stadt Fürth (Zukunft.Umwelt.Fürth, Flößaustraße 22a) sowie kostenlose Energie-Initialberatung der Stadt Fürth",
+    "url": "https://www.fuerth.de/umwelt-abfall/klima/gebaeude-und-energie/energieberatung/"
+  },
+  "offen": [
+    "Netzgebiet der infra fürth gmbh: keine Netzgebietskarte oder Angabe gefunden, ob alle Stadtteile abgedeckt sind.",
+    "infra-fuerth.de war beim Abruf nicht direkt erreichbar (Verbindung abgelehnt); Netzbetreiber- und Förderangaben stammen aus Web-Archive-Snapshots vom 08.06.2026 bzw. 04.09.2026 und sollten vor Veröffentlichung live gegengeprüft werden.",
+    "Städtische Förderprogramme (fuerth.de) enthalten keinen Photovoltaik-Baustein; ein kommunales PV-Förderprogramm wurde nicht gefunden.",
+    "Status 2026 der KlimaOffensive nicht ausdrücklich belegt.",
+    "Einwohnerzahl: Destatis-Wert (Fortschreibung auf Basis Zensus 2022) weicht vom Melderegisterwert der Stadt ab (Stadt: rund 132.600 Ende 2025)."
+  ],
+  "abgerufen": "2026-09-14"
+}

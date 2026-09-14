@@ -418,10 +418,10 @@ export const BUNDESLAENDER = {
       {
         ort: "Stuttgart",
         programm: "Solaroffensive",
-        hoehe: "350 €/kWp, bei Volleinspeisung bis 600 €/kWp",
-        was: "Begleitmaßnahmen rund um die Anlage",
+        hoehe: "bis 50 %, max. 300 €/kWp (Dach) bzw. 400 €/kWp (Fassade, Gründach); Speicher 100 €/kWh",
+        was: "Begleitmaßnahmen rund um die Anlage (Richtlinie ab 01.05.2026)",
         hinweis:
-          "Gefördert werden ausdrücklich NICHT Module, Wechselrichter und Montage, sondern Zählerplatz, Elektroinstallation, Gerüst, Statikprüfung, Kabelwege, Dacharbeiten und Blitzschutz.",
+          "Gefördert werden ausdrücklich NICHT Module, Wechselrichter und Montagesysteme, sondern Zählerplatz, Elektroinstallation, Gerüst, Statik, Dacharbeiten und Blitzschutz. Mittel 2026 ausgeschöpft – Anträge weiter möglich, Auszahlung ab 2027.",
       },
       {
         ort: "Heidelberg",
@@ -440,10 +440,10 @@ export const BUNDESLAENDER = {
       },
       {
         ort: "Freiburg",
-        programm: "Städtische PV-Förderung",
-        hoehe: "aktives Programm, Konditionen bei der Stadt erfragen",
-        was: "Dachanlagen für Hausbesitzer",
-        hinweis: "Die Stadt bietet zusätzlich eine kostenlose Erstberatung an.",
+        programm: "Klimafreundlich Wohnen – Stromerzeugung erneuerbar",
+        hoehe: "150 €/kWp, max. 1.500 € (plus Boni)",
+        was: "PV-Dachvollbelegung auf Wohngebäuden",
+        hinweis: "Mittel 2026 ausgeschöpft, neue Anträge ab 01.01.2027. Für Anlagen über 30 kWp fördert die Stadt zusätzlich die Netzanschlusserweiterung.",
       },
     ],
 

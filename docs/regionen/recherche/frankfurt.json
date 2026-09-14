@@ -1,0 +1,93 @@
+{
+  "name": "Frankfurt am Main",
+  "slug": "frankfurt",
+  "bundesland": "Hessen",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 756021,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/05-staedte.html"
+  },
+  "netzbetreiber": {
+    "name": "NRM Netzdienste Rhein-Main GmbH",
+    "hinweis": "Tochter der Mainova AG; laut NRM zuständig für die Netze „in Frankfurt am Main und Umland“. Ablauf für EEG-Anlagen laut NRM: Registrierung und Anmeldung durch Elektroinstallateur/Anlagenerrichter im NRM-Netzportal, Netzverträglichkeitsprüfung (Einspeisezusage sechs Monate gültig), Zählersetzungsantrag im Installateurportal der Mainova ServiceDienste, Zählersetzung, Inbetriebnahme, MaStR-Registrierung binnen vier Wochen, Fertigmeldung (u. a. E.8-Inbetriebsetzungsprotokoll), Einspeisefreigabe per E-Mail. Steckersolargeräte bis 800 W Wechselrichter- und 2.000 Wp Modulleistung sind bei NRM nur noch im MaStR anzumelden (https://www.nrm-netzdienste.de/de/einspeisungen/strom/plug-in-pv-anlagen). Achtung: Die städtische Solarseite verlinkt neben NRM auch Einspeiser-Portale der Syna GmbH; in der Syna-Netzgebietskarte 2023 sind westliche Frankfurter Stadtteile (u. a. Höchst, Nied, Sindlingen, Unterliederbach, Griesheim) beschriftet. Netzbetreiber daher adressgenau prüfen.",
+    "anmeldung_url": "https://www.nrm-netzdienste.de/de/einspeisungen/strom/einspeisung-eeg",
+    "url": "https://www.nrm-netzdienste.de/"
+  },
+  "solarkataster": [
+    {
+      "name": "Solar-Kataster Hessen",
+      "traeger": "Land Hessen (LandesEnergieAgentur Hessen, LEA); von der Stadt Frankfurt auf frankfurt.de empfohlen (Dach- und Freiflächen, PV und Solarthermie, Wirtschaftlichkeitsrechner). Ein eigenes städtisches Solarkataster wurde nicht gefunden.",
+      "url": "https://www.lea-hessen.de/buergerinnen-und-buerger/sonnenenergie-nutzen/solarkataster-hessen/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Klimabonus – Richtlinie zur Förderung von Klimaschutz- und Klimaanpassungsmaßnahmen in Frankfurt am Main",
+      "traeger": "Stadt Frankfurt am Main (Klimareferat, Solmsstraße 18, 60486 Frankfurt am Main, Tel. 069 212-39193)",
+      "gegenstand": "Säule Erneuerbare Energien: neue Photovoltaik- und Solarthermieanlagen an/auf Gebäuden und zugehörigen Nutzflächen (Höfe, Einfahrten, Parkplätze), Solar-Gründächer, Mini-PV-Anlagen, Batteriespeicher und Ladeinfrastruktur (Speicher/Ladepunkte nur in Kombination mit PV-Anlage oder Solar-Gründach im gleichen Gebäude). Säule Klimaanpassung: Dach-, Fassaden- und Hofbegrünung, Regenwasserspeicher, Trinkbrunnen. Förderfähig u. a. Planung, Module, Wechselrichter, Montagesysteme, notwendige Ertüchtigung der Hauselektrik, denkmalgerechte Mehrkosten, Fassaden-PV. Erweiterungen bestehender PV-Anlagen ab 4 kWp Zusatzleistung oder in Kombination mit Speicher/Ladeinfrastruktur. Mini-PV nur für Mietwohnungen bzw. Mehrfamilienhäuser ab drei Wohneinheiten. Antragsberechtigt: Privatpersonen, Eigentümergemeinschaften, Organisationen, Unternehmen als Eigentümer/dinglich Verfügungsberechtigte.",
+      "konditionen": "Zuschuss: PV/Solarthermie 20 %, Solar-Gründächer 30 %, Batteriespeicher 20 %, Ladesäulen 20 %, Begrünung/Regenwasser/Trinkbrunnen 50 % der förderfähigen Kosten. Gemeinschaftsprojekte (z. B. WEG, Mieter-, Bürger-, Mitarbeiter-Solaranlagen) +5 Prozentpunkte (nicht für Mini-PV). Höchstbetrag 50.000 Euro je Fördersäule und Gebäude, insgesamt max. 100.000 Euro. Unternehmen: max. 40 % (groß) / 50 % (mittel) / 60 % (klein). Nur digitaler Antrag; Beginn erst nach Zuwendungsbescheid (auch keine Anzahlungen); Kombination mit anderen Förderprogrammen möglich; Pflichtmaßnahmen nicht förderfähig; keine Mieterhöhung; Zweckbindung 10 Jahre (Mini-PV 5 Jahre); Speicher-Empfehlung 1 kWh je 1,2 kWp.",
+      "status": "Laufend. Laut Stadt läuft das Programm voraussichtlich bis mindestens Ende 2026; kein Rechtsanspruch, Förderung unter Vorbehalt verfügbarer Haushaltsmittel. Mini-PV (Balkonkraftwerke): Mittel seit 03.06.2025 ausgeschöpft, keine Anträge mehr möglich; übrige Fördergegenstände nicht betroffen (Stand Webseite, abgerufen 14.09.2026).",
+      "url": "https://frankfurt.de/themen/klima-und-energie/stadtklima/klimabonus"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2035 (Stadtverwaltung bis 2030) laut Beschluss der Stadtverordnetenversammlung „Klimaneutrales Frankfurt 2035“: Grundsatzbeschlüsse (§ 1650 vom 12.05.2022). Quelle: Einleitung der Klimabonus-Förderrichtlinie; Zieljahr 2030 für die Verwaltung laut Klimareferat (https://klimaschutz-frankfurt.de/ueber-uns/). Hinweis: Ältere städtische Seiten nennen noch das Masterplan-Ziel 2050 (Energieverbrauch halbieren, THG −95 % ggü. 1990).",
+    "url": "https://frankfurt.de/-/media/frankfurtde/frankfurt-themen/klima-und-energie/pdf/klimareferat/klimabonus/foerderrichtlinie-klimabonus.pdf"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle „Zuordnung der Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Blatt HE, Gemeindeschlüssel 06412000 Frankfurt am Main: Schneelastzone 1. Die Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab; verbindlich sind die amtlichen Bekanntmachungen des Landes, Nachweis im Einzelfall durch Statiker.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "An Kulturdenkmälern bzw. in denkmalgeschützten Ensembles braucht eine Solaranlage die Zustimmung der Unteren Denkmalschutzbehörde (Denkmalamt, Kurt-Schumacher-Straße 10); in Gebieten mit Erhaltungs- und/oder Gestaltungssatzung ggf. Zustimmung von Stadtplanungsamt oder Bauaufsicht. Der Klimabonus fördert die Mehrkosten denkmalgerechter Solaranlagen, wenn die denkmalrechtliche Genehmigung vorliegt.",
+      "url": "https://frankfurt.de/-/media/frankfurtde/frankfurt-themen/klima-und-energie/pdf/klimareferat/klimabonus/merkblatt-foerderprogramm-klimabonus.pdf"
+    },
+    {
+      "text": "Frankfurt hat neben gestalterischen Festsetzungen in Bebauungsplänen selbständige Gestaltungssatzungen (§ 91 HBO) für Alt-Höchst, Alt-Sachsenhausen, Bahnhofsviertel, „Fressgass“ und anliegende Straßen, Nördliche Mainuferbebauung und das Dom-Römer-Areal; sie regeln u. a. Dachform und Materialien. Einsicht über planAS oder die Planauskunft des Stadtplanungsamts.",
+      "url": "https://www.stadtplanungsamt-frankfurt.de/gestaltungssatzungen_5330.html"
+    },
+    {
+      "text": "Denkmalamt Frankfurt: Jede Veränderung an einem Kulturdenkmal erfordert eine denkmalschutzrechtliche Genehmigung; Beratung durch Konservator:innen (Sprechtage Di und Do, nach Terminvereinbarung), Zuständigkeit nach Stadtteilen aufgeteilt.",
+      "url": "https://frankfurt.de/themen/kultur/baukultur/denkmalamt"
+    },
+    {
+      "text": "Hessische Richtlinie der Obersten Denkmalschutzbehörde (Wissenschaftsministerium): Solaranlagen auf oder an denkmalgeschützten Gebäuden sind in der Regel zu genehmigen; eine Ablehnung kommt allenfalls bei erheblicher Beeinträchtigung in Frage (z. B. ortsbildprägende Gesamtanlagen an bedeutenden Plätzen/Sichtachsen, erhebliche Eingriffe in Dach/Fassade, Gefährdung der Statik), dann sind Alternativen wie Nebengebäude oder zurückhaltende Anlagen zu prüfen. Die Richtlinie ist für die kommunalen Denkmalbehörden handlungsleitend.",
+      "url": "https://wissenschaft.hessen.de/presse/neue-richtlinie-ermoeglicht-mehr-solaranlagen-auf-denkmalgeschuetzten-gebaeuden"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Gestaltungssatzung Freiraum und Klima (beschlossen 30.03.2023, § 3093; in Kraft seit 10.05.2023): Gilt im gesamten Stadtgebiet für Neu- und Umbauten; Dächer bis 20° Neigung sind mit mind. 12 cm Vegetationstragschicht zu begrünen, Carports/Garagen/Nebenbauten mit mind. 8 cm – eine Kombination der Begrünung mit Solaranlagen ist ausdrücklich zulässig. Für Solar-Gründächer empfiehlt die Stadt aufgeständerte Module (Unterkante mind. 20 cm, besser 30–35 cm über Substrat) und Wartungsgänge von 70–80 cm; zu beachten ist die städtische „Leitlinie Solaranlagen auf Gründächern“.",
+      "url": "https://frankfurt.de/themen/klima-und-energie/klimaanpassung/gestaltungssatzung-freiraum-und-klima"
+    },
+    {
+      "text": "Das Klimareferat veranstaltet 2026 die kostenlose „Solar-Tour“ (Stadtteil-Infobörsen, Solar-Spaziergänge, Solar-Info-Tag an der Hauptwache) u. a. in Sossenheim, Goldstein, Ginnheim und Nieder-Eschbach; weitere Termine im zweiten Halbjahr 2026. Außerdem führt das Klimareferat eine Fachbetriebsliste Solar (Stand ab 03.06.2026).",
+      "url": "https://klimaschutz-frankfurt.de/themenschwerpunkte/solarenergie/"
+    },
+    {
+      "text": "Die Mainova AG bietet in Frankfurt den Mieterstrom-Tarif „Strom Lokal PV“ für Mietshäuser mit Mainova-Solaranlage an; bei fehlendem Solarstrom wird Strom aus dem Netz geliefert. Mainova nennt über 700 Mieterstrom-Anlagen mit rund 4.200 Haushalten. Der Klimabonus fördert Mieterstrom-Anlagen als Gemeinschaftsprojekt mit +5 Prozentpunkten.",
+      "url": "https://www.mainova.de/de/tarife/strom/solarstrom-fuer-mieter"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energiepunkt FrankfurtRheinMain e. V. (vom städtischen Energie-/Klimareferat initiiert): unabhängige, kostenfreie Impulsberatung (30–90 Minuten) für Bürger:innen der Stadt Frankfurt am Main, ausdrücklich auch zu Photovoltaik und Solaranlagen (https://www.energiepunkt-frankfurt.de). Daneben Energieberatung der Verbraucherzentrale Hessen, Beratungsstelle Frankfurt (Große Friedberger Straße 13-17), die die Stadt als Anlaufstelle nennt; Verständnisfragen zum Klimabonus beantwortet das Klimareferat (069 212-39193).",
+    "url": "https://frankfurt.de/themen/klima-und-energie/energie/gebaeude/energiepunkt"
+  },
+  "offen": [
+    "Geländehöhe: keine amtliche Angabe eingesehen (Statistikportal der Stadt ist eine JavaScript-Anwendung und per curl nicht lesbar; Stadtportrait-Seite zeitweise per Cloudflare gesperrt).",
+    "Netzbetreiber: Welche Frankfurter Stadtteile/Adressen ggf. im Netz der Syna GmbH statt NRM liegen, ist nicht belegt (Syna-Karte zeigt nur Ortsbeschriftungen, keine eindeutige Zuordnung).",
+    "Solar-Kataster Hessen: LEA-Seite lieferte HTTP 500; Inhalt nur über die städtische Beschreibung auf frankfurt.de (https://frankfurt.de/themen/klima-und-energie/energie/energieversorgung/solarkatasterhessen) belegt.",
+    "Konkrete Solarregeln in den Gestaltungssatzungen Alt-Sachsenhausen, Alt-Höchst, Dom-Römer-Areal usw. nicht eingesehen (Satzungstexte nur über planAS).",
+    "Hessisches Energiegesetz (etwa PV-Pflichten für Parkplätze oder Landesgebäude): Gesetzestext auf rv.hessenrecht.hessen.de nicht lesbar (JavaScript), daher nicht aufgenommen.",
+    "Datum der hessischen Denkmal-Richtlinie Solaranlagen nicht auf der Pressemitteilung ablesbar.",
+    "„Frankfurt spart Strom“: Domain ist nicht mehr aktiv (Domain-Handelsseite), kein aktuelles Angebot gefunden."
+  ],
+  "abgerufen": "2026-09-14"
+}

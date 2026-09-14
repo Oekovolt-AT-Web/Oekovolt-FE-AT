@@ -1,0 +1,81 @@
+{
+  "name": "Passau",
+  "slug": "passau",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 53039,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/05-staedte.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Passau GmbH",
+    "hinweis": "Die Stadtwerke Passau betreiben ein eigenes Strom-Verteilnetz (Netzveröffentlichung: 53.125 Einwohner im Netzgebiet, versorgte Fläche 23,0 km² bei 74,6 km² geografischer Fläche). Ob einzelne Randbereiche des Stadtgebiets von einem anderen Netzbetreiber versorgt werden, ist auf den Seiten nicht eindeutig angegeben – die Stadtwerke bieten auch Tarife für das Netzgebiet der Bayernwerk Netz GmbH an. Im Zweifel Netzbetreiber adressgenau prüfen.",
+    "anmeldung_url": "https://www.stadtwerke-passau.de/service/netzanschluss.html",
+    "url": "https://netze.stadtwerke-passau.de/strom/netzveroeffentlichungen.html"
+  },
+  "solarkataster": [
+    {
+      "name": "Energie-Atlas Bayern – Karte „PV-Potenzial auf Dachflächen“",
+      "traeger": "Land (Freistaat Bayern, Energie-Atlas Bayern)",
+      "url": "https://www.energieatlas.bayern.de/erneuerbare-energien/photovoltaik/dachflaechen"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Förderung kleiner Solarstromanlagen (Balkonkraftwerke)",
+      "traeger": "Stadt Passau (Umweltschutz und Klima)",
+      "gegenstand": "Anschaffung von Balkonkraftwerken; nach Beschluss vom 23.06.2025 in modifizierter Form fortgesetzt und gezielt für Mieter von selbstgenutztem Wohnraum",
+      "konditionen": null,
+      "status": "laufend (Fortsetzung laut Stadt Passau beschlossen; Förderrichtlinie Stand 01.07.2025)",
+      "url": "https://www.passau.de/rathaus-buergerservice/dienstleistungen/a-z/balkonkraftwerke/"
+    }
+  ],
+  "klimaziel": {
+    "text": "Integriertes Klimaschutzkonzept (Stadtratsbeschluss Ende Oktober 2021): Gesamtgebiet der Stadt Passau bis spätestens 2050 annähernd klimaneutral, kommunale Verwaltung bis spätestens 2045; Zwischenziele 2030 und 2045.",
+    "url": "https://www.passau.de/bauen-umwelt/umwelt-klimaschutz/integriertes-klimaschutzkonzept/"
+  },
+  "schneelastzone": {
+    "zone": "3a",
+    "hinweis": "DIBt-Tabelle „Zuordnung der Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Blatt BY, Gemeindeschlüssel 09262000 Passau: Schneelastzone 3a, Vermerk „neue Schneelastzone aus dem Forschungsprojekt“ (Forschungsprojekt des Deutschen Wetterdienstes, Rundschreiben Bayerisches StMI vom 19.01.2018). Die maßgebliche Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab; verbindlich sind die amtlichen Bekanntmachungen des Landes, Nachweis im Einzelfall durch Statiker.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "764 eingetragene Baudenkmäler und drei Ensembles (Altstadt, Hals, Dr.-von-Pichler-Platz in Haidenhof). In den Ensemblebereichen sind laut Stadt alle außenwirksamen Maßnahmen erlaubnispflichtig (denkmalrechtliche Erlaubnis, kostenfrei). Solaranlagen werden auf der Seite nicht gesondert erwähnt.Beratungstermine über die Untere Denkmalschutzbehörde (0851 396-303).",
+      "url": "https://www.passau.de/rathaus-buergerservice/dienstleistungen/a-z/denkmalschutz/"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Überschwemmungsgebietsverordnung der Stadt für Donau, Inn und Ilz (Stadtratsbeschluss 27.07.2015, in Kraft 06.08.2015); Grundlage der Abgrenzung ist das Hochwasser vom Juni 2013 (für Passau ein über-100-jährliches Ereignis), am Inn teils das Hochwasser 1954. Laut Stadt ist die Errichtung oder Erweiterung baulicher Anlagen in festgesetzten Überschwemmungsgebieten grundsätzlich untersagt; für Hochwasservorsorge an Gebäuden gibt es eine städtische Förderrichtlinie.",
+      "url": "https://www.passau.de/bauen-umwelt/umwelt-klimaschutz/hochwasser/"
+    },
+    {
+      "text": "Grundsatzbeschluss der Stadt vom 06.02.2024 zu Photovoltaik-Freiflächenanlagen: Anlagen möglichst in vorbelasteten Bereichen (z. B. Konversionsflächen, Gewerbegebiete, Deponien), Vorhabenträger reichen u. a. eine netztechnische Vorabprüfung ein; Sicherheitsleistung für Ausgleichsflächen und Rückbau.",
+      "url": "https://www.passau.de/aktuelles/alle-nachrichten-aus-passau/grundsatzbeschluss-fuer-die-errichtung-von-photovoltaik-freiflaechenanlagen-im-stadtgebiet/"
+    },
+    {
+      "text": "Anmeldung von Netzanschluss und EEG-Anlagen bei den Stadtwerken Passau über deren Online-Portal; Formulare (E1 Antragstellung, E2 Datenblatt Erzeugungsanlagen, E3 Datenblatt Speicher, E8 Inbetriebsetzungsprotokoll, Anmeldung steckerfertige Erzeugungsanlage) stehen auf der Netzseite bereit.",
+      "url": "https://netze.stadtwerke-passau.de/strom/formulare.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "VerbraucherService Bayern im KDFB e.V., Beratungsstelle Passau (Ludwigsplatz 4/I) – Energieberatung jeden 2. Mittwoch im Monat, 14–17 Uhr, Termin auch über 0800 809 802 400",
+    "url": "https://www.verbraucherservice-bayern.de/beratung/passau"
+  },
+  "offen": [
+    "Förderhöhe Balkonkraftwerke: Die Förderrichtlinie (PDF vom 01.07.2025) ist ein Scan und konnte nicht ausgelesen werden; Betrag daher nicht angegeben.",
+    "Keine kommunale PV-Dachanlagen-Förderung der Stadt Passau gefunden; die Seite „Energie-Förderprogramme“ verweist nur auf Bundesprogramme (BAFA, KfW).",
+    "Genaue Abgrenzung des Stromnetzgebiets der Stadtwerke Passau gegenüber Bayernwerk Netz innerhalb des Stadtgebiets nicht belegbar.",
+    "Geländehöhe: keine amtliche Einzelangabe auf passau.de oder beim Landesamt gefunden.",
+    "Kein eigenes Solarkataster der Stadt Passau belegt.",
+    "Keine städtische Gestaltungssatzung mit Regeln speziell zu Solaranlagen gefunden.",
+    "Mieterstromangebot der Stadtwerke Passau nicht belegt."
+  ],
+  "abgerufen": "2026-09-14"
+}

@@ -1,0 +1,77 @@
+{
+  "name": "Ingolstadt",
+  "slug": "ingolstadt",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 141185,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugQ/AuszugGV4QAktuell.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Ingolstadt Netze GmbH (SWI Netze)",
+    "hinweis": "Netzbetreiber für ihr Versorgungsgebiet in Ingolstadt; die genaue Gebietsabgrenzung ist nur als Karte veröffentlicht, einzelne Randbereiche wurden nicht geprüft. Bei Anlagen über 7 kW (Wechselrichternennleistung) führt SWI Netze eine Netzverträglichkeitsprüfung durch; Anmeldung und Inbetriebsetzung laufen über das SWI-Installateur-Portal.",
+    "anmeldung_url": "https://swi-netze.de/strom/stromeinspeisung/",
+    "url": "https://swi-netze.de/unternehmen/versorgungsgebiet/"
+  },
+  "solarkataster": [
+    {
+      "name": "Solar- und Gründachpotenzialkataster der Stadt Ingolstadt",
+      "traeger": "Stadt (Referat für Gesundheit, Klimaschutz und Umwelt)",
+      "url": "https://www.solare-stadt.de/ingolstadt/"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Der Stadtrat hat am 2. Juni 2022 das Integrierte Klimaschutzkonzept beschlossen: Ingolstadt soll bis 2035 klimaneutral werden (zuvor 2050). Die Stadtverwaltung mit Geschäftsbereichen, Beteiligungsgesellschaften und Liegenschaften strebt Klimaneutralität bis 2030 an.",
+    "url": "https://ingolstadt.de/klimaschutzkonzept"
+  },
+  "schneelastzone": {
+    "zone": "1a",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Version 07.02.2023), Blatt BY, Gemeindeschlüssel 09161000: Zone 1a; zusätzlich sind laut Tabelle die Ergebnisse des bayerischen Forschungsprojekts zu berücksichtigen. Charakteristische Schneelast abhängig von der Geländehöhe (DIN EN 1991-1-3/NA); verbindlich sind die amtlichen Bekanntmachungen.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": null
+  },
+  "ortsbild": [
+    {
+      "text": "Die Bayerische Denkmalliste führt für Ingolstadt das Ensemble 'Altstadt Ingolstadt' (E-1-61-000-1). In Ensembles ist eine denkmalrechtliche Erlaubnis nötig, wenn eine Maßnahme ein Einzeldenkmal betrifft oder sich auf das Erscheinungsbild des Ensembles auswirken kann.",
+      "url": "https://geodaten.bayern.de/denkmal_static_data/externe_denkmalliste/pdf/denkmalliste_merge_161000.pdf"
+    },
+    {
+      "text": "Art. 6 Abs. 2 BayDSchG: Dient eine Maßnahme der Gewinnung erneuerbarer Energien überwiegend für den Energiebedarf im Baudenkmal oder zu seiner energetischen Verbesserung, kann die Erlaubnis nur versagt werden, soweit überwiegende Gründe des Denkmalschutzes entgegenstehen und diesen nicht durch Nebenbestimmungen Rechnung getragen werden kann.",
+      "url": "https://www.gesetze-bayern.de/Content/Document/BayDSchG-6"
+    },
+    {
+      "text": "Die Planungshinweise des städtischen Solarpotenzialkatasters weisen darauf hin, dass auf denkmalgeschützten Gebäuden eine Solaranlage nur in Ausnahmefällen mit denkmalpflegerischer Erlaubnis möglich ist und der Schutz auch Nachbargebäude eines Denkmals betreffen kann.",
+      "url": "https://www.solare-stadt.de/ingolstadt/Planungshinweise"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Der Stadtrat hat die Gründung der SWI Stadtenergie GmbH (Tochter der Stadtwerke Ingolstadt) beschlossen, die städtische Dächer mit PV-Anlagen ausstattet. Ziel bis 2030: 3.000 bis 5.000 kWp; Stand der Meldung vom 08.03.2024: 1.175 kWp in Betrieb, 1.110 kWp in Planung/Bau.",
+      "url": "https://nachhaltigkeitsagenda-ingolstadt.de/meilensteil-auf-dem-weg-zur-klimaneutralitaet/"
+    },
+    {
+      "text": "Das städtische Solarförderprogramm (Stadtratsbeschluss 16.05.2023; PV-Neuanlagen, Umrüstung auf Eigenverbrauch, Batteriespeicher, 200 Euro pauschal je Balkonkraftwerk 300–600 W) war nur bis einschließlich 2024 beantragbar.",
+      "url": "https://nachhaltigkeitsagenda-ingolstadt.de/neues-solarfoerderprogramm-fuer-ingolstadt/"
+    },
+    {
+      "text": "Die Stadtwerke Ingolstadt bieten eine Förderdatenbank und einen Förderservice (Unterstützung bei Anträgen zu bestehenden Programmen), jedoch kein eigenes Zuschussprogramm.",
+      "url": "https://sw-i.de/bauen-wohnen/foerdermittel/"
+    }
+  ],
+  "energieberatung": {
+    "name": "VerbraucherService Bayern, Kupferstraße 24, Ingolstadt (kostenlose, mindestens 30-minütige Energieberatung; von der Stadt Ingolstadt empfohlen)",
+    "url": "https://www.ingolstadt.de/Rathaus/Aktuelles/Meldungs-Archiv/Energieberatung-F%C3%B6rdermittel.php?object=tx%2C2789.5.1&ModID=7&FID=465.3221.1&NavID=2789.737&La=1"
+  },
+  "offen": [
+    "Aktuelles kommunales PV-/Speicher-Förderprogramm 2025/2026: nicht gefunden; das Solarförderprogramm der Stadt lief bis einschließlich 2024.",
+    "Geländehöhe: keine offizielle städtische oder amtliche Quelle mit Höhenangabe eingesehen (nur Drittseiten).",
+    "Netzgebiet: Abgrenzung der SWI Netze nur als Karte, textlich nicht belegt, ob das gesamte Stadtgebiet abgedeckt ist.",
+    "Einwohner: Destatis-Stand 31.12.2024 (141.185); Bayerisches Landesamt für Statistik meldet 140.799 zum 31.12.2025 (Statistischer Bericht A1210C 202500)."
+  ],
+  "abgerufen": "2026-09-14"
+}

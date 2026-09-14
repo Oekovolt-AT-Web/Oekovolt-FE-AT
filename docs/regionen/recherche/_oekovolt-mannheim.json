@@ -1,0 +1,31 @@
+{
+  "standort_belegt": false,
+  "adresse": null,
+  "belege": [
+    {
+      "text": "Impressum: ÖKOVOLT GmbH Solartechnik, Schlingener Straße 1a, 86842 Türkheim, Amtsgericht Memmingen HRB 14166. Nur der Standort Türkheim wird genannt, keine Niederlassung, kein Mannheim.",
+      "url": "https://oekovolt.de/impressum"
+    },
+    {
+      "text": "Kontaktseite: nur die Adresse in Türkheim (Schreibweise dort „Schlinginger Straße 1a“), keine Erwähnung von Mannheim.",
+      "url": "https://oekovolt.de/kontakt"
+    },
+    {
+      "text": "Die Unterseiten /standorte und /mannheim liefern HTTP 404.",
+      "url": "https://oekovolt.de/mannheim"
+    },
+    {
+      "text": "North Data: ÖKOVOLT GmbH Solartechnik (früher ÖKOVOLT GmbH Energietechnik), AG Memmingen HRB 14166, Schlingener Str. 1 a, 86842 Türkheim; keine Zweigniederlassung ausgewiesen.",
+      "url": "https://www.northdata.de/ÖKOVOLT+GmbH+Solartechnik,+Türkheim/HRB+14166"
+    },
+    {
+      "text": "Gelbe Seiten, Suche „ökovolt“ in Mannheim: keine Einträge in der Nähe; einziger bundesweiter Treffer ist ÖKOVOLT GmbH Solartechnik in 86842 Türkheim.",
+      "url": "https://www.gelbeseiten.de/suche/%C3%B6kovolt/mannheim"
+    },
+    {
+      "text": "Verwechslungsgefahr: oekovolt.com gehört zur österreichischen Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething (FN 375708m, LG Ried im Innkreis); oekovolt.at leitet dorthin weiter. Kein Mannheim-Bezug.",
+      "url": "https://oekovolt.com/impressum"
+    }
+  ],
+  "hinweis": "Für einen Standort der ÖKOVOLT GmbH Solartechnik (HRB 14166, Sitz Türkheim) in Mannheim wurde kein Beleg gefunden. Das bedeutet nur, dass nichts gefunden wurde; dass es sicher keinen Standort gibt, ist damit nicht bewiesen. Nicht geprüft werden konnten: Google-Unternehmensprofil (Websuche-Kontingent der Sitzung aufgebraucht), 11880.com (HTTP 403), Das Örtliche (Ergebnisse per JavaScript), handelsregister.de und unternehmensregister.de im Original (nur North Data gesehen). Die Straße ist auf oekovolt.de uneinheitlich geschrieben („Schlingener“ im Impressum, „Schlinginger“ auf Kontakt- und Startseite)."
+}

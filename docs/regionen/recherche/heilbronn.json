@@ -1,0 +1,77 @@
+{
+  "name": "Heilbronn",
+  "slug": "heilbronn",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 131986,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/04-kreise.xlsx?__blob=publicationFile"
+  },
+  "netzbetreiber": {
+    "name": "NHF Netzgesellschaft Heilbronn-Franken mbH",
+    "hinweis": "Laut NHF gehören zu ihrem Stromnetz die Gemeinden Heilbronn, Lauffen am Neckar, Kirchheim am Neckar und Neckarwestheim; NHF hat das Stromnetz der ZEAG Energie AG gepachtet. Grundversorger im gesamten NHF-Stromnetzgebiet ist die ZEAG Energie AG. Eine Aufteilung nach Stadtteilen oder abweichende Betreiber in einzelnen Stadtteilen werden in den Quellen nicht genannt. Die Stadt Heilbronn verweist bei PV-Anlagen ebenfalls auf die NHF als Netzbetreiber.",
+    "anmeldung_url": "https://www.n-hf.de/einspeisung/strom/erzeugungsanlagen-am-nieder-und-mittelspannungsnetz.html",
+    "url": "https://www.n-hf.de/netznutzung/strom/marktpartnerinformationen.html"
+  },
+  "solarkataster": [
+    {
+      "name": "Energieatlas Baden-Württemberg – Solarpotenzial auf Dachflächen",
+      "traeger": "Land",
+      "url": "https://www.energieatlas-bw.de/sonne/dachflachen/solarpotenzial-auf-dachflachen"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Der Gemeinderat hat am 30. Januar 2023 beschlossen, dass die Stadt Heilbronn bis zum Jahr 2035 treibhausgasneutral (Netto-Treibhausgas-Neutralität) werden will; ab 2035 soll pro Jahr und Einwohner nur noch eine Tonne CO2e entstehen. Für die Stadtverwaltung selbst gilt das Ziel Netto-Treibhausgas-Neutralität 2030. Beim Ausbau der Gebäude-Photovoltaik sollen bis 2035 75 % des im Energieatlas Baden-Württemberg ausgewiesenen Maximalpotenzials an Dachflächen erschlossen sein (342.073 MWh/a, rund 192 ha).",
+    "url": "https://www.heilbronn.de/umwelt-mobilitaet/klima-klimaschutz/klimaschutz-masterplan.html"
+  },
+  "schneelastzone": {
+    "zone": "2",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (DIN EN 1991-1-3/NA), Tabellenblatt BW (08): SK Heilbronn = Schneelastzone 2. Laut DIBt sind verbindlich die amtlichen Bekanntmachungen der Länder. Die charakteristische Schneelast hängt zusätzlich von der Geländehöhe des konkreten Standorts ab (Marktplatz 157 m ü. NN, höchste Erhebung Reisberg 378 m ü. NN).",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 157,
+    "url": "https://www.heilbronn.de/leben/heilbronn-entdecken/heilbronn-in-zahlen/bevoelkerung-und-gebietheilbronn-in-zahlen.html"
+  },
+  "ortsbild": [
+    {
+      "text": "Die Stadt Heilbronn weist darauf hin, dass bei Neubau oder Sanierung von Bestandsgebäuden eine rechtliche Verpflichtung zur Photovoltaik besteht und für denkmalgeschützte Gebäude oder Kulturdenkmale teilweise Sonderregelungen gelten.",
+      "url": "https://www.heilbronn.de/umwelt-mobilitaet/energie/solarenergie-photovoltaik/photovoltaik-auf-kommunalen-daechern.html"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Auf kommunalen Dächern in Heilbronn sind Photovoltaikanlagen mit 3,5 MW Leistung in Betrieb (rund 60 Anlagen auf über 35.000 m² Dachfläche, rund 3,5 Mio. kWh pro Jahr; Stand November 2024). Die Stadt errichtet die Anlagen selbst oder mit den lokalen Energiegenossenschaften EnerGeno eG und Bürgerenergiegenossenschaft Heilbronn eG.",
+      "url": "https://www.heilbronn.de/umwelt-mobilitaet/energie/solarenergie-photovoltaik/photovoltaik-auf-kommunalen-daechern.html"
+    },
+    {
+      "text": "Laut Stadt befindet sich die Hälfte der PV-Anlagen in Heilbronn im direkten Eigentum von Privatpersonen, inzwischen über 3.000 Anlagen.",
+      "url": "https://www.heilbronn.de/umwelt-mobilitaet/energie/solarenergie-photovoltaik/solarstrom-fuer-die-buergerschaft.html"
+    },
+    {
+      "text": "Die Bürgersolarberatung Heilbronn (Ortsgruppe unter dem Dach von MetropolSolar e.V.) berät ehrenamtlich, kostenlos und unabhängig zur eigenen PV-Anlage, mit Fokus auf Ein- und Zweifamilienhäuser (Planung mit/ohne Speicher, Wärmepumpe, E-Auto; Angebotsvergleich; Wirtschaftlichkeitsrechnung). Keine Steuerberatung und keine Handwerkervermittlung.",
+      "url": "https://www.heilbronn.de/umwelt-mobilitaet/energie/solarenergie-photovoltaik/solarstrom-fuer-die-buergerschaft/buergersolarberatung-heilbronn.html"
+    },
+    {
+      "text": "Die 2013 von ZEAG Energie AG und Stadt Heilbronn gegründete BürgerEnergiegenossenschaft Heilbronn (rund 250 Mitglieder, Anteil 300 Euro) ist Mehrheitseigentümerin (64 %) der EE Bürgerenergie Heilbronn GmbH & Co. KG, die über 60 Photovoltaik-Anlagen mit rund 2,0 MW betreibt.",
+      "url": "https://www.heilbronn.de/umwelt-mobilitaet/energie/buergerenergiegenossenschaft-heilbronn.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieagentur Heilbronn GmbH (kostenfreie, anbieterneutrale Erstberatung für Privatpersonen aus dem Stadtkreis Heilbronn)",
+    "url": "https://www.energieagentur-heilbronn.de/"
+  },
+  "offen": [
+    "Einwohner: Wert 131.986 stammt aus dem Gemeindeverzeichnis von Destatis (Stand 31.12.2024, Basis Zensus 2022). Ein Wert zum 31.12.2025 vom Statistischen Landesamt BW wurde nicht direkt gefunden. Die Stadt nennt zum 31.12.2025 133.360 Einwohner mit Hauptwohnsitz, allerdings nach kommunalem Melderegister (nicht amtliche Fortschreibung).",
+    "Förderprogramme: Auf den Seiten der Stadt Heilbronn (Solarenergie, Energetische Sanierung, Klimaschutzportal) und der Energieagentur wurde kein aktuelles kommunales Förderprogramm für PV, Speicher oder Balkonkraftwerke gefunden. Das städtische Programm KLIMAfit ist ein Beratungs- und Workshop-Programm für Unternehmen (vom Land gefördert) und keine PV-Förderung. Ein früheres Balkonkraftwerk-Programm des Landkreises Heilbronn gilt nicht für den Stadtkreis und ist laut Landkreis abgeschlossen.",
+    "Solarkataster: Kein eigenes Solarkataster der Stadt gefunden; die Stadt verweist auf den Energieatlas BW (Land).",
+    "Ortsbild: Keine Gestaltungs- oder Altstadtsatzung der Stadt Heilbronn mit Regeln zu Solaranlagen gefunden. Belegt ist nur der allgemeine Hinweis der Stadt auf Sonderregelungen bei Kulturdenkmalen.",
+    "Solarpflicht: Keine städtische Regelung über das Landesrecht hinaus gefunden; die Stadt verlinkt nur die PV-Pflicht des Landes.",
+    "Netzbetreiber: Keine Quelle zur Aufteilung nach Stadtteilen gefunden. NHF nennt Heilbronn ohne Einschränkung als Gemeinde im eigenen Stromnetz.",
+    "Mieterstrom: Die ZEAG bietet der Wohnungswirtschaft Mieterstrom aus Photovoltaik oder BHKW an und nennt dazu Quartiersprojekte (Südbahnhof, Neckarbogen, Pfühlpark). Auf der Seite ist aber nicht eindeutig belegt, welche davon PV-Mieterstrom enthalten. Deshalb nicht in die Besonderheiten aufgenommen (https://www.zeag-energie.de/quartiersentwicklung/baustein-mieterstrom.html).",
+    "Geländehöhe: Der Wert 157 m ü. NN bezieht sich laut Stadt auf den Marktplatz; das Stadtgebiet reicht bis 378 m ü. NN (Reisberg)."
+  ],
+  "abgerufen": "2026-09-14"
+}

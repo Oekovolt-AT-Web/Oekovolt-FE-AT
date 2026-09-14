@@ -50,6 +50,7 @@ export const NAVIGATION = [
           { name: "Gewerbe & Industrie", href: "/gewerbe", icon: "Warehouse", text: "PV nach Lastgang, Speicher, E-Flotte" },
           { name: "Landwirtschaft & Agri-PV", href: "/landwirtschaft", icon: "Tractor", text: "Stall, Scheune, Agri-PV" },
           { name: "Kommunen & Stadtwerke", href: "/kommunen", icon: "Landmark", text: "Schulen, Freiflächen, Quartiere" },
+          { name: "Einzugsgebiet", href: "/photovoltaik", icon: "MapPin", text: "24 Städte mit Standortdaten" },
         ],
       },
       {

@@ -1,0 +1,67 @@
+{
+  "name": "Kempten (Allgäu)",
+  "slug": "kempten",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 67645,
+    "stand": "31.12.2024",
+    "url": "https://statistik.bayern.de/mam/produkte/statistik_kommunal/2025/09763.pdf"
+  },
+  "netzbetreiber": {
+    "name": "AllgäuNetz GmbH & Co. KG",
+    "hinweis": "Sitz Illerstraße 18, 87435 Kempten. Der Klimaplan 2035 der Stadt Kempten nennt die Infrastruktur von AllgäuNetz als aufnehmendes Stromnetz für erneuerbare Energien. Anmeldung von Erzeugungsanlagen und Speichern über das Netzanschlussportal von AllgäuNetz; steckerfertige Anlagen müssen laut AllgäuNetz nur im Marktstammdatenregister registriert werden. Eine Netzgebietsliste mit allen Stadtteilen wurde nicht eingesehen – per Adresse prüfen.",
+    "anmeldung_url": "https://www.allgaeunetz.com/eigenerzeugung-stromspeicher.html",
+    "url": "https://kempten.de/file/2022-09-20_Klimaplan2035_Kempten-final.pdf"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarkataster der Stadt Kempten (mit Anlagenkonfigurator und Wirtschaftlichkeitsrechner)",
+      "traeger": "Stadt",
+      "url": "https://www.kempten.de/solar-kataster-19496.html"
+    }
+  ],
+  "foerderprogramme": [],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2035: Die klimaschädigenden Emissionen sollen bis 2035 um 95 % reduziert werden; Klimaplan 2035 im Juli 2022 vom Stadtrat verabschiedet.",
+    "url": "https://www.kempten.de/klimaschutz-21905.html"
+  },
+  "schneelastzone": {
+    "zone": "3",
+    "hinweis": "Zuordnung nach DIN EN 1991-1-3 laut DIBt-Tabelle „Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Gemeindeschlüssel 09763000; für Bayern sind laut Tabelle zusätzlich Ergebnisse eines Forschungsprojekts zu berücksichtigen. Verbindlich sind die amtlichen Bekanntmachungen des Landes; charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": null,
+  "ortsbild": [
+    {
+      "text": "Kempten hat denkmalrechtliche Ensemblebereiche. Laut Stadt kann auch für baurechtlich genehmigungsfreie Veränderungen an Gebäuden eine denkmalrechtliche Erlaubnis erforderlich sein, wenn das Gebäude ein Einzeldenkmal ist, in der Nähe eines Denkmals liegt oder sich im Ensemblebereich befindet. Zuständig ist die Stadt als Untere Denkmalschutzbehörde.",
+      "url": "https://kempten.de/denkmalschutz-3796.html"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Solar-Offensive: gemeinsame Kampagne der Stadt Kempten und des Landkreises Oberallgäu in Kooperation mit regionalen Energieversorgern, Anlagenerrichtern und Speicherherstellern; Ziel ist ein höherer Anteil an Solaranlagen mit Stromspeicher auf privaten und gewerblichen Dächern.",
+      "url": "https://www.kempten.de/solar-offensive-19486.html"
+    },
+    {
+      "text": "Laut Klimaschutzbeirat der Stadt beträgt das Dachflächen-Potenzial im Stadtgebiet 297 GWh/Jahr; der Ausbaustand lag bei 55 MWp (ca. 18,5 % aller geeigneten Dächer). Der Beirat appelliert an Bürger und Unternehmen, Dächer mit PV auszustatten und Balkonkraftwerke zu nutzen.",
+      "url": "https://kempten.de/38443.html"
+    },
+    {
+      "text": "„Kemptener Leitlinien für die Zulassung von Freiflächen-Photovoltaik-Anlagen“, vom Stadtrat am 25.01.2024 beschlossen; vorrangig sollen PV-Anlagen auf versiegelten Flächen, Dächern und Fassaden entstehen, Freiflächen-PV ist unter bestimmten Voraussetzungen möglich.",
+      "url": "https://kempten.de/kemptener-leitlinien-fur-die-zulassung-von-freiflachen-photovoltaik-anlagen-34143.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieberatung im eza!-Haus (Energie- und Umweltzentrum Allgäu), Burgstraße 26, 87435 Kempten – kostenfrei und unabhängig, Anmeldung unter 0831 960286-0",
+    "url": "https://www.eza-allgaeu.de/bau-energieberatung/fachleute-finden/energieberatungsstellen/"
+  },
+  "offen": [
+    "Kein laufendes kommunales Förderprogramm der Stadt Kempten für PV, Speicher oder Balkonkraftwerke 2025/2026 gefunden (Solar-Offensive-Seiten nennen keine Förderkonditionen).",
+    "Geländehöhe: keine Angabe auf städtischen Seiten oder beim Landesamt gefunden – daher null.",
+    "Datum/Stand der Angabe „55 MWp“ auf der Appell-Seite des Klimaschutzbeirats nicht genannt.",
+    "Keine Gestaltungssatzung mit Solarregeln für die Altstadt gefunden; nur allgemeine Erlaubnispflicht im Ensemble belegt.",
+    "Netzbetreiber-Zuordnung über Klimaplan 2035 und Sitz von AllgäuNetz in Kempten, nicht über eine ausdrückliche Netzgebietsangabe."
+  ],
+  "abgerufen": "2026-09-14"
+}

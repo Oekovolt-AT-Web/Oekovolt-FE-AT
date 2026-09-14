@@ -1,0 +1,78 @@
+{
+  "name": "Karlsruhe",
+  "slug": "karlsruhe",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 309050,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.html"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Karlsruhe Netzservice GmbH",
+    "hinweis": "Laut Netzbetreiber Ansprechpartner 'für alle Erzeugungsanlagen, die im Karlsruher Netzgebiet betrieben werden'; Anmeldung über das Netzkundenportal, in der Regel durch die Elektrofachkraft mit Vollmacht. In den Veröffentlichungspflichten wird die geographische Fläche des Stromnetzgebiets mit 173 km² angegeben (Stadtfläche laut Destatis 173,42 km²). Abdeckung einzelner Stadtteile nicht separat geprüft.",
+    "anmeldung_url": "https://www.netzservice-swka.de/netze/fuer-erzeuger/erzeugungsanlage-anmelden/photovoltaikanlage.php",
+    "url": "https://www.netzservice-swka.de/netze/fuer-erzeuger/erzeugungsanlage-anmelden.php"
+  },
+  "solarkataster": [
+    {
+      "name": "Solardachkataster im Energieatlas Baden-Württemberg (LUBW); von der städtischen Klimaplattform klima.karlsruhe.de als 'Solarkataster' verlinkt",
+      "traeger": "Land",
+      "url": "https://www.energieatlas-bw.de/sonne/gebaeude/karten?activeLayer=solarkataster"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "KlimaBonus Karlsruhe",
+      "traeger": "Stadt Karlsruhe (Liegenschaftsamt)",
+      "gegenstand": "Investitionen zum Klimaschutz bei Wohngebäuden – von der Installation einer Photovoltaikanlage bis zur energetischen Sanierung (Effizienzhaus-Standard, Einzelmaßnahmen wie Fassaden- oder Dachdämmung).",
+      "konditionen": "Die städtische Klimaplattform nennt bis zu 2.500 EUR für eine neue PV-Anlage und bis zu 500 EUR für die Klärung steuerlicher Fragen (Seite ohne Datumsangabe). Haushaltsmittel 2026: 1,3 Mio. EUR.",
+      "status": "Mittel erschöpft: Antragstellung für 2026 geschlossen (Meldung vom 06.05.2026, Seitenstand 11.09.2026); Programm wird überarbeitet und soll 2027 mit Änderungen neu starten.",
+      "url": "https://www.karlsruhe.de/mobilitaet-stadtbild/bauen-und-immobilien/wohnen"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität in Karlsruhe bis 2040 (Gemeinderatsbeschluss vom 14.12.2021). Bis 2030 sollen die CO2-Emissionen im Stadtgebiet um mindestens 58 % gegenüber 2010 sinken; die Stadtverwaltung soll spätestens 2040 klimaneutral sein. Grundlage ist das Klimaschutzkonzept 2030 (Gemeinderat 28.04.2020).",
+    "url": "https://www.karlsruhe.de/umwelt-klima/klimaschutz-klimaanpassung/klimaschutzaktivitaeten/klimaschutzziele-der-stadt-karlsruhe"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt Baden-Württemberg, Regierungsbezirk Karlsruhe: 'SK Karlsruhe' Schneelastzone 1. Höhenlage laut Statistischem Jahrbuch 2025: Stadtmitte (Marktplatz) 115 m, tiefster Punkt 100 m, höchster Punkt 323 m über NHN (Tiergehege Grünwettersbach); maßgeblich ist die Höhe des Standorts.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 115,
+    "url": "https://web6.karlsruhe.de/Stadtentwicklung/statistik/pdf/2025/JB_2025_KAP_1.pdf"
+  },
+  "ortsbild": [],
+  "besonderheiten": [
+    {
+      "text": "Karlsruher Solaroffensive: PV auf städtischen Dächern und Dächern der städtischen Gesellschaften ist zentrale Maßnahme des Klimaschutzkonzepts 2030. Laut Stadt (Juli 2025) rund 110 MWp PV-Leistung im Stadtgebiet, davon rund zehn Prozent der Anlagen mit städtischer Beteiligung (ca. 12 MWp bis Mai 2025, geplant rund 27 MWp). Ein PV-Dashboard zeigt die städtischen Anlagen.",
+      "url": "https://www.karlsruhe.de/stadt-rathaus/aktuelles/meldungen/solaroffensive-der-stadt-zeigt-wirkung"
+    },
+    {
+      "text": "PV-Dashboard der Stadt Karlsruhe mit allen Solaranlagen der Stadt und der städtischen Gesellschaften, einschließlich geplanter Anlagen bis 2027.",
+      "url": "https://www.karlsruhe.de/mobilitaet-stadtbild/hochbau-und-architektur/nachhaltiges-bauen-und-klimaschutz/solarstrom"
+    },
+    {
+      "text": "Zubau 2023: laut Stadt 1260 neue Solaranlagen der Größenklasse 5 bis 30 kWp (2022: rund 430) und über 500 Balkonmodule; 396 bewilligte KlimaBonus-Anträge für PV im Jahr 2023.",
+      "url": "https://www.karlsruhe.de/stadt-rathaus/aktuelles/meldungen/soviel-neue-solardaecher-wie-nie-zuvor-in-karlsruhe"
+    },
+    {
+      "text": "Die städtische Klimakampagne 'Jeder kann Solar' bündelt Angebote für Eigentümer, Mieter und Unternehmen (u. a. KEK-Beratung, Beratung zu Balkonmodulen, Bürgerenergiegenossenschaften, PV-Lösungen der Stadtwerke Karlsruhe für Gewerbe).",
+      "url": "https://klima.karlsruhe.de/schwerpunkte/jeder-kann-solar"
+    }
+  ],
+  "energieberatung": {
+    "name": "KEK – Karlsruher Energie- und Klimaschutzagentur gGmbH, Beratungszentrum Klima Energie Mobilität, Hebelstraße 15 (kostenfrei und neutral; Hotline 0721 480 88 250)",
+    "url": "https://www.kek-karlsruhe.de/ueber-uns/beratungszentrum/"
+  },
+  "offen": [
+    "Ortsbild: keine städtische Satzung oder Richtlinie zu Solaranlagen in Denkmal- oder Gestaltungsbereichen gefunden (Denkmalschutz-Seite der Stadt ohne PV-Hinweise).",
+    "Konditionen KlimaBonus: Förderrichtlinie (PDF) nicht ausgewertet; der Betrag 2.500 EUR stammt von der undatierten Kampagnenseite und kann für die Neuauflage 2027 abweichen.",
+    "Solarkataster: kein eigenes städtisches Kataster gefunden; angegeben ist das landesweite LUBW-Kataster.",
+    "Netzgebiet: Abdeckung aller Stadtteile nur über Flächenangabe abgeleitet, nicht ausdrücklich belegt.",
+    "Mieterstrom-Angebot der Stadtwerke Karlsruhe nicht belegt (geprüfte URLs lieferten 404); Websuche-Kontingent war während der Recherche erschöpft."
+  ],
+  "abgerufen": "2026-09-14"
+}

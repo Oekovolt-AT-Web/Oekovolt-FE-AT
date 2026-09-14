@@ -1,0 +1,104 @@
+{
+  "name": "Regensburg",
+  "slug": "regensburg",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 151389,
+    "stand": "31.12.2024",
+    "url": "https://www.statistik.bayern.de/mam/produkte/veroffentlichungen/statistische_berichte/a1210c_202400.pdf"
+  },
+  "netzbetreiber": {
+    "name": "Regensburg Netz GmbH",
+    "hinweis": "Laut Unternehmensporträt 'der Netzbetreiber für Regensburg und die Region'; 100-prozentige Tochter der REWAG, seit 2021 Eigentümerin des Stromnetzes. Genaue Netzgebietsgrenzen werden textlich nicht genannt (REWAG verweist auf eine Netzgebietskarte) – Zuständigkeit für die konkrete Adresse vor Anmeldung prüfen.",
+    "anmeldung_url": "https://www.regensburg-netz.de/fuer-einspeiser/faq-niederspannungseinspeisung",
+    "url": "https://www.regensburg-netz.de/ueber-uns/unternehmensportraet"
+  },
+  "solarkataster": [
+    {
+      "name": "Solar- und Gründachpotenzialkataster der Stadt Regensburg",
+      "traeger": "Stadt",
+      "url": "https://www.solare-stadt.de/regensburg/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Regensburg effizient – Förderung der Photovoltaik",
+      "traeger": "Stadt Regensburg, Stabsstelle Klimaschutz und Klimaresilienz",
+      "gegenstand": "Investitionen in fest installierte PV-Anlagen im Stadtgebiet (auch Erweiterung oder Erneuerung bestehender Anlagen); Zusatzzuschuss bei Installation auf einem denkmalgeschützten Gebäude oder an einer Fassade. Nicht förderfähig: reine Freiflächenanlagen und Balkonkraftwerke.",
+      "konditionen": "100 € pro kWp, max. 1.500 €; zusätzlich 200 € bei denkmalgeschütztem Gebäude oder Fassade. Eine Maßnahme pro Gebäude. Maßnahmenbeginn (Montage) erst nach schriftlicher Förderzusage; Installation und Verwendungsnachweis innerhalb von 18 Monaten; Betrieb mindestens fünf Jahre; keine Kombination mit investiven Bundes-/Landesprogrammen; vorbehaltlich verfügbarer Haushaltsmittel.",
+      "status": "laufend 2026 (Richtlinie vom 1. Januar 2026 in Kraft; auf der Förderseite am 14.09.2026 kein Hinweis auf erschöpfte Mittel)",
+      "url": "https://www.regensburg.de/sixcms/media.php/RBG_SIXTUS_1A64.a.578.de/r_upload/20260101_Richtlinie_Photovoltaik.pdf"
+    },
+    {
+      "name": "REWAG-Förderung für PV-Anlagen",
+      "traeger": "REWAG Regensburger Energie- und Wasserversorgung AG & Co KG (städtischer Energieversorger)",
+      "gegenstand": "Kauf einer PV-Anlage (für Kundinnen und Kunden der Ökostromtarife rewario.strom.natur.regio bzw. rewario.strom.mobil)",
+      "konditionen": "400 € je Haushalt für eine PV-Anlage ab 4 kWp und einem Mindesteinkaufswert von 2.000 €; aktiver Energieliefervertrag in einem der genannten Tarife erforderlich",
+      "status": "laufend (Seite am 14.09.2026 abrufbar, kein Enddatum genannt)",
+      "url": "https://www.rewag.de/foerderungen/pv-anlagen"
+    },
+    {
+      "name": "REWAG-Förderung für Balkonkraftwerke",
+      "traeger": "REWAG Regensburger Energie- und Wasserversorgung AG & Co KG (städtischer Energieversorger)",
+      "gegenstand": "Kauf eines Balkonkraftwerks (steckbare PV-Anlage) mit maximal 800 Wp (für Kundinnen und Kunden der Tarife rewario.strom.natur.regio bzw. rewario.strom.mobil)",
+      "konditionen": "50 € je Haushalt bei Mindesteinkaufswert von 250 €",
+      "status": "laufend (Seite am 14.09.2026 abrufbar, kein Enddatum genannt)",
+      "url": "https://www.rewag.de/foerderungen/balkonkraftwerk"
+    }
+  ],
+  "klimaziel": {
+    "text": "Mit dem Green Deal Regensburg (2021 vom Stadtrat beschlossen) soll die Stadt spätestens 2035 klimaneutral sein; die Stadtverwaltung bereits bis 2030. Zudem Reduktion der Treibhausgasemissionen um 65 % bis 2030 gegenüber 1990.",
+    "url": "https://www.regensburg.de/greendeal/fortschritte"
+  },
+  "schneelastzone": {
+    "zone": "1a",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Version 07.02.2023), Blatt BY, Gemeindeschlüssel 09362000 Regensburg: Schneelastzone 1a nach DIN EN 1991-1-3; Hinweis der Tabelle: zusätzlich sind die Ergebnisse des bayerischen Forschungsprojekts zu Schneelastmesswerten zu berücksichtigen; verbindlich sind die amtlichen Bekanntmachungen der Länder. Geländehöhe am Standort für die Schneelast gesondert berücksichtigen (Stadtgebiet laut Stadt bis 471 m).",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 337,
+    "url": "https://www.regensburg.de/fm/121/regensburg-in-zahlen-2024.pdf"
+  },
+  "ortsbild": [
+    {
+      "text": "Die Altstadtschutzsatzung für die historische Altstadt mit Stadtamhof und den Wöhrden (Welterbebereich) hat Solarmodule auf Dächern bis 2022 pauschal untersagt; dieses kommunale Verbot wurde gestrichen. Solartechnik richtet sich dort seitdem im Wesentlichen nach denkmalfachlichen Kriterien.",
+      "url": "https://www.regensburg.de/rathaus/aemteruebersicht/kulturreferat/amt-fuer-kulturelles-erbe/denkmal-solar-atlas-kdk"
+    },
+    {
+      "text": "Die Stadt erarbeitet mit dem Kommunalen Denkmalkonzept 'Regensburg – Denkmal-Solar-Atlas' Karten und textliche Handlungsrichtlinien, welche Form von Solartechnik auf welchen Dächern der Altstadt denkbar ist (Auftrag an Büro Reicher Haase, Aachen, Dezember 2024; Begleitung durch das Bayerische Landesamt für Denkmalpflege). Stand laut Seite: Projekt in der Schlussphase; Eigentümerworkshop am 27.11.2025. Ein veröffentlichter Leitfaden war auf der Seite nicht verlinkt.",
+      "url": "https://www.regensburg.de/rathaus/aemteruebersicht/kulturreferat/amt-fuer-kulturelles-erbe/denkmal-solar-atlas-kdk"
+    },
+    {
+      "text": "Regensburg ist seit 2006 UNESCO-Welterbe ('Altstadt Regensburg mit Stadtamhof'); 2021 kam der Donaulimes als zweiter Titel hinzu.",
+      "url": "https://www.regensburg.de/welterbe"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Die Energieagentur Regensburg e. V. wurde von Stadt und Landkreis Regensburg gemeinsam mit Vertretern aus Wirtschaft, Wissenschaft und Industrie gegründet und hat die Projektsteuerung des Green Deal Regensburg inne.",
+      "url": "https://www.regensburg.de/greendeal/ueber-uns"
+    },
+    {
+      "text": "Laut Green-Deal-Fortschrittsseite: 2022 PV-Anlagen auf 17 städtischen Liegenschaften mit 600 kWp; 2024 PV-Anlage auf der Donau-Arena mit 3.706 m² Modulfläche fertiggestellt; 2025 Jahnstadion erhält PV-Anlage, im Osten Regensburgs sollen neue PV-Freiflächen entstehen.",
+      "url": "https://www.regensburg.de/greendeal/fortschritte"
+    },
+    {
+      "text": "Regensburg Netz GmbH: Anmeldung von PV-Anlagen über das Serviceportal (kostenfreie Einspeiservoranfrage, Einspeisezusage, Installation durch Fachbetrieb, Fertigmeldung, Zweirichtungszähler, Registrierung im Marktstammdatenregister). Kontakt: einspeisung@regensburg-netz.de, 0941 601-3272.",
+      "url": "https://www.regensburg-netz.de/fuer-einspeiser/faq-niederspannungseinspeisung"
+    }
+  ],
+  "energieberatung": {
+    "name": "Kostenlose Energieberatung der Stadt Regensburg, durchgeführt von der Energieagentur Regensburg e. V.",
+    "url": "https://www.regensburg.de/greendeal/mitmachen/energieberatung"
+  },
+  "offen": [
+    "Mieterstrom-Angebot der REWAG: keine aktuelle Angebotsseite auf rewag.de gefunden; Regensburg Netz nennt nur Formulare für Kundenanlagen/Mieterstrommodelle – nicht aufgenommen.",
+    "Städtische Solarpflicht über Landesrecht hinaus: nicht geprüft/keine Quelle gefunden.",
+    "Denkmal-Solar-Atlas: veröffentlichter Leitfaden bzw. Karte im GeoPortal auf der städtischen Seite nicht gesehen (Projekt laut Seite in Schlussphase).",
+    "Exakte Grenzen des Netzgebiets der Regensburg Netz GmbH nicht textlich belegt (nur 'Regensburg und die Region').",
+    "Geländehöhe 337 m bezieht sich auf das Alte Rathaus; Stadtgebiet reicht laut derselben Quelle bis 471 m (höchster Punkt).",
+    "Hinweis zur Methode: regensburg.de lieferte an WebFetch HTTP 503; die Seiten von regensburg.de, rewag.de, regensburg-netz.de und die DIBt-Tabelle wurden deshalb in dieser Sitzung direkt per HTTP-Abruf (curl) von den genannten URLs gelesen."
+  ],
+  "abgerufen": "2026-09-14"
+}

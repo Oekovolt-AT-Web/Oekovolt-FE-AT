@@ -1,0 +1,62 @@
+{
+  "name": "Ulm",
+  "slug": "ulm",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt (Stadtkreis Ulm)",
+  "einwohner": {
+    "wert": 129882,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.xlsx?__blob=publicationFile"
+  },
+  "netzbetreiber": {
+    "name": "Stadtwerke Ulm/Neu-Ulm Netze GmbH (Ulm Netze)",
+    "hinweis": "Netzbetreiber für Ulm und Neu-Ulm. Ablauf laut Ulm Netze: Voranfrage im Netzportal, Anmeldung und Inbetriebnahme durch einen beim Netzbetreiber eingetragenen Installateur, Zählersetzung, danach Anmeldung zur EEG-Vergütung. Balkon-PV unter 800 W nur Registrierung im Marktstammdatenregister. Hinweis Neu-Ulm (Bayern): gleicher Netzbetreiber, aber anderes Bundesland – bayerische Bauordnung, Denkmalschutzbehörden und Förderprogramme gelten dort, nicht die baden-württembergischen.",
+    "anmeldung_url": "https://www.ulm-netze.de/leistungen/erzeugungsanlagen-speicher",
+    "url": "https://www.ulm-netze.de/leistungen/erzeugungsanlagen-speicher"
+  },
+  "solarkataster": [],
+  "foerderprogramme": [
+    {
+      "name": "Ulmer Energieförderprogramm 2026",
+      "traeger": "Stadt Ulm",
+      "gegenstand": "Laut Regionaler Energieagentur Ulm u. a. Umstieg auf Heizanlagen mit erneuerbaren Energien und nachwachsende Dämmstoffe im Gebäudebestand; PV-bezogene Fördertatbestände konnten auf der Stadtseite nicht eingesehen werden (siehe offen).",
+      "konditionen": null,
+      "status": "2026 gestartet; laut Regionaler Energieagentur Ulm (Meldung vom 02.07.2026) Antragstopp am 01.09.2026, da die Mittel weitgehend abgerufen sind – damit Stand 14.09.2026 keine neuen Anträge mehr.",
+      "url": "https://www.regionale-energieagentur-ulm.de/foerderprogramme-2/"
+    }
+  ],
+  "klimaziel": null,
+  "schneelastzone": null,
+  "gelaendehoehe_m": null,
+  "ortsbild": [],
+  "besonderheiten": [
+    {
+      "text": "Regionale Energieagentur Ulm gGmbH, gegründet von Stadt Ulm, Landkreis Neu-Ulm und Alb-Donau-Kreis mit regionalen Energieversorgern (u. a. Stadtwerke Ulm/Neu-Ulm) und Kreishandwerkerschaften; Gebäude-Energieberatung unabhängig und in der Erstberatung kostenlos, auch für Mieter.",
+      "url": "https://www.regionale-energieagentur-ulm.de/"
+    },
+    {
+      "text": "Die Stadtwerke Ulm/Neu-Ulm betreiben seit 2008 eine PV-Anlage auf dem EvoBus-Werk 5 in Neu-Ulm mit 2.309 kW (rund 13.500 Module auf 18.000 m², rund 2 Mio. kWh/Jahr).",
+      "url": "https://www.swu.de/privatkunden/unternehmen/erzeugung/photovoltaik/photovoltaik-anlage-neu-ulm"
+    },
+    {
+      "text": "Nachbarstadt Neu-Ulm (Bayern, Landkreis Neu-Ulm, 62.641 Einwohner am 31.12.2024): Integriertes Klimaschutzkonzept am 13.12.2023 vom Stadtrat verabschiedet; Ziel Klimaneutralität für das Stadtgebiet bis 2040, Stadtverwaltung bis 2028; Anteil erneuerbarer Energien bei Strom und Wärme bis 2040 auf 100 %.",
+      "url": "https://www.wir-leben-neu.de/smart-and-green/klimaschutzkonzept"
+    },
+    {
+      "text": "Schneelastzone Neu-Ulm (Bayern): Zone 1 laut DIBt-Tabelle „Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Gemeindeschlüssel 09775135.",
+      "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+    }
+  ],
+  "energieberatung": {
+    "name": "Regionale Energieagentur Ulm gGmbH, Hafenbad 25, 89073 Ulm – Erstberatung kostenlos, Termin unter 0731 7903308-0",
+    "url": "https://www.regionale-energieagentur-ulm.de/kontakt/"
+  },
+  "offen": [
+    "Die Website der Stadt Ulm (ulm.de, inkl. PDFs) blockierte alle Abrufe (HTTP 403 / Azure WAF). Dadurch nicht selbst eingesehen: Klimaziel/Klimaschutzstrategie Ulm 2040 und Beschlussdatum, städtisches Solarkataster (ulm.de/…/solarkataster), Förderrichtlinie 2026 mit PV-Konditionen (Stecker-PV, PV-Check, Mieterstrom), Denkmalschutz/Altstadt-Regeln, Geländehöhe. Vor Veröffentlichung manuell prüfen.",
+    "Schneelastzone Ulm: Der Stadtkreis Ulm ist in der DIBt-Tabelle für Baden-Württemberg nicht aufgeführt (nur Alb-Donau-Kreis) – daher null.",
+    "Einwohnerzahl aus dem Destatis-Gemeindeverzeichnis (Stand 31.12.2024), da statistik-bw.de-Tabellen nicht abrufbar waren.",
+    "Die private Website solarstadt-ulm.de (Impressum: van Valkenburg GmbH) ist kein städtisches Angebot und wurde nicht aufgenommen.",
+    "Neu-Ulm: keine eigenen Förderprogramme oder Solarkataster geprüft (Websuche-Kontingent erschöpft)."
+  ],
+  "abgerufen": "2026-09-14"
+}

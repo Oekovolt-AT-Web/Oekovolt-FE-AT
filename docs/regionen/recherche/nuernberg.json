@@ -1,0 +1,81 @@
+{
+  "name": "Nürnberg",
+  "slug": "nuernberg",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 529508,
+    "stand": "31.12.2024",
+    "url": "https://www.statistik.bayern.de/mam/produkte/veroffentlichungen/statistische_berichte/a1210c_202400.pdf"
+  },
+  "netzbetreiber": {
+    "name": "N-ERGIE Netz GmbH",
+    "hinweis": "Die Liste 'Leitungsauskünfte im Stadtgebiet Nürnberg' der Stadt (Stand 29.12.2025) führt die N-ERGIE Netz GmbH als zuständig für Strom-, Gas-, Wasser- und Fernwärmeversorgung (die Stadt gibt keine Gewähr für Vollständigkeit). Im Bereich der Stadtgrenze zu Fürth ist laut Liste zusätzlich infra fürth gmbh aufgeführt. Anlage im Einzelfall beim Netzbetreiber prüfen.",
+    "anmeldung_url": null,
+    "url": "https://www.nuernberg.de/imperia/md/soer_nbg/dokumente/allgemeines_und_verwaltung/kommunikation_und_medien/beteiligungslisteleitungsauskuenfte.pdf"
+  },
+  "solarkataster": [
+    {
+      "name": "Solar- und Gründachkataster Nürnberg",
+      "traeger": "Stadt (Referat für Umwelt und Gesundheit)",
+      "url": "https://solar-gruendach-nuernberg.ipsyscon.de/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "CO2-Minderungsprogramm der N-ERGIE",
+      "traeger": "N-ERGIE Aktiengesellschaft (regionaler Energieversorger)",
+      "gegenstand": "Einbau von Wärmepumpen, Umstellung auf Fernwärme, Installation von Heimspeichern und Wallboxen, Kauf effizienter Haushaltsgeräte",
+      "konditionen": "Budget 2026: 800.000 Euro; Details und Antragsformulare laut Artikel auf n-ergie.de",
+      "status": "laufend 2026 (laut N-ERGIE-Magazin vom 12.01.2026); aktueller Mittelstand, z. B. für Heimspeicher, nicht auf Primärseite geprüft",
+      "url": "https://magazin.n-ergie.de/artikel/2026-das-ist-neu/"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität der Gesamtstadt bis spätestens 2040 (Stadtratsbeschluss Mai 2022); Klimaneutralität der Stadtverwaltung bis 2035 (Stadtratsbeschluss Juni 2020). Am 23.07.2025 hat der Stadtrat ein Integriertes Klimaschutzkonzept beschlossen.",
+    "url": "https://www.nuernberg.de/presse/mitteilungen/pm_25834.html"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Tabellenblatt Bayern: Nürnberg (Gemeindeschlüssel 09564000) = Schneelastzone 1, mit dem Hinweis, dass zusätzlich die Ergebnisse eines Forschungsprojekts zu berücksichtigen sind. Die charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab; eine repräsentative Geländehöhe war nicht amtlich belegbar.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": null,
+  "ortsbild": [
+    {
+      "text": "In Ensembles müssen alle von außen sichtbaren Veränderungen, ausdrücklich auch die Errichtung von Photovoltaikanlagen, vor Beginn von der Unteren Denkmalschutzbehörde erlaubt werden, wenn sie sich auf das Erscheinungsbild des Ensembles auswirken.",
+      "url": "https://www.nuernberg.de/internet/bauen/ensembles.html"
+    },
+    {
+      "text": "Leitfaden der Stadt 'Photovoltaik- und Solarthermieanlagen im Denkmalbereich': Das Stadtgebiet hat über 8.000 denkmalgeschützte Dächer (Einzeldenkmäler und ensemblegeschützte Gebäude). Anlagen sollen bevorzugt auf Nebengebäuden oder nicht vom öffentlichen Raum einsehbaren Dächern liegen, bündig oder mit minimaler Konstruktionshöhe; aufgeständerte Montage und kleinteilige Anordnung sind nicht zulässig; bei vom öffentlichen Raum einsehbaren Dächern (z. B. Burgblick) nur flächenbündig integrierte, farblich angeglichene Anlagen (Indach). Die Dachlandschaft der Altstadt wird ausdrücklich als zu erhaltend genannt.",
+      "url": "https://www.nuernberg.de/imperia/md/solarinitiative/dokumente/leitfaden_pv_denkmalschut_neu.pdf"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "PV-Bestand im Stadtgebiet: 144,7 MW in 12.774 Anlagen Ende 2025 (2010: 19,4 MW in 1.394 Anlagen). Laut Stadt liegt das größte Potenzial für erneuerbare Energien im Stadtgebiet in der Solarenergie.",
+      "url": "https://www.nuernberg.de/internet/klima/erneuerbare_energien.html"
+    },
+    {
+      "text": "Solarinitiative Nürnberg (Referat für Umwelt und Gesundheit): kostenlose Initialberatung für Privathaushalte und Projektberatung für Unternehmen; ab September 2026 zehn kostenfreie PV-Checks vor Ort für Wohnungseigentümergemeinschaften.",
+      "url": "https://www.nuernberg.de/internet/solarinitiative/"
+    },
+    {
+      "text": "Die Stadt verweist zum Thema Mieterstrom auf das Mieterstrom-Portal (mieterstrom-info.de) mit Informationen zu Betreiber- und Messkonzepten sowie Verträgen.",
+      "url": "https://www.nuernberg.de/internet/klima/erneuerbare_energien.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "Solarinitiative Nürnberg – kostenlose Solar-Initialberatung (durchgeführt mit der DGS Franken)",
+    "url": "https://www.nuernberg.de/internet/klima/beratungsangebote.html"
+  },
+  "offen": [
+    "Anmeldeseite des Netzbetreibers für PV-Anlagen: n-ergie-netz.de war in dieser Sitzung nicht erreichbar (Verbindung abgelehnt), daher anmeldung_url null.",
+    "Netzbetreiber: Keine Netzbetreiber-eigene Aussage zum Netzgebiet abrufbar; Beleg nur über die städtische Liste der Leitungsauskünfte.",
+    "Geländehöhe: Keine amtliche repräsentative Höhe (z. B. Stadtmitte) gefunden. Die Bayerische Staatsregierung nennt nur den höchsten Geländepunkt (408,4 m ü. NN, Stadtteil Brunn, Mitteilung vom 25.11.2016). Das ist nicht repräsentativ, daher null.",
+    "CO2-Minderungsprogramm der N-ERGIE: Die Programmseite auf n-ergie.de war nicht erreichbar; der aktuelle Mittelstand je Fördergegenstand und genaue Konditionen sind nicht geprüft.",
+    "Kommunales Förderprogramm der Stadt Nürnberg für PV oder Balkon-Solaranlagen: Auf den städtischen Seiten war kein laufendes Programm zu finden. Angaben Dritter zu 100 Euro Zuschuss für Balkon-Solaranlagen sind nicht primär belegt und wurden nicht aufgenommen.",
+    "Gestaltungs- oder Altstadtsatzung mit eigenen Solarregeln sowie eine städtische Solarpflicht über das Landesrecht hinaus waren nicht belegbar."
+  ],
+  "abgerufen": "2026-09-14"
+}

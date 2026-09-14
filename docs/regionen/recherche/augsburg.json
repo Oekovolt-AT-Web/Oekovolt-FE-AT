@@ -1,0 +1,77 @@
+{
+  "name": "Augsburg",
+  "slug": "augsburg",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 301105,
+    "stand": "31.12.2024",
+    "url": "https://statistik.bayern.de/mam/produkte/statistik_kommunal/2025/09761.pdf"
+  },
+  "netzbetreiber": {
+    "name": "swa Netze GmbH",
+    "hinweis": "Netzbetreiber der Stadtwerke Augsburg (Hoher Weg 1, 86152 Augsburg). Anmeldung von Erzeugungsanlagen digital über das swa-Netze-Einspeiserportal; laut swa Netze kann die Anmeldung ausschließlich durch den Elektrofachbetrieb eingereicht werden. Für Anlagen über 25 kWp ist zusätzlich ein Formular zum Einspeisemanagement erforderlich. Für Randlagen per Adresse prüfen.",
+    "anmeldung_url": "https://www.swa-netze.de/sparten/strom/einspeisung",
+    "url": "https://www.swa-netze.de/sparten/strom/einspeisung"
+  },
+  "solarkataster": [
+    {
+      "name": "Solardachflächenkataster der Stadt Augsburg",
+      "traeger": "Stadt (Geodatenamt mit Umweltamt und Stadtplanungsamt)",
+      "url": "https://www.augsburg.de/umwelt-soziales/umwelt/energiewende/solarenergie"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Augsburger Solarförderprogramm 2023–2025",
+      "traeger": "Stadt Augsburg (Umweltamt, Solaroffensive Augsburg)",
+      "gegenstand": "Photovoltaikanlagen, Solarthermieanlagen und Steckersolargeräte (Balkonkraftwerke) an und auf Gebäuden im Stadtgebiet",
+      "konditionen": "Programmvolumen 500.000 € aus der städtischen Klimarücklage (2023–2025); Förderhöhen je Anlage auf der Seite nicht mehr genannt.",
+      "status": "beendet – laut Stadt „wie geplant zum 15.12.2025“ nach über 1.560 Anträgen; „Eine Fortsetzung des Förderprogramms im kommenden Jahr ist aktuell nicht absehbar.“",
+      "url": "https://www.augsburg.de/umwelt-soziales/umwelt/klima-energie/solaroffensive-augsburg/solarfoerderprogramm"
+    }
+  ],
+  "klimaziel": {
+    "text": "Vom Stadtrat beschlossen: klimaneutrale Stadtverwaltung bis spätestens 2035. Für das gesamte Stadtgebiet gibt es kein festes Zieljahr; das im Juli 2022 (28.07.2022) beschlossene Blue City Klimaschutzprogramm basiert auf einem städtischen CO2-Restbudget und soll Klimaneutralität „so schnell wie möglich“ erreichen.",
+    "url": "https://www.augsburg.de/fileadmin/user_upload/umwelt_soziales/umwelt/umweltschutz/klimaschutzberichte/download/Klimaschutzbericht_2024.pdf"
+  },
+  "schneelastzone": {
+    "zone": "1a",
+    "hinweis": "Zuordnung nach DIN EN 1991-1-3 laut DIBt-Tabelle „Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Gemeindeschlüssel 09761000; für Bayern sind laut Tabelle zusätzlich Ergebnisse eines Forschungsprojekts zu berücksichtigen. Verbindlich sind die amtlichen Bekanntmachungen des Landes; charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 489,
+    "url": "https://www.augsburg.de/fileadmin/user_upload/buergerservice_rathaus/rathaus/statisiken_und_geodaten/statistiken/kompakt/daten_fakten_zahlen_2012.pdf"
+  },
+  "ortsbild": [
+    {
+      "text": "Augsburg hat das denkmalgeschützte „Ensemble Altstadt Augsburg“. Solaranlagen an Baudenkmälern und im Ensemble werden von der Stadt nach einem Stufenmodell beurteilt: auf nicht einsehbaren Flächen können herkömmliche Anlagen zulässig sein; bei Ensemblegebäuden auf öffentlich einsehbaren Flächen nur gestalterisch integrierte Anlagen (z. B. Indach- oder farbige Module); bei Einzeldenkmälern auf einsehbaren Flächen nur denkmalverträgliche Anlagen. Eine denkmalrechtliche Erlaubnis ist zu beantragen.",
+      "url": "https://www.augsburg.de/buergerservice-rathaus/wohnen-und-bauen/denkmalschutz/"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "Solarkonzept der Stadt Augsburg, vom Stadtrat am 24.02.2011 beschlossen: Leitfaden für die Solarnutzung im Stadtgebiet mit Einstufung von Flächen (gut / bedingt / nicht geeignet), Schwerpunkt auf bereits bebauten bzw. versiegelten Flächen; das Solardachflächenkataster ist daraus hervorgegangen.",
+      "url": "https://www.augsburg.de/buergerservice-rathaus/stadtplanung/stadtentwicklung/fachkonzepte/solarkonzept"
+    },
+    {
+      "text": "Solaroffensive Augsburg: Das Team der Stadt informiert und berät kostenfrei und unabhängig zu PV und Steckersolargeräten, u. a. mit einem Online-SolardachCheck, Vor-Ort-Beratungen und Vorträgen.",
+      "url": "https://www.augsburg.de/umwelt-soziales/umwelt/klima-energie/solaroffensive-augsburg"
+    },
+    {
+      "text": "Die Stadtwerke Augsburg bieten Geschäftskunden und öffentlichen Einrichtungen Lösungen zu Mieterstrommodellen und Ladeinfrastruktur an.",
+      "url": "https://www.sw-augsburg.de/kommunen/dienstleistungen/energiedienstleistungen/photovoltaik-und-mehr"
+    }
+  ],
+  "energieberatung": {
+    "name": "Solaroffensive Augsburg (Umweltamt der Stadt Augsburg) – kostenfreie, unabhängige Solarberatung",
+    "url": "https://www.augsburg.de/umwelt-soziales/umwelt/klima-energie/solaroffensive-augsburg"
+  },
+  "offen": [
+    "Kein laufendes kommunales PV-Förderprogramm 2026 belegbar (städtisches Programm endete am 15.12.2025).",
+    "Geländehöhe: nur Höhe des Rathauses (489 m ü. NN) aus der städtischen Broschüre „Augsburg kompakt“ 2012; Stadtgebiet variiert – als Richtwert zu verstehen.",
+    "Kein festes Klimaneutralitäts-Zieljahr für die gesamte Stadt; nur für die Stadtverwaltung (2035) belegt. Das genaue Beschlussdatum für das Ziel 2035 war im Bericht nicht angegeben.",
+    "Direkter Link zur Kartenanwendung des Solardachflächenkatasters nur als generische ArcGIS-Adresse genannt; daher Quelle = Infoseite der Stadt."  ],
+  "abgerufen": "2026-09-14"
+}

@@ -1,0 +1,115 @@
+{
+  "name": "Würzburg",
+  "slug": "wuerzburg",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 133258,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122024_Auszug_GV.html"
+  },
+  "netzbetreiber": {
+    "name": "Mainfranken Netze GmbH (MFN)",
+    "hinweis": "MFN bezeichnet sich als regionaler Netzbetreiber für Strom-, Gas-, Wasser- und Wärmenetze 'in Würzburg und Umgebung'. Anfragen zu Photovoltaikanlagen: bearbeitung-eeg@mfn.de; Netzanschlussmanagement Domstraße 26 (Zugang über WVV-Kundenzentrum). Eine Netzgebietsabgrenzung nach Stadtteilen wurde nicht gefunden.",
+    "anmeldung_url": "https://www.mainfrankennetze.de/netzportal/einspeiser.html",
+    "url": "https://www.mainfrankennetze.de/einspeiser/strom.html"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarkataster Würzburg (gemittelte Einstrahlung je Gebäude; individuelle Auskunft für Eigentümerinnen und Eigentümer kostenlos auf Anfrage im Energie- und Klimazentrum der Stadt, kein Online-Link auf der Seite)",
+      "traeger": "Stadt",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/klimaundenergie/solarenergie/414373.Solarkataster-Wuerzburg.html"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "KlimaStadt Würzburg – Baustein Gemeinschaftliche Gebäudeversorgung",
+      "traeger": "Stadt Würzburg",
+      "gegenstand": "Erstmalige Einrichtung einer gemeinschaftlichen Gebäudeversorgung mit Solarstrom auf Mehrfamilienhäusern (PV-Anlage auf dem Dach plus technische und organisatorische Einrichtung der Stromverteilung inkl. Messtechnik); ersetzt den früheren Mieterstrom-Baustein.",
+      "konditionen": "2.000 EUR Grundpauschale plus 150 EUR/kWp, max. 5.000 EUR pro Anlage; Gebäude im Stadtgebiet, mindestens 3 Wohneinheiten, Eigentümer oder WEG-Beschluss, Installation durch Fachunternehmen, Antrag vor Beauftragung.",
+      "status": "laufend 2026 (Programm KlimaStadt Würzburg, Online-Antragstellung seit 25.04.2026)",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik/549158.Gemeinschaftliche-Gebaeudeversorgung--Solarstrom-fuer-Ihr-Mehrfamilienhaus-in-Wuerzburg.html"
+    },
+    {
+      "name": "KlimaStadt Würzburg – Baustein PV an Fassade",
+      "traeger": "Stadt Würzburg",
+      "gegenstand": "Erstmalige Installation von Photovoltaikmodulen an Gebäudefassaden im Stadtgebiet (nicht auf dem Dach).",
+      "konditionen": "250 EUR/kWp, max. 5.000 EUR pro Anlage (Obergrenze ab 20 kWp); Eigentümer:in, Installation durch Fachbetrieb, Antrag vor Beauftragung.",
+      "status": "laufend 2026",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik/549168.Photovoltaik-an-Fassade--Solarstrom-von-Waenden-in-Wuerzburg.html"
+    },
+    {
+      "name": "KlimaStadt Würzburg – Baustein PVT-Kollektoren (neu 2026)",
+      "traeger": "Stadt Würzburg",
+      "gegenstand": "PVT-Hybridmodule (kombinierte Photovoltaik- und Solarthermie-Kollektoren), nicht separate PV- und Solarthermie-Anlagen.",
+      "konditionen": "250 EUR/kWp, max. 5.000 EUR; Gebäude im Stadtgebiet, Eigentümer:in, Installation durch Fachunternehmen.",
+      "status": "laufend 2026",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik/549159.PVT-Kollektoren--Strom-und-Waerme-von-einem-Dach-in-Wuerzburg.html"
+    },
+    {
+      "name": "KlimaStadt Würzburg – Baustein PV mit Dachbegrünung",
+      "traeger": "Stadt Würzburg",
+      "gegenstand": "PV-Anlage auf einem begrünten Dach (bestehende Dachbegrünung oder gleichzeitige Neuanlage); Doppelförderung mit Baustein Dachbegrünung möglich.",
+      "konditionen": "150 EUR/kWp, max. 3.000 EUR; Eigentümer:in, WEG oder MFH.",
+      "status": "laufend 2026",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik/549129.PV-mit-Dachbegruenung--Solarstrom-und-gruenes-Dach-in-Wuerzburg-kombinieren.html"
+    },
+    {
+      "name": "Balkon-PV, PV Dachvollbelegung, PV und Denkmalschutz (frühere städtische Bausteine)",
+      "traeger": "Stadt Würzburg",
+      "gegenstand": "Bisherige Zuschüsse für Steckersolargeräte (200 EUR pauschal), PV-Dachvollbelegung (150 EUR/kWp, max. 1.500 EUR) und PV an Denkmälern (200 EUR/kWp, max. 2.000 EUR).",
+      "konditionen": "entfallen mit dem Programm KlimaStadt Würzburg 2026",
+      "status": "eingestellt (ab Förderperiode 2026 nicht mehr angeboten)",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/gutzuwissen/549151.Was-sich-gegenueber-2025-aendert.html"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2040; die Stadtverwaltung soll bis 2028 klimaneutral werden. Grundlage ist das integrierte Klimaschutzkonzept, das der Stadtrat am 20.01.2022 beschlossen hat.",
+    "url": "https://www.wuerzburg.de/themen/umwelt-klima/klimaundenergie/strategien-und-ziele"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt Bayern, Gemeindeschlüssel 09663000: Schneelastzone 1. Für Bayern ist laut Tabelle zusätzlich das Forschungsprojekt zu Schneelastmesswerten (Rundschreiben StMI vom 19.01.2018) zu berücksichtigen. Geländehöhe laut Stadt 177 m (Stadt im mittleren Maintal, überragt von der Festung auf dem Marienberg); für die Bemessung maßgeblich ist die Höhe des jeweiligen Standorts.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 177,
+    "url": "https://www.wuerzburg.de/rathaus/statistikstadtforschung/stadtgebietflaechennutzungklima/32319.Stadtgebiet-Flaechennutzung-Klima.html"
+  },
+  "ortsbild": [
+    {
+      "text": "Das Kongregationshaus der Erlöserschwestern liegt im Zentrum des denkmalgeschützten Ensembles der Würzburger Altstadt. Mit Unterstützung des von der Stadt beauftragten und vom Bayerischen Landesamt für Denkmalpflege fachlich und finanziell unterstützten Kommunalen Denkmalkonzepts wurde dort eine denkmalverträgliche Solaranlage geplant; das BLfD bezeichnet sie als Bayerns erste PV-Anlage auf einem Großdenkmal.",
+      "url": "https://www.blfd.bayern.de/meta/aktuelle_meldungen/005025/index.html"
+    },
+    {
+      "text": "Die frühere städtische Förderung 'PV und Denkmalschutz' ist 2026 entfallen; Eigentümer:innen denkmalgeschützter Gebäude sollen sich laut Stadt an die Untere Denkmalschutzbehörde wenden, um eine mögliche Landesförderung anzufragen. Beim Baustein 'PV an Fassade' nennt die Stadt eine denkmalschutzrechtliche Klärung im Bedarfsfall als Verfahrensschritt.",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/gutzuwissen/549151.Was-sich-gegenueber-2025-aendert.html"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "'Mit der Sonne rechnen': Aktion von Stadt und Landkreis Würzburg mit der Verbraucherzentrale Bayern – kostenlose Vor-Ort-Erstberatung (Eignungs-Check Solar) durch Energieberater der Verbraucherzentrale per Beratungsgutschein.",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/klimaundenergie/solarenergie/522730.Mit-der-Sonne-rechnen--Kostenlose-Vor-Ort-Beratung-zur-Nutzung-von-Sonnenenergie.html"
+    },
+    {
+      "text": "Bürgersonnenkraftwerke: In Würzburg wurden laut Stadt mehrere Bürgersonnenkraftwerke umgesetzt, u. a. auf Dächern des Gartenamts, am Betriebshof der Stadtreiniger und auf Schulgebäuden – über die Bürgerbeteiligung der WVV oder den Verein Sonneninitiative.",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/klimaundenergie/solarenergie/buergersonnenkraftwerke"
+    },
+    {
+      "text": "Das Förderprogramm 'KlimaStadt Würzburg' fasst seit 2026 die früheren Programme 'Klimaneutrales Wohnen' und 'Stadtgrün und Klimaanpassung' zusammen (14 Bausteine, davon 4 für Photovoltaik); die Stadt beziffert die Sonnenscheindauer auf über 1.700 Stunden und die Globalstrahlung auf 1.150 kWh/m² pro Jahr.",
+      "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik"
+    }
+  ],
+  "energieberatung": {
+    "name": "Stabsstelle Klima und Nachhaltigkeit der Stadt Würzburg (kostenlose, unabhängige Beratung u. a. zu PV-Potenzial und Förderkombination; Tel. 0931 37 27 46)",
+    "url": "https://www.wuerzburg.de/themen/umwelt-klima/foerderungen-und-beratungen/photovoltaik"
+  },
+  "offen": [
+    "Netzgebiet der Mainfranken Netze GmbH: keine Angabe gefunden, ob alle Stadtteile abgedeckt sind.",
+    "Ortsbild: keine Altstadt- oder Gestaltungssatzung mit ausdrücklichen Regeln zu Solaranlagen gefunden (Stadtrecht-Seite beim Abruf nicht erreichbar); ob das Kommunale Denkmalkonzept Leitlinien für das gesamte Altstadtensemble veröffentlicht hat, ist nicht belegt.",
+    "Solarkataster: Die Stadtseite bietet keinen Online-Link, nur Auskunft auf Anfrage; Sonnenstunden werden auf zwei Stadtseiten unterschiedlich angegeben (ca. 1.650 bzw. über 1.700).",
+    "Die Stadt nennt für die Stabsstelle Klima und Nachhaltigkeit und das 'Energie- und Klimazentrum' unterschiedliche Bezeichnungen; Zuordnung nicht geklärt.",
+    "Websuche-Kontingent war während der Recherche erschöpft; Mieterstrom-Angebote der WVV wurden nicht geprüft."
+  ],
+  "abgerufen": "2026-09-14"
+}

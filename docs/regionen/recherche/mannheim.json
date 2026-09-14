@@ -1,0 +1,76 @@
+{
+  "name": "Mannheim",
+  "slug": "mannheim",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 318035,
+    "stand": "31.12.2024",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/05-staedte.html"
+  },
+  "netzbetreiber": {
+    "name": "MVV Netze GmbH",
+    "hinweis": "Netzbetreiber für das Stromnetz in Mannheim (Netzgebiet laut MVV Netze u. a. auch Ilvesheim und Ketsch). Netzanschlussbegehren für EE-Anlagen bis 30 kW reichen Elektroinstallateure seit 01.01.2025 über das Installateur-Webportal ein; für Anlagen über 30 kW gibt es die „Einspeiseanfrage/Checkliste für PV-Anlagen“.",
+    "anmeldung_url": "https://www.mvv-netze.de/ich-erzeuge-energie/eeg-anlagenbetreiber/photovoltaik",
+    "url": "https://www.mvv-netze.de/ich-erzeuge-energie/eeg-anlagenbetreiber/photovoltaik"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarkataster Mannheim im städtischen Geoportal (GIS Mannheim), auf Basis des Energieatlas der LUBW",
+      "traeger": "Stadt Mannheim (Daten: Land/LUBW)",
+      "url": "https://www.gis-mannheim.de/mannheim/index.php?service=solarkataster"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "SolarBonus 2026",
+      "traeger": "Stadt Mannheim (Klimafonds), abgewickelt durch die Klimaschutzagentur Mannheim",
+      "gegenstand": "Neue PV-Anlagen auf Gebäuden in Mannheim mit Bauantrag vor 01.05.2022: Mehrfamilienhäuser/WEG ab 3 Wohneinheiten mit Mieterstrommodell oder gemeinschaftlicher Gebäudeversorgung (Vollbelegung oder mind. 20 kWp); Ein- und Zweifamilienhäuser nur bei begrüntem Dach oder Denkmalschutz; Fassaden-PV und Solarzäune; Dächer eingetragener gemeinnütziger Vereine (Vollbelegung oder mind. 30 kWp). Antragsberechtigt: private Wohngebäudeeigentümer inkl. WEG und gemeinnützige Vereine. Ausgeschlossen u. a. PV-Miete und selbst beschaffte Komponenten.",
+      "konditionen": "MFH/WEG 120 Euro/kWp, max. 2.400 Euro; PV mit Dachbegrünung 260 Euro/kWp, max. 4.000 Euro; Denkmal 300 Euro/kWp, max. 4.500 Euro (mit denkmalrechtlicher Genehmigung, die farblich angepasste Sondermodule fordert); Mieterstrom-/GGV-Umsetzung 50 % der Kosten, max. 3.000 Euro; Fassaden-PV/Zaunanlagen 250 Euro/kWp, max. 3.000 Euro laut Richtlinie (Beteiligungsplattform nennt max. 3.750 Euro), Mindestleistung 1,5 kWp; Vereine 140 Euro/kWp, max. 4.200 Euro. Antrag vor Beauftragung; Installation und Verwendungsnachweis binnen 12 Monaten nach vorläufiger Zusage; Mittelvergabe nach Eingang vollständiger Anträge; Förderung nur im Rahmen der Haushaltsmittel.",
+      "status": "laufend 2026 (Neustart am 11.03.2026; Richtlinie Stand 11.03.2026)",
+      "url": "https://api.klima-ma.de/api/subsidy-downloads/20260311-forderrichtlinie-solarbonus-2026.pdf"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität 2030; der Gemeinderat hat am 17.11.2022 den Klimaschutz-Aktionsplan 2030 beschlossen (81 Maßnahmen mit über 300 Aktivitäten in 8 Handlungsfeldern; die Photovoltaik-Offensive gehört zu den TOP-Maßnahmen).",
+    "url": "https://mannheim-gemeinsam-gestalten.de/umsetzung_ksap2030"
+  },
+  "schneelastzone": {
+    "zone": "1",
+    "hinweis": "DIBt-Tabelle „Zuordnung der Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Blatt BW: „SK Mannheim – 1“. Das Stadtgebiet liegt laut LEO-BW zwischen ca. 87 und 146 m ü. NN. Verbindlich sind die amtlichen Bekanntmachungen des Landes; Nachweis im Einzelfall durch Statiker.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": null,
+    "url": "https://www.leo-bw.de/en/detail-gis/-/Detail/details/ORT/labw_ortslexikon/5910/Mannheim"
+  },
+  "ortsbild": [],
+  "besonderheiten": [
+    {
+      "text": "Photovoltaik-Offensive von Stadt Mannheim und MVV (gestartet 26.07.2022) über die gemeinsame sMArt City Mannheim GmbH: Stromerzeugung für die städtischen Liegenschaften soll bis 2027 auf erneuerbare Energien umgestellt werden; geplant waren PV-Anlagen auf städtischen Dach- und Freiflächen mit insgesamt 40 Megawatt, finanziert überwiegend aus dem Klimafonds.",
+      "url": "https://www.mvv.de/journalisten/pressemitteilungen/detail/stadt-mannheim-und-mvv-starten-photovoltaik-offensive"
+    },
+    {
+      "text": "Mannheim wurde im April 2022 als eine der 100 Städte der EU-Mission „100 klimaneutrale Städte bis 2030“ ausgewählt; die Stadt verfolgt den Local-Green-Deal-Ansatz, der Klimaschutz-Aktionsplan 2030 ist das zentrale Umsetzungsinstrument.",
+      "url": "https://mannheim-gemeinsam-gestalten.de/umsetzung_ksap2030"
+    },
+    {
+      "text": "Beim SolarBonus 2026 liegt der Schwerpunkt auf Mehrfamilienhäusern mit Mieterstrom bzw. gemeinschaftlicher Gebäudeversorgung, Gründach-PV, Denkmal- und Fassadenanlagen; der Balkon-SolarBonus ist nicht mehr Teil der Programme 2026.",
+      "url": "https://mannheim-gemeinsam-gestalten.de/node/6170"
+    }
+  ],
+  "energieberatung": {
+    "name": "Klimaschutzagentur Mannheim gGmbH (Tattersallstraße 15-17, 68165 Mannheim; kostenlose Beratung, u. a. Erstberatung zu Sanierung und Fördermöglichkeiten)",
+    "url": "https://www.mvv.de/rund-ums-haus/energieberatung/klimaschutzagentur"
+  },
+  "offen": [
+    "Seiten auf mannheim.de lieferten beim Abruf HTTP 403; Pressemitteilungen der Stadt (Neustart Förderprogramme 10.03.2026, Solarkataster) konnten daher nur teilweise direkt eingesehen werden. Klimaziel und SolarBonus-Details sind über die städtische Beteiligungsplattform und die Förderrichtlinie belegt.",
+    "Fassaden-PV-Höchstbetrag widersprüchlich: Förderrichtlinie 3.000 Euro, Beteiligungsplattform 3.750 Euro.",
+    "Klimaschutzagentur-Website (klima-ma.de) lädt Inhalte per JavaScript; aktuelle Angaben zu verfügbaren Restmitteln 2026 nicht direkt einsehbar.",
+    "Geländehöhe: keine amtliche Einzelangabe, nur Spanne ca. 87–146 m ü. NN laut LEO-BW.",
+    "Keine städtische Gestaltungs- oder Denkmalsatzung mit Regeln speziell zu Solaranlagen auf offizieller Quelle gefunden (Denkmalschutz nur im Rahmen der SolarBonus-Bedingungen belegt).",
+    "Mieterstromangebot der MVV für Mannheim nicht geprüft; Stand der PV-Offensive (erreichte Leistung) nicht aus Primärquelle belegt.",
+    "Die Webseite der Klimaschutzagentur wurde über mvv.de zitiert (MVV-Seite zur Klimaschutzagentur)."
+  ],
+  "abgerufen": "2026-09-14"
+}

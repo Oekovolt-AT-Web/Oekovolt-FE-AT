@@ -1,0 +1,98 @@
+{
+  "name": "München",
+  "slug": "muenchen",
+  "bundesland": "Bayern",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 1505005,
+    "stand": "31.12.2024",
+    "url": "https://statistik.bayern.de/mam/produkte/statistik_kommunal/2025/09162.pdf"
+  },
+  "netzbetreiber": {
+    "name": "SWM Infrastruktur GmbH & Co. KG",
+    "hinweis": "Netztochter der Stadtwerke München. Anmeldung von PV-Anlagen (mit/ohne Speicher) über das Netzanschlussportal; Steckersolargeräte (max. 800 VA Wechselrichter, max. 2.000 Wp Modulleistung) nur Schnellanmeldung im Marktstammdatenregister. Ob das gesamte Stadtgebiet ohne Ausnahme abgedeckt ist, wurde nicht gesondert geprüft – per Adresse im Netzanschlussportal prüfen.",
+    "anmeldung_url": "https://www.swm-infrastruktur.de/einspeisung/erzeugungsanlage-anmelden/photovoltaikanlage-anmelden",
+    "url": "https://www.swm-infrastruktur.de/einspeisung/erzeugungsanlage-anmelden/photovoltaikanlage-anmelden"
+  },
+  "solarkataster": [
+    {
+      "name": "Solarpotenzialkarte (GeoPortal München)",
+      "traeger": "Stadt (Landeshauptstadt München)",
+      "url": "http://geoportal.muenchen.de/portal/solarpotenzial/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Förderprogramm Klimaneutrale Gebäude (FKG) – Stecker-Solar-Geräte (Balkonkraftwerke)",
+      "traeger": "Landeshauptstadt München, Referat für Klima- und Umweltschutz",
+      "gegenstand": "Kauf und Installation steckbarer PV-Geräte bis 800 Wp je Wohneinheit",
+      "konditionen": "0,40 € je Wp (bis 800 Wp je Wohneinheit), max. 50 % der Kosten; für München-Pass-Inhaber*innen 95 % der förderfähigen Kosten. Antrag online vor Kauf/Bestellung; nur Gebäude im Stadtgebiet (PLZ 80331–81929).",
+      "status": "laufend 2026 (Antragstellung über das städtische Förderportal möglich)",
+      "url": "https://stadt.muenchen.de/service/info/sachgebiet-foerderprogramm-klimaneutrale-gebaeude/10414151/"
+    },
+    {
+      "name": "Förderprogramm Klimaneutrale Gebäude (FKG) – Photovoltaikberatung und Mieterstrom",
+      "traeger": "Landeshauptstadt München, Referat für Klima- und Umweltschutz",
+      "gegenstand": "Beratungs- und Planungsleistungen zu Photovoltaik (Wohn- und Nichtwohngebäude) sowie Umsetzung von Mieterstrommodellen inkl. neu errichteter PV-Anlage",
+      "konditionen": "PV-Beratung: 60 % des Honorars, max. 3.000 € (1–2 Wohneinheiten) bzw. 15.000 € (ab 3 WE / Nichtwohngebäude); Mieterstrom: 200 €/kWp der zugehörigen PV-Anlage, begrenzt auf die förderfähigen Kosten (gilt für Anträge ab 11.06.2025). Antrag vor Auftragsvergabe.",
+      "status": "laufend 2026",
+      "url": "https://stadt.muenchen.de/service/info/sachgebiet-foerderprogramm-klimaneutrale-gebaeude/10414154/"
+    },
+    {
+      "name": "Förderprogramm Klimaneutrale Gebäude (FKG) – Förderung von PV-Anlagen",
+      "traeger": "Landeshauptstadt München",
+      "gegenstand": "Photovoltaikanlagen",
+      "konditionen": "Anträge waren bis 18.12.2024 möglich; gestellte Anträge behalten ihre Gültigkeit.",
+      "status": "eingestellt (Stadt: „Eine Antragstellung ist nicht mehr möglich“)",
+      "url": "https://stadt.muenchen.de/infos/foerderprogramm-klimaneutrale-gebaeude.html"
+    }
+  ],
+  "klimaziel": {
+    "text": "Klimaneutralität bis 2035 (laut Stadt: „Die Stadt München möchte bis 2035 klimaneutral werden.“); Masterplan „Solares München“ vom Stadtrat beschlossen: langfristig 25 % des Münchner Strombedarfs aus PV im Stadtgebiet, Zubau ab ca. 2030 dauerhaft 100 MWp pro Jahr.",
+    "url": "https://stadt.muenchen.de/infos/solarenergie.html"
+  },
+  "schneelastzone": {
+    "zone": "1a",
+    "hinweis": "Zuordnung nach DIN EN 1991-1-3 laut DIBt-Tabelle „Schneelastzonen nach Verwaltungsgrenzen“ (Stand 07.02.2023), Gemeindeschlüssel 09162000; für Bayern sind laut Tabelle zusätzlich Ergebnisse eines Forschungsprojekts zu berücksichtigen. Verbindlich sind die amtlichen Bekanntmachungen des Landes; charakteristische Schneelast hängt zusätzlich von der Geländehöhe des Standorts ab.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": {
+    "wert": 519,
+    "url": "https://www.muenchen.de/sehenswuerdigkeiten/muenchen-zahlen-interessante-fakten-ueber-die-stadt"
+  },
+  "ortsbild": [
+    {
+      "text": "Für PV- und Solarthermieanlagen an Einzelbaudenkmälern, in Ensembles, in der Nähe von Baudenkmälern und über Bodendenkmälern ist eine denkmalrechtliche Erlaubnis nötig. Stufenmodell: auf nicht öffentlich einsehbaren Flächen herkömmliche Anlagen regelmäßig erlaubnisfähig; in Ensembles auf einsehbaren Flächen integrierte Anlagen, Folien u. Ä.; bei Einzeldenkmälern auf einsehbaren Flächen z. B. Solarziegel, Solarfolien oder dachintegrierte Anlagen. Auf Kirchen, Kapellen, Kloster-, Schloss- und Burganlagen und anderen besonders bedeutenden Denkmälern grundsätzlich nicht möglich.",
+      "url": "https://stadt.muenchen.de/infos/denkmalschutz-solaranlagen.html"
+    },
+    {
+      "text": "Für das denkmalgeschützte Olympiadorf gibt es einen eigenen Photovoltaik-Rahmenplan der Stadt (Broschüre).",
+      "url": "https://stadt.muenchen.de/infos/denkmalschutz-solaranlagen.html"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "In München sind laut Stadt rund 265 MWp PV installiert (ca. 230 GWh/Jahr, gut 2 % des Stromverbrauchs); 2025 betrug der Zubau rund 50 MWp (Stand der Seite: 01.07.2026).",
+      "url": "https://stadt.muenchen.de/infos/solarenergie.html"
+    },
+    {
+      "text": "Masterplan „Solares München“: Richtwert 20 % PV-Modulfläche bezogen auf die Grundstücksfläche in Siedlungsflächen (40 % der Siedlungsfläche bleiben z. B. wegen Denkmalschutz unberücksichtigt); Stadtwerke München sollen 2026–2028 jährlich 30 MWp im Stadtgebiet zubauen, die Münchner Wohnen GmbH jährlich 12,5 MWp.",
+      "url": "https://stadt.muenchen.de/infos/solarenergie.html"
+    },
+    {
+      "text": "Münchner Solarbörse der Stadt: Eigentümer können Dachflächen einstellen und erhalten unverbindliche Angebote eingetragener Solarpartner; die Stadt stellt außerdem Leitfäden zu Photovoltaik (2025), Steckersolargeräten (2026) und zur Kombination von PV und Gründach bereit.",
+      "url": "https://stadt.muenchen.de/infos/solarenergie.html"
+    }
+  ],
+  "energieberatung": {
+    "name": "Bauzentrum München (Informations- und Beratungszentrum der Landeshauptstadt München) – kostenfreie, produkt- und firmenneutrale Beratungen sowie kostenfreie Infoveranstaltungen zu Solarenergie",
+    "url": "https://stadt.muenchen.de/infos/bauzentrum-muenchen.html"
+  },
+  "offen": [
+    "Datum des Stadtratsbeschlusses zum Klimaneutralitätsziel 2035 und zum Masterplan „Solares München“ nicht auf den eingesehenen Seiten genannt (Beschlussvorlage im RIS verlinkt, nicht geöffnet).",
+    "Geländehöhe: 519 m ist die durchschnittliche Höhe über NHN laut Stadtportal muenchen.de (höchster Punkt 579 m Warnberg, tiefster 482 m Feldmoching); muenchen.de ist das offizielle Stadtportal, nicht die Verwaltungsseite stadt.muenchen.de.",
+    "Netzgebiet der SWM Infrastruktur: keine ausdrückliche Aussage zur vollständigen Abdeckung des Stadtgebiets eingesehen.",
+    "Keine Gestaltungssatzung mit stadtweiten Solarregeln geprüft; nur Denkmalschutz-Regeln belegt."
+  ],
+  "abgerufen": "2026-09-14"
+}

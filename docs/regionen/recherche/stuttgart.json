@@ -1,0 +1,83 @@
+{
+  "name": "Stuttgart",
+  "slug": "stuttgart",
+  "bundesland": "Baden-Württemberg",
+  "kreis": "kreisfreie Stadt",
+  "einwohner": {
+    "wert": 609365,
+    "stand": "31.12.2025",
+    "url": "https://www.destatis.de/DE/Themen/Laender-Regionen/Regionales/Gemeindeverzeichnis/Administrativ/Archiv/GVAuszugJ/31122025_Auszug_GV.xlsx?__blob=publicationFile"
+  },
+  "netzbetreiber": {
+    "name": "Stuttgart Netze GmbH",
+    "hinweis": "Laut Beteiligungsbericht 2024 der Landeshauptstadt Eigentümerin und Betreiberin des Elektrizitäts- und Gasversorgungsnetzes der allgemeinen Versorgung in Stuttgart; Konzessionsinhaberin für das Stromnetz auf dem Gebiet der Landeshauptstadt seit 2014, Verträge bis 31.12.2033. Gesellschafter: Stadtwerke Stuttgart GmbH (74,9 %) und Netze BW GmbH (25,1 %).",
+    "anmeldung_url": null,
+    "url": "https://www.stuttgart.de/medien/ibs/beteiligungsbericht_2024.pdf"
+  },
+  "solarkataster": [
+    {
+      "name": "Solaratlas Stuttgart",
+      "traeger": "Stadt (Amt für Umweltschutz mit Stadtmessungsamt)",
+      "url": "https://maps.stuttgart.de/solaratlas/"
+    }
+  ],
+  "foerderprogramme": [
+    {
+      "name": "Solaroffensive (Förderrichtlinie in der Fassung vom 1. Mai 2026)",
+      "traeger": "Landeshauptstadt Stuttgart, Amt für Umweltschutz",
+      "gegenstand": "Begleitende Maßnahmen bei neu errichteten, nicht verpflichtend zu errichtenden PV-Anlagen an Gebäuden im Stadtgebiet (u. a. Ertüchtigung Elektroinstallation/Zählerplatz, Gerüst, Statikprüfung und statische Ertüchtigung, Versetzen von Bauteilen, Arbeiten an der Dachhaut, Blitzschutz, Funkrundsteuerempfänger); außerdem netzdienliche Stromspeicher in Verbindung mit neu errichteten PV-Anlagen. Module, Montagesysteme und Wechselrichter sind nicht förderfähig.",
+      "konditionen": "PV: max. 50 % der förderfähigen Kosten, max. 300 €/kWp (Dachanlagen) bzw. 400 €/kWp (Fassade oder über Dachbegrünung), max. 30.000 € je Antrag. Speicher: 100 €/kWh nutzbarer Kapazität, max. 1 kWh je kWp, laut Richtlinie max. 15.000 € je Antrag. 10 % Bonus mit FamilienCard oder Wohngeld inkl. Lastenzuschuss. Antrag vor Beauftragung; der verpflichtende Teil nach Landes-PV-Pflicht ist nicht förderfähig.",
+      "status": "Mittel erschöpft (Fördermittel 2026 ausgeschöpft; Anträge weiter möglich, Auszahlung laut Stadt ab 2027)",
+      "url": "https://www.stuttgart.de/solaroffensive"
+    }
+  ],
+  "klimaziel": {
+    "text": "Der Gemeinderat hat am 27. Juli 2022 mit sehr großer Mehrheit beschlossen, dass Stuttgart bis 2035 klimaneutral sein soll (vorher Ziel 2050). Zwischenziel: CO2-Ausstoß 2030 um 80 % unter dem Niveau von 1990.",
+    "url": "https://jetztklimachen.stuttgart.de/klimaneutralitaet-bis-2035-beschlossen"
+  },
+  "schneelastzone": {
+    "zone": "2",
+    "hinweis": "DIBt-Tabelle 'Zuordnung der Schneelastzonen nach Verwaltungsgrenzen' (Stand 07.02.2023), Blatt BW: 'SK Stuttgart' = Schneelastzone 2. Verbindlich sind laut DIBt die amtlichen Bekanntmachungen der Länder. Die charakteristische Schneelast hängt zusätzlich von der Geländehöhe am Standort ab; das Stadtgebiet reicht laut LEO-BW von ca. 200 bis ca. 549 m ü. NN.",
+    "url": "https://www.dibt.de/fileadmin/dibt-website/Dokumente/Referat/P5/Technische_Bestimmungen/Schneelastzonen_nach_Verwaltungsgrenzen.xlsx"
+  },
+  "gelaendehoehe_m": null,
+  "ortsbild": [
+    {
+      "text": "Laut Stadt gibt es in Stuttgart mehr als 4.500 Kulturdenkmale als Einzelobjekte; der Schutz gilt auch für Baumaßnahmen in der Umgebung eines Denkmals. Maßnahmen, die das Erscheinungsbild einer denkmalgeschützten Gesamtanlage verändern, brauchen eine denkmalschutzrechtliche Genehmigung, auch wenn keine Baugenehmigung nötig ist. Zuständig ist die untere Denkmalschutzbehörde im Amt für Stadtplanung und Wohnen.",
+      "url": "https://www.stuttgart.de/organigramm/leistungen/denkmalschutz-aenderungen-an-einer-denkmalgeschuetzten-gesamtanlage-beantragen"
+    },
+    {
+      "text": "Im Stadtrecht sind unter anderem Rechtsverordnungen des Regierungspräsidiums Stuttgart über die Gesamtanlagen 'Obere Calwer Straße', 'Rotenberg' und 'Marktstraße in Bad Cannstatt' aufgeführt.",
+      "url": "https://www.stuttgart.de/rathaus/verwaltung/stadtrecht/3/3-schutz-von-natur-bzw.kulturdenkmalen"
+    }
+  ],
+  "besonderheiten": [
+    {
+      "text": "SolarScouts Stuttgart: Anfang 2024 gegründet (BUND, Solaroffensive Botnang, Energieberatungszentrum Stuttgart, Amt für Umweltschutz), koordiniert vom Amt für Umweltschutz; rund 80 Ehrenamtliche in allen 23 Stadtbezirken beraten kostenlos und anbieterneutral zu Dach- und Balkonanlagen.",
+      "url": "https://www.stuttgart.de/leben/umwelt/energie/foerderprogramme/solarscouts"
+    },
+    {
+      "text": "Laut Amt für Umweltschutz (Ausschuss für Klima und Umwelt, 16. Mai 2025): 109 MWp installierte PV-Leistung im Stadtgebiet, Zubau 2024: 26,8 MWp. Der jährliche Zubau soll in den folgenden zwei Jahren um weitere 45 % steigen.",
+      "url": "https://www.stuttgart.de/service/aktuelle-meldungen/2025/mai/stuttgart-intensiviert-photovoltaik-ausbau-deutlich-solarstrom-fuer-ueber-30.000-haushalte"
+    },
+    {
+      "text": "Auf städtischen Liegenschaften waren im Mai 2025 fast 300 PV-Anlagen mit rund 15 MWp installiert; 107 städtische Schulen hatten eine eigene PV-Anlage. Ziel war, bis Ende 2025 alle geeigneten Schuldächer mit Solaranlagen auszustatten.",
+      "url": "https://www.stuttgart.de/service/aktuelle-meldungen/2025/mai/stuttgart-intensiviert-photovoltaik-ausbau-deutlich-solarstrom-fuer-ueber-30.000-haushalte"
+    }
+  ],
+  "energieberatung": {
+    "name": "Energieberatungszentrum Stuttgart e.V. (EBZ) – kostenlose PV-Beratung für Privatpersonen mit Objekt in Stuttgart, PV-Check von Angeboten",
+    "url": "https://ebz-stuttgart.de/schritt-fuer-schritt-zur-pv-anlage/"
+  },
+  "offen": [
+    "Geländehöhe: Keine einzelne amtliche Höhenangabe gefunden. LEO-BW (Landesarchiv BW) nennt für das Stadtgebiet min. 200,26 m und max. 548,58 m ü. NN (https://www.leo-bw.de/detail-gis/-/Detail/details/ORT/labw_ortslexikon/5/Stuttgart). Ein Einzelwert wäre wegen der großen Spanne irreführend, deshalb null.",
+    "Netzbetreiber-Anmeldeseite: Die Seiten von stuttgart-netze.de und stadtwerke-stuttgart.de waren in dieser Sitzung wegen eines Bot-Schutzes (HTTP 403) nicht abrufbar. Deshalb ist anmeldung_url null. Laut Suchergebnissen läuft die Anmeldung über ein Online-Portal der Stuttgart Netze (Seite 'Photovoltaik' unter stuttgart-netze.de/energie-einspeisen/ihre-anlage/photovoltaik/) – nicht selbst verifiziert.",
+    "Mieterstrom der Stadtwerke Stuttgart: Die Primärquelle (stadtwerke-stuttgart.de) war nicht abrufbar (403), daher nicht aufgenommen.",
+    "Solarpflicht-Regelungen der Stadt über das Landesrecht hinaus (z. B. in Bebauungsplänen oder Grundstückskaufverträgen): Keine allgemeine städtische Regelung belegt. Die Solaroffensive-Richtlinie erwähnt nur, dass Anlagen, die aufgrund von Vorschriften (u. a. Bebauungspläne, städtebauliche Verträge, Kaufverträge) verpflichtend sind, nicht gefördert werden.",
+    "Gestaltungs- oder Altstadtsatzung mit ausdrücklichen Regeln zu Solaranlagen: Nicht gefunden. Für die Gesamtanlagen wurden die Verordnungstexte nicht auf PV-Regeln geprüft.",
+    "Solaroffensive: Die städtische Website nennt für Speicher max. 10.000 € je Antrag, die Förderrichtlinie ab 01.05.2026 max. 15.000 €. Im JSON steht der Wert aus der Richtlinie.",
+    "Einwohner: Die Statistikdatenbank des Statistischen Landesamts BW war nicht direkt abfragbar. Verwendet wurde das Destatis-Gemeindeverzeichnis (Bevölkerung auf Grundlage des Zensus 2022, Stand 31.12.2025). Zum 31.12.2024 nennt dieselbe Destatis-Reihe 612.663.",
+    "Zur Umsetzbarkeit des Klimaziels 2035 gibt es laut Presseberichten (2026) Diskussionen im Gemeinderat; dazu wurde keine städtische Primärquelle eingesehen, daher nicht aufgenommen."
+  ],
+  "abgerufen": "2026-09-14"
+}
