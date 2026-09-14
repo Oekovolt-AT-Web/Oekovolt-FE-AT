@@ -29,6 +29,7 @@
     "@next/third-parties": "15.3.0",
     "@react-google-maps/api": "^2.20.6",
     "@react-pdf/renderer": "^4.9.0",
+    "@tesseract.js-data/eng": "^1.0.0",
     "cookies-next": "^5.1.0",
     "lucide-react": "^0.511.0",
     "next": "^15.3.0",
@@ -42,6 +43,7 @@
     "slick-carousel": "^1.8.1",
     "slugify": "^1.6.6",
     "styled-components": "^6.1.18",
+    "tesseract.js": "^7.0.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

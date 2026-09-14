@@ -302,6 +302,36 @@ const PrivacyPolicy = () => {
         </p>
       </section>
 
+      <section id="unterlagen" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Unterlagen per Smartphone und KI-Auswertung</h2>
+        <p className="mb-4">
+          Für ein präzises Angebot können Sie am Computer einen QR-Code erzeugen und mit Ihrem Smartphone Fotos von Stromzähler,
+          Stromrechnung und optional Zählerschrank und Haus hochladen. Dabei verarbeiten wir Ihre Kontaktdaten (Name, E-Mail,
+          optional Telefon und Postleitzahl), Ihre Angaben im Rechner, die Fotos bzw. Dokumente sowie den Zählerstand. Der
+          QR-Code enthält einen zufälligen Einmal-Schlüssel, der nach 45 Minuten ungültig wird; wir speichern nur einen
+          nicht umkehrbaren Hashwert davon. Die Fotos werden vor dem Hochladen auf Ihrem Gerät verkleinert, dabei werden
+          Standort- und Kameradaten (EXIF) entfernt. Der Zählerstand wird per Texterkennung direkt auf Ihrem Smartphone
+          ausgelesen – die dafür nötigen Dateien laden wir von unserem eigenen Server, es werden keine Daten an Dritte
+          übertragen. Die Unterlagen werden verschlüsselt übertragen und in unserem Backoffice geschützt gespeichert; Zugriff
+          haben nur Vertrieb und technischer Innendienst.
+        </p>
+        <p className="mb-4">
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen auf Ihre Anfrage) sowie Ihre Einwilligung
+          (Art. 6 Abs. 1 lit. a DSGVO). Nicht abgeschlossene Vorgänge löschen wir nach 24 Stunden, Anfragen ohne Angebot oder
+          Auftrag nach zwölf Monaten.
+        </p>
+        <p>
+          <strong>Optionale KI-Auswertung:</strong> Nur wenn Sie dies auf dem Smartphone ausdrücklich ankreuzen, übermitteln
+          wir die hochgeladenen Unterlagen an die Anthropic, PBC (San Francisco, USA), die mit dem KI-Modell Claude Verbrauch,
+          Preise, Tarif und Zählerdaten ausliest sowie Zählerschrank und Dach beschreibt. Anthropic verarbeitet die Daten als
+          Auftragsverarbeiter ausschließlich zu diesem Zweck und nutzt sie nicht zum Training von KI-Modellen. Die Übermittlung
+          in die USA erfolgt auf Grundlage Ihrer Einwilligung (Art. 49 Abs. 1 lit. a DSGVO) und der mit Anthropic vereinbarten
+          Standardvertragsklauseln. Ohne Einwilligung prüft ein Mitarbeiter Ihre Unterlagen manuell. Die ausgelesenen Werte
+          werden von unseren Beratern geprüft; es findet keine automatisierte Entscheidung im Sinne von Art. 22 DSGVO statt.
+          Sie können die Einwilligung jederzeit mit Wirkung für die Zukunft widerrufen.
+        </p>
+      </section>
+
       <section id="analyse" className="mb-12 scroll-mt-28">
         <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">PDF-Analyse aus dem Solarrechner</h2>
         <p>

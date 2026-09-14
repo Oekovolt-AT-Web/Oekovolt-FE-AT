@@ -3,6 +3,7 @@
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import PdfAnalyse from "@/components/Analyse/PdfAnalyse";
+import ScanHandshake from "@/components/Scan/ScanHandshake";
 import {
   ArrowRight,
   BatteryCharging,
@@ -398,17 +399,19 @@ export default function Solarrechner({ className = "" }) {
           </div>
 
           <div className="mt-6 flex flex-col gap-3 @xl:flex-row @xl:items-center">
-            <Link
-              href={angebotHref}
-              className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-7 text-[15.5px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700"
-            >
-              <span className="whitespace-nowrap @3xl:hidden">Mit diesen Werten anfragen</span>
-              <span className="hidden whitespace-nowrap @3xl:inline">Angebot mit diesen Werten anfragen</span>
-              <ArrowRight aria-hidden="true" className="h-[1.05em] w-[1.05em] transition-transform group-hover:translate-x-1" />
-            </Link>
+            <ScanHandshake
+              rechner={{ kwp, verbrauch, speicherKwh: speicher, ausrichtung, neigung }}
+              quelle="Solarrechner"
+              beiKiErgebnis={(ki) => ki.jahresverbrauch && setVerbrauch(Math.min(20000, Math.max(1500, Math.round(ki.jahresverbrauch / 250) * 250)))}
+              knopfKlasse="h-14 bg-ov-600 px-7 text-[15.5px] text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] hover:bg-ov-700"
+            />
             <PdfAnalyse eingaben={{ kwp, ausrichtung, neigung, verbrauch, speicherKwh: speicher, preissteigerung: steigerung }} className="h-14 px-6" />
           </div>
-          <div className="mt-3">
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <Link href={angebotHref} className="group inline-flex items-center gap-1.5 text-[14px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+              Oder ohne Fotos mit diesen Werten anfragen
+              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
             <p className="flex items-center gap-2 text-[13px] text-ink-500">
               <Leaf aria-hidden="true" className="h-4 w-4 text-ov-600" />
               spart rund <Animiert wert={r.co2ProJahr / 1000} format={(v) => zahl(v, 1)} className="font-semibold text-ink-800" /> t CO₂ pro Jahr

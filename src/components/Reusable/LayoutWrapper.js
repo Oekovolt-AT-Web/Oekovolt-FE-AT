@@ -19,7 +19,7 @@ const RueckrufWidgetLazy = dynamic(() => import("@/components/Rueckruf/RueckrufW
 export default function LayoutWrapper({ children }) {
   // Info-Bildschirm (SCADA/TV): nur der Inhalt, ohne Kopf, Fuß, Banner und Widgets
   const pfad = usePathname() || "";
-  if (pfad === "/tv" || pfad.startsWith("/tv/")) return <main id="main-content">{children}</main>;
+  if (pfad === "/tv" || pfad.startsWith("/tv/") || pfad.startsWith("/scan/")) return <main id="main-content">{children}</main>;
 
   return (
     <>
