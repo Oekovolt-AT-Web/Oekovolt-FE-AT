@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import QRCode from "qrcode";
+import { herkunftFelder, herkunftZeile } from "@/lib/herkunftServer";
 import { renderToBuffer } from "@react-pdf/renderer";
 import AnalysePdf from "@/lib/analyse/AnalysePdf";
 import { analyse } from "@/lib/analyse/berechnung";
@@ -75,6 +76,7 @@ export async function POST(request) {
         investition: Math.round(r.investition),
         amortisation: r.amortisationJahre ? Math.round(r.amortisationJahre * 10) / 10 : 0,
         seite: sauber(e.seite, 300),
+        ...herkunftFelder(e.herkunft),
         pdf_base64: Buffer.from(pdf).toString("base64"),
       });
       gespeichert = true;
@@ -89,6 +91,7 @@ export async function POST(request) {
             `PV-ANALYSE ${referenz} (PDF heruntergeladen)`,
             `${daten.eingaben.kwp} kWp, ${daten.labels.ausrichtung}, ${daten.labels.neigung}, Verbrauch ${daten.eingaben.verbrauch} kWh, Speicher ${daten.eingaben.speicherKwh} kWh`,
             `Ertrag ${Math.round(r.jahresertrag)} kWh · Autarkie ${Math.round(r.autarkie * 100)} % · Investition ${Math.round(r.investition)} € · Amortisation ${r.amortisationJahre ? r.amortisationJahre.toFixed(1) : "–"} Jahre`,
+            herkunftZeile(e.herkunft),
           ].join("\n"),
         });
         gespeichert = true;

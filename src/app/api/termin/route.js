@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { herkunftFelder, herkunftZeile } from "@/lib/herkunftServer";
 import { TERMIN_ARTEN, THEMEN, slotsFuerArt, telefonNormalisieren } from "@/data/erreichbarkeit";
 import { HEADERS_PRIVAT, alsKontaktanfrage, berlinText, emailGueltig, frappeKonfiguriert, frappeKontakt, gedrosselt, sauber } from "@/lib/rueckrufApi";
 
@@ -86,6 +87,7 @@ export async function POST(request) {
         thema,
         nachricht,
         seite: sauber(e.seite, 300),
+        ...herkunftFelder(e.herkunft),
       });
       return antwort({ ...basis, bestaetigt: true, referenz: r?.referenz || null });
     } catch (fehler) {
@@ -101,7 +103,7 @@ export async function POST(request) {
       telefon,
       plzOrt: plz,
       strasse: art.mitAdresse ? adresse : "",
-      nachricht: [`TERMINWUNSCH: ${art.titel} (${art.dauer} Min.)`, `Wunschtermin: ${berlinText(basis.start)}`, thema && `Thema: ${thema}`, nachricht && `\n${nachricht}`]
+      nachricht: [`TERMINWUNSCH: ${art.titel} (${art.dauer} Min.)`, `Wunschtermin: ${berlinText(basis.start)}`, thema && `Thema: ${thema}`, nachricht && `\n${nachricht}`, herkunftZeile(e.herkunft)]
         .filter(Boolean)
         .join("\n"),
     });

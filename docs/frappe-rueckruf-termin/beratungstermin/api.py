@@ -13,6 +13,7 @@ from frappe import _
 from frappe.utils import add_to_date, escape_html, format_datetime, get_datetime, now_datetime
 
 from oekovoltdeutchland.oekovoltdeutchland.doctype.rueckruf.api import (
+	herkunft_felder,
 	lokal_zu_iso,
 	neue_referenz,
 	nur_webformular,
@@ -198,6 +199,7 @@ def create_termin(**kwargs):
 		"thema": text(d.get("thema"), 60),
 		"nachricht": text(d.get("nachricht"), 2000),
 		"seite": text(d.get("seite"), 300),
+		**herkunft_felder(d),
 	})
 	doc.insert(ignore_permissions=True)
 

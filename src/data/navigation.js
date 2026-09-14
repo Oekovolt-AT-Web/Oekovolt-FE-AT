@@ -42,6 +42,13 @@ export const NAVIGATION = [
           { name: "Smarthome", href: "/dienstleistungen/smarthome", icon: "Cpu", text: "Energiemanagement im ganzen Haus" },
           { name: "Photovoltaik Repowering", href: "/service/repowering", icon: "RefreshCw", text: "Altanlagen modernisieren" },
           { name: "Direktvermarktung", href: "/service/direktvermarktung", icon: "TrendingUp", text: "Mehr Erlös nach dem EEG" },
+        ],
+      },
+      {
+        label: "Für Unternehmen",
+        items: [
+          { name: "Gewerbe & Industrie", href: "/gewerbe", icon: "Warehouse", text: "PV nach Lastgang, Speicher, E-Flotte" },
+          { name: "Landwirtschaft & Agri-PV", href: "/landwirtschaft", icon: "Tractor", text: "Stall, Scheune, Agri-PV" },
           { name: "Kommunen & Stadtwerke", href: "/kommunen", icon: "Landmark", text: "Schulen, Freiflächen, Quartiere" },
         ],
       },

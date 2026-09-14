@@ -6,6 +6,8 @@ import { AlertCircle, CalendarClock, Check, Loader2, Lock, Phone, PhoneCall, Zap
 import { cn } from "@/components/ui/cn";
 import { THEMEN, telefonNormalisieren } from "@/data/erreichbarkeit";
 import KalenderLinks from "./KalenderLinks";
+import { herkunft } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 
 const FEHLER = {
   telefon: "Bitte eine gültige deutsche, österreichische oder Schweizer Rufnummer angeben.",
@@ -88,12 +90,14 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           website: website.current?.value || "",
           dauer: Date.now() - start.current,
           seite: typeof window !== "undefined" ? window.location.pathname : "",
+          herkunft: herkunft(),
         }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.fehler || "backend");
       setErgebnis(d);
       setZustand("fertig");
+      ereignis("rueckruf_angefordert", { modus: d.modus === "Wunschzeit" ? "wunschzeit" : "sofort" });
     } catch (err) {
       setFehler(FEHLER[err.message] || FEHLER.backend);
       setZustand("form");

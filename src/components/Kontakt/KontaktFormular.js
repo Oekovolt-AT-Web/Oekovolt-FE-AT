@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, ArrowRight, Loader2, Lock, RotateCcw } from "lucide-react";
 import { submitContact } from "@/lib/api/contact/create_contact";
+import { herkunftText } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 
 const LEER = {
   firstName: "",
@@ -88,7 +90,7 @@ export default function KontaktFormular() {
 
     setStatus("sendet");
     setServerFehler("");
-    const nachricht = thema ? `Thema: ${thema}\n\n${werte.message.trim()}` : werte.message.trim();
+    const nachricht = `${thema ? `Thema: ${thema}\n\n` : ""}${werte.message.trim()}\n\n—\n${herkunftText()}`;
     const payload = {
       nachname: werte.lastName.trim(),
       vorname: werte.firstName.trim(),
@@ -108,6 +110,7 @@ export default function KontaktFormular() {
       setBeruehrt({});
       setFehler({});
       setStatus("erfolg");
+      ereignis("kontakt_gesendet", { thema: thema || "ohne" });
     } catch (error) {
       setServerFehler(error?.message && !/Failed to submit/i.test(error.message) ? error.message : "");
       setStatus("fehler");

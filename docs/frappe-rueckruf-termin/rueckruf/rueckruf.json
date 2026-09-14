@@ -27,7 +27,17 @@
   "column_break_b",
   "erledigt_am",
   "cloudtalk_agent",
-  "loeschung_faellig"
+  "loeschung_faellig",
+  "sec_herkunft",
+  "herkunft_kanal",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "column_break_herkunft",
+  "utm_term",
+  "utm_content",
+  "herkunft_referrer",
+  "einstiegsseite"
  ],
  "fields": [
   { "fieldname": "sec_anfrage", "fieldtype": "Section Break", "label": "Anfrage" },
@@ -50,7 +60,17 @@
   { "fieldname": "column_break_b", "fieldtype": "Column Break" },
   { "fieldname": "erledigt_am", "fieldtype": "Datetime", "label": "Erledigt am", "read_only": 1 },
   { "fieldname": "cloudtalk_agent", "fieldtype": "Data", "label": "CloudTalk-Agent", "read_only": 1 },
-  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "90 Tage nach Erledigung (Datenminimierung), sofern nicht in einen Lead übernommen." }
+  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "90 Tage nach Erledigung (Datenminimierung), sofern nicht in einen Lead übernommen." },
+  { "fieldname": "sec_herkunft", "fieldtype": "Section Break", "label": "Herkunft (Kampagne)", "collapsible": 1 },
+  { "fieldname": "herkunft_kanal", "fieldtype": "Select", "label": "Kanal", "options": "\nAnzeige\nSocial Media\nE-Mail\nOffline/QR\nKampagne\nSuchmaschine\nKI-Assistent\nVerweis\nDirekt", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "utm_source", "fieldtype": "Data", "label": "UTM-Quelle (utm_source)", "read_only": 1 },
+  { "fieldname": "utm_medium", "fieldtype": "Data", "label": "UTM-Medium (utm_medium)", "read_only": 1 },
+  { "fieldname": "utm_campaign", "fieldtype": "Data", "label": "Kampagne (utm_campaign)", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "column_break_herkunft", "fieldtype": "Column Break" },
+  { "fieldname": "utm_term", "fieldtype": "Data", "label": "Suchbegriff/Variante (utm_term)", "read_only": 1 },
+  { "fieldname": "utm_content", "fieldtype": "Data", "label": "Anzeigeninhalt (utm_content)", "read_only": 1 },
+  { "fieldname": "herkunft_referrer", "fieldtype": "Data", "label": "Verweisende Website", "read_only": 1, "description": "Nur der Hostname, z. B. www.google.com" },
+  { "fieldname": "einstiegsseite", "fieldtype": "Data", "label": "Einstiegsseite", "read_only": 1 }
  ],
  "index_web_pages_for_search": 0,
  "links": [],

@@ -13,7 +13,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_months, add_to_date, cint, cstr, flt, get_datetime, now_datetime
 
-from oekovoltdeutchland.oekovoltdeutchland.doctype.rueckruf.api import nur_webformular, team_benachrichtigen, text
+from oekovoltdeutchland.oekovoltdeutchland.doctype.rueckruf.api import herkunft_felder, nur_webformular, team_benachrichtigen, text
 
 FELDER = {
 	"zaehler": "zaehler_foto",
@@ -65,6 +65,7 @@ def sitzung_starten(**kwargs):
 		"speicher_kwh": flt(d.get("speicher_kwh")),
 		"ausrichtung": text(d.get("ausrichtung"), 20),
 		"neigung": text(d.get("neigung"), 20),
+		**herkunft_felder(d),
 		"loeschung_faellig": add_months(now_datetime().date(), 12),
 	})
 	doc.insert(ignore_permissions=True)

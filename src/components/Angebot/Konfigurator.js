@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 
 import { berechne, empfohlenerSpeicher } from "@/lib/solarrechner";
+import { herkunftText } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 import { submitAnfrage } from "@/lib/api/anfrage/create_anfrage";
 
 /* ------------------------------------------------------------------ */
@@ -177,7 +179,7 @@ export default function Konfigurator() {
     const details =
       `Jährlicher Stromverbrauch: ${f.verbrauch} kWh | Vorhaben: ${vorhabenText} | Gebäude: ${f.gebaeude} | ` +
       `Ausrichtung: ${AUSRICHTUNG.find((a) => a.id === f.ausrichtung)?.label} | Zeitplan: ${f.zeitplan} | ` +
-      `Richtwert: ${schaetzung.kwp} kWp${schaetzung.speicherKwh ? ` + ${schaetzung.speicherKwh} kWh Speicher` : ""} (Konfigurator)`;
+      `Richtwert: ${schaetzung.kwp} kWp${schaetzung.speicherKwh ? ` + ${schaetzung.speicherKwh} kWh Speicher` : ""} (Konfigurator) | ${herkunftText()}`;
     try {
       try {
         await submitAnfrage({ ...basis, wieviel_stromverbrauch_hast_du_im_jahr: details });
@@ -186,6 +188,7 @@ export default function Konfigurator() {
         await submitAnfrage(basis);
       }
       setStatus("ok");
+      ereignis("angebot_angefragt", { kwp: schaetzung.kwp });
       try { localStorage.removeItem(SPEICHER_KEY); } catch {}
     } catch {
       setStatus("fehler");

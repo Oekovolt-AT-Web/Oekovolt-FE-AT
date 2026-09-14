@@ -99,159 +99,76 @@ const PrivacyPolicy = () => {
         </p>
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Cookies</h2>
+      <section id="cookies" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Cookies und Speicherung im Browser</h2>
         <p className="mb-4">
-          Unsere Website verwendet Cookies. Das sind kleine Textdateien, die Ihr Webbrowser auf Ihrem Endgerät
-          speichert. Cookies helfen uns dabei, unser Angebot nutzerfreundlicher, effektiver und sicherer zu machen.
-        </p>
-        <p className="mb-4">
-          Einige Cookies sind &quot;Session-Cookies.&quot; Solche Cookies werden nach Ende Ihrer Browser-Sitzung von
-          selbst gelöscht. Hingegen bleiben andere Cookies auf Ihrem Endgerät bestehen, bis Sie diese selbst löschen.
-          Solche Cookies helfen uns, Sie bei Rückkehr auf unserer Website wiederzuerkennen.
-        </p>
-        <p className="mb-4">
-          Mit einem modernen Webbrowser können Sie das Setzen von Cookies überwachen, einschränken oder unterbinden.
-          Viele Webbrowser lassen sich so konfigurieren, dass Cookies mit dem Schließen des Programms von selbst
-          gelöscht werden. Die Deaktivierung von Cookies kann eine eingeschränkte Funktionalität unserer Website zur
-          Folge haben.
+          Wir setzen nur ein technisch notwendiges Cookie („cookieConsent“), in dem Ihre Auswahl im Cookie-Banner für
+          ein Jahr gespeichert wird. Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG in Verbindung mit Art. 6 Abs. 1 lit. c
+          und f DSGVO. Weitere Cookies entstehen nur, wenn Sie Inhalte von Drittanbietern ausdrücklich zulassen (Google
+          Maps, siehe Cookie-Einstellungen). Für Push-Benachrichtigungen legt Ihr Browser nach Ihrer Zustimmung ein
+          Abonnement an (siehe Abschnitt „Push-Benachrichtigungen“).
         </p>
         <p>
-          Das Setzen von Cookies, die zur Ausübung elektronischer Kommunikationsvorgänge oder der Bereitstellung
-          bestimmter, von Ihnen erwünschter Funktionen (z.B. Warenkorb) notwendig sind, erfolgt auf Grundlage von Art. 6
-          Abs. 1 lit. f DSGVO. Als Betreiber dieser Website haben wir ein berechtigtes Interesse an der Speicherung von
-          Cookies zur technisch fehlerfreien und reibungslosen Bereitstellung unserer Dienste. Sofern die Setzung
-          anderer Cookies (z.B. für Analyse-Funktionen) erfolgt, werden diese in dieser Datenschutzerklärung separat
-          behandelt.
-        </p>
-      </section>
-      <section className="mb-12">
-        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Google Analytics</h2>
-        <p className="mb-4">
-          Unsere Website verwendet Funktionen des Webanalysedienstes Google Analytics. Anbieter des Webanalysedienstes
-          ist die Google Inc., 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA.
-        </p>
-        <p className="mb-4">
-          Google Analytics verwendet &quot;Cookies.&quot; Das sind kleine Textdateien, die Ihr Webbrowser auf Ihrem
-          Endgerät speichert und eine Analyse der Website-Benutzung ermöglichen. Mittels Cookie erzeugte Informationen
-          über Ihre Benutzung unserer Website werden an einen Server von Google übermitteln und dort gespeichert.
-          Server-Standort ist im Regelfall die USA.
-        </p>
-        <p className="mb-4">
-          Das Setzen von Google-Analytics-Cookies erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Als Betreiber
-          dieser Website haben wir ein berechtigtes Interesse an der Analyse des Nutzerverhaltens, um unser Webangebot
-          und ggf. auch Werbung zu optimieren.
-        </p>
-
-        <h2 className="text-2xl md:text-3xl text-gray-800 mt-6 mb-4">IP-Anonymisierung</h2>
-        <p className="mb-4">
-          Wir setzen Google Analytics in Verbindung mit der Funktion IP-Anonymisierung ein. Sie gewährleistet, dass
-          Google Ihre IP-Adresse innerhalb von Mitgliedstaaten der Europäischen Union oder in anderen Vertragsstaaten
-          des Abkommens über den Europäischen Wirtschaftsraum vor der Übermittlung in die USA kürzt. Es kann
-          Ausnahmefälle geben, in denen Google die volle IP-Adresse an einen Server in den USA überträgt und dort kürzt.
-          In unserem Auftrag wird Google diese Informationen benutzen, um Ihre Nutzung der Website auszuwerten, um
-          Reports über Websiteaktivitäten zu erstellen und um weitere mit der Websitenutzung und der Internetnutzung
-          verbundene Dienstleistungen gegenüber uns zu erbringen. Es findet keine Zusammenführung der von Google
-          Analytics übermittelten IP-Adresse mit anderen Daten von Google statt.
-        </p>
-
-        <h3 className="text-2xl md:text-3xl text-gray-800 mt-6 mb-4">Browser-Plugin</h3>
-        <p className="mb-4">
-          Das Setzen von Cookies durch Ihren Webbrowser ist verhinderbar. Einige Funktionen unserer Website könnten
-          dadurch jedoch eingeschränkt werden. Ebenso können Sie die Erfassung von Daten bezüglich Ihrer Website-Nutzung
-          einschließlich Ihrer IP-Adresse mitsamt anschließender Verarbeitung durch Google unterbinden. Dies ist
-          möglich, indem Sie das über folgenden Link erreichbare Browser-Plugin herunterladen und installieren:{" "}
-          <a
-            href="https://tools.google.com/dlpage/gaoptout?hl=de"
-            className="text-[#669933] hover:underline"
-          >
-            Browser-Plugin zur Deaktivierung von Google Analytics
-          </a>
-          .
-        </p>
-
-        <h2 className="text-2xl md:text-3xl text-gray-800 mt-6 mb-4">Widerspruch gegen die Datenerfassung</h2>
-        <p className="mb-4">
-          Sie können die Erfassung Ihrer Daten durch Google Analytics verhindern, indem Sie auf folgenden Link klicken.
-          Es wird ein Opt-Out-Cookie gesetzt, der die Erfassung Ihrer Daten bei zukünftigen Besuchen unserer Website
-          verhindert:{" "}
-          <a href="#" className="text-[#669933] hover:underline">
-            Google Analytics deaktivieren
-          </a>
-          .
-        </p>
-        <p className="mb-4">
-          Einzelheiten zum Umgang mit Nutzerdaten bei Google Analytics finden Sie in der Datenschutzerklärung von
-          Google:
-          <a
-            href="https://support.google.com/analytics/answer/6004245?hl=de"
-            className="text-[#669933] hover:underline"
-          >
-            Datenschutzerklärung von Google Analytics
-          </a>
-          .
-        </p>
-
-        <h2 className="text-2xl md:text-3xl text-gray-800 mt-6 mb-4">Auftragsverarbeitung</h2>
-        <p className="mb-4">
-          Zur vollständigen Erfüllung der gesetzlichen Datenschutzvorgaben haben wir mit Google einen Vertrag über die
-          Auftragsverarbeitung abgeschlossen.
-        </p>
-
-        <h2 className="text-2xl md:text-3xl text-gray-800 mt-6 mb-4">Demografische Merkmale bei Google Analytics</h2>
-        <p>
-          Unsere Website verwendet die Funktion &quot;demografische Merkmale&quot; von Google Analytics. Mit ihr lassen
-          sich Berichte erstellen, die Aussagen zu Alter, Geschlecht und Interessen der Seitenbesucher enthalten. Diese
-          Daten stammen aus interessenbezogener Werbung von Google sowie aus Besucherdaten von Drittanbietern. Eine
-          Zuordnung der Daten zu einer bestimmten Person ist nicht möglich. Sie können diese Funktion jederzeit
-          deaktivieren. Dies ist über die Anzeigeneinstellungen in Ihrem Google-Konto möglich oder indem Sie die
-          Erfassung Ihrer Daten durch Google Analytics, wie im Punkt &quot;Widerspruch gegen die Datenerfassung&quot;
-          erläutert, generell untersagen.
+          Ihre Einwilligung können Sie jederzeit über „Cookie-Einstellungen“ im Seitenfuß ändern oder widerrufen. Mit
+          einem modernen Webbrowser können Sie das Setzen von Cookies zudem überwachen, einschränken oder unterbinden.
         </p>
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Google AdWords und Google Conversion-Tracking</h2>
+      <section id="statistik" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Besucherstatistik mit Umami (ohne Cookies)</h2>
         <p className="mb-4">
-          Unsere Website verwendet Google AdWords. Anbieter ist die Google Inc., 1600 Amphitheatre Parkway, Mountain
-          View, CA 94043, United States.
+          Um unser Angebot zu verbessern, erstellen wir anonyme Besucherstatistiken mit der Open-Source-Software Umami,
+          die wir selbst auf Servern in Deutschland betreiben. Umami setzt keine Cookies, nutzt keinen lokalen Speicher
+          Ihres Browsers und speichert Ihre IP-Adresse nicht. Erfasst werden die aufgerufene Seite (ohne Such- und
+          Formularparameter; Kampagnenparameter wie utm_source bleiben erhalten), die Herkunftsseite (nur die Domain),
+          Browsertyp, Betriebssystem, Gerätekategorie, Bildschirmgröße, Sprache, Land sowie anonyme Ereignisse wie
+          „Formular abgesendet“. Zur Unterscheidung von Besuchen wird ein täglich wechselnder, nicht umkehrbarer Hashwert
+          gebildet; ein Wiedererkennen über mehrere Tage oder Websites hinweg ist nicht möglich. Die Daten werden nicht an
+          Dritte weitergegeben.
         </p>
         <p className="mb-4">
-          AdWords ist ein Online-Werbeprogramm. Im Rahmen des Online-Werbeprogramms arbeiten wir mit
-          Conversion-Tracking. Nach einem Klick auf eine von Google geschaltete Anzeige wird ein Cookie für das
-          Conversion-Tracking gesetzt. Cookies sind kleine Textdateien, die Ihr Webbrowser auf Ihrem Endgerät speichert.
-          Google AdWords Cookies verlieren nach 30 Tagen ihre Gültigkeit und dienen nicht der persönlichen
-          Identifizierung der Nutzer. Am Cookie können Google und wir erkennen, dass Sie auf eine Anzeige geklickt haben
-          und zu unserer Website weitergeleitet wurden.
+          Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen Reichweitenmessung und
+          Fehleranalyse (Art. 6 Abs. 1 lit. f DSGVO). Da keine Informationen auf Ihrem Endgerät gespeichert oder aus ihm
+          ausgelesen werden, ist keine Einwilligung nach § 25 TDDDG erforderlich. Aktivieren Sie in Ihrem Browser „Do Not
+          Track“, findet keine Erfassung statt. Seiten mit Einmal-Zugangscodes (z. B. Upload per QR-Code) werden
+          grundsätzlich nicht erfasst.
         </p>
-        <p className="mb-4">
-          Jeder Google AdWords-Kunde erhält ein anderes Cookie. Die Cookies sind nicht über Websites von AdWords-Kunden
-          nachverfolgbar. Mit Conversion-Cookies werden Conversion-Statistiken für AdWords-Kunden, die
-          Conversion-Tracking einsetzen, erstellt. Adwords-Kunden erfahren wie viele Nutzer auf ihre Anzeige geklickt
-          haben und auf Seiten mit Conversion-Tracking-Tag weitergeleitet wurden. AdWords-Kunden erhalten jedoch keine
-          Informationen, die eine persönliche Identifikation der Nutzer ermöglichen. Wenn Sie nicht am Tracking
-          teilnehmen möchten, können Sie einer Nutzung widersprechen. Hier ist das Conversion-Cookie in den
-          Nutzereinstellungen des Browsers zu deaktivieren. So findet auch keine Aufnahme in die Conversion-Tracking
-          Statistiken statt.
+        <p>
+          Sie können der Verarbeitung jederzeit widersprechen, etwa über die „Do Not Track“-Einstellung oder formlos per
+          E-Mail an office@oekovolt.de.
         </p>
-        <p className="mb-4">
-          Die Speicherung von &quot;Conversion-Cookies&quot; erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir
-          als Websitebetreiber haben ein berechtigtes Interesse an der Analyse des Nutzerverhaltens, um unser Webangebot
-          und unsere Werbung zu optimieren.
-        </p>
-        <p className="mb-4">
-          Einzelheiten zu Google AdWords und Google Conversion-Tracking finden Sie in den Datenschutzbestimmungen von Google:{" "}
-          <a
-            href="https://www.google.de/policies/privacy/"
-            className="text-[#669933] hover:underline"
-          >
-            Datenschutzbestimmungen von Google
+      </section>
+
+      <section id="google-maps" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Google Maps</h2>
+        <p>
+          Auf der Kontaktseite und in der Referenzkarte können Karten von Google Maps (Google Ireland Limited, Gordon
+          House, Barrow Street, Dublin 4, Irland) angezeigt werden. Die Karte wird erst geladen, wenn Sie dem im
+          Cookie-Banner oder direkt an der Karte zustimmen. Dabei werden Ihre IP-Adresse und technische Daten an Google
+          übertragen; Google kann Cookies setzen und Daten auch in den USA verarbeiten. Rechtsgrundlage ist Ihre
+          Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG), die Sie jederzeit über die Cookie-Einstellungen
+          widerrufen können. Weitere Informationen:{" "}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-ov-700 underline">
+            Datenschutzerklärung von Google
           </a>
           .
         </p>
+      </section>
+
+      <section id="herkunft" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Herkunft Ihrer Anfrage (Kampagnen-Zuordnung)</h2>
+        <p className="mb-4">
+          Wenn Sie uns eine Anfrage senden (Kontakt, Rückruf, Terminbuchung, PDF-Analyse, Angebots-Konfigurator oder
+          Unterlagen per Smartphone), speichern wir zusammen mit der Anfrage, über welchen Weg Sie auf unsere Website
+          gekommen sind: Kampagnenparameter aus dem Link (utm_source, utm_medium, utm_campaign, utm_term, utm_content), die
+          Domain der verweisenden Website, die Einstiegsseite und die Seite, auf der Sie die Anfrage gestellt haben. So
+          erkennen wir, welche Informationsangebote und Werbemaßnahmen für unsere Kunden hilfreich sind.
+        </p>
         <p>
-          Mit einem modernen Webbrowser können Sie das Setzen von Cookies überwachen, einschränken oder unterbinden. Die
-          Deaktivierung von Cookies kann eine eingeschränkte Funktionalität unserer Website zur Folge haben.
+          Diese Angaben werden während Ihres Besuchs nur im Arbeitsspeicher der geöffneten Seite gehalten und nicht in
+          Cookies oder im Browserspeicher abgelegt; sie werden ausschließlich mit einer von Ihnen abgesendeten Anfrage
+          übertragen. Rechtsgrundlage ist unser berechtigtes Interesse an der Auswertung unserer Marketingmaßnahmen
+          (Art. 6 Abs. 1 lit. f DSGVO). Die Angaben werden gemeinsam mit der Anfrage gelöscht.
         </p>
       </section>
 

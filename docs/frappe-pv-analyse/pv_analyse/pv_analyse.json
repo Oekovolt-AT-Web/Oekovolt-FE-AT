@@ -5,7 +5,7 @@
  "description": "PDF-Ersteinschätzung aus dem Solarrechner / Konfigurator der Website (Lead).",
  "doctype": "DocType",
  "engine": "InnoDB",
- "field_order": ["sec_lead", "referenz", "status", "zustaendig", "column_break_l", "kontakt_name", "email", "telefon", "plz", "sec_anlage", "kwp", "ausrichtung", "neigung", "verbrauch", "speicher_kwh", "column_break_a", "jahresertrag", "autarkie", "investition", "amortisation", "sec_datei", "pdf", "seite", "column_break_d", "notiz", "loeschung_faellig"],
+ "field_order": ["sec_lead", "referenz", "status", "zustaendig", "column_break_l", "kontakt_name", "email", "telefon", "plz", "sec_anlage", "kwp", "ausrichtung", "neigung", "verbrauch", "speicher_kwh", "column_break_a", "jahresertrag", "autarkie", "investition", "amortisation", "sec_datei", "pdf", "seite", "column_break_d", "notiz", "loeschung_faellig", "sec_herkunft", "herkunft_kanal", "utm_source", "utm_medium", "utm_campaign", "column_break_herkunft", "utm_term", "utm_content", "herkunft_referrer", "einstiegsseite"],
  "fields": [
   { "fieldname": "sec_lead", "fieldtype": "Section Break", "label": "Lead" },
   { "fieldname": "referenz", "fieldtype": "Data", "label": "Referenz", "unique": 1, "read_only": 1, "in_list_view": 1 },
@@ -32,7 +32,17 @@
   { "fieldname": "seite", "fieldtype": "Data", "label": "Erstellt auf Seite", "read_only": 1 },
   { "fieldname": "column_break_d", "fieldtype": "Column Break" },
   { "fieldname": "notiz", "fieldtype": "Small Text", "label": "Notiz Vertrieb" },
-  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "12 Monate nach Erstellung, sofern kein Angebot/Auftrag entstanden ist." }
+  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "12 Monate nach Erstellung, sofern kein Angebot/Auftrag entstanden ist." },
+  { "fieldname": "sec_herkunft", "fieldtype": "Section Break", "label": "Herkunft (Kampagne)", "collapsible": 1 },
+  { "fieldname": "herkunft_kanal", "fieldtype": "Select", "label": "Kanal", "options": "\nAnzeige\nSocial Media\nE-Mail\nOffline/QR\nKampagne\nSuchmaschine\nKI-Assistent\nVerweis\nDirekt", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "utm_source", "fieldtype": "Data", "label": "UTM-Quelle (utm_source)", "read_only": 1 },
+  { "fieldname": "utm_medium", "fieldtype": "Data", "label": "UTM-Medium (utm_medium)", "read_only": 1 },
+  { "fieldname": "utm_campaign", "fieldtype": "Data", "label": "Kampagne (utm_campaign)", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "column_break_herkunft", "fieldtype": "Column Break" },
+  { "fieldname": "utm_term", "fieldtype": "Data", "label": "Suchbegriff/Variante (utm_term)", "read_only": 1 },
+  { "fieldname": "utm_content", "fieldtype": "Data", "label": "Anzeigeninhalt (utm_content)", "read_only": 1 },
+  { "fieldname": "herkunft_referrer", "fieldtype": "Data", "label": "Verweisende Website", "read_only": 1, "description": "Nur der Hostname, z. B. www.google.com" },
+  { "fieldname": "einstiegsseite", "fieldtype": "Data", "label": "Einstiegsseite", "read_only": 1 }
  ],
  "modified": "2026-09-14 10:00:00.000000",
  "modified_by": "Administrator",

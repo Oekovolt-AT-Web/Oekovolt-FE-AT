@@ -1,3 +1,4 @@
+import Umami from "@/components/Statistik/Umami";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
@@ -252,13 +253,7 @@ export default function RootLayout({ children }) {
         {/* Language */}
         <meta httpEquiv="content-language" content="de-DE" />
         <meta name="ahrefs-site-verification" content="e1d71a17817647a67232c6d7f2943114c4d8bb7d08642c44ecc929d005be7401"></meta>
-
-        <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
-        {/* Also preconnect to Google Analytics if needed */}
-        <link rel="preconnect" href="https://www.google-analytics.com" />
-        <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+        {/* Keine Vorverbindungen zu Google: Verbindungen zu Drittanbietern erst nach Einwilligung */}
       </head>
       <body className="bg-white text-ink-900">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#669933] focus:text-white focus:rounded">Zum Hauptinhalt springen</a>
@@ -267,6 +262,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
         />
         <LayoutWrapper>{children}</LayoutWrapper>
+        <Umami />
       </body>
     </html>
   );

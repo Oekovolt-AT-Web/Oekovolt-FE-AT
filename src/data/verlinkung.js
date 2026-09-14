@@ -208,6 +208,18 @@ export const QUERVERWEISE = {
     { href: "/faqs", titel: "Häufige Fragen", text: "Die Fragen, die uns Kunden am häufigsten stellen." },
     { href: "/rechner", titel: "Rechner & Tools", text: "Das Wissen direkt auf Ihr Haus anwenden." },
   ],
+  "/landwirtschaft": [
+    { href: "/ratgeber/photovoltaik-gewerbe", titel: "Photovoltaik im Betrieb", text: "Lastgang, Abschreibung und die 100-kW-Grenze." },
+    { href: "/service/direktvermarktung", titel: "Direktvermarktung", text: "Überschüsse großer Anlagen vermarkten." },
+    { href: "/ratgeber/photovoltaik-steuern", titel: "Photovoltaik und Steuern", text: "Steuerbefreiung, Umsatzsteuer und Gewerbe." },
+    { href: "/produkte/stromspeicher", titel: "Stromspeicher", text: "Solarstrom für Abendmelken und Nacht." },
+  ],
+  "/gewerbe": [
+    { href: "/ratgeber/photovoltaik-gewerbe", titel: "Ratgeber Photovoltaik Gewerbe", text: "Beispielrechnung 100 kWp, AfA und IAB." },
+    { href: "/service/direktvermarktung", titel: "Direktvermarktung", text: "Pflicht ab 100 kW – so funktioniert sie." },
+    { href: "/produkte/mieterstrom", titel: "Mieterstrom", text: "Solarstrom an Mieter im Gebäude liefern." },
+    { href: "/ratgeber/photovoltaik-flachdach", titel: "PV auf dem Flachdach", text: "Aufständerung, Ballast und Statik." },
+  ],
 };
 
 /** Verweise fuer einen Pfad; leeres Array, wenn nichts hinterlegt ist. */

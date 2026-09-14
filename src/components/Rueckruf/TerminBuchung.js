@@ -10,6 +10,8 @@ import { cn } from "@/components/ui/cn";
 import { TERMIN_ARTEN, THEMEN, telefonNormalisieren } from "@/data/erreichbarkeit";
 import KalenderLinks from "./KalenderLinks";
 import { oeffneRueckruf } from "./oeffnen";
+import { herkunft } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 
 const ICONS = { Phone, Video, MapPin };
 const SCHRITTE = ["Art", "Termin", "Kontakt"];
@@ -104,6 +106,7 @@ export default function TerminBuchung() {
           website: website.current?.value || "",
           dauer: Date.now() - start.current,
           seite: window.location.pathname,
+          herkunft: herkunft(),
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -116,6 +119,7 @@ export default function TerminBuchung() {
         throw new Error(d.fehler || "backend");
       }
       setErgebnis(d);
+      ereignis("termin_gebucht", { art: artId });
       zu(3);
     } catch (err) {
       setFehler(FEHLERTEXT[err.message] || FEHLERTEXT.backend);

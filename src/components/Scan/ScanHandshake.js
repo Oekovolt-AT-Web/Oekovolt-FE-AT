@@ -5,6 +5,8 @@ import Link from "next/link";
 import { AlertCircle, Camera, Check, CheckCircle2, Clock, ExternalLink, FileText, Gauge, Home, Loader2, Lock, QrCode, Smartphone, Sparkles, X, Zap } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import useFokusFalle from "@/components/ui/useFokusFalle";
+import { herkunft } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 
 const SCHRITTE = [
   { feld: "zaehler", label: "Stromzähler", icon: Gauge },
@@ -68,7 +70,10 @@ export default function ScanHandshake({ rechner, quelle = "Solarrechner", beiKiE
     es.addEventListener("status", (e) => {
       const s = JSON.parse(e.data);
       setStatus(s);
-      if (s.phase === "eingegangen") setSchritt("fertig");
+      if (s.phase === "eingegangen") {
+        setSchritt("fertig");
+        ereignis("scan_unterlagen_eingegangen", { quelle });
+      }
     });
     es.addEventListener("ende", (e) => {
       const { grund } = JSON.parse(e.data);
@@ -76,7 +81,7 @@ export default function ScanHandshake({ rechner, quelle = "Solarrechner", beiKiE
       es.close();
     });
     return () => es.close();
-  }, [sitzung, schritt]);
+  }, [sitzung, schritt, quelle]);
 
   // Nach Eingang weiter auf das KI-Ergebnis horchen
   useEffect(() => {
@@ -109,13 +114,14 @@ export default function ScanHandshake({ rechner, quelle = "Solarrechner", beiKiE
       const r = await fetch("/api/scan/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...werte, einwilligung, rechner, quelle, website: website.current?.value || "", dauer: Date.now() - start.current, seite: window.location.pathname }),
+        body: JSON.stringify({ ...werte, einwilligung, rechner, quelle, website: website.current?.value || "", dauer: Date.now() - start.current, seite: window.location.pathname, herkunft: herkunft() }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.fehler || "backend");
       setSitzung(d);
       setStatus({ phase: "offen", fotos: {}, gueltig: true });
       setSchritt("qr");
+      ereignis("scan_qr_erzeugt", { quelle });
     } catch (err) {
       setFehler(FEHLER[err.message] || FEHLER.backend);
     } finally {

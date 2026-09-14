@@ -169,7 +169,7 @@ function Immersive({ breadcrumbs, eyebrow, title, lead, image, actions, points, 
   return (
     <section className={cn("relative isolate overflow-hidden bg-navy-950 text-white", className)}>
       {image?.src && (
-        <Image src={image.src} alt={image.alt || ""} fill priority sizes="100vw" className="-z-20 object-cover" />
+        <Image src={image.src} alt={image.alt || ""} fill priority sizes="100vw" className="-z-20 object-cover" style={image.position ? { objectPosition: image.position } : undefined} />
       )}
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950/95 via-navy-950/75 to-navy-950/20" />
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-t from-navy-950 via-transparent to-transparent" />

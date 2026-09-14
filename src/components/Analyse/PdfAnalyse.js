@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Check, FileDown, FileText, Loader2, Lock, X } from "lucide-react";
 import { cn } from "@/components/ui/cn";
+import { herkunft } from "@/lib/herkunft";
+import { ereignis } from "@/lib/statistik";
 
 const FEHLER = {
   name: "Bitte geben Sie Ihren Namen an.",
@@ -73,7 +75,7 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
       const r = await fetch("/api/analyse/pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ eingaben, ...werte, einwilligung, website: website.current?.value || "", dauer: Date.now() - start.current, seite: window.location.pathname }),
+        body: JSON.stringify({ eingaben, ...werte, einwilligung, website: website.current?.value || "", dauer: Date.now() - start.current, seite: window.location.pathname, herkunft: herkunft() }),
       });
       if (!r.ok) {
         const d = await r.json().catch(() => ({}));
@@ -91,6 +93,7 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
       setTimeout(() => URL.revokeObjectURL(url), 4000);
       setReferenz(ref);
       setStatus("fertig");
+      ereignis("pdf_analyse_erstellt", { kwp: eingaben?.kwp });
     } catch (err) {
       setFehler(FEHLER[err.message] || FEHLER.pdf);
       setStatus("bereit");

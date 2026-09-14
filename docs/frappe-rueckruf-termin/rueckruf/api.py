@@ -30,6 +30,28 @@ def text(wert, maximal):
 	return cstr(wert).strip()[:maximal]
 
 
+HERKUNFT_KANAELE = {"Anzeige", "Social Media", "E-Mail", "Offline/QR", "Kampagne", "Suchmaschine", "KI-Assistent", "Verweis", "Direkt"}
+
+
+def herkunft_felder(d):
+	"""Kampagnen-Zuordnung (von der Website bereits geprüft) für die Herkunft-Felder."""
+	kanal = cstr(d.get("herkunft_kanal"))
+	felder = {"herkunft_kanal": kanal if kanal in HERKUNFT_KANAELE else ""}
+	for feld in ("utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"):
+		felder[feld] = text(d.get(feld), 100)
+	felder["herkunft_referrer"] = text(d.get("herkunft_referrer"), 120)
+	seite = text(d.get("einstiegsseite"), 200)
+	felder["einstiegsseite"] = seite if seite.startswith("/") else ""
+	return felder
+
+
+def herkunft_html(doc):
+	"""Eine Zeile für Team-Benachrichtigungen."""
+	teile = [doc.get("herkunft_kanal"), doc.get("utm_source"), doc.get("utm_campaign")]
+	teile = [frappe.utils.escape_html(t) for t in teile if t]
+	return f"<br>Herkunft: {' · '.join(teile)}" if teile else ""
+
+
 def neue_referenz(doctype, praefix):
 	for _versuch in range(20):
 		ref = f"{praefix}-" + "".join(secrets.choice(ALPHABET) for _stelle in range(6))
@@ -102,6 +124,7 @@ def create_rueckruf(**kwargs):
 		"thema": text(d.get("thema"), 60),
 		"seite": text(d.get("seite"), 300),
 		"cloudtalk_agent": text(d.get("cloudtalk_agent"), 40),
+		**herkunft_felder(d),
 	})
 	doc.insert(ignore_permissions=True)
 	frappe.db.commit()
@@ -112,7 +135,7 @@ def create_rueckruf(**kwargs):
 			ROLLE_TEAM,
 			f"Rückruf: {doc.kontakt_name or telefon}" + (" (Wunschzeit)" if wunschzeit else " – SOFORT"),
 			f"<p>{wann}</p><p>Telefon: <a href='tel:{telefon}'>{telefon}</a><br>Name: {frappe.utils.escape_html(doc.kontakt_name or '–')}<br>"
-			f"Thema: {frappe.utils.escape_html(doc.thema or '–')}<br>Seite: {frappe.utils.escape_html(doc.seite or '–')}</p>"
+			f"Thema: {frappe.utils.escape_html(doc.thema or '–')}<br>Seite: {frappe.utils.escape_html(doc.seite or '–')}{herkunft_html(doc)}</p>"
 			f"<p><a href='{frappe.utils.get_url_to_form('Rueckruf', doc.name)}'>Im Backoffice öffnen</a></p>",
 			"Rueckruf",
 			doc.name,

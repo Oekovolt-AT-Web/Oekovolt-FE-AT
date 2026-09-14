@@ -10,7 +10,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_months, cint, cstr, escape_html, flt, now_datetime
 
-from oekovoltdeutchland.oekovoltdeutchland.doctype.rueckruf.api import nur_webformular, team_benachrichtigen, text
+from oekovoltdeutchland.oekovoltdeutchland.doctype.rueckruf.api import herkunft_felder, nur_webformular, team_benachrichtigen, text
 
 ROLLE_VERTRIEB = "Vertrieb"
 MAX_PDF_BYTES = 3 * 1024 * 1024
@@ -48,6 +48,7 @@ def create_analyse(**kwargs):
 		"investition": flt(d.get("investition")),
 		"amortisation": flt(d.get("amortisation")),
 		"seite": text(d.get("seite"), 300),
+		**herkunft_felder(d),
 		"loeschung_faellig": add_months(now_datetime().date(), 12),
 	})
 	doc.insert(ignore_permissions=True)

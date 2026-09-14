@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { herkunftFelder, herkunftZeile } from "@/lib/herkunftServer";
 import { THEMEN, freieSlots, oeffnungsStatus, telefonNormalisieren } from "@/data/erreichbarkeit";
 import {
   HEADERS_PRIVAT,
@@ -75,6 +76,7 @@ export async function POST(request) {
     wunschzeit: wunschzeit || "",
     seite: sauber(e.seite, 300),
     modus: wunschzeit ? "Wunschzeit" : "Sofort",
+    ...herkunftFelder(e.herkunft),
   };
 
   // Sofort-Rückruf über CloudTalk, wenn jemand frei ist
@@ -106,6 +108,7 @@ export async function POST(request) {
             wunschzeit ? `Wunschzeit: ${berlinText(wunschzeit)}` : "Bitte so schnell wie möglich zurückrufen.",
             daten.thema && `Thema: ${daten.thema}`,
             daten.seite && `Seite: ${daten.seite}`,
+            herkunftZeile(e.herkunft),
           ]
             .filter(Boolean)
             .join("\n"),

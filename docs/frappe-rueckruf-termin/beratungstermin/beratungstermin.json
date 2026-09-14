@@ -31,7 +31,17 @@
   "seite",
   "column_break_i",
   "notiz",
-  "loeschung_faellig"
+  "loeschung_faellig",
+  "sec_herkunft",
+  "herkunft_kanal",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "column_break_herkunft",
+  "utm_term",
+  "utm_content",
+  "herkunft_referrer",
+  "einstiegsseite"
  ],
  "fields": [
   { "fieldname": "sec_termin", "fieldtype": "Section Break", "label": "Termin" },
@@ -58,7 +68,17 @@
   { "fieldname": "seite", "fieldtype": "Data", "label": "Gebucht auf Seite", "read_only": 1 },
   { "fieldname": "column_break_i", "fieldtype": "Column Break" },
   { "fieldname": "notiz", "fieldtype": "Small Text", "label": "Notiz" },
-  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "12 Monate nach dem Termin, sofern kein Auftrag/Lead daraus entstanden ist." }
+  { "fieldname": "loeschung_faellig", "fieldtype": "Date", "label": "Löschung fällig", "read_only": 1, "description": "12 Monate nach dem Termin, sofern kein Auftrag/Lead daraus entstanden ist." },
+  { "fieldname": "sec_herkunft", "fieldtype": "Section Break", "label": "Herkunft (Kampagne)", "collapsible": 1 },
+  { "fieldname": "herkunft_kanal", "fieldtype": "Select", "label": "Kanal", "options": "\nAnzeige\nSocial Media\nE-Mail\nOffline/QR\nKampagne\nSuchmaschine\nKI-Assistent\nVerweis\nDirekt", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "utm_source", "fieldtype": "Data", "label": "UTM-Quelle (utm_source)", "read_only": 1 },
+  { "fieldname": "utm_medium", "fieldtype": "Data", "label": "UTM-Medium (utm_medium)", "read_only": 1 },
+  { "fieldname": "utm_campaign", "fieldtype": "Data", "label": "Kampagne (utm_campaign)", "read_only": 1, "in_standard_filter": 1 },
+  { "fieldname": "column_break_herkunft", "fieldtype": "Column Break" },
+  { "fieldname": "utm_term", "fieldtype": "Data", "label": "Suchbegriff/Variante (utm_term)", "read_only": 1 },
+  { "fieldname": "utm_content", "fieldtype": "Data", "label": "Anzeigeninhalt (utm_content)", "read_only": 1 },
+  { "fieldname": "herkunft_referrer", "fieldtype": "Data", "label": "Verweisende Website", "read_only": 1, "description": "Nur der Hostname, z. B. www.google.com" },
+  { "fieldname": "einstiegsseite", "fieldtype": "Data", "label": "Einstiegsseite", "read_only": 1 }
  ],
  "index_web_pages_for_search": 0,
  "is_calendar_and_gantt": 1,
