@@ -10,6 +10,7 @@ const nextConfig = {
   serverExternalPackages: ["@react-pdf/renderer"],
   outputFileTracingIncludes: {
     "/api/analyse/pdf": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
+    "/solarrechner/ergebnis/bild": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
   },
   compress: true,
   poweredByHeader: false,
@@ -215,6 +216,15 @@ const nextConfig = {
         ],
       },
       // Handy-Upload per QR-Code: nie indexieren, Token nicht per Referrer weitergeben
+      // Fortsetzen-Link aus der Erinnerungs-E-Mail: gleiche Schutzmaßnahmen wie /scan
+      {
+        source: "/fortsetzen/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "Cache-Control", value: "no-store" },
+        ],
+      },
       {
         source: "/scan/:path*",
         headers: [

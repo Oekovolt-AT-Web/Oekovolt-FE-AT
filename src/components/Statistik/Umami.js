@@ -26,7 +26,7 @@ export default function Umami() {
         window.ovUmamiFilter = function (typ, daten) {
           try {
             var u = new URL(daten.url, location.origin);
-            if (/^\\/(scan|tv)(\\/|$)/.test(u.pathname)) return false;
+            if (/^\\/(scan|tv|fortsetzen)(\\/|$)/.test(u.pathname)) return false;
             var behalten = new URLSearchParams();
             u.searchParams.forEach(function (w, k) { if (/^utm_(source|medium|campaign|term|content)$/.test(k)) behalten.set(k, w.slice(0, 100)); });
             var q = behalten.toString();

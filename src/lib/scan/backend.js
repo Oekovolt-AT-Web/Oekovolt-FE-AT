@@ -26,6 +26,7 @@ export const scanVerfuegbar = () => demoAktiv() || frappeKonfiguriert();
 // ---------------------------------------------------------------- Demo-Speicher
 
 const demo = (globalThis.__ovScanDemo ||= new Map());
+const demoFortsetzen = (globalThis.__ovScanDemoFortsetzen ||= new Map());
 
 function demoStatus(s) {
   return {
@@ -43,7 +44,12 @@ export async function sitzungStarten(daten) {
   const token = neuesToken();
   const gueltigBis = Date.now() + GUELTIG_MINUTEN * 60_000;
   if (demoAktiv()) {
-    demo.set(hash(token), { phase: "offen", fotos: {}, ki: { status: "keine" }, gueltigBis, daten });
+    const s = { phase: "offen", fotos: {}, ki: { status: "keine" }, gueltigBis, daten };
+    demo.set(hash(token), s);
+    // Demo: Erinnerungs-Link sofort erzeugen (in Frappe erst nach 2 Stunden per E-Mail)
+    const fortsetzen = neuesToken();
+    demoFortsetzen.set(hash(fortsetzen), { sitzung: s, bis: Date.now() + 72 * 3600_000 });
+    console.info(`[Demo] Erinnerungs-Link: /fortsetzen/${fortsetzen}`);
     return { token, gueltigBis };
   }
   await frappeKontakt("solar_lead", "sitzung_starten", { ...daten, token_hash: hash(token), gueltig_minuten: GUELTIG_MINUTEN });
@@ -58,6 +64,42 @@ export async function sitzungStatus(token) {
     return s ? demoStatus(s) : null;
   }
   return frappeKontakt("solar_lead", "sitzung_status", { token_hash: hash(token) });
+}
+
+// ---------------------------------------------------------------- Fortsetzen (Erinnerungs-E-Mail)
+
+function demoFortsetzenSitzung(token) {
+  const f = demoFortsetzen.get(hash(token));
+  return f && Date.now() < f.bis && f.sitzung.phase !== "eingegangen" ? f : null;
+}
+
+/** Nur lesend: { vorname, kwp, verbrauch, speicher_kwh, fotos } oder null */
+export async function fortsetzenInfo(token) {
+  if (!tokenGueltig(token)) return null;
+  if (demoAktiv()) {
+    const f = demoFortsetzenSitzung(token);
+    if (!f) return null;
+    const d = f.sitzung.daten;
+    return { vorname: String(d.name || "").split(" ")[0], kwp: d.kwp || null, verbrauch: d.verbrauch || null, speicher_kwh: d.speicher_kwh || null, fotos: demoStatus(f.sitzung).fotos };
+  }
+  return frappeKontakt("solar_lead", "fortsetzen_info", { fortsetzen_hash: hash(token) });
+}
+
+/** Neuen Handy-Code für die offene Sitzung. Rückgabe: { token, gueltigBis } oder null */
+export async function fortsetzenStarten(fortsetzenToken) {
+  if (!tokenGueltig(fortsetzenToken)) return null;
+  const token = neuesToken();
+  const gueltigBis = Date.now() + GUELTIG_MINUTEN * 60_000;
+  if (demoAktiv()) {
+    const f = demoFortsetzenSitzung(fortsetzenToken);
+    if (!f) return null;
+    for (const [k, s] of demo) if (s === f.sitzung) demo.delete(k);
+    f.sitzung.gueltigBis = gueltigBis;
+    demo.set(hash(token), f.sitzung);
+    return { token, gueltigBis };
+  }
+  const ok = await frappeKontakt("solar_lead", "fortsetzen_starten", { fortsetzen_hash: hash(fortsetzenToken), token_hash: hash(token), gueltig_minuten: GUELTIG_MINUTEN });
+  return ok ? { token, gueltigBis } : null;
 }
 
 export async function alsVerbundenMarkieren(token) {

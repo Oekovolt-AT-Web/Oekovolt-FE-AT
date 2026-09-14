@@ -234,8 +234,15 @@ const PrivacyPolicy = () => {
         </p>
         <p className="mb-4">
           Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen auf Ihre Anfrage) sowie Ihre Einwilligung
-          (Art. 6 Abs. 1 lit. a DSGVO). Nicht abgeschlossene Vorgänge löschen wir nach 24 Stunden, Anfragen ohne Angebot oder
-          Auftrag nach zwölf Monaten.
+          (Art. 6 Abs. 1 lit. a DSGVO). Anfragen ohne Angebot oder Auftrag löschen wir nach zwölf Monaten.
+        </p>
+        <p className="mb-4">
+          <strong>Erinnerung bei nicht abgeschlossener Übermittlung:</strong> Sind zwei Stunden nach dem Start noch keine
+          Unterlagen eingegangen, senden wir Ihnen einmalig eine E-Mail mit einem persönlichen Link, über den Sie die
+          Übermittlung fortsetzen können. Weitere Erinnerungen erhalten Sie zu dieser Anfrage nicht. Der Link enthält einen
+          zufälligen Schlüssel, von dem wir nur einen Hashwert speichern, und ist 72 Stunden gültig. Rechtsgrundlage ist
+          Art. 6 Abs. 1 lit. b DSGVO (Durchführung Ihrer Anfrage). Nicht abgeschlossene Vorgänge löschen wir 24 Stunden nach
+          Ablauf des QR-Codes bzw. des Links.
         </p>
         <p>
           <strong>Optionale KI-Auswertung:</strong> Nur wenn Sie dies auf dem Smartphone ausdrücklich ankreuzen, übermitteln

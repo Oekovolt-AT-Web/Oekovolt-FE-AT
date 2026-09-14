@@ -18,6 +18,21 @@ Smartphone /scan/<token>
 PC: „Vielen Dank! Ihre Daten wurden übermittelt.“  (+ erkannte Werte → „In den Rechner übernehmen“)
 ```
 
+## Erinnerung bei Abbruch (Fortsetzen-Link)
+
+```
+Solar Lead „Wartet auf Unterlagen“, 2–24 h alt, noch keine Erinnerung
+  └─ erinnerungen_senden (alle 15 Min.) ──▶ EINE E-Mail mit https://www.oekovolt.de/fortsetzen/<token> (72 h gültig)
+Kunde öffnet Link ──GET /fortsetzen/<token>──▶ fortsetzen_info (nur lesen: Vorname, Rechnerwerte, vorhandene Fotos)
+Klick „Weiter“ ──POST /api/scan/fortsetzen──▶ fortsetzen_starten: neuer Handy-Code (45 Min.), „Über Erinnerung“ = 1
+  Smartphone → direkt zur Foto-Seite · Computer → QR-Code fürs Handy
+```
+
+- **Nur eine Erinnerung** je Anfrage, keine weitere, wenn inzwischen eine andere Anfrage mit derselben E-Mail-Adresse abgeschlossen wurde.
+- **Link-Scanner:** Das Öffnen des Links ändert nichts. Virenscanner in E-Mail-Programmen, die Links vorab aufrufen, verbrauchen ihn also nicht. Erst der Klick auf „Weiter“ erzeugt einen neuen Code, höchstens 10-mal.
+- **Erfolg messen:** Filter „Über Erinnerungs-Link fortgesetzt“ in der Liste Solar Lead; in Umami das Ereignis `scan_fortgesetzt`.
+- **Aufräumen:** Nicht abgeschlossene Anfragen werden 24 Stunden nach Ablauf des Fortsetzen-Links gelöscht.
+
 ## Sicherheit
 
 - **Einmal-Token:** zufällig, 256 Bit, nur im QR-Code. Frappe speichert ausschließlich den SHA-256-Hash. Das Token ist 45 Minuten gültig.
@@ -45,7 +60,14 @@ PC: „Vielen Dank! Ihre Daten wurden übermittelt.“  (+ erkannte Werte → �
    ```
    Ohne `anthropic_api_key` entfällt die KI-Auswertung. Die Fotos gehen trotzdem an den Vertrieb.
 5. **Worker:** Die Queue `long` muss laufen, das ist bei `bench start` bzw. in Produktion per supervisor Standard.
-6. **Scheduler:** in `hooks.py` → `scheduler_events["daily"]` eintragen: `"oekovoltdeutchland.oekovoltdeutchland.doctype.solar_lead.api.aufraeumen"`
+6. **Scheduler:** in `hooks.py` eintragen:
+   ```python
+   scheduler_events = {
+       "daily": ["oekovoltdeutchland.oekovoltdeutchland.doctype.solar_lead.api.aufraeumen"],
+       "cron": {"*/15 * * * *": ["oekovoltdeutchland.oekovoltdeutchland.doctype.solar_lead.api.erinnerungen_senden"]},
+   }
+   ```
+   Für die Erinnerungs-E-Mail muss ein ausgehendes E-Mail-Konto eingerichtet sein. Die Adresse der Website ist optional (Standard `https://www.oekovolt.de`): `bench --site <site> set-config website_url "https://www.oekovolt.de"`
 7. **Abschluss:** `bench --site <site> migrate` und `bench restart`.
 
 ## Website (Next.js)

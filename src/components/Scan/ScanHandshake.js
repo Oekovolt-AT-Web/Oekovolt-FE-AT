@@ -211,6 +211,9 @@ export default function ScanHandshake({ rechner, quelle = "Solarrechner", beiKiE
                       * Pflichtfeld
                     </span>
                   </label>
+                  <p className="text-[12.5px] leading-relaxed text-ink-600">
+                    Kommen die Fotos nicht an, erinnern wir Sie einmalig per E-Mail mit einem Link zum Weitermachen – danach nicht mehr.
+                  </p>
                   {fehler && (
                     <p role="alert" className="flex items-start gap-2 rounded-xl bg-red-50 p-3 text-[14px] text-red-700 ring-1 ring-red-200">
                       <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />

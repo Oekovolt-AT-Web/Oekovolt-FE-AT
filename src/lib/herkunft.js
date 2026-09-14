@@ -29,7 +29,7 @@ export function herkunftErfassen() {
   }
 
   // Einmal-Tokens nie übernehmen
-  const einstieg = /^\/scan\//.test(url.pathname) ? "/scan" : url.pathname.slice(0, 200);
+  const einstieg = url.pathname.replace(/^\/(scan|fortsetzen)\/.*/, "/$1").slice(0, 200);
   erfasst = { ...utm, referrer, einstieg, zeit: new Date().toISOString() };
 }
 
@@ -56,7 +56,7 @@ export function herkunft() {
   if (typeof window === "undefined") return null;
   if (!erfasst) herkunftErfassen();
   const h = erfasst || {};
-  return { ...h, kanal: kanal(h), seite: window.location.pathname.replace(/^\/scan\/.*/, "/scan").slice(0, 200) };
+  return { ...h, kanal: kanal(h), seite: window.location.pathname.replace(/^\/(scan|fortsetzen)\/.*/, "/$1").slice(0, 200) };
 }
 
 /** Kompakte Textzeile für Backends ohne eigene Felder (z. B. bestehende Kontaktanfrage). */

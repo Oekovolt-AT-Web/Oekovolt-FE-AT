@@ -7,7 +7,9 @@
 # Aufrufer: API-User mit Rolle "Kontakt Webformular" (keine Leserechte auf Solar Lead).
 
 import base64
+import hashlib
 import re
+import secrets
 
 import frappe
 from frappe import _
@@ -185,14 +187,138 @@ def sitzung_abschliessen(**kwargs):
 	return True
 
 
+# ---------------------------------------------------------------- Erinnerung & Fortsetzen
+#
+# Fehlen die Unterlagen 2 Stunden nach dem Start noch, geht EINMAL eine E-Mail mit einem
+# Fortsetzen-Link raus. Das Link-Token (32 Byte) steht nur in der E-Mail; gespeichert wird
+# sein SHA-256-Hash. Der Link ist 72 Stunden gültig und ändert beim Öffnen nichts –
+# erst der Klick auf „Weiter“ erzeugt einen neuen Handy-Code (Schutz vor Link-Scannern
+# in E-Mail-Programmen, die Links vorab aufrufen).
+
+ERINNERUNG_NACH_STUNDEN = 2
+ERINNERUNG_BIS_STUNDEN = 24
+FORTSETZEN_STUNDEN = 72
+FORTSETZEN_MAX = 10
+
+
+def _fortsetzen_lead(fortsetzen_hash, sperren=False):
+	fortsetzen_hash = cstr(fortsetzen_hash)
+	if not re.fullmatch(r"[0-9a-f]{64}", fortsetzen_hash):
+		return None
+	name = frappe.db.get_value("Solar Lead", {"fortsetzen_hash": fortsetzen_hash}, "name", for_update=sperren)
+	if not name:
+		return None
+	doc = frappe.get_doc("Solar Lead", name)
+	if doc.phase == "eingegangen" or not doc.fortsetzen_bis or get_datetime(doc.fortsetzen_bis) < now_datetime():
+		return None
+	return doc
+
+
+@frappe.whitelist(methods=["POST"])
+def fortsetzen_info(**kwargs):
+	"""Nur lesend: Daten für die Fortsetzen-Seite (Vorname, Rechnerwerte, vorhandene Fotos)."""
+	nur_webformular()
+	doc = _fortsetzen_lead(frappe.form_dict.get("fortsetzen_hash"))
+	if not doc:
+		return None
+	return {
+		"vorname": (doc.kontakt_name or "").split(" ")[0][:40],
+		"kwp": doc.kwp or None,
+		"verbrauch": doc.verbrauch_rechner or None,
+		"speicher_kwh": doc.speicher_kwh or None,
+		"fotos": {k: bool(doc.get(f)) for k, f in FELDER.items()},
+	}
+
+
+@frappe.whitelist(methods=["POST"])
+def fortsetzen_starten(**kwargs):
+	"""Neuen Handy-Code für eine offene Sitzung setzen (alter Code wird damit ungültig)."""
+	nur_webformular()
+	d = frappe.form_dict
+	doc = _fortsetzen_lead(d.get("fortsetzen_hash"), sperren=True)
+	token_hash = cstr(d.get("token_hash"))
+	if not doc or not re.fullmatch(r"[0-9a-f]{64}", token_hash) or cint(doc.fortsetzen_anzahl) >= FORTSETZEN_MAX:
+		return False
+	minuten = min(max(cint(d.get("gueltig_minuten")) or 45, 5), 120)
+	frappe.db.set_value(
+		"Solar Lead",
+		doc.name,
+		{
+			"token_hash": token_hash,
+			"gueltig_bis": add_to_date(now_datetime(), minutes=minuten),
+			"ueber_erinnerung": 1,
+			"fortsetzen_anzahl": cint(doc.fortsetzen_anzahl) + 1,
+		},
+		update_modified=False,
+	)
+	frappe.db.commit()
+	return True
+
+
+def erinnerungen_senden():
+	"""Scheduler (alle 15 Minuten): einmalige Erinnerung für abgebrochene Uploads."""
+	jetzt = now_datetime()
+	kandidaten = frappe.get_all(
+		"Solar Lead",
+		filters={
+			"phase": ["!=", "eingegangen"],
+			"erinnerung_gesendet_am": ["is", "not set"],
+			"email": ["is", "set"],
+			"creation": ["between", [add_to_date(jetzt, hours=-ERINNERUNG_BIS_STUNDEN), add_to_date(jetzt, hours=-ERINNERUNG_NACH_STUNDEN)]],
+		},
+		fields=["name", "kontakt_name", "email", "creation"],
+		limit=50,
+	)
+	basis = (frappe.conf.get("website_url") or "https://www.oekovolt.de").rstrip("/")
+	for lead in kandidaten:
+		# Inzwischen eine neue Anfrage mit derselben Adresse abgeschlossen? Dann keine Erinnerung.
+		erledigt = frappe.db.exists("Solar Lead", {"email": lead.email, "phase": "eingegangen", "creation": [">=", lead.creation]})
+		token = secrets.token_urlsafe(32)
+		felder = {"erinnerung_gesendet_am": jetzt}
+		if not erledigt:
+			felder.update({"fortsetzen_hash": hashlib.sha256(token.encode()).hexdigest(), "fortsetzen_bis": add_to_date(jetzt, hours=FORTSETZEN_STUNDEN), "fortsetzen_anzahl": 0})
+		frappe.db.set_value("Solar Lead", lead.name, felder, update_modified=False)
+		frappe.db.commit()
+		if erledigt:
+			continue
+		vorname = frappe.utils.escape_html((lead.kontakt_name or "").split(" ")[0])
+		link = f"{basis}/fortsetzen/{token}"
+		try:
+			frappe.sendmail(
+				recipients=[lead.email],
+				subject="Ihre Solaranfrage ist fast fertig",
+				message=(
+					f"<p>Hallo {vorname},</p>"
+					"<p>Sie haben auf oekovolt.de begonnen, Fotos von Stromzähler und Stromrechnung für ein genaues Angebot zu senden – "
+					"die Übermittlung wurde aber nicht abgeschlossen.</p>"
+					"<p>Mit diesem Link machen Sie genau dort weiter, Ihre Angaben aus dem Solarrechner sind schon hinterlegt:</p>"
+					f"<p><a href='{link}' style='display:inline-block;padding:12px 22px;border-radius:999px;background:#5d8f2e;color:#fff;font-weight:600;text-decoration:none'>Unterlagen jetzt senden</a></p>"
+					f"<p style='color:#555;font-size:13px'>Der Link ist {FORTSETZEN_STUNDEN} Stunden gültig. Sie erhalten zu dieser Anfrage keine weitere Erinnerung. "
+					"Kein Interesse mehr? Dann müssen Sie nichts tun – nicht abgeschlossene Anfragen löschen wir automatisch.</p>"
+					"<p>Lieber telefonisch? 08245 96 788 0 (Mo–Do 8–16 Uhr, Fr 8–13 Uhr)</p>"
+					"<p>Ihr Ökovolt-Team</p>"
+				),
+				reference_doctype="Solar Lead",
+				reference_name=lead.name,
+				now=True,
+			)
+		except Exception:
+			frappe.log_error(title="Solar Lead: Erinnerung fehlgeschlagen", reference_doctype="Solar Lead", reference_name=lead.name)
+
+
 # ---------------------------------------------------------------- Aufräumen
 
 def aufraeumen():
 	"""Täglicher Scheduler-Job:
-	- nicht abgeschlossene Sitzungen 24 h nach Ablauf samt Fotos löschen
+	- nicht abgeschlossene Sitzungen 24 h nach Ablauf (QR-Code bzw. Fortsetzen-Link) samt Fotos löschen
 	- Leads ohne Fortschritt nach 12 Monaten löschen"""
 	jetzt = now_datetime()
-	offen = frappe.get_all("Solar Lead", filters={"phase": ["!=", "eingegangen"], "gueltig_bis": ["<", add_to_date(jetzt, hours=-24)]}, pluck="name")
+	grenze = add_to_date(jetzt, hours=-24)
+	offen = [
+		l.name
+		for l in frappe.get_all("Solar Lead", filters={"phase": ["!=", "eingegangen"], "gueltig_bis": ["<", grenze]}, fields=["name", "fortsetzen_bis"])
+		if not l.fortsetzen_bis or get_datetime(l.fortsetzen_bis) < grenze
+	]
 	alt = frappe.get_all("Solar Lead", filters={"loeschung_faellig": ["<=", jetzt.date()], "status": ["in", ["Neu", "In Prüfung", "Verloren"]]}, pluck="name")
 	for name in set(offen + alt):
 		for f in frappe.get_all("File", filters={"attached_to_doctype": "Solar Lead", "attached_to_name": name}, pluck="name"):

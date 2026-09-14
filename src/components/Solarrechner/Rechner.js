@@ -22,7 +22,9 @@ import {
 
 import { AUSRICHTUNGEN, NEIGUNGEN, ANNAHMEN } from "@/data/solarrechner";
 import { berechne, empfohlenerSpeicher } from "@/lib/solarrechner";
+import { STANDARD } from "@/lib/rechnerTeilen";
 import CashflowChart from "./CashflowChart";
+import ErgebnisTeilen from "./ErgebnisTeilen";
 import useAnimierteZahl from "./useAnimierteZahl";
 
 const zahl = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -180,14 +182,14 @@ function Energiefluss({ r }) {
  * und 20-Jahres-Cashflow. Passt sich über Container-Queries an die
  * verfügbare Breite an (Hero der Rechnerseite oder schmale Artikelspalte).
  */
-export default function Solarrechner({ className = "" }) {
-  const [kwp, setKwp] = useState(10);
-  const [ausrichtung, setAusrichtung] = useState("sued");
-  const [neigung, setNeigung] = useState("mittel");
-  const [verbrauch, setVerbrauch] = useState(4500);
-  const [mitSpeicher, setMitSpeicher] = useState(true);
-  const [speicherKwh, setSpeicherKwh] = useState(8);
-  const [steigerung, setSteigerung] = useState(ANNAHMEN.strompreisSteigerung);
+export default function Solarrechner({ className = "", start = STANDARD }) {
+  const [kwp, setKwp] = useState(start.kwp);
+  const [ausrichtung, setAusrichtung] = useState(start.ausrichtung);
+  const [neigung, setNeigung] = useState(start.neigung);
+  const [verbrauch, setVerbrauch] = useState(start.verbrauch);
+  const [mitSpeicher, setMitSpeicher] = useState(start.speicher > 0);
+  const [speicherKwh, setSpeicherKwh] = useState(start.speicher || STANDARD.speicher);
+  const [steigerung, setSteigerung] = useState(start.steigerung);
 
   const speicher = mitSpeicher ? speicherKwh : 0;
   const r = useMemo(
@@ -417,6 +419,11 @@ export default function Solarrechner({ className = "" }) {
               spart rund <Animiert wert={r.co2ProJahr / 1000} format={(v) => zahl(v, 1)} className="font-semibold text-ink-800" /> t CO₂ pro Jahr
             </p>
           </div>
+
+          <ErgebnisTeilen
+            eingaben={{ kwp, verbrauch, ausrichtung, neigung, speicher, steigerung }}
+            titel={`${zahl(kwp, kwp % 1 ? 1 : 0)} kWp Solaranlage: ${eur(r.nutzenProJahr)} Vorteil im 1. Jahr, ${pctTxt(r.autarkie)} Autarkie`}
+          />
 
           <p className="mt-5 text-[12px] leading-relaxed text-ink-500">
             Orientierung, kein Angebot. Annahmen: {zahl(ANNAHMEN.ertragProKwpSued)} kWh/kWp bei Süd, Netzstrom {zahl(ANNAHMEN.strompreis * 100)} ct/kWh im ersten
