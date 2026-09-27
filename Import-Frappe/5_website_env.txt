@@ -1,0 +1,33 @@
+# Umgebungsvariablen für die Next.js-Website (Hosting / .env.local) – NICHT für Frappe.
+# Die API-Keys/Secrets kommen von den API-Usern, die in Schritt 5 der ANLEITUNG angelegt werden.
+
+# API-User kontakt-web@oekovolt.de  (Rolle: Kontakt Webformular)
+# → Rückruf, Termin, PDF-Analyse, Foto-Upload (Solar Lead)
+KONTAKT_API_KEY=
+KONTAKT_API_SECRET=
+
+# API-User hinweis-web@oekovolt.de  (Rolle: Hinweis Webformular)
+HINWEIS_API_KEY=
+HINWEIS_API_SECRET=
+
+# API-User kanal-web@oekovolt.de  (Rolle: Kanal Webservice)
+KANAL_API_KEY=
+KANAL_API_SECRET=
+KANAL_WEBHOOK_SECRET=        # gleicher Wert wie oekovolt_kanal_secret in Frappe
+
+# Einmalig erzeugen mit: node scripts/ap-schluessel.mjs  (danach nie mehr ändern)
+AP_PUBLIC_KEY=
+AP_PRIVATE_KEY=
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+VAPID_SUBJECT=
+CRON_SECRET=                 # optional
+
+# CloudTalk (Sofort-Rückruf)
+CLOUDTALK_KEY_ID=
+CLOUDTALK_KEY_SECRET=
+CLOUDTALK_AGENT_IDS=         # z. B. 12345,23456 (Reihenfolge = Priorität)
+
+# Umami (Besucherstatistik)
+UMAMI_SCRIPT_URL=https://statistik.oekovolt.de/ov.js
+UMAMI_WEBSITE_ID=

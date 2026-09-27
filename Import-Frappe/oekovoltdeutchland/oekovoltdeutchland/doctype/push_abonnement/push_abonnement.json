@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-09-14 09:00:00.000000",
+ "description": "Web-Push-Abo eines Browsers. Enthält keine Namen oder E-Mail-Adressen.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["endpoint", "endpoint_hash", "p256dh", "auth", "themen", "erstellt_am", "zuletzt_zugestellt"],
+ "fields": [
+  { "fieldname": "endpoint", "fieldtype": "Small Text", "label": "Endpoint", "reqd": 1, "read_only": 1 },
+  { "fieldname": "endpoint_hash", "fieldtype": "Data", "label": "Endpoint-Hash", "unique": 1, "read_only": 1, "search_index": 1 },
+  { "fieldname": "p256dh", "fieldtype": "Data", "label": "p256dh", "read_only": 1 },
+  { "fieldname": "auth", "fieldtype": "Data", "label": "auth", "read_only": 1 },
+  { "fieldname": "themen", "fieldtype": "Data", "label": "Themen", "read_only": 1, "in_list_view": 1, "in_standard_filter": 1 },
+  { "fieldname": "erstellt_am", "fieldtype": "Datetime", "label": "Erstellt am", "read_only": 1, "in_list_view": 1 },
+  { "fieldname": "zuletzt_zugestellt", "fieldtype": "Datetime", "label": "Zuletzt zugestellt", "read_only": 1 }
+ ],
+ "in_create": 1,
+ "modified": "2026-09-14 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Push Abonnement",
+ "owner": "Administrator",
+ "permissions": [
+  { "role": "Marketing", "read": 1, "report": 1 },
+  { "role": "System Manager", "read": 1, "write": 1, "delete": 1, "report": 1 }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
