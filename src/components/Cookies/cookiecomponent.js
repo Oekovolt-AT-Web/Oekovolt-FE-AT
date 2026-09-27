@@ -65,7 +65,31 @@ export const cookieServices = {
       },
     },
   },
+  statistics: {
+    googleAnalytics: {
+      title: "Google Analytics",
+      description: "Erstellt Statistiken darüber, wie unsere Website genutzt wird.",
+      purpose:
+        "Google Analytics 4 erfasst, welche Seiten aufgerufen werden, wie lange Besucher bleiben, über welche Quelle (z. B. Suchmaschine oder Kampagne) sie kommen sowie Gerät, Browser und ungefähren Standort (Land/Region). Außerdem zählen wir Aktionen wie gesendete Formulare. Wir nutzen die Daten ausschließlich, um unsere Website zu verbessern – ohne Werbefunktionen, ohne Google Signals und ohne Personalisierung. Google speichert keine IP-Adressen in Analytics.",
+      provider: "Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland",
+      contact: {
+        phone: "+353 1 543 1000",
+        email: "dpo-google@google.com",
+        privacy: "https://policies.google.com/privacy",
+      },
+      cookies: [
+        { name: "_ga", type: "HTTP Cookie", duration: "2 Jahre" },
+        { name: "_ga_*", type: "HTTP Cookie", duration: "2 Jahre" },
+      ],
+      dataProcessing: {
+        countries: [{ name: "Vereinigte Staaten", sub: "A" }],
+        mechanisms: [{ name: "Angemessenheitsbeschluss (EU-US Data Privacy Framework)", sub: "A" }],
+      },
+    },
+  },
 };
+
+const OHNE = { essential: true, functional: false, googleMaps: false, statistics: false, googleAnalytics: false };
 
 export default function CookieBanner({ forceShow = false, onClose }) {
   const router = useRouter();
@@ -75,26 +99,31 @@ export default function CookieBanner({ forceShow = false, onClose }) {
   const [showBanner, setShowBanner] = useState(forceShow);
   const [expandedSections, setExpandedSections] = useState({
     functional: false,
+    statistics: false,
   });
   const [expandedServices, setExpandedServices] = useState({});
-  const [consent, setConsent] = useState({
-    essential: true,
-    functional: false,
-    googleMaps: false,
-  });
+  const [consent, setConsent] = useState(OHNE);
 
   useEffect(() => {
-    if (!getCookie("cookieConsent")) {
+    const gespeichert = getCookie("cookieConsent");
+    if (!gespeichert) {
       setShowBanner(true);
+      return;
+    }
+    // Beim erneuten Öffnen die bisherige Auswahl anzeigen
+    try {
+      setConsent({ ...OHNE, ...JSON.parse(gespeichert), essential: true });
+    } catch {
+      /* ungültig -> Standard */
     }
   }, []);
 
   useEffect(() => {
-    setConsent((prev) => ({ ...prev, functional: prev.googleMaps }));
-  }, [consent.googleMaps]);
+    setConsent((prev) => ({ ...prev, functional: prev.googleMaps, statistics: prev.googleAnalytics }));
+  }, [consent.googleMaps, consent.googleAnalytics]);
 
   const handleAcceptAll = () => {
-    const newConsent = { essential: true, functional: true, googleMaps: true };
+    const newConsent = { essential: true, functional: true, googleMaps: true, statistics: true, googleAnalytics: true };
     setConsent(newConsent);
     saveConsent(newConsent);
     router.refresh();
@@ -106,7 +135,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
   };
 
   const handleRejectAll = () => {
-    const newConsent = { essential: true, functional: false, googleMaps: false };
+    const newConsent = OHNE;
     setConsent(newConsent);
     saveConsent(newConsent);
     router.refresh();
@@ -120,7 +149,11 @@ export default function CookieBanner({ forceShow = false, onClose }) {
   const saveConsent = (consentState) => {
     setCookie("cookieConsent", JSON.stringify(consentState), {
       maxAge: 60 * 60 * 24 * 365,
+      path: "/",
+      sameSite: "lax",
     });
+    // Google Analytics sofort (ohne Neuladen) starten bzw. stoppen
+    window.dispatchEvent(new CustomEvent("ov-consent", { detail: consentState }));
 
     // Close banner last
     setShowBanner(false);
@@ -135,6 +168,10 @@ export default function CookieBanner({ forceShow = false, onClose }) {
         const newValue = !prev.functional;
         newConsent.functional = newValue;
         newConsent.googleMaps = newValue;
+      } else if (category === "statistics") {
+        const newValue = !prev.statistics;
+        newConsent.statistics = newValue;
+        newConsent.googleAnalytics = newValue;
       } else {
         newConsent[category] = !prev[category];
       }
@@ -193,13 +230,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             <div>
               <h2 ref={kompaktTitel} tabIndex={-1} className="font-display text-[16.5px] font-bold text-ink-900 focus:outline-none">Ihre Privatsphäre zählt</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-ink-600">
-                Karten von Google Maps laden wir nur mit Ihrer Zustimmung. Unsere Besucherstatistik kommt ohne Cookies aus.
+                Mit Ihrer Zustimmung nutzen wir Google Analytics für Besucherstatistiken und laden Karten von Google Maps.
+                Ohne Zustimmung werden keine Daten an Google übertragen.
               </p>
             </div>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-2">
             <button
-              onClick={handleAcceptSelected}
+              onClick={handleRejectAll}
               className="h-11 rounded-full px-3 text-[14px] font-semibold text-ink-800 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 cursor-pointer"
             >
               Nur notwendige
@@ -243,7 +281,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             <div className="w-[100%] flex-1 md:w-[60%]">
               <p className="text-gray-600 text-sm">
                 Wir verwenden Cookies und ähnliche Technologien auf unserer Website und verarbeiten personenbezogene
-                Daten über Sie, wie Ihre IP-Adresse. Nur mit Ihrer Einwilligung werden Inhalte von Drittanbietern (Google Maps) geladen. Die Datenverarbeitung kann
+                Daten über Sie, wie Ihre IP-Adresse. Nur mit Ihrer Einwilligung werden Google Analytics und Inhalte von Drittanbietern (Google Maps) geladen. Die Datenverarbeitung kann
                 mit Ihrer Einwilligung oder auf der Grundlage eines berechtigten Interesses erfolgen, dem Sie
                 widersprechen können. Sie haben das Recht, nur in essenzielle Services einzuwilligen und Ihre
                 Einwilligung zu einem späteren Zeitpunkt in der Datenschutzerklärung zu ändern oder zu widerrufen.
@@ -274,7 +312,7 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             </div>
           </div>
           <p className="text-gray-600 mt-1 p-6 pb-2 text-xs">
-            Google Maps kann personenbezogene Daten in Drittländern verarbeiten. Indem Sie in die Nutzung
+            Google Analytics und Google Maps können personenbezogene Daten in Drittländern (u. a. USA) verarbeiten. Indem Sie in die Nutzung
             dieser Services einwilligen, erklären Sie sich auch mit der Verarbeitung Ihrer Daten in diesen unsicheren
             Drittländern gemäß Art. 49 Abs. 1 lit. a DSGVO einverstanden. Dies birgt das Risiko, dass Ihre Daten von
             Behörden zu Kontroll- und Überwachungszwecken verarbeitet werden, möglicherweise ohne die Möglichkeit eines
@@ -383,18 +421,62 @@ export default function CookieBanner({ forceShow = false, onClose }) {
               )}
             </div>
 
-            {/* Statistik ohne Cookies */}
-            <div className="space-y-2 border border-[var(--secondary)]/20 p-6">
-              <p className="font-medium text-gray-900">Statistik ohne Cookies</p>
-              <p className="text-sm text-gray-600 ml-0">
-                Für anonyme Besucherstatistiken nutzen wir Umami auf unserem eigenen Server – ohne Cookies, ohne
-                Speicherung Ihrer IP-Adresse und ohne Weitergabe an Dritte. Dafür ist keine Einwilligung erforderlich;
-                eine „Do Not Track“-Einstellung Ihres Browsers wird respektiert. Details in der{" "}
+            {/* Statistik */}
+            <div className="space-y-4 border border-[var(--secondary)]/20 p-6">
+              <div className="flex items-center justify-start gap-2">
+                <label htmlFor="statistics-cookies" className="flex items-center space-x-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    id="statistics-cookies"
+                    checked={consent.statistics}
+                    onChange={() => toggleConsent("statistics")}
+                    className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                  />
+                  <span className="font-medium text-gray-900">Statistik (1)</span>
+                </label>
+              </div>
+              <p className="text-sm text-gray-500 ml-8">
+                Statistik-Dienste helfen uns zu verstehen, wie Besucher unsere Website nutzen, damit wir sie verbessern
+                können. Sie werden erst nach Ihrer Zustimmung geladen. Details in der{" "}
                 <Link href="/datenschutz#statistik" className="font-medium text-ov-700 underline">
                   Datenschutzerklärung
                 </Link>
-                .
+                .&nbsp;&nbsp;
+                <button
+                  type="button"
+                  onClick={() => toggleCategoryDetails("statistics")}
+                  aria-expanded={expandedSections.statistics}
+                  className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline cursor-pointer bg-transparent border-0 p-0"
+                >
+                  {expandedSections.statistics ? "Details ausblenden" : "Details anzeigen"}
+                </button>
               </p>
+              {expandedSections.statistics && (
+                <div className="ml-8 space-y-2">
+                  <label htmlFor="google-analytics" className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      id="google-analytics"
+                      checked={consent.googleAnalytics}
+                      onChange={() => toggleConsent("googleAnalytics")}
+                      className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                    />
+                    <span className="font-medium text-black">{cookieServices.statistics.googleAnalytics.title}</span>
+                  </label>
+                  <p className="text-sm text-gray-500 ml-8">
+                    {cookieServices.statistics.googleAnalytics.description}&nbsp;&nbsp;
+                    <button
+                      type="button"
+                      onClick={() => toggleServiceDetails("googleAnalytics")}
+                      aria-expanded={expandedServices.googleAnalytics}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
+                    >
+                      {expandedServices.googleAnalytics ? "Details ausblenden" : "Details anzeigen"}
+                    </button>
+                  </p>
+                  {expandedServices.googleAnalytics && <CookieDetails service={cookieServices.statistics.googleAnalytics} />}
+                </div>
+              )}
             </div>
           </div>
           <div className="border-t border-gray-200 bg-gray-50 p-2 sticky bottom-0">

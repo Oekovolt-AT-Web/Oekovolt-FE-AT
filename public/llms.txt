@@ -122,6 +122,9 @@ Purpose: Provide structured, factual, LLM-readable context about Ökovolt Solart
 - [RSS: Presse & Neuigkeiten](https://www.oekovolt.de/presse/rss.xml) · [JSON Feed](https://www.oekovolt.de/presse/feed.json)
 - [RSS: Ratgeber](https://www.oekovolt.de/ratgeber/rss.xml)
 - Fediverse (ActivityPub, folgbar über Mastodon, Threads u. a.): @oekovolt@oekovolt.de (News & Presse), @ratgeber@oekovolt.de (Fachartikel)
+
+### Rechtliches
+
 - [Impressum](https://www.oekovolt.de/impressum)
 - [Datenschutz](https://www.oekovolt.de/datenschutz)
 - [AGB](https://www.oekovolt.de/agb)

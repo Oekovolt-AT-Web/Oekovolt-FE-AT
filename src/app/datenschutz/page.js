@@ -11,7 +11,7 @@ export const metadata = {
     "Datenschutz",
     "ÖKOVOLT GmbH",
     "DSGVO",
-    "Umami",
+    "Google Analytics",
     "Cookies",
   ],
   openGraph: {

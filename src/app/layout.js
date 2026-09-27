@@ -1,4 +1,4 @@
-import Umami from "@/components/Statistik/Umami";
+import GoogleAnalytics from "@/components/Statistik/GoogleAnalytics";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
@@ -262,7 +262,7 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
         />
         <LayoutWrapper>{children}</LayoutWrapper>
-        <Umami />
+        <GoogleAnalytics />
       </body>
     </html>
   );

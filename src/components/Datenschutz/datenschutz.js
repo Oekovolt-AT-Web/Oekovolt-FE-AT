@@ -105,7 +105,7 @@ const PrivacyPolicy = () => {
           Wir setzen nur ein technisch notwendiges Cookie („cookieConsent“), in dem Ihre Auswahl im Cookie-Banner für
           ein Jahr gespeichert wird. Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG in Verbindung mit Art. 6 Abs. 1 lit. c
           und f DSGVO. Weitere Cookies entstehen nur, wenn Sie Inhalte von Drittanbietern ausdrücklich zulassen (Google
-          Maps, siehe Cookie-Einstellungen). Für Push-Benachrichtigungen legt Ihr Browser nach Ihrer Zustimmung ein
+          Analytics und Google Maps, siehe Cookie-Einstellungen). Für Push-Benachrichtigungen legt Ihr Browser nach Ihrer Zustimmung ein
           Abonnement an (siehe Abschnitt „Push-Benachrichtigungen“).
         </p>
         <p>
@@ -115,27 +115,34 @@ const PrivacyPolicy = () => {
       </section>
 
       <section id="statistik" className="mb-12 scroll-mt-28">
-        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Besucherstatistik mit Umami (ohne Cookies)</h2>
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Besucherstatistik mit Google Analytics</h2>
         <p className="mb-4">
-          Um unser Angebot zu verbessern, erstellen wir anonyme Besucherstatistiken mit der Open-Source-Software Umami,
-          die wir selbst auf Servern in Deutschland betreiben. Umami setzt keine Cookies, nutzt keinen lokalen Speicher
-          Ihres Browsers und speichert Ihre IP-Adresse nicht. Erfasst werden die aufgerufene Seite (ohne Such- und
-          Formularparameter; Kampagnenparameter wie utm_source bleiben erhalten), die Herkunftsseite (nur die Domain),
-          Browsertyp, Betriebssystem, Gerätekategorie, Bildschirmgröße, Sprache, Land sowie anonyme Ereignisse wie
-          „Formular abgesendet“. Zur Unterscheidung von Besuchen wird ein täglich wechselnder, nicht umkehrbarer Hashwert
-          gebildet; ein Wiedererkennen über mehrere Tage oder Websites hinweg ist nicht möglich. Die Daten werden nicht an
-          Dritte weitergegeben.
+          Sofern Sie im Cookie-Banner unter „Statistik“ eingewilligt haben, nutzen wir Google Analytics 4, einen
+          Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland („Google“). Ohne Ihre
+          Einwilligung wird Google Analytics nicht geladen und es werden keine Daten an Google übertragen.
         </p>
         <p className="mb-4">
-          Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen Reichweitenmessung und
-          Fehleranalyse (Art. 6 Abs. 1 lit. f DSGVO). Da keine Informationen auf Ihrem Endgerät gespeichert oder aus ihm
-          ausgelesen werden, ist keine Einwilligung nach § 25 TDDDG erforderlich. Aktivieren Sie in Ihrem Browser „Do Not
-          Track“, findet keine Erfassung statt. Seiten mit Einmal-Zugangscodes (z. B. Upload per QR-Code) werden
-          grundsätzlich nicht erfasst.
+          Erfasst werden die aufgerufenen Seiten (ohne Such- und Formularparameter; Kampagnenparameter wie utm_source
+          bleiben erhalten), die Herkunftsseite, Verweildauer, Browsertyp, Betriebssystem, Gerätekategorie,
+          Bildschirmgröße, Sprache, ungefährer Standort (Land/Region) sowie Ereignisse wie „Formular abgesendet“. Namen,
+          E-Mail-Adressen oder andere Formularinhalte werden nicht an Google übermittelt. Zur Wiedererkennung Ihres
+          Browsers setzt Google Analytics die Cookies „_ga“ und „_ga_*“ (Speicherdauer bis zu 2 Jahre). IP-Adressen werden
+          von Google Analytics 4 nicht gespeichert. Google Signals, Werbefunktionen und personalisierte Werbung sind
+          deaktiviert. Seiten mit Einmal-Zugangscodes (z. B. Upload per QR-Code) werden grundsätzlich nicht erfasst.
+        </p>
+        <p className="mb-4">
+          Google kann Daten auch in den USA verarbeiten. Google ist nach dem EU-US Data Privacy Framework zertifiziert,
+          für das ein Angemessenheitsbeschluss der EU-Kommission besteht. Mit Google haben wir einen Vertrag zur
+          Auftragsverarbeitung geschlossen. Die Daten werden nach 14 Monaten automatisch gelöscht.
         </p>
         <p>
-          Sie können der Verarbeitung jederzeit widersprechen, etwa über die „Do Not Track“-Einstellung oder formlos per
-          E-Mail an office@oekovolt.de.
+          Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG). Sie können die
+          Einwilligung jederzeit mit Wirkung für die Zukunft über „Privatsphäre-Einstellungen“ im Seitenfuß widerrufen;
+          die Messung wird dann sofort beendet und die Analytics-Cookies werden gelöscht. Weitere Informationen:{" "}
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" className="text-ov-700 underline">
+            Datenschutzerklärung von Google
+          </a>
+          .
         </p>
       </section>
 
@@ -169,6 +176,28 @@ const PrivacyPolicy = () => {
           Cookies oder im Browserspeicher abgelegt; sie werden ausschließlich mit einer von Ihnen abgesendeten Anfrage
           übertragen. Rechtsgrundlage ist unser berechtigtes Interesse an der Auswertung unserer Marketingmaßnahmen
           (Art. 6 Abs. 1 lit. f DSGVO). Die Angaben werden gemeinsam mit der Anfrage gelöscht.
+        </p>
+      </section>
+
+      <section id="ip-adresse" className="mb-12 scroll-mt-28">
+        <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Speicherung der IP-Adresse bei Anfragen</h2>
+        <p className="mb-4">
+          Wenn Sie über unsere Website ein Formular absenden – Kontaktformular, Rückruf, Terminbuchung, Angebotsanfrage,
+          PDF-Analyse aus dem Solarrechner sowie Unterlagen per Smartphone –, speichern wir zusammen mit Ihren Angaben die
+          IP-Adresse, von der aus das Formular abgesendet wurde, und den Zeitpunkt des Absendens. Für Meldungen über das
+          Hinweisgebersystem gilt das ausdrücklich nicht (siehe unten).
+        </p>
+        <p className="mb-4">
+          Die IP-Adresse dient ausschließlich dazu, Ihre Anfrage bzw. Einwilligung nachweisen zu können (etwa bei der
+          Erlaubnis, Sie anzurufen) und unsere Formulare vor Missbrauch und automatisierten Spam-Anfragen zu schützen. Sie
+          wird nicht an Dritte weitergegeben und nicht mit anderen Daten zu einem Profil zusammengeführt. Rechtsgrundlage ist
+          unser berechtigtes Interesse an der Nachweisbarkeit von Einwilligungen und an der Sicherheit unserer Website
+          (Art. 6 Abs. 1 lit. f DSGVO).
+        </p>
+        <p>
+          Die IP-Adresse wird gemeinsam mit der jeweiligen Anfrage gelöscht, sobald diese abschließend bearbeitet ist und
+          keine gesetzlichen Aufbewahrungsfristen entgegenstehen. Sie können der Verarbeitung jederzeit widersprechen,
+          formlos per E-Mail an office@oekovolt.de.
         </p>
       </section>
 
