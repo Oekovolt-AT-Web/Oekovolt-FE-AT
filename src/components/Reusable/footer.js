@@ -154,7 +154,7 @@ export default function Footer() {
               <li><Link href="/impressum" className="transition-colors hover:text-white">Impressum</Link></li>
               <li><Link href="/datenschutz" className="transition-colors hover:text-white">Datenschutz</Link></li>
               <li><Link href="/agb" className="transition-colors hover:text-white">AGB</Link></li>
-              <li><Link href="/hinweisgebersystem" className="transition-colors hover:text-white">Hinweisgebersystem</Link></li>
+              <li><a href="https://oekovolt.integrityline.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">Hinweisgebersystem</a></li>
               <li><Link href="/barrierefreiheit" className="transition-colors hover:text-white">Barrierefreiheit</Link></li>
             </ul>
           </nav>

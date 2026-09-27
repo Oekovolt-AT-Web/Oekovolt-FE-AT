@@ -114,7 +114,7 @@ Purpose: Provide structured, factual, LLM-readable context about Ökovolt Solart
 - [Energie live – Day-Ahead-Strompreis & Stromerzeugung in Deutschland in Echtzeit](https://www.oekovolt.de/energie-live)
 - [Beratungstermin online buchen – Telefon, Video, vor Ort](https://www.oekovolt.de/termin)
 - [Presse & Neuigkeiten (Newsroom)](https://www.oekovolt.de/presse)
-- [Hinweisgebersystem (HinSchG, anonym möglich)](https://www.oekovolt.de/hinweisgebersystem)
+- [Hinweisgebersystem (HinSchG, anonym möglich)](https://oekovolt.integrityline.com/)
 
 ### Feeds & Fediverse
 

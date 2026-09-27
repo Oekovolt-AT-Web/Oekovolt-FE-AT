@@ -15,8 +15,13 @@ const KEY = process.env.HINWEIS_API_KEY || process.env.API_KEY;
 const SECRET = process.env.HINWEIS_API_SECRET || process.env.API_SECRET;
 const BASIS = `${SERVER}/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.hinweis.api.`;
 
+// Eigenes Hinweisgebersystem erst nach Freigabe aktiv (HINWEIS_INTERN=1). Bis dahin läuft der
+// Meldekanal über IntegrityLine und die API lehnt Meldungen ab (503), damit nichts in einem
+// Kanal landet, der noch nicht betreut wird.
+const INTERN_AKTIV = process.env.HINWEIS_INTERN === "1";
+
 export function hinweisKonfiguriert() {
-  return Boolean(SERVER && KEY && SECRET);
+  return Boolean(INTERN_AKTIV && SERVER && KEY && SECRET);
 }
 
 /** Ruft eine whitelisted Frappe-Methode auf. Wirft bei Fehlern ohne Inhaltsdetails. */

@@ -25,6 +25,12 @@ const nextConfig = {
         permanent: true,
       },
 
+      // Hinweisgebersystem: vorerst IntegrityLine (wie bisher). Eigenes System unter
+      // /hinweisgebersystem ist fertig, aber noch nicht freigegeben – temporär (307),
+      // damit die Seite später ohne Browser-Cache-Probleme zurückkommen kann.
+      { source: "/hinweisgebersystem", destination: "https://oekovolt.integrityline.com/", permanent: false },
+      { source: "/hinweisgebersystem/:path*", destination: "https://oekovolt.integrityline.com/", permanent: false },
+
       // HINWEIS: trailingSlash ist false -> Next normalisiert "/x/" zu "/x",
       // BEVOR diese Redirects ausgewertet werden. Alle Quellen daher OHNE
       // abschliessenden Slash notieren, sonst greifen sie nie.

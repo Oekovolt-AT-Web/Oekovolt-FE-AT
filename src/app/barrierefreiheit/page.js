@@ -43,7 +43,6 @@ export default function BarrierefreiheitPage() {
           <li>Rechner und Werkzeuge (u. a. Solarrechner, Stromspeicher-, Wärmepumpen- und Finanzierungsrechner, Fördercheck)</li>
           <li>Rückruf-Service und Online-Terminbuchung</li>
           <li>Kontaktformular und Kurzbewerbung</li>
-          <li>Hinweisgebersystem nach dem Hinweisgeberschutzgesetz</li>
         </ul>
       </>
 

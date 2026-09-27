@@ -71,7 +71,6 @@ const STATIC_PAGES = [
   // Live-Daten: Inhalt aendert sich viertelstuendlich
   { path: "/energie-live", changeFrequency: "hourly", priority: 0.8, lastModified: UPDATED_2026_09 },
   { path: "/wissen/lexikon", changeFrequency: "monthly", priority: 0.7, lastModified: UPDATED_2026_09 },
-  { path: "/hinweisgebersystem", changeFrequency: "yearly", priority: 0.3, lastModified: UPDATED_2026_09 },
   { path: "/impressum", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/datenschutz", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/agb", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
