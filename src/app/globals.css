@@ -324,6 +324,10 @@ main li::marker {
   body.ov-cta-sichtbar button[aria-label="Nach oben"] {
     bottom: 96px !important;
   }
+  /* Rückruf-Icon (links unten) ebenfalls über die Leiste heben */
+  body.ov-cta-sichtbar .ov-rueckruf-launcher {
+    bottom: 96px;
+  }
 }
 
 /* Mobilmenü offen: Hintergrund sperren, schwebende Elemente ausblenden. */

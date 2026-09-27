@@ -182,9 +182,9 @@ export const metadata = {
   category: "Erneuerbare Energien",
   classification: "Photovoltaik & Solartechnik",
   icons: {
-    icon: "/Logo_ov_4cDeutschland-removebg-preview.png",
-    shortcut: "/Logo_ov_4cDeutschland-removebg-preview.png",
-    apple: "/Logo_ov_4cDeutschland-removebg-preview.png",
+    icon: "/logo_blue.png",
+    shortcut: "/logo_blue.png",
+    apple: "/logo_blue.png",
   },
   openGraph: {
     type: "website",

@@ -8,6 +8,6 @@ export default function manifest() {
     background_color: "#03122b",
     theme_color: "#669933",
     lang: "de-DE",
-    icons: [{ src: "/Logo_ov_4cDeutschland-removebg-preview.png", sizes: "any", type: "image/png" }],
+    icons: [{ src: "/logo_blue.png", sizes: "any", type: "image/png" }],
   };
 }

@@ -14,6 +14,8 @@ import { RUECKRUF_EVENT } from "./oeffnen";
 // Hinweisgebersystem: bewusst keine Kontakt-Widgets (Vertraulichkeit); Terminseite hat eigenen Ablauf.
 const OHNE_WIDGET = ["/hinweisgebersystem", "/termin", "/angebot"];
 const ICONS = { Phone, Video, MapPin };
+// Merkt sich, ob der Besucher den großen Launcher auf das Icon verkleinert hat.
+const KLEIN_KEY = "ov-rueckruf-klein";
 
 export default function RueckrufWidget() {
   const pfad = usePathname() || "/";
@@ -21,13 +23,14 @@ export default function RueckrufWidget() {
   const [tab, setTab] = useState("rueckruf");
   const [sichtbar, setSichtbar] = useState(false);
   const [geoeffnet, setGeoeffnet] = useState(null);
+  const [klein, setKlein] = useState(false);
   const ausloeser = useRef(null);
   const panel = useRef(null);
   const titel = useRef(null);
   const ausgenommen = OHNE_WIDGET.some((p) => pfad === p || pfad.startsWith(`${p}/`));
 
   // Fokus wird von useFokusFalle an das zuvor fokussierte Element zurückgegeben
-  // (mobil ist der Launcher ausgeblendet – Auslöser ist dann z. B. die Handlungsleiste).
+  // (Launcher-Icon oder z. B. die mobile Handlungsleiste).
   const schliessen = useCallback(() => setOffen(false), []);
   useFokusFalle(offen, panel, { beiEscape: schliessen, startRef: titel });
 
@@ -40,6 +43,21 @@ export default function RueckrufWidget() {
     window.addEventListener(RUECKRUF_EVENT, oeffnen);
     return () => window.removeEventListener(RUECKRUF_EVENT, oeffnen);
   }, []);
+
+  // Verkleinerten Zustand aus früheren Seitenaufrufen übernehmen
+  useEffect(() => {
+    try {
+      setKlein(window.localStorage.getItem(KLEIN_KEY) === "1");
+    } catch {}
+  }, []);
+
+  const verkleinern = () => {
+    setKlein(true);
+    try {
+      window.localStorage.setItem(KLEIN_KEY, "1");
+    } catch {}
+    ausloeser.current?.focus();
+  };
 
   // Launcher dezent verzögert einblenden
   useEffect(() => {
@@ -68,28 +86,55 @@ export default function RueckrufWidget() {
 
   return (
     <>
-      {/* Launcher – nur Desktop; mobil öffnet die Handlungsleiste */}
+      {/* Launcher – mobil und verkleinert nur das Icon, auf Desktop sonst mit Text */}
       {!ausgenommen && (
-        <button
-          ref={ausloeser}
-          type="button"
-          onClick={() => (offen ? schliessen() : (setTab("rueckruf"), setOffen(true)))}
-          aria-expanded={offen}
-          aria-controls="ov-rueckruf-panel"
+        <div
           className={cn(
-            "group fixed bottom-8 left-8 z-[9400] hidden items-center gap-3 rounded-full bg-navy-950 py-2 pl-2 pr-5 text-white shadow-[0_18px_40px_-14px_rgba(3,18,43,0.7)] ring-1 ring-white/10 transition-all duration-500 hover:-translate-y-0.5 lg:flex",
+            "ov-rueckruf-launcher fixed bottom-6 left-5 z-[9400] transition-all duration-500 lg:bottom-8 lg:left-8",
             sichtbar ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
           )}
+          style={{ marginBottom: "env(safe-area-inset-bottom)" }}
         >
-          <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-ov-500">
-            {offen ? <X aria-hidden="true" className="h-5 w-5" /> : <PhoneCall aria-hidden="true" className="h-[18px] w-[18px]" />}
-            {geoeffnet && !offen && <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-ov-300 ring-2 ring-navy-950 motion-safe:animate-pulse" />}
-          </span>
-          <span className="text-left leading-tight">
-            <span className="block text-[14.5px] font-semibold">{offen ? "Schließen" : "Kostenloser Rückruf"}</span>
-            {!offen && <span className="block text-[12px] text-white/60">{geoeffnet ? "Wir sind jetzt erreichbar" : "Wunschzeit wählen"}</span>}
-          </span>
-        </button>
+          <button
+            ref={ausloeser}
+            type="button"
+            onClick={() => (offen ? schliessen() : (setTab("rueckruf"), setOffen(true)))}
+            aria-expanded={offen}
+            aria-controls="ov-rueckruf-panel"
+            aria-label={offen ? "Rückruf-Fenster schließen" : "Kostenlosen Rückruf anfordern"}
+            title={klein && !offen ? "Kostenloser Rückruf" : undefined}
+            tabIndex={sichtbar ? 0 : -1}
+            className={cn(
+              "group flex items-center gap-3 rounded-full bg-navy-950 p-1.5 text-white shadow-[0_18px_40px_-14px_rgba(3,18,43,0.7)] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-0.5",
+              !klein && "lg:py-2 lg:pl-2 lg:pr-5"
+            )}
+          >
+            <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 lg:h-10 lg:w-10">
+              {offen ? <X aria-hidden="true" className="h-5 w-5" /> : <PhoneCall aria-hidden="true" className="h-[18px] w-[18px]" />}
+              {geoeffnet && !offen && <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-ov-300 ring-2 ring-navy-950 motion-safe:animate-pulse" />}
+            </span>
+            {/* Text nur auf Desktop und nur, solange nicht verkleinert */}
+            {!klein && (
+              <span aria-hidden="true" className="hidden text-left leading-tight lg:block">
+                <span className="block text-[14.5px] font-semibold">{offen ? "Schließen" : "Kostenloser Rückruf"}</span>
+                {!offen && <span className="block text-[12px] text-white/60">{geoeffnet ? "Wir sind jetzt erreichbar" : "Wunschzeit wählen"}</span>}
+              </span>
+            )}
+          </button>
+
+          {/* Großen Launcher auf das Icon verkleinern (nur Desktop – mobil ist er ohnehin klein) */}
+          {!klein && !offen && (
+            <button
+              type="button"
+              onClick={verkleinern}
+              aria-label="Rückruf-Hinweis verkleinern"
+              tabIndex={sichtbar ? 0 : -1}
+              className="absolute -right-2 -top-2 hidden h-6 w-6 items-center justify-center rounded-full bg-white text-ink-700 shadow-md ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ov-500 lg:flex"
+            >
+              <X aria-hidden="true" className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       )}
 
       {offen && (

@@ -1,21 +1,24 @@
 import { cn } from "./cn";
 import Reveal from "./Reveal";
 
-/** Kleine Überzeile über Headlines. */
+/**
+ * Kleine Überzeile über Headlines.
+ * Der Punkt sitzt in einer Box mit genau einer Zeilenhöhe – einzeilig mittig zum Text,
+ * bei Umbruch mittig zur ersten Zeile.
+ */
 export function Eyebrow({ children, dark = false, className }) {
   return (
     <p
       className={cn(
-        "inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em]",
+        "inline-flex items-start gap-2 text-[12.5px] font-semibold uppercase leading-[1.5] tracking-[0.16em]",
         dark ? "text-ov-300" : "text-ov-700",
         className
       )}
     >
-      <span
-        aria-hidden="true"
-        className={cn("h-1.5 w-1.5 rounded-full", dark ? "bg-ov-300" : "bg-ov-500")}
-      />
-      {children}
+      <span aria-hidden="true" className="flex h-[1.5em] shrink-0 items-center">
+        <span className={cn("h-1.5 w-1.5 rounded-full", dark ? "bg-ov-300" : "bg-ov-500")} />
+      </span>
+      <span>{children}</span>
     </p>
   );
 }
