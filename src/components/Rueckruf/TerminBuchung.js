@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
-  AlertCircle, ArrowLeft, ArrowRight, CalendarCheck2, CalendarDays, Check, Clock, Loader2, Lock, MapPin, Phone, RefreshCw, Video,
+  AlertCircle, ArrowLeft, ArrowRight, CalendarCheck2, CalendarDays, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock, MapPin, Phone, RefreshCw, Video,
 } from "lucide-react";
 import { cn } from "@/components/ui/cn";
-import { TERMIN_ARTEN, THEMEN, telefonNormalisieren } from "@/data/erreichbarkeit";
+import { TERMIN_ARTEN, THEMEN, berlin, hhmm, slotsFuerArt, telefonNormalisieren } from "@/data/erreichbarkeit";
+import { tageAusApi } from "@/lib/terminSlots";
 import KalenderLinks from "./KalenderLinks";
 import { oeffneRueckruf } from "./oeffnen";
-import { herkunft } from "@/lib/herkunft";
 import { ereignis } from "@/lib/statistik";
 
 const ICONS = { Phone, Video, MapPin };
@@ -21,15 +21,139 @@ const langDatum = (iso) =>
 const uhrzeit = (iso) => new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
 const FEHLERTEXT = {
-  belegt: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie eine andere Zeit.",
   einwilligung: "Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.",
-  zu_viele: "Sie haben bereits mehrere Termine angefragt – wir melden uns bei Ihnen.",
-  nicht_konfiguriert: "Die Online-Buchung ist gerade nicht verfügbar. Rufen Sie uns gern an: 08245 96 788 0.",
   backend: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
+  vergeben: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie eine andere Uhrzeit.",
 };
 
-export default function TerminBuchung() {
+/**
+ * Horizontale Tagesleiste: Pfeile, Ziehen mit der Maus und Mausrad scrollen seitlich.
+ * Touch/Trackpad scrollen wie gewohnt nativ.
+ */
+function TageLeiste({ aktivIndex, children }) {
+  const leiste = useRef(null);
+  const zug = useRef(null);
+  const [rand, setRand] = useState({ links: false, rechts: false });
+
+  const pruefeRand = () => {
+    const el = leiste.current;
+    if (!el) return;
+    setRand({ links: el.scrollLeft > 4, rechts: el.scrollLeft + el.clientWidth < el.scrollWidth - 4 });
+  };
+
+  useEffect(() => {
+    const el = leiste.current;
+    if (!el) return;
+    pruefeRand();
+    // Mausrad (vertikal) seitlich scrollen – am Ende scrollt wieder die Seite
+    const rad = (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      const max = el.scrollWidth - el.clientWidth;
+      if ((e.deltaY < 0 && el.scrollLeft <= 0) || (e.deltaY > 0 && el.scrollLeft >= max - 1)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", rad, { passive: false });
+    window.addEventListener("resize", pruefeRand);
+    return () => {
+      el.removeEventListener("wheel", rad);
+      window.removeEventListener("resize", pruefeRand);
+    };
+  }, []);
+
+  // Gewählten Tag sichtbar halten
+  useEffect(() => {
+    const el = leiste.current;
+    const knopf = el?.children[aktivIndex];
+    if (!el || !knopf) return;
+    const links = knopf.offsetLeft - el.offsetLeft;
+    if (links < el.scrollLeft || links + knopf.offsetWidth > el.scrollLeft + el.clientWidth) {
+      el.scrollTo({ left: links - el.clientWidth / 2 + knopf.offsetWidth / 2, behavior: "smooth" });
+    }
+  }, [aktivIndex]);
+
+  const blaettern = (richtung) => {
+    const el = leiste.current;
+    el?.scrollBy({ left: richtung * el.clientWidth * 0.8, behavior: "smooth" });
+  };
+
+  // Klicken und Ziehen mit der Maus
+  const onPointerDown = (e) => {
+    if (e.pointerType !== "mouse" || e.button !== 0) return;
+    zug.current = { x: e.clientX, start: leiste.current.scrollLeft, bewegt: false };
+  };
+  const onPointerMove = (e) => {
+    const z = zug.current;
+    if (!z) return;
+    const dx = e.clientX - z.x;
+    if (!z.bewegt && Math.abs(dx) > 5) {
+      z.bewegt = true;
+      leiste.current.setPointerCapture?.(e.pointerId);
+    }
+    if (z.bewegt) leiste.current.scrollLeft = z.start - dx;
+  };
+  const onPointerUp = (e) => {
+    const z = zug.current;
+    zug.current = null;
+    if (z?.bewegt) {
+      leiste.current.releasePointerCapture?.(e.pointerId);
+      // Klick nach dem Ziehen nicht als Tagesauswahl werten
+      const stopp = (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+      };
+      leiste.current.addEventListener("click", stopp, { capture: true, once: true });
+      setTimeout(() => leiste.current?.removeEventListener("click", stopp, { capture: true }), 0);
+    }
+  };
+
+  const pfeil =
+    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-ink-800 shadow-sm ring-1 ring-ink-200 transition hover:bg-ov-50 hover:text-ov-700 hover:ring-ov-300 disabled:cursor-default disabled:bg-ink-50 disabled:text-ink-300 disabled:shadow-none disabled:ring-ink-100 sm:h-12 sm:w-12";
+
+  // Weiche Kanten, solange es in die Richtung noch weitergeht
+  const maske = `linear-gradient(to right, ${rand.links ? "transparent" : "#000"} 0, #000 ${rand.links ? "28px" : "0"}, #000 calc(100% - ${rand.rechts ? "28px" : "0px"}), ${rand.rechts ? "transparent" : "#000"} 100%)`;
+
+  return (
+    <div className="mt-7 flex items-center gap-2 sm:gap-3">
+      <button type="button" onClick={() => blaettern(-1)} disabled={!rand.links} aria-label="Frühere Tage" className={pfeil}>
+        <ChevronLeft aria-hidden="true" className="h-5 w-5" />
+      </button>
+      <div
+        ref={leiste}
+        onScroll={pruefeRand}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onDragStart={(e) => e.preventDefault()}
+        style={{ maskImage: maske, WebkitMaskImage: maske }}
+        className="ov-no-scrollbar flex min-w-0 flex-1 cursor-grab select-none gap-2 overflow-x-auto py-1 active:cursor-grabbing"
+        role="group"
+        aria-label="Tag wählen"
+      >
+        {children}
+      </div>
+      <button type="button" onClick={() => blaettern(1)} disabled={!rand.rechts} aria-label="Spätere Tage" className={pfeil}>
+        <ChevronRight aria-hidden="true" className="h-5 w-5" />
+      </button>
+    </div>
+  );
+}
+
+/** Fallback without API: local times (not checked against bookings) */
+function tageLokal(artId) {
+  return slotsFuerArt(artId).map((d) => ({
+    ...d,
+    status: d.slots.length ? "frei" : "geschlossen",
+    buchbar: d.slots.length > 0,
+    slots: d.slots.map((s) => ({ ...s, frei: true })),
+  }));
+}
+
+export default function TerminBuchung({ kalender = null }) {
   const params = useSearchParams();
+  const router = useRouter();
+  const [aktualisiert, startTransition] = useTransition();
   const startArt = TERMIN_ARTEN.some((a) => a.id === params.get("art")) ? params.get("art") : null;
 
   const [schritt, setSchritt] = useState(startArt ? 1 : 0);
@@ -43,29 +167,45 @@ export default function TerminBuchung() {
   const [senden, setSenden] = useState(false);
   const [fehler, setFehler] = useState("");
   const [ergebnis, setErgebnis] = useState(null);
-  const start = useRef(Date.now());
   const website = useRef(null);
   const kopf = useRef(null);
 
   const art = TERMIN_ARTEN.find((a) => a.id === artId);
 
-  const laden = async (id = artId) => {
-    setDaten((d) => ({ ...d, laden: true }));
-    try {
-      const r = await fetch(`/api/termin?art=${id}`, { cache: "no-store" });
-      const d = await r.json();
-      setDaten({ laden: false, tage: d.tage || [], verfuegbar: d.verfuegbar !== false, live: d.live !== false });
-    } catch {
-      setDaten({ laden: false, tage: [], verfuegbar: false, live: false });
+  // Builds the days: API data if available, otherwise local fallback
+  const aufbauen = (id, zuruecksetzen) => {
+    const a = TERMIN_ARTEN.find((x) => x.id === id);
+    const api = kalender?.[a?.titel];
+    const live = Array.isArray(api) && api.length > 0;
+    const tage = live ? tageAusApi(api) : tageLokal(id);
+
+    setDaten({ laden: false, tage, verfuegbar: tage.some((d) => d.buchbar), live });
+
+    if (zuruecksetzen) {
+      const erster = tage.findIndex((d) => d.buchbar);
+      setTagIndex(erster >= 0 ? erster : 0);
+      setSlot("");
+    } else {
+      // after refresh: discard the chosen time if it is no longer free
+      const nochFrei = (s) => tage.some((d) => d.slots.some((x) => x.start === s && x.frei));
+      setSlot((s) => (s && !nochFrei(s) ? "" : s));
     }
   };
 
+  // New Terminart → rebuild and reset selection
   useEffect(() => {
-    laden(artId);
-    setTagIndex(0);
-    setSlot("");
+    aufbauen(artId, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artId]);
+
+  // New server data (after "Aktualisieren") → rebuild, keep selection if still free
+  useEffect(() => {
+    aufbauen(artId, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [kalender]);
+
+  // Reload calendar from the server (runs page.js again → new kalender prop)
+  const laden = () => startTransition(() => router.refresh());
 
   const zu = (n) => {
     setSchritt(n);
@@ -94,41 +234,53 @@ export default function TerminBuchung() {
 
     setSenden(true);
     setFehler("");
+    const b = berlin(new Date(slot));
+    const nachricht = [werte.nachricht.trim(), art.mitAdresse && werte.adresse.trim() ? `Adresse: ${werte.adresse.trim()}` : ""].filter(Boolean).join("\n\n");
     try {
       const r = await fetch("/api/termin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          art: artId,
-          start: slot,
-          ...werte,
-          einwilligung,
+          terminart: art.titel,
+          datum: b.ymd,
+          uhrzeit: hhmm(b.minuten),
+          name_komplett: werte.name.trim(),
+          email: werte.email.trim(),
+          telefon: telefonNormalisieren(werte.telefon),
+          plz: werte.plz.trim(),
+          thema: werte.thema,
+          nachricht,
+          einwilligung: einwilligung ? 1 : 0,
+          quelle: window.location.pathname,
           website: website.current?.value || "",
-          dauer: Date.now() - start.current,
-          seite: window.location.pathname,
-          herkunft: herkunft(),
         }),
       });
       const d = await r.json().catch(() => ({}));
       if (!r.ok) {
-        if (d.fehler === "belegt") {
-          setSlot("");
-          await laden();
-          zu(1);
-        }
-        throw new Error(d.fehler || "backend");
+        const err = new Error(d.error || "backend");
+        err.status = r.status;
+        throw err;
       }
-      setErgebnis(d);
+      setErgebnis({ referenz: d?.data?.message?.referenz || null });
       ereignis("termin_gebucht", { art: artId });
       zu(3);
     } catch (err) {
-      setFehler(FEHLERTEXT[err.message] || FEHLERTEXT.backend);
+      if (err.status === 409) {
+        // slot was taken in the meantime → back to time selection with fresh data
+        setSlot("");
+        laden();
+        zu(1);
+        setFehler(FEHLERTEXT.vergeben);
+      } else {
+        setFehler(FEHLERTEXT.backend);
+      }
     } finally {
       setSenden(false);
     }
   }
 
   const tag = daten.tage[tagIndex];
+  const laedt = daten.laden || aktualisiert;
 
   // ------------------------------------------------ Bestätigung
   if (schritt === 3 && ergebnis) {
@@ -138,15 +290,12 @@ export default function TerminBuchung() {
         <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-ov-500 text-white shadow-[0_14px_34px_-12px_rgba(102,153,51,0.8)]">
           <CalendarCheck2 aria-hidden="true" className="h-9 w-9" />
         </span>
-        <p className="mt-6 text-[13px] font-semibold uppercase tracking-[0.16em] text-ov-600">{ergebnis.bestaetigt ? "Termin gebucht" : "Terminwunsch eingegangen"}</p>
+        <p className="mt-6 text-[13px] font-semibold uppercase tracking-[0.16em] text-ov-600">Termin gebucht</p>
         <h2 className="ov-h2 mt-2 text-ink-900">
-          {langDatum(ergebnis.start)}, {uhrzeit(ergebnis.start)} Uhr
+          {langDatum(slot)}, {uhrzeit(slot)} Uhr
         </h2>
         <p className="mx-auto mt-3 max-w-lg text-[16px] leading-relaxed text-ink-600">
-          {art.titel} ({art.dauer} Min.) –{" "}
-          {ergebnis.bestaetigt
-            ? `die Bestätigung ist unterwegs an ${werte.email}.`
-            : `wir bestätigen Ihren Wunschtermin in Kürze per E-Mail an ${werte.email}.`}
+          {art.titel} ({art.dauer} Min.) – die Bestätigung ist unterwegs an {werte.email}.
           {art.id === "video" && " Den Link zur Video-Beratung erhalten Sie mit der Bestätigung."}
         </p>
         {ergebnis.referenz && <p className="mt-3 text-[14px] text-ink-500">Buchungsnummer: <span className="ov-num font-semibold text-ink-900">{ergebnis.referenz}</span></p>}
@@ -155,7 +304,7 @@ export default function TerminBuchung() {
           titel={`Ökovolt: ${art.titel}`}
           beschreibung={`${art.titel} mit Ökovolt (${art.dauer} Min.). Fragen oder Terminänderung: 08245 96 788 0 · office@oekovolt.de`}
           ort={ort}
-          start={ergebnis.start}
+          start={slot}
           minuten={art.dauer}
         />
         <div className="mx-auto mt-10 grid max-w-2xl gap-3 border-t border-ink-100 pt-8 text-left sm:grid-cols-3">
@@ -250,16 +399,24 @@ export default function TerminBuchung() {
                 <p className="mt-2 text-[15.5px] text-ink-600">
                   {art.titel} · {art.dauer} Minuten · deutsche Zeit
                 </p>
+                {!daten.live && <p className="mt-1 text-[13px] text-ink-500">Die Verfügbarkeit wird bei der Buchung geprüft.</p>}
               </div>
-              <button type="button" onClick={() => laden()} className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-500 hover:text-ov-700">
-                <RefreshCw aria-hidden="true" className={cn("h-3.5 w-3.5", daten.laden && "animate-spin")} />
+              <button type="button" onClick={laden} disabled={laedt} className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-ink-500 hover:text-ov-700 disabled:opacity-60">
+                <RefreshCw aria-hidden="true" className={cn("h-3.5 w-3.5", laedt && "animate-spin")} />
                 Aktualisieren
               </button>
             </div>
 
-            {daten.laden && daten.tage.length === 0 ? (
+            {fehler && (
+              <p role="alert" className="mt-5 flex items-start gap-2 rounded-xl bg-red-50 p-3 text-[14px] text-red-700 ring-1 ring-red-200">
+                <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+                {fehler}
+              </p>
+            )}
+
+            {laedt && daten.tage.length === 0 ? (
               <div className="mt-7 grid grid-cols-3 gap-2 sm:grid-cols-5" aria-hidden="true">
-                {Array.from({ length: 15 }).map((_, i) => (
+                {Array.from({ length: 40 }).map((_, i) => (
                   <div key={i} className="h-11 animate-pulse rounded-xl bg-ink-100" />
                 ))}
               </div>
@@ -275,52 +432,83 @@ export default function TerminBuchung() {
               </div>
             ) : (
               <>
-                <div className="ov-no-scrollbar -mx-1 mt-7 flex gap-2 overflow-x-auto px-1 pb-2" role="group" aria-label="Tag wählen">
+                <TageLeiste aktivIndex={tagIndex}>
                   {daten.tage.map((d, i) => {
                     const [, mo, ta] = d.ymd.split("-");
                     const aktiv = i === tagIndex;
+                    const zu_ = !d.buchbar;
+                    const hinweis = d.status === "ausgebucht" ? "voll" : "zu";
                     return (
                       <button
                         key={d.ymd}
                         type="button"
                         aria-pressed={aktiv}
+                        disabled={zu_}
+                        aria-label={zu_ ? `${d.label} – ${d.status === "ausgebucht" ? "ausgebucht" : "geschlossen"}` : d.label}
                         onClick={() => {
                           setTagIndex(i);
                           setSlot("");
                         }}
                         className={cn(
                           "flex w-[68px] shrink-0 flex-col items-center rounded-2xl py-2.5 ring-1 ring-inset transition",
-                          aktiv ? "bg-navy-950 text-white ring-navy-950" : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-300"
+                          zu_
+                            ? "cursor-not-allowed bg-ink-50 text-ink-400 ring-ink-100"
+                            : aktiv
+                              ? "bg-navy-950 text-white ring-navy-950"
+                              : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-300"
                         )}
                       >
-                        <span className={cn("text-[12px] font-semibold uppercase", aktiv ? "text-white/70" : "text-ink-500")}>{d.label.slice(0, 2)}</span>
-                        <span className="ov-num font-display text-[21px] font-extrabold leading-tight">{Number(ta)}</span>
-                        <span className={cn("text-[11.5px]", aktiv ? "text-white/70" : "text-ink-500")}>
-                          {new Intl.DateTimeFormat("de-DE", { month: "short" }).format(new Date(Date.UTC(2026, Number(mo) - 1, 1)))}
+                        <span className={cn("text-[12px] font-semibold uppercase", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>{d.label.slice(0, 2)}</span>
+                        <span className={cn("ov-num font-display text-[21px] font-extrabold leading-tight", zu_ && "line-through decoration-1")}>{Number(ta)}</span>
+                        <span className={cn("text-[11.5px]", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>
+                          {zu_ ? hinweis : new Intl.DateTimeFormat("de-DE", { month: "short" }).format(new Date(Date.UTC(2026, Number(mo) - 1, 1)))}
                         </span>
                       </button>
                     );
                   })}
-                </div>
+                </TageLeiste>
 
-                {tag && (
+                {tag && tag.buchbar && (
                   <fieldset className="mt-5">
-                    <legend className="mb-3 text-[14px] font-semibold text-ink-900">{langDatum(tag.slots[0].start)}</legend>
+                    <legend className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[14px] font-semibold text-ink-900">
+                      {langDatum(`${tag.ymd}T12:00:00Z`)}
+                      {tag.slots.some((s) => !s.frei) && (
+                        <span className="inline-flex items-center gap-1.5 text-[12.5px] font-normal text-ink-500">
+                          <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-ink-100 ring-1 ring-ink-200" />
+                          bereits vergeben
+                        </span>
+                      )}
+                    </legend>
                     <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
-                      {tag.slots.map((s) => (
-                        <button
-                          key={s.start}
-                          type="button"
-                          aria-pressed={slot === s.start}
-                          onClick={() => setSlot(s.start)}
-                          className={cn(
-                            "ov-num h-11 rounded-xl text-[15px] font-semibold ring-1 ring-inset transition",
-                            slot === s.start ? "bg-ov-600 text-white ring-ov-600 shadow-[0_8px_20px_-8px_rgba(102,153,51,0.8)]" : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-400"
-                          )}
-                        >
-                          {s.zeit}
-                        </button>
-                      ))}
+                      {tag.slots.map((s) =>
+                        s.frei ? (
+                          <button
+                            key={s.start}
+                            type="button"
+                            aria-pressed={slot === s.start}
+                            onClick={() => {
+                              setSlot(s.start);
+                              setFehler("");
+                            }}
+                            className={cn(
+                              "ov-num h-11 rounded-xl text-[15px] font-semibold ring-1 ring-inset transition",
+                              slot === s.start ? "bg-ov-600 text-white ring-ov-600 shadow-[0_8px_20px_-8px_rgba(102,153,51,0.8)]" : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-400"
+                            )}
+                          >
+                            {s.zeit}
+                          </button>
+                        ) : (
+                          <button
+                            key={s.start}
+                            type="button"
+                            disabled
+                            aria-label={`${s.zeit} Uhr – bereits vergeben`}
+                            className="ov-num h-11 cursor-not-allowed rounded-xl bg-ink-50 text-[15px] font-semibold text-ink-400 line-through ring-1 ring-inset ring-ink-100"
+                          >
+                            {s.zeit}
+                          </button>
+                        )
+                      )}
                     </div>
                   </fieldset>
                 )}

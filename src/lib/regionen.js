@@ -2,7 +2,6 @@
 
 import pvgis from "@/data/regionen-pvgis.json";
 import { REGIONEN } from "@/data/regionen";
-import { normalisiereProjekt } from "@/components/Project/projektDaten";
 
 export const TUERKHEIM = [48.064, 10.641];
 
@@ -64,10 +63,9 @@ export function nachbarn(region, n = 4) {
  * Echte Referenzprojekte nach Entfernung – es wird nichts erfunden: nur Projekte aus dem
  * Backoffice, deren Ort in REFERENZ_ORTE hinterlegt ist. Je Ort das größte Projekt.
  */
-export function naechsteReferenzen(region, rohProjekte, n = 3) {
+export function naechsteReferenzen(region, projekte, n = 3) {
   const jeOrt = new Map();
-  for (const roh of rohProjekte) {
-    const p = normalisiereProjekt(roh);
+  for (const p of projekte) {
     const koord = REFERENZ_ORTE[p.ort];
     if (!koord) continue;
     const alt = jeOrt.get(p.ort);

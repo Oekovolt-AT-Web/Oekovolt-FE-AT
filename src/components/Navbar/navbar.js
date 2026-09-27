@@ -35,10 +35,24 @@ export default function Navbar() {
   const perTastatur = useRef(false); // Mega-Menü per Enter/Leertaste geöffnet → Fokus ins Panel
 
   useEffect(() => {
-    const pruefen = () => setGescrollt(window.scrollY > 24);
+    let raf = 0;
+    const pruefen = () => {
+      raf = 0;
+      const y = window.scrollY;
+      // Collapse only after 80px, expand again only near the very top.
+      // The gap (80 → 4) is larger than the ~56px the header shrinks,
+      // so the layout jump can no longer flip the state back.
+      setGescrollt((alt) => (alt ? y > 4 : y > 80));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(pruefen);
+    };
     pruefen();
-    window.addEventListener("scroll", pruefen, { passive: true });
-    return () => window.removeEventListener("scroll", pruefen);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   // Routenwechsel schließt alles
@@ -131,7 +145,7 @@ export default function Navbar() {
         <div className={`ov-container flex items-center justify-between gap-6 transition-[height] duration-500 ${gescrollt ? "h-[68px]" : "h-[84px]"}`}>
           <Link href="/" aria-label="Ökovolt Solartechnik – zur Startseite" className="relative shrink-0">
             <div className={`relative origin-left transition-transform duration-500 ${gescrollt ? "scale-[0.86]" : ""}`} style={{ width: 168, height: 56 }}>
-              <Image src="/Images/Navbar/logo.png" alt="Ökovolt Solartechnik Deutschland" fill priority sizes="168px" className="object-contain object-left" />
+              <Image src="/logo-Photoroom.png" alt="Ökovolt Solartechnik Deutschland" fill priority sizes="168px" className="object-contain object-left" />
             </div>
           </Link>
 
@@ -174,12 +188,6 @@ export default function Navbar() {
             >
               <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
             </a>
-            <Link
-              href="/kontakt"
-              className="hidden h-11 items-center rounded-full px-4 text-[14.5px] font-medium text-ink-700 transition-colors hover:text-ink-900 2xl:flex"
-            >
-              Kontakt
-            </Link>
             <Link
               href="/angebot"
               className="group hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ov-600 pl-5 pr-4 text-[14.5px] font-semibold text-white shadow-[0_8px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-700 sm:flex"
@@ -345,7 +353,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }
     >
       <div className="flex h-[72px] items-center justify-between border-b border-ink-100 px-5">
         <Link href="/" onClick={schliessen} className="relative" style={{ width: 150, height: 50 }} aria-label="Startseite">
-          <Image src="/Images/Navbar/logo.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
+          <Image src="/logo-Photoroom.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
         </Link>
         <button ref={schliessKnopf} type="button" onClick={schliessen} aria-label="Menü schließen" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-900">
           <X aria-hidden="true" className="h-5 w-5" />

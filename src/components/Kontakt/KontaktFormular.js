@@ -13,7 +13,8 @@ const LEER = {
   email: "",
   phone: "",
   message: "",
-  zipCity: "",
+  plz: "",
+  ort: "",
   street: "",
   acceptTerms: false,
 };
@@ -30,8 +31,10 @@ function pruefe(name, wert) {
       return wert.trim() ? "" : "Bitte geben Sie Ihren Nachnamen an.";
     case "street":
       return wert.trim() ? "" : "Bitte geben Sie Straße und Hausnummer an.";
-    case "zipCity":
-      return !wert.trim() ? "Bitte geben Sie PLZ und Ort an." : /\d{4,5}/.test(wert) ? "" : "Bitte mit Postleitzahl, z. B. 86842 Türkheim.";
+    case "plz":
+      return !wert.trim() ? "Bitte geben Sie Ihre Postleitzahl an." : /^\d{4,5}$/.test(wert.trim()) ? "" : "Bitte eine gültige Postleitzahl angeben, z. B. 86842.";
+    case "ort":
+      return wert.trim() ? "" : "Bitte geben Sie Ihren Ort an.";
     case "email":
       return !wert.trim() ? "Bitte geben Sie Ihre E-Mail-Adresse an." : EMAIL.test(wert.trim()) ? "" : "Diese E-Mail-Adresse sieht unvollständig aus.";
     case "phone":
@@ -46,8 +49,11 @@ function pruefe(name, wert) {
 }
 
 /**
- * Kontaktformular – gleiche Payload wie zuvor (submitContact), mit
- * Inline-Validierung, Themenwahl (wird der Nachricht vorangestellt) und Erfolgszustand.
+ * Kontaktformular – sendet über submitContact() an /api/create_contact.
+ * Payload-Feldnamen entsprechen dem Zielformat (thema, vorname, nachname,
+ * email, telefon, strasse_hausnummer, plz, ort, nachricht, einwilligung,
+ * quelle, website [Honeypot]). PLZ und Ort sind eigene Felder (nicht mehr
+ * kombiniert). Inline-Validierung, Themenwahl (eigenes Feld) und Erfolgszustand.
  */
 export default function KontaktFormular() {
   const [werte, setWerte] = useState(LEER);
@@ -59,6 +65,7 @@ export default function KontaktFormular() {
   const [gesendetAn, setGesendetAn] = useState("");
   const erfolgRef = useRef(null);
   const formRef = useRef(null);
+  const website = useRef(null); // Honeypot gegen Spam-Bots – bleibt für Menschen leer
 
   useEffect(() => {
     if (status === "erfolg") erfolgRef.current?.focus();
@@ -90,16 +97,20 @@ export default function KontaktFormular() {
 
     setStatus("sendet");
     setServerFehler("");
-    const nachricht = `${thema ? `Thema: ${thema}\n\n` : ""}${werte.message.trim()}\n\n—\n${herkunftText()}`;
+    const nachricht = `${werte.message.trim()}\n\n—\n${herkunftText()}`;
     const payload = {
-      nachname: werte.lastName.trim(),
+      thema: thema || "",
       vorname: werte.firstName.trim(),
-      e_mail_adressee: werte.email.trim(),
-      telefonnummer: werte.phone.trim(),
-      ihre_nachricht: nachricht,
-      strasse_und_hausnummer: werte.street.trim(),
-      plz_und_ort: werte.zipCity.trim(),
-      allgemeine_geschaeftsbedingungen: werte.acceptTerms ? 1 : 0,
+      nachname: werte.lastName.trim(),
+      email: werte.email.trim(),
+      telefon: werte.phone.trim(),
+      strasse_hausnummer: werte.street.trim(),
+      plz: werte.plz.trim(),
+      ort: werte.ort.trim(),
+      nachricht,
+      einwilligung: werte.acceptTerms ? 1 : 0,
+      quelle: window.location.pathname,
+      website: website.current?.value || "",
     };
 
     try {
@@ -188,8 +199,9 @@ export default function KontaktFormular() {
         <Feld name="lastName" label="Nachname" autoComplete="family-name" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="email" label="E-Mail-Adresse" type="email" autoComplete="email" inputMode="email" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="phone" label="Telefonnummer" type="tel" autoComplete="tel" inputMode="tel" hinweis="Für kurze Rückfragen" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
-        <Feld name="street" label="Straße und Hausnummer" autoComplete="street-address" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
-        <Feld name="zipCity" label="PLZ und Ort" placeholder="86842 Türkheim" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="street" label="Straße und Hausnummer" autoComplete="street-address" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} className="sm:col-span-2" />
+        <Feld name="plz" label="PLZ" inputMode="numeric" autoComplete="postal-code" placeholder="86842" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="ort" label="Ort" autoComplete="address-level2" placeholder="Türkheim" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
       </div>
 
       <Feld
@@ -202,6 +214,8 @@ export default function KontaktFormular() {
         onChange={aendern}
         onBlur={verlassen}
       />
+
+      <input ref={website} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
 
       <div>
         <label className="flex cursor-pointer items-start gap-3">
@@ -266,7 +280,7 @@ export default function KontaktFormular() {
   );
 }
 
-function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, onChange, onBlur, ...rest }) {
+function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, onChange, onBlur, className, ...rest }) {
   const f = fehler[name];
   const ok = !f && String(werte[name]).trim() && !pruefe(name, werte[name]);
   const klassen = `peer w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-inset transition-all placeholder:text-ink-500 focus:ring-2 ${
@@ -274,7 +288,7 @@ function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, 
   }`;
   const beschreibung = [f ? `${name}-fehler` : null, hinweis ? `${name}-hinweis` : null].filter(Boolean).join(" ") || undefined;
   return (
-    <div className={mehrzeilig ? "" : "min-w-0"}>
+    <div className={[mehrzeilig ? "" : "min-w-0", className].filter(Boolean).join(" ")}>
       <label htmlFor={`kf-${name}`} className="mb-2 flex items-baseline justify-between gap-3 text-[14px] font-semibold text-ink-800">
         <span>
           {label} <span className="text-ov-600" aria-hidden="true">*</span>

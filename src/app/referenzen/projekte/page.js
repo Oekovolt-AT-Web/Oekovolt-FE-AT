@@ -1,6 +1,16 @@
 // referenzen/projekte/page.js
 
-import { ClipboardCheck, Compass, HardHat, Leaf, LineChart, Map as MapIcon, PiggyBank, ShieldCheck, Zap } from "lucide-react";
+import {
+  ClipboardCheck,
+  Compass,
+  HardHat,
+  Leaf,
+  LineChart,
+  Map as MapIcon,
+  PiggyBank,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,77 +23,78 @@ import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProjektPortfolio from "@/components/Project/ProjektPortfolio";
 import ReferenzStatistik from "@/components/Project/ReferenzStatistik";
-import { bildUrl, fmtKwp, kennzahlen, normalisiereProjekt } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import {
+  bildUrl,
+  fmtKwp,
+  kennzahlen,
+  normalisiereApiProjekt,
+} from "@/components/Project/projektDaten";
+import {
+  API_BASE_URL,
+  getApiHeaders,
+  isApiConfigured,
+} from "@/lib/apiBaseUrl";
 import { generateSlug } from "@/lib/slugify";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
+// Seitentexte aus dem Backoffice (primary_page), Projekte aus der neuen API (oekovolt_app)
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
-const PROJECTS_API = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
+const PROJECTS_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 const PAGE_URL = "https://www.oekovolt.de/referenzen/projekte";
 
 async function fetchProjekteData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
+  if (!isApiConfigured()) return null;
 
   try {
-    const headers = getApiHeaders();
-
     const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
+      method: "GET",
+      headers: getApiHeaders(),
+      next: { revalidate: 600 },
     });
 
     if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
+      console.error(
+        `Referenzen API returned ${response.status}:`,
+        await response.text(),
+      );
       return null;
     }
 
     const data = await response.json();
     return data.message;
   } catch (error) {
-    console.error("Fetch error details:", error);
+    console.error("Error fetching Referenzen page:", error);
     return null;
   }
 }
 
 async function fetchProjectsList() {
-  if (!isApiConfigured()) {
-    return [];
-  }
+  if (!isApiConfigured()) return [];
 
   try {
-    const headers = getApiHeaders();
-
     const response = await fetch(PROJECTS_API, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
+      method: "GET",
+      headers: getApiHeaders(),
+      next: { revalidate: 600 },
     });
 
     if (!response.ok) {
-      console.error(`Projects API returned ${response.status}`);
+      console.error(
+        `Projects API returned ${response.status}:`,
+        await response.text(),
+      );
       return [];
     }
 
     const data = await response.json();
-    if (Array.isArray(data?.message)) {
-      return data.message;
-    }
-    return [];
+
+    const msg = data?.message;
+    const liste = Array.isArray(msg)
+      ? msg
+      : (msg?.projekte ?? msg?.projects ?? msg?.data);
+
+    return Array.isArray(liste) ? liste : [];
   } catch (error) {
     console.error("Error fetching projects list:", error);
     return [];
@@ -93,15 +104,25 @@ async function fetchProjectsList() {
 export async function generateMetadata() {
   const seoData = await fetchProjekteData();
 
-  const defaultKeywords = ["Photovoltaik Referenzen", "Solarprojekte", "PV-Anlagen Beispiele", "Ökovolt Projekte", "Energielösungen Referenzen"];
+  const defaultKeywords = [
+    "Photovoltaik Referenzen",
+    "Solarprojekte",
+    "PV-Anlagen Beispiele",
+    "Ökovolt Projekte",
+    "Energielösungen Referenzen",
+  ];
 
   if (!seoData) {
     // Fallback metadata if API fails
     return {
       title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt",
-      description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
+      description:
+        "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
       keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
+      alternates: {
+        canonical: PAGE_URL,
+        languages: hreflangLanguages(PAGE_URL),
+      },
       robots: { index: true, follow: true },
       openGraph: {
         type: "website",
@@ -109,21 +130,33 @@ export async function generateMetadata() {
         url: PAGE_URL,
         siteName: "Ökovolt Deutschland",
         title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
-        description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-        images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
+        description:
+          "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
+        images: [
+          {
+            url: "https://www.oekovolt.de/og-image.jpg",
+            width: 1200,
+            height: 630,
+            alt: "Ökovolt Referenzprojekte",
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
-        description: "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-        images: ["https://www.oekovolt.de/og-image.jpg"]
+        description:
+          "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
+        images: ["https://www.oekovolt.de/og-image.jpg"],
       },
     };
   }
 
-  const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
+  const apiKeywords = seoData?.keywords
+    ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
+    : defaultKeywords;
   const title = "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt";
-  const description = "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!";
+  const description =
+    "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!";
 
   return {
     title,
@@ -138,13 +171,20 @@ export async function generateMetadata() {
       siteName: "Ökovolt Deutschland",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Referenzprojekte" }],
+      images: [
+        {
+          url: "https://www.oekovolt.de/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Ökovolt Referenzprojekte",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://www.oekovolt.de/og-image.jpg"]
+      images: ["https://www.oekovolt.de/og-image.jpg"],
     },
   };
 }
@@ -152,14 +192,33 @@ export async function generateMetadata() {
 const VORTEIL_ICONS = [PiggyBank, Leaf, ShieldCheck, LineChart];
 
 const ABLAUF = [
-  { icon: Compass, title: "Analyse", text: "Dach, Verschattung, Stromverbrauch und Ihre Pläne – die Grundlage jeder guten Anlage." },
-  { icon: ClipboardCheck, title: "Planung", text: "Modulbelegung, Wechselrichter, Speicher und eine ehrliche Wirtschaftlichkeitsrechnung." },
-  { icon: HardHat, title: "Montage", text: "Fachgerechte Installation durch unser Montageteam – sauber und sicher." },
-  { icon: Zap, title: "Inbetriebnahme", text: "Anschluss, Anmeldung beim Netzbetreiber und im Marktstammdatenregister." },
+  {
+    icon: Compass,
+    title: "Analyse",
+    text: "Dach, Verschattung, Stromverbrauch und Ihre Pläne – die Grundlage jeder guten Anlage.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Planung",
+    text: "Modulbelegung, Wechselrichter, Speicher und eine ehrliche Wirtschaftlichkeitsrechnung.",
+  },
+  {
+    icon: HardHat,
+    title: "Montage",
+    text: "Fachgerechte Installation durch unser Montageteam – sauber und sicher.",
+  },
+  {
+    icon: Zap,
+    title: "Inbetriebnahme",
+    text: "Anschluss, Anmeldung beim Netzbetreiber und im Marktstammdatenregister.",
+  },
 ];
 
 function faqFuer(k) {
-  const spanne = k.kleinste && k.groesste ? `von ${fmtKwp(k.kleinste.kwp)} kWp bis ${fmtKwp(k.groesste.kwp)} kWp` : "vom Einfamilienhaus bis zum Gewerbedach";
+  const spanne =
+    k.kleinste && k.groesste
+      ? `von ${fmtKwp(k.kleinste.kwp)} kWp bis ${fmtKwp(k.groesste.kwp)} kWp`
+      : "vom Einfamilienhaus bis zum Gewerbedach";
   return [
     {
       q: "Welche Anlagengrößen setzt Ökovolt um?",
@@ -194,7 +253,8 @@ export default async function ProjektePage() {
     fetchProjectsList(),
   ]);
 
-  const projekte = projectsList.map(normalisiereProjekt).filter((p) => p.slug);
+  const projekte = projectsList.map(normalisiereApiProjekt).filter((p) => p.slug);
+
   const k = kennzahlen(projekte);
 
   const collectionSchema = {
@@ -203,19 +263,21 @@ export default async function ProjektePage() {
     "@id": `${PAGE_URL}/#collectionpage`,
     url: PAGE_URL,
     name: data?.title || "Referenzprojekte – Ökovolt Deutschland",
-    description: data?.description || "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
+    description:
+      data?.description ||
+      "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
 
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
-    ...(projectsList.length > 0 && {
+    ...(projekte.length > 0 && {
       mainEntity: {
         "@type": "ItemList",
-        numberOfItems: projectsList.length,
-        itemListElement: projectsList.map((p, i) => ({
+        numberOfItems: projekte.length,
+        itemListElement: projekte.map((p, i) => ({
           "@type": "ListItem",
           position: i + 1,
-          name: p.title || p.name,
-          url: `${PAGE_URL}/${(generateSlug(p.title) || generateSlug(p.name))}`,
+          name: p.titel,
+          url: `${PAGE_URL}/${p.slug}`,
         })),
       },
     }),
@@ -230,25 +292,60 @@ export default async function ProjektePage() {
   const heroStats = projekte.length
     ? [
         { value: k.anzahl, label: "Referenzprojekte" },
-        { value: Math.round(k.summeKwp), suffix: " kWp", label: "dokumentierte Leistung" },
+        {
+          value: Math.round(k.summeKwp),
+          suffix: " kWp",
+          label: "dokumentierte Leistung",
+        },
         { value: k.orte, label: "Orte" },
       ]
     : [];
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
 
       <PageHero
         variant="immersive"
-        breadcrumbs={[{ name: "Referenzen", href: "/referenzen/projekte" }, { name: "Projekte" }]}
+        breadcrumbs={[
+          { name: "Referenzen", href: "/referenzen/projekte" },
+          { name: "Projekte" },
+        ]}
         eyebrow={data?.title || "Referenzen"}
-        title={<>Photovoltaik-Projekte, die <span className="ov-text-gradient-light">heute Strom liefern</span></>}
-        lead={data?.description?.trim() || "Erfolgreiche Photovoltaik-Projekte – maßgeschneidert für Privathaushalte, Gewerbe und Landwirtschaft."}
-        image={k.groesste?.bilder?.length ? { src: k.groesste.bild, alt: `Photovoltaikanlage ${k.groesste.titel} mit ${k.groesste.leistungText}` } : { src: bildUrl(data?.image, "/Images/Referenzen/projekteBanner.jpg"), alt: data?.alt_image || "Photovoltaikanlage von Ökovolt" }}
+        title={
+          <>
+            Photovoltaik-Projekte, die{" "}
+            <span className="ov-text-gradient-light">heute Strom liefern</span>
+          </>
+        }
+        lead={
+          data?.description?.trim() ||
+          "Erfolgreiche Photovoltaik-Projekte – maßgeschneidert für Privathaushalte, Gewerbe und Landwirtschaft."
+        }
+        image={
+          k.groesste?.bilder?.length
+            ? {
+                src: k.groesste.bild,
+                alt: `Photovoltaikanlage ${k.groesste.titel} mit ${k.groesste.leistungText}`,
+              }
+            : {
+                src: bildUrl(
+                  data?.image,
+                  "/Images/Referenzen/projekteBanner.jpg",
+                ),
+                alt: data?.alt_image || "Photovoltaikanlage von Ökovolt",
+              }
+        }
         actions={[
           { label: "Eigene Anlage anfragen", href: "/angebot" },
-          { label: "Referenzkarte öffnen", href: "/referenzen/referenzkarte", icon: MapIcon },
+          {
+            label: "Referenzkarte öffnen",
+            href: "/referenzen/referenzkarte",
+            icon: MapIcon,
+          },
         ]}
         stats={heroStats}
       />
@@ -258,19 +355,31 @@ export default async function ProjektePage() {
         <div className="mb-10 grid items-end gap-6 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <SectionHeading
             eyebrow="Projekte"
-            title={<>Echte Anlagen, <span className="ov-text-gradient">echte Kennzahlen</span></>}
+            title={
+              <>
+                Echte Anlagen,{" "}
+                <span className="ov-text-gradient">echte Kennzahlen</span>
+              </>
+            }
             lead="Filtern Sie nach Objektart, Leistung, Dach oder Ort und finden Sie Anlagen, die Ihrem Vorhaben ähneln."
           />
           {data?.first_card_table?.[0]?.option && (
-            <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">{data.first_card_table[0].option}</p>
+            <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">
+              {data.first_card_table[0].option}
+            </p>
           )}
         </div>
         {projekte.length > 0 ? (
           <ProjektPortfolio projekte={projekte} />
         ) : (
           <div className="rounded-3xl bg-white p-10 text-center ring-1 ring-ink-200">
-            <p className="font-display text-[20px] font-bold text-ink-900">Die Projektübersicht wird gerade aktualisiert.</p>
-            <p className="mt-2 text-ink-600">Rufen Sie uns an – wir nennen Ihnen gern Referenzen in Ihrer Nähe: 08245 96 788 0.</p>
+            <p className="font-display text-[20px] font-bold text-ink-900">
+              Die Projektübersicht wird gerade aktualisiert.
+            </p>
+            <p className="mt-2 text-ink-600">
+              Rufen Sie uns an – wir nennen Ihnen gern Referenzen in Ihrer Nähe:
+              08245 96 788 0.
+            </p>
           </div>
         )}
       </Section>
@@ -279,7 +388,10 @@ export default async function ProjektePage() {
       {projekte.length >= 3 && (
         <Section tone="navy" space="lg" className="overflow-hidden">
           <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-          <div aria-hidden="true" className="absolute -left-40 top-20 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
+          <div
+            aria-hidden="true"
+            className="absolute -left-40 top-20 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]"
+          />
           <ReferenzStatistik projekte={projekte} />
         </Section>
       )}
@@ -289,13 +401,26 @@ export default async function ProjektePage() {
         <SplitMedia
           eyebrow={data?.second_card_title || "Intelligente Energielösungen"}
           title={data?.second_card_subtitle || "Technik, die mitdenkt"}
-          text={data?.second_card_description || "Moderne Systeme steuern Energieflüsse intelligent, erhöhen den Eigenverbrauch und binden Speicher, Wallbox und Wärmepumpe ein."}
-          points={(data?.second_card_table || []).map((o) => o.option.replace("Öekovolt", "Ökovolt").replace(/\.$/, ""))}
+          text={
+            data?.second_card_description ||
+            "Moderne Systeme steuern Energieflüsse intelligent, erhöhen den Eigenverbrauch und binden Speicher, Wallbox und Wärmepumpe ein."
+          }
+          points={(data?.second_card_table || []).map((o) =>
+            o.option.replace("Öekovolt", "Ökovolt").replace(/\.$/, ""),
+          )}
           image={{
-            src: bildUrl(data?.second_card_second_image, "/Images/Referenzen/Projekte-2.jpg"),
-            alt: data?.second_card_second_alt_text || "Solarmodule auf einem Dach",
+            src: bildUrl(
+              data?.second_card_second_image,
+              "/Images/Referenzen/Projekte-2.jpg",
+            ),
+            alt:
+              data?.second_card_second_alt_text || "Solarmodule auf einem Dach",
           }}
-          action={{ label: "Photovoltaik-Leistungen ansehen", href: "/dienstleistungen/photovoltaik", variant: "secondary" }}
+          action={{
+            label: "Photovoltaik-Leistungen ansehen",
+            href: "/dienstleistungen/photovoltaik",
+            variant: "secondary",
+          }}
         />
       </Section>
 
@@ -304,7 +429,10 @@ export default async function ProjektePage() {
         <Section tone="sand" space="lg">
           <SectionHeading
             eyebrow="Warum Photovoltaik"
-            title={data?.third_card_title || "Vorteile einer nachhaltigen Energieversorgung"}
+            title={
+              data?.third_card_title ||
+              "Vorteile einer nachhaltigen Energieversorgung"
+            }
             lead={data?.third_card_description?.trim()}
             align="center"
             className="mb-12"
@@ -319,21 +447,42 @@ export default async function ProjektePage() {
           <div>
             <SectionHeading
               eyebrow="So entsteht jede Referenz"
-              title={data?.fifth_card_title || "Ganzheitliche Planung und Umsetzung"}
+              title={
+                data?.fifth_card_title || "Ganzheitliche Planung und Umsetzung"
+              }
             />
-            <Fliesstext text={data?.fifth_card_description} className="mt-5 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
+            <Fliesstext
+              text={data?.fifth_card_description}
+              className="mt-5 space-y-4 text-[16.5px] leading-relaxed text-ink-600"
+            />
           </div>
           <ol className="relative grid gap-4 sm:grid-cols-2">
             {ABLAUF.map((s, i) => (
-              <Reveal as="li" key={s.title} delay={i * 90} className="relative rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-7">
+              <Reveal
+                as="li"
+                key={s.title}
+                delay={i * 90}
+                className="relative rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-7"
+              >
                 <div className="flex items-center justify-between">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200">
-                    <s.icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
+                    <s.icon
+                      aria-hidden="true"
+                      className="h-6 w-6"
+                      strokeWidth={1.8}
+                    />
                   </span>
-                  <span aria-hidden="true" className="ov-num font-display text-[34px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
+                  <span
+                    aria-hidden="true"
+                    className="ov-num font-display text-[34px] font-extrabold leading-none text-ink-200"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                 </div>
                 <h3 className="ov-h3 mt-5 text-ink-900">{s.title}</h3>
-                <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">{s.text}</p>
+                <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">
+                  {s.text}
+                </p>
               </Reveal>
             ))}
           </ol>

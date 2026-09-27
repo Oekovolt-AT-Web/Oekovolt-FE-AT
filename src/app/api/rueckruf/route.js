@@ -1,124 +1,43 @@
+// src/app/api/rueckruf/route.js
 import { NextResponse } from "next/server";
-import { herkunftFelder, herkunftZeile } from "@/lib/herkunftServer";
-import { THEMEN, freieSlots, oeffnungsStatus, telefonNormalisieren } from "@/data/erreichbarkeit";
-import {
-  HEADERS_PRIVAT,
-  alsKontaktanfrage,
-  berlinText,
-  cloudtalkKonfiguriert,
-  cloudtalkRueckruf,
-  frappeKonfiguriert,
-  frappeKontakt,
-  freieAgenten,
-  gedrosselt,
-  sauber,
-} from "@/lib/rueckrufApi";
+import { ipAdresse } from "@/lib/ipAdresse";
+import { API_BASE_URL } from "@/lib/apiBaseUrl";
+import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
 
-export const dynamic = "force-dynamic";
-
-const antwort = (body, status = 200) => NextResponse.json(body, { status, headers: HEADERS_PRIVAT });
-
-// Wunschzeiten für Rückrufe: 15-Minuten-Gespräche im 30-Minuten-Raster, 7 Tage voraus
-const wunschzeiten = (jetzt = new Date()) => freieSlots({ dauer: 15, raster: 30, vorlaufMinuten: 45, tage: 7, jetzt });
-
-/** Status für das Widget: geöffnet? Sofort-Rückruf möglich? Wunschzeiten. */
-export async function GET() {
-  const status = oeffnungsStatus();
-  const verfuegbar = frappeKonfiguriert() || cloudtalkKonfiguriert();
-  const sofort = status.offen && (await freieAgenten()).length > 0;
-  return antwort({
-    verfuegbar,
-    offen: status.offen,
-    titel: status.titel,
-    detail: status.detail,
-    sofort,
-    // Zusage, die das Widget anzeigt
-    zusage: sofort ? "in unter 60 Sekunden" : status.offen ? "in der Regel innerhalb von 15 Minuten" : null,
-    wunschzeiten: wunschzeiten().slice(0, 5),
-  });
-}
+const API_URL = `${API_BASE_URL}oekovolt_app.website_api.termin.buche_termin`;
 
 export async function POST(request) {
-  if (!frappeKonfiguriert() && !cloudtalkKonfiguriert()) return antwort({ fehler: "nicht_konfiguriert" }, 503);
-  if (gedrosselt("rueckruf:global", 60, 10 * 60 * 1000)) return antwort({ fehler: "zu_viele" }, 429);
+  // Diese Frappe-Methode ist als Gast erreichbar (kein API-Key nötig) – ein
+  // Authorization-Header führt hier sogar zu 401, wenn der Token nicht exakt
+  // zu diesem Server passt. Deshalb bewusst ohne Auth, nur Content-Type.
+  if (!API_BASE_URL) {
+    console.error("API not configured: Missing NEW_SERVER environment variable");
+    return NextResponse.json({ error: "API not configured" }, { status: 500 });
+  }
 
-  let e;
   try {
-    e = await request.json();
-  } catch {
-    return antwort({ fehler: "ungueltig" }, 400);
-  }
+    const body = await request.json();
 
-  // Honeypot und Mindest-Ausfülldauer gegen Bots
-  if (e.website || (Number(e.dauer) > 0 && Number(e.dauer) < 2500)) return antwort({ fehler: "ungueltig" }, 400);
-  if (e.einwilligung !== true) return antwort({ fehler: "einwilligung" }, 400);
+    // Forward the data to the external API (no auth – guest-accessible method)
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...body, ip_adresse: ipAdresse(request) }),
+    });
 
-  const telefon = telefonNormalisieren(e.telefon);
-  if (!telefon) return antwort({ fehler: "telefon" }, 400);
-
-  // Schutz vor Belästigung/Missbrauch: je Nummer max. 3 Anfragen pro Stunde
-  if (gedrosselt(`rueckruf:${telefon}`, 3, 60 * 60 * 1000)) return antwort({ fehler: "zu_viele" }, 429);
-
-  const status = oeffnungsStatus();
-  let wunschzeit = null;
-  if (e.wunschzeit) {
-    const erlaubt = wunschzeiten().some((t) => t.slots.some((s) => s.start === e.wunschzeit));
-    if (!erlaubt) return antwort({ fehler: "zeit" }, 400);
-    wunschzeit = e.wunschzeit;
-  } else if (!status.offen) {
-    return antwort({ fehler: "geschlossen" }, 400);
-  }
-
-  const daten = {
-    telefon,
-    name: sauber(e.name, 140),
-    thema: THEMEN.includes(e.thema) ? e.thema : "",
-    wunschzeit: wunschzeit || "",
-    seite: sauber(e.seite, 300),
-    modus: wunschzeit ? "Wunschzeit" : "Sofort",
-    ...herkunftFelder(e.herkunft),
-  };
-
-  // Sofort-Rückruf über CloudTalk, wenn jemand frei ist
-  if (!wunschzeit) {
-    const agenten = await freieAgenten();
-    for (const agent of agenten.slice(0, 2)) {
-      try {
-        await cloudtalkRueckruf(agent, telefon);
-        daten.modus = "CloudTalk automatisch";
-        daten.cloudtalk_agent = agent;
-        break;
-      } catch {
-        /* nächsten Agenten versuchen */
-      }
+    if (!response.ok) {
+      const { status, body: fehler } = await backendFehler(response, "Rueckruf API");
+      return NextResponse.json(fehler, { status });
     }
-  }
 
-  let referenz = null;
-  if (frappeKonfiguriert()) {
-    try {
-      referenz = (await frappeKontakt("rueckruf", "create_rueckruf", daten))?.referenz || null;
-    } catch {
-      try {
-        await alsKontaktanfrage({
-          name: daten.name,
-          telefon,
-          nachricht: [
-            `RÜCKRUF-ANFRAGE (${daten.modus})`,
-            wunschzeit ? `Wunschzeit: ${berlinText(wunschzeit)}` : "Bitte so schnell wie möglich zurückrufen.",
-            daten.thema && `Thema: ${daten.thema}`,
-            daten.seite && `Seite: ${daten.seite}`,
-            herkunftZeile(e.herkunft),
-          ]
-            .filter(Boolean)
-            .join("\n"),
-        });
-      } catch {
-        // Läuft der Anruf bereits, ist die Anfrage trotzdem erfolgreich.
-        if (daten.modus !== "CloudTalk automatisch") return antwort({ fehler: "backend" }, 502);
-      }
-    }
-  }
+    const data = await response.json();
 
-  return antwort({ ok: true, modus: daten.modus, wunschzeit, referenz });
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error("Error in rueckruf API:", error);
+    return NextResponse.json(
+      { error: NICHT_ERREICHBAR, code: "backend" },
+      { status: 502 }
+    );
+  }
 }

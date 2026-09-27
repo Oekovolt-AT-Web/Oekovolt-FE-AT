@@ -8,7 +8,7 @@ export const ZEITZONE = "Europe/Berlin";
 
 // Wochentag: 1 = Montag … 7 = Sonntag; Minuten ab Mitternacht
 export const OEFFNUNGSZEITEN = [
-  { tage: [1, 2, 3, 4], label: "Montag – Donnerstag", kurz: "Mo–Do", von: 8 * 60, bis: 16 * 60, text: "08:00 – 16:00 Uhr" },
+  { tage: [1, 2, 3, 4], label: "Montag – Donnerstag", kurz: "Mo–Do", von: 8 * 60, bis: 16 * 60, text: "08:00 – 17:00 Uhr" },
   { tage: [5], label: "Freitag", kurz: "Fr", von: 8 * 60, bis: 13 * 60, text: "08:00 – 13:00 Uhr" },
   { tage: [6, 7], label: "Samstag & Sonntag", kurz: "Sa–So", von: null, bis: null, text: "geschlossen" },
 ];
@@ -51,7 +51,7 @@ export const TERMIN_REGELN = {
   raster: 30, // Minuten zwischen Slot-Starts
   vorlaufMinuten: 120, // frühestens 2 h ab jetzt …
   vorOrtVorlaufTage: 2, // … Vor-Ort-Termine frühestens übermorgen
-  tageVoraus: 21,
+  tageVoraus: 30,
 };
 
 // Rückruf: Wunschzeit-Fenster außerhalb der Öffnungszeiten

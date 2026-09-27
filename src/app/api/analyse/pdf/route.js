@@ -2,25 +2,54 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import QRCode from "qrcode";
-import { herkunftFelder, herkunftZeile } from "@/lib/herkunftServer";
 import { renderToBuffer } from "@react-pdf/renderer";
 import AnalysePdf from "@/lib/analyse/AnalysePdf";
 import { analyse } from "@/lib/analyse/berechnung";
-import { demoAktiv } from "@/lib/kanaele/demo";
-import { alsKontaktanfrage, emailGueltig, frappeKonfiguriert, frappeKontakt, gedrosselt, sauber } from "@/lib/rueckrufApi";
+import { emailGueltig, gedrosselt, sauber } from "@/lib/rueckrufApi";
+import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { ipAdresse } from "@/lib/ipAdresse";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
+const SOLARRECHNER_URL = `${API_BASE_URL}oekovolt_app.website_api.solarrechner.submit_solarrechner`;
+
 const fehler = (code, status = 400) => Response.json({ fehler: code }, { status, headers: { "Cache-Control": "no-store" } });
+
+/** Nur einen Seitenpfad wie „/solarrechner“ zulassen. */
+const quellePfad = (v) => (/^\/[\w\-/.%~]*$/.test(String(v || "")) ? String(v).slice(0, 200) : "");
+
+/**
+ * Sendet Kontaktdaten und das PDF als multipart/form-data an
+ * oekovolt_app.website_api.solarrechner.submit_solarrechner.
+ */
+async function solarrechnerSenden({ kontakt, quelle, ip, pdf, referenz }) {
+  const form = new FormData();
+  form.append("kunden_name", kontakt.name);
+  form.append("email", kontakt.email);
+  form.append("telefon", kontakt.telefon);
+  form.append("plz", kontakt.plz);
+  form.append("ip_adresse", ip);
+  form.append("quelle", quelle); // z. B. /solarrechner
+  form.append("pdf", new Blob([pdf], { type: "application/pdf" }), `Oekovolt-PV-Analyse-${referenz}.pdf`);
+
+  const headers = getApiHeaders();
+  headers.delete("Content-Type"); // multipart/form-data setzt die Boundary selbst
+  const res = await fetch(SOLARRECHNER_URL, { method: "POST", headers, body: form, cache: "no-store", signal: AbortSignal.timeout(15000) });
+  if (!res.ok) {
+    // Frappe-Fehlermeldung (Traceback-Typ) loggen – ohne Zugangsdaten oder Formularinhalte
+    const text = await res.text().catch(() => "");
+    throw new Error(`HTTP ${res.status}: ${text.slice(0, 300)}`);
+  }
+}
 
 /**
  * Erzeugt die persönliche PV-Analyse als PDF – in einem Schritt:
- * berechnen → PDF rendern → im Backoffice speichern (inkl. Mail an Kunde & Vertrieb) → Download.
+ * prüfen → berechnen → PDF rendern → an Frappe senden → Download.
  */
 export async function POST(request) {
-  if (gedrosselt("analyse:global", 60, 10 * 60 * 1000)) return fehler("zu_viele", 429);
+  if (gedrosselt("analyse:  ", 60, 10 * 60 * 1000)) return fehler("zu_viele", 429);
 
   let e;
   try {
@@ -34,12 +63,13 @@ export async function POST(request) {
   const kontakt = {
     name: sauber(e.name, 120),
     email: sauber(e.email, 190).toLowerCase(),
-    plz: sauber(e.plz, 10),
     telefon: sauber(e.telefon, 40),
+    plz: sauber(e.plz, 10),
   };
   if (kontakt.name.length < 2) return fehler("name");
   if (!emailGueltig(kontakt.email)) return fehler("email");
-  if (kontakt.plz && !/^\d{4,5}$/.test(kontakt.plz)) return fehler("plz");
+  if (kontakt.telefon.replace(/\D/g, "").length < 6) return fehler("telefon");
+  if (!/^\d{5}$/.test(kontakt.plz)) return fehler("plz");
   if (gedrosselt(`analyse:${kontakt.email}`, 5, 24 * 3600 * 1000)) return fehler("zu_viele", 429);
 
   const daten = analyse(e.eingaben);
@@ -57,48 +87,15 @@ export async function POST(request) {
     return fehler("pdf", 500);
   }
 
-  // Im Backoffice ablegen und Vertrieb informieren – Download klappt auch, wenn das Backoffice gerade nicht erreichbar ist.
-  let gespeichert = false;
-  // Lokale Demo (KANAL_DEMO=1, nie in Produktion): nichts ins echte Backoffice schreiben
-  if (frappeKonfiguriert() && !demoAktiv()) {
-    const r = daten.ergebnis;
-    try {
-      await frappeKontakt("pv_analyse", "create_analyse", {
-        referenz,
-        ...kontakt,
-        kwp: daten.eingaben.kwp,
-        ausrichtung: daten.eingaben.ausrichtung,
-        neigung: daten.eingaben.neigung,
-        verbrauch: daten.eingaben.verbrauch,
-        speicher_kwh: daten.eingaben.speicherKwh,
-        jahresertrag: Math.round(r.jahresertrag),
-        autarkie: Math.round(r.autarkie * 100),
-        investition: Math.round(r.investition),
-        amortisation: r.amortisationJahre ? Math.round(r.amortisationJahre * 10) / 10 : 0,
-        seite: sauber(e.seite, 300),
-        ...herkunftFelder(e.herkunft),
-        pdf_base64: Buffer.from(pdf).toString("base64"),
-      });
-      gespeichert = true;
-    } catch {
-      try {
-        await alsKontaktanfrage({
-          name: kontakt.name,
-          email: kontakt.email,
-          telefon: kontakt.telefon,
-          plzOrt: kontakt.plz,
-          nachricht: [
-            `PV-ANALYSE ${referenz} (PDF heruntergeladen)`,
-            `${daten.eingaben.kwp} kWp, ${daten.labels.ausrichtung}, ${daten.labels.neigung}, Verbrauch ${daten.eingaben.verbrauch} kWh, Speicher ${daten.eingaben.speicherKwh} kWh`,
-            `Ertrag ${Math.round(r.jahresertrag)} kWh · Autarkie ${Math.round(r.autarkie * 100)} % · Investition ${Math.round(r.investition)} € · Amortisation ${r.amortisationJahre ? r.amortisationJahre.toFixed(1) : "–"} Jahre`,
-            herkunftZeile(e.herkunft),
-          ].join("\n"),
-        });
-        gespeichert = true;
-      } catch {
-        /* Download trotzdem ausliefern */
-      }
-    }
+  if (!isApiConfigured()) {
+    console.error("PDF-Analyse: API_KEY/API_SECRET fehlen");
+    return fehler("pdf", 500);
+  }
+  try {
+    await solarrechnerSenden({ kontakt, quelle: quellePfad(e.seite), ip: ipAdresse(request), pdf, referenz });
+  } catch (err) {
+    console.error("PDF-Analyse: submit_solarrechner fehlgeschlagen –", err?.message);
+    return fehler("pdf", 502);
   }
 
   return new Response(pdf, {
@@ -108,7 +105,6 @@ export async function POST(request) {
       "Cache-Control": "no-store",
       "X-Robots-Tag": "noindex",
       "X-Analyse-Referenz": referenz,
-      "X-Analyse-Gespeichert": gespeichert ? "1" : "0",
     },
   });
 }

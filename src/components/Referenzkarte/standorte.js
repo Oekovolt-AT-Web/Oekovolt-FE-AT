@@ -29,7 +29,20 @@ const ROH = [
   { lat: 47.520760499999994, lng: 9.768744127661652, label: "Lochau", land: "Österreich" },
   { lat: 47.426632749999996, lng: 9.671584195801643, label: "Lustenau", land: "Österreich" },
   { lat: 47.2692, lng: 11.4041, label: "Innsbruck", land: "Österreich" },
+  // Orte aus den Projekten im Backoffice (Koordinaten: OpenStreetMap)
+  { lat: 47.9435363, lng: 10.4582112, label: "Oberegg", plz: "87782" }, // Oberegg bei Dirlewang (Unterallgäu)
+  { lat: 48.7615353, lng: 11.2580425, label: "Bergheim", plz: "86673" }, // Bergheim, Neuburg an der Donau
 ];
+
+/** Ortsname vereinheitlichen, z. B. „Bergheim Neuburg an der Donau“ → „bergheim neuburg an der donau“ */
+const ortSchluessel = (t) => String(t || "").toLowerCase().replace(/\s+/g, " ").trim();
+
+/** Passt der Ort eines Projekts zu einem Kartenort? Gleicher Name oder Name mit Zusatz („Bergheim Neuburg …“). */
+export function ortPasst(projektOrt, label) {
+  const p = ortSchluessel(projektOrt);
+  const l = ortSchluessel(label);
+  return !!p && !!l && (p === l || p.startsWith(`${l} `) || p.startsWith(`${l},`));
+}
 
 /** Luftlinie in km (Haversine) */
 export function entfernungKm(a, b) {
@@ -39,6 +52,12 @@ export function entfernungKm(a, b) {
   const dLng = rad(b.lng - a.lng);
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLng / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** Bekannte Koordinaten eines Ortsnamens (z. B. „Bergheim Neuburg an der Donau“ → Bergheim) oder null */
+export function bekannteKoordinaten(ort) {
+  const treffer = ROH.find((s) => ortPasst(ort, s.label));
+  return treffer ? { label: treffer.label, lat: treffer.lat, lng: treffer.lng, land: treffer.land || "Deutschland", plz: treffer.plz || "" } : null;
 }
 
 export const STANDORTE = ROH.map((s, i) => ({

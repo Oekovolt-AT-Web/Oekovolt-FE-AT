@@ -10,7 +10,8 @@ import { ereignis } from "@/lib/statistik";
 const FEHLER = {
   name: "Bitte geben Sie Ihren Namen an.",
   email: "Bitte eine gültige E-Mail-Adresse angeben.",
-  plz: "Bitte eine gültige Postleitzahl angeben.",
+  telefon: "Bitte eine Telefonnummer angeben.",
+  plz: "Bitte eine gültige Postleitzahl angeben (5 Ziffern).",
   einwilligung: "Bitte stimmen Sie der Verarbeitung zu.",
   zu_viele: "Sie haben heute bereits mehrere Analysen erstellt. Wir melden uns gern persönlich.",
   pdf: "Das PDF konnte gerade nicht erstellt werden. Bitte versuchen Sie es erneut.",
@@ -66,7 +67,8 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
     e.preventDefault();
     if (werte.name.trim().length < 2) return setFehler(FEHLER.name);
     if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(werte.email.trim())) return setFehler(FEHLER.email);
-    if (werte.plz && !/^\d{4,5}$/.test(werte.plz.trim())) return setFehler(FEHLER.plz);
+    if (werte.telefon.replace(/\D/g, "").length < 6) return setFehler(FEHLER.telefon);
+    if (!/^\d{5}$/.test(werte.plz.trim())) return setFehler(FEHLER.plz);
     if (!einwilligung) return setFehler(FEHLER.einwilligung);
 
     setFehler("");
@@ -171,12 +173,12 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
                   </label>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="block">
-                      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">PLZ</span>
-                      <input className={feld} inputMode="numeric" autoComplete="postal-code" value={werte.plz} onChange={(e) => setWerte({ ...werte, plz: e.target.value })} />
+                      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">PLZ *</span>
+                      <input className={feld} inputMode="numeric" autoComplete="postal-code" value={werte.plz} onChange={(e) => setWerte({ ...werte, plz: e.target.value })} aria-required="true" maxLength={5} />
                     </label>
                     <label className="block">
-                      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">Telefon</span>
-                      <input className={feld} type="tel" inputMode="tel" autoComplete="tel" value={werte.telefon} onChange={(e) => setWerte({ ...werte, telefon: e.target.value })} />
+                      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">Telefon *</span>
+                      <input className={feld} type="tel" inputMode="tel" autoComplete="tel" value={werte.telefon} onChange={(e) => setWerte({ ...werte, telefon: e.target.value })} aria-required="true" />
                     </label>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { sitemapLanguages } from "@/lib/hreflang";
 import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
+import { normalisiereApiProjekt } from "@/components/Project/projektDaten";
 import { REGIONEN } from "@/data/regionen";
 
 const BASE_URL = "https://www.oekovolt.de";
@@ -112,11 +113,13 @@ async function authenticatedFetch(url, timeoutMs = 5000) {
   }
 }
 
-// Fetch projects data
+// Projekte – gleiche Quelle wie /referenzen/projekte (Slug = projektSlug, z. B. „mindelheim-2“)
 async function fetchAllProjects() {
-  const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
+  const API_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
   const data = await authenticatedFetch(API_URL);
-  return data?.message || [];
+  const msg = data?.message;
+  const liste = Array.isArray(msg) ? msg : msg?.projekte;
+  return (Array.isArray(liste) ? liste : []).map(normalisiereApiProjekt).filter((p) => p.slug);
 }
 
 // Fetch jobs data
@@ -188,7 +191,7 @@ export default async function sitemap() {
 
   // 1. Project pages
   projects.forEach((project) => {
-    const slug = generateSlug(project.title || project.name);
+    const slug = project.slug;
     if (slug) {
       dynamicEntries.push({
         url: `${BASE_URL}/referenzen/projekte/${slug}`,

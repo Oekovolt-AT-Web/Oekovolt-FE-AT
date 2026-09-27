@@ -7,7 +7,8 @@ import { generateSlug } from "@/lib/slugify";
 
 export const FALLBACK_BILD = "/Images/Referenzen/Projekte-1.jpg";
 
-export const bildUrl = (pfad, fallback = FALLBACK_BILD) => (pfad ? `/api/image?path=${pfad}` : fallback);
+// Frappe-Dateien laufen über den Bild-Proxy; lokale Bilder aus /public (/Images/…) direkt.
+export const bildUrl = (pfad, fallback = FALLBACK_BILD) => (!pfad ? fallback : pfad.startsWith("/Images/") ? pfad : `/api/image?path=${pfad}`);
 
 /** "314,505 kWp" -> 314.505 */
 export function parseKwp(leistung) {
@@ -105,6 +106,35 @@ export function normalisiereProjekt(p) {
     bilder,
     bild: bildUrl(bilder[0]),
     modified: p?.modified || null,
+  };
+}
+
+/**
+ * URL-Slug eines Projekts der neuen API – aus dem Projektnamen („Mindelheim 2“ → „mindelheim-2“),
+ * damit keine Kundennamen in der URL stehen. projekt_website_name („haydu-2“) nur als Rückfall.
+ */
+export const projektSlug = (p) => generateSlug(p?.projekt_name || "") || p?.projekt_website_name || "";
+
+/**
+ * Eintrag der Projekt-API (oekovolt_app.website_api.projekte.get_projekte) ->
+ * gleiches Format wie normalisiereProjekt. Slug = projektSlug().
+ */
+export function normalisiereApiProjekt(p) {
+  const basis = normalisiereProjekt(p);
+  const bild = p?.bild_url ? encodeURI(p.bild_url) : basis.bild;
+  return {
+    ...basis,
+    slug: projektSlug(p) || basis.slug,
+    titel: p?.projekt_name || basis.titel,
+    ort: p?.ort || basis.ort,
+    jahr: p?.jahr || basis.jahr,
+    segment: p?.objekt || basis.segment,
+    dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
+    kwp: Number(p?.leistung) || basis.kwp || 0,
+    leistungText: p?.leistung_label || basis.leistungText,
+    bild,
+    bilder: bild ? [bild] : basis.bilder || [],
+    bildAlt: p?.bild_alt || basis.bildAlt,
   };
 }
 

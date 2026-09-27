@@ -1,5 +1,6 @@
 import QRCode from "qrcode";
 import { herkunftFelder } from "@/lib/herkunftServer";
+import { ipAdresse } from "@/lib/ipAdresse";
 import { sitzungStarten, scanVerfuegbar, GUELTIG_MINUTEN } from "@/lib/scan/backend";
 import { emailGueltig, gedrosselt, sauber } from "@/lib/rueckrufApi";
 import { telefonNormalisieren } from "@/data/erreichbarkeit";
@@ -51,6 +52,7 @@ export async function POST(request) {
       ausrichtung: sauber(r.ausrichtung, 20),
       neigung: sauber(r.neigung, 20),
       ...herkunftFelder(e.herkunft),
+      ip_adresse: ipAdresse(request),
     });
     const origin = process.env.NODE_ENV === "production" ? "https://www.oekovolt.de" : new URL(request.url).origin;
     const url = `${origin}/scan/${token}`;

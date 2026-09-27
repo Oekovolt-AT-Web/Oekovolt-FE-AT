@@ -11,59 +11,144 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import ReferenzKarte from "@/components/Referenzkarte/ReferenzKarte";
-import { STANDORTE } from "@/components/Referenzkarte/standorte";
+import { FIRMENSITZ, ortPasst } from "@/components/Referenzkarte/standorte";
+import { orteAusProjekten } from "@/lib/referenzOrte";
 import ProjektKarte from "@/components/Project/ProjektKarte";
-import { ladeProjekte } from "@/components/Project/ladeProjekte";
-import { bildUrl, kennzahlen, normalisiereProjekt } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { bildUrl, fmtKwp, kennzahlen, normalisiereProjekt, projektSlug } from "@/components/Project/projektDaten";
+import {
+  API_BASE_URL,
+  getApiHeaders,
+  isApiConfigured,
+} from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
+// Old API: page texts (titles, cards, images)
+// New API: map places + projects
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzstandorde_page.api.get_referenzstandorde_page`;
+const KARTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_referenzkarte`;
+const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 const RK_PAGE_URL = "https://www.oekovolt.de/referenzen/referenzkarte";
 
-async function fetchReferenzkarteData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
+// ---------- API helpers ----------
 
+async function fetchSeitenDaten() {
+  if (!isApiConfigured()) return null;
   try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
+    const res = await fetch(DATA_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
+    if (!res.ok) {
+      console.error(`Referenzkarte-Seite API returned ${res.status}:`, await res.text());
       return null;
     }
-
-    const data = await response.json();
-    return data.message;
+    return (await res.json()).message;
   } catch (error) {
-    console.error("Fetch error details:", error);
+    console.error("Error fetching Referenzkarte page:", error);
     return null;
   }
 }
 
+async function fetchReferenzkarte() {
+  if (!isApiConfigured()) return null;
+  try {
+    const res = await fetch(KARTE_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
+    if (!res.ok) {
+      console.error(`Referenzkarte API returned ${res.status}:`, await res.text());
+      return null;
+    }
+    const data = await res.json();
+    return data?.message || null;
+  } catch (error) {
+    console.error("Error fetching Referenzkarte:", error);
+    return null;
+  }
+}
+
+const bildLink = (b) => (b?.bild_url ? encodeURI(b.bild_url) : "");
+
+/** Project from the new API → format for ProjektKarte */
+function projektAusApi(p) {
+  let basis = {};
+  try {
+    basis = normalisiereProjekt(p) || {};
+  } catch {
+    basis = {};
+  }
+  const kwp = p?.leistung != null && p.leistung !== "" ? Number(p.leistung) : basis.kwp ?? null;
+  const bilderRoh = Array.isArray(p?.bilder) && p.bilder.length ? p.bilder : p?.bild_url ? [{ bild_url: p.bild_url }] : [];
+  const bilder = bilderRoh.map(bildLink).filter(Boolean);
+  return {
+    ...basis,
+    slug: projektSlug(p) || basis.slug,
+    titel: p?.projekt_name || basis.titel || "",
+    jahr: p?.jahr || basis.jahr || null,
+    ort: p?.ort || basis.ort || "",
+    segment: p?.objekt || basis.segment || "",
+    dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
+    kwp,
+    leistungText: p?.leistung_label || (kwp != null ? `${fmtKwp(kwp)} kWp` : ""),
+    bilder,
+    bild: bilder[0] || basis.bild || "",
+  };
+}
+
+/** Projects + totals from get_projekte: { projekte, anzahl, summeKwp } */
+async function fetchProjekteListe() {
+  const leer = { projekte: [], anzahl: 0, summeKwp: 0 };
+  if (!isApiConfigured()) return leer;
+  try {
+    const res = await fetch(PROJEKTE_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
+    if (!res.ok) {
+      console.error(`Projekte API returned ${res.status}:`, await res.text());
+      return leer;
+    }
+    const m = (await res.json())?.message || {};
+    const projekte = Array.isArray(m.projekte) ? m.projekte.map(projektAusApi).filter((p) => p.slug) : [];
+    return {
+      projekte,
+      anzahl: Number(m.anzahl) || projekte.length,
+      summeKwp: Number(m.summe_kwp) || projekte.reduce((s, p) => s + (p.kwp || 0), 0),
+    };
+  } catch (error) {
+    console.error("Error fetching Projekte:", error);
+    return leer;
+  }
+}
+
+/** Project (from get_projekte or get_referenzkarte) → { slug, titel, leistung } for the links on the map */
+function projektLink(p) {
+  const slug = p?.slug || projektSlug(p);
+  if (!slug) return null;
+  return { slug, titel: p.titel || p.projekt_name || slug, leistung: p.leistungText || p.leistung_label || "" };
+}
+
+/** Place from the API → same format as STANDORTE (id, label, lat, lng, land, km) */
+function ortZuStandort(o) {
+  const lat = Number(o?.latitude);
+  const lng = Number(o?.longitude);
+  if (!o?.ort || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  const projekte = Array.isArray(o.projekte) ? o.projekte.filter((x) => x && typeof x === "object") : [];
+  return {
+    id: `${o.plz || ""}-${o.ort}`.toLowerCase().replace(/\s+/g, "-"),
+    label: o.ort,
+    plz: o.plz || "",
+    lat,
+    lng,
+    land: o.land || "Deutschland",
+    km: Number(o.entfernung_km) || 0,
+    imUmkreis: !!o.im_umkreis,
+    anzahl: Number(o.anzahl_projekte) || projekte.length || 0,
+    projekte,
+  };
+}
+
+// ---------- Metadata ----------
+
 const META_TITLE = "Referenzkarte: PV-Anlagen in Ihrer Nähe | Ökovolt";
-const META_DESCRIPTION = "Photovoltaik-Referenzen auf der Karte: Anlagen im Allgäu, in Bayern & Österreich mit Entfernung zu Türkheim. Jetzt Anlage in Ihrer Nähe entdecken & anfragen.";
+const META_DESCRIPTION =
+  "Photovoltaik-Referenzen auf der Karte: realisierte Anlagen von Ökovolt mit Leistung und Entfernung zu Türkheim. Jetzt Anlage in Ihrer Nähe entdecken & anfragen.";
 
 export async function generateMetadata() {
-  const seoData = await fetchReferenzkarteData();
+  const seoData = await fetchSeitenDaten();
 
   const defaultKeywords = [
     "Photovoltaik Referenzkarte",
@@ -72,43 +157,39 @@ export async function generateMetadata() {
     "Ökovolt Referenzen",
     "Energielösungen Standorte",
   ];
-
-  // Process keywords - combine API keywords with defaults if available
   const apiKeywords = seoData?.keywords
     ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
     : defaultKeywords;
-
-  const canonical = RK_PAGE_URL;
 
   return {
     title: META_TITLE,
     description: META_DESCRIPTION,
     keywords: apiKeywords,
-    alternates: { canonical, languages: hreflangLanguages(canonical) },
+    alternates: { canonical: RK_PAGE_URL, languages: hreflangLanguages(RK_PAGE_URL) },
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      url: canonical,
+      url: RK_PAGE_URL,
       siteName: "Ökovolt Deutschland",
       title: META_TITLE,
       description: META_DESCRIPTION,
       images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Referenzkarte – Photovoltaik Standorte Deutschland" }],
     },
-    twitter: {
-      card: "summary_large_image",
-      title: META_TITLE,
-      description: META_DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"]
-    },
+    twitter: { card: "summary_large_image", title: META_TITLE, description: META_DESCRIPTION, images: ["https://www.oekovolt.de/og-image.jpg"] },
   };
 }
 
 const SZENARIO_ICONS = [BatteryCharging, Thermometer, PlugZap, Building2];
 
-const FAQ = [
+/** "A, B und C" */
+const aufzaehlung = (namen) => (namen.length > 1 ? `${namen.slice(0, -1).join(", ")} und ${namen.at(-1)}` : namen[0] || "");
+
+const faqFuer = (ortsnamen) => [
   {
     q: "Baut Ökovolt auch in meiner Region?",
-    a: "Unser Firmensitz ist in Türkheim im Unterallgäu. Die meisten Referenzen liegen im Allgäu, in Schwaben und Oberbayern, dazu kommen Anlagen am Bodensee, im Salzburger Land, in Vorarlberg und Tirol. Liegt Ihr Ort nicht auf der Karte, fragen Sie trotzdem – wir sagen Ihnen ehrlich, ob wir Ihr Projekt gut betreuen können.",
+    a: `Unser Firmensitz ist in Türkheim im Unterallgäu.${
+      ortsnamen.length ? ` Dokumentierte Referenzprojekte auf der Karte gibt es derzeit in ${aufzaehlung(ortsnamen)}.` : ""
+    } Liegt Ihr Ort nicht auf der Karte, fragen Sie trotzdem – wir sagen Ihnen ehrlich, ob wir Ihr Projekt gut betreuen können.`,
   },
   {
     q: "Warum ist ein Fachbetrieb aus der Nähe von Vorteil?",
@@ -124,13 +205,54 @@ const FAQ = [
   },
 ];
 
-export default async function ReferenzkarteSeite() {
-  const [data, rohProjekte] = await Promise.all([fetchReferenzkarteData(), ladeProjekte()]);
+// ---------- Page ----------
 
-  const projekte = rohProjekte.map(normalisiereProjekt).filter((p) => p.slug);
+export default async function ReferenzkarteSeite() {
+  const [data, karte, projektDaten] = await Promise.all([fetchSeitenDaten(), fetchReferenzkarte(), fetchProjekteListe()]);
+  const { projekte } = projektDaten;
+
+  // Places from get_referenzkarte (only if they have coordinates)
+  const apiOrte = (karte?.orte || []).map(ortZuStandort).filter(Boolean);
+
+  const firmensitzBasis = karte?.firmensitz?.latitude
+    ? {
+        ...FIRMENSITZ, // keeps id and other fields the map components expect
+        label: karte.firmensitz.name || FIRMENSITZ.label,
+        lat: Number(karte.firmensitz.latitude),
+        lng: Number(karte.firmensitz.longitude),
+        beschreibung: karte.firmensitz.beschreibung || "Planung, Montage & Service",
+      }
+    : FIRMENSITZ;
+
+  // Map places = the towns of the real projects (get_projekte), grouped by "ort".
+  // get_referenzkarte places are used instead as soon as it delivers them with coordinates.
+  const ausProjekten = await orteAusProjekten(projekte, firmensitzBasis);
+  if (ausProjekten.ohneKoordinaten.length) {
+    console.warn("Referenzkarte: keine Koordinaten gefunden für", ausProjekten.ohneKoordinaten.join(", "));
+  }
+  const mitLinks = (s) => {
+    const liste = (s.projekte || []).map(projektLink).filter(Boolean);
+    return { ...s, projekte: liste, anzahl: liste.length || s.anzahl || 0 };
+  };
+  const standorte = (apiOrte.length ? apiOrte : ausProjekten.orte).map(mitLinks);
+  const firmensitz = mitLinks({
+    ...firmensitzBasis,
+    projekte: apiOrte.length ? projekte.filter((p) => ortPasst(p.ort, firmensitzBasis.label)) : ausProjekten.amFirmensitz,
+  });
+
+  const umkreisKm = Number(karte?.umkreis_km) || 100;
+  const imUmkreis = apiOrte.length && karte?.anzahl_im_umkreis != null ? karte.anzahl_im_umkreis : standorte.filter((s) => s.km <= umkreisKm).length;
+  // Towns with projects, incl. Türkheim if there are projects at the company location
+  const anzahlOrte = standorte.length + (firmensitz.projekte.length ? 1 : 0);
+  const ortsnamen = [...(firmensitz.projekte.length ? [firmensitz.label] : []), ...standorte.map((s) => s.label)];
+
+  // Number of projects per place (for list and map)
+  const projekteJeOrt = Object.fromEntries(standorte.map((s) => [s.label, s.anzahl || 0]));
+
   const k = kennzahlen(projekte);
-  const projekteJeOrt = projekte.reduce((m, p) => (p.ort ? { ...m, [p.ort]: (m[p.ort] || 0) + 1 } : m), {});
-  const neueste = [...projekte].sort((a, b) => (b.jahr || 0) - (a.jahr || 0) || (b.kwp || 0) - (a.kwp || 0)).slice(0, 3);
+  const neueste = [...projekte]
+    .sort((a, b) => (b.jahr || 0) - (a.jahr || 0) || (b.kwp || 0) - (a.kwp || 0))
+    .slice(0, 3);
 
   const webPageSchema = {
     "@context": "https://schema.org",
@@ -138,7 +260,9 @@ export default async function ReferenzkarteSeite() {
     "@id": `${RK_PAGE_URL}/#webpage`,
     url: RK_PAGE_URL,
     name: data?.title || "Referenzkarte – Ökovolt Photovoltaik Standorte",
-    description: data?.description?.trim() || "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
+    description:
+      data?.description?.trim() ||
+      "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
     isPartOf: { "@id": "https://www.oekovolt.de/#website" },
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
@@ -146,11 +270,21 @@ export default async function ReferenzkarteSeite() {
     mainEntity: {
       "@type": "ItemList",
       name: "Referenzstandorte von Ökovolt",
-      numberOfItems: STANDORTE.length,
-      itemListElement: STANDORTE.map((s, i) => ({
+      numberOfItems: standorte.length,
+      itemListElement: standorte.map((s, i) => ({
         "@type": "ListItem",
         position: i + 1,
-        item: { "@type": "Place", name: s.label, geo: { "@type": "GeoCoordinates", latitude: s.lat, longitude: s.lng }, address: { "@type": "PostalAddress", addressLocality: s.label, addressCountry: s.land === "Österreich" ? "AT" : "DE" } },
+        item: {
+          "@type": "Place",
+          name: s.label,
+          geo: { "@type": "GeoCoordinates", latitude: s.lat, longitude: s.lng },
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: s.label,
+            ...(s.plz && { postalCode: s.plz }),
+            addressCountry: s.land === "Österreich" ? "AT" : "DE",
+          },
+        },
       })),
     },
   };
@@ -161,8 +295,6 @@ export default async function ReferenzkarteSeite() {
     text: s.secondary_paragraph,
   }));
 
-  const umkreis100 = STANDORTE.filter((s) => s.km <= 100).length;
-
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
@@ -172,15 +304,18 @@ export default async function ReferenzkarteSeite() {
         eyebrow={data?.title || "Referenzstandorte"}
         title={<>Solaranlagen <span className="ov-text-gradient">in Ihrer Nähe</span></>}
         lead="Von Türkheim aus planen und bauen wir Photovoltaikanlagen im Allgäu, in ganz Bayern und darüber hinaus. Die Karte zeigt, wo unsere Anlagen bereits Strom erzeugen – mit Entfernung zu unserem Firmensitz."
-        image={{ src: bildUrl(data?.image, "/Images/Referenzen/referenzkarte1.jpg"), alt: data?.alt_image || "Fachkraft kontrolliert Photovoltaik-Modul auf Dach" }}
+        image={{
+          src: bildUrl(data?.image, "/Images/Referenzen/referenzkarte1.jpg"),
+          alt: data?.alt_image || "Fachkraft kontrolliert Photovoltaik-Modul auf Dach",
+        }}
         actions={[
           { label: "Anlage in Ihrer Nähe anfragen", href: "/angebot" },
           { label: "Zur Karte", href: "#karte", icon: MapPin },
         ]}
         stats={[
-          { value: STANDORTE.length, label: "Referenzstandorte" },
-          { value: umkreis100, label: "im Umkreis von 100 km" },
-          { value: 15, suffix: "+", label: "Jahre Erfahrung" },
+          { value: projektDaten.anzahl, label: "Projekte" },
+          { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
+          { value: Math.round(projektDaten.summeKwp), suffix: " kWp", label: "installierte Leistung" },
         ]}
         badge={
           <div className="flex items-center gap-4">
@@ -188,8 +323,8 @@ export default async function ReferenzkarteSeite() {
               <MapPin aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[19px] font-extrabold leading-tight text-ink-900">Türkheim</p>
-              <p className="mt-0.5 text-[12.5px] leading-snug text-ink-500">Firmensitz im Unterallgäu – Planung, Montage & Service</p>
+              <p className="font-display text-[19px] font-extrabold leading-tight text-ink-900">{firmensitz.label}</p>
+              <p className="mt-0.5 text-[12.5px] leading-snug text-ink-500">Firmensitz im Unterallgäu – {firmensitz.beschreibung || "Planung, Montage & Service"}</p>
             </div>
           </div>
         }
@@ -212,13 +347,13 @@ export default async function ReferenzkarteSeite() {
               <span aria-hidden="true" className="h-3 w-3 rounded-full border-2 border-white bg-ov-500" /> Referenzstandort
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-3 w-5 rounded-full border border-dashed border-white/50" /> Umkreis ab Türkheim
+              <span aria-hidden="true" className="h-3 w-5 rounded-full border border-dashed border-white/50" /> Umkreis ab {firmensitz.label}
             </li>
           </ul>
         </div>
         <div className="relative mx-auto max-w-[92rem] px-3 md:px-6">
           <Reveal dir="scale">
-            <ReferenzKarte projekteJeOrt={projekteJeOrt} />
+            <ReferenzKarte standorte={standorte} firmensitz={firmensitz} umkreisKm={umkreisKm} imUmkreis={imUmkreis} projekteJeOrt={projekteJeOrt} />
           </Reveal>
         </div>
       </section>
@@ -229,7 +364,10 @@ export default async function ReferenzkarteSeite() {
           eyebrow={data?.first_card_title ? "Unsere Projekte" : "Referenzen"}
           title={data?.first_card_subtitle || "Unsere Referenzkarte – erfolgreiche Projekte auf einen Blick"}
           text={(data?.first_card_table || []).map((o) => o.option)}
-          image={{ src: bildUrl(data?.third_card_first_image, "/Images/Referenzen/referenzkarte2.jpg"), alt: data?.third_card_first_alt_text || "Arbeiter überprüft Solarpanels auf Dach" }}
+          image={{
+            src: bildUrl(data?.third_card_first_image, "/Images/Referenzen/referenzkarte2.jpg"),
+            alt: data?.third_card_first_alt_text || "Arbeiter überprüft Solarpanels auf Dach",
+          }}
           action={{ label: "Alle Projekte ansehen", href: "/referenzen/projekte" }}
         />
       </Section>
@@ -282,15 +420,22 @@ export default async function ReferenzkarteSeite() {
           title={data?.third_card_subtitle || "Solarlösungen für Privathaushalte"}
           text={data?.third_card_description}
           points={(data?.third_card_table || []).map((o) => o.option.replace(/\.$/, ""))}
-          image={{ src: bildUrl(data?.third_card_second_image, "/Images/Referenzen/referenzkarte3.jpg"), alt: data?.third_card_second_alt_text || "Arbeiter bereitet Solarmodul für Montage vor" }}
+          image={{
+            src: bildUrl(data?.third_card_second_image, "/Images/Referenzen/referenzkarte3.jpg"),
+            alt: data?.third_card_second_alt_text || "Arbeiter bereitet Solarmodul für Montage vor",
+          }}
           action={{ label: "Anlage in Ihrer Nähe anfragen", href: "/angebot" }}
         />
       </Section>
 
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading eyebrow="Häufige Fragen" title="Referenzen in Ihrer Region" lead="Sie möchten wissen, ob wir auch bei Ihnen bauen? Rufen Sie uns an: 08245 96 788 0." />
-          <Faq items={FAQ} />
+          <SectionHeading
+            eyebrow="Häufige Fragen"
+            title="Referenzen in Ihrer Region"
+            lead="Sie möchten wissen, ob wir auch bei Ihnen bauen? Rufen Sie uns an: 08245 96 788 0."
+          />
+          <Faq items={faqFuer(ortsnamen)} />
         </div>
       </Section>
 

@@ -55,7 +55,18 @@ export default function LeafletKarte({ standorte, auswahl, onWahl, projekteJeOrt
             <strong>{s.sitz ? "Ökovolt – Firmensitz Türkheim" : s.label}</strong>
             <br />
             {s.sitz ? "Planung, Montage & Service" : `${s.land} · ${s.km} km von Türkheim`}
-            {projekteJeOrt[s.label] ? (
+            {s.projekte?.length > 0 ? (
+              <ul style={{ margin: "8px 0 0", padding: 0, listStyle: "none" }}>
+                {s.projekte.map((p) => (
+                  <li key={p.slug} style={{ margin: "4px 0" }}>
+                    <a href={`/referenzen/projekte/${encodeURIComponent(p.slug)}`}>
+                      {p.titel}
+                      {p.leistung ? ` · ${p.leistung}` : ""} →
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : projekteJeOrt[s.label] ? (
               <>
                 <br />
                 <a href={`/referenzen/projekte?ort=${encodeURIComponent(s.label)}`}>

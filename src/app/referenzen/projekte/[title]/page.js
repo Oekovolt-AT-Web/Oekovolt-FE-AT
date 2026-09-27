@@ -1,7 +1,17 @@
 // src/app/referenzen/projekte/[title]/page.js
 
-import { notFound } from "next/navigation";
-import { ArrowLeft, Calculator, CalendarDays, Home, MapPin, Sun, Zap, Layers, Info } from "lucide-react";
+import { notFound, permanentRedirect } from "next/navigation";
+import {
+  ArrowLeft,
+  Calculator,
+  CalendarDays,
+  Home,
+  MapPin,
+  Sun,
+  Zap,
+  Layers,
+  Info,
+} from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -10,104 +20,188 @@ import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import ProjektGalerie from "@/components/ProjectItem/ProjektGalerie";
 import ProjektKarte from "@/components/Project/ProjektKarte";
-import { ERTRAG_JE_KWP, HAUSHALT_KWH, bildUrl, fmtKwp, fmtZahl, normalisiereProjekt } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { generateSlug } from "@/lib/slugify";
+import {
+  ERTRAG_JE_KWP,
+  HAUSHALT_KWH,
+  fmtKwp,
+  fmtZahl,
+  normalisiereProjekt,
+  projektSlug,
+} from "@/components/Project/projektDaten";
+import {
+  API_BASE_URL,
+  getApiHeaders,
+  isApiConfigured,
+} from "@/lib/apiBaseUrl";
 
-const PROJECTS_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
+const LIST_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
+const DETAIL_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekt`;
 const BASE_URL = "https://www.oekovolt.de";
+const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
-// Helper function to fetch all projects
-async function fetchAllProjects() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
-    return [];
+// ---------- API helpers (only used in this file) ----------
+
+const bildLink = (b) => (b?.bild_url ? encodeURI(b.bild_url) : "");
+
+/** Converts one project from the new API into the format the components expect */
+function projektAusApi(p) {
+  let basis = {};
+  try {
+    basis = normalisiereProjekt(p) || {};
+  } catch {
+    basis = {};
   }
 
+  const kwp =
+    p?.leistung != null && p.leistung !== ""
+      ? Number(p.leistung)
+      : (basis.kwp ?? null);
+
+  // Detail API: bilder = [{ bild_url }], list API: bild_url directly
+  const bilderRoh =
+    Array.isArray(p?.bilder) && p.bilder.length
+      ? p.bilder
+      : p?.bild_url
+        ? [{ bild_url: p.bild_url }]
+        : [];
+  const bilder = bilderRoh.map(bildLink).filter(Boolean);
+
+  return {
+    ...basis,
+    slug: projektSlug(p) || basis.slug,
+    apiName: p?.projekt_website_name || "",
+    titel: p?.projekt_name || basis.titel || "",
+    jahr: p?.jahr || basis.jahr || null,
+    plz: p?.plz || "",
+    ort: p?.ort || basis.ort || "",
+    land: p?.land || basis.land || "Deutschland",
+    segment: p?.objekt || basis.segment || "",
+    dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
+    kwp,
+    leistungText:
+      p?.leistung_label || (kwp != null ? `${fmtKwp(kwp)} kWp` : ""),
+    modul: p?.modul || "",
+    wechselrichter: p?.wechselrichter || "",
+    speicher: p?.speicher || "",
+    ertragApi: p?.ertrag ? Number(p.ertrag) : null,
+    lat: p?.latitude ?? null,
+    lng: p?.longitude ?? null,
+    bilder,
+    bild: bilder[0] || basis.bild || "",
+    typTeile: [p?.objekt, p?.dach, p?.modul].filter(Boolean),
+  };
+}
+
+/** All projects – for "Weitere Projekte" and generateStaticParams */
+async function fetchProjekteListe() {
+  if (!isApiConfigured()) return [];
   try {
-    const headers = getApiHeaders();
-
-    const res = await fetch(PROJECTS_URL, {
+    const res = await fetch(LIST_URL, {
       method: "GET",
-      headers: headers,
-      next: { revalidate: 600 } // ISR: Revalidate every hour
+      headers: getApiHeaders(),
+      next: { revalidate: 600 },
     });
-
     if (!res.ok) {
-      let errorText = "";
-      try {
-        const errorData = await res.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await res.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${res.status}: ${errorText}`);
+      console.error(`Projekte API returned ${res.status}:`, await res.text());
       return [];
     }
-
     const data = await res.json();
-    return data?.message || [];
+    const liste = data?.message?.projekte;
+    return Array.isArray(liste)
+      ? liste.map(projektAusApi).filter((p) => p.slug)
+      : [];
   } catch (error) {
-    console.error("Error fetching projects:", error);
+    console.error("Error fetching projekte:", error);
     return [];
   }
 }
 
-// Generate static params at build time - this enables static generation
-export async function generateStaticParams() {
+/** One project by projekt_website_name, e.g. "haydu-2" */
+async function fetchProjekt(apiName) {
+  if (!isApiConfigured() || !apiName) return null;
   try {
-    const projects = await fetchAllProjects();
-
-    if (!projects || projects.length === 0) {
-      console.warn("⚠️ No projects found - returning empty params");
-      return [];
+    const res = await fetch(
+      `${DETAIL_URL}?projekt_website_name=${encodeURIComponent(apiName)}`,
+      {
+        method: "GET",
+        headers: getApiHeaders(),
+        next: { revalidate: 600 },
+      },
+    );
+    if (!res.ok) {
+      return null;
     }
-
-    const params = projects.map((project) => ({
-      title: generateSlug(project.title || project.name)
-    })).filter(param => param.title);
-
-    return params;
+    const data = await res.json();
+    const p = data?.message;
+    return p && typeof p === "object" && p.projekt_website_name
+      ? projektAusApi(p)
+      : null;
   } catch (error) {
-    console.error("Error in generateStaticParams:", error);
-    return [];
+    console.error("Error fetching projekt:", error);
+    return null;
   }
+}
+
+/**
+ * Project for a URL slug, e.g. "mindelheim-2". Old URLs with projekt_website_name
+ * (e.g. "haydu-2") are recognised too – `veraltet` then says the page should redirect.
+ */
+async function ladeProjektFuerUrl(title, liste) {
+  const treffer = liste.find((x) => x.slug === title) || liste.find((x) => x.apiName === title);
+  if (!treffer) return { p: null, veraltet: false };
+  const p = (await fetchProjekt(treffer.apiName)) || treffer;
+  return { p, veraltet: p.slug !== title };
+}
+
+// ---------- Next.js ----------
+
+export async function generateStaticParams() {
+  const projekte = await fetchProjekteListe();
+  return projekte.map((p) => ({ title: p.slug }));
 }
 
 /** Sachliche Kurzbeschreibung – nur aus den Projektfeldern zusammengesetzt */
 function kurzbeschreibung(p) {
   const teile = [];
-  teile.push(`Photovoltaikanlage${p.kwp != null ? ` mit ${p.leistungText}` : ""}`);
-  if (p.segment) teile.push(p.segment === "Einfamilienhaus" ? "auf einem Einfamilienhaus" : p.segment === "Gewerbe" ? "auf einem Gewerbeobjekt" : "auf einem landwirtschaftlichen Gebäude");
+  teile.push(
+    `Photovoltaikanlage${p.kwp != null ? ` mit ${p.leistungText}` : ""}`,
+  );
+  if (p.segment)
+    teile.push(
+      p.segment === "Einfamilienhaus"
+        ? "auf einem Einfamilienhaus"
+        : p.segment === "Gewerbe"
+          ? "auf einem Gewerbeobjekt"
+          : "auf einem landwirtschaftlichen Gebäude",
+    );
   if (p.ort) teile.push(`in ${p.ort}`);
   let satz = teile.join(" ");
   if (p.jahr) satz += `, realisiert ${p.jahr}`;
   satz += " von Ökovolt.";
-  if (p.typ) satz += ` Objekt & Montage: ${p.typ}.`;
+  if (p.modul) satz += ` Verbaut: ${p.modul}.`;
   return satz;
 }
 
 export async function generateMetadata({ params }) {
   try {
     const { title } = await params;
-    const projects = await fetchAllProjects();
-    const project = projects.find(p => generateSlug(p.title) === title || generateSlug(p.name) === title);
+    const { p } = await ladeProjektFuerUrl(title, await fetchProjekteListe());
 
-    if (!project) {
+    if (!p) {
       return {
         title: "Projekt nicht gefunden | Ökovolt",
-        robots: { index: false }
+        robots: { index: false },
       };
     }
 
-    const p = normalisiereProjekt(project);
-    const projectTitle = p.titel;
-    const seitenTitel = `${projectTitle}${p.kwp != null ? ` – ${p.leistungText} PV` : ""} | Ökovolt`;
-    const description = project.description || `${kurzbeschreibung(p)} Bilder, Kennzahlen und Projektdetails – jetzt ansehen und eigene Anlage anfragen.`.slice(0, 200);
-    const canonical = `${BASE_URL}/referenzen/projekte/${title}`;
-    const imgUrl = p.bilder[0] ? `${BASE_URL}/api/image?path=${p.bilder[0]}` : `${BASE_URL}/og-image.jpg`;
+    const seitenTitel = `${p.titel}${p.kwp != null ? ` – ${p.leistungText} PV` : ""} | Ökovolt`;
+    const description =
+      `${kurzbeschreibung(p)} Bilder, Kennzahlen und Projektdetails – jetzt ansehen und eigene Anlage anfragen.`.slice(
+        0,
+        200,
+      );
+    const canonical = `${BASE_URL}/referenzen/projekte/${p.slug}`;
+    const imgUrl = p.bilder[0] || `${BASE_URL}/og-image.jpg`;
 
     return {
       title: seitenTitel,
@@ -121,7 +215,7 @@ export async function generateMetadata({ params }) {
         siteName: "Ökovolt Deutschland",
         title: seitenTitel,
         description,
-        images: [{ url: imgUrl, width: 1200, height: 630, alt: projectTitle }],
+        images: [{ url: imgUrl, width: 1200, height: 630, alt: p.titel }],
       },
       twitter: {
         card: "summary_large_image",
@@ -134,7 +228,7 @@ export async function generateMetadata({ params }) {
     console.error("Error generating metadata:", error);
     return {
       title: "Projekt nicht gefunden | Ökovolt",
-      robots: { index: false }
+      robots: { index: false },
     };
   }
 }
@@ -144,91 +238,179 @@ const WISSEN = {
   Einfamilienhaus: {
     titel: "Worauf es beim Einfamilienhaus ankommt",
     punkte: [
-      { t: "Eigenverbrauch", x: "Ohne Speicher nutzt ein Haushalt typischerweise 25–35 % des Solarstroms selbst, mit passend dimensioniertem Speicher oft 60–80 %." },
-      { t: "Steuern", x: "Anlagen bis 30 kWp auf Wohngebäuden sind von der Umsatzsteuer (0 % nach § 12 Abs. 3 UStG) und der Einkommensteuer (§ 3 Nr. 72 EStG) befreit." },
-      { t: "Zukunft mitdenken", x: "Wallbox oder Wärmepumpe verschieben die ideale Anlagengröße nach oben – das planen wir von Anfang an ein." },
+      {
+        t: "Eigenverbrauch",
+        x: "Ohne Speicher nutzt ein Haushalt typischerweise 25–35 % des Solarstroms selbst, mit passend dimensioniertem Speicher oft 60–80 %.",
+      },
+      {
+        t: "Steuern",
+        x: "Anlagen bis 30 kWp auf Wohngebäuden sind von der Umsatzsteuer (0 % nach § 12 Abs. 3 UStG) und der Einkommensteuer (§ 3 Nr. 72 EStG) befreit.",
+      },
+      {
+        t: "Zukunft mitdenken",
+        x: "Wallbox oder Wärmepumpe verschieben die ideale Anlagengröße nach oben – das planen wir von Anfang an ein.",
+      },
     ],
   },
   Gewerbe: {
     titel: "Worauf es bei Gewerbedächern ankommt",
     punkte: [
-      { t: "Lastgang", x: "Betriebe verbrauchen tagsüber, wenn die Anlage erzeugt – das ermöglicht hohe Eigenverbrauchsquoten ohne großen Speicher." },
-      { t: "Statik & Dachhaut", x: "Trapez-, Sandwich- und Flachdächer brauchen passende Unterkonstruktionen und eine Prüfung der Tragreserven." },
-      { t: "Ab 100 kWp", x: "Neue Anlagen über 100 kWp müssen ihren Überschuss direkt vermarkten und fernsteuerbar sein – wir binden das bei der Planung ein." },
+      {
+        t: "Lastgang",
+        x: "Betriebe verbrauchen tagsüber, wenn die Anlage erzeugt – das ermöglicht hohe Eigenverbrauchsquoten ohne großen Speicher.",
+      },
+      {
+        t: "Statik & Dachhaut",
+        x: "Trapez-, Sandwich- und Flachdächer brauchen passende Unterkonstruktionen und eine Prüfung der Tragreserven.",
+      },
+      {
+        t: "Ab 100 kWp",
+        x: "Neue Anlagen über 100 kWp müssen ihren Überschuss direkt vermarkten und fernsteuerbar sein – wir binden das bei der Planung ein.",
+      },
     ],
   },
   Landwirtschaft: {
     titel: "Worauf es in der Landwirtschaft ankommt",
     punkte: [
-      { t: "Große Dachflächen", x: "Hallen, Ställe und Scheunen bieten viel Fläche – oft lohnt es sich, das Dach vollständig zu belegen." },
-      { t: "Eigenverbrauch", x: "Kühlung, Lüftung, Melk- und Fütterungstechnik laufen tagsüber und nutzen Solarstrom direkt." },
-      { t: "Netzanschluss", x: "Bei größeren Leistungen klären wir früh mit dem Netzbetreiber, welcher Anschlusspunkt möglich ist." },
+      {
+        t: "Große Dachflächen",
+        x: "Hallen, Ställe und Scheunen bieten viel Fläche – oft lohnt es sich, das Dach vollständig zu belegen.",
+      },
+      {
+        t: "Eigenverbrauch",
+        x: "Kühlung, Lüftung, Melk- und Fütterungstechnik laufen tagsüber und nutzen Solarstrom direkt.",
+      },
+      {
+        t: "Netzanschluss",
+        x: "Bei größeren Leistungen klären wir früh mit dem Netzbetreiber, welcher Anschlusspunkt möglich ist.",
+      },
     ],
   },
   _: {
     titel: "Worauf es bei der Planung ankommt",
     punkte: [
-      { t: "Dach & Statik", x: "Dachform, Eindeckung und Tragfähigkeit bestimmen Unterkonstruktion und Modulbelegung." },
-      { t: "Ausrichtung", x: "Süd bringt den höchsten Ertrag je Modul, Ost-West-Belegung verteilt die Erzeugung gleichmäßiger über den Tag." },
-      { t: "Einspeisung", x: "Neue Anlagen ohne Smart Meter speisen seit dem Solarspitzengesetz (2025) höchstens 60 % ihrer Leistung ein – ein Speicher gleicht das aus." },
+      {
+        t: "Dach & Statik",
+        x: "Dachform, Eindeckung und Tragfähigkeit bestimmen Unterkonstruktion und Modulbelegung.",
+      },
+      {
+        t: "Ausrichtung",
+        x: "Süd bringt den höchsten Ertrag je Modul, Ost-West-Belegung verteilt die Erzeugung gleichmäßiger über den Tag.",
+      },
+      {
+        t: "Einspeisung",
+        x: "Neue Anlagen ohne Smart Meter speisen seit dem Solarspitzengesetz (2025) höchstens 60 % ihrer Leistung ein – ein Speicher gleicht das aus.",
+      },
     ],
   },
 };
 
 export default async function ProjectDetailPage({ params }) {
-  const { title } = await params;
+  const { title } = await params; // e.g. "mindelheim-2"
 
-  // Fetch all projects
-  const projects = await fetchAllProjects();
-
-  // Find the current project
-  const project = projects.find((p) => generateSlug(p.title || p.name) === title) ?? null;
-
-  if (!project) notFound();
-
-  const p = normalisiereProjekt(project);
-  const alle = projects.map(normalisiereProjekt).filter((x) => x.slug && x.slug !== p.slug);
+  const liste = await fetchProjekteListe();
+  const { p, veraltet } = await ladeProjektFuerUrl(title, liste);
+  if (!p) notFound();
+  // Old URL with the customer name (e.g. /haydu-2) -> new URL by place (/mindelheim-2)
+  if (veraltet) permanentRedirect(`/referenzen/projekte/${p.slug}`);
 
   // Weitere Projekte: gleiche Objektart zuerst, dann ähnliche Leistung
-  const weitere = [...alle]
+  const weitere = liste
+    .filter((x) => x.slug !== p.slug)
     .sort((a, b) => {
       const s = (x) => (x.segment && x.segment === p.segment ? 0 : 1);
-      const d = (x) => (p.kwp != null && x.kwp != null ? Math.abs(Math.log(x.kwp / p.kwp)) : 9);
+      const d = (x) => (p.kwp && x.kwp ? Math.abs(Math.log(x.kwp / p.kwp)) : 9);
       return s(a) - s(b) || d(a) - d(b);
     })
     .slice(0, 3);
 
-  const ertrag = p.kwp != null ? Math.round((p.kwp * ERTRAG_JE_KWP) / 1000) * 1000 : null;
-  const haushalte = ertrag ? Math.max(1, Math.round(ertrag / HAUSHALT_KWH)) : null;
+  // Ertrag: Wert aus dem Backoffice, sonst rechnerisch
+  const ertragRechnerisch =
+    p.kwp != null ? Math.round((p.kwp * ERTRAG_JE_KWP) / 1000) * 1000 : null;
+  const ertrag = p.ertragApi || ertragRechnerisch;
+  const istRechnerisch = !p.ertragApi && !!ertragRechnerisch;
+  const haushalte = ertrag
+    ? Math.max(1, Math.round(ertrag / HAUSHALT_KWH))
+    : null;
   const wissen = WISSEN[p.segment] || WISSEN._;
 
-  const galerie = p.bilder.map((pfad, i) => ({ src: bildUrl(pfad), alt: `${p.titel} – Photovoltaikanlage, Bild ${i + 1}` }));
+  const galerie = p.bilder.map((src, i) => ({
+    src,
+    alt: `${p.titel} – Photovoltaikanlage, Bild ${i + 1}`,
+  }));
+  const canonicalUrl = `${BASE_URL}/referenzen/projekte/${p.slug}`;
+  const ortText = [p.plz, p.ort].filter(Boolean).join(" ");
 
   const projectSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: p.titel,
-    description: project.description || kurzbeschreibung(p),
-    url: `${BASE_URL}/referenzen/projekte/${generateSlug(title)}`,
+    description: kurzbeschreibung(p),
+    url: canonicalUrl,
     publisher: { "@id": `${BASE_URL}/#organization` },
     author: { "@id": `${BASE_URL}/#organization` },
-    dateModified: project.modified || new Date().toISOString(),
-    ...(p.bilder.length > 0 && { image: p.bilder.map((pfad) => `${BASE_URL}/api/image?path=${pfad}`) }),
+    dateModified: p.modified || new Date().toISOString(),
+    ...(p.bilder.length > 0 && { image: p.bilder }),
     about: {
       "@type": "Thing",
       name: `Photovoltaikanlage ${p.titel}`,
-      ...(p.kwp != null && { description: `Nennleistung ${p.leistungText}${p.jahr ? `, Baujahr ${p.jahr}` : ""}${p.ort ? `, ${p.ort}` : ""}` }),
+      ...(p.kwp != null && {
+        description: `Nennleistung ${p.leistungText}${p.jahr ? `, Baujahr ${p.jahr}` : ""}${p.ort ? `, ${p.ort}` : ""}`,
+      }),
     },
-    ...(p.ort && { contentLocation: { "@type": "Place", name: p.ort } }),
+    ...(p.ort && {
+      contentLocation: {
+        "@type": "Place",
+        name: p.ort,
+        ...(p.lat &&
+          p.lng && {
+            geo: {
+              "@type": "GeoCoordinates",
+              latitude: p.lat,
+              longitude: p.lng,
+            },
+          }),
+      },
+    }),
   };
 
+  // true only for real values (not null, undefined, "", NaN, 0)
+  const hat = (v) =>
+    v !== null &&
+    v !== undefined &&
+    v !== "" &&
+    !(typeof v === "number" && (isNaN(v) || v === 0));
+
   const fakten = [
-    p.kwp != null && { icon: Zap, label: "Nennleistung", wert: p.leistungText, gross: true },
-    p.jahr && { icon: CalendarDays, label: "Baujahr", wert: String(p.jahr) },
-    p.segment && { icon: Home, label: "Objektart", wert: p.segment },
-    p.ort && { icon: MapPin, label: "Ort", wert: p.ort },
-    ertrag && { icon: Sun, label: "Ertrag (rechnerisch)", wert: `≈ ${fmtZahl(ertrag)} kWh/Jahr` },
+    hat(p.kwp) &&
+      hat(p.leistungText) && {
+        icon: Zap,
+        label: "Nennleistung",
+        wert: p.leistungText,
+        gross: true,
+      },
+    hat(p.jahr) && {
+      icon: CalendarDays,
+      label: "Baujahr",
+      wert: String(p.jahr),
+    },
+    hat(p.segment) && { icon: Home, label: "Objektart", wert: p.segment },
+    hat(p.ort) && { icon: MapPin, label: "Ort", wert: p.ort },
+    hat(ertrag) && {
+      icon: Sun,
+      label: istRechnerisch ? "Ertrag (rechnerisch)" : "Ertrag",
+      wert: `≈ ${fmtZahl(ertrag)} kWh/Jahr`,
+    },
   ].filter(Boolean);
+
+  // Tailwind needs complete class names → fixed lookup instead of building strings
+  const SPALTEN = {
+    1: "grid-cols-1",
+    2: "grid-cols-2 lg:grid-cols-2",
+    3: "grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-2 lg:grid-cols-4",
+    5: "grid-cols-2 lg:grid-cols-5",
+  };
 
   return (
     <div>
@@ -239,37 +421,78 @@ export default async function ProjectDetailPage({ params }) {
 
       <PageHero
         variant="immersive"
-        breadcrumbs={[{ name: "Referenzen", href: "/referenzen/projekte" }, { name: "Projekte", href: "/referenzen/projekte" }, { name: p.titel }]}
+        breadcrumbs={[
+          { name: "Referenzen", href: "/referenzen/projekte" },
+          { name: "Projekte", href: "/referenzen/projekte" },
+          { name: p.titel },
+        ]}
         eyebrow={["Referenzprojekt", p.jahr].filter(Boolean).join(" · ")}
         title={p.titel}
         lead={kurzbeschreibung(p)}
-        image={{ src: p.bild, alt: `Photovoltaikanlage ${p.titel}` }}
+        image={{
+          src: p.bild || FALLBACK_BILD,
+          alt: `Photovoltaikanlage ${p.titel}`,
+        }}
         points={p.typTeile}
         actions={[
           { label: "Ähnliche Anlage anfragen", href: "/angebot" },
-          { label: "Ertrag berechnen", href: "/solarrechner", icon: Calculator },
+          {
+            label: "Ertrag berechnen",
+            href: "/solarrechner",
+            icon: Calculator,
+          },
         ]}
         className="pb-16"
       />
 
       {/* Kennzahlen-Leiste */}
+      {/* Kennzahlen-Leiste – only shows boxes with values, hidden completely when empty */}
       {fakten.length > 0 && (
         <div className="relative z-10 -mt-14 md:-mt-16">
           <div className="ov-container">
             <Reveal dir="scale">
-              <dl className={`grid grid-cols-2 overflow-hidden rounded-3xl bg-white shadow-[0_30px_70px_-35px_rgba(15,23,42,0.45)] ring-1 ring-ink-200/70 ${fakten.length >= 5 ? "lg:grid-cols-5" : fakten.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
-                {fakten.map((f, i) => (
-                  <div
-                    key={f.label}
-                    className={`flex flex-col gap-2 border-ink-100 p-5 md:p-7 ${i > 0 ? "lg:border-l" : ""} ${i % 2 === 1 ? "border-l" : ""} ${i >= 2 ? "border-t lg:border-t-0" : ""} ${f.gross ? "bg-ov-50/60" : ""} ${fakten.length % 2 === 1 && i === fakten.length - 1 ? "col-span-2 lg:col-span-1" : ""}`}
-                  >
-                    <dt className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">
-                      <f.icon aria-hidden="true" className="h-4 w-4 text-ov-600" />
-                      {f.label}
-                    </dt>
-                    <dd className={`ov-num font-display font-extrabold leading-tight tracking-tight text-ink-900 ${f.gross ? "text-[26px] md:text-[32px]" : "text-[18px] md:text-[21px]"}`}>{f.wert}</dd>
-                  </div>
-                ))}
+              <dl
+                className={`grid overflow-hidden rounded-3xl bg-white shadow-[0_30px_70px_-35px_rgba(15,23,42,0.45)] ring-1 ring-ink-200/70 ${SPALTEN[fakten.length]}`}
+              >
+                {fakten.map((f, i) => {
+                  const einzeln = fakten.length === 1;
+                  const letzteUngerade =
+                    fakten.length > 1 &&
+                    fakten.length % 2 === 1 &&
+                    i === fakten.length - 1;
+                  return (
+                    <div
+                      key={f.label}
+                      className={[
+                        "flex flex-col gap-2 border-ink-100 p-5 md:p-7",
+                        // Desktop: divider between all boxes
+                        i > 0 && "lg:border-l",
+                        // Mobile (2 columns): divider left in the right column, top from row 2
+                        !einzeln && i % 2 === 1 && "border-l",
+                        !einzeln && i >= 2 && "border-t lg:border-t-0",
+                        // odd count: last box full width on mobile
+                        letzteUngerade &&
+                          "col-span-2 border-l-0 lg:col-span-1 lg:border-l",
+                        f.gross && "bg-ov-50/60",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      <dt className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                        <f.icon
+                          aria-hidden="true"
+                          className="h-4 w-4 text-ov-600"
+                        />
+                        {f.label}
+                      </dt>
+                      <dd
+                        className={`ov-num font-display font-extrabold leading-tight tracking-tight text-ink-900 ${f.gross ? "text-[26px] md:text-[32px]" : "text-[18px] md:text-[21px]"}`}
+                      >
+                        {f.wert}
+                      </dd>
+                    </div>
+                  );
+                })}
               </dl>
             </Reveal>
           </div>
@@ -281,7 +504,10 @@ export default async function ProjectDetailPage({ params }) {
         <Section tone="white" space="md">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <SectionHeading eyebrow="Galerie" title="Die Anlage im Bild" />
-            <p className="text-[14px] text-ink-500">{galerie.length} {galerie.length === 1 ? "Foto" : "Fotos"} · zum Vergrößern antippen</p>
+            <p className="text-[14px] text-ink-500">
+              {galerie.length} {galerie.length === 1 ? "Foto" : "Fotos"} · zum
+              Vergrößern antippen
+            </p>
           </div>
           <ProjektGalerie bilder={galerie} titel={p.titel} />
         </Section>
@@ -292,33 +518,55 @@ export default async function ProjectDetailPage({ params }) {
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <Reveal dir="left">
             <div className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-9">
-              <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Projektsteckbrief</p>
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
+                Projektsteckbrief
+              </p>
               <h2 className="ov-h3 mt-3 text-ink-900">{p.titel}</h2>
               <dl className="mt-6 divide-y divide-ink-100 text-[15.5px]">
                 {[
                   ["Leistung", p.leistungText],
                   ["Baujahr", p.jahr],
                   ["Objektart", p.segment],
-                  ["Objekt / Montage", p.typ],
                   ["Dachart", p.dacharten.join(", ")],
-                  ["Ort", p.ort],
+                  ["Module", p.modul],
+                  ["Wechselrichter", p.wechselrichter],
+                  ["Speicher", p.speicher],
+                  ["Ort", ortText],
                   ["Land", p.ort ? p.land : null],
                 ]
                   .filter(([, v]) => v)
                   .map(([k, v]) => (
                     <div key={k} className="flex justify-between gap-6 py-3">
                       <dt className="text-ink-500">{k}</dt>
-                      <dd className="text-right font-semibold text-ink-900">{v}</dd>
+                      <dd className="text-right font-semibold text-ink-900">
+                        {v}
+                      </dd>
                     </div>
                   ))}
               </dl>
               {ertrag && (
                 <div className="mt-6 rounded-2xl bg-ov-50 p-5">
                   <p className="flex items-start gap-2.5 text-[14.5px] leading-relaxed text-ink-700">
-                    <Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+                    <Info
+                      aria-hidden="true"
+                      className="mt-0.5 h-4 w-4 shrink-0 text-ov-600"
+                    />
                     <span>
-                      Rechnerisch erzeugt eine Anlage dieser Größe rund <strong className="text-ink-900">{fmtZahl(ertrag)} kWh</strong> im Jahr – etwa der Verbrauch von{" "}
-                      <strong className="text-ink-900">{haushalte} {haushalte === 1 ? "Haushalt" : "Haushalten"}</strong> mit {fmtZahl(HAUSHALT_KWH)} kWh. Orientierung mit {fmtZahl(ERTRAG_JE_KWP)} kWh je kWp, kein Messwert.
+                      {istRechnerisch
+                        ? "Rechnerisch erzeugt eine Anlage dieser Größe"
+                        : "Diese Anlage erzeugt"}{" "}
+                      rund{" "}
+                      <strong className="text-ink-900">
+                        {fmtZahl(ertrag)} kWh
+                      </strong>{" "}
+                      im Jahr – etwa der Verbrauch von{" "}
+                      <strong className="text-ink-900">
+                        {haushalte}{" "}
+                        {haushalte === 1 ? "Haushalt" : "Haushalten"}
+                      </strong>{" "}
+                      mit {fmtZahl(HAUSHALT_KWH)} kWh.
+                      {istRechnerisch &&
+                        ` Orientierung mit ${fmtZahl(ERTRAG_JE_KWP)} kWh je kWp, kein Messwert.`}
                     </span>
                   </p>
                 </div>
@@ -327,16 +575,29 @@ export default async function ProjectDetailPage({ params }) {
           </Reveal>
 
           <div>
-            <SectionHeading eyebrow="Einordnung" title={wissen.titel} lead={`Jede Anlage wird individuell geplant. Diese Punkte spielen bei Projekten wie ${p.titel} typischerweise eine Rolle (Stand 2026).`} />
+            <SectionHeading
+              eyebrow="Einordnung"
+              title={wissen.titel}
+              lead={`Jede Anlage wird individuell geplant. Diese Punkte spielen bei Projekten wie ${p.titel} typischerweise eine Rolle (Stand 2026).`}
+            />
             <ul className="mt-8 space-y-4">
               {wissen.punkte.map((w, i) => (
-                <Reveal as="li" key={w.t} delay={i * 90} className="flex gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-200/60">
+                <Reveal
+                  as="li"
+                  key={w.t}
+                  delay={i * 90}
+                  className="flex gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-200/60"
+                >
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-600 font-display text-[15px] font-extrabold text-white">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <h3 className="font-display text-[18px] font-bold text-ink-900">{w.t}</h3>
-                    <p className="mt-1.5 text-[15.5px] leading-relaxed text-ink-600">{w.x}</p>
+                    <h3 className="font-display text-[18px] font-bold text-ink-900">
+                      {w.t}
+                    </h3>
+                    <p className="mt-1.5 text-[15.5px] leading-relaxed text-ink-600">
+                      {w.x}
+                    </p>
                   </div>
                 </Reveal>
               ))}
@@ -345,7 +606,11 @@ export default async function ProjectDetailPage({ params }) {
               <Button href="/angebot" pfeil>
                 Anlage für mein Dach planen
               </Button>
-              <Button href="/referenzen/referenzkarte" variant="secondary" icon={Layers}>
+              <Button
+                href="/referenzen/referenzkarte"
+                variant="secondary"
+                icon={Layers}
+              >
                 Referenzkarte
               </Button>
             </div>
@@ -359,9 +624,22 @@ export default async function ProjectDetailPage({ params }) {
           <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
             <SectionHeading
               eyebrow="Weitere Referenzen"
-              title={p.segment ? <>Mehr Projekte: <span className="ov-text-gradient">{p.segment}</span></> : "Weitere Kundenprojekte entdecken"}
+              title={
+                p.segment ? (
+                  <>
+                    Mehr Projekte:{" "}
+                    <span className="ov-text-gradient">{p.segment}</span>
+                  </>
+                ) : (
+                  "Weitere Kundenprojekte entdecken"
+                )
+              }
             />
-            <Button href="/referenzen/projekte" variant="secondary" icon={ArrowLeft}>
+            <Button
+              href="/referenzen/projekte"
+              variant="secondary"
+              icon={ArrowLeft}
+            >
               Alle Projekte
             </Button>
           </div>
@@ -377,7 +655,11 @@ export default async function ProjectDetailPage({ params }) {
 
       <CtaBand
         eyebrow="Ihre Anlage als nächste Referenz"
-        title={p.kwp != null ? `${fmtKwp(p.kwp)} kWp oder ganz anders – was passt auf Ihr Dach?` : "Was passt auf Ihr Dach?"}
+        title={
+          p.kwp != null
+            ? `${fmtKwp(p.kwp)} kWp oder ganz anders – was passt auf Ihr Dach?`
+            : "Was passt auf Ihr Dach?"
+        }
         text="Wir prüfen Dach, Verbrauch und Ihre Pläne und erstellen Ihnen ein ehrliches Angebot – mit Planung, Montage und Anmeldung aus einer Hand."
         primary={{ label: "Kostenloses Angebot anfragen", href: "/angebot" }}
         secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}

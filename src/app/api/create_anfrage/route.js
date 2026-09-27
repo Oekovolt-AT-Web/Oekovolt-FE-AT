@@ -1,14 +1,16 @@
 // src/app/api/anfrage/route.js (or wherever this file is located)
 
 import { NextResponse } from "next/server";
+import { ipAdresse } from "@/lib/ipAdresse";
 import { getApiHeaders, isApiConfigured, API_BASE_URL } from "@/lib/apiBaseUrl";
+import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
 
-const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.anfrage.api.create_anfrage`;
+const API_URL = `${API_BASE_URL}oekovolt_app.website_api.angebot.submit_angebot`;
 
 export async function POST(request) {
     // Check if API is configured
     if (!isApiConfigured()) {
-        console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+        console.error("API not configured: Missing NEW_API_KEY or NEW_API_SECRET in environment variables");
         return NextResponse.json(
             { error: "API not configured" },
             { status: 500 }
@@ -17,7 +19,7 @@ export async function POST(request) {
 
     try {
         const body = await request.json();
-        
+
         // Get authenticated headers
         const headers = getApiHeaders();
 
@@ -25,24 +27,12 @@ export async function POST(request) {
         const response = await fetch(API_URL, {
             method: "POST",
             headers: headers,
-            body: JSON.stringify(body),
+            body: JSON.stringify({ ...body, ip_adresse: ipAdresse(request) }),
         });
 
         if (!response.ok) {
-            let errorData = {};
-            try {
-                errorData = await response.json();
-                console.error("Error response:", errorData);
-            } catch (e) {
-                const errorText = await response.text();
-                console.error("Error text:", errorText);
-                errorData = { message: errorText };
-            }
-            
-            return NextResponse.json(
-                { error: "Failed to submit inquiry", details: errorData },
-                { status: response.status }
-            );
+            const { status, body: fehler } = await backendFehler(response, "Angebot API");
+            return NextResponse.json(fehler, { status });
         }
 
         const data = await response.json();
@@ -51,8 +41,8 @@ export async function POST(request) {
     } catch (error) {
         console.error("Error in PV inquiry API:", error);
         return NextResponse.json(
-            { error: "Internal Server Error" },
-            { status: 500 }
+            { error: NICHT_ERREICHBAR, code: "backend" },
+            { status: 502 }
         );
     }
 }

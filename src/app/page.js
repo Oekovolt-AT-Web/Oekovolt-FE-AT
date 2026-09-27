@@ -8,9 +8,9 @@ import {
   Cpu, Handshake, HousePlug, Library, MapPin, PlugZap, Ruler, ShieldCheck, Sparkles, Sun, Thermometer, Wrench, Zap,
 } from "lucide-react";
 
+import { projektSlug } from "@/components/Project/projektDaten";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
-import { generateSlug } from "@/lib/slugify";
 import { getEnergySnapshot } from "@/lib/energy";
 
 import Section from "@/components/ui/Section";
@@ -29,7 +29,7 @@ import { LiveDot } from "@/components/ui/LiveTicker";
 
 const BASE_URL = "https://www.oekovolt.de";
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.home_page.api.get_home_page`;
-const PROJEKTE_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.projekte.api.projektede_data`;
+const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 
 async function apiGet(url) {
   if (!isApiConfigured()) return null;
@@ -103,9 +103,19 @@ const FAQ = [
 export default async function HomePage() {
   const [data, projekteRoh, energie] = await Promise.all([getHomeData(), getProjekte(), getEnergySnapshot().catch(() => null)]);
 
-  const projekte = (Array.isArray(projekteRoh) ? projekteRoh : [])
-    .filter((p) => p.status === "Aktiv")
-    .map((p) => ({ title: p.title, slug: generateSlug(p.title), bild: p.bild_anhagen?.[0]?.bild_anhagen, leistung: p.leistung }))
+  // Neueste 4 Projekte – Felder und Sortierung wie im Portfolio (/referenzen/projekte: "Neueste")
+  const projekteListe = Array.isArray(projekteRoh) ? projekteRoh : projekteRoh?.projekte;
+  const projekte = (Array.isArray(projekteListe) ? projekteListe : [])
+    .filter((p) => p.projekt_website_name)
+    .map((p) => ({
+      title: p.projekt_name || p.projekt_website_name,
+      slug: projektSlug(p),
+      bild: p.bild_url ? encodeURI(p.bild_url) : null,
+      leistung: p.leistung_label,
+      jahr: Number(p.jahr) || 0,
+      kwp: Number(p.leistung) || 0,
+    }))
+    .sort((a, b) => b.jahr - a.jahr || b.kwp - a.kwp)
     .slice(0, 4);
 
   const kennzahlen = [
@@ -285,12 +295,13 @@ export default async function HomePage() {
       <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <Reveal dir="left" className="relative">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl sm:aspect-[5/4] lg:aspect-[4/5]">
-              <Image src="/Images/Kontakt/download-1.jpg" alt="Firmensitz der Ökovolt GmbH Solartechnik in Türkheim mit Servicefahrzeugen" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-            </div>
-            <div className="absolute -bottom-6 right-4 max-w-[260px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-ink-100 md:-right-6">
-              <p className="font-display text-[36px] font-extrabold leading-none tracking-tight text-ov-600">15+</p>
-              <p className="mt-2 text-[14px] leading-snug text-ink-600">Jahre Photovoltaik-Erfahrung – mit eigenem Montageteam aus Türkheim.</p>
+            {/* 15+ box sits inside the image frame, so it stays on the image's bottom-right corner */}
+            <div className="relative aspect-[4/5] rounded-[2rem] shadow-2xl sm:aspect-[5/4] lg:aspect-[4/5]">
+              <Image src="/Images/Kontakt/download-1.jpg" alt="Firmensitz der Ökovolt GmbH Solartechnik in Türkheim mit Servicefahrzeugen" fill sizes="(max-width: 1024px) 100vw, 50vw" className="rounded-[2rem] object-cover" />
+              <div className="absolute -bottom-6 right-4 max-w-[260px] rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-ink-100 md:-right-6">
+                <p className="font-display text-[36px] font-extrabold leading-none tracking-tight text-ov-600">15+</p>
+                <p className="mt-2 text-[14px] leading-snug text-ink-600">Jahre Photovoltaik-Erfahrung – mit eigenem Montageteam aus Türkheim.</p>
+              </div>
             </div>
           </Reveal>
           <div className="flex flex-col justify-center">
@@ -385,7 +396,7 @@ export default async function HomePage() {
                 <Link href={`/referenzen/projekte/${p.slug}`} className="group block">
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-ink-100">
                     <Image
-                      src={p.bild ? `/api/image?path=${p.bild}` : "/Images/Referenzen/Projekte-1.jpg"}
+                      src={p.bild || "/Images/Referenzen/Projekte-1.jpg"}
                       alt={`Photovoltaik-Projekt ${p.title}`}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"

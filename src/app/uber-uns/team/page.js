@@ -14,66 +14,25 @@ import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import Fliesstext from "@/components/Reusable/Fliesstext";
 import TeamKarte, { normalisiereMitglied } from "@/components/Team/TeamKarte";
-import FirmenTimeline from "@/components/Team/FirmenTimeline";
-import { ladeProjekte } from "@/components/Project/ladeProjekte";
-import { bildUrl, normalisiereProjekt } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import Firmengeschichte from "@/components/Team/Firmengeschichte";
+import { GENERATIONEN, PROFIL } from "@/data/unternehmen";
+import { bildUrl } from "@/components/Project/projektDaten";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.team_page.api.get_team_page`;
-const TEAM_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.team.api.teamde_data`;
 const PAGE_URL = "https://www.oekovolt.de/uber-uns/team";
 
 async function fetchTeamData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
+  // Statisch aus dem Repo - die Website liest nichts mehr aus dem
+  // Backoffice, dort werden nur noch Formulare gespeichert.
+  return null;
 }
 
 // Teammitglieder serverseitig laden (vorher nur clientseitig über /api/team)
 async function fetchTeamMitglieder() {
-  if (!isApiConfigured()) return [];
-  try {
-    const res = await fetch(TEAM_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data?.message) ? data.message.filter((p) => !p?.status || p.status === "Aktiv") : [];
-  } catch (error) {
-    console.error("Error fetching team:", error);
-    return [];
-  }
+  // Statisch aus dem Repo - die Website liest nichts mehr aus dem
+  // Backoffice, dort werden nur noch Formulare gespeichert.
+  return [];
 }
 
 export async function generateMetadata() {
@@ -129,9 +88,8 @@ const ROLLEN = [
 const KARRIERE_ICONS = [GraduationCap, Users, TrendingUp, Sparkles];
 
 export default async function TeamPage() {
-  const [data, mitgliederRoh, projekteRoh] = await Promise.all([fetchTeamData(), fetchTeamMitglieder(), ladeProjekte()]);
+  const [data, mitgliederRoh] = await Promise.all([fetchTeamData(), fetchTeamMitglieder()]);
   const mitglieder = mitgliederRoh.map(normalisiereMitglied).filter((m) => m.name);
-  const projekte = projekteRoh.map(normalisiereProjekt).filter((p) => p.slug);
 
   const webPageSchema = {
     "@context": "https://schema.org",
@@ -144,16 +102,26 @@ export default async function TeamPage() {
     about: { "@id": "https://www.oekovolt.de/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
-    ...(mitglieder.length > 0 && {
-      mainEntity: {
-        "@type": "ItemList",
-        itemListElement: mitglieder.map((m, i) => ({
-          "@type": "ListItem",
-          position: i + 1,
-          item: { "@type": "Person", name: m.name, ...(m.rolle && { jobTitle: m.rolle }), worksFor: { "@id": "https://www.oekovolt.de/#organization" } },
-        })),
-      },
-    }),
+    // Personen fuer die Suchmaschine: bevorzugt gepflegte Teamprofile, sonst
+    // die Geschaeftsfuehrung aus @/data/unternehmen. Die Gruender werden
+    // zusaetzlich als `founder` ausgezeichnet - das verbindet Person und
+    // Organisation als Entitaeten (E-E-A-T).
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: (mitglieder.length > 0
+        ? mitglieder.map((m) => ({ name: m.name, jobTitle: m.rolle }))
+        : GENERATIONEN.flatMap((g) => g.personen.map((pp) => ({ name: pp.name, jobTitle: pp.rolle })))
+      ).map((pp, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Person",
+          name: pp.name,
+          ...(pp.jobTitle && { jobTitle: pp.jobTitle }),
+          worksFor: { "@id": "https://www.oekovolt.de/#organization" },
+        },
+      })),
+    },
   };
 
   const introText = (data?.first_card_table || []).map((o) => o.option).join("\n\n").replace(" ,.um", ", um").replace(",.um", ", um");
@@ -264,7 +232,7 @@ export default async function TeamPage() {
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200 transition-colors group-hover:bg-ov-500 group-hover:text-white">
                       <r.icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
                     </span>
-                    <span aria-hidden="true" className="ov-num font-display text-[30px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="ov-num font-display text-[30px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
                   </div>
                   <h3 className="ov-h3 mt-5 text-ink-900">{r.title}</h3>
                   <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">{r.text}</p>
@@ -275,27 +243,25 @@ export default async function TeamPage() {
         </div>
       </Section>
 
-      {/* Zeitleiste */}
-      {projekte.length > 0 && (
-        <Section tone="navy" space="lg" className="overflow-hidden">
-          <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-          <div aria-hidden="true" className="absolute -right-40 top-40 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-          <SectionHeading
-            dark
-            eyebrow="Unsere Geschichte in Projekten"
-            title={<>Gewachsen <span className="ov-text-gradient-light">Dach für Dach</span></>}
-            lead="Die Zeitleiste zeigt belegte Stationen: unseren Firmensitz in Türkheim und die Baujahre der Referenzprojekte aus unserer Projektdatenbank."
-            align="center"
-            className="mb-14 md:mb-20"
-          />
-          <FirmenTimeline projekte={projekte} />
-          <div className="mt-14 flex justify-center">
-            <Button href="/referenzen/projekte" variant="outlineLight" pfeil>
-              Alle Referenzprojekte ansehen
-            </Button>
-          </div>
-        </Section>
-      )}
+      {/* Firmengeschichte: Zeitleiste, Generationen, Gruppe, Registerdaten */}
+      <Section tone="navy" space="lg" className="overflow-hidden" id="geschichte">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-40 top-40 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <SectionHeading
+          dark
+          eyebrow="Unsere Geschichte"
+          title={<>Solarpioniere aus dem <span className="ov-text-gradient-light">Allgäu</span>. Seit 2010.</>}
+          lead={PROFIL.lead}
+          align="center"
+          className="mb-4"
+        />
+        <Firmengeschichte />
+        <div className="mt-14 flex justify-center">
+          <Button href="/referenzen/projekte" variant="outlineLight" pfeil>
+            Alle Referenzprojekte ansehen
+          </Button>
+        </div>
+      </Section>
 
       {/* Arbeitsweise */}
       <Section tone="white" space="lg">
