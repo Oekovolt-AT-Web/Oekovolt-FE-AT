@@ -24,7 +24,7 @@ const OW_LINZ = (LINZ[8] + LINZ[9]) / 2;
 
 const artikel = {
   slug: "photovoltaik-ertrag-pro-kwp",
-  title: "Photovoltaik-Ertrag pro kWp in Österreich: Werte aller Landeshauptstädte",
+  title: "Photovoltaik-Ertrag pro kWp in Österreich: Werte der Landeshauptstädte",
   seoTitle: "PV-Ertrag pro kWp Österreich: PVGIS-Werte | Ökovolt",
   kurzTitel: "Ertrag pro kWp",
   description:

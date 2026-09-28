@@ -56,7 +56,7 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: "**Fast jedes Flachdach eignet sich grundsätzlich für Photovoltaik – entscheidend sind Tragreserve, Zustand der Abdichtung und Windlast, nicht die Ausrichtung des Gebäudes.** Weil die Module auf einer eigenen Unterkonstruktion stehen, lässt sich die optimale Richtung unabhängig vom Grundriss wählen. Gerade Gewerbehallen, Logistikzentren, Supermärkte und landwirtschaftliche Gebäude bieten große, unverschattete Flächen direkt beim Verbraucher.",
+          text: "**Fast jedes Flachdach eignet sich grundsätzlich für Photovoltaik – entscheidend sind Tragreserve, Zustand der Abdichtung und Windlast, nicht die Ausrichtung des Gebäudes.** Weil die Module auf einer eigenen [Aufständerung](/wissen/lexikon#aufstaenderung) stehen, lässt sich die optimale Richtung unabhängig vom Grundriss wählen. Gerade Gewerbehallen, Logistikzentren, Supermärkte und landwirtschaftliche Gebäude bieten große, unverschattete Flächen direkt beim Verbraucher.",
         },
         {
           typ: "p",
@@ -226,6 +226,21 @@ const artikel = {
         {
           typ: "p",
           text: "Bei 500 kWp liegt die Anlage deutlich über der Grenze von 250 kW, ab der die TOR Stromerzeugungsanlagen Typ B gelten. Netzbetreiber verlangen dann in der Regel eine zentrale Regelung für Wirk- und Blindleistung – Ökovolt setzt dafür einen eigenen [Parkregler](/technik/parkregler) ein. Wie der Überschuss einer solchen Anlage vermarktet wird, zeigt der Ratgeber [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+        },
+      ],
+    },
+    {
+      id: "foerderung-recht",
+      titel: "Förderung, Genehmigung und Solarpflicht",
+      tocLabel: "Förderung & Recht",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Flachdachanlagen auf Gebäuden sind förderrechtlich begünstigt: Für sie gibt es keinen Freiflächen-Abschlag, und der EAG-Investitionszuschuss steht bis 1.000 kWp offen.** 2026 liegt der Höchstsatz in Kategorie C (über 20 bis 100 kWp) bei 130 €/kWp, in Kategorie D (über 100 bis 1.000 kWp) bei 120 €/kWp; gefördert wird nach Gebot und höchstens 30 % der Investition. Für Module und Wechselrichter mit europäischer Wertschöpfung kommen je 10 % Zuschlag hinzu. Details im Ratgeber [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss).",
+        },
+        {
+          typ: "p",
+          text: "Genehmigungsrechtlich regeln bisher die Bauordnungen der Länder, ob eine Aufdachanlage anzeige- oder bewilligungspflichtig ist. Laut PV Austria bringt das Erneuerbaren-Ausbau-Beschleunigungsgesetz ab 2027 für PV auf und an den meisten Gebäuden eine bundesweite Genehmigungsfreiheit; elektrizitätsrechtliche Pflichten, Brandschutz und Netzanschluss bleiben davon unberührt. In mehreren Bundesländern gelten zudem PV-Pflichten für neue Betriebsgebäude oder große Dachsanierungen – siehe [Solarpflicht nach Bundesland](/ratgeber/solarpflicht-bundeslaender).",
         },
       ],
     },

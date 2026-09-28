@@ -18,7 +18,7 @@ const artikel = {
   seoTitle: "Solarcarport Gewerbe & Gemeinde Österreich | Ökovolt",
   kurzTitel: "Solarcarport",
   description:
-    "Solarcarport für Kundenparkplatz, Betrieb und Gemeinde: Baurecht der Länder, Statik nach ÖNORM, Brandschutz, Ladeinfrastruktur, Förderung und Wirtschaftlichkeit.",
+    "Solarcarport für Kundenparkplatz, Betrieb und Gemeinde: Baurecht der Länder, Statik nach ÖNORM, Brandschutz, Ladepunkte, Förderung und Wirtschaftlichkeit.",
   excerpt:
     "Parkplätze sind die größten ungenutzten Flächen vieler Betriebe und Gemeinden. Wie Solarcarports geplant, genehmigt und mit Ladepunkten kombiniert werden – mit Statik, Brandschutz und Rechenbeispiel für 40 Stellplätze.",
   hauptKeyword: "solarcarport gewerbe",
@@ -74,7 +74,7 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: "**Ein Solarcarport ist ein bauliche Anlage und fällt unter die Bauordnung des jeweiligen Bundeslands – je nach Größe, Lage und Widmung genügt eine Bauanzeige oder es ist eine Baubewilligung erforderlich.** Gewerbliche Parkplatzüberdachungen mit vielen Stellplätzen sind in der Regel bewilligungspflichtig. Hinzu kommen je nach Standort Vorgaben aus Flächenwidmung, Bebauungsplan, Ortsbildschutz und gegebenenfalls Denkmalschutz.",
+          text: "**Ein Solarcarport ist eine bauliche Anlage und fällt unter die Bauordnung des jeweiligen Bundeslands – je nach Größe, Lage und Widmung genügt eine Bauanzeige oder es ist eine Baubewilligung erforderlich.** Gewerbliche Parkplatzüberdachungen mit vielen Stellplätzen sind in der Regel bewilligungspflichtig. Hinzu kommen je nach Standort Vorgaben aus Flächenwidmung, Bebauungsplan, Ortsbildschutz und gegebenenfalls Denkmalschutz.",
         },
         {
           typ: "tabelle",
@@ -147,6 +147,54 @@ const artikel = {
         {
           typ: "p",
           text: "Details zu Feuerwehr, Abschaltung und Versicherungsauflagen beschreibt der Ratgeber [Brandschutz bei Photovoltaik](/ratgeber/photovoltaik-brandschutz).",
+        },
+      ],
+    },
+    {
+      id: "bauformen",
+      titel: "Welche Bauformen gibt es?",
+      tocLabel: "Bauformen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die Bauform richtet sich nach Parkplatzgeometrie, Fahrgassen, Schneelast und gewünschter Modulfläche – typisch sind einreihige Pultdächer, zweireihige Konstruktionen mit Mittelstützen und Parkdeck-Überdachungen.** Je größer die Spannweite und je höher die Schneelast, desto aufwendiger werden Tragwerk und Fundamente.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Bauformen von Solarcarports im Vergleich",
+          kopf: ["Bauform", "Eigenschaften", "Geeignet für"],
+          zeilen: [
+            ["Einreihig, Pultdach", "Stützen an einer Seite oder beidseitig, einfache Entwässerung", "Mitarbeiterparkplätze entlang von Grundstücksgrenzen"],
+            ["Zweireihig mit Mittelstütze (T- oder Y-Form)", "zwei Stellplatzreihen unter einem Dach, wenig Stützen im Fahrbereich", "Kundenparkplätze im Handel, große Flächen"],
+            ["Ost-West-Satteldach", "gleichmäßigere Erzeugung über den Tag, gute Schneeabgleitung je nach Neigung", "Betriebe mit Ladebedarf morgens und nachmittags"],
+            ["Parkdeck-Überdachung", "Tragwerk über dem obersten Deck, hohe Anforderungen an Statik und Brandschutz", "Parkhäuser, Hotels, Gemeinden"],
+            ["Lkw- und Bus-Überdachung", "große Durchfahrtshöhen und Spannweiten", "Logistik, Busunternehmen, Bauhöfe"],
+          ],
+          minBreite: 640,
+        },
+        {
+          typ: "p",
+          text: "Glas-Glas-Module mit lichtdurchlässigen Zwischenräumen sorgen für Tageslicht unter dem Carport; geschlossene Dächer mit Rinnen halten Fahrzeuge trocken. In schneereichen Lagen spielen Neigung, Abrutschzonen und Schneefang eine große Rolle – mehr dazu im Ratgeber [Photovoltaik im Winter](/ratgeber/photovoltaik-im-winter).",
+        },
+      ],
+    },
+    {
+      id: "betrieb",
+      titel: "Betrieb und Wartung eines Solarcarports",
+      tocLabel: "Betrieb & Wartung",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ein Solarcarport ist leichter zugänglich als eine Dachanlage – Wartung, Reinigung und Thermografie sind entsprechend einfacher, müssen aber mit dem Parkbetrieb abgestimmt werden.** Für Betriebe mit Arbeitnehmern gelten die Prüfpflichten der Elektroschutzverordnung wie für jede elektrische Anlage.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "Wiederkehrende Prüfung von PV und Ladepunkten mit Prüfbefund – siehe [E-Check für PV-Anlagen](/ratgeber/e-check-photovoltaik).",
+            "Monitoring von Erzeugung und Ladevorgängen; Alarme bei Ausfall von Ladepunkten.",
+            "Winterdienst: Schneeabrutsch und Eisbildung auf Fahrwegen beachten, Schnee nicht vom Modulfeld schieben.",
+            "Anprallschäden an Stützen regelmäßig kontrollieren.",
+          ],
         },
       ],
     },
@@ -228,6 +276,27 @@ const artikel = {
       ],
     },
     {
+      id: "fehler",
+      titel: "Typische Fehler bei der Planung",
+      tocLabel: "Typische Fehler",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die teuersten Fehler passieren in der Vorplanung: zu knappe Statikreserven, fehlende Leerrohre und eine Anschlussleistung, die für den späteren Ladeausbau nicht reicht.** Wer diese Punkte früh klärt, spart Nachrüstungen, die bei laufendem Parkbetrieb besonders aufwendig sind.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "Schneelast nur nach Zone, nicht nach Verwehung und Abrutschen bemessen.",
+            "Ladepunkte „später“ geplant, aber keine Leerrohre und Kabelwege vorgesehen.",
+            "Netzanfrage zu spät gestellt – Netzausbau kann Monate dauern.",
+            "Entwässerung vergessen: Tropfkanten über Fußwegen und Eisbildung im Winter.",
+            "Stützen ohne Anprallschutz im Rangierbereich.",
+          ],
+        },
+      ],
+    },
+    {
       id: "ablauf",
       titel: "Ablauf: Vom Parkplatz zum Solarcarport",
       tocLabel: "Ablauf",
@@ -271,6 +340,14 @@ const artikel = {
     {
       q: "Wird ein Solarcarport gefördert?",
       a: "Der PV-Teil kann grundsätzlich über den EAG-Investitionszuschuss gefördert werden; wie Carports im jeweiligen Call eingestuft werden, ist vorab zu prüfen. Dazu kommen je nach Bundesland Landesförderungen.",
+    },
+    {
+      q: "Wie hoch muss ein Solarcarport sein?",
+      a: "Das hängt von den Fahrzeugen ab: Für Pkw genügen meist rund 2,5 m lichte Höhe, für Transporter, Wohnmobile, Busse oder Lkw deutlich mehr. Die Höhe beeinflusst Statik, Windlast und die Vorgaben der Bauordnung.",
+    },
+    {
+      q: "Kann ein Solarcarport Strom für eine Energiegemeinschaft liefern?",
+      a: "Ja. Gerade Gemeinden und Betriebe mit großen Parkflächen erzeugen oft mehr, als sie selbst brauchen. Über eine Erneuerbare-Energie-Gemeinschaft kann der Überschuss an Mitglieder in der Nähe geliefert werden – mehr dazu im Ratgeber [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden).",
     },
   ],
 

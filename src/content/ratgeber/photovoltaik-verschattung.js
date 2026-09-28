@@ -1,263 +1,293 @@
-// Ratgeber: Photovoltaik und Verschattung
-// Sonnenstände berechnet für 48,06° N (Türkheim) und 53,55° N (Hamburg),
-// Studienwerte ZHAW EFFPVSHADE (2021–2024).
+// Ratgeber: Photovoltaik und Verschattung – Hallendach, Alpenraum, Planung (Österreich)
+// Horizontverschattung: PVGIS 5.3, Neigung 35° Süd, mit/ohne Geländehorizont (usehorizon=1/0), Abfrage 28.09.2026.
+// Sonnenhöhe 21.12. Mittag Linz (48,3° N): 90° − 48,3° − 23,44° ≈ 18,3°; Schattenlänge = Höhe / tan(18,3°) ≈ 3,0 × Höhe.
+
+const HORIZONT = [
+  // [Ort, Jahr mit Horizont, Jahr ohne, Dez mit, Dez ohne]
+  ["Linz", 1141, 1142, 39.1, 39.1],
+  ["Innsbruck", 1361, 1383, 64.8, 71.2],
+  ["Bad Gastein", 1072, 1205, 40.3, 62.1],
+  ["Lech am Arlberg", 1067, 1196, 22.0, 49.0],
+  ["Hallstatt", 926, 1099, 14.6, 53.7],
+];
+
+const verlust = (mit, ohne) => (ohne - mit <= 0.5 ? "0 %" : "−" + String(Math.round(((ohne - mit) / ohne) * 100)) + " %");
+const f0 = (x) => Math.round(x).toLocaleString("de-AT");
 
 const artikel = {
   slug: "photovoltaik-verschattung",
-  title: "Photovoltaik und Verschattung: Was Schatten kostet und was hilft",
-  seoTitle: "Photovoltaik Verschattung: Verluste & Lösungen | Ökovolt",
+  title: "Photovoltaik und Verschattung: Ursachen, Verluste, Lösungen",
+  seoTitle: "PV-Verschattung: Verluste & Lösungen | Ökovolt",
   kurzTitel: "PV-Verschattung",
   description:
-    "Photovoltaik trotz Verschattung? So wirken Schatten auf Module und Strings, was Bypass-Dioden, Schattenmanagement, Optimierer und Mikrowechselrichter wirklich bringen.",
+    "Verschattung bei Photovoltaik: Berge, Lichtkuppeln, Kamine und Modulreihen – Horizontverluste von Linz bis Hallstatt, Bypassdioden, Strings und Optimierer.",
   excerpt:
-    "Ein Schornstein, ein Baum, eine Gaube: Schon kleine Schatten können überproportional Ertrag kosten. Wie das technisch passiert, welche Gegenmaßnahme wann lohnt – und was Studien zu Optimierern sagen.",
+    "Ein Kamin, eine Lichtkuppel oder ein Berg im Süden: Verschattung kostet mehr Ertrag, als ihre Fläche vermuten lässt. Wie Sie Verluste beziffern und durch Planung, Stringaufteilung und Leistungselektronik begrenzen.",
   hauptKeyword: "photovoltaik verschattung",
-  keywords: ["Photovoltaik Verschattung", "PV-Anlage Teilverschattung", "Verschattung Solarmodule Ertragsverlust", "Leistungsoptimierer sinnvoll", "Bypass-Dioden Solarmodul", "Schattenmanagement Wechselrichter", "Mikrowechselrichter Verschattung"],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  keywords: [
+    "Photovoltaik Verschattung",
+    "Teilverschattung Solarmodul",
+    "Bypassdiode Verschattung",
+    "Horizontverschattung Berge Photovoltaik",
+    "Leistungsoptimierer Verschattung",
+    "Verschattungsanalyse PV",
+    "Lichtkuppel Verschattung Hallendach",
+  ],
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
   bild: "/Images/Ratgeber/photovoltaik-verschattung.jpg",
   bildAlt: "Huawei-Leistungsoptimierer SUN2000-450W-P2 für Solarmodule, Produktfoto",
-  badge: { wert: "≤ 5 %", text: "Jahres-Mehrertrag durch Optimierer in den ZHAW-Laborfällen" },
+  badge: { wert: "−55 %", text: "Dezember-Ertrag in Lech durch Bergschatten (PVGIS)" },
 
   kurzFazit: [
-    "**Verschattung kostet oft mehr Ertrag, als die Schattenfläche vermuten lässt**, weil Solarzellen in Reihe geschaltet sind: Die schwächste Zelle bremst ihre ganze Zellgruppe.",
-    "**Bypass-Dioden** in jedem Modul begrenzen den Schaden – ein kleiner Schatten legt meist nur ein Drittel des Moduls lahm, nicht den ganzen Strang.",
-    "**Die wirksamste Maßnahme ist die Planung:** Schattenfreie Flächen belegen, Strings nach Verschattung trennen und einen Wechselrichter mit gutem Schattenmanagement wählen.",
-    "**Leistungsoptimierer und Mikrowechselrichter** lohnen sich vor allem bei mittlerer bis starker Teilverschattung oder vielen Ausrichtungen. Eine Laborstudie der ZHAW fand in den untersuchten Fällen höchstens rund 5 % Jahres-Mehrertrag.",
+    "**Verschattung senkt den Ertrag einer PV-Anlage oft überproportional: Schon ein beschatteter Zellbereich kann über die Bypassdiode ein Drittel eines Moduls abschalten und in schlecht geplanten Strings weitere Module ausbremsen.**",
+    "Im Alpenraum ist der **Berghorizont** der größte Faktor: Laut PVGIS verliert eine Südanlage in Hallstatt **16 %** des Jahresertrags durch die umliegenden Berge, in Lech und Bad Gastein **11 %**. Im Dezember sind es in Lech **55 %**, in Hallstatt **73 %**.",
+    "Auf Hallendächern verschatten **Lichtkuppeln, Lüftungsanlagen, Attiken und Nachbarreihen**. In Linz ist ein Hindernis am 21. Dezember zu Mittag etwa **dreimal so lang im Schatten wie hoch**.",
+    "Die wirksamsten Gegenmittel sind **Planung und Stringaufteilung**; Leistungsoptimierer oder Mikrowechselrichter helfen gezielt bei unvermeidbarer Teilverschattung – vorgeschrieben sind sie in Österreich nicht generell.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Wie stark schadet Verschattung einer PV-Anlage?",
-      tocLabel: "Kurze Antwort",
+      titel: "Wie stark mindert Verschattung den PV-Ertrag?",
+      tocLabel: "Wie stark?",
       bloecke: [
         {
           typ: "p",
-          text: "**Das hängt weniger von der Größe des Schattens ab als davon, wo er fällt, wie lange er bleibt und wie die Anlage verschaltet ist.** Ein Blatt auf einer einzelnen Zelle kann ein Drittel eines Moduls abschalten; ein Schornsteinschatten, der morgens über mehrere Module wandert, kostet über das Jahr dagegen oft nur wenige Prozent. Dauerhafter Schatten durch hohe Bäume oder Nachbargebäude kann eine Anlage dagegen unwirtschaftlich machen.",
+          text: "**[Verschattung](/wissen/lexikon#verschattung) kostet je nach Art, Dauer und Anlagenplanung zwischen wenigen Prozent und einem Großteil des Ertrags – entscheidend ist weniger die beschattete Fläche als die Frage, welche Zellen, Module und Strings betroffen sind.** Solarzellen eines Moduls sind in Reihe geschaltet: Liefert eine Zelle weniger Strom, begrenzt sie die ganze Kette. Damit ein Modul nicht komplett ausfällt, überbrücken Bypassdioden den betroffenen Abschnitt – meist ein Drittel des Moduls.",
         },
         {
           typ: "p",
-          text: "Wichtig ist die Unterscheidung zwischen **Einstrahlungsverlust** (auf die verschattete Fläche fällt weniger Licht – unvermeidbar) und **Mismatch-Verlust** (verschattete Zellen bremsen unverschattete – durch Technik und Planung beeinflussbar). Nur gegen den zweiten helfen Optimierer, Mikrowechselrichter oder geschickte Verschaltung.",
+          text: "Bei Gewerbeanlagen kommt die Verschaltung hinzu. Module werden zu [Strings](/wissen/lexikon#string) zusammengefasst, die ein [MPP-Tracker](/wissen/lexikon#mpp-tracker) im Wechselrichter gemeinsam regelt. Ist ein Teil des Strings verschattet, muss der Tracker einen Kompromiss finden – und der kostet auch die unverschatteten Module Leistung. Gute Planung trennt deshalb verschattete und unverschattete Bereiche konsequent.",
+        },
+      ],
+    },
+    {
+      id: "horizont",
+      titel: "Berge als Schattenwerfer: Horizontverschattung im Alpenraum",
+      tocLabel: "Berghorizont",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**In inneralpinen Tälern verschattet der Horizont eine PV-Anlage oft stundenlang, besonders im Winter bei tiefem Sonnenstand.** PVGIS berechnet diesen Effekt aus einem digitalen Geländemodell. Die folgende Tabelle vergleicht den Ertrag mit und ohne Horizont für dieselbe Südanlage mit 35° Neigung.",
         },
         {
-          typ: "kennzahl",
-          wert: "3×",
-          titel: "so lang wie hoch ist ein Schatten mittags im Dezember",
-          text: "In Süddeutschland steht die Sonne am 21. Dezember mittags nur rund 18,5 Grad hoch. Ein Baum, der 10 Meter über die Dachfläche ragt, wirft dann einen rund 30 Meter langen Schatten – im Juni sind es knapp 5 Meter.",
+          typ: "tabelle",
+          caption: "Ertrag in kWh/kWp mit und ohne Geländehorizont (PVGIS 5.3, Süd 35°)",
+          kopf: ["Ort", "Jahr ohne Horizont", "Jahr mit Horizont", "Verlust Jahr", "Dezember ohne", "Dezember mit", "Verlust Dezember"],
+          zeilen: HORIZONT.map(([o, jm, jo, dm, dop]) => [o, f0(jo), f0(jm), verlust(jm, jo), f0(dop), f0(dm), verlust(dm, dop)]),
+          hervorheben: 6,
+          minBreite: 760,
+          fussnote: "Quelle: EU JRC, PVGIS 5.3, eigene Abfragen vom 28.09.2026 für die Ortszentren, 14 % Systemverluste, Horizont aus dem Geländemodell (Auflösung begrenzt). Gebäude, Bäume und nahe Hindernisse sind nicht enthalten – ein Horizontfoto vom Dach ist genauer.",
+        },
+        {
+          typ: "p",
+          text: "Die Verluste konzentrieren sich auf den Winter: Im Sommer steht die Sonne hoch genug über den Bergen. Für Chalets, Hotels und Betriebe in Tallagen heißt das: Der Jahresertrag bleibt oft solide, der Winterstrom aber fällt deutlich geringer aus als im Flachland. Wie Sie den Winterertrag trotzdem steigern – etwa mit Fassadenmodulen oder steilerer Neigung – erklärt der Ratgeber [Photovoltaik im Winter](/ratgeber/photovoltaik-im-winter). Werte für Ihre Adresse liefert der [Standort-Check](/standort-check).",
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "Horizont selbst erfassen",
+          text: "Für eine präzise Planung wird der Horizont vom geplanten Modulstandort aufgenommen – mit einem Horizontfoto (Fischaugenobjektiv mit Kompass), einer App oder aus einem Drohnen-3D-Modell. Die Horizontlinie lässt sich in PVGIS hochladen oder in Planungsprogramme übernehmen. Gerade in Tälern weicht der tatsächliche Horizont vom groben Geländemodell deutlich ab.",
+        },
+      ],
+    },
+    {
+      id: "ursachen",
+      titel: "Typische Schattenquellen auf Gewerbe- und Hallendächern",
+      tocLabel: "Schattenquellen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Auf Hallendächern entstehen die meisten Ertragsverluste nicht durch Nachbargebäude, sondern durch Aufbauten auf dem eigenen Dach.** Weil die Module flach stehen und die Sonne im Winter tief, werfen selbst niedrige Hindernisse lange Schatten.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Schattenquellen und wie man mit ihnen umgeht",
+          kopf: ["Schattenquelle", "Wann kritisch", "Planungslösung"],
+          zeilen: [
+            ["Lichtkuppeln und Lichtbänder", "ganzjährig morgens und abends, im Winter mittags", "Abstand halten, Module nicht direkt nördlich davon; Strings parallel zu Lichtbändern führen"],
+            ["Lüftungs- und Klimageräte, RWA", "je nach Höhe ganztags", "Schattenbereich freihalten oder mit eigenem String bzw. Optimierern belegen"],
+            ["Attika, Brüstung, Absturzsicherung", "Randreihen, vor allem im Winter", "erste Reihe mit Abstand zur Attika planen"],
+            ["Eigene Modulreihen (Süd-Aufständerung)", "Winterhalbjahr", "Reihenabstand nach Sonnenstand am 21. Dezember"],
+            ["Kamine, Blitzschutzfangstangen, Antennen", "wandernder Punktschatten", "Module aussparen oder Fangstangen versetzen (Trennungsabstand beachten)"],
+            ["Bäume und Nachbargebäude", "Winter, Randbereiche", "Verschattungsanalyse mit 3D-Modell; Wuchshöhe in 20 Jahren bedenken"],
+            ["Verschmutzung und Schnee", "flache Neigung, Stallabluft, Winter", "Reinigung, steilere Neigung, Monitoring"],
+          ],
+          minBreite: 700,
+          fussnote: "Allgemeine Planungshinweise; die Auswirkung im Einzelfall zeigt eine Verschattungssimulation.",
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Faustregel für Linz: Schatten dreimal so lang wie das Hindernis hoch",
+          text: "Am 21. Dezember steht die Sonne in Linz zu Mittag nur rund 18° hoch. Ein 1 m hohes Lüftungsgerät wirft dann einen etwa 3 m langen Schatten nach Norden, morgens und nachmittags noch längere nach Nordwest bzw. Nordost. In Graz steht die Sonne rund 1°, in Klagenfurt knapp 2° höher, in Salzburg und Bregenz knapp 1° höher. Für Süd-Aufständerungen ergibt sich daraus der Reihenabstand – mehr im Ratgeber [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach).",
         },
       ],
     },
     {
       id: "technik",
-      titel: "Warum kleine Schatten große Wirkung haben",
-      tocLabel: "Technik: Zellen, Dioden, Strings",
+      titel: "Was im Modul passiert: Bypassdioden, Halbzellen, Hotspots",
+      tocLabel: "Technik im Modul",
       bloecke: [
         {
           typ: "p",
-          text: "**Solarzellen sind in Reihe geschaltet, und in einer Reihenschaltung bestimmt das schwächste Glied den Strom.** Ein typisches Modul besteht aus 108 bis 144 Halbzellen, die elektrisch in drei Zellgruppen aufgeteilt sind. Mehrere Module bilden einen [String](/wissen/lexikon#string), der am [MPP-Tracker](/wissen/lexikon#mpp-tracker) des Wechselrichters angeschlossen ist.",
+          text: "**Moderne Module enthalten meist drei Bypassdioden, die je ein Drittel der Zellen überbrücken, wenn diese verschattet sind.** Das verhindert den Totalausfall, kostet aber pro überbrücktem Abschnitt rund ein Drittel der Modulleistung. [Halbzellen-Module](/wissen/lexikon#halbzellen) sind in zwei parallel geschaltete Hälften geteilt; wird nur die untere Hälfte verschattet, etwa durch Schnee am unteren Rand oder die Nachbarreihe, arbeitet die obere weiter.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Querformat oder Hochformat:** Bei Reihenverschattung von unten ist die Ausrichtung entscheidend, ob ein oder mehrere Bypass-Abschnitte ausfallen – das sollte zur Verschaltung passen.",
+            "**Hotspots:** Dauerhaft verschattete oder verschmutzte Zellen können sich stark erhitzen. Das beschleunigt die Alterung und kann das Modul beschädigen. Eine [Drohnen-Thermografie](/service/drohneninspektion) findet solche Stellen zuverlässig.",
+            "**Defekte Bypassdioden:** Nach Überspannung oder Alterung können Dioden ausfallen – im Monitoring sichtbar als dauerhaft um ein Drittel reduzierte Modul- oder Stringleistung.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "loesungen",
+      titel: "Gegenmaßnahmen: Planung, Stringaufteilung, Leistungselektronik",
+      tocLabel: "Lösungen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die wirksamste Maßnahme gegen Verschattung ist, sie gar nicht erst entstehen zu lassen – danach kommen Stringplanung und erst dann Modulleistungselektronik.** Jede Stufe kostet mehr als die vorherige und bringt weniger.",
         },
         {
           typ: "ablauf",
           schritte: [
-            ["Zelle verschattet", "Die Zelle erzeugt weniger Strom. Die übrigen Zellen der Gruppe drücken Strom durch sie hindurch – sie wird zum Verbraucher und erwärmt sich (Hotspot-Gefahr)."],
-            ["Bypass-Diode schaltet", "Sobald die Zellgruppe genug bremst, leitet die Bypass-Diode in der Anschlussdose den Strom an ihr vorbei. Das Modul arbeitet mit zwei Dritteln weiter."],
-            ["String arbeitet weiter", "Der String verliert die Spannung der überbrückten Gruppe, sein Strom bleibt aber hoch. Die Leistungskurve bekommt dadurch mehrere Spitzen."],
-            ["Wechselrichter sucht das Maximum", "Ein guter MPP-Tracker scannt die gesamte Kennlinie und findet das globale Leistungsmaximum. Ein einfacher Tracker kann auf einer lokalen, niedrigeren Spitze hängen bleiben."],
+            ["Belegung optimieren", "Schattenzonen aus der Simulation freihalten; lieber einige Module weniger als dauerhaft verschattete Module."],
+            ["Strings sinnvoll aufteilen", "Module mit gleichem Schattenverlauf in eigene Strings, jeden Bereich auf einen eigenen MPP-Tracker; Ost- und Westflächen getrennt."],
+            ["Wechselrichter mit mehreren Trackern", "Gewerbewechselrichter bieten oft sechs bis zwölf Tracker – das erlaubt feine Aufteilung ohne Zusatzkomponenten. Mehr im Ratgeber [Wechselrichter](/ratgeber/wechselrichter-photovoltaik)."],
+            ["Leistungsoptimierer gezielt einsetzen", "Nur für Module mit unvermeidbarer Teilverschattung, etwa neben Aufbauten oder bei Fassaden – nicht flächendeckend ohne Grund."],
+            ["Monitoring und Kontrolle", "Stringüberwachung zeigt, ob die Verschattungsprognose stimmt und ob neue Hindernisse (Bäume, Aufbauten) dazugekommen sind."],
           ],
         },
         {
-          typ: "kasten",
-          variant: "info",
-          titel: "Rechenbeispiel: ein Schornsteinschatten",
-          text: "Ein String aus 20 Modulen hat 60 Zellgruppen. Legt der Schatten eines Schornsteins bei einem Modul eine Zellgruppe lahm, fehlen dem String rechnerisch rund 1/60 seiner Leistung – knapp 2 % für die Dauer des Schattens. Ohne Bypass-Diode müsste der ganze String auf den Strom der verschatteten Zelle heruntergehen. Deshalb sind Dioden Pflichtausstattung jedes Moduls.",
+          typ: "tabelle",
+          caption: "Leistungselektronik bei Verschattung im Vergleich",
+          kopf: ["Lösung", "Wirkung", "Einsatz im Gewerbe"],
+          zeilen: [
+            ["String-Wechselrichter mit mehreren MPP-Trackern", "trennt Bereiche mit unterschiedlicher Einstrahlung", "Standard; ausreichend bei guter Planung"],
+            ["Leistungsoptimierer (DC/DC am Modul)", "jedes Modul arbeitet im eigenen Optimum, Modulmonitoring", "gezielt bei Teilverschattung, Fassaden, komplexen Dächern"],
+            ["Mikrowechselrichter", "jedes Modul mit eigenem Wechselrichter", "eher kleine Anlagen und Fassadenabschnitte"],
+          ],
+          fussnote: "Modulleistungselektronik ist in Österreich nicht generell vorgeschrieben. Ob sie im Rahmen eines Brandschutzkonzepts nach OVE R 11-1 eingesetzt wird, entscheidet die Planung im Einzelfall. Jede zusätzliche Komponente auf dem Dach ist auch eine zusätzliche Fehlerquelle.",
         },
         {
           typ: "p",
-          text: "Die Einbaulage spielt mit: Bei vielen [Halbzellenmodulen](/wissen/lexikon#halbzellen) sind obere und untere Modulhälfte innerhalb jeder Zellgruppe parallel geschaltet. Trifft ein Schatten nur die untere Modulkante, bleibt so oft rund die Hälfte der Leistung erhalten. Auf Flachdächern mit Reihenverschattung werden Module dagegen häufig quer montiert, damit der flache Schatten zuerst nur eine der drei Zellgruppen trifft. Mehr zu Zelltechnologien im [Solarmodule-Vergleich](/ratgeber/solarmodule-vergleich).",
+          text: "Wie [Leistungsoptimierer](/wissen/lexikon#leistungsoptimierer) funktionieren, erklärt das Lexikon. Für die Brandschutzfragen rund um die DC-Seite ist der Ratgeber [Photovoltaik und Brandschutz](/ratgeber/photovoltaik-brandschutz) die richtige Anlaufstelle.",
         },
       ],
     },
     {
-      id: "schattenquellen",
-      titel: "Welche Schattenquellen gibt es?",
-      tocLabel: "Schattenquellen",
+      id: "wirtschaftlichkeit",
+      titel: "Wann ein Modul weniger mehr bringt",
+      tocLabel: "Wirtschaftlichkeit",
       bloecke: [
         {
+          typ: "p",
+          text: "**Ein dauerhaft verschattetes Modul kostet gleich viel wie ein unverschattetes, liefert aber weniger – und kann im schlechtesten Fall seinen ganzen String ausbremsen.** Deshalb lohnt der nüchterne Blick auf die Kosten je erzeugter Kilowattstunde, statt das Dach bis zum letzten Quadratmeter zu füllen.",
+        },
+        {
           typ: "tabelle",
-          caption: "Arten der Verschattung und ihre typische Wirkung",
-          kopf: ["Art", "Beispiele", "Typische Wirkung", "Was hilft"],
+          caption: "Rechenbeispiel: Ertrag und Kosten je kWh bei unterschiedlicher Verschattung (Linz, Süd 10°)",
+          kopf: ["Modulposition", "Ertrag je kWp und Jahr", "relative Kosten je kWh"],
           zeilen: [
-            ["Temporär", "Laub, Schnee, Vogelkot, Staub", "zeitweise, oft einzelne Zellen", "Neigung, Kontrolle über Monitoring, bei Bedarf Reinigung"],
-            ["Gebäudeeigen", "Schornstein, Gaube, Satellitenschüssel, Lüfter, Blitzfangstange", "wandernder Schatten über wenige Module", "Belegung anpassen, Anbauteile versetzen, String-Aufteilung"],
-            ["Umgebung", "Bäume, Nachbarhäuser, Masten, Berge", "saisonal, im Winter deutlich stärker", "Verschattungsanalyse, ggf. Flächen weglassen"],
-            ["Eigenverschattung", "aufgeständerte Modulreihen auf dem Flachdach", "morgens, abends und im Winter", "Reihenabstand, flacher Winkel, Ost-West"],
+            ["unverschattet", "ca. 1.040 kWh", "100 %"],
+            ["leicht verschattet (−10 %)", "ca. 940 kWh", "ca. 111 %"],
+            ["deutlich verschattet (−30 %)", "ca. 730 kWh", "ca. 143 %"],
+            ["stark verschattet (−50 %)", "ca. 520 kWh", "ca. 200 %"],
           ],
-          minBreite: 720,
+          fussnote: "Vereinfachte Rechnung bei gleichen Investitionskosten je Modul; Ertrag unverschattet laut PVGIS 5.3 für Linz. Nicht enthalten sind Folgeverluste im String, wenn Verschattung nicht durch eigene MPP-Tracker oder Optimierer abgefangen wird.",
         },
         {
           typ: "p",
-          text: "Besonders tückisch ist die **saisonale Verschattung**: Bei der Besichtigung im Sommer ist das Dach frei, im Winter liegt es halb im Schatten. Wie tief die Sonne steht, zeigt die Tabelle. Auch **Baumwachstum** über 25 Jahre Anlagenlaufzeit und mögliche Neubauten laut Bebauungsplan gehören in die Planung.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Sonnenhöhe mittags und Schattenlänge eines Hindernisses, das 10 m über die Dachfläche ragt",
-          kopf: ["Datum", "Süddeutschland (48° N)", "Norddeutschland (53,5° N)"],
-          zeilen: [
-            ["21. Juni", "65° – Schatten 4,6 m", "60° – Schatten 5,8 m"],
-            ["20. März / 22. September", "42° – Schatten 11 m", "36,5° – Schatten 13,5 m"],
-            ["21. Dezember", "18,5° – Schatten 30 m", "13° – Schatten 43 m"],
-          ],
-          hervorheben: 1,
-          minBreite: 520,
-          fussnote: "Eigene Berechnung (12 Uhr Sonnenzeit). Morgens und abends ist der Schatten deutlich länger. Im Winter ist der Ertrag ohnehin gering, deshalb wiegt Winterschatten weniger schwer als Schatten im Frühjahr und Sommer.",
+          text: "Die Rechnung zeigt: Module, die ein Drittel ihres Ertrags durch Schatten verlieren, erzeugen Strom deutlich teurer als der Rest der Anlage. Solche Positionen werden entweder ausgespart oder bewusst mit eigener Verschaltung belegt – etwa wenn die Dachfläche knapp ist und jede Kilowattstunde im Betrieb selbst verbraucht wird. Wie viel Strom Ihr Betrieb tatsächlich nutzen kann, zeigt der Ratgeber [PV-Anlage Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen).",
         },
       ],
     },
     {
-      id: "massnahmen",
-      titel: "Was hilft gegen Verschattung? Die Maßnahmen im Vergleich",
-      tocLabel: "Maßnahmen im Vergleich",
+      id: "analyse",
+      titel: "Verschattungsanalyse: So wird der Verlust beziffert",
+      tocLabel: "Analyse",
       bloecke: [
         {
           typ: "p",
-          text: "**Die Reihenfolge lautet: erst vermeiden, dann klug verschalten, erst dann Zusatzelektronik.** Jede Stufe ist günstiger und robuster als die nächste.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Maßnahmen gegen Verschattungsverluste",
-          kopf: ["Maßnahme", "Wirkung", "Nachteile", "Sinnvoll bei"],
-          zeilen: [
-            ["Schattenfreie Belegung", "vermeidet Verluste vollständig", "weniger Module", "jedem Dach als erster Schritt"],
-            ["Strings nach Verschattung trennen", "verschattete Module bremsen unverschattete nicht", "Wechselrichter mit mehreren MPP-Trackern nötig", "Teilflächen mit unterschiedlichem Schatten oder Ausrichtung"],
-            ["Wechselrichter mit Schattenmanagement", "findet globales Leistungsmaximum bei mehreren Kennlinienspitzen", "hilft nicht gegen Mismatch innerhalb des Strings", "leichter bis mittlerer Verschattung – heute Standard vieler Geräte"],
-            ["Leistungsoptimierer", "jedes Modul arbeitet im eigenen Optimum, Überwachung je Modul", "Mehrkosten, Eigenverbrauch der Geräte, mehr Bauteile auf dem Dach", "mittlerer bis starker Teilverschattung, vielen Teilflächen"],
-            ["Mikrowechselrichter", "jedes Modul völlig unabhängig, keine DC-Hochspannung im String", "Mehrkosten, viele Geräte auf dem Dach, Speicheranbindung AC-seitig", "kleinen, stark zerklüfteten Dächern"],
-          ],
-          minBreite: 760,
-        },
-        { typ: "h3", text: "Wechselrichter mit Schattenmanagement" },
-        {
-          typ: "p",
-          text: "Moderne [Wechselrichter](/wissen/lexikon#wechselrichter) tasten die Kennlinie jedes MPP-Trackers in regelmäßigen Abständen vollständig ab, um bei Teilverschattung das globale statt eines lokalen Maximums zu treffen – Fronius nennt die Funktion etwa Dynamic Peak Manager, andere Hersteller haben vergleichbare Verfahren. Solche Funktionen sind im Gerät integriert und kommen ohne zusätzliche Bauteile auf dem Dach aus. Was bei der Auswahl sonst zählt, lesen Sie im Ratgeber [Wechselrichter für Photovoltaik](/ratgeber/wechselrichter-photovoltaik).",
-        },
-        { typ: "h3", text: "Leistungsoptimierer" },
-        {
-          typ: "p",
-          text: "[Leistungsoptimierer](/wissen/lexikon#leistungsoptimierer) sind kleine DC/DC-Wandler unter jedem Modul. Sie entkoppeln das Modul vom String, liefern Leistungsdaten je Modul und können die Modulspannung im Notfall abschalten. Bei einigen Systemen genügt es, nur die verschatteten Module auszustatten; andere Systeme brauchen einen Optimierer an jedem Modul – hier gelten die Freigaben des Wechselrichter-Herstellers.",
-        },
-        { typ: "h3", text: "Mikrowechselrichter" },
-        {
-          typ: "p",
-          text: "Mikrowechselrichter wandeln den Strom schon am Modul in Wechselstrom. Das ist bei kleinen, stark verwinkelten Dächern mit vielen Ausrichtungen elegant, bedeutet aber viele Elektronikbauteile unter den Modulen. Soll später ein Speicher dazukommen, wird er wechselstromseitig angebunden ([AC-Kopplung](/wissen/lexikon#ac-kopplung)).",
-        },
-      ],
-    },
-    {
-      id: "studien",
-      titel: "Was bringen Optimierer wirklich? Das sagt die Forschung",
-      tocLabel: "Studienlage",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Unabhängige Messungen zeigen deutlich kleinere Mehrerträge durch Optimierer, als Werbeaussagen und manche Planungsprogramme versprechen.** Die Zürcher Hochschule für Angewandte Wissenschaften (ZHAW) hat im Projekt EFFPVSHADE (2021 bis 2024) kommerzielle Optimierer und herkömmliche Wechselrichter im Labor vermessen und die Ergebnisse auf typische Verschattungssituationen von Wohndächern hochgerechnet.",
+          text: "**Eine professionelle Verschattungsanalyse bildet Gebäude, Aufbauten und Umgebung in 3D nach und simuliert den Sonnenlauf über ein ganzes Jahr.** Ergebnis ist der Verlust je Modul und String – die Grundlage für Belegung, Stringplan und Ertragsprognose.",
         },
         {
           typ: "checkliste",
           punkte: [
-            "In allen untersuchten Fällen lag der **zusätzliche Jahresertrag durch Optimierer bei höchstens rund 5 %**.",
-            "Für ein stark verschattetes Dach sagten die Planungsprogramme PVsyst und PV*SOL **+7,2 % bzw. +14,6 %** voraus – die ZHAW-Simulation auf Basis der Labormessungen ergab **+2,2 %**.",
-            "Ursache: Datenblätter bilden lastabhängige Verluste der Optimierer nicht vollständig ab.",
-            "**Sinnvoll** sind Optimierer laut Studie bei **mittlerer bis starker Verschattung** in Wohngebieten oder bei **kleinen Anlagen mit mehreren Ausrichtungen**.",
-            "Bei **wenig oder keiner Verschattung** und höchstens zwei Ausrichtungen können sie wegen ihres Eigenverbrauchs sogar **weniger Ertrag** bringen.",
+            "Dachaufmaß mit allen Aufbauten und Höhen, idealerweise per Drohnenbefliegung oder aus Plänen.",
+            "Umgebung erfassen: Nachbargebäude, Bäume (mit künftiger Wuchshöhe), Berghorizont.",
+            "Simulation mit Planungssoftware wie PV*SOL oder PVsyst; Ergebnis je Modul prüfen.",
+            "Varianten vergleichen: mehr Module mit Verschattung oder weniger Module ohne Verschattung.",
+            "Ertragsprognose mit Verschattungsverlust ausweisen – wichtig für Finanzierung und Wartungsvertrag.",
+            "Nach Inbetriebnahme gegenprüfen: Stimmen die gemessenen Stringerträge mit der Simulation überein, war die Analyse richtig – sonst Ursachen suchen.",
           ],
         },
         {
-          typ: "kasten",
-          variant: "wichtig",
-          titel: "Vorsicht bei „bis zu 25 % oder 30 % mehr Ertrag“",
-          text: "Solche Werte beziehen sich auf ungünstige Einzelsituationen oder Vergleiche mit veralteter Technik, nicht auf ein typisches Jahr. Lassen Sie sich im Angebot zeigen, mit welchem Verschattungsmodell der Mehrertrag berechnet wurde.",
-        },
-        {
           typ: "p",
-          text: "Optimierer haben neben dem Ertrag weitere Argumente: **Überwachung je Modul** erleichtert die Fehlersuche, und die **Abschaltung der Modulspannung** kann bei Arbeiten oder im Brandfall die Gleichspannung auf dem Dach reduzieren. In Deutschland ist das für Wohngebäude nicht vorgeschrieben, kann aber ein Kriterium sein. Wie Monitoring im Betrieb hilft, erklärt der Ratgeber [PV-Reinigung und Wartung](/ratgeber/photovoltaik-reinigung-wartung).",
-        },
-      ],
-    },
-    {
-      id: "planung",
-      titel: "So planen Sie eine Anlage auf einem teilverschatteten Dach",
-      tocLabel: "Planung",
-      bloecke: [
-        {
-          typ: "ablauf",
-          schritte: [
-            ["Schatten erfassen", "Vor Ort Hindernisse aufnehmen: Höhe, Abstand und Himmelsrichtung von Bäumen, Gebäuden, Schornsteinen und Anbauteilen. Fotos zu verschiedenen Tageszeiten helfen."],
-            ["Simulieren", "Mit 3D-Planungssoftware oder einem Horizontprofil den Schattenverlauf über das ganze Jahr berechnen. PVGIS erlaubt einen einfachen Horizont-Check."],
-            ["Belegung optimieren", "Dauerhaft verschattete Bereiche freilassen. Ein Modul weniger ist oft wirtschaftlicher als ein Modul, das den String bremst."],
-            ["Verschaltung festlegen", "Module mit ähnlicher Verschattung und Ausrichtung auf denselben MPP-Tracker legen."],
-            ["Elektronik gezielt einsetzen", "Nur dort Optimierer oder Mikrowechselrichter vorsehen, wo die Simulation einen klaren Mehrertrag zeigt."],
-          ],
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Anbauteile verlegen",
-          text: "Satellitenschüsseln, Antennen oder ungenutzte Schornsteinköpfe lassen sich oft günstig versetzen oder zurückbauen. Das bringt dauerhaft mehr als jede Elektronik. Auch ein Rückschnitt von Bäumen kann sich lohnen – bei geschützten Bäumen vorher die Baumschutzsatzung der Gemeinde prüfen.",
-        },
-        {
-          typ: "p",
-          text: "Liegt ein großer Teil des Daches im Schatten, lohnt der Blick auf andere Flächen: Ost- oder Westdächer, eine [Flachdach-Garage](/ratgeber/photovoltaik-flachdach) oder ein [Solarcarport](/ratgeber/solarcarport). Ob sich die Anlage insgesamt rechnet, prüfen Sie mit dem Ratgeber [Lohnt sich Photovoltaik?](/ratgeber/photovoltaik-lohnt-sich).",
-        },
-        { typ: "tool", href: "/solarrechner", titel: "Grobe Wirtschaftlichkeit prüfen", text: "Der Solarrechner rechnet ohne Verschattung – ziehen Sie für betroffene Flächen einen Abschlag ab oder lassen Sie das Dach simulieren.", label: "Zum Solarrechner" },
-      ],
-    },
-    {
-      id: "partner",
-      titel: "Herstellerneutral planen",
-      tocLabel: "Herstellerwahl",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ob Schattenmanagement im Wechselrichter reicht oder Optimierer nötig sind, entscheidet das Dach – nicht die Marke.** Ökovolt ist Partner von Huawei, Fronius, Solis und Sigenergy und plant mit Wechselrichtern, Optimierern und Speichern verschiedener Hersteller. Grundlage ist immer die Verschattungsanalyse Ihrer Dachflächen.",
+          text: "Für Gewerbedächer ist die Analyse Teil unserer Planung – siehe [Photovoltaik für Gewerbe & Industrie](/gewerbe). Wie sich Verschattung in den Jahresertrag übersetzt und welche Werte ohne Verschattung erreichbar sind, zeigt der Ratgeber [Ertrag pro kWp](/ratgeber/photovoltaik-ertrag-pro-kwp).",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Wie viel Ertrag kostet Verschattung bei einer PV-Anlage?", a: "Das reicht von unter einem Prozent bei einem kurzen Schornsteinschatten bis zu einem Großteil des Ertrags bei dauerhaftem Schatten durch Bäume oder Gebäude. Eine pauschale Zahl gibt es nicht – belastbar ist nur eine Simulation mit den Hindernissen Ihres Daches." },
-    { q: "Lohnt sich eine PV-Anlage bei Teilverschattung?", a: "Oft ja, wenn die verschatteten Bereiche frei bleiben oder der Schatten nur wenige Stunden am Tag auftritt. Kritisch wird es, wenn große Teile des Daches von Frühjahr bis Herbst im Schatten liegen." },
-    { q: "Sind Leistungsoptimierer sinnvoll?", a: "Bei mittlerer bis starker Teilverschattung oder vielen Teilflächen können sie den Ertrag steigern. Die ZHAW fand in Laborfällen höchstens rund 5 % Jahres-Mehrertrag; bei unverschatteten Dächern können sie wegen ihres Eigenverbrauchs sogar schlechter abschneiden." },
-    { q: "Was ist besser bei Verschattung: Optimierer oder Mikrowechselrichter?", a: "Beide entkoppeln die Module. Optimierer arbeiten mit einem zentralen Wechselrichter und lassen sich gut mit DC-gekoppelten Speichern kombinieren. Mikrowechselrichter eignen sich für kleine, verwinkelte Dächer; ein Speicher wird dann wechselstromseitig angebunden." },
-    { q: "Was machen Bypass-Dioden im Solarmodul?", a: "Sie leiten den Strom an einer verschatteten oder defekten Zellgruppe vorbei. So fällt nur ein Teil des Moduls aus, und der String arbeitet weiter. Außerdem schützen sie verschattete Zellen vor Überhitzung." },
-    { q: "Schadet Verschattung den Solarmodulen?", a: "Kurzzeitiger Schatten nicht. Dauerhaft verschattete Zellen können sich aber stark erwärmen (Hotspots), besonders wenn eine Bypass-Diode defekt ist. Auffällige Module lassen sich per Thermografie finden." },
-    { q: "Hilft ein Stromspeicher gegen Verschattung?", a: "Nein. Ein Speicher verschiebt vorhandenen Solarstrom in den Abend, erzeugt aber keinen zusätzlichen. Gegen Verschattung helfen Belegung, Verschaltung und gegebenenfalls Modulelektronik." },
+    {
+      q: "Wie viel Ertrag kostet ein Kamin auf dem Dach?",
+      a: "Das hängt von Lage, Höhe und Verschaltung ab – von kaum messbar bis zu einigen Prozent der Anlage. Kritisch wird es, wenn der Schatten über den Tag mehrere Module in verschiedenen Strings streift. Mit angepasster Belegung und Stringaufteilung lässt sich der Verlust meist gering halten.",
+    },
+    {
+      q: "Lohnt sich PV in einem schattigen Alpental?",
+      a: "Oft ja, weil der Sommer kaum betroffen ist. Laut PVGIS verlieren Lech und Bad Gastein durch den Berghorizont rund 11 % des Jahresertrags, Hallstatt rund 16 %. Der Winterertrag sinkt aber stark – das muss in Eigenverbrauch und Wirtschaftlichkeit eingerechnet werden.",
+    },
+    {
+      q: "Brauche ich Leistungsoptimierer?",
+      a: "Nur bei unvermeidbarer Teilverschattung einzelner Module oder bei komplexen Dächern und Fassaden. Bei guter Planung und Wechselrichtern mit mehreren MPP-Trackern sind sie im Gewerbe meist nicht nötig. Eine generelle Pflicht gibt es in Österreich nicht.",
+    },
+    {
+      q: "Was ist eine Bypassdiode?",
+      a: "Ein Bauteil in der Anschlussdose, das einen verschatteten Zellabschnitt überbrückt. So fällt bei Teilverschattung nur etwa ein Drittel des Moduls aus statt des ganzen Moduls oder Strings. Übliche Module haben drei Bypassdioden.",
+    },
+    {
+      q: "Wie finde ich heraus, ob meine Anlage durch Schatten Ertrag verliert?",
+      a: "Über Stringmonitoring: Strings mit Schatten zeigen typische Einbrüche zu bestimmten Tageszeiten. Vergleichen Sie Strings gleicher Ausrichtung und prüfen Sie Auffälligkeiten mit Thermografie. Neue Hindernisse wie gewachsene Bäume sind eine häufige Ursache für sinkende Erträge.",
+    },
+    {
+      q: "Kann Verschattung die Module beschädigen?",
+      a: "Dauerhafte Teilverschattung oder Verschmutzung einzelner Zellen kann Hotspots erzeugen, die das Modul lokal stark erhitzen und schneller altern lassen. Bypassdioden begrenzen das Risiko, beseitigen es aber nicht. Hersteller schließen Schäden durch unsachgemäße Montage oder dauerhafte Verschattung teils von der Garantie aus – ein Grund mehr, Schattenzonen zu meiden.",
+    },
+    {
+      q: "Verschatten sich Modulreihen auf dem Flachdach gegenseitig?",
+      a: "Bei Süd-Aufständerung im Winter ja, wenn der Reihenabstand zu klein ist. In Linz steht die Sonne am 21. Dezember zu Mittag nur rund 18° hoch. Ost-West-Systeme mit 10° Neigung verschatten sich kaum, weil sie flach und Rücken an Rücken stehen.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/wechselrichter-photovoltaik", titel: "Wechselrichter für Photovoltaik", text: "String, Hybrid, Mikro – Auslegung und Kosten." },
-    { href: "/ratgeber/solarmodule-vergleich", titel: "Solarmodule im Vergleich", text: "Zelltechnik, Halbzellen, Glas-Glas und Garantien." },
-    { href: "/ratgeber/photovoltaik-flachdach", titel: "Photovoltaik auf dem Flachdach", text: "Aufständerung, Reihenabstand und Statik." },
-    { href: "/angebot", titel: "Angebot anfragen", text: "Mit Verschattungsanalyse Ihres Daches." },
+    { href: "/gewerbe", titel: "PV für Gewerbe & Industrie", text: "Planung mit 3D-Verschattungsanalyse." },
+    { href: "/service/drohneninspektion", titel: "Drohnen-Thermografie", text: "Hotspots und Schattenschäden finden." },
+    { href: "/ratgeber/photovoltaik-flachdach", titel: "Photovoltaik auf dem Flachdach", text: "Reihenabstand, Ballast, Statik." },
+    { href: "/standort-check", titel: "Standort-Check", text: "Ertrag und Naturgefahren für Ihre Adresse." },
   ],
 
   quellen: [
-    { titel: "ZHAW – EFFPVSHADE: Effizienzanalyse von dezentraler Photovoltaik-Leistungselektronik bei Teilbeschattung", url: "https://www.zhaw.ch/de/forschung/projekt/72880", stand: "09/2026" },
-    { titel: "1000 Sonnendächer – Was können Optimizer bei PV-Anlagen wirklich leisten? (Zusammenfassung der ZHAW-Ergebnisse)", url: "https://1000-sonnen-daecher.ch/Optimierer", stand: "09/2026" },
-    { titel: "Fronius – Dynamic Peak Manager: Schattenmanagement im Wechselrichter", url: "https://www.fronius.com/de-de/germany/solarenergie/installateure-partner/produkte-loesungen/features/dynamic-peak-manager", stand: "09/2026" },
-    { titel: "Huawei – SUN2000-450W-P2 Smart PV Optimizer, Produktseite", url: "https://solar.huawei.com/en/products/sun2000-450w-p2-600w-p/", stand: "09/2026" },
-    { titel: "Verbraucherzentrale – Photovoltaik: Was bei der Planung einer Solaranlage wichtig ist", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/photovoltaik-was-bei-der-planung-einer-solaranlage-wichtig-ist-5574", stand: "09/2026" },
-    { titel: "Joint Research Centre der EU-Kommission – PVGIS mit Horizontberücksichtigung", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
+    { titel: "EU JRC – PVGIS 5.3 (Ertrag mit und ohne Horizont)", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
+    { titel: "EU JRC – PVGIS: Horizon and shading, Methodik", url: "https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/getting-started-pvgis/pvgis-user-manual_en", stand: "09/2026" },
+    { titel: "Fraunhofer ISE – Photovoltaics Report (Juli 2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/photovoltaics-report.html", stand: "09/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen (Version 1.4)", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor", stand: "09/2026" },
+    { titel: "OVE – Richtlinie R 11-1: Brandschutz bei Photovoltaikanlagen", url: "https://www.ove.at/", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Schatten auf dem Dach?", text: "Wir simulieren den Schattenverlauf übers Jahr.", href: "/angebot", label: "Angebot anfragen" },
+  seitenCta: { titel: "Schatten auf dem Dach?", text: "Wir simulieren Verluste und optimieren die Belegung.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Wir analysieren die Verschattung Ihres Daches.",
-    text: "Vor-Ort-Aufnahme, Simulation übers ganze Jahr und eine Verschaltung, die zu Ihrem Dach passt – mit Optimierern nur dort, wo sie sich rechnen.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/solarrechner" },
+    title: "Mehr Ertrag durch bessere Planung – nicht durch mehr Technik.",
+    text: "Wir analysieren Dach, Aufbauten und Horizont in 3D und planen Belegung und Strings so, dass Schatten möglichst wenig kostet.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Drohnen-Thermografie", href: "/service/drohneninspektion" },
   },
 };
 

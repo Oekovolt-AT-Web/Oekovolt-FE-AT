@@ -1,319 +1,293 @@
-// Ratgeber: Solarmodule im Vergleich – Zelltechnik, Aufbau, Garantien
-// Recherchestand September 2026. Wirkungsgrad-, Degradations- und Kostenanteile: Fraunhofer ISE
-// (Fassung 20.08.2026); Technologietrend: ITRPV 17. Ausgabe; Großhandelspreise: pvXchange.
-
-import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
-
-const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
-const ANLAGE_10 = 10 * preisProKwp(10);
-// Fläche für 10 kWp bei gegebenem Modulwirkungsgrad (1.000 W/m² STC), nur Modulfläche
-const flaeche = (eta) => Math.round(10000 / (1000 * eta));
+// Ratgeber: Solarmodule im Vergleich – Zelltechnik, Glas-Glas, Bifazial, Prüflasten, Lieferkette
+// Recherchestand 28.09.2026. Wirkungsgrade: Fraunhofer ISE Photovoltaics Report (14.07.2026).
+// Mechanik/Hagel: IEC 61215-2 (MQT 16/17), IEC 62938; HW-Klassen: Elementarschutzregister Hagel (VKF/EPZ).
+// Förderzuschlag EU-Wertschöpfung: EAG-IZ-VO Strom § 6 Abs. 6/8 (Fassung 2026).
+// Temperaturkoeffizienten, Bifazialität, Garantien: typische Datenblattwerte (Marktübersicht), keine Herstellerzusagen.
 
 const artikel = {
   slug: "solarmodule-vergleich",
-  title: "Solarmodule im Vergleich 2026: TOPCon, HJT, Back Contact & Co.",
-  seoTitle: "Solarmodule Vergleich 2026: Technik & Garantien | Ökovolt",
+  title: "Solarmodule im Vergleich: TOPCon, HJT, Glas-Glas, Bifazial",
+  seoTitle: "Solarmodule Vergleich 2026: TOPCon, HJT | Ökovolt",
   kurzTitel: "Solarmodule im Vergleich",
   description:
-    "Solarmodule im Vergleich: TOPCon, Heterojunction, Back Contact, Glas-Glas und bifazial – Wirkungsgrad, Temperaturverhalten, Garantien und Qualitätsmerkmale 2026.",
+    "Solarmodule 2026 im Vergleich: TOPCon, Heterojunction und Back-Contact, Glas-Glas und bifazial, Schnee- und Hagelprüfung, Garantien und Lieferkette erklärt.",
   excerpt:
-    "Welche Zelltechnik lohnt sich, was bringt Glas-Glas, und warum der höchste Wirkungsgrad nicht automatisch den besten Ertrag bedeutet. Der Vergleich mit Tabellen und Checkliste.",
+    "Welche Zelltechnik, welcher Aufbau, welche Prüflast? Was Datenblätter über Wirkungsgrad, Temperaturverhalten, Schnee- und Hagelfestigkeit wirklich aussagen – und worauf Betriebe in Österreich beim Einkauf achten sollten.",
   hauptKeyword: "solarmodule vergleich",
   keywords: [
     "Solarmodule Vergleich",
-    "PV-Module Vergleich 2026",
-    "TOPCon oder Heterojunction",
-    "Glas-Glas-Module",
-    "Bifaziale Solarmodule",
-    "Solarmodul Wirkungsgrad",
-    "Solarmodule Garantie",
+    "TOPCon Module",
+    "Heterojunction HJT Module",
+    "Glas-Glas-Modul",
+    "bifaziale Solarmodule",
+    "Schneelast Solarmodul 5400 Pa",
+    "Solarmodul Hagelwiderstand",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
   bild: "/Images/Jobs/jobs2.jpg",
   bildAlt: "Techniker prüft ein monokristallines Solarmodul auf einem Dach",
-  badge: { wert: "knapp 23 %", text: "mittlerer Wirkungsgrad neuer Module 2025 (Fraunhofer ISE)" },
+  badge: { wert: "22,7 %", text: "mittlerer Wirkungsgrad kristalliner Module (Fraunhofer ISE)" },
 
   kurzFazit: [
-    "**Standard 2026 sind monokristalline n-Typ-Module mit TOPCon-Zellen** und Wirkungsgraden um 22 bis 23,5 %. PERC verschwindet vom Markt, Heterojunction (HJT) und Back Contact (BC) sind die Premiumklasse.",
-    "**Ein höherer Wirkungsgrad bringt mehr kWp auf dieselbe Fläche – aber kaum mehr kWh je kWp.** Er lohnt sich vor allem, wenn das Dach knapp ist.",
-    "**Glas-Glas-Module** sind robuster, altern langsamer und haben oft 30 Jahre Garantie. Bifaziale Module bringen auf dem geneigten Hausdach nur wenig Zusatzertrag.",
-    "Module machen laut Fraunhofer ISE nur noch **rund ein Fünftel der Investition** aus. Qualität, Garantiebedingungen und saubere Montage sind wichtiger als ein paar Watt mehr.",
+    "**n-Typ-Zellen haben PERC abgelöst: TOPCon ist 2026 die dominierende Technologie, Heterojunction (HJT) und Back-Contact (BC) besetzen das obere Segment.** Der gewichtete Durchschnitt kristalliner Module lag laut Fraunhofer ISE Ende 2024 bei 22,7 % Wirkungsgrad, die besten Serienmodule bei 24,8 %.",
+    "Für Österreich zählen neben dem Wirkungsgrad vor allem **Temperaturverhalten, mechanische Belastbarkeit und Hagelfestigkeit**. Die übliche Angabe 5.400 Pa ist eine Prüflast – die zulässige Designlast beträgt 3.600 Pa.",
+    "**Glas-Glas-Module** sind langlebiger und oft mit 30 Jahren Leistungsgarantie erhältlich; **bifaziale** Module bringen auf hellen Flachdächern, Freiflächen und bei Schnee einige Prozent Mehrertrag.",
+    "Beim Einkauf wird die **Lieferkette** wichtiger: Die EU-Zwangsarbeitsverordnung gilt ab Dezember 2027, und der EAG-Investitionszuschuss gewährt **10 % Zuschlag** für Module aus europäischer Fertigung.",
   ],
 
   abschnitte: [
     {
-      id: "ueberblick",
-      titel: "Welche Solarmodule sind 2026 die richtigen?",
-      tocLabel: "Kurzantwort",
+      id: "antwort",
+      titel: "Welche Solarmodule sind 2026 die besten?",
+      tocLabel: "Die besten Module?",
       bloecke: [
         {
           typ: "p",
-          text: "**Für die meisten Hausdächer sind monokristalline n-Typ-Module mit TOPCon-Zellen, Halbzellen-Aufbau und 25 bis 30 Jahren Garantie die ausgewogenste Wahl.** Sie sind effizient, bewährt und am Markt breit verfügbar. Heterojunction- und Back-Contact-Module holen auf kleinen oder heißen Dächern noch etwas mehr heraus, kosten aber mehr. Ältere Technik wie polykristalline oder PERC-Module spielt bei Neuanlagen kaum noch eine Rolle.",
+          text: "**Das beste Modul gibt es nicht – es gibt das passende Modul für Dach, Standort und Betrieb.** Auf einem statisch knappen Hallendach zählt das Gewicht, in Kitzbühel die Schneelast, im Grazer Becken die Hagelfestigkeit und auf einer Freifläche der Preis je Kilowattstunde über 30 Jahre. Der Wirkungsgrad ist wichtig, wenn die Fläche knapp ist; sonst entscheiden oft andere Kriterien.",
         },
         {
           typ: "p",
-          text: "Der mittlere Wirkungsgrad neu produzierter Siliziummodule ist laut Fraunhofer ISE um etwa 0,5 Prozentpunkte pro Jahr gestiegen und lag 2025 bei knapp 23 %. Ein Quadratmeter Modul liefert damit rund 230 Watt Nennleistung, Spitzenmodule etwa 10 % mehr. Die 17. Ausgabe der Technologie-Roadmap ITRPV bestätigt: TOPCon dominiert und verdrängt PERC, rund 82 % der Wafer sind inzwischen n-Typ.",
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Monokristallin ist heute Standard",
-          text: "Die Unterscheidung „monokristallin oder polykristallin“ stammt aus früheren Jahren. Praktisch alle aktuellen Hausdachmodule sind [monokristallin](/wissen/lexikon#monokristallin). Entscheidend ist heute die Zellarchitektur – also PERC, TOPCon, Heterojunction oder Back Contact.",
+          text: "Technologisch hat sich der Markt in den letzten drei Jahren grundlegend verändert. Laut Fraunhofer ISE ersetzen n-Typ-TOPCon- und Heterojunction-Zellen die p-Typ-PERC-Technik, die bis 2023 dominierte; monokristallines n-Typ-TOPCon ist inzwischen der Standard. Die zehn größten Hersteller vereinen rund 85 % der weltweiten Liefermenge, überwiegend aus Asien.",
         },
       ],
     },
     {
       id: "zelltechnik",
-      titel: "Zelltechnologien im Vergleich: PERC, TOPCon, HJT und Back Contact",
-      tocLabel: "Zelltechnologien",
+      titel: "Zelltechnologien: PERC, TOPCon, Heterojunction, Back-Contact",
+      tocLabel: "Zelltechnik",
       bloecke: [
         {
           typ: "p",
-          text: "**Die vier Zelltechnologien unterscheiden sich vor allem in Wirkungsgrad, Temperaturverhalten und Rückseitennutzung.** Die Tabelle zeigt typische Datenblattwerte aktueller Serienmodule. Einzelne Produkte können abweichen – maßgeblich ist immer das Datenblatt des konkreten Moduls.",
+          text: "**Die Zelltechnik bestimmt Wirkungsgrad, Temperaturverhalten, Bifazialität und Alterung eines Moduls.** Die folgende Übersicht fasst typische Datenblattwerte zusammen; einzelne Produkte weichen davon ab.",
         },
         {
           typ: "tabelle",
-          caption: "Solarzellen-Technologien im Vergleich, typische Werte von Serienmodulen, Stand September 2026",
-          kopf: ["", "PERC (p-Typ)", "TOPCon (n-Typ)", "Heterojunction (HJT)", "Back Contact (BC)"],
+          caption: "Zelltechnologien im Vergleich (typische Datenblattwerte, Stand 09/2026)",
+          kopf: ["Technologie", "Modulwirkungsgrad", "Temperaturkoeffizient Pmax", "Bifazialität", "Einordnung"],
           zeilen: [
-            ["Modulwirkungsgrad", "ca. 20–21,5 %", "ca. 22–23,8 %", "ca. 22,5–24 %", "ca. 23–25 %"],
-            ["Temperaturkoeffizient Pmax", "ca. −0,34 bis −0,37 %/°C", "ca. −0,29 bis −0,32 %/°C", "ca. −0,24 bis −0,26 %/°C", "ca. −0,26 bis −0,29 %/°C"],
-            ["Bifazialität (Rückseite)", "ca. 70 %", "ca. 80–85 %", "ca. 85–95 %", "meist gering bis mittel"],
-            ["Lichtinduzierte Degradation", "ausgeprägter", "gering", "sehr gering", "gering"],
-            ["Marktbedeutung", "auslaufend", "**Standard**", "Premium, wachsend", "Premium, wachsend"],
-            ["Besonders geeignet für", "Bestandsergänzung", "fast alle Dächer", "heiße Standorte, Flachdach bifazial", "kleine Dächer, Optik (keine Kontaktfinger)"],
+            ["PERC (p-Typ, mono)", "ca. 20–21,5 %", "ca. −0,34 bis −0,37 %/K", "ca. 70 %", "auslaufend, kaum noch Neuware"],
+            ["TOPCon (n-Typ)", "ca. 22–23,5 %", "ca. −0,29 bis −0,30 %/K", "ca. 80 %", "Marktstandard, gutes Preis-Leistungs-Verhältnis"],
+            ["Heterojunction / HJT (n-Typ)", "ca. 22,5–24 %", "ca. −0,24 bis −0,26 %/K", "ca. 85–90 %", "sehr gutes Hitze- und Schwachlichtverhalten"],
+            ["Back-Contact (BC, n- oder p-Typ)", "ca. 23–24,8 %", "ca. −0,26 bis −0,29 %/K", "ca. 70 % oder monofazial", "höchster Wirkungsgrad, ohne Frontkontakte, ästhetisch"],
           ],
-          hervorheben: 2,
-          minBreite: 760,
-          fussnote: "Spannen aus Herstellerdatenblättern und Fachportalen; Rekordwerte einzelner Hersteller liegen darüber. Der Temperaturkoeffizient gibt an, wie viel Leistung je Grad über 25 °C Zelltemperatur verloren geht.",
-        },
-        { typ: "h3", text: "TOPCon: der neue Standard" },
-        {
-          typ: "p",
-          text: "[TOPCon](/wissen/lexikon#topcon) (Tunnel Oxide Passivated Contact) ergänzt die Zelle um eine hauchdünne Oxidschicht, die Ladungsverluste an den Kontakten verringert. Die Technik lässt sich in bestehenden Fabriken umrüsten und ist deshalb schnell zum Massenprodukt geworden. Gegenüber PERC gewinnen Sie rund einen bis zwei Prozentpunkte Wirkungsgrad, ein besseres Temperaturverhalten und eine geringere Anfangsdegradation.",
-        },
-        { typ: "h3", text: "Heterojunction: stark bei Hitze" },
-        {
-          typ: "p",
-          text: "[Heterojunction-Zellen](/wissen/lexikon#heterojunction) kombinieren kristallines Silizium mit dünnen amorphen Schichten. Ihr Vorteil ist der sehr niedrige Temperaturkoeffizient: An einem heißen Sommertag mit 65 °C Zelltemperatur verliert ein HJT-Modul rund 10 % Leistung, ein PERC-Modul etwa 14 %. Auf gut hinterlüfteten Schrägdächern in Deutschland macht das übers Jahr meist nur wenige Prozent aus, bei Indach-Lösungen oder flach aufgelegten Modulen etwas mehr.",
-        },
-        { typ: "h3", text: "Back Contact: alle Kontakte auf der Rückseite" },
-        {
-          typ: "p",
-          text: "Bei Back-Contact-Zellen liegen alle elektrischen Kontakte auf der Rückseite. Die Vorderseite bleibt frei von Kontaktfingern – das steigert den Wirkungsgrad und sorgt für eine besonders gleichmäßige, dunkle Optik. BC-Module sind die Wahl, wenn auf wenig Fläche möglichst viel Leistung unterkommen soll oder die Optik eine große Rolle spielt.",
-        },
-      ],
-    },
-    {
-      id: "wirkungsgrad",
-      titel: "Wie wichtig ist der Wirkungsgrad wirklich?",
-      tocLabel: "Wirkungsgrad",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Der Modulwirkungsgrad bestimmt, wie viel Leistung auf einen Quadratmeter passt – nicht, wie viele Kilowattstunden ein Kilowatt-Peak erzeugt.** Ein 10-kWp-Generator aus 21-%-Modulen liefert an derselben Stelle nahezu den gleichen Jahresertrag wie einer aus 24-%-Modulen; er braucht nur mehr Fläche. Unterschiede im [spezifischen Ertrag](/wissen/lexikon#spezifischer-ertrag) entstehen vor allem durch Temperaturverhalten, Schwachlichtverhalten und Degradation – und liegen meist im niedrigen einstelligen Prozentbereich.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Benötigte Modulfläche für 10 kWp nach Wirkungsgrad",
-          kopf: ["Modulwirkungsgrad", "Modulfläche für 10 kWp", "Leistung je m²", "Typische Technik"],
-          zeilen: [
-            ["20 %", `ca. ${flaeche(0.2)} m²`, "200 W", "ältere PERC-Module"],
-            ["22 %", `ca. ${flaeche(0.22)} m²`, "220 W", "TOPCon Einstieg"],
-            ["23 %", `ca. ${flaeche(0.23)} m²`, "230 W", "TOPCon aktuell (Marktmittel)"],
-            ["24 %", `ca. ${flaeche(0.24)} m²`, "240 W", "HJT / Back Contact"],
-            ["25 %", `ca. ${flaeche(0.25)} m²`, "250 W", "Spitzenmodule"],
-          ],
-          markierteZeile: 2,
-          fussnote: `Reine Modulfläche bei Standard-Testbedingungen. Auf dem Dach kommen Randabstände, Klemmbereiche und Fugen hinzu; unser Solarrechner rechnet deshalb mit rund ${ANNAHMEN.qmProKwp} m² Dachfläche je kWp.`,
+          hervorheben: 1,
+          minBreite: 720,
+          fussnote: "Bandbreiten typischer Datenblattwerte führender Hersteller; Einordnung nach Fraunhofer ISE Photovoltaics Report (07/2026): gewichteter Mittelwert kristalliner Module 22,7 % (Q4/2024), Spanne 18,9 bis 24,8 %. Rekordwirkungsgrad im Labor: 26,0 % für Module aus monokristallinem Silizium.",
         },
         {
           typ: "p",
-          text: "Die Faustregel daraus: Ist Ihr Dach groß genug für die geplante Leistung, wählen Sie das Modul mit dem besten Verhältnis aus Preis, Garantie und Qualität. Ist das Dach der Engpass – etwa bei einem Reihenhaus, vielen Dachfenstern oder wenn später eine [Wärmepumpe](/produkte/warmepumpe) und ein E-Auto dazukommen – zahlt sich ein Hochleistungsmodul aus. Wie viel Leistung Sie brauchen, zeigt der Ratgeber [PV-Anlage: Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen).",
+          text: "Für Gewerbedächer in Österreich ist [TOPCon](/wissen/lexikon#topcon) meist die wirtschaftlichste Wahl. [Heterojunction](/wissen/lexikon#heterojunction) spielt seine Stärken bei heißen Blechdächern aus: Mit einem Temperaturkoeffizienten von −0,25 %/K statt −0,35 %/K verliert ein HJT-Modul bei 65 °C Zelltemperatur rund 4 Prozentpunkte weniger Leistung als ein PERC-Modul. Back-Contact-Module punkten mit Optik und Flächenertrag, etwa bei Chalets und repräsentativen Gebäuden. Für Freiflächen und große Hallen zählt dagegen vor allem der Preis je Kilowattstunde über die Laufzeit – dort setzt sich meist das günstigste Modul mit soliden Prüfnachweisen durch.",
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Degradation: LeTID, UVID und PID",
+          text: "Neue Zelltechnologien bringen neue Alterungsmechanismen. PERC-Module waren anfällig für lichtinduzierte Degradation bei erhöhter Temperatur (LeTID); bei TOPCon wird eine UV-induzierte Degradation (UVID) diskutiert. Potenzialinduzierte Degradation (PID) betrifft vor allem große Anlagen mit hohen Systemspannungen. Fragen Sie nach Prüfberichten unabhängiger Labore über die Normprüfung hinaus – etwa verlängerte UV- und Klimakammertests.",
         },
       ],
     },
     {
       id: "aufbau",
-      titel: "Glas-Folie oder Glas-Glas, bifazial oder Full Black?",
-      tocLabel: "Aufbau & Bauform",
+      titel: "Glas-Folie oder Glas-Glas, monofazial oder bifazial?",
+      tocLabel: "Aufbau & Bifazial",
       bloecke: [
         {
           typ: "p",
-          text: "**Glas-Glas-Module schützen die Zellen beidseitig mit Glas und gelten als besonders langlebig; Glas-Folie-Module sind leichter und etwas günstiger.** Die Wahl hängt vom Dach, von der Statik und von Ihren Prioritäten ab.",
+          text: "**Glas-Glas-Module schützen die Zellen auf beiden Seiten mit Glas und gelten als langlebiger; Glas-Folie-Module sind leichter und günstiger.** Für die meisten Gewerbeanlagen sind beide Bauarten geeignet – die Wahl hängt von Statik, Umgebung und gewünschter Laufzeit ab.",
         },
         {
           typ: "tabelle",
-          caption: "Modulbauformen im Vergleich",
-          kopf: ["Bauform", "Vorteile", "Nachteile", "Sinnvoll für"],
+          caption: "Glas-Folie und Glas-Glas im Vergleich",
+          kopf: ["Merkmal", "Glas-Folie", "Glas-Glas"],
           zeilen: [
-            ["**Glas-Folie**", "Leichter, günstiger, große Auswahl", "Rückseitenfolie altert, Mikrorisse eher möglich", "Standard-Schrägdach mit knapper Statik"],
-            ["**Glas-Glas**", "Robust gegen Feuchte und mechanische Last, geringere Degradation, oft 30 Jahre Garantie", "Schwerer, etwas teurer", "Die meisten Neuanlagen, Landwirtschaft, schneereiche Regionen"],
-            ["**Bifazial (Glas-Glas)**", "Nutzt Licht von der Rückseite", "Mehrertrag auf dem Schrägdach gering", "Aufgeständertes Flachdach, Carport, Freifläche, Fassade"],
-            ["**Full Black**", "Einheitliche, dunkle Optik", "Etwas wärmer, meist minimal weniger Leistung, Aufpreis", "Sichtbare Dachflächen, Neubau, Gestaltungssatzungen"],
+            ["Aufbau", "Frontglas (meist 3,2 mm) + Kunststoff-Rückseitenfolie", "zwei Gläser (oft je 2,0 mm), meist gerahmt"],
+            ["Gewicht", "leichter", "etwas schwerer"],
+            ["Feuchte, Ammoniak, Salz", "gut", "sehr gut – geeignet für Stallungen, Küstennähe, Floating-PV"],
+            ["Brandverhalten", "Folie brennbar", "günstiger, Glas nicht brennbar"],
+            ["Garantien (typisch)", "12–25 Jahre Produkt, 25–30 Jahre Leistung", "bis 30 Jahre Produkt und Leistung"],
+            ["Bifazial möglich", "mit transparenter Rückseitenfolie", "ja, Standard"],
           ],
-          minBreite: 700,
+          fussnote: "Typische Marktangaben; Garantiebedingungen je Hersteller genau prüfen.",
         },
         {
           typ: "p",
-          text: "Ein [Glas-Glas-Modul](/wissen/lexikon#glas-glas-modul) altert laut Fraunhofer ISE langsamer und schneidet in der Ökobilanz besser ab, weil oft auf den Aluminiumrahmen verzichtet werden kann. [Bifaziale Module](/wissen/lexikon#bifazial) entfalten ihren Vorteil nur, wenn Licht die Rückseite erreicht – auf einem dicht belegten Satteldach mit wenigen Zentimetern Abstand zur Dachhaut ist das kaum der Fall. Auf einem aufgeständerten [Flachdach](/ratgeber/photovoltaik-flachdach) mit hellem Untergrund oder unter einem [Solarcarport](/ratgeber/solarcarport) sieht das anders aus.",
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Nicht zu groß wählen",
-          text: "Moderne Hausdachmodule haben meist 1,7 bis 2,0 m² Fläche und rund 430 bis 500 Wp. Noch größere Formate für Solarparks sind schwer zu handhaben, belasten die Unterkonstruktion stärker und passen oft schlecht in Dachflächen mit Fenstern und Gauben.",
+          text: "[Bifaziale Module](/wissen/lexikon#bifazial) nutzen zusätzlich das Licht, das auf die Rückseite fällt. Der Mehrertrag hängt stark vom Untergrund ab: Auf Wiese und dunklem Kies sind es wenige Prozent, auf hellen Dachbahnen, Beton und bei Schnee mehr, bei vertikaler Aufstellung in der [Agri-PV](/ratgeber/agri-pv-oesterreich) ist die Rückseite gleichwertiger Teil der Anlage. Auf Flachdächern lohnt Bifazialität nur mit ausreichend Abstand zum Dach und hellem Untergrund. Mehr zum [Glas-Glas-Modul](/wissen/lexikon#glas-glas-modul) im Lexikon.",
         },
       ],
     },
     {
-      id: "garantie",
-      titel: "Welche Garantien sollten Solarmodule haben?",
-      tocLabel: "Garantien & Lebensdauer",
+      id: "flaeche",
+      titel: "Wirkungsgrad, Format und Gewicht: Was auf dem Dach zählt",
+      tocLabel: "Format & Fläche",
       bloecke: [
         {
           typ: "p",
-          text: "**Achten Sie auf zwei getrennte Zusagen: eine Produktgarantie gegen Material- und Verarbeitungsfehler und eine Leistungsgarantie, die eine Mindestleistung nach 25 bis 30 Jahren zusichert.** Üblich sind laut Fraunhofer ISE Garantien für einen maximalen Leistungsverlust von 10 bis 15 % über 25 bis 30 Jahre. Bei qualitätsgesicherten Anlagen hat das ISE eine mittlere Degradation der Modulleistung von nur rund 0,15 % pro Jahr gemessen.",
+          text: "**Ein höherer Wirkungsgrad bringt mehr Leistung auf dieselbe Fläche – er lohnt sich vor allem, wenn das Dach knapp oder die Statik der Engpass ist.** Auf 1.000 m² Modulfläche passen bei 21 % Wirkungsgrad rund 210 kWp, bei 22,7 % rund 227 kWp und bei 24 % rund 240 kWp. Der Unterschied von drei Prozentpunkten entspricht also rund 14 % mehr Leistung und Ertrag auf demselben Dach – bei praktisch gleicher Unterkonstruktion, Montagezeit und Dachlast.",
         },
         {
           typ: "tabelle",
-          caption: "Typische Garantiebedingungen für Solarmodule, Stand 2026",
-          kopf: ["Garantieart", "Glas-Folie", "Glas-Glas", "Worauf achten"],
+          caption: "Leistung auf 1.000 m² Modulfläche nach Wirkungsgrad",
+          kopf: ["Wirkungsgrad", "Leistung je 1.000 m² Modulfläche", "Jahresertrag bei 1.040 kWh/kWp (Linz, Süd 10°)"],
           zeilen: [
-            ["Produktgarantie", "12–25 Jahre", "25–30 Jahre", "Deckt sie Demontage, Transport und Neumontage ab?"],
-            ["Leistungsgarantie", "25–30 Jahre", "30 Jahre", "Mindestleistung am Ende, z. B. 85–89 %"],
-            ["Degradation 1. Jahr", "ca. 1–2 %", "ca. 1 %", "Angabe im Datenblatt prüfen"],
-            ["Degradation danach", "ca. 0,4–0,55 %/Jahr", "ca. 0,35–0,4 %/Jahr", "linear garantiert?"],
+            ["21,0 %", "ca. 210 kWp", "ca. 218 MWh"],
+            ["22,7 %", "ca. 227 kWp", "ca. 236 MWh"],
+            ["24,0 %", "ca. 240 kWp", "ca. 250 MWh"],
           ],
-          minBreite: 640,
-          fussnote: "Typische Werte aus Herstellerdatenblättern. Garantien sind nur so viel wert wie der Hersteller, der sie gibt – eine europäische Niederlassung oder eine Garantieversicherung erleichtern die Durchsetzung.",
-        },
-        {
-          typ: "kasten",
-          variant: "wichtig",
-          titel: "Kleingedrucktes lesen",
-          text: "Die Verbraucherzentrale rät, Garantiebedingungen genau zu prüfen: Teilweise müssen Komponenten beim Hersteller registriert werden, und viele Garantien ersetzen nur das Modul, nicht aber die Arbeitskosten für Gerüst und Montage. Unser Solarrechner rechnet konservativ mit 0,5 % Leistungsverlust pro Jahr.",
+          fussnote: "Leistung = Fläche × 1.000 W/m² × Wirkungsgrad (Standard-Testbedingungen); Ertrag nach PVGIS 5.3 für Linz. Die belegbare Modulfläche eines Daches ist kleiner als die Dachfläche.",
         },
         {
           typ: "p",
-          text: "Die tatsächliche Lebensdauer guter Module liegt bei 25 bis 30 Jahren und oft darüber. Wie sich [Degradation](/wissen/lexikon#degradation) und Lebensdauer auf die Wirtschaftlichkeit auswirken, rechnet der Ratgeber [Lohnt sich Photovoltaik?](/ratgeber/photovoltaik-lohnt-sich) durch.",
+          text: "Gewerbemodule sind in den letzten Jahren deutlich größer geworden: Formate um 2,3 × 1,1 m mit 550 bis 650 Wp sind für Freiflächen üblich, auf Dächern haben sich Formate um 1,7 bis 2,0 m Länge bewährt. Große Module sparen Montagezeit, sind aber schwerer zu handhaben, biegen sich unter Last stärker durch und brauchen eine Unterkonstruktion, die exakt zur Klemmfreigabe passt. Auf Dächern mit begrenztem Zugang, schwacher Statik oder hoher Schneelast sind mittlere Formate oft die bessere Wahl.",
         },
       ],
     },
     {
-      id: "qualitaet",
-      titel: "Woran erkennen Sie gute Solarmodule?",
-      tocLabel: "Qualitätsmerkmale",
+      id: "mechanik",
+      titel: "Schnee- und Windlast: Was die Pascal-Angaben bedeuten",
+      tocLabel: "Schnee & Wind",
       bloecke: [
         {
           typ: "p",
-          text: "**Gute Module erkennen Sie an geprüften Zertifikaten, hohen Lastwerten, transparenten Datenblättern und einem Hersteller, der seine Garantie auch in 20 Jahren noch erfüllen kann.** Die folgende Checkliste hilft beim Vergleich von Angeboten.",
+          text: "**Datenblätter nennen meist 5.400 Pa Druck- und 2.400 Pa Soglast – das sind Prüflasten nach IEC 61215-2 (MQT 16), die bereits einen Sicherheitsfaktor von mindestens 1,5 enthalten.** Die zulässige Designlast beträgt entsprechend 3.600 Pa auf der Vorderseite und 1.600 Pa auf der Rückseite, und zwar nur in den vom Hersteller freigegebenen Klemmbereichen und Montagearten.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Mechanische Prüfungen für Solarmodule",
+          kopf: ["Prüfung", "Inhalt", "Bedeutung für Österreich"],
+          zeilen: [
+            ["IEC 61215-2 MQT 16", "statische Last auf Vorder- und Rückseite, Prüflast = Designlast × ≥ 1,5, Mindestprüflast 2.400 Pa", "Grundnachweis; für Schnee in Tallagen meist ausreichend"],
+            ["Erhöhte Prüflasten (herstellerspezifisch)", "Prüflasten über 5.400 Pa, teils über 8.000 Pa", "für schneereiche Lagen wie Pinzgau, Pongau, Arlberg"],
+            ["IEC 62938", "ungleichmäßige Schneelast, Schnee staut sich am unteren Rahmen", "entscheidend bei geneigten Modulen in Schneeregionen"],
+            ["IEC 61215-2 MQT 17", "Hagelprüfung mit 25-mm-Eiskugeln bei 23 m/s", "Mindestnachweis; für Hagelregionen zu wenig"],
+          ],
+          minBreite: 680,
+          fussnote: "Welche Last am Standort tatsächlich wirkt, ergibt sich aus der Schneelast laut eHORA (ÖNORM B 1991-1-3) und der Statik. Die Designlast des Moduls muss den Bemessungswert abdecken.",
+        },
+        {
+          typ: "p",
+          text: "Wie die Bodenschneelast in eine Belastung der Modulfläche umgerechnet wird und ab welcher Seehöhe Standardmodule an ihre Grenzen stoßen, zeigt der Ratgeber [Schneelast und Photovoltaik](/ratgeber/schneelast-photovoltaik) mit Beispielen von Linz bis Lech.",
+        },
+      ],
+    },
+    {
+      id: "hagel",
+      titel: "Hagelfestigkeit: IEC-Test und Hagelwiderstandsklasse",
+      tocLabel: "Hagel",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die IEC-Hagelprüfung mit 25-mm-Eiskugeln entspricht rund 2 Joule Aufprallenergie – ein 4-cm-Hagelkorn bringt über 11 Joule.** Laut HORA fallen in weiten Teilen Österreichs statistisch alle 30 Jahre Körner von 4 bis 5 cm. Aussagekräftiger ist deshalb die [Hagelwiderstandsklasse](/wissen/lexikon#hagelwiderstandsklasse) HW 1 bis HW 5 des Elementarschutzregisters Hagel oder ein Prüfbericht mit größeren Eiskugeln.",
+        },
+        {
+          typ: "p",
+          text: "Für Gewerbedächer in hagelgefährdeten Regionen – etwa im Grazer und Klagenfurter Becken, im Mostviertel oder im Linzer Zentralraum – empfehlen wir Module mit nachgewiesener Klasse HW 4 oder vergleichbarem Prüfnachweis. Die Details, Tabellen und das Vorgehen nach einem Schaden erklärt der Ratgeber [Hagel und Photovoltaik](/ratgeber/hagel-photovoltaik).",
+        },
+      ],
+    },
+    {
+      id: "garantie-lieferkette",
+      titel: "Garantien, Zertifikate und Lieferkette",
+      tocLabel: "Garantie & Lieferkette",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Neben Technik entscheiden Garantiebedingungen und die Herkunft der Module zunehmend über den Einkauf – bei Förderungen, Ausschreibungen und im Nachhaltigkeitsbericht.**",
         },
         {
           typ: "checkliste",
           punkte: [
-            "**Zertifizierung nach IEC 61215 und IEC 61730** (Bauarteignung und Sicherheit) durch ein unabhängiges Prüfinstitut.",
-            "**Mechanische Belastbarkeit:** Drucklast (Schnee) meist 5.400 Pa, Soglast (Wind) mindestens 2.400 Pa – in Schneelastzone 3 und im Voralpenland besonders wichtig.",
-            "**Hagelwiderstand:** Der IEC-Grundtest nutzt 25-mm-Hagelkörner. Für hagelgefährdete Regionen geben die Hagelwiderstandsklassen HW 1–5 des Hagelregisters zusätzliche Sicherheit.",
-            "**PID-Resistenz** (potenzialinduzierte Degradation) und bei landwirtschaftlichen Gebäuden **Ammoniakbeständigkeit** nach IEC 62716.",
-            "**Positive Leistungstoleranz** (z. B. 0/+5 W): Das Modul liefert mindestens die angegebene Leistung.",
-            "**Vollständige Datenblätter** mit Temperaturkoeffizient, Degradation und Garantiebedingungen in deutscher Sprache.",
-            "**Kompatibilität** mit Wechselrichter, Montagesystem und Klemmbereichen – freigegeben vom Hersteller des Montagesystems.",
+            "**Produktgarantie:** deckt Material- und Verarbeitungsfehler, typisch 12 bis 25 Jahre, bei Glas-Glas bis 30 Jahre. Prüfen Sie, wer im Garantiefall Aus- und Einbau zahlt.",
+            "**Leistungsgarantie:** lineare Garantie über 25 bis 30 Jahre mit einem Endwert von typischerweise rund 85 bis 89 % der Nennleistung; entscheidend ist die zulässige Degradation im ersten Jahr und pro Jahr danach.",
+            "**Sicherheit und Zulassung:** IEC 61215 (Bauartzulassung) und IEC 61730 (Sicherheit, Schutzklasse II) sind Pflicht; zusätzlich Nachweise zu Brandverhalten für Dachanwendungen.",
+            "**Herkunft und Zwangsarbeit:** Die EU-Verordnung (EU) 2024/3015 verbietet ab 14. Dezember 2027 Produkte aus Zwangsarbeit auf dem EU-Markt. Lassen Sie sich Rückverfolgbarkeit bis zum Polysilizium dokumentieren.",
+            "**Europäische Wertschöpfung:** Der EAG-Investitionszuschuss erhöht sich um 10 % für Module, bei denen alle in der Verordnung genannten Fertigungsschritte in der EU, im EWR oder in der Schweiz erfolgen; die EAG-Abwicklungsstelle führt dazu eine Herstellerliste.",
+            "**Bankability:** Für finanzierte Anlagen verlangen Banken oft Module von Herstellern mit stabiler Bilanz und unabhängigen Zuverlässigkeitstests.",
           ],
         },
         {
-          typ: "kasten",
-          variant: "info",
-          titel: "„Tier 1“ ist kein Qualitätssiegel",
-          text: "Die oft genannte Tier-1-Liste von BloombergNEF bewertet, ob Hersteller bei großen Projekten von Banken finanziert werden. Sie sagt nichts direkt über die Qualität eines einzelnen Moduls aus. Zertifikate, Datenblatt und Garantiebedingungen sind aussagekräftiger.",
-        },
-        {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Herkunft und Lieferkette",
-          text: "Ab dem 14. Dezember 2027 gilt die EU-Zwangsarbeitsverordnung (EU) 2024/3015: Produkte, die ganz oder teilweise in Zwangsarbeit hergestellt wurden, dürfen dann nicht mehr in der EU in Verkehr gebracht werden. Seriöse Hersteller legen ihre Lieferkette schon heute offen – fragen Sie danach.",
+          typ: "p",
+          text: "Die Regeln zum EAG-Zuschlag erklärt der Ratgeber [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss); die Bedeutung von Lieferketten für den Nachhaltigkeitsbericht behandelt [CSRD, ESG und Photovoltaik](/ratgeber/csrd-esg-photovoltaik).",
         },
       ],
     },
     {
-      id: "preis",
-      titel: "Was kosten Solarmodule – und wie viel macht die Modulwahl aus?",
-      tocLabel: "Preise",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Solarmodule kosteten im Großhandel laut pvXchange-Index im Juli 2026 rund 13,5 Cent je Watt (Mainstream) bis 15 Cent je Watt (Hochleistungsmodule).** Nach mehr als einem Jahrzehnt sinkender Preise stiegen sie im ersten Halbjahr 2026 um gut ein Viertel, im Sommer kam die Entwicklung weitgehend zum Stillstand. Für 10 kWp entspricht das einem Großhandelswert von grob 1.350 bis 1.500 Euro – bei einer schlüsselfertigen Anlage für rund ${eur(ANLAGE_10)} (Orientierungswert unseres Solarrechners).`,
-        },
-        {
-          typ: "kennzahl",
-          wert: "≈ 1/5",
-          titel: "Anteil der Module an der Investition",
-          text: "Laut Fraunhofer ISE sind die PV-Module nur noch für etwa ein Fünftel der Investitionskosten verantwortlich; bei kleinen Dachanlagen ist der Anteil eher geringer.",
-        },
-        {
-          typ: "p",
-          text: "Das relativiert den Aufpreis für Premiumtechnik: 2 Cent mehr je Watt kosten bei 10 kWp rund 200 Euro. Gerüst, Montage, Wechselrichter, Zählerschrank und Anmeldung bestimmen den Endpreis stärker. Welche Positionen ein Angebot enthalten sollte, zeigen die Ratgeber [Solaranlage Kosten](/ratgeber/solaranlage-kosten) und [Photovoltaik-Angebot vergleichen](/ratgeber/photovoltaik-angebot-vergleichen).",
-        },
-      ],
-    },
-    {
-      id: "empfehlung",
-      titel: "Welches Modul passt zu welchem Dach?",
-      tocLabel: "Empfehlung",
+      id: "auswahl",
+      titel: "Auswahl-Checkliste für Gewerbe und alpine Lagen",
+      tocLabel: "Checkliste",
       bloecke: [
         {
           typ: "karten",
           cols: 2,
           items: [
-            { titel: "Normales Schrägdach, genug Fläche", text: "TOPCon-Module mit Halbzellen, gern als Glas-Glas-Variante mit 30 Jahren Garantie. Das beste Verhältnis aus Preis und Langlebigkeit." },
-            { titel: "Kleines Dach oder viele Aufbauten", text: "Back-Contact- oder HJT-Module mit 23,5 % Wirkungsgrad und mehr. Jeder Quadratmeter zählt – mehr kWp auf gleicher Fläche." },
-            { titel: "Flachdach, Carport, Fassade", text: "Bifaziale Glas-Glas-Module. Aufgeständert oder mit Abstand zum Untergrund nutzen sie Licht von der Rückseite." },
-            { titel: "Stall, Scheune, Schneeregion", text: "Glas-Glas mit hoher Last- und Hagelklasse, Ammoniakbeständigkeit nach IEC 62716 und passender Statik." },
+            { titel: "Gewerbehalle im Flachland", text: "TOPCon, Glas-Folie oder Glas-Glas je nach Statik, Designlast ≥ 3.600 Pa, Hagelklasse passend zur HORA-Gefährdung, Temperaturkoeffizient ≤ −0,30 %/K bei Blechdächern." },
+            { titel: "Landwirtschaft und Stall", text: "Glas-Glas mit Ammoniakbeständigkeit (IEC 62716), robuste Rahmen, PID-Resistenz; bei Agri-PV bifaziale Module." },
+            { titel: "Alpin und schneereich", text: "Erhöhte Prüflasten und Nachweis zur ungleichmäßigen Schneelast (IEC 62938), Montage nach Herstellerfreigabe, Stützschienen; Frostspannung in der Stringplanung." },
+            { titel: "Fassade und Architektur", text: "Glas-Glas, rahmenlos oder mit schmalem Rahmen, Back-Contact oder farbige Gläser; Bauproduktnachweise für BIPV – siehe [Fassade und BIPV](/ratgeber/photovoltaik-fassade-bipv)." },
           ],
         },
         {
           typ: "p",
-          text: "Genauso wichtig wie das Modul ist die Planung drumherum: ein passender [Wechselrichter](/ratgeber/wechselrichter-photovoltaik), ein geprüftes Montagesystem und die Berücksichtigung von [Verschattung](/wissen/lexikon#verschattung). Eine Übersicht über komplette Anlagen finden Sie auf der Seite [Photovoltaikanlage](/produkte/photovoltaikanlage).",
+          text: "Welche Hersteller wir einsetzen und wie wir Module und Wechselrichter kombinieren, zeigt die Seite [Photovoltaikanlage](/produkte/photovoltaikanlage). Die passende Wechselrichtertechnik erklärt der Ratgeber [Wechselrichter](/ratgeber/wechselrichter-photovoltaik).",
         },
-        { typ: "tool", href: "/solarrechner", titel: "Was bringt Ihr Dach?", text: "Ertrag, Autarkie und Amortisation mit Ihrer Anlagengröße und Ausrichtung berechnen.", label: "Zum Solarrechner" },
       ],
     },
   ],
 
   faq: [
-    { q: "Welche Solarmodule sind 2026 die besten?", a: "Das beste Modul hängt vom Dach ab. Für die meisten Häuser sind TOPCon-Glas-Glas-Module mit 30 Jahren Garantie die ausgewogenste Wahl. Bei wenig Dachfläche lohnen sich Back-Contact- oder HJT-Module mit höherem Wirkungsgrad." },
-    { q: "Was ist besser: TOPCon oder Heterojunction?", a: "HJT-Module haben einen etwas niedrigeren Temperaturkoeffizienten und eine höhere Bifazialität, TOPCon-Module sind günstiger und breiter verfügbar. Auf einem gut hinterlüfteten Schrägdach in Deutschland liegt der Ertragsunterschied meist nur bei wenigen Prozent." },
-    { q: "Lohnen sich Glas-Glas-Module?", a: "Meist ja. Sie sind robuster, altern langsamer und haben häufig 30 Jahre Produkt- und Leistungsgarantie. Nachteil ist das höhere Gewicht, das die Statik des Dachs tragen muss." },
-    { q: "Bringen bifaziale Module auf dem Schrägdach mehr Ertrag?", a: "Nur wenig. Auf einem Schrägdach erreicht kaum Licht die Rückseite. Bifaziale Module lohnen sich vor allem auf aufgeständerten Flachdächern, Carports oder Freiflächen." },
-    { q: "Wie lange halten Solarmodule?", a: "Hochwertige Module sind auf 25 bis 30 Jahre und mehr ausgelegt. Hersteller garantieren meist, dass nach 25 bis 30 Jahren noch 85 bis 90 % der Nennleistung erreicht werden; gemessene Degradationsraten liegen oft darunter." },
-    { q: "Liefern schwarze Module (Full Black) weniger Strom?", a: "Geringfügig. Full-Black-Module erwärmen sich etwas stärker und haben je nach Bauart minimal weniger Leistung. Der Unterschied ist klein und oft eine Frage der Optik und des Preises." },
-    { q: "Was bedeutet Tier 1 bei Solarmodulen?", a: "Die Tier-1-Liste von BloombergNEF zeigt, welche Hersteller bei großen Projekten bankfinanziert wurden. Sie ist ein Hinweis auf Marktgröße, aber kein Qualitätsprüfsiegel für einzelne Module." },
+    {
+      q: "Welche Solarzellen-Technologie ist 2026 Standard?",
+      a: "TOPCon auf n-Typ-Silizium. Laut Fraunhofer ISE hat es die bis 2023 dominierende PERC-Technik abgelöst. Heterojunction und Back-Contact sind die effizienteren, meist teureren Alternativen.",
+    },
+    {
+      q: "Wie hoch ist der Wirkungsgrad aktueller Solarmodule?",
+      a: "Der gewichtete Durchschnitt kristalliner Module lag laut Fraunhofer ISE Ende 2024 bei 22,7 %, die besten Serienmodule erreichten 24,8 %. Im Labor wurden 26,0 % für Silizium-Module gemessen.",
+    },
+    {
+      q: "Sind Glas-Glas-Module besser?",
+      a: "Sie sind langlebiger, feuchte- und ammoniakbeständiger und haben oft längere Garantien, sind aber etwas schwerer. Für Stallungen, Freiflächen und Fassaden sind sie meist erste Wahl, für statisch knappe Hallendächer kann Glas-Folie sinnvoller sein.",
+    },
+    {
+      q: "Was bedeutet 5.400 Pa im Datenblatt?",
+      a: "Die Prüflast nach IEC 61215 für die Vorderseite. Sie enthält einen Sicherheitsfaktor von mindestens 1,5; die zulässige Designlast beträgt 3.600 Pa – und gilt nur für die freigegebenen Klemmbereiche.",
+    },
+    {
+      q: "Lohnen sich bifaziale Module auf dem Dach?",
+      a: "Auf hellen Flachdächern mit ausreichend Abstand zur Dachfläche und bei Freiflächen meist ja, der Mehrertrag liegt je nach Untergrund bei einigen Prozent. Auf dunklen Dächern und bei dachparalleler Montage bringt die Rückseite kaum etwas.",
+    },
+    {
+      q: "Wie lange halten Solarmodule?",
+      a: "Hochwertige Module sind für 25 bis 30 Jahre und mehr ausgelegt; Hersteller garantieren meist, dass sie nach 25 bis 30 Jahren noch rund 85 bis 89 % ihrer Nennleistung liefern. Viele Anlagen laufen danach weiter. Wie Betreiber alte Anlagen weiterbetreiben oder erneuern, erklärt der Ratgeber Photovoltaik nach 20 Jahren.",
+    },
+    {
+      q: "Gibt es mehr Förderung für europäische Module?",
+      a: "Ja. Beim EAG-Investitionszuschuss erhöht sich die Förderung um 10 %, wenn die Module nachweislich in der EU, im EWR oder in der Schweiz gefertigt wurden, weitere 10 % sind für europäische Wechselrichter möglich.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/wechselrichter-photovoltaik", titel: "Wechselrichter für Photovoltaik", text: "String, Hybrid oder Mikro – und wie groß er sein muss." },
-    { href: "/ratgeber/photovoltaik-ertrag-pro-kwp", titel: "Photovoltaik-Ertrag pro kWp", text: "Wie viel Strom ein kWp in Ihrer Region erzeugt." },
-    { href: "/ratgeber/solaranlage-kosten", titel: "Was kostet eine Solaranlage?", text: "Preise je kWp und was im Komplettpreis steckt." },
-    { href: "/angebot", titel: "Angebot anfragen", text: "Module und Anlage passend zum Dach planen lassen." },
+    { href: "/produkte/photovoltaikanlage", titel: "Photovoltaikanlage", text: "Module, Wechselrichter, Unterkonstruktion." },
+    { href: "/ratgeber/hagel-photovoltaik", titel: "Hagel und Photovoltaik", text: "Hagelwiderstandsklassen und Versicherung." },
+    { href: "/ratgeber/schneelast-photovoltaik", titel: "Schneelast und Photovoltaik", text: "Prüflast, Designlast, eHORA." },
+    { href: "/produkte/hersteller", titel: "Hersteller", text: "Marken, denen wir vertrauen." },
   ],
 
   quellen: [
-    { titel: "Fraunhofer ISE – Aktuelle Fakten zur Photovoltaik in Deutschland (Fassung 20.08.2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/aktuelle-fakten-zur-photovoltaik-in-deutschland.html", stand: "08/2026" },
-    { titel: "Solarserver – ITRPV-Roadmap (17. Ausgabe): TOPCon marktführende Technologie", url: "https://www.solarserver.de/2026/06/24/itrpv-roadmap-topcon-marktfuehrende-photovoltaik-technologie", stand: "06/2026" },
-    { titel: "pv magazine – pvXchange-Modulpreisindex", url: "https://www.pv-magazine.de/modulpreisindex/", stand: "08/2026" },
-    { titel: "Verbraucherzentrale – Photovoltaik: Garantie- und Versicherungsbedingungen genau lesen", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/photovoltaik-garantie-und-versicherungsbedingungen-genau-lesen-6700", stand: "09/2026" },
-    { titel: "Hagelregister – Neuregelung für den Eintrag von PV-Modulen", url: "https://www.hagelregister.ch/neuregelung-eintrag-pv-module.html", stand: "10/2025" },
-    { titel: "EUR-Lex – Verordnung (EU) 2024/3015 über das Verbot von Produkten aus Zwangsarbeit", url: "https://eur-lex.europa.eu/legal-content/DE/ALL/?uri=CELEX%3A32024R3015", stand: "12/2024" },
+    { titel: "Fraunhofer ISE – Photovoltaics Report (14.07.2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/photovoltaics-report.html", stand: "09/2026" },
+    { titel: "VDMA – International Technology Roadmap for Photovoltaic (ITRPV)", url: "https://www.vdma.org/international-technology-roadmap-photovoltaic", stand: "09/2026" },
+    { titel: "IEC 61215-2:2021 – Design qualification and type approval, test procedures", url: "https://webstore.iec.ch/en/publication/61350", stand: "09/2026" },
+    { titel: "VKF/EPZ – Hagelwiderstand von Baumaterialien (Hagelwiderstandsklassen)", url: "https://www.hagelregister.at/wp-content/uploads/2018/03/Hagelwiderstand-Baumaterialien_d.pdf", stand: "09/2026" },
+    { titel: "EUR-Lex – Verordnung (EU) 2024/3015 über das Verbot von Produkten aus Zwangsarbeit", url: "https://eur-lex.europa.eu/eli/reg/2024/3015/oj", stand: "09/2026" },
+    { titel: "RIS – EAG-Investitionszuschüsseverordnung-Strom, § 6 (Zuschlag europäische Wertschöpfung)", url: "https://ogd.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40275221/NOR40275221.html", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Welches Modul passt aufs Dach?", text: "Wir planen Module, Wechselrichter und Montage passend zu Fläche, Statik und Budget.", href: "/angebot", label: "Anlage planen lassen" },
+  seitenCta: { titel: "Welches Modul passt?", text: "Wir wählen Module nach Dach, Last und Standort.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Gute Module brauchen eine gute Planung.",
-    text: "Wir prüfen Dachfläche, Statik und Verschattung vor Ort und empfehlen Module, die zu Ihrem Dach und Ihrem Budget passen – mit nachvollziehbaren Datenblättern und Garantiebedingungen.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Ertrag berechnen", href: "/solarrechner" },
+    title: "Module, die zu Ihrem Dach und Standort passen.",
+    text: "Wir vergleichen Zelltechnik, Prüflasten, Hagelklassen und Garantien und wählen Module, die auf Ihrem Dach 30 Jahre zuverlässig arbeiten.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Photovoltaikanlage", href: "/produkte/photovoltaikanlage" },
   },
 };
 

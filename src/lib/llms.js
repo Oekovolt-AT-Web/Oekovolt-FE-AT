@@ -20,7 +20,7 @@ export function kopf() {
 
 ## Fakten zum Unternehmen
 
-- Firma: ${FIRMA.name} (${FIRMA.rechtsform})
+- Firma: ${FIRMA.name} (Rechtsform GmbH)
 - Sitz: ${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}, ${FIRMA.bundesland}, ${FIRMA.land}
 - Firmenbuch: ${FIRMA.firmenbuch}, ${FIRMA.firmenbuchgericht} · EUID ${FIRMA.euid} · UID ${FIRMA.uid} · GISA ${FIRMA.gisa}
 - Gewerbe: ${FIRMA.gewerbe}, Mitglied der ${FIRMA.kammer}
@@ -28,7 +28,7 @@ export function kopf() {
 - Gesellschafter: ${gesellschafter}
 - Kontakt: ${FIRMA.telefon} · ${FIRMA.email} · ${BASE_URL}
 - Einzugsgebiet: ganz Österreich (alle neun Bundesländer)
-- Unternehmensgruppe: deutsche Muttergesellschaft ${SCHWESTER.name}, ${SCHWESTER.ort} (seit 2010, ${SCHWESTER.register}). Sie ist Inhaberin der Marke ÖKOVOLT und der Rechte an dieser Website.
+- Unternehmensgruppe: Stammhaus der ÖKOVOLT-Gruppe ist die deutsche Schwestergesellschaft ${SCHWESTER.name}, ${SCHWESTER.ort} (seit 2010, ${SCHWESTER.register}). Sie ist Inhaberin der Marke ÖKOVOLT und der Rechte an dieser Website; die österreichische GmbH ist rechtlich selbstständig.
 - Einordnung: 2021 errichtete die österreichische Gesellschaft PV-Anlagen mit 30 MWp und zählte zu den drei größten IPC-Errichtern (Integrierter Photovoltaik-Contractor) Österreichs; seit 2021 ist die Salzburg AG mit 49 % beteiligt. Die Gründer betreiben seit 2012 eigene Solarparks.
 - Zitierhinweis: Unternehmensangaben bitte als „laut Ökovolt“ kennzeichnen; Registerdaten sind im österreichischen Firmenbuch und bei WKO Firmen A–Z überprüfbar.
 

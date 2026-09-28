@@ -99,7 +99,7 @@ for (const s of STELLEN) {
     eyebrow: "Wir suchen · ganzjährig",
     titel: `${s.kurz} (m/w/d)`,
     unterzeile: [s.ort, s.anstellung].filter(Boolean).join("  ·  "),
-    fussLinks: "oekovolt.de/jobs",
+    fussLinks: "oekovolt.com/jobs",
     fussRechts: s.bereich,
     datei: path.join(ROOT, "public/og/jobs", `${s.slug}.jpg`),
   });
@@ -131,7 +131,7 @@ for (const a of artikel) {
     bild: a.bild,
     eyebrow: `Ratgeber · ${a.kategorie}`,
     titel: a.title,
-    fussLinks: "oekovolt.de/ratgeber",
+    fussLinks: "oekovolt.com/ratgeber",
     fussRechts: "Fachbetrieb für Photovoltaik",
     datei: path.join(ROOT, "public/og/ratgeber", `${a.slug}.jpg`),
   });

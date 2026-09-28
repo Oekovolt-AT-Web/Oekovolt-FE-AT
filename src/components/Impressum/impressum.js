@@ -245,7 +245,8 @@ const Impressum = () => {
           Lizenz eine Namensnennung verlangt, nennen wir Urheberin bzw. Urheber und Lizenz direkt beim Bild oder in dieser
           Rubrik. Karten- und Geodaten stammen, soweit angegeben, von den OpenStreetMap-Mitwirkenden (ODbL) bzw. von
           basemap.at (CC BY 4.0). Produktabbildungen werden im Rahmen der Produktinformation der jeweiligen Hersteller
-          verwendet.
+          verwendet. Alle Urheberinnen und Urheber, Quellen und Lizenzen im Einzelnen finden Sie im{" "}
+          <Link href="/bildnachweis">Bildnachweis</Link>.
         </p>
       </section>
 

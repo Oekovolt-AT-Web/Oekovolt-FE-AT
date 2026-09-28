@@ -10,6 +10,7 @@ const RECHTLICHES = [
   { name: "AGB", href: "/agb" },
   { name: "Barrierefreiheit", href: "/barrierefreiheit" },
   { name: "Hinweisgeberschutz", href: "/hinweisgeberschutz" },
+  { name: "Bildnachweis", href: "/bildnachweis" },
 ];
 
 /**

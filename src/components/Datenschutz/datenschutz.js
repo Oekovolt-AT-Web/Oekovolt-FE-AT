@@ -340,16 +340,21 @@ const PrivacyPolicy = () => {
         </p>
         <ul className="mt-2 space-y-1.5">
           <li>
-            <strong>Geokodierung:</strong> Die Adresse wird zur Ermittlung der Koordinaten an den Suchdienst Nominatim der
-            OpenStreetMap Foundation (Vereinigtes Königreich, Angemessenheitsbeschluss) bzw. an basemap.at, die
-            Verwaltungsgrundkarte der österreichischen Bundesländer, übermittelt.
+            <strong>Geokodierung:</strong> Die Adresse wird von unserem Server aus – ohne Ihre IP-Adresse – an den
+            Suchdienst Nominatim der OpenStreetMap Foundation (Vereinigtes Königreich, Angemessenheitsbeschluss)
+            übermittelt, um die Koordinaten zu ermitteln.
           </li>
           <li>
-            <strong>Höhendaten:</strong> Zur Ermittlung der Seehöhe werden die Koordinaten an die Elevation-API von Open-Meteo
-            (open-meteo.com) übermittelt.
+            <strong>Höhendaten und Ertrag:</strong> Von unserem Server aus werden nur die Koordinaten an Open Topo Data
+            (Höhenmodell EU-DEM) sowie an PVGIS, das Photovoltaik-Informationssystem der Europäischen Kommission
+            (Gemeinsame Forschungsstelle), übermittelt.
           </li>
           <li>
-            <strong>eHORA:</strong> Für die amtlichen Naturgefahren-Informationen (u. a. Schneelast- und Windzonen) verlinken
+            <strong>Karte:</strong> Die Karte lädt Kartenkacheln von basemap.at (Verwaltungsgrundkarte Österreich, Server
+            der Stadt Wien) direkt in Ihren Browser; dabei wird Ihre IP-Adresse an diesen Server übermittelt.
+          </li>
+          <li>
+            <strong>eHORA:</strong> Für die amtlichen Naturgefahren-Informationen (u. a. Schneelast, Wind und Hagel) verlinken
             wir auf{" "}
             <Ext href="https://www.hora.gv.at">eHORA (hora.gv.at)</Ext>. Die Seite öffnet sich erst durch Ihren Klick; dabei
             gelten die Datenschutzbestimmungen des Bundes.
@@ -390,6 +395,11 @@ const PrivacyPolicy = () => {
           Anfragen löschen wir zwölf Monate nach unserer Entscheidung; bei einer Sponsoring-Vereinbarung gelten die
           gesetzlichen Aufbewahrungsfristen.
         </p>
+        <p>
+          Anfragen über die Formulare für Sponsoring, Elektro-Partner und PV Award werden in unser Kunden- und
+          Anfragesystem (Backoffice) übertragen. Zum Schutz vor Missbrauch speichern wir dabei die IP-Adresse und den
+          Zeitpunkt der Übermittlung als Nachweis (Art. 6 Abs. 1 lit. f DSGVO).
+        </p>
       </Abschnitt>
 
       <Abschnitt id="pv-award" titel="16. Einreichungen zum Ökovolt PV Award">
@@ -403,7 +413,8 @@ const PrivacyPolicy = () => {
         <p>
           Namen, Fotos und Projektbeschreibungen von Nominierten und Preisträgern veröffentlichen wir (z. B. auf der Website,
           im Newsroom und in sozialen Medien) nur mit Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie jederzeit
-          widerrufen können. Mit der Einreichung bestätigen Sie, dass Sie über die Rechte an den eingereichten Fotos verfügen
+          widerrufen können; ein Widerruf bis zur Jurysitzung führt dazu, dass Ihre Einreichung nicht öffentlich genannt wird.
+          Freiwillig freigegebene Monitoring-Daten der Anlage verwenden wir nur für die Bewertung. Mit der Einreichung bestätigen Sie, dass Sie über die Rechte an den eingereichten Fotos verfügen
           und abgebildete Personen einverstanden sind. Nicht prämierte Einreichungen löschen wir zwölf Monate nach der
           Preisverleihung.
         </p>

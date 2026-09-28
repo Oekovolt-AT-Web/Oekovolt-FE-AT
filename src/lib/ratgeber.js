@@ -35,7 +35,7 @@ const STATISCHE_ARTIKEL = [
       "Wallbox installieren lassen in Österreich: 11 oder 22 kW, Voraussetzungen, Meldung beim Netzbetreiber, Lastmanagement und Förderung – für Betrieb und Eigenheim.",
     excerpt:
       "Was eine Wallbox mit Installation kostet, wann 22 kW sinnvoll sind, was Sie dem Netzbetreiber melden müssen und wie Lastmanagement und PV-Überschussladen zusammenspielen.",
-    veroeffentlicht: "2026-09-12",
+    veroeffentlicht: "2026-09-28",
     aktualisiert: "2026-09-28",
     lesezeit: 10,
     kategorie: "E-Mobilität & Sektorkopplung",
