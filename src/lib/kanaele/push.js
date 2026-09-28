@@ -1,6 +1,6 @@
 // src/lib/kanaele/push.js – Versand von Web-Push-Nachrichten (VAPID) an alle Abos eines Themas.
 //
-// Umgebungsvariablen: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT (z. B. mailto:office@oekovolt.de)
+// Umgebungsvariablen: VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY, VAPID_SUBJECT (z. B. mailto:office@oekovolt.com)
 // Schlüssel einmalig erzeugen: npx web-push generate-vapid-keys
 
 import webpush from "web-push";
@@ -38,7 +38,7 @@ function zielLink(link) {
  */
 export async function sendePushNachricht(n) {
   if (!pushBereit()) throw new Error("push_nicht_konfiguriert");
-  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:office@oekovolt.de", process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
+  webpush.setVapidDetails(process.env.VAPID_SUBJECT || "mailto:office@oekovolt.com", process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
   const payload = JSON.stringify({
     titel: String(n.titel || "Ökovolt").slice(0, 80),

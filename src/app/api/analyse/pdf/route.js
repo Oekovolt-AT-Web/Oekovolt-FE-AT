@@ -75,7 +75,7 @@ export async function POST(request) {
   const daten = analyse(e.eingaben);
   const referenz = `PVA-${new Date().getFullYear()}-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
   const datum = new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date());
-  const qrPng = await QRCode.toDataURL(`https://www.oekovolt.de/termin?utm_source=pdf-analyse&utm_medium=qr&ref=${referenz}`, { margin: 0, width: 300, color: { dark: "#03122b", light: "#ffffff" } });
+  const qrPng = await QRCode.toDataURL(`https://www.oekovolt.com/termin?utm_source=pdf-analyse&utm_medium=qr&ref=${referenz}`, { margin: 0, width: 300, color: { dark: "#03122b", light: "#ffffff" } });
 
   let pdf;
   try {

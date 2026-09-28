@@ -22,7 +22,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import ErloesVergleich from "@/components/Direktvermaktung/ErloesVergleich";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.direktvermarktung_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
-const DV_PAGE_URL = "https://www.oekovolt.de/service/direktvermarktung";
+const DV_PAGE_URL = "https://www.oekovolt.com/service/direktvermarktung";
 
 async function fetchDirektvermarktungData() {
   if (!isApiConfigured()) {
@@ -78,16 +78,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: DV_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Direktvermarktung Solarstrom" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Direktvermarktung Solarstrom" }],
     },
     twitter: {
       card: "summary_large_image",
       title: TITLE,
       description: DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -113,10 +113,10 @@ export default async function DirektvermarktungPage() {
     "@type": "WebPage",
     "@id": `${DV_PAGE_URL}/#webpage`,
     url: DV_PAGE_URL,
-    name: data?.title || "Solarstrom Direktvermarktung | Ökovolt Deutschland",
+    name: data?.title || "Solarstrom Direktvermarktung | Ökovolt Österreich",
     description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };
@@ -127,7 +127,7 @@ export default async function DirektvermarktungPage() {
     name: "Direktvermarktung von Solarstrom",
     serviceType: "Direktvermarktung im Marktprämienmodell",
     description: "Vermarktung von überschüssigem Solarstrom an der Strombörse mit Absicherung über die gleitende Marktprämie für Photovoltaikanlagen bis 100 kWp.",
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     areaServed: { "@type": "Country", name: "Deutschland" },
     url: DV_PAGE_URL,
   };

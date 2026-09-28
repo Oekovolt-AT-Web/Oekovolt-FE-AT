@@ -23,7 +23,7 @@ import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 import { ANNAHMEN } from "@/data/solarrechner";
 import { artikelNachSlug, artikelPfad } from "@/lib/ratgeber";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const SLUG = "einspeiseverguetung-2026";
 const artikel = artikelNachSlug(SLUG);
 const PAGE_URL = `${BASE_URL}${artikelPfad(SLUG)}`;
@@ -39,7 +39,7 @@ export const metadata = {
   openGraph: {
     type: "article",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: artikel.title,
     description: artikel.description,
     publishedTime: artikel.veroeffentlicht,
@@ -125,7 +125,7 @@ export default function EinspeiseverguetungPage() {
         "@id": `${PAGE_URL}/#article`,
         headline: artikel.title,
         description: artikel.description,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         datePublished: artikel.veroeffentlicht,
         dateModified: artikel.aktualisiert,
         author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },

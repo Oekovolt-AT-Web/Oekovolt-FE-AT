@@ -14,7 +14,7 @@ import { actorId } from "@/lib/kanaele/activitypub";
 
 export const revalidate = 300;
 
-const PAGE_URL = "https://www.oekovolt.de/kommunen";
+const PAGE_URL = "https://www.oekovolt.com/kommunen";
 const TITEL = "Photovoltaik für Kommunen & Stadtwerke | Ökovolt";
 const BESCHREIBUNG =
   "PV auf Schulen, Rathäusern und Bauhöfen, Freiflächen- und Agri-PV, Quartiere, Ladeinfrastruktur und Monitoring – Planung und Umsetzung für Kommunen, Landkreise und Stadtwerke.";
@@ -22,9 +22,9 @@ const BESCHREIBUNG =
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
-  alternates: { canonical: PAGE_URL, types: { "application/activity+json": [{ url: actorId("oekovolt"), title: "@oekovolt@oekovolt.de" }] } },
-  openGraph: { type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland", title: TITEL, description: BESCHREIBUNG, images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630 }] },
-  other: { "fediverse:creator": "@oekovolt@oekovolt.de" },
+  alternates: { canonical: PAGE_URL, types: { "application/activity+json": [{ url: actorId("oekovolt"), title: "@oekovolt@oekovolt.com" }] } },
+  openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630 }] },
+  other: { "fediverse:creator": "@oekovolt@oekovolt.com" },
 };
 
 const FAQ = [
@@ -42,7 +42,7 @@ const FAQ = [
   },
   {
     q: "Wie bleiben wir über Neuigkeiten informiert – ohne kommerzielle Plattformen?",
-    a: "Unser Newsroom ist über das Fediverse erreichbar: Folgen Sie @oekovolt@oekovolt.de direkt von Ihrem Mastodon-Konto aus – auch von Behörden-Instanzen. Alternativ gibt es RSS-Feeds und Push-Benachrichtigungen ohne Tracking.",
+    a: "Unser Newsroom ist über das Fediverse erreichbar: Folgen Sie @oekovolt@oekovolt.com direkt von Ihrem Mastodon-Konto aus – auch von Behörden-Instanzen. Alternativ gibt es RSS-Feeds und Push-Benachrichtigungen ohne Tracking.",
   },
 ];
 
@@ -57,7 +57,7 @@ export default async function KommunenPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@graph": [
-              { "@type": "Service", name: "Photovoltaik für Kommunen und Stadtwerke", provider: { "@id": "https://www.oekovolt.de/#organization" }, areaServed: "DE", audience: { "@type": "Audience", audienceType: "Kommunen, Landkreise, Stadtwerke" }, url: PAGE_URL, description: BESCHREIBUNG },
+              { "@type": "Service", name: "Photovoltaik für Kommunen und Stadtwerke", provider: { "@id": "https://www.oekovolt.com/#organization" }, areaServed: "DE", audience: { "@type": "Audience", audienceType: "Kommunen, Landkreise, Stadtwerke" }, url: PAGE_URL, description: BESCHREIBUNG },
               { "@type": "FAQPage", mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
             ],
           }),

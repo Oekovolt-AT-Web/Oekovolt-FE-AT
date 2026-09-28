@@ -18,7 +18,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import PraemienRechner from "@/components/Vorteilswelt/PraemienRechner";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.oekovolt_vorteilswelt_service_page.api.get_vorteilswelt_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/service/vorteilswelt";
+const PAGE_URL = "https://www.oekovolt.com/service/vorteilswelt";
 
 async function fetchVorteilsweltData() {
   if (!isApiConfigured()) {
@@ -76,18 +76,18 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "de_DE",
+      locale: "de_AT",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Österreich" }],
     },
     twitter: {
       card: "summary_large_image",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -156,8 +156,8 @@ export default async function VorteilsweltPage() {
     url: PAGE_URL,
     name: data?.Title || "Ökovolt Vorteilswelt – 250 € Prämie für Ihre Empfehlung",
     description: data?.description || META_DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };

@@ -36,7 +36,7 @@ import {
 
 const LIST_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 const DETAIL_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekt`;
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
 // ---------- API helpers (only used in this file) ----------
@@ -210,9 +210,9 @@ export async function generateMetadata({ params }) {
       robots: { index: true, follow: true },
       openGraph: {
         type: "article",
-        locale: "de_DE",
+        locale: "de_AT",
         url: canonical,
-        siteName: "Ökovolt Deutschland",
+        siteName: "Ökovolt Österreich",
         title: seitenTitel,
         description,
         images: [{ url: imgUrl, width: 1200, height: 630, alt: p.titel }],

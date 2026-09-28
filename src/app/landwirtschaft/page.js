@@ -10,7 +10,7 @@ import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 
-const PAGE_URL = "https://www.oekovolt.de/landwirtschaft";
+const PAGE_URL = "https://www.oekovolt.com/landwirtschaft";
 const TITEL = "Photovoltaik für Landwirtschaft & Agri-PV | Ökovolt";
 const BESCHREIBUNG =
   "PV auf Stall, Scheune und Maschinenhalle, Agri-PV nach DIN SPEC 91434, Speicher für Melk- und Kühltechnik: Planung, Genehmigung und Montage für landwirtschaftliche Betriebe.";
@@ -19,7 +19,7 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland", title: TITEL, description: BESCHREIBUNG, images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630 }] },
+  openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630 }] },
 };
 
 const FAQ = [
@@ -60,7 +60,7 @@ export default async function LandwirtschaftPage({ searchParams }) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@graph": [
-              { "@type": "Service", name: "Photovoltaik und Agri-PV für landwirtschaftliche Betriebe", provider: { "@id": "https://www.oekovolt.de/#organization" }, areaServed: "DE", audience: { "@type": "Audience", audienceType: "Landwirtschaftliche Betriebe" }, url: PAGE_URL, description: BESCHREIBUNG },
+              { "@type": "Service", name: "Photovoltaik und Agri-PV für landwirtschaftliche Betriebe", provider: { "@id": "https://www.oekovolt.com/#organization" }, areaServed: "DE", audience: { "@type": "Audience", audienceType: "Landwirtschaftliche Betriebe" }, url: PAGE_URL, description: BESCHREIBUNG },
               { "@type": "FAQPage", mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
             ],
           }),

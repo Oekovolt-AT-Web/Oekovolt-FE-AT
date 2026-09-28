@@ -5,7 +5,7 @@ import Postfach from "@/components/Hinweisgeber/Postfach";
 export const metadata = {
   title: "Postfach – Hinweisgebersystem | Ökovolt",
   description: "Anonymes Postfach des Ökovolt-Hinweisgebersystems: Bearbeitungsstand verfolgen und Rückfragen der Meldestelle beantworten.",
-  alternates: { canonical: "https://www.oekovolt.de/hinweisgebersystem/postfach" },
+  alternates: { canonical: "https://www.oekovolt.com/hinweisgebersystem/postfach" },
   robots: { index: false, follow: false },
 };
 

@@ -9,7 +9,7 @@ import Solarrechner from "@/components/Solarrechner/Rechner";
 import { berechne } from "@/lib/solarrechner";
 import { alsBerechnung, eingabenAusParams, teilenQuery } from "@/lib/rechnerTeilen";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 
 const de = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 
@@ -24,7 +24,7 @@ export async function generateMetadata({ searchParams }) {
     description: beschreibung,
     robots: { index: false, follow: true },
     alternates: { canonical: `${BASE_URL}/solarrechner` },
-    openGraph: { type: "website", locale: "de_DE", siteName: "Ökovolt Deutschland", title: titel, description: beschreibung, url: `${BASE_URL}/solarrechner/ergebnis?${teilenQuery(e)}`, images: [{ url: bild, width: 1200, height: 630, alt: titel }] },
+    openGraph: { type: "website", locale: "de_AT", siteName: "Ökovolt Österreich", title: titel, description: beschreibung, url: `${BASE_URL}/solarrechner/ergebnis?${teilenQuery(e)}`, images: [{ url: bild, width: 1200, height: 630, alt: titel }] },
     twitter: { card: "summary_large_image", title: titel, description: beschreibung, images: [bild] },
   };
 }

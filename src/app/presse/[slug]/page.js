@@ -34,9 +34,9 @@ export async function generateMetadata({ params }) {
     },
     openGraph: {
       type: "article",
-      locale: "de_DE",
+      locale: "de_AT",
       url: m.url,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: m.titel,
       description: m.teaser,
       publishedTime: m.datum,
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
       images: m.bildAbsolut ? [{ url: m.bildAbsolut, alt: m.bildAlt }] : [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image", title: m.titel, description: m.teaser },
-    other: { "fediverse:creator": "@oekovolt@oekovolt.de" },
+    other: { "fediverse:creator": "@oekovolt@oekovolt.com" },
   };
 }
 
@@ -66,7 +66,7 @@ export default async function MeldungPage({ params }) {
     description: m.teaser,
     datePublished: m.datum,
     dateModified: m.aktualisiert,
-    inLanguage: "de-DE",
+    inLanguage: "de-AT",
     articleSection: m.kategorie,
     keywords: m.hashtags.join(", "),
     ...(m.bildAbsolut ? { image: [m.bildAbsolut] } : {}),

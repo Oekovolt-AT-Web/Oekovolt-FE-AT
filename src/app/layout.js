@@ -21,7 +21,7 @@ const manrope = Manrope({
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
-const BASE_URL = "https://www.oekovolt.de";
+import { BASE_URL, FIRMA, SCHWESTER } from "@/lib/site";
 
 const siteSchema = {
   "@context": "https://schema.org",
@@ -29,8 +29,9 @@ const siteSchema = {
     {
       "@type": ["Organization", "LocalBusiness", "Electrician"],
       "@id": `${BASE_URL}/#organization`,
-      name: "Ökovolt Deutschland",
-      alternateName: ["ÖKOVOLT GmbH Solartechnik", "Oekovolt", "Ökovolt"],
+      name: FIRMA.name,
+      legalName: FIRMA.name,
+      alternateName: ["Ökovolt Österreich", "Oekovolt", "Ökovolt", "ÖKOVOLT Solartechnik"],
       url: BASE_URL,
       logo: {
         "@type": "ImageObject",
@@ -38,104 +39,83 @@ const siteSchema = {
         url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
         width: 400,
         height: 100,
-        caption: "Ökovolt Deutschland Logo",
+        caption: "Ökovolt Österreich Logo",
       },
-      image: {
-        "@type": "ImageObject",
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
-      },
+      image: { "@type": "ImageObject", url: `${BASE_URL}/og-image.jpg` },
       description:
-        "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen für Privat und Gewerbe. Über 15 Jahre Erfahrung.",
-      slogan: "Solarenergie für alle – einfach, sicher, wirtschaftlich.",
+        "Photovoltaik für Gewerbe, Industrie, Landwirtschaft, Gemeinden und anspruchsvolle Privatobjekte in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Gewerbespeicher, Ladeinfrastruktur, Energiegemeinschaften, eigener Parkregler (EZA-Regler), Fernwartung und SCADA – geplant, gebaut und betreut aus einer Hand.",
+      slogan: "Wir bauen, was wir selbst betreiben würden.",
+      foundingDate: "2012-02-16",
+      founder: { "@type": "Person", name: "Andreas Wegscheider" },
+      taxID: FIRMA.uid,
+      vatID: FIRMA.uid,
+      identifier: [
+        { "@type": "PropertyValue", propertyID: "Firmenbuchnummer", value: FIRMA.firmenbuch },
+        { "@type": "PropertyValue", propertyID: "EUID", value: FIRMA.euid },
+        { "@type": "PropertyValue", propertyID: "GISA-Zahl", value: FIRMA.gisa },
+      ],
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Schlingener Str. 1a",
-        addressLocality: "Türkheim",
-        postalCode: "86842",
-        addressCountry: "DE",
-        addressRegion: "Bayern",
+        streetAddress: FIRMA.strasse,
+        addressLocality: FIRMA.ort,
+        postalCode: FIRMA.plz,
+        addressRegion: FIRMA.bundesland,
+        addressCountry: "AT",
       },
-      geo: {
-        "@type": "GeoCoordinates",
-        latitude: 48.03858,
-        longitude: 10.62765,
-      },
-      hasMap: "https://www.google.com/maps?q=ÖKOVOLT+GmbH+Solartechnik,+Schlingener+Str.+1a,+86842+Türkheim",
+      geo: { "@type": "GeoCoordinates", latitude: FIRMA.geo.lat, longitude: FIRMA.geo.lng },
+      hasMap: "https://www.google.com/maps?q=%C3%96kovolt+Solartechnik+GmbH,+Gewerbegebiet+10,+5121+Ostermiething",
       openingHoursSpecification: [
-        {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"],
-          opens: "08:00",
-          closes: "16:00",
-        },
-        {
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: ["Friday"],
-          opens: "08:00",
-          closes: "13:00",
-        },
+        { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "08:00", closes: "16:00" },
+        { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday"], opens: "08:00", closes: "12:00" },
       ],
-      telephone: "+49-8245-96788-0",
-      email: "office@oekovolt.de",
-      priceRange: "€€",
+      telephone: "+43-6278-71030",
+      email: FIRMA.email,
+      priceRange: "€€€",
       currenciesAccepted: "EUR",
-      paymentAccepted: "Cash, Credit Card, Bank Transfer",
-      areaServed: {
-        "@type": "Country",
-        name: "Deutschland",
-      },
-      serviceArea: {
-        "@type": "GeoCircle",
-        geoMidpoint: {
-          "@type": "GeoCoordinates",
-          latitude: 51.1657,
-          longitude: 10.4515,
-        },
-        geoRadius: "600000",
-      },
-      sameAs: [
-        "https://www.facebook.com/oekovoltdeutschland",
-        "https://www.instagram.com/oekovoltdeutschland/",
-        "https://www.linkedin.com/company/%C3%B6kovoltdeutchland",
-        "https://x.com/Oekovolt_De",
-        "https://de.pinterest.com/oekovoltdeutschland/",
+      paymentAccepted: "Bank Transfer, Leasing, Financing",
+      areaServed: [
+        { "@type": "Country", name: "Österreich" },
+        ...["Wien", "Niederösterreich", "Oberösterreich", "Salzburg", "Tirol", "Vorarlberg", "Kärnten", "Steiermark", "Burgenland"].map((n) => ({ "@type": "State", name: n })),
       ],
+      memberOf: [{ "@type": "Organization", name: FIRMA.kammer, url: "https://www.wko.at/ooe" }],
+      parentOrganization: {
+        "@type": "Organization",
+        name: SCHWESTER.name,
+        url: SCHWESTER.web,
+        description: "Deutsche Schwestergesellschaft und Inhaberin der Marke ÖKOVOLT",
+      },
+      sameAs: [FIRMA.social.facebook, FIRMA.social.linkedin, FIRMA.wko, FIRMA.firmenabc],
       knowsAbout: [
-        "Photovoltaik",
-        "Solaranlagen",
-        "Stromspeicher",
-        "Wärmepumpen",
-        "Smart Home",
-        "Wallbox",
-        "Erneuerbare Energien",
-        "Direktvermarktung Solarstrom",
-        "Photovoltaik Repowering",
-        "Mieterstrom",
+        "Photovoltaik Gewerbe", "Photovoltaik Industrie", "Freiflächen-Photovoltaik", "Agri-Photovoltaik",
+        "Gewerbespeicher", "Batteriespeicher", "Peak Shaving", "Ladeinfrastruktur", "Energiegemeinschaften",
+        "Erneuerbare-Energie-Gemeinschaft", "Bürgerenergiegemeinschaft", "Reststromvermarktung", "PPA",
+        "EZA-Regler", "Parkregler", "SCADA", "Fernüberwachung Photovoltaik", "TOR Erzeuger",
+        "Schneelast ÖNORM B 1991-1-3", "Blackout-Vorsorge", "Notstrom", "Thermografie Drohne",
+        "EAG-Investitionszuschuss", "OeMAG", "Investitionsfreibetrag",
       ],
       hasOfferCatalog: {
         "@type": "OfferCatalog",
-        name: "Photovoltaik & Energielösungen",
+        name: "Photovoltaik & Energielösungen für Österreich",
         itemListElement: [
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Photovoltaikanlage Installation" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Stromspeicher Installation" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Wärmepumpe Installation" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Wallbox Installation" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Smart Home Lösungen" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Photovoltaik Repowering" } },
-          { "@type": "Offer", itemOffered: { "@type": "Service", name: "Solarstrom Direktvermarktung" } },
-        ],
+          "Photovoltaik für Gewerbe und Industrie", "Freiflächen-Photovoltaik", "Agri-PV", "Gewerbespeicher",
+          "Ladeinfrastruktur", "Energiegemeinschaften", "Parkregler (EZA-Regler)", "Fernwartung", "SCADA",
+          "Wartungsvertrag", "Anlagenprüfung (E-Check)", "PV-Reinigung", "Drohnen-Thermografie",
+          "PV-Versicherung", "Energieberatung", "Notstrom & Blackout-Vorsorge", "Reststromvermarktung",
+          "Finanzierung & Leasing", "Photovoltaik für Luxus-Chalets",
+        ].map((name) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name } })),
       },
     },
     {
       "@type": "WebSite",
       "@id": `${BASE_URL}/#website`,
       url: BASE_URL,
-      name: "Ökovolt Deutschland",
-      description: "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen.",
-
+      name: "Ökovolt Österreich",
+      inLanguage: "de-AT",
+      description: "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich.",
       publisher: { "@id": `${BASE_URL}/#organization` },
       copyrightYear: new Date().getFullYear(),
-      copyrightHolder: { "@id": `${BASE_URL}/#organization` },
+      // Website- und Markenrechte liegen bei der deutschen Schwestergesellschaft
+      copyrightHolder: { "@type": "Organization", name: SCHWESTER.name, url: SCHWESTER.web },
     },
   ],
 };
@@ -149,36 +129,33 @@ export const viewport = {
 export const metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Ökovolt Deutschland – Photovoltaik & Solaranlagen",
+    default: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
     template: "%s",
   },
   description:
-    "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen für Privat und Gewerbe. Jetzt kostenlose Beratung sichern!",
+    "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Speicher, Ladeinfrastruktur, eigener Parkregler & SCADA. Seit 2012.",
   keywords: [
-    "Photovoltaik",
-    "Solaranlage kaufen",
-    "Photovoltaikanlage Deutschland",
-    "Stromspeicher",
-    "Wärmepumpe",
-    "Smart Home Solar",
+    "Photovoltaik Gewerbe Österreich",
+    "PV-Anlage Unternehmen",
+    "Photovoltaik Industrie",
+    "Freiflächen-Photovoltaik Österreich",
+    "Agri-PV Österreich",
+    "Gewerbespeicher",
+    "Energiegemeinschaft",
+    "Reststromvermarktung",
+    "EZA-Regler",
+    "Parkregler Photovoltaik",
+    "SCADA Photovoltaik",
+    "PV Wartungsvertrag",
+    "EAG Investitionszuschuss",
+    "Investitionsfreibetrag Photovoltaik",
+    "Photovoltaik Oberösterreich",
+    "Photovoltaik Salzburg",
     "Ökovolt",
-    "Solarenergie Deutschland",
-    "Photovoltaikanlage kaufen",
-    "Solaranlage installieren",
-    "Wallbox Ladestation",
-    "Photovoltaik Gewerbe",
-    "Photovoltaik Privat",
-    "Solarstrom Eigenverbrauch",
-    "Energiespeicher Batterie",
-    "Wärmepumpe kaufen",
-    "KfW Förderung Photovoltaik",
-    "PV Anlage Kosten",
-    "Solaranlage Förderung",
-    "Repowering Photovoltaik",
   ],
-  authors: [{ name: "Ökovolt Deutschland", url: BASE_URL }],
-  creator: "Ökovolt Deutschland",
-  publisher: "Ökovolt Deutschland",
+  authors: [{ name: "Ökovolt Österreich", url: BASE_URL }],
+  creator: "Ökovolt Österreich",
+  publisher: "Ökovolt Österreich",
   category: "Erneuerbare Energien",
   classification: "Photovoltaik & Solartechnik",
   icons: {
@@ -188,18 +165,18 @@ export const metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: BASE_URL,
-    siteName: "Ökovolt Deutschland",
-    title: "Ökovolt Deutschland – Photovoltaik & Solaranlagen",
+    siteName: "Ökovolt Österreich",
+    title: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
     description:
-      "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen. Kostenlose Beratung!",
+      "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich – geplant, gebaut und betreut aus einer Hand.",
     images: [
       {
         url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "Ökovolt Deutschland – Photovoltaik & Solartechnik",
+        alt: "Ökovolt Österreich – Photovoltaik & Solartechnik",
         type: "image/jpeg",
       },
     ],
@@ -208,9 +185,9 @@ export const metadata = {
     card: "summary_large_image",
     site: "@oekovolt",
     creator: "@oekovolt",
-    title: "Ökovolt Deutschland – Photovoltaik & Solaranlagen",
+    title: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
     description:
-      "Ihr Experte für Photovoltaik in Deutschland – Solaranlagen, Stromspeicher, Wärmepumpen & Smart Home Lösungen.",
+      "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich.",
     images: [`${BASE_URL}/og-image.jpg`],
   },
   robots: {
@@ -239,20 +216,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="de" dir="ltr" className={`${inter.variable} ${manrope.variable}`}>
+    <html lang="de-AT" dir="ltr" className={`${inter.variable} ${manrope.variable}`}>
       <head>
         {/* Resource hints */}
         {/* <link rel="dns-prefetch" href="https://unpkg.com" /> */}
         {/* msapplication tile color for IE/Edge */}
         <meta name="msapplication-TileColor" content="#669933" />
         {/* Geo targeting */}
-        <meta name="geo.region" content="DE" />
-        <meta name="geo.placename" content="Türkheim, Bayern, Deutschland" />
-        <meta name="geo.position" content="48.03858;10.62765" />
-        <meta name="ICBM" content="48.03858, 10.62765" />
+        <meta name="geo.region" content="AT-4" />
+        <meta name="geo.placename" content="Ostermiething, Oberösterreich, Österreich" />
+        <meta name="geo.position" content="48.0466;12.8255" />
+        <meta name="ICBM" content="48.0466, 12.8255" />
         {/* Language */}
-        <meta httpEquiv="content-language" content="de-DE" />
-        <meta name="ahrefs-site-verification" content="e1d71a17817647a67232c6d7f2943114c4d8bb7d08642c44ecc929d005be7401"></meta>
+        <meta httpEquiv="content-language" content="de-AT" />
         {/* Keine Vorverbindungen zu Google: Verbindungen zu Drittanbietern erst nach Einwilligung */}
       </head>
       <body className="bg-white text-ink-900">

@@ -18,7 +18,7 @@ import { ZONEN, naechsteReferenzen, nachbarn, pvgisQuelle, pvgisReferenz, region
 export const revalidate = 3600;
 export const dynamicParams = false;
 
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 
 export function generateStaticParams() {
   return Object.keys(REGIONEN).map((stadt) => ({ stadt }));
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
     title: r.seoTitel,
     description: r.beschreibung,
     alternates: { canonical: url },
-    openGraph: { type: "website", locale: "de_DE", url, siteName: "Ökovolt Deutschland", title: r.seoTitel, description: r.beschreibung, images: [{ url: `${BASE}/og-image.jpg`, width: 1200, height: 630 }] },
+    openGraph: { type: "website", locale: "de_AT", url, siteName: "Ökovolt Österreich", title: r.seoTitel, description: r.beschreibung, images: [{ url: `${BASE}/og-image.jpg`, width: 1200, height: 630 }] },
   };
 }
 

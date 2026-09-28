@@ -16,7 +16,7 @@ import Solarrechner from "@/components/Solarrechner/Rechner";
 import { ANNAHMEN, AUSRICHTUNGEN, preisProKwp } from "@/data/solarrechner";
 import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const PAGE_URL = `${BASE_URL}/solarrechner`;
 
 const TITLE = "Solarrechner 2026: Ertrag & Amortisation | Ökovolt";
@@ -41,7 +41,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: "Solarrechner: Was bringt Ihnen eine PV-Anlage?",
     description: DESCRIPTION,
     images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Solarrechner" }],
@@ -99,7 +99,7 @@ export default function SolarrechnerPage() {
         url: PAGE_URL,
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isAccessibleForFree: true,
         description:
           "Berechnet Ertrag, Eigenverbrauch, Autarkie, Ersparnis, Amortisation und den 20-Jahres-Cashflow einer Photovoltaikanlage mit den EEG-Sätzen 2026.",
@@ -118,7 +118,7 @@ export default function SolarrechnerPage() {
         url: PAGE_URL,
         name: TITLE,
         description: DESCRIPTION,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE_URL}/#website` },
         mainEntity: { "@id": `${PAGE_URL}/#app` },
         dateModified: VERGUETUNG.gueltigAb,

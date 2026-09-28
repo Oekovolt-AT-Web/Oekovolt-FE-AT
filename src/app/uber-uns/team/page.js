@@ -20,7 +20,7 @@ import { bildUrl } from "@/components/Project/projektDaten";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
-const PAGE_URL = "https://www.oekovolt.de/uber-uns/team";
+const PAGE_URL = "https://www.oekovolt.com/uber-uns/team";
 
 async function fetchTeamData() {
   // Statisch aus dem Repo - die Website liest nichts mehr aus dem
@@ -53,16 +53,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Team" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Team" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://www.oekovolt.de/og-image.jpg"]
+      images: ["https://www.oekovolt.com/og-image.jpg"]
     },
   };
 }
@@ -96,10 +96,10 @@ export default async function TeamPage() {
     "@type": "AboutPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Unser Team | Ökovolt Deutschland",
+    name: data?.title || "Unser Team | Ökovolt Österreich",
     description: data?.description?.trim() || "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
     // Personen fuer die Suchmaschine: bevorzugt gepflegte Teamprofile, sonst
@@ -118,7 +118,7 @@ export default async function TeamPage() {
           "@type": "Person",
           name: pp.name,
           ...(pp.jobTitle && { jobTitle: pp.jobTitle }),
-          worksFor: { "@id": "https://www.oekovolt.de/#organization" },
+          worksFor: { "@id": "https://www.oekovolt.com/#organization" },
         },
       })),
     },
@@ -216,11 +216,11 @@ export default async function TeamPage() {
                   </span>
                   <span className="font-display text-[22px] font-extrabold tracking-tight">08245 96 788 0</span>
                 </a>
-                <a href="mailto:office@oekovolt.de" className="mt-3 flex items-center gap-3 text-[15px] text-white/80 hover:text-white">
+                <a href="mailto:office@oekovolt.com" className="mt-3 flex items-center gap-3 text-[15px] text-white/80 hover:text-white">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10">
                     <Mail aria-hidden="true" className="h-5 w-5" />
                   </span>
-                  office@oekovolt.de
+                  office@oekovolt.com
                 </a>
                 <p className="mt-4 border-t border-white/10 pt-4 text-[13.5px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
               </Reveal>
@@ -300,7 +300,7 @@ export default async function TeamPage() {
               <Button href="/uber-uns/jobs" size="lg" pfeil>
                 Offene Stellen ansehen
               </Button>
-              <Button href="mailto:office@oekovolt.de?subject=Initiativbewerbung" size="lg" variant="secondary" icon={Mail}>
+              <Button href="mailto:office@oekovolt.com?subject=Initiativbewerbung" size="lg" variant="secondary" icon={Mail}>
                 Initiativ bewerben
               </Button>
             </div>

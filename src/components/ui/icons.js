@@ -4,13 +4,17 @@ import {
   Wrench, Cpu, RefreshCw, TrendingUp, Wallet, Zap, Gift, Calculator, Sparkles, BadgeEuro,
   Activity, Map, Percent, Landmark, FileCheck2, Images, MapPin, BookOpen, Library, Euro,
   HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Circle, Tractor, Warehouse,
+  Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
+  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake,
 } from "lucide-react";
 
 const ICONS = {
   Sun, BatteryCharging, HousePlug, Building2, Thermometer, PlugZap, Gauge, Factory,
   Wrench, Cpu, RefreshCw, TrendingUp, Wallet, Zap, Gift, Calculator, Sparkles, BadgeEuro,
   Activity, Map, Percent, Landmark, FileCheck2, Images, MapPin, BookOpen, Library, Euro,
-  HelpCircle, Users, Briefcase, MessageCircle, Tractor, Warehouse,
+  HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Tractor, Warehouse,
+  Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
+  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake,
 };
 
 export function iconFor(name) {

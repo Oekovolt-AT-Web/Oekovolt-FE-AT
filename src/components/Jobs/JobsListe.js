@@ -183,7 +183,7 @@ function KeineStellen({ kompakt = false }) {
             ))}
           </ul>
           <p className="mt-5 border-t border-ink-200 pt-5 text-[14.5px] leading-relaxed text-ink-600">
-            Bewerbung an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.de</a> – mit oder ohne Photovoltaik-Erfahrung.
+            Bewerbung an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.com</a> – mit oder ohne Photovoltaik-Erfahrung.
           </p>
         </div>
       </div>

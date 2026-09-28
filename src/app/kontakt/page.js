@@ -12,7 +12,7 @@ import KontaktFormular from "@/components/Kontakt/KontaktFormular";
 import OeffnungsStatus, { OeffnungszeitenListe } from "@/components/Kontakt/OeffnungsStatus";
 import { hreflangLanguages } from "@/lib/hreflang";
 
-const PAGE_URL = "https://www.oekovolt.de/kontakt";
+const PAGE_URL = "https://www.oekovolt.com/kontakt";
 const TITEL = "Kontakt & Beratung Photovoltaik Türkheim | Ökovolt";
 const BESCHREIBUNG =
   "Ökovolt in Türkheim: Beratung zu Photovoltaik, Speicher & Wärmepumpe. Rufen Sie an (08245 96 788 0), schreiben Sie uns oder vereinbaren Sie einen Vor-Ort-Termin.";
@@ -21,22 +21,22 @@ export const metadata = {
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
   title: TITEL,
   description: BESCHREIBUNG,
-  keywords: ["Kontakt Ökovolt", "Photovoltaik Beratung Türkheim", "Solarteur Allgäu", "Photovoltaik Anfrage", "Ökovolt Deutschland"],
+  keywords: ["Kontakt Ökovolt", "Photovoltaik Beratung Türkheim", "Solarteur Allgäu", "Photovoltaik Anfrage", "Ökovolt Österreich"],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
+    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Österreich" }],
   },
   twitter: {
     card: "summary_large_image",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: ["https://www.oekovolt.de/og-image.jpg"],
+    images: ["https://www.oekovolt.com/og-image.jpg"],
   },
 };
 
@@ -45,16 +45,16 @@ const contactSchema = {
   "@type": "ContactPage",
   "@id": `${PAGE_URL}/#webpage`,
   url: PAGE_URL,
-  name: "Kontakt | Ökovolt Deutschland",
+  name: "Kontakt | Ökovolt Österreich",
   description: BESCHREIBUNG,
-  isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-  about: { "@id": "https://www.oekovolt.de/#organization" },
+  isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+  about: { "@id": "https://www.oekovolt.com/#organization" },
   mainEntity: {
     "@type": ["LocalBusiness", "Electrician"],
-    "@id": "https://www.oekovolt.de/#organization",
+    "@id": "https://www.oekovolt.com/#organization",
     name: "ÖKOVOLT GmbH Solartechnik",
     telephone: "+49 8245 96 788 0",
-    email: "office@oekovolt.de",
+    email: "office@oekovolt.com",
     address: {
       "@type": "PostalAddress",
       streetAddress: "Schlingener Straße 1a",
@@ -70,7 +70,7 @@ const contactSchema = {
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+49 8245 96 788 0",
-      email: "office@oekovolt.de",
+      email: "office@oekovolt.com",
       contactType: "customer service",
       areaServed: "DE",
       availableLanguage: ["German"],
@@ -166,14 +166,14 @@ export default function KontaktPage() {
 
           <Reveal as="li" delay={90} className="flex">
             <a
-              href="mailto:office@oekovolt.de"
+              href="mailto:office@oekovolt.com"
               className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70 hover:ring-ov-200 md:p-9"
             >
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ink-200 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
                 <Mail aria-hidden="true" className="h-6 w-6" />
               </span>
               <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">E-Mail schreiben</h3>
-              <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">office@oekovolt.de</p>
+              <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">office@oekovolt.com</p>
               <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">Ideal für Unterlagen, Fotos vom Dach oder Ihre Stromrechnung.</p>
               <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-200/70 pt-6 text-[14px] font-semibold text-ov-700">
                 E-Mail-Programm öffnen

@@ -54,7 +54,7 @@ export async function POST(request) {
       ...herkunftFelder(e.herkunft),
       ip_adresse: ipAdresse(request),
     });
-    const origin = process.env.NODE_ENV === "production" ? "https://www.oekovolt.de" : new URL(request.url).origin;
+    const origin = process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : new URL(request.url).origin;
     const url = `${origin}/scan/${token}`;
     const qrSvg = await QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#03122b", light: "#ffffff" } });
     return antwort({ token, url, qrSvg, gueltigBis, gueltigMinuten: GUELTIG_MINUTEN });

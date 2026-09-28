@@ -35,7 +35,7 @@ import Rahmen2026 from "@/components/Photovoltaik/Rahmen2026";
 import { PV_FAQ } from "@/data/photovoltaik-seite";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.photovoltaikanlagen_primary_page.api.get_photovoltaikanlagen`;
-const PV_PAGE_URL = "https://www.oekovolt.de/dienstleistungen/photovoltaik";
+const PV_PAGE_URL = "https://www.oekovolt.com/dienstleistungen/photovoltaik";
 
 async function fetchPhotovoltaikData() {
   if (!isApiConfigured()) {
@@ -91,18 +91,18 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "de_DE",
+      locale: "de_AT",
       url: PV_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik" }],
     },
     twitter: {
       card: "summary_large_image",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -153,11 +153,11 @@ export default async function PhotovoltaikPage() {
     "@type": "WebPage",
     "@id": `${PV_PAGE_URL}/#webpage`,
     url: PV_PAGE_URL,
-    name: data?.title || "Photovoltaik aus einer Hand | Ökovolt Deutschland",
+    name: data?.title || "Photovoltaik aus einer Hand | Ökovolt Österreich",
     description: data?.description?.trim() || META_DESCRIPTION,
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     mainEntity: { "@id": `${PV_PAGE_URL}/#service` },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
@@ -172,7 +172,7 @@ export default async function PhotovoltaikPage() {
     url: PV_PAGE_URL,
     description:
       "Komplettpaket für Photovoltaikanlagen: Beratung vor Ort, Planung mit Ertragsprognose, Netzanmeldung, Montage durch eigenes Team, Inbetriebnahme mit Eintrag ins Marktstammdatenregister sowie Monitoring und Service.",
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     areaServed: [
       { "@type": "AdministrativeArea", name: "Allgäu" },
       { "@type": "AdministrativeArea", name: "Schwaben" },

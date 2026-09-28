@@ -26,7 +26,7 @@ const KATEGORIE_ICONS = {
   "Förderung, Steuern & Recht": Scale,
 };
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const PAGE_URL = `${BASE_URL}/ratgeber`;
 
 const DESCRIPTION =
@@ -41,15 +41,15 @@ export const metadata = {
     canonical: PAGE_URL,
     types: {
       "application/rss+xml": [{ url: "/ratgeber/rss.xml", title: "Ökovolt Ratgeber" }],
-      "application/activity+json": [{ url: `${BASE_URL}/api/ap/users/ratgeber`, title: "@ratgeber@oekovolt.de" }],
+      "application/activity+json": [{ url: `${BASE_URL}/api/ap/users/ratgeber`, title: "@ratgeber@oekovolt.com" }],
     },
   },
-  other: { "fediverse:creator": "@ratgeber@oekovolt.de" },
+  other: { "fediverse:creator": "@ratgeber@oekovolt.com" },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: "Photovoltaik-Ratgeber | Ökovolt",
     description: DESCRIPTION,
     images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Ratgeber" }],
@@ -71,7 +71,7 @@ export default function RatgeberPage() {
         "@id": `${PAGE_URL}/#collection`,
         name: "Photovoltaik-Ratgeber",
         description: DESCRIPTION,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE_URL}/#website` },
         publisher: { "@id": `${BASE_URL}/#organization` },
         mainEntity: { "@id": `${PAGE_URL}/#list` },

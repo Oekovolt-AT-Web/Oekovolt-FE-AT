@@ -22,7 +22,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import VorherNachher from "@/components/Repowering/VorherNachher";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaik_repowering_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/service/repowering";
+const PAGE_URL = "https://www.oekovolt.com/service/repowering";
 
 async function fetchRepoweringData() {
   if (!isApiConfigured()) {
@@ -78,16 +78,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Repowering" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Repowering" }],
     },
     twitter: {
       card: "summary_large_image",
       title: TITLE,
       description: DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -139,8 +139,8 @@ export default async function RepoweringPage() {
     url: PAGE_URL,
     name: data?.photovoltaik_title || "Photovoltaik Repowering",
     description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };
@@ -151,7 +151,7 @@ export default async function RepoweringPage() {
     name: "Repowering und Erweiterung von Photovoltaikanlagen",
     serviceType: "PV-Repowering",
     description: "Modul- und Wechselrichtertausch, Erweiterung, Umstellung auf Eigenverbrauch und Speichernachrüstung für bestehende Photovoltaikanlagen.",
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     areaServed: { "@type": "Country", name: "Deutschland" },
     url: PAGE_URL,
   };

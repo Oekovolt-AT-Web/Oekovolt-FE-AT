@@ -23,7 +23,7 @@ import { WALLBOX, spanne } from "@/data/wallbox";
 import { artikelNachSlug, artikelPfad } from "@/lib/ratgeber";
 import { berechne } from "@/lib/solarrechner";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const SLUG = "solaranlage-kosten";
 const artikel = artikelNachSlug(SLUG);
 const PAGE_URL = `${BASE_URL}${artikelPfad(SLUG)}`;
@@ -38,7 +38,7 @@ export const metadata = {
   openGraph: {
     type: "article",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: artikel.title,
     description: artikel.description,
     publishedTime: artikel.veroeffentlicht,
@@ -117,7 +117,7 @@ export default function SolaranlageKostenPage() {
         "@id": `${PAGE_URL}/#article`,
         headline: artikel.title,
         description: artikel.description,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         datePublished: artikel.veroeffentlicht,
         dateModified: artikel.aktualisiert,
         author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },

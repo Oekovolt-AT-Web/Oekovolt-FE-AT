@@ -4,7 +4,7 @@ import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
   title: "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt",
-  alternates: { canonical: "https://www.oekovolt.de/agb", languages: hreflangLanguages("https://www.oekovolt.de/agb") },
+  alternates: { canonical: "https://www.oekovolt.com/agb", languages: hreflangLanguages("https://www.oekovolt.com/agb") },
   description:
     "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
   keywords: [
@@ -16,15 +16,15 @@ export const metadata = {
   ],
   openGraph: {
     type: "website",
-    url: "https://www.oekovolt.de/agb",
+    url: "https://www.oekovolt.com/agb",
     title: "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt",
     description: "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
     images: [
       {
-        url: "https://www.oekovolt.de/og-image.jpg",
+        url: "https://www.oekovolt.com/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Ökovolt Deutschland",
+        alt: "Ökovolt Österreich",
       },
     ],
   },

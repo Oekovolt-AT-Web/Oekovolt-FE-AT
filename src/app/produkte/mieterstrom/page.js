@@ -20,7 +20,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.mieterstrom_page.api.get_mieterstrom_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/produkte/mieterstrom";
+const PAGE_URL = "https://www.oekovolt.com/produkte/mieterstrom";
 
 async function fetchMieterstromData() {
   if (!isApiConfigured()) {
@@ -71,7 +71,7 @@ export async function generateMetadata() {
     ? seoData.keywords.split(/,\s*/).filter((k) => /mieter|mehrfamilien|wohnung|pv|photovoltaik|solar/i.test(k) && !/finanzier|kredit/i.test(k))
     : [];
   const keywords = [...new Set([...defaultKeywords, ...apiKeywords])];
-  const bild = "https://www.oekovolt.de/og-image.jpg";
+  const bild = "https://www.oekovolt.com/og-image.jpg";
 
   return {
     title: TITLE,
@@ -82,7 +82,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
       images: [{ url: bild, width: 1200, height: 630, alt: "Ökovolt Mieterstrom" }],
@@ -150,10 +150,10 @@ export default async function MieterstromPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: "Mieterstrom & gemeinschaftliche Gebäudeversorgung | Ökovolt Deutschland",
+    name: "Mieterstrom & gemeinschaftliche Gebäudeversorgung | Ökovolt Österreich",
     description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };
@@ -164,7 +164,7 @@ export default async function MieterstromPage() {
     "@id": `${PAGE_URL}/#service`,
     name: "Mieterstrom und gemeinschaftliche Gebäudeversorgung",
     serviceType: "Photovoltaik für Mehrfamilienhäuser mit Messkonzept und Abrechnung",
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     areaServed: { "@type": "Country", name: "Deutschland" },
     audience: { "@type": "BusinessAudience", name: "Vermieter, Wohnungseigentümergemeinschaften und Gewerbeimmobilien" },
   };

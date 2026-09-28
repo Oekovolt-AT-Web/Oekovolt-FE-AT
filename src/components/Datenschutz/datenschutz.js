@@ -196,7 +196,7 @@ const PrivacyPolicy = () => {
         <p>
           Die IP-Adresse wird gemeinsam mit der jeweiligen Anfrage gelöscht, sobald diese abschließend bearbeitet ist und
           keine gesetzlichen Aufbewahrungsfristen entgegenstehen. Sie können der Verarbeitung jederzeit widersprechen,
-          formlos per E-Mail an office@oekovolt.de.
+          formlos per E-Mail an office@oekovolt.com.
         </p>
       </section>
 
@@ -318,7 +318,7 @@ const PrivacyPolicy = () => {
       <section id="fediverse" className="mb-12 scroll-mt-28">
         <h2 className="text-2xl md:text-3xl text-gray-800 mb-4">Fediverse-Konten (Mastodon, Threads u. a.) und RSS-Feeds</h2>
         <p className="mb-4">
-          Unsere Website betreibt eigene Konten im Fediverse (@oekovolt@oekovolt.de und @ratgeber@oekovolt.de), denen Sie
+          Unsere Website betreibt eigene Konten im Fediverse (@oekovolt@oekovolt.com und @ratgeber@oekovolt.com), denen Sie
           z. B. über Mastodon oder Threads folgen können. Wenn Sie einem Konto folgen, übermittelt Ihr Server uns die
           öffentlichen Angaben Ihres Profils (Profiladresse, Benutzername, Anzeigename und die Adresse Ihres Posteingangs).
           Wir speichern diese Angaben, um Ihnen neue Beiträge zuzustellen (Art. 6 Abs. 1 lit. b DSGVO – Sie fordern die

@@ -4,7 +4,7 @@ import { BASE_URL } from "@/lib/kanaele/veroeffentlichungen";
 
 export const dynamic = "force-dynamic";
 
-/** WebFinger: /.well-known/webfinger?resource=acct:oekovolt@oekovolt.de */
+/** WebFinger: /.well-known/webfinger?resource=acct:oekovolt@oekovolt.com */
 export async function GET(request) {
   const resource = new URL(request.url).searchParams.get("resource") || "";
   let name = null;

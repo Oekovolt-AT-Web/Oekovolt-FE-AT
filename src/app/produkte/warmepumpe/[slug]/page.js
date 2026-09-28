@@ -124,7 +124,7 @@ export async function generateMetadata({ params }) {
   // Jetzt den Hersteller mit dem Titel holen
   const manufacturer = await fetchManufacturerByName(item.title);
   const name = manufacturer?.title || item.title;
-  const url = `https://www.oekovolt.de/produkte/warmepumpe/${slug}`;
+  const url = `https://www.oekovolt.com/produkte/warmepumpe/${slug}`;
   const title = `${name} Wärmepumpe: Produkte & Einbau | Ökovolt`;
   const description = kuerzen(
     `${name} bei Ökovolt: ${manufacturer?.main_description || item.main_description || ""}`.trim(),
@@ -139,11 +139,11 @@ export async function generateMetadata({ params }) {
     openGraph: {
       type: "website",
       url,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
       images: [{
-        url: "https://www.oekovolt.de/og-image.jpg",
+        url: "https://www.oekovolt.com/og-image.jpg",
         width: 1200,
         height: 630,
         alt: `${name} Wärmepumpe`

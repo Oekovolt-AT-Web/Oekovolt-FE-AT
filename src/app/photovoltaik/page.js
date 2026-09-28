@@ -7,7 +7,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import CtaBand from "@/components/ui/CtaBand";
 import { ZONEN, alleRegionen, pvgisQuelle } from "@/lib/regionen";
 
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 const TITEL = "Einzugsgebiet: Photovoltaik in Süddeutschland, Stadt für Stadt | Ökovolt";
 const BESCHREIBUNG =
   "Von Türkheim aus planen und bauen wir Photovoltaikanlagen in Bayern, Baden-Württemberg und bis Frankfurt – mit standortgenauen Ertragswerten, Netzbetreiber, Förderung und Anlaufstellen je Stadt.";
@@ -16,7 +16,7 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: `${BASE}/photovoltaik` },
-  openGraph: { type: "website", locale: "de_DE", url: `${BASE}/photovoltaik`, siteName: "Ökovolt Deutschland", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE}/og-image.jpg`, width: 1200, height: 630 }] },
+  openGraph: { type: "website", locale: "de_AT", url: `${BASE}/photovoltaik`, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE}/og-image.jpg`, width: 1200, height: 630 }] },
 };
 
 const de = (n) => Number(n).toLocaleString("de-DE");

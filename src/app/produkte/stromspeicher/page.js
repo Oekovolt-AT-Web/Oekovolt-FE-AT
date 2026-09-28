@@ -23,7 +23,7 @@ import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/produkte/stromspeicher";
+const PAGE_URL = "https://www.oekovolt.com/produkte/stromspeicher";
 
 async function fetchStromspeicherData() {
   if (!isApiConfigured()) {
@@ -79,16 +79,16 @@ export async function generateMetadata() {
         type: "website",
 
         url: PAGE_URL,
-        siteName: "Ökovolt Deutschland",
+        siteName: "Ökovolt Österreich",
         title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
         description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
-        images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
+        images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
       },
       twitter: {
         card: "summary_large_image",
         title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
         description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
-        images: ["https://www.oekovolt.de/og-image.jpg"]
+        images: ["https://www.oekovolt.com/og-image.jpg"]
       },
     };
   }
@@ -107,16 +107,16 @@ export async function generateMetadata() {
       type: "website",
 
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://www.oekovolt.de/og-image.jpg"]
+      images: ["https://www.oekovolt.com/og-image.jpg"]
     },
   };
 }
@@ -156,10 +156,10 @@ export default async function StromspeicherPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Stromspeicher kaufen | Ökovolt Deutschland",
+    name: data?.title || "Stromspeicher kaufen | Ökovolt Österreich",
     description: data?.description || "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };

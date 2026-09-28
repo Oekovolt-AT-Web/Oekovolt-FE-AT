@@ -14,7 +14,7 @@ import { BUND, STAND, laenderFuerCheck } from "@/components/Foerdercheck/program
 import { Tabelle } from "@/components/Forderungen/Shared/Bausteine";
 import { hreflangLanguages } from "@/lib/hreflang";
 
-const PAGE_URL = "https://www.oekovolt.de/foerdercheck";
+const PAGE_URL = "https://www.oekovolt.com/foerdercheck";
 const TITLE = "Förder-Check 2026: PV, Speicher & Wärmepumpe | Ökovolt";
 const DESCRIPTION = "Kostenloser Förder-Check: Bundesland und Vorhaben wählen – passende Programme für Photovoltaik, Speicher, Wallbox, Wärmepumpe und Sanierung in 30 Sekunden.";
 
@@ -37,12 +37,12 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITLE,
     description: DESCRIPTION,
-    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Förder-Check" }],
+    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Förder-Check" }],
   },
-  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: ["https://www.oekovolt.de/og-image.jpg"] },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: ["https://www.oekovolt.com/og-image.jpg"] },
 };
 
 const FAQ = [
@@ -84,11 +84,11 @@ export default function FoerdercheckPage() {
     description: DESCRIPTION,
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
-    inLanguage: "de-DE",
+    inLanguage: "de-AT",
     isAccessibleForFree: true,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     dateModified: STAND.iso,
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     featureList: [
       "Förderprogramme nach Bundesland und Postleitzahl",
       "Photovoltaik, Stromspeicher, Wallbox, Wärmepumpe, Sanierung",

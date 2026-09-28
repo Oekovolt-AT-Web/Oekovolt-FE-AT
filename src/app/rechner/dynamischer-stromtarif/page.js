@@ -12,7 +12,7 @@ import { fmt } from "@/lib/rechner/annahmen";
 export const revalidate = 900;
 
 const PFAD = "/rechner/dynamischer-stromtarif";
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,

@@ -41,7 +41,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 // Seitentexte aus dem Backoffice (primary_page), Projekte aus der neuen API (oekovolt_app)
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
 const PROJECTS_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
-const PAGE_URL = "https://www.oekovolt.de/referenzen/projekte";
+const PAGE_URL = "https://www.oekovolt.com/referenzen/projekte";
 
 async function fetchProjekteData() {
   if (!isApiConfigured()) return null;
@@ -128,13 +128,13 @@ export async function generateMetadata() {
         type: "website",
 
         url: PAGE_URL,
-        siteName: "Ökovolt Deutschland",
+        siteName: "Ökovolt Österreich",
         title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
         description:
           "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
         images: [
           {
-            url: "https://www.oekovolt.de/og-image.jpg",
+            url: "https://www.oekovolt.com/og-image.jpg",
             width: 1200,
             height: 630,
             alt: "Ökovolt Referenzprojekte",
@@ -146,7 +146,7 @@ export async function generateMetadata() {
         title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
         description:
           "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-        images: ["https://www.oekovolt.de/og-image.jpg"],
+        images: ["https://www.oekovolt.com/og-image.jpg"],
       },
     };
   }
@@ -168,12 +168,12 @@ export async function generateMetadata() {
       type: "website",
 
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
       images: [
         {
-          url: "https://www.oekovolt.de/og-image.jpg",
+          url: "https://www.oekovolt.com/og-image.jpg",
           width: 1200,
           height: 630,
           alt: "Ökovolt Referenzprojekte",
@@ -184,7 +184,7 @@ export async function generateMetadata() {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -262,13 +262,13 @@ export default async function ProjektePage() {
     "@type": "CollectionPage",
     "@id": `${PAGE_URL}/#collectionpage`,
     url: PAGE_URL,
-    name: data?.title || "Referenzprojekte – Ökovolt Deutschland",
+    name: data?.title || "Referenzprojekte – Ökovolt Österreich",
     description:
       data?.description ||
       "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
 
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     ...(projekte.length > 0 && {
       mainEntity: {
         "@type": "ItemList",

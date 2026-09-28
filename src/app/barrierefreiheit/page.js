@@ -1,10 +1,10 @@
 import Link from "next/link";
 import LegalShell from "@/components/Reusable/LegalShell";
 
-const PAGE_URL = "https://www.oekovolt.de/barrierefreiheit";
-const TITEL = "Erklärung zur Barrierefreiheit | Ökovolt Deutschland";
+const PAGE_URL = "https://www.oekovolt.com/barrierefreiheit";
+const TITEL = "Erklärung zur Barrierefreiheit | Ökovolt Österreich";
 const BESCHREIBUNG =
-  "Erklärung zur Barrierefreiheit der Website www.oekovolt.de nach dem Barrierefreiheitsstärkungsgesetz (BFSG): Standards, Stand der Vereinbarkeit, bekannte Einschränkungen und Kontakt.";
+  "Erklärung zur Barrierefreiheit der Website www.oekovolt.com nach dem Barrierefreiheitsstärkungsgesetz (BFSG): Standards, Stand der Vereinbarkeit, bekannte Einschränkungen und Kontakt.";
 
 export const metadata = {
   title: TITEL,
@@ -13,12 +13,12 @@ export const metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Deutschland" }],
+    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Österreich" }],
   },
 };
 
@@ -35,7 +35,7 @@ export default function BarrierefreiheitPage() {
       <>
         <h2>Geltungsbereich</h2>
         <p>
-          Diese Erklärung gilt für die Website <strong>www.oekovolt.de</strong> der ÖKOVOLT GmbH Solartechnik einschließlich der dort
+          Diese Erklärung gilt für die Website <strong>www.oekovolt.com</strong> der ÖKOVOLT GmbH Solartechnik einschließlich der dort
           angebotenen Online-Dienste:
         </p>
         <ul className="space-y-1.5">
@@ -137,7 +137,7 @@ export default function BarrierefreiheitPage() {
         <p>
           Alle Leistungen, die Sie online anfragen können, erreichen Sie auch persönlich: telefonisch unter{" "}
           <a href="tel:+498245967880">08245 96 788 0</a> (Mo–Do 8–16 Uhr, Fr 8–13 Uhr) oder per E-Mail an{" "}
-          <a href="mailto:office@oekovolt.de">office@oekovolt.de</a>. Wir beraten Sie gern auch vor Ort.
+          <a href="mailto:office@oekovolt.com">office@oekovolt.com</a>. Wir beraten Sie gern auch vor Ort.
         </p>
       </>
 
@@ -168,7 +168,7 @@ export default function BarrierefreiheitPage() {
           <br />
           Telefon: <a href="tel:+498245967880">08245 96 788 0</a>
           <br />
-          E-Mail: <a href="mailto:office@oekovolt.de?subject=Barrierefreiheit">office@oekovolt.de</a>
+          E-Mail: <a href="mailto:office@oekovolt.com?subject=Barrierefreiheit">office@oekovolt.com</a>
         </address>
         <p className="mt-4">
           Alternativ erreichen Sie uns über unser <Link href="/kontakt">Kontaktformular</Link>.

@@ -38,9 +38,9 @@ const ContactSection = () => {
                     <Phone className="h-4 w-4 opacity-70" />
                     +49 8245 96 788 0
                   </a>
-                  <a href="mailto:office@oekovolt.de" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
+                  <a href="mailto:office@oekovolt.com" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
                     <Mail className="h-4 w-4 opacity-70" />
-                    office@oekovolt.de
+                    office@oekovolt.com
                   </a>
                 </div>
               </div>
@@ -93,7 +93,7 @@ const ContactSection = () => {
             <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl z-10">
               <Image
                 src="/Images/Kontakt/download-1.jpg"
-                alt="Zentrale von Ökovolt Deutschland in Türkheim (Bayern)"
+                alt="Zentrale von Ökovolt Österreich in Türkheim (Bayern)"
                 fill
                 className="object-cover"
                 loading="eager"
@@ -106,7 +106,7 @@ const ContactSection = () => {
             <div className="hidden lg:block absolute -bottom-[-25px] -right-6 w-32 h-32  border-4 border-[#669933] rounded-lg z-10 opacity-50"></div>
             <div className="hidden lg:block absolute -top-6 -left-6 w-24 h-24 border-4 border-[#669933] rounded-lg z-10 opacity-50"></div>
             <p className="text-center text-gray-600 mt-8 text-sm italic">
-              Zentrale von Ökovolt Deutschland in Türkheim (Bayern)
+              Zentrale von Ökovolt Österreich in Türkheim (Bayern)
             </p>
           </div>
         </div>

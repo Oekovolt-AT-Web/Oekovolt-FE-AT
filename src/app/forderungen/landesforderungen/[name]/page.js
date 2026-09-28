@@ -97,7 +97,7 @@ export async function generateStaticParams() {
     return params;
 }
 
-const PAGE_BASE = "https://www.oekovolt.de/forderungen/landesforderungen";
+const PAGE_BASE = "https://www.oekovolt.com/forderungen/landesforderungen";
 
 function findeEintrag(allData, name) {
     return allData.find((item) => {
@@ -153,7 +153,7 @@ export async function generateMetadata({ params }) {
         openGraph: {
             type: "article",
             url: canonicalUrl,
-            siteName: "Ökovolt Deutschland",
+            siteName: "Ökovolt Österreich",
             title,
             description,
             images: [{ url: imageUrl, width: 1200, height: 630, alt: item.firstcard_alt_image || title }],
@@ -215,15 +215,15 @@ export default async function LandesforderungDetailPage({ params }) {
         url: pageUrl,
         name: `Photovoltaik-Förderung in ${ort} 2026`,
         description: intro?.secondary_paragraph,
-        inLanguage: "de-DE",
-        isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+        inLanguage: "de-AT",
+        isPartOf: { "@id": "https://www.oekovolt.com/#website" },
         about: [
             { "@type": "Thing", name: "Photovoltaik-Förderung" },
             seite?.typ === "region"
                 ? { "@type": "Place", name: ort, containedInPlace: { "@type": "State", name: seite.land.name } }
                 : { "@type": "State", name: ort },
         ],
-        publisher: { "@id": "https://www.oekovolt.de/#organization" },
+        publisher: { "@id": "https://www.oekovolt.com/#organization" },
         ...(seite ? { dateModified: seite.land.stand } : {}),
     };
 

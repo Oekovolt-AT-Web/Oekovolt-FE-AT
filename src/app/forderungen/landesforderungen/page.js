@@ -24,7 +24,7 @@ import { hreflangLanguages } from "@/lib/hreflang";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_page.api.get_forderungen_page`;
 const LIST_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages`;
-const PAGE_URL = "https://www.oekovolt.de/forderungen/landesforderungen";
+const PAGE_URL = "https://www.oekovolt.com/forderungen/landesforderungen";
 
 async function fetchLandesforderungenData() {
   if (!isApiConfigured()) {
@@ -108,16 +108,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Förderungen" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Förderungen" }],
     },
     twitter: {
       card: "summary_large_image",
       title: TITLE,
       description: DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"]
+      images: ["https://www.oekovolt.com/og-image.jpg"]
     },
   };
 }
@@ -190,9 +190,9 @@ export default async function Page() {
     url: PAGE_URL,
     name: data?.title || "Photovoltaik Förderung 2026 nach Bundesland",
     description: DESCRIPTION,
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: stand,
     mainEntity: {
@@ -203,7 +203,7 @@ export default async function Page() {
         "@type": "ListItem",
         position: i + 1,
         name: `Förderung in ${l.name}`,
-        url: `https://www.oekovolt.de${l.href}`,
+        url: `https://www.oekovolt.com${l.href}`,
       })),
     },
   };

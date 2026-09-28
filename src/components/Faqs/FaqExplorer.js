@@ -161,9 +161,9 @@ export default function FaqExplorer({ gruppen }) {
               <span className="font-display text-[20px] font-extrabold tracking-tight">08245 96 788 0</span>
             </a>
             <p className="relative mt-2 text-[13px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
-            <a href="mailto:office@oekovolt.de" className="relative mt-5 flex items-center gap-2.5 border-t border-white/10 pt-5 text-[14.5px] text-white/80 hover:text-white">
+            <a href="mailto:office@oekovolt.com" className="relative mt-5 flex items-center gap-2.5 border-t border-white/10 pt-5 text-[14.5px] text-white/80 hover:text-white">
               <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" />
-              office@oekovolt.de
+              office@oekovolt.com
             </a>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">

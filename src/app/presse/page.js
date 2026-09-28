@@ -13,7 +13,7 @@ export const revalidate = 300;
 
 const PAGE_URL = `${BASE_URL}/presse`;
 const TITEL = "Presse & Neuigkeiten | Newsroom | Ökovolt";
-const BESCHREIBUNG = "Pressemitteilungen, Unternehmensnews und Projekte der ÖKOVOLT GmbH Solartechnik – mit RSS-Feed, Push-Benachrichtigungen und Fediverse-Konto @oekovolt@oekovolt.de.";
+const BESCHREIBUNG = "Pressemitteilungen, Unternehmensnews und Projekte der ÖKOVOLT GmbH Solartechnik – mit RSS-Feed, Push-Benachrichtigungen und Fediverse-Konto @oekovolt@oekovolt.com.";
 
 export const metadata = {
   title: TITEL,
@@ -23,11 +23,11 @@ export const metadata = {
     types: {
       "application/rss+xml": [{ url: "/presse/rss.xml", title: "Ökovolt – Presse & Neuigkeiten" }],
       "application/feed+json": [{ url: "/presse/feed.json", title: "Ökovolt – Presse & Neuigkeiten (JSON)" }],
-      "application/activity+json": [{ url: actorId("oekovolt"), title: "@oekovolt@oekovolt.de" }],
+      "application/activity+json": [{ url: actorId("oekovolt"), title: "@oekovolt@oekovolt.com" }],
     },
   },
-  openGraph: { type: "website", locale: "de_DE", url: PAGE_URL, siteName: "Ökovolt Deutschland", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Newsroom" }] },
-  other: { "fediverse:creator": "@oekovolt@oekovolt.de" },
+  openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Newsroom" }] },
+  other: { "fediverse:creator": "@oekovolt@oekovolt.com" },
 };
 
 export default async function PressePage({ searchParams }) {
@@ -46,7 +46,7 @@ export default async function PressePage({ searchParams }) {
     url: PAGE_URL,
     name: "Ökovolt Newsroom",
     description: BESCHREIBUNG,
-    inLanguage: "de-DE",
+    inLanguage: "de-AT",
     isPartOf: { "@id": `${BASE_URL}/#website` },
     about: { "@id": `${BASE_URL}/#organization` },
     mainEntity: { "@type": "ItemList", itemListElement: liste.slice(0, 20).map((m, i) => ({ "@type": "ListItem", position: i + 1, url: m.url, name: m.titel })) },
@@ -133,10 +133,10 @@ export default async function PressePage({ searchParams }) {
             lead="Sie berichten über Photovoltaik, Speicher, Energiewende in Kommunen oder über ein Projekt von uns? Wir liefern Zahlen, Bilder und Ansprechpartner – schnell und unkompliziert."
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            <a href="mailto:office@oekovolt.de?subject=Presseanfrage" className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
+            <a href="mailto:office@oekovolt.com?subject=Presseanfrage" className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
               <Mail aria-hidden="true" className="h-6 w-6 text-ov-600" />
               <p className="mt-4 text-[16px] font-semibold text-ink-900">Presseanfragen</p>
-              <p className="mt-1 text-[14.5px] text-ink-600">office@oekovolt.de</p>
+              <p className="mt-1 text-[14.5px] text-ink-600">office@oekovolt.com</p>
             </a>
             <a href="tel:+498245967880" className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
               <Phone aria-hidden="true" className="h-6 w-6 text-ov-600" />

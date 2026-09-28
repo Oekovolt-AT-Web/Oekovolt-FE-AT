@@ -10,7 +10,7 @@ import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 
-const PAGE_URL = "https://www.oekovolt.de/angebot";
+const PAGE_URL = "https://www.oekovolt.com/angebot";
 const TITEL = "Photovoltaik Angebot anfragen – in 2 Minuten | Ökovolt";
 const BESCHREIBUNG =
   "Solaranlage, Speicher, Wallbox oder Wärmepumpe konfigurieren und sofort eine Ersteinschätzung zu Größe, Ertrag und Ersparnis erhalten. Kostenlos & unverbindlich.";
@@ -22,12 +22,12 @@ export const metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Angebots-Konfigurator" }],
+    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Angebots-Konfigurator" }],
   },
 };
 
@@ -38,10 +38,10 @@ const schema = {
   url: PAGE_URL,
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Web",
-  inLanguage: "de-DE",
+  inLanguage: "de-AT",
   description: BESCHREIBUNG,
   offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-  provider: { "@id": "https://www.oekovolt.de/#organization" },
+  provider: { "@id": "https://www.oekovolt.com/#organization" },
 };
 
 const FAQ = [

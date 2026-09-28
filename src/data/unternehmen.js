@@ -240,7 +240,7 @@ export const GESELLSCHAFTEN = {
     gericht: "Amtsgericht Memmingen",
     eingetragen: "15. April 2010",
     ustId: "DE270816873",
-    website: "https://www.oekovolt.de",
+    website: "https://www.oekovolt.com",
   },
   at: {
     land: "Österreich",

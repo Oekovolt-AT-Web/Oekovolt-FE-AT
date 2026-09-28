@@ -8,7 +8,7 @@ import sanitizeHtml from "sanitize-html";
 import { kanal, kanalKonfiguriert } from "./frappe";
 import { DEMO, demoAktiv } from "./demo";
 
-export const BASE_URL = "https://www.oekovolt.de";
+export const BASE_URL = "https://www.oekovolt.com";
 
 export const KATEGORIEN = [
   { id: "Pressemitteilung", plural: "Pressemitteilungen", farbe: "navy" },

@@ -16,7 +16,7 @@ export default function ErgebnisTeilen({ eingaben, titel }) {
 
   const oeffnen = () => {
     if (url) return setUrl("");
-    const basis = process.env.NODE_ENV === "production" ? "https://www.oekovolt.de" : window.location.origin;
+    const basis = process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : window.location.origin;
     setUrl(`${basis}/solarrechner/ergebnis?${teilenQuery(eingaben)}`);
     ereignis("rechner_teilen_geoeffnet", { kwp: eingaben.kwp });
   };

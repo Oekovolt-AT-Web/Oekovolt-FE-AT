@@ -55,7 +55,7 @@ async function fetchSteuerlichData() {
   }
 }
 
-const STEUERLICH_PAGE_URL = "https://www.oekovolt.de/forderungen/steuerlich";
+const STEUERLICH_PAGE_URL = "https://www.oekovolt.com/forderungen/steuerlich";
 const TITLE = "PV-Anlage steuerfrei: 0 % MwSt. & Steuerbefreiung | Ökovolt";
 const DESCRIPTION = "Photovoltaik & Steuer 2026: 0 % Umsatzsteuer, Einkommensteuerbefreiung bis 30 kWp je Einheit, Gewerbesteuer – mit Steuer-Check und Schritt-für-Schritt-Anleitung.";
 const KEYWORDS = [
@@ -84,10 +84,10 @@ export async function generateMetadata() {
     openGraph: {
       type: "article",
       url: STEUERLICH_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Deutschland" }],
+      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Österreich" }],
     },
     twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
   };
@@ -184,11 +184,11 @@ export default async function Steuerlich() {
     "@type": "WebPage",
     "@id": `${STEUERLICH_PAGE_URL}/#webpage`,
     url: STEUERLICH_PAGE_URL,
-    name: banner?.title || "Steuerliche Förderungen für Photovoltaik | Ökovolt Deutschland",
+    name: banner?.title || "Steuerliche Förderungen für Photovoltaik | Ökovolt Österreich",
     description: DESCRIPTION,
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: "2026-09-13",
   };

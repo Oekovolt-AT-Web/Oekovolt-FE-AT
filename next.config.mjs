@@ -20,8 +20,8 @@ const nextConfig = {
       // RIDREJTIMET: Nga non-www tek www (kjo është ajo që duhet)
       {
         source: "/:path*",
-        has: [{ type: "host", value: "oekovolt.de" }],
-        destination: "https://www.oekovolt.de/:path*",
+        has: [{ type: "host", value: "oekovolt.com" }],
+        destination: "https://www.oekovolt.com/:path*",
         permanent: true,
       },
 
@@ -168,7 +168,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "backoffice.oekovolt.de",
+        hostname: "backoffice.oekovolt.com",
         pathname: "/**",
       },
       {
@@ -266,7 +266,7 @@ const nextConfig = {
       { source: "/.well-known/host-meta", destination: "/api/ap/host-meta" },
       {
         source: '/api/backoffice/:path*',
-        destination: 'https://backoffice.oekovolt.de/:path*',
+        destination: 'https://backoffice.oekovolt.com/:path*',
       },
     ];
   },

@@ -3,8 +3,8 @@
 // Schlanke ActivityPub-Umsetzung für „nur veröffentlichende“ Konten der Website.
 // Folgen von Mastodon, Threads, Friendica, Misskey, Pixelfed … möglich.
 //
-//   Handle:     @oekovolt@oekovolt.de  (WebFinger unter /.well-known/webfinger)
-//   Actor:      https://www.oekovolt.de/api/ap/users/oekovolt
+//   Handle:     @oekovolt@oekovolt.com  (WebFinger unter /.well-known/webfinger)
+//   Actor:      https://www.oekovolt.com/api/ap/users/oekovolt
 //   Inbox:      …/inbox (Follow, Undo, Delete) · Shared Inbox: /api/ap/inbox
 //   Signaturen: HTTP Signatures (rsa-sha256, draft-cavage) eingehend geprüft, ausgehend signiert
 //
@@ -51,7 +51,7 @@ export function actor(name) {
     type: "Organization",
     preferredUsername: name,
     name: k.titel,
-    summary: `<p>${k.text}</p><p>ÖKOVOLT GmbH Solartechnik · Türkheim · <a href="${BASE_URL}">oekovolt.de</a></p>`,
+    summary: `<p>${k.text}</p><p>Ökovolt Solartechnik GmbH · Ostermiething · <a href="${BASE_URL}">oekovolt.com</a></p>`,
     url: `${BASE_URL}${k.profilPfad}`,
     inbox: `${id}/inbox`,
     outbox: `${id}/outbox`,
@@ -66,7 +66,7 @@ export function actor(name) {
     icon: { type: "Image", mediaType: "image/png", url: `${BASE_URL}/Logo_ov_4cDeutschland-removebg-preview.png` },
     image: { type: "Image", mediaType: "image/jpeg", url: `${BASE_URL}/og-image.jpg` },
     attachment: [
-      { type: "PropertyValue", name: "Website", value: `<a href="${BASE_URL}" rel="me nofollow noopener" target="_blank">oekovolt.de</a>` },
+      { type: "PropertyValue", name: "Website", value: `<a href="${BASE_URL}" rel="me nofollow noopener" target="_blank">oekovolt.com</a>` },
       { type: "PropertyValue", name: "Telefon", value: "08245 96 788 0" },
       { type: "PropertyValue", name: "RSS", value: `<a href="${BASE_URL}${name === "ratgeber" ? "/ratgeber/rss.xml" : "/presse/rss.xml"}" rel="nofollow noopener" target="_blank">Feed</a>` },
     ],
@@ -138,7 +138,7 @@ export async function signiertPosten(name, inbox, activity) {
   const headers = { Host: u.host, Date: new Date().toUTCString(), Digest: digest(body), "Content-Type": AP_TYPE };
   const res = await fetch(inbox, {
     method: "POST",
-    headers: { ...headers, Signature: signaturHeader(name, "POST", inbox, headers), Accept: AP_TYPE, "User-Agent": "oekovolt-website/1.0 (+https://www.oekovolt.de)" },
+    headers: { ...headers, Signature: signaturHeader(name, "POST", inbox, headers), Accept: AP_TYPE, "User-Agent": "oekovolt-website/1.0 (+https://www.oekovolt.com)" },
     body,
     signal: AbortSignal.timeout(15000),
     cache: "no-store",
@@ -151,7 +151,7 @@ async function signiertHolen(url) {
   const u = new URL(url);
   const headers = { Host: u.host, Date: new Date().toUTCString(), Accept: AP_TYPE };
   const res = await fetch(url, {
-    headers: { ...headers, Signature: signaturHeader("oekovolt", "GET", url, headers), "User-Agent": "oekovolt-website/1.0 (+https://www.oekovolt.de)" },
+    headers: { ...headers, Signature: signaturHeader("oekovolt", "GET", url, headers), "User-Agent": "oekovolt-website/1.0 (+https://www.oekovolt.com)" },
     signal: AbortSignal.timeout(10000),
     cache: "no-store",
   });

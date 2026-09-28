@@ -10,7 +10,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import { TOOLS } from "./tools";
 import { STAND } from "@/lib/rechner/annahmen";
 
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 
 /** Metadaten für eine Rechner-Seite */
 export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
@@ -24,7 +24,7 @@ export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
     openGraph: {
       type: "website",
       url,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
       images: [{ url: `${BASE}/Logo-Oekovolt-Gruen-mit-Weiss.webp`, width: 1200, height: 630, alt: title }],
@@ -68,7 +68,7 @@ export default function RechnerSeite({
         applicationCategory: "FinanceApplication",
         operatingSystem: "Web",
         browserRequirements: "Requires JavaScript",
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isAccessibleForFree: true,
         featureList: app.featureList,
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },

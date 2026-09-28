@@ -55,7 +55,7 @@ async function fetchBaurechtData() {
   }
 }
 
-const BAURECHT_PAGE_URL = "https://www.oekovolt.de/forderungen/baurecht";
+const BAURECHT_PAGE_URL = "https://www.oekovolt.com/forderungen/baurecht";
 const TITLE = "Baurecht Photovoltaik: Genehmigung nach Bundesland | Ökovolt";
 const DESCRIPTION = "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht 2026: verfahrensfreie Dachanlagen, Solarpflicht je Bundesland, Denkmalschutz & Brandschutz – mit Genehmigungs-Check.";
 
@@ -83,10 +83,10 @@ export async function generateMetadata() {
     openGraph: {
       type: "article",
       url: BAURECHT_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Deutschland" }],
+      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Österreich" }],
     },
     twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
   };
@@ -167,11 +167,11 @@ export default async function Baurecht() {
     "@type": "WebPage",
     "@id": `${BAURECHT_PAGE_URL}/#webpage`,
     url: BAURECHT_PAGE_URL,
-    name: body?.title || "Baurecht für Photovoltaik | Ökovolt Deutschland",
+    name: body?.title || "Baurecht für Photovoltaik | Ökovolt Österreich",
     description: DESCRIPTION,
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: "2026-09-13",
   };

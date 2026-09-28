@@ -3,7 +3,7 @@ import LegalShell from "@/components/Reusable/LegalShell";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 export const metadata = {
-  alternates: { canonical: "https://www.oekovolt.de/datenschutz", languages: hreflangLanguages("https://www.oekovolt.de/datenschutz") },
+  alternates: { canonical: "https://www.oekovolt.com/datenschutz", languages: hreflangLanguages("https://www.oekovolt.com/datenschutz") },
   title: "Datenschutzerklärung | Ökovolt GmbH Solartechnik",
   description:
     "Datenschutz bei Ökovolt: Erfahren Sie, wie wir Ihre personenbezogenen Daten schützen, verarbeiten und welche Rechte Ihnen nach DSGVO zustehen.",
@@ -16,15 +16,15 @@ export const metadata = {
   ],
   openGraph: {
     type: "website",
-    url: "https://www.oekovolt.de/datenschutz",
+    url: "https://www.oekovolt.com/datenschutz",
     title: "Datenschutzerklärung | Ökovolt GmbH Solartechnik",
     description: "Datenschutzrechtliche Bestimmungen und Ihre Rechte bei ÖKOVOLT GmbH.",
     images: [
       {
-        url: "https://www.oekovolt.de/og-image.jpg",
+        url: "https://www.oekovolt.com/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Ökovolt Deutschland",
+        alt: "Ökovolt Österreich",
       },
     ],
   },

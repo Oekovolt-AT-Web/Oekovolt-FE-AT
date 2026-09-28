@@ -98,6 +98,6 @@ export function alleStellen(apiJobs = []) {
 
 export const fmtDatum = (d) => (d ? new Date(String(d).replace(" ", "T")).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" }) : "");
 
-export const BEWERBUNG_MAIL = "office@oekovolt.de";
+export const BEWERBUNG_MAIL = "office@oekovolt.com";
 export const bewerbungsLink = (titel) =>
   `mailto:${BEWERBUNG_MAIL}?subject=${encodeURIComponent(titel ? `Bewerbung: ${titel}` : "Initiativbewerbung")}`;

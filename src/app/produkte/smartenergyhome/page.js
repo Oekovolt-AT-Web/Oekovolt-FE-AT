@@ -23,7 +23,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_energy_home_page.api.get_smart_energy_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/produkte/smartenergyhome";
+const PAGE_URL = "https://www.oekovolt.com/produkte/smartenergyhome";
 
 async function fetchSmartEnergyData() {
   if (!isApiConfigured()) {
@@ -70,7 +70,7 @@ export async function generateMetadata() {
   const seoData = await fetchSmartEnergyData();
   const defaultKeywords = ["Smart Energy Home", "Energiemanagementsystem", "Energiemanagement Photovoltaik", "HEMS", "Eigenverbrauch optimieren"];
   const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const bild = "https://www.oekovolt.de/og-image.jpg";
+  const bild = "https://www.oekovolt.com/og-image.jpg";
 
   return {
     title: TITLE,
@@ -81,7 +81,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
       images: [{ url: bild, width: 1200, height: 630, alt: "Ökovolt Smart Energy Home" }],
@@ -138,8 +138,8 @@ export default async function SmartEnergyPage() {
     url: PAGE_URL,
     name: data?.title || "Smart Energy Home – Energiemanagementsystem für Photovoltaik | Ökovolt",
     description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };

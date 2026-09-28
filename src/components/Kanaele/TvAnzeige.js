@@ -174,7 +174,7 @@ function MarkenFolie({ strom, farben }) {
         <p className="text-[1.4em] font-bold uppercase tracking-[0.2em] text-[#8cc152]">Ökovolt · Photovoltaik aus einer Hand</p>
         <h1 className="mt-[0.5em] text-[5em] font-extrabold leading-[1.05] tracking-tight">Energie, die sich rechnet.</h1>
         <p className={`mt-[0.8em] text-[1.9em] leading-snug ${farben.leise}`}>Photovoltaik, Stromspeicher, Wallbox und Wärmepumpe – geplant und installiert vom Fachbetrieb aus Türkheim.</p>
-        <p className="mt-[1.4em] text-[1.9em] font-bold text-[#8cc152]">oekovolt.de · 08245 96 788 0</p>
+        <p className="mt-[1.4em] text-[1.9em] font-bold text-[#8cc152]">oekovolt.com · +43 6278 71030</p>
       </div>
       {strom?.erzeugung && (
         <div className="grid grid-cols-2 gap-[1.2em]">

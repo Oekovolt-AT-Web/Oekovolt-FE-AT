@@ -18,8 +18,8 @@ import { preisTage, zeitfenster, ct, gw, uhr, spanne, tagLang } from "@/componen
 
 export const revalidate = 900;
 
-const PAGE_URL = "https://www.oekovolt.de/energie-live";
-const OG_BILD = "https://www.oekovolt.de/og-image.jpg";
+const PAGE_URL = "https://www.oekovolt.com/energie-live";
+const OG_BILD = "https://www.oekovolt.com/og-image.jpg";
 
 export async function generateMetadata() {
   const title = "Strompreis Börse aktuell: Day-Ahead heute live | Ökovolt";
@@ -51,9 +51,9 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "de_DE",
+      locale: "de_AT",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: "Strommarkt Deutschland live – Börsenstrompreis & Strommix",
       description,
       images: [{ url: OG_BILD, width: 1200, height: 630, alt: "Ökovolt – Strommarkt live" }],
@@ -132,7 +132,7 @@ export default async function EnergieLivePage() {
     isAccessibleForFree: true,
     license: "https://creativecommons.org/licenses/by/4.0/",
     creator: { "@type": "Organization", name: "Fraunhofer-Institut für Solare Energiesysteme ISE – Energy-Charts", url: "https://www.energy-charts.info" },
-    publisher: { "@id": "https://www.oekovolt.de/#organization" },
+    publisher: { "@id": "https://www.oekovolt.com/#organization" },
     spatialCoverage: { "@type": "Place", name: "Deutschland" },
     temporalCoverage: tage.heute ? new Date(tage.heute.start).toISOString().slice(0, 10) : undefined,
     dateModified: s.stand,
@@ -143,7 +143,7 @@ export default async function EnergieLivePage() {
       { "@type": "PropertyValue", name: "Anteil erneuerbarer Energien an der Last", unitText: "Prozent" },
     ],
     distribution: [
-      { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: "https://www.oekovolt.de/api/energie/live?voll=1" },
+      { "@type": "DataDownload", encodingFormat: "application/json", contentUrl: "https://www.oekovolt.com/api/energie/live?voll=1" },
     ],
   };
 
@@ -154,7 +154,7 @@ export default async function EnergieLivePage() {
     url: PAGE_URL,
     name: "Strommarkt Deutschland live – Börsenstrompreis aktuell & Day-Ahead-Preis heute",
     description: antwort,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
     about: { "@id": `${PAGE_URL}/#dataset` },
     dateModified: s.stand,
   };

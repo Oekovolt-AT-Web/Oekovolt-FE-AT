@@ -19,7 +19,7 @@
 //     const referer = req.headers.get("referer");
 
 //     const allowed =
-//       process.env.ALLOWED_LOCAL || "https://www.oekovolt.de";
+//       process.env.ALLOWED_LOCAL || "https://www.oekovolt.com";
 
 //     if (
 //       origin &&
@@ -93,7 +93,7 @@ export async function GET(req) {
     const referer = req.headers.get("referer");
 
     const allowed =
-      process.env.ALLOWED_LOCAL || "https://www.oekovolt.de";
+      process.env.ALLOWED_LOCAL || "https://www.oekovolt.com";
 
     if (
       origin &&

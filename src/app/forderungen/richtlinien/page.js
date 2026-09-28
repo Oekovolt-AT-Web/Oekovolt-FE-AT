@@ -58,7 +58,7 @@ async function fetchRichtlinenData() {
 
 const defaultTitle = "Normen & Richtlinien für PV-Anlagen 2026 | Ökovolt";
 const defaultDescription = "VDE-AR-N 4105, EEG & Solarspitzengesetz, Marktstammdatenregister: alle Normen und Pflichten für PV-Anlagen 2026 – mit Normen-Explorer und Anmelde-Fahrplan.";
-const defaultCanonical = "https://www.oekovolt.de/forderungen/richtlinien";
+const defaultCanonical = "https://www.oekovolt.com/forderungen/richtlinien";
 
 // Generate metadata dynamically from fetched data
 export async function generateMetadata() {
@@ -83,7 +83,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "article",
       url: defaultCanonical,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: defaultTitle,
       description: defaultDescription,
       images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt" }],
@@ -93,7 +93,7 @@ export async function generateMetadata() {
 }
 
 const RICHTLINEN_PAGE_URL = process.env.NEXT_PUBLIC_SITE === "de" || process.env.NEXT_PUBLIC_COUNTRY === "deutschland"
-  ? "https://www.oekovolt.de/forderungen/richtlinien"
+  ? "https://www.oekovolt.com/forderungen/richtlinien"
   : "https://www.oekovolt.com/forderungen/richtlinien";
 
 const img = (p) => (p ? `/api/image?path=${p}` : "/Images/Jobs/jobs1.jpg");
@@ -139,9 +139,9 @@ export default async function Richtlinen() {
     url: RICHTLINEN_PAGE_URL,
     name: body?.title || "Technische Richtlinien für Photovoltaik | Ökovolt",
     description: defaultDescription,
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: "2026-09-13",
   };

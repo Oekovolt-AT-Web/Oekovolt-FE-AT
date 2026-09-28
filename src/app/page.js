@@ -27,7 +27,7 @@ import HeroVideo from "@/components/Home2/HeroVideo";
 import HomeLive from "@/components/Home2/HomeLive";
 import { LiveDot } from "@/components/ui/LiveTicker";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.home_page.api.get_home_page`;
 const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 
@@ -67,7 +67,7 @@ export async function generateMetadata() {
     keywords,
     alternates: { canonical: BASE_URL, languages: hreflangLanguages(BASE_URL) },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
-    openGraph: { type: "website", locale: "de_DE", url: BASE_URL, siteName: "Ökovolt Deutschland", title: META.title, description: META.description, images: [bild] },
+    openGraph: { type: "website", locale: "de_AT", url: BASE_URL, siteName: "Ökovolt Österreich", title: META.title, description: META.description, images: [bild] },
     twitter: { card: "summary_large_image", site: "@oekovolt", creator: "@oekovolt", title: META.title, description: META.description, images: [bild.url] },
   };
 }

@@ -28,7 +28,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzstandorde_page.api.get_referenzstandorde_page`;
 const KARTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_referenzkarte`;
 const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
-const RK_PAGE_URL = "https://www.oekovolt.de/referenzen/referenzkarte";
+const RK_PAGE_URL = "https://www.oekovolt.com/referenzen/referenzkarte";
 
 // ---------- API helpers ----------
 
@@ -170,12 +170,12 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: RK_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Referenzkarte – Photovoltaik Standorte Deutschland" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Referenzkarte – Photovoltaik Standorte Deutschland" }],
     },
-    twitter: { card: "summary_large_image", title: META_TITLE, description: META_DESCRIPTION, images: ["https://www.oekovolt.de/og-image.jpg"] },
+    twitter: { card: "summary_large_image", title: META_TITLE, description: META_DESCRIPTION, images: ["https://www.oekovolt.com/og-image.jpg"] },
   };
 }
 
@@ -263,8 +263,8 @@ export default async function ReferenzkarteSeite() {
     description:
       data?.description?.trim() ||
       "Unsere Photovoltaik-Projekte auf der Karte. Entdecken Sie unsere Referenzstandorte in ganz Deutschland.",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
     mainEntity: {

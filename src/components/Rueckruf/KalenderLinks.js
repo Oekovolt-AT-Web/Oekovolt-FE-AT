@@ -19,7 +19,7 @@ export default function KalenderLinks({ titel, beschreibung = "", ort = "", star
       "CALSCALE:GREGORIAN",
       "METHOD:PUBLISH",
       "BEGIN:VEVENT",
-      `UID:${utcKompakt(beginn)}-${Math.random().toString(36).slice(2)}@oekovolt.de`,
+      `UID:${utcKompakt(beginn)}-${Math.random().toString(36).slice(2)}@oekovolt.com`,
       `DTSTAMP:${utcKompakt(new Date())}`,
       `DTSTART:${utcKompakt(beginn)}`,
       `DTEND:${utcKompakt(ende)}`,

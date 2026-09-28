@@ -24,7 +24,7 @@ import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProduktGalerie from "@/components/Produktdetail/ProduktGalerie";
 import { generateSlug } from "@/lib/slugify";
 
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 const img = (p) => (p ? `/api/image?path=${p}` : null);
 
 /** Einstellungen je Produktbereich */
@@ -93,7 +93,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
         url: seitenUrl,
         name: `${titel} – ${k.label} & Komponenten`,
         description: kuerzen(beschreibung, 300),
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE}/#website` },
         about: { "@id": `${seitenUrl}/#brand` },
         ...(produkte.length ? { mainEntity: { "@id": `${seitenUrl}/#produkte` } } : {}),

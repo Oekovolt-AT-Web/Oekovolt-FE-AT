@@ -1,7 +1,7 @@
 // Öffentliche Fediverse-Konten der Website (ActivityPub) – ohne Geheimnisse, auch im Browser nutzbar.
 // Folgen möglich von Mastodon, Threads (mit aktivierter Fediverse-Freigabe), Pixelfed, Friendica, Misskey …
 
-export const HANDLE_DOMAIN = "oekovolt.de";
+export const HANDLE_DOMAIN = "oekovolt.com";
 
 export const FEDIVERSE_KONTEN = [
   {

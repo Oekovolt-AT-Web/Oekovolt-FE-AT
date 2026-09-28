@@ -2,121 +2,130 @@
 // Zentrale Seitenstruktur – genutzt von Navigation, Footer und Sitemap.
 // Icons werden als Namen gespeichert und in den Komponenten aufgelöst,
 // damit diese Datei auch in Server-Komponenten importierbar bleibt.
+//
+// Österreich: Schwerpunkt Gewerbe, Industrie, Landwirtschaft und öffentliche
+// Hand. Privat ist bewusst nachgeordnet (Premium-Objekte, Chalets).
+
+import { FIRMA } from "@/lib/site";
 
 export const NAVIGATION = [
   {
-    title: "Produkte",
-    slug: "produkte",
-    intro: "Alles für Ihr eigenes Kraftwerk – abgestimmt aus einer Hand.",
+    title: "Lösungen",
+    slug: "loesungen",
+    intro: "Photovoltaik für Unternehmen, Land- und Forstwirtschaft und die öffentliche Hand.",
     groups: [
       {
-        label: "Erzeugen & Speichern",
+        label: "Für Unternehmen",
         items: [
-          { name: "Photovoltaikanlage", href: "/produkte/photovoltaikanlage", icon: "Sun", text: "Komplettanlage für Eigenheim & Gewerbe" },
-          { name: "Stromspeicher", href: "/produkte/stromspeicher", icon: "BatteryCharging", text: "Solarstrom abends und nachts nutzen" },
-          { name: "Smart Energy Home", href: "/produkte/smartenergyhome", icon: "HousePlug", text: "Erzeugung, Speicher & Verbrauch vernetzt" },
-          { name: "Mieterstrom", href: "/produkte/mieterstrom", icon: "Building2", text: "Solarstrom für Mehrfamilienhäuser" },
+          { name: "Gewerbe & Industrie", href: "/gewerbe", icon: "Warehouse", text: "PV nach Lastgang, Hallen- und Flachdächer" },
+          { name: "Freiflächenanlagen", href: "/freiflaechen-photovoltaik", icon: "Sun", text: "Solarparks von 500 kWp bis in den MW-Bereich" },
+          { name: "Agri-PV", href: "/agri-pv", icon: "Sprout", text: "Doppelte Ernte auf derselben Fläche" },
+          { name: "Landwirtschaft", href: "/landwirtschaft", icon: "Tractor", text: "Stall, Scheune, Maschinenhalle" },
+          { name: "Hotellerie & Tourismus", href: "/hotellerie-tourismus", icon: "Hotel", text: "Hotels, Bergbahnen, Thermen" },
         ],
       },
       {
-        label: "Nutzen & Steuern",
+        label: "Energie nutzen",
         items: [
-          { name: "Wärmepumpe", href: "/produkte/warmepumpe", icon: "Thermometer", text: "Heizen mit eigenem Sonnenstrom" },
-          { name: "Wallbox", href: "/produkte/wallbox", icon: "PlugZap", text: "E-Auto mit Solarüberschuss laden" },
-          { name: "Smart Meter", href: "/produkte/smartmeter", icon: "Gauge", text: "Intelligentes Messsystem" },
+          { name: "Gewerbespeicher", href: "/gewerbespeicher", icon: "BatteryCharging", text: "Peak Shaving, Eigenverbrauch, Notstrom" },
+          { name: "Ladeinfrastruktur", href: "/ladeinfrastruktur", icon: "PlugZap", text: "E-Flotte, Kundenparkplatz, Lkw" },
+          { name: "Energiegemeinschaften", href: "/energiegemeinschaften", icon: "Share2", text: "EEG, BEG & GEA richtig aufsetzen" },
+          { name: "Reststromvermarktung", href: "/service/direktvermarktung", icon: "TrendingUp", text: "Überschuss, PPA & Marktpreis" },
+        ],
+      },
+      {
+        label: "Öffentlich & Premium",
+        items: [
+          { name: "Gemeinden & Länder", href: "/kommunen", icon: "Landmark", text: "Schulen, Bauhöfe, Kläranlagen" },
+          { name: "Luxus-Chalets & Alpin", href: "/chalets", icon: "Mountain", text: "Indach, Schneelast, Concierge-Wartung" },
+          { name: "Einzugsgebiet Österreich", href: "/photovoltaik", icon: "MapPin", text: "Alle Bundesländer & Städte" },
+        ],
+      },
+    ],
+    feature: { title: "Standort-Check mit eHORA", text: "Schneelast, Wind, Hagel und Ertrag für Ihre Adresse – in einer Minute.", href: "/standort-check", cta: "Standort prüfen" },
+  },
+  {
+    title: "Technik",
+    slug: "technik",
+    intro: "Eigene Regelungs- und Leittechnik – entwickelt für den österreichischen Netzanschluss.",
+    groups: [
+      {
+        label: "Eigene Systeme",
+        items: [
+          { name: "Parkregler (EZA-Regler)", href: "/technik/parkregler", icon: "SlidersHorizontal", text: "TOR-Erzeuger-konform, Blindleistung & Einspeiselimit" },
+          { name: "Fernwartung", href: "/technik/fernwartung", icon: "Radio", text: "Sichere Fernzugriffe, 24/7-Überwachung" },
+          { name: "SCADA & Leitwarte", href: "/technik/scada", icon: "MonitorDot", text: "Portfolio-Monitoring & Reporting" },
+          { name: "Technik-Übersicht", href: "/technik", icon: "Cpu", text: "Unser Systemverbund im Überblick" },
+        ],
+      },
+      {
+        label: "Komponenten",
+        items: [
+          { name: "Photovoltaikanlage", href: "/produkte/photovoltaikanlage", icon: "Sun", text: "Module, Wechselrichter, Unterkonstruktion" },
+          { name: "Stromspeicher", href: "/produkte/stromspeicher", icon: "BatteryCharging", text: "Heim- und Gewerbespeicher" },
+          { name: "Wärmepumpe", href: "/produkte/warmepumpe", icon: "Thermometer", text: "Heizen und Kühlen mit Solarstrom" },
+          { name: "Wallbox", href: "/produkte/wallbox", icon: "PlugZap", text: "Laden mit PV-Überschuss" },
+          { name: "Smart Meter & EMS", href: "/produkte/smartmeter", icon: "Gauge", text: "Messung, Steuerung, Energiemanagement" },
           { name: "Hersteller", href: "/produkte/hersteller", icon: "Factory", text: "Marken, denen wir vertrauen" },
         ],
       },
     ],
-    feature: { title: "Anlage in 2 Minuten konfigurieren", text: "Dach, Verbrauch, Wünsche – Sie erhalten eine fundierte Ersteinschätzung.", href: "/angebot", cta: "Konfigurator starten" },
+    feature: { title: "Strommarkt Österreich live", text: "Day-Ahead-Preis der Gebotszone AT und Erzeugungsmix – viertelstündlich.", href: "/energie-live", cta: "Zum Live-Dashboard", live: true },
   },
   {
     title: "Service",
     slug: "service",
-    intro: "Von der Planung bis 20 Jahre nach der Inbetriebnahme.",
+    intro: "Über die gesamte Lebensdauer: Betrieb, Prüfung, Absicherung.",
     groups: [
       {
-        label: "Leistungen",
+        label: "Betrieb & Wartung",
         items: [
-          { name: "Photovoltaik-Montage", href: "/dienstleistungen/photovoltaik", icon: "Wrench", text: "Planung, Installation & Anmeldung" },
-          { name: "Smarthome", href: "/dienstleistungen/smarthome", icon: "Cpu", text: "Energiemanagement im ganzen Haus" },
-          { name: "Photovoltaik Repowering", href: "/service/repowering", icon: "RefreshCw", text: "Altanlagen modernisieren" },
-          { name: "Direktvermarktung", href: "/service/direktvermarktung", icon: "TrendingUp", text: "Mehr Erlös nach dem EEG" },
+          { name: "Wartung & Wartungsvertrag", href: "/service/wartung", icon: "Wrench", text: "Service-Level nach Anlagengröße" },
+          { name: "E-Check & Anlagenprüfung", href: "/service/e-check", icon: "ClipboardCheck", text: "Wiederkehrende Prüfung nach ÖVE/ÖNORM" },
+          { name: "Drohnen-Thermografie", href: "/service/drohneninspektion", icon: "ScanSearch", text: "Hotspots aus der Luft finden" },
+          { name: "PV-Reinigung", href: "/service/reinigung", icon: "Droplets", text: "Mehr Ertrag, Garantie erhalten" },
+          { name: "Repowering", href: "/service/repowering", icon: "RefreshCw", text: "Bestandsanlagen modernisieren" },
         ],
       },
       {
-        label: "Für Unternehmen",
+        label: "Absichern & Beraten",
         items: [
-          { name: "Gewerbe & Industrie", href: "/gewerbe", icon: "Warehouse", text: "PV nach Lastgang, Speicher, E-Flotte" },
-          { name: "Landwirtschaft & Agri-PV", href: "/landwirtschaft", icon: "Tractor", text: "Stall, Scheune, Agri-PV" },
-          { name: "Kommunen & Stadtwerke", href: "/kommunen", icon: "Landmark", text: "Schulen, Freiflächen, Quartiere" },
-          { name: "Einzugsgebiet", href: "/photovoltaik", icon: "MapPin", text: "24 Städte mit Standortdaten" },
+          { name: "Notstrom & Blackout-Vorsorge", href: "/service/notstrom", icon: "ShieldAlert", text: "Ersatzstrom und Inselbetrieb" },
+          { name: "PV-Versicherung", href: "/service/versicherung", icon: "ShieldCheck", text: "Allgefahren, Ertragsausfall, Haftpflicht" },
+          { name: "Energieberatung", href: "/service/energieberatung", icon: "Lightbulb", text: "Lastganganalyse & Energieaudit" },
+          { name: "Finanzierung & Leasing", href: "/service/finanzierung", icon: "Wallet", text: "Leasing, Kredit, Contracting" },
         ],
       },
       {
-        label: "Vorteile",
+        label: "Mehr Wirkung",
         items: [
-          { name: "Finanzierung", href: "/service/finanzierung", icon: "Wallet", text: "Solaranlage ohne Eigenkapital" },
-          { name: "Dynamischer Stromtarif", href: "/service/stromtarif", icon: "Zap", text: "Günstig laden, wenn die Börse fällt" },
-          { name: "Ökovolt Vorteilswelt", href: "/service/vorteilswelt", icon: "Gift", text: "Exklusive Leistungen für Kunden" },
+          { name: "Nachhaltigkeitsmarketing", href: "/service/nachhaltigkeitsmarketing", icon: "Clapperboard", text: "Imagefilm & Content mit Solensa" },
+          { name: "Dynamischer Stromtarif", href: "/service/stromtarif", icon: "Zap", text: "Laden, wenn die Börse günstig ist" },
+          { name: "Ökovolt Vorteilswelt", href: "/service/vorteilswelt", icon: "Gift", text: "Exklusiv für Kunden" },
         ],
       },
     ],
-    feature: { title: "Strompreis live", text: "Börsenpreis und Solaranteil im deutschen Netz – viertelstündlich aktuell.", href: "/energie-live", cta: "Zum Live-Dashboard", live: true },
-  },
-  {
-    title: "Rechner & Tools",
-    slug: "rechner",
-    intro: "Ehrliche Zahlen, bevor Sie mit uns sprechen.",
-    groups: [
-      {
-        label: "Rechner",
-        items: [
-          { name: "Solarrechner", href: "/solarrechner", icon: "Calculator", text: "Ertrag, Ersparnis & Amortisation" },
-          { name: "Stromspeicher-Rechner", href: "/rechner/stromspeicher", icon: "BatteryCharging", text: "Die passende Speichergröße" },
-          { name: "Wärmepumpen-Rechner", href: "/rechner/waermepumpe", icon: "Thermometer", text: "Heizkosten mit PV vergleichen" },
-          { name: "E-Auto-Laderechner", href: "/rechner/wallbox", icon: "PlugZap", text: "Solar laden statt tanken" },
-        ],
-      },
-      {
-        label: "Tools",
-        items: [
-          { name: "Angebots-Konfigurator", href: "/angebot", icon: "Sparkles", text: "Ihre Anlage in 2 Minuten" },
-          { name: "Förder-Check", href: "/foerdercheck", icon: "BadgeEuro", text: "Förderung für Ihr Bundesland" },
-          { name: "Dynamischer-Tarif-Rechner", href: "/rechner/dynamischer-stromtarif", icon: "Zap", text: "Mit Live-Börsenpreisen" },
-          { name: "Energie live", href: "/energie-live", icon: "Activity", text: "Strommarkt in Echtzeit" },
-        ],
-      },
-    ],
-    feature: { title: "Alle Rechner auf einen Blick", text: "Acht Werkzeuge, die Ihnen die Entscheidung leichter machen.", href: "/rechner", cta: "Zur Übersicht" },
+    feature: { title: "Wartungsvertrag anfragen", text: "Service-Level, Reaktionszeiten und Preis passend zu Ihrer Anlage.", href: "/service/wartung#anfrage", cta: "Angebot anfordern" },
   },
   {
     title: "Förderungen",
     slug: "forderungen",
-    intro: "Kein Zuschuss soll liegen bleiben.",
+    intro: "Bund, Länder, Steuern und Recht – aktuell für Österreich.",
     groups: [
       {
         label: "Förderungen",
         items: [
-          { name: "Förder-Check", href: "/foerdercheck", icon: "BadgeEuro", text: "In 30 Sekunden zur passenden Förderung" },
-          { name: "Landesförderungen", href: "/forderungen/landesforderungen", icon: "Map", text: "Programme aller 16 Bundesländer" },
-          { name: "Steuerliche Vorteile", href: "/forderungen/steuerlich", icon: "Percent", text: "0 % MwSt. & Einkommensteuer" },
-          { name: "Baurecht", href: "/forderungen/baurecht", icon: "Landmark", text: "Genehmigung & Vorschriften" },
-          { name: "Richtlinien", href: "/forderungen/richtlinien", icon: "FileCheck2", text: "Normen, EEG & Netzbetreiber" },
+          { name: "Förder-Check", href: "/foerdercheck", icon: "BadgeEuro", text: "Passende Programme in 30 Sekunden" },
+          { name: "Bundesförderung (EAG & KPC)", href: "/forderungen/bundesfoerderung", icon: "Landmark", text: "OeMAG-Investitionszuschuss, UFI" },
+          { name: "Landesförderungen", href: "/forderungen/landesforderungen", icon: "Map", text: "Alle neun Bundesländer" },
+          { name: "Steuerliche Vorteile", href: "/forderungen/steuerlich", icon: "Percent", text: "IFB, AfA, Elektrizitätsabgabe" },
         ],
       },
-    ],
-  },
-  {
-    title: "Referenzen",
-    slug: "referenzen",
-    intro: "Anlagen, die wir gebaut haben – mit echten Zahlen.",
-    groups: [
       {
-        label: "Referenzen",
+        label: "Recht & Normen",
         items: [
-          { name: "Projekte", href: "/referenzen/projekte", icon: "Images", text: "Ausgewählte Kundenanlagen" },
-          { name: "Referenzkarte", href: "/referenzen/referenzkarte", icon: "MapPin", text: "Unsere Anlagen in Ihrer Nähe" },
+          { name: "Baurecht", href: "/forderungen/baurecht", icon: "Building2", text: "Bauordnungen der Bundesländer" },
+          { name: "Richtlinien & Netzanschluss", href: "/forderungen/richtlinien", icon: "FileCheck2", text: "EAG, ElWG, TOR Erzeuger, OVE" },
         ],
       },
     ],
@@ -124,33 +133,58 @@ export const NAVIGATION = [
   {
     title: "Wissen",
     slug: "wissen",
-    intro: "Unabhängig erklärt – vom Fachbetrieb.",
+    intro: "Fachwissen für Geschäftsführung, Technik und Einkauf.",
     groups: [
       {
         label: "Wissen",
         items: [
-          { name: "Ratgeber", href: "/ratgeber", icon: "BookOpen", text: "Fundierte Artikel rund um PV" },
+          { name: "Ratgeber", href: "/ratgeber", icon: "BookOpen", text: "Fachartikel für Österreich" },
           { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon", icon: "Library", text: "Fachbegriffe von A bis Z" },
-          { name: "Solaranlage Kosten 2026", href: "/ratgeber/solaranlage-kosten", icon: "Euro", text: "Preise je kWp im Überblick" },
-          { name: "Einspeisevergütung 2026", href: "/ratgeber/einspeiseverguetung-2026", icon: "TrendingUp", text: "Aktuelle Sätze nach EEG" },
           { name: "FAQs", href: "/faqs", icon: "HelpCircle", text: "Häufige Fragen, kurz beantwortet" },
-          { name: "Presse & Neuigkeiten", href: "/presse", icon: "Newspaper", text: "Newsroom, RSS & Fediverse" },
+          { name: "Presse & News", href: "/presse", icon: "Newspaper", text: "Newsroom, RSS & Fediverse" },
+        ],
+      },
+      {
+        label: "Rechner & Tools",
+        items: [
+          { name: "Standort-Check (eHORA)", href: "/standort-check", icon: "Mountain", text: "Schneelast, Wind, Hagel, Ertrag" },
+          { name: "Solarrechner", href: "/solarrechner", icon: "Calculator", text: "Ertrag, Ersparnis & Amortisation" },
+          { name: "Stromspeicher-Rechner", href: "/rechner/stromspeicher", icon: "BatteryCharging", text: "Die passende Speichergröße" },
+          { name: "Alle Rechner", href: "/rechner", icon: "Sparkles", text: "Wärmepumpe, E-Auto, Tarif" },
+          { name: "Energie live", href: "/energie-live", icon: "Activity", text: "Strommarkt Österreich in Echtzeit" },
         ],
       },
     ],
+    feature: { title: "Angebot in 2 Minuten", text: "Dach, Lastgang, Wünsche – Sie erhalten eine fundierte Ersteinschätzung.", href: "/angebot", cta: "Konfigurator starten" },
   },
   {
-    title: "Über uns",
+    title: "Unternehmen",
     slug: "uber-uns",
-    intro: "Ein Team aus Türkheim, das Energie ernst nimmt.",
+    intro: "Seit 2012 in Österreich – aus Ostermiething für das ganze Land.",
     groups: [
       {
-        label: "Unternehmen",
+        label: "Ökovolt",
         items: [
+          { name: "Über uns", href: "/uber-uns", icon: "Building2", text: "Geschichte, Gesellschafter, Haltung" },
           { name: "Team", href: "/uber-uns/team", icon: "Users", text: "Die Menschen hinter Ökovolt" },
-          { name: "Jobs & Karriere", href: "/uber-uns/jobs", icon: "Briefcase", text: "Werden Sie Teil der Energiewende" },
+          { name: "Referenzen", href: "/referenzen/projekte", icon: "Images", text: "Anlagen mit echten Zahlen" },
+          { name: "Referenzkarte", href: "/referenzen/referenzkarte", icon: "MapPin", text: "Unsere Anlagen in Ihrer Nähe" },
+        ],
+      },
+      {
+        label: "Gemeinsam",
+        items: [
+          { name: "Ökovolt PV Award", href: "/pv-award", icon: "Trophy", text: "Die besten Anlagen des Jahres" },
+          { name: "Sponsoring", href: "/sponsoring", icon: "HeartHandshake", text: "Vereine, Kultur, Nachwuchs" },
+          { name: "Elektro-Partner werden", href: "/partner", icon: "Handshake", text: "Energiewende gemeinsam bauen" },
+          { name: "Jobs & Karriere", href: "/uber-uns/jobs", icon: "Briefcase", text: "Werden Sie Teil des Teams" },
+        ],
+      },
+      {
+        label: "Kontakt",
+        items: [
           { name: "Kontakt", href: "/kontakt", icon: "MessageCircle", text: "Beratung, Anfahrt & Öffnungszeiten" },
-          { name: "Termin buchen", href: "/termin", icon: "CalendarDays", text: "Telefon, Video oder vor Ort – online" },
+          { name: "Termin buchen", href: "/termin", icon: "CalendarDays", text: "Telefon, Video oder vor Ort" },
         ],
       },
     ],
@@ -158,13 +192,10 @@ export const NAVIGATION = [
 ];
 
 export const KONTAKT = {
-  telefon: "+49 8245 96 788 0",
-  telefonHref: "tel:+498245967880",
-  email: "office@oekovolt.de",
-  strasse: "Schlingener Straße 1a",
-  ort: "86842 Türkheim",
-  oeffnungszeiten: [
-    { tage: "Mo – Do", zeit: "08:00 – 16:00" },
-    { tage: "Fr", zeit: "08:00 – 13:00" },
-  ],
+  telefon: FIRMA.telefon,
+  telefonHref: FIRMA.telefonHref,
+  email: FIRMA.email,
+  strasse: FIRMA.strasse,
+  ort: `${FIRMA.plz} ${FIRMA.ort}`,
+  oeffnungszeiten: FIRMA.oeffnungszeiten,
 };

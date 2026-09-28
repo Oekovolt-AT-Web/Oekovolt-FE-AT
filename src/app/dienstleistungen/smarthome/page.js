@@ -38,7 +38,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.smarthome_page.api.get_smarthome_page`;
-const SMARTHOME_PAGE_URL = "https://www.oekovolt.de/dienstleistungen/smarthome";
+const SMARTHOME_PAGE_URL = "https://www.oekovolt.com/dienstleistungen/smarthome";
 
 async function fetchSmarthomeData() {
   if (!isApiConfigured()) {
@@ -97,16 +97,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: SMARTHOME_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Smart Home" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Smart Home" }],
     },
     twitter: {
       card: "summary_large_image",
       title: META_TITLE,
       description: META_DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -205,10 +205,10 @@ export default async function SmarthomePage() {
     "@type": "WebPage",
     "@id": `${SMARTHOME_PAGE_URL}/#webpage`,
     url: SMARTHOME_PAGE_URL,
-    name: data?.title || "Smart Home Lösungen | Ökovolt Deutschland",
+    name: data?.title || "Smart Home Lösungen | Ökovolt Österreich",
     description: data?.description || "Intelligente Smarthome-Lösungen: Photovoltaik, Stromspeicher, Wallbox, Wärmepumpe und Smartmeter als ein gesteuertes System.",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };
@@ -219,7 +219,7 @@ export default async function SmarthomePage() {
     "@id": `${SMARTHOME_PAGE_URL}/#service`,
     name: "Smarthome-Lösungen und Energiemanagement",
     serviceType: "Planung und Installation von Energiemanagement, Stromspeicher, Wallbox, Notstrombox und Smartmeter",
-    provider: { "@id": "https://www.oekovolt.de/#organization" },
+    provider: { "@id": "https://www.oekovolt.com/#organization" },
     areaServed: { "@type": "Country", name: "Deutschland" },
     url: SMARTHOME_PAGE_URL,
     hasOfferCatalog: {

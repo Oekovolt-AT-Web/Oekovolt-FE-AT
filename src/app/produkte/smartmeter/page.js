@@ -20,7 +20,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_meter_page.api.get_smart_meter_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/produkte/smartmeter";
+const PAGE_URL = "https://www.oekovolt.com/produkte/smartmeter";
 
 async function fetchSmartMeterData() {
   if (!isApiConfigured()) {
@@ -67,7 +67,7 @@ export async function generateMetadata() {
   const seoData = await fetchSmartMeterData();
   const defaultKeywords = ["Smart Meter", "Smart Meter Pflicht", "intelligentes Messsystem", "digitaler Stromzähler", "Smart Meter Kosten"];
   const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const bild = "https://www.oekovolt.de/og-image.jpg";
+  const bild = "https://www.oekovolt.com/og-image.jpg";
 
   return {
     title: TITLE,
@@ -78,7 +78,7 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
       images: [{ url: bild, width: 1200, height: 630, alt: "Ökovolt Smart Meter" }],
@@ -147,10 +147,10 @@ export default async function SmartmeterPage() {
     "@type": "WebPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt Deutschland",
+    name: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt Österreich",
     description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };

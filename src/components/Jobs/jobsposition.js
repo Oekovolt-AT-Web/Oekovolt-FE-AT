@@ -173,7 +173,7 @@ const JobListings = () => {
             <Frown className="text-5xl text-yellow-500" />
             <h3 className="text-lg font-semibold">Keine offenen Stellen</h3>
             <p className="text-sm max-w-md">
-              Derzeit sind keine offenen Stellen verfügbar. Du möchtest trotzdem Teil unseres Teams werden? Wir freuen uns über deine Initiativbewerbung an <a href="mailto:office@oekovolt.de" className="text-yellow-500">office@oekovolt.de</a>
+              Derzeit sind keine offenen Stellen verfügbar. Du möchtest trotzdem Teil unseres Teams werden? Wir freuen uns über deine Initiativbewerbung an <a href="mailto:office@oekovolt.com" className="text-yellow-500">office@oekovolt.com</a>
             </p>
           </FadeInView>
         )}

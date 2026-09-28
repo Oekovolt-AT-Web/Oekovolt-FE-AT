@@ -22,7 +22,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.jobs_page.api.get_jobs_de`;
 const JOBS_LIST_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
-const JOBS_PAGE_URL = "https://www.oekovolt.de/uber-uns/jobs";
+const JOBS_PAGE_URL = "https://www.oekovolt.com/uber-uns/jobs";
 
 async function fetchJobsPageData() {
   if (!isApiConfigured()) {
@@ -118,18 +118,18 @@ export async function generateMetadata() {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      locale: "de_DE",
+      locale: "de_AT",
       url: JOBS_PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Jobs" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Jobs" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -154,7 +154,7 @@ const FELDER = [
 ];
 
 const ABLAUF = [
-  { icon: Send, title: "Bewerbung senden", text: "Lebenslauf und ein paar Sätze zu Ihnen per E-Mail an office@oekovolt.de – ein aufwendiges Anschreiben ist nicht nötig." },
+  { icon: Send, title: "Bewerbung senden", text: "Lebenslauf und ein paar Sätze zu Ihnen per E-Mail an office@oekovolt.com – ein aufwendiges Anschreiben ist nicht nötig." },
   { icon: MessagesSquare, title: "Erstes Gespräch", text: "Wir melden uns bei Ihnen und lernen uns am Telefon oder persönlich kennen." },
   { icon: Users, title: "Kennenlernen", text: "Sie lernen Team und Aufgaben kennen und stellen all Ihre Fragen – gern auch bei uns in Türkheim." },
   { icon: Rocket, title: "Start im Team", text: "Einarbeitung im Team und Schulungen, damit Sie gut in Ihre neue Aufgabe starten." },
@@ -163,7 +163,7 @@ const ABLAUF = [
 const FAQ = [
   {
     q: "Kann ich mich auch ohne ausgeschriebene Stelle bewerben?",
-    a: "Ja. Wir freuen uns jederzeit über Initiativbewerbungen an office@oekovolt.de. Schreiben Sie kurz, welcher Bereich Sie interessiert – Planung, Montage, Technik, Vertrieb oder Verwaltung.",
+    a: "Ja. Wir freuen uns jederzeit über Initiativbewerbungen an office@oekovolt.com. Schreiben Sie kurz, welcher Bereich Sie interessiert – Planung, Montage, Technik, Vertrieb oder Verwaltung.",
   },
   {
     q: "Welche Qualifikation erwarten Sie?",
@@ -213,8 +213,8 @@ export default async function JobsPage() {
     url: JOBS_PAGE_URL,
     name: data?.title || "Karriere bei Ökovolt | Jobs in der Solarbranche",
     description: data?.description?.trim() || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-    about: { "@id": "https://www.oekovolt.de/#organization" },
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+    about: { "@id": "https://www.oekovolt.com/#organization" },
     datePublished: "2020-01-01",
     dateModified: new Date().toISOString().split("T")[0],
   };
@@ -348,7 +348,7 @@ export default async function JobsPage() {
           <SectionHeading
             eyebrow="Häufige Fragen"
             title="Karriere bei Ökovolt"
-            lead={<>Noch etwas unklar? Schreiben Sie uns an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.de</a> oder rufen Sie an.</>}
+            lead={<>Noch etwas unklar? Schreiben Sie uns an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.com</a> oder rufen Sie an.</>}
           />
           <Faq items={FAQ} />
         </div>

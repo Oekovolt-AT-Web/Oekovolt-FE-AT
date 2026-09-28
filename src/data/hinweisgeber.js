@@ -18,7 +18,7 @@ export const DATENSCHUTZ = [
   {
     titel: "Verantwortlicher",
     text: [
-      "ÖKOVOLT GmbH Solartechnik, Schlingener Straße 1a, 86842 Türkheim, Telefon +49 8245 96 788 0, E-Mail office@oekovolt.de. Für Fragen zum Datenschutz im Hinweisgebersystem können Sie uns auch vertraulich über Ihr Postfach oder per Post an die interne Meldestelle kontaktieren.",
+      "ÖKOVOLT GmbH Solartechnik, Schlingener Straße 1a, 86842 Türkheim, Telefon +49 8245 96 788 0, E-Mail office@oekovolt.com. Für Fragen zum Datenschutz im Hinweisgebersystem können Sie uns auch vertraulich über Ihr Postfach oder per Post an die interne Meldestelle kontaktieren.",
     ],
   },
   {

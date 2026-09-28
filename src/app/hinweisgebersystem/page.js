@@ -11,7 +11,7 @@ import Reveal from "@/components/ui/Reveal";
 import MeldeFormular from "@/components/Hinweisgeber/MeldeFormular";
 import { ABLAUF, FAQ, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL } from "@/data/hinweisgeber";
 
-const PAGE_URL = "https://www.oekovolt.de/hinweisgebersystem";
+const PAGE_URL = "https://www.oekovolt.com/hinweisgebersystem";
 const TITEL = "Hinweisgebersystem – vertraulich melden | Ökovolt";
 const BESCHREIBUNG =
   "Verstöße vertraulich und auf Wunsch anonym melden: das interne Hinweisgebersystem der ÖKOVOLT GmbH Solartechnik nach dem Hinweisgeberschutzgesetz (HinSchG).";
@@ -23,12 +23,12 @@ export const metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Hinweisgebersystem" }],
+    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Hinweisgebersystem" }],
   },
 };
 
@@ -39,8 +39,8 @@ const schema = {
   url: PAGE_URL,
   name: TITEL,
   description: BESCHREIBUNG,
-  isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-  about: { "@id": "https://www.oekovolt.de/#organization" },
+  isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+  about: { "@id": "https://www.oekovolt.com/#organization" },
 };
 
 export default function HinweisgebersystemPage() {

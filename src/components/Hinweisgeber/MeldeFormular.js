@@ -271,7 +271,7 @@ export default function MeldeFormular() {
 function Bestaetigung({ ergebnis }) {
   const [kopiert, setKopiert] = useState(false);
   const [gesichert, setGesichert] = useState(false);
-  const text = `Ökovolt Hinweisgebersystem\nFall-Nummer: ${ergebnis.referenz}\nZugangsschlüssel: ${ergebnis.zugangsschluessel}\nPostfach: https://www.oekovolt.de/hinweisgebersystem/postfach\n\nBewahren Sie diese Daten sicher und für andere unzugänglich auf.`;
+  const text = `Ökovolt Hinweisgebersystem\nFall-Nummer: ${ergebnis.referenz}\nZugangsschlüssel: ${ergebnis.zugangsschluessel}\nPostfach: https://www.oekovolt.com/hinweisgebersystem/postfach\n\nBewahren Sie diese Daten sicher und für andere unzugänglich auf.`;
 
   const kopieren = async () => {
     try {

@@ -3,20 +3,17 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaPinterestP } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaFacebookF, FaLinkedinIn } from "react-icons/fa";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import CookieBanner from "../Cookies/cookiecomponent";
 import { NAVIGATION, KONTAKT } from "@/data/navigation";
 import LiveTicker from "@/components/ui/LiveTicker";
+import { FIRMA, SCHWESTER } from "@/lib/site";
 
 const SOCIAL = [
-  { href: "https://www.facebook.com/oekovoltdeutschland", label: "Facebook", Icon: FaFacebookF },
-  { href: "https://x.com/Oekovolt_De", label: "X (Twitter)", Icon: FaXTwitter },
-  { href: "https://www.instagram.com/oekovoltdeutschland/", label: "Instagram", Icon: FaInstagram },
-  { href: "https://de.pinterest.com/oekovoltdeutschland/", label: "Pinterest", Icon: FaPinterestP },
-  { href: "https://www.linkedin.com/company/%C3%B6kovoltdeutchland", label: "LinkedIn", Icon: FaLinkedinIn },
+  { href: FIRMA.social.linkedin, label: "LinkedIn", Icon: FaLinkedinIn },
+  { href: FIRMA.social.facebook, label: "Facebook", Icon: FaFacebookF },
 ];
 
 // Spalten aus der zentralen Navigation ableiten
@@ -26,21 +23,35 @@ const spalte = (titel) => {
 };
 
 const SPALTEN = [
-  spalte("Produkte"),
+  spalte("Lösungen"),
   spalte("Service"),
-  spalte("Rechner & Tools"),
   {
-    titel: "Wissen & Förderung",
+    titel: "Technik & Wissen",
     links: [
+      { name: "Parkregler (EZA-Regler)", href: "/technik/parkregler" },
+      { name: "Fernwartung", href: "/technik/fernwartung" },
+      { name: "SCADA & Leitwarte", href: "/technik/scada" },
+      { name: "Standort-Check (eHORA)", href: "/standort-check" },
+      { name: "Solarrechner", href: "/solarrechner" },
       { name: "Ratgeber", href: "/ratgeber" },
       { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon" },
       { name: "FAQs", href: "/faqs" },
-      { name: "Presse & Neuigkeiten", href: "/presse" },
+      { name: "Presse & News", href: "/presse" },
       { name: "RSS-Feed", href: "/rss.xml" },
+    ],
+  },
+  {
+    titel: "Förderung & Unternehmen",
+    links: [
+      { name: "Förder-Check", href: "/foerdercheck" },
+      { name: "Bundesförderung", href: "/forderungen/bundesfoerderung" },
       { name: "Landesförderungen", href: "/forderungen/landesforderungen" },
       { name: "Steuerliche Vorteile", href: "/forderungen/steuerlich" },
-      { name: "Referenzprojekte", href: "/referenzen/projekte" },
-      { name: "Team", href: "/uber-uns/team" },
+      { name: "Über uns", href: "/uber-uns" },
+      { name: "Referenzen", href: "/referenzen/projekte" },
+      { name: "PV Award", href: "/pv-award" },
+      { name: "Sponsoring", href: "/sponsoring" },
+      { name: "Elektro-Partner werden", href: "/partner" },
       { name: "Jobs", href: "/uber-uns/jobs" },
       { name: "Termin buchen", href: "/termin" },
     ],
@@ -52,7 +63,7 @@ export default function Footer() {
   const jahr = new Date().getFullYear();
 
   return (
-    <footer role="contentinfo" aria-label="Fußbereich Ökovolt Deutschland" className="ov-noise relative isolate overflow-hidden bg-navy-950 text-white">
+    <footer role="contentinfo" aria-label="Fußbereich Ökovolt Österreich" className="ov-noise relative isolate overflow-hidden bg-navy-950 text-white">
       <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10 opacity-60" />
       <div aria-hidden="true" className="absolute -left-40 top-0 -z-10 h-[500px] w-[500px] rounded-full bg-ov-500/15 blur-[140px]" />
 
@@ -61,7 +72,7 @@ export default function Footer() {
         <div className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
             <Link href="/" className="relative block h-[62px] w-[200px]" aria-label="Zur Startseite">
-              <Image src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt GmbH Solartechnik" fill sizes="200px" className="object-contain object-left" />
+              <Image src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt Solartechnik GmbH" fill sizes="200px" className="object-contain object-left" />
             </Link>
             <p className="mt-5 font-display text-[clamp(1.4rem,1.1rem+1vw,2rem)] font-bold leading-tight tracking-tight">
               Solarenergie für alle – <span className="ov-text-gradient-light">einfach, sicher, wirtschaftlich.</span>
@@ -85,9 +96,9 @@ export default function Footer() {
             <div className="flex gap-3">
               <MapPin aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
               <address className="not-italic">
-                ÖKOVOLT GmbH Solartechnik<br />
+                {FIRMA.name}<br />
                 {KONTAKT.strasse}<br />
-                {KONTAKT.ort}, Deutschland
+                {KONTAKT.ort}, Österreich
               </address>
             </div>
             <p className="flex gap-3">
@@ -142,19 +153,24 @@ export default function Footer() {
         {/* Live-Leiste */}
         <div className="flex flex-col gap-4 rounded-2xl bg-white/[0.04] px-5 py-4 ring-1 ring-white/10 md:flex-row md:items-center md:justify-between">
           <LiveTicker />
-          <p className="text-[12px] text-white/60">Daten: Fraunhofer ISE Energy-Charts (CC BY 4.0)</p>
+          <p className="text-[12px] text-white/60">Daten: Fraunhofer ISE Energy-Charts (CC BY 4.0), Gebotszone Österreich</p>
         </div>
 
         {/* Rechtliches */}
         <div className="flex flex-col gap-4 py-8 text-[13.5px] text-white/50 md:flex-row md:items-center md:justify-between">
-          <p>© {jahr} ÖKOVOLT GmbH Solartechnik · Alle Rechte vorbehalten</p>
+          <div className="max-w-xl space-y-1">
+            <p>© {jahr} {FIRMA.name} · {FIRMA.firmenbuch} · UID {FIRMA.uid}</p>
+            <p className="text-[12.5px] text-white/40">
+              Website, Inhalte und Marke ÖKOVOLT: alle Rechte bei der {SCHWESTER.name} ({SCHWESTER.ort}, {SCHWESTER.land}), Markeninhaberin und Schwestergesellschaft.
+            </p>
+          </div>
           <nav aria-label="Rechtliche Links">
             <ul className="flex flex-wrap gap-x-6 gap-y-2">
               <li><button type="button" onClick={() => setPopup(true)} className="transition-colors hover:text-white">Privatsphäre-Einstellungen</button></li>
               <li><Link href="/impressum" className="transition-colors hover:text-white">Impressum</Link></li>
               <li><Link href="/datenschutz" className="transition-colors hover:text-white">Datenschutz</Link></li>
               <li><Link href="/agb" className="transition-colors hover:text-white">AGB</Link></li>
-              <li><a href="https://oekovolt.integrityline.com/" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">Hinweisgebersystem</a></li>
+              <li><Link href="/hinweisgeberschutz" className="transition-colors hover:text-white">Hinweisgebersystem</Link></li>
               <li><Link href="/barrierefreiheit" className="transition-colors hover:text-white">Barrierefreiheit</Link></li>
             </ul>
           </nav>

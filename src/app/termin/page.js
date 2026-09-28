@@ -30,7 +30,7 @@ const TAGE_VORAUS = 30;
 
 const iso = (d) => d.toISOString().split("T")[0];
 
-const PAGE_URL = "https://www.oekovolt.de/termin";
+const PAGE_URL = "https://www.oekovolt.com/termin";
 const TITEL = "Beratungstermin online buchen – Photovoltaik | Ökovolt";
 const BESCHREIBUNG =
   "Kostenlose Photovoltaik-Beratung direkt online buchen: per Telefon, Video oder vor Ort. Freie Termine in Echtzeit – oder Sofort-Rückruf anfordern.";
@@ -42,14 +42,14 @@ export const metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_DE",
+    locale: "de_AT",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
     images: [
       {
-        url: "https://www.oekovolt.de/og-image.jpg",
+        url: "https://www.oekovolt.com/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Beratungstermin bei Ökovolt buchen",
@@ -94,15 +94,15 @@ const schema = {
       url: PAGE_URL,
       name: TITEL,
       description: BESCHREIBUNG,
-      inLanguage: "de-DE",
-      isPartOf: { "@id": "https://www.oekovolt.de/#website" },
-      about: { "@id": "https://www.oekovolt.de/#organization" },
+      inLanguage: "de-AT",
+      isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+      about: { "@id": "https://www.oekovolt.com/#organization" },
       potentialAction: {
         "@type": "ReserveAction",
         target: {
           "@type": "EntryPoint",
           urlTemplate: PAGE_URL,
-          inLanguage: "de-DE",
+          inLanguage: "de-AT",
           actionPlatform: [
             "https://schema.org/DesktopWebPlatform",
             "https://schema.org/MobileWebPlatform",

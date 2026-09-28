@@ -41,7 +41,7 @@ import Heizkostenvergleich from "@/components/Warmepumpe/Heizkostenvergleich";
 import SonnenJahr from "@/components/Warmepumpe/SonnenJahr";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.waermepumpe_page.api.get_waermepumpe_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.de/produkte/warmepumpe";
+const PAGE_URL = "https://www.oekovolt.com/produkte/warmepumpe";
 
 async function fetchWaermepumpeData() {
   if (!isApiConfigured()) {
@@ -98,16 +98,16 @@ export async function generateMetadata() {
     openGraph: {
       type: "website",
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title: TITLE,
       description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Wärmepumpe" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Wärmepumpe" }],
     },
     twitter: {
       card: "summary_large_image",
       title: TITLE,
       description: DESCRIPTION,
-      images: ["https://www.oekovolt.de/og-image.jpg"],
+      images: ["https://www.oekovolt.com/og-image.jpg"],
     },
   };
 }
@@ -167,8 +167,8 @@ export default async function WarmepumpePage() {
         url: PAGE_URL,
         name: TITLE,
         description: DESCRIPTION,
-        inLanguage: "de-DE",
-        isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+        inLanguage: "de-AT",
+        isPartOf: { "@id": "https://www.oekovolt.com/#website" },
         about: { "@id": `${PAGE_URL}/#service` },
         datePublished: "2020-01-01",
         dateModified: new Date().toISOString().split("T")[0],
@@ -179,7 +179,7 @@ export default async function WarmepumpePage() {
         name: "Wärmepumpe mit Photovoltaik",
         serviceType: "Planung, Installation und Förderservice für Wärmepumpen",
         description: "Beratung, Heizlastberechnung, Installation und Inbetriebnahme von Wärmepumpen inklusive Einbindung in die Photovoltaikanlage und Unterstützung beim KfW-Förderantrag.",
-        provider: { "@id": "https://www.oekovolt.de/#organization" },
+        provider: { "@id": "https://www.oekovolt.com/#organization" },
         areaServed: { "@type": "Country", name: "Deutschland" },
         url: PAGE_URL,
       },

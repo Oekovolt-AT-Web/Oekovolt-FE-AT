@@ -8,7 +8,7 @@ import useFokusFalle from "@/components/ui/useFokusFalle";
 const SEEN_KEY = "oekovolt_email_change_notice_v1";
 
 const OLD_EMAIL = "office@oekovolt.com";
-const NEW_EMAIL = "office@oekovolt.de";
+const NEW_EMAIL = "office@oekovolt.com";
 
 // Static colors on purpose — this notice must look identical no matter what
 // theme or CSS variables the surrounding page happens to be running.

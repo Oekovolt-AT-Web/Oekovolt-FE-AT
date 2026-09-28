@@ -68,7 +68,7 @@ export async function GET(request) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
-          <div style={{ display: "flex", fontSize: 26, fontWeight: 600 }}>Was bringt Ihr Dach? → oekovolt.de/solarrechner</div>
+          <div style={{ display: "flex", fontSize: 26, fontWeight: 600 }}>Was bringt Ihr Dach? → oekovolt.com/solarrechner</div>
           <div style={{ display: "flex", fontSize: 18, color: "rgba(255,255,255,0.55)" }}>Orientierung, kein Angebot</div>
         </div>
       </div>

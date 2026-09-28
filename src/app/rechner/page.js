@@ -21,7 +21,7 @@ import { berechne as solarBerechne } from "@/lib/solarrechner";
 export const revalidate = 900;
 
 const PFAD = "/rechner";
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,

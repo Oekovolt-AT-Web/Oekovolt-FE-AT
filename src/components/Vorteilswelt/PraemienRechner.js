@@ -11,7 +11,7 @@ import { Check, Copy, Gift, Mail, MessageCircle, UserPlus, Users } from "lucide-
  */
 
 const PRAEMIE = 250;
-const ANGEBOT_URL = "https://www.oekovolt.de/angebot";
+const ANGEBOT_URL = "https://www.oekovolt.com/angebot";
 
 const TEXTE = {
   du: `Hallo! Ich habe meine Solaranlage mit Ökovolt umgesetzt – Beratung, Montage und Anmeldung kamen aus einer Hand. Falls du auch über Photovoltaik, einen Stromspeicher oder eine Wallbox nachdenkst: Hier bekommst du ein kostenloses, unverbindliches Angebot. Und wenn daraus ein Vertrag mit Ökovolt entsteht, erhältst du über das Empfehlungsprogramm 250 € Prämie. ${ANGEBOT_URL}`,

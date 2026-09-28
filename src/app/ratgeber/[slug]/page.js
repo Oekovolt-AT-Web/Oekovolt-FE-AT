@@ -11,7 +11,7 @@ import ArtikelInhalt from "@/components/Ratgeber/ArtikelInhalt";
 import { klartext } from "@/components/Ratgeber/InlineText";
 import { INHALTS_ARTIKEL, artikelPfad } from "@/lib/ratgeber";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 
 export const dynamicParams = false;
 
@@ -35,8 +35,8 @@ export async function generateMetadata({ params }) {
     openGraph: {
       type: "article",
       url,
-      siteName: "Ökovolt Deutschland",
-      locale: "de_DE",
+      siteName: "Ökovolt Österreich",
+      locale: "de_AT",
       title: a.title,
       description: a.description,
       publishedTime: a.veroeffentlicht,
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
     },
     twitter: { card: "summary_large_image", title: a.title, description: a.description, images: [`${BASE_URL}/og/ratgeber/${a.slug}.jpg`] },
     // Autorenzeile bei Link-Vorschauen in Mastodon, Verknüpfung zum Fediverse-Beitrag
-    other: { "fediverse:creator": "@ratgeber@oekovolt.de" },
+    other: { "fediverse:creator": "@ratgeber@oekovolt.com" },
   };
 }
 
@@ -69,7 +69,7 @@ export default async function RatgeberArtikelPage({ params }) {
       "@id": `${url}/#article`,
       headline: a.title,
       description: a.description,
-      inLanguage: "de-DE",
+      inLanguage: "de-AT",
       datePublished: a.veroeffentlicht,
       dateModified: a.aktualisiert,
       author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },
@@ -90,7 +90,7 @@ export default async function RatgeberArtikelPage({ params }) {
       "@type": "HowTo",
       "@id": `${url}/#howto`,
       name: a.howTo.name,
-      inLanguage: "de-DE",
+      inLanguage: "de-AT",
       step: a.howTo.schritte.map((s, i) => ({ "@type": "HowToStep", position: i + 1, name: s.name, text: klartext(s.text) })),
     });
   }

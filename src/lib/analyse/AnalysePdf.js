@@ -154,7 +154,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
   const tabelleJahre = [1, 5, 10, 15, 20].filter((j) => cf[j]);
 
   return (
-    <Document title={`Photovoltaik-Analyse ${referenz}`} author="ÖKOVOLT GmbH Solartechnik" subject="Unverbindliche Photovoltaik-Ersteinschätzung" language="de-DE" creator="oekovolt.de">
+    <Document title={`Photovoltaik-Analyse ${referenz}`} author="Ökovolt Solartechnik GmbH" subject="Unverbindliche Photovoltaik-Ersteinschätzung" language="de-AT" creator="oekovolt.com">
       {/* ------------------------------------------------ Seite 1: Titel */}
       <Page size="A4" style={[s.seite, { paddingTop: 0, paddingHorizontal: 0 }]}>
         <View style={{ backgroundColor: C.navy, paddingHorizontal: 42, paddingTop: 36, paddingBottom: 34 }}>
@@ -340,7 +340,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
         <View style={{ flexDirection: "row", backgroundColor: C.navy, borderRadius: 12, padding: 18, marginTop: 10, alignItems: "center" }}>
           <View style={{ flex: 1, paddingRight: 14 }}>
             <Text style={{ fontFamily: "Manrope", fontWeight: 800, fontSize: 16, color: "#ffffff" }}>Kostenlosen Beratungstermin buchen</Text>
-            <Text style={{ color: "#b9c2d0", marginTop: 6, lineHeight: 1.45 }}>QR-Code scannen oder www.oekovolt.de/termin – telefonisch unter {"08245\u00a096\u00a0788\u00a00"} oder per E-Mail an office@oekovolt.de.</Text>
+            <Text style={{ color: "#b9c2d0", marginTop: 6, lineHeight: 1.45 }}>QR-Code scannen oder www.oekovolt.com/termin – telefonisch unter {"08245\u00a096\u00a0788\u00a00"} oder per E-Mail an office@oekovolt.com.</Text>
             <Text style={{ color: C.gruenHell, marginTop: 8, fontWeight: 600 }}>Bitte Referenz {referenz} angeben.</Text>
           </View>
           {qrPng && (
@@ -365,7 +365,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
         </Text>
         <View style={{ marginTop: 22, borderTopWidth: 0.6, borderTopColor: C.linie, paddingTop: 10 }}>
           <Text style={{ fontWeight: 700 }}>ÖKOVOLT GmbH Solartechnik</Text>
-          <Text style={s.text}>Schlingener Straße 1a · 86842 Türkheim · 08245 96 788 0 · office@oekovolt.de · www.oekovolt.de</Text>
+          <Text style={s.text}>Schlingener Straße 1a · 86842 Türkheim · 08245 96 788 0 · office@oekovolt.com · www.oekovolt.com</Text>
         </View>
         <Fuss referenz={referenz} />
       </Page>

@@ -9,7 +9,7 @@ import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.faqs_page.api.get_faqs_page`;
-const PAGE_URL = "https://www.oekovolt.de/faqs";
+const PAGE_URL = "https://www.oekovolt.com/faqs";
 
 async function fetchFaqsData() {
   if (!isApiConfigured()) {
@@ -63,16 +63,16 @@ export async function generateMetadata() {
         type: "website",
 
         url: PAGE_URL,
-        siteName: "Ökovolt Deutschland",
+        siteName: "Ökovolt Österreich",
         title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
         description: "Antworten auf die häufigsten Fragen zu Photovoltaik: Kosten, Förderung, Installation, Wartung und Service – klar und verständlich erklärt von Ökovolt.",
-        images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
+        images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
       },
       twitter: {
         card: "summary_large_image",
         title: "FAQ: Häufige Fragen zu Photovoltaik & Solaranlagen | Ökovolt",
         description: "Antworten auf Ihre wichtigsten Fragen zu Photovoltaik.",
-        images: ["https://www.oekovolt.de/og-image.jpg"]
+        images: ["https://www.oekovolt.com/og-image.jpg"]
       },
     };
   }
@@ -92,16 +92,16 @@ export async function generateMetadata() {
       type: "website",
 
       url: PAGE_URL,
-      siteName: "Ökovolt Deutschland",
+      siteName: "Ökovolt Österreich",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: "https://www.oekovolt.de/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
+      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt FAQ" }],
     },
   };
 }
@@ -129,8 +129,8 @@ export default async function FaqsPage() {
     "@id": `${PAGE_URL}/#faqpage`,
     url: PAGE_URL,
     name: "Häufige Fragen zu Photovoltaik, Speicher und Installation",
-    inLanguage: "de-DE",
-    isPartOf: { "@id": "https://www.oekovolt.de/#website" },
+    inLanguage: "de-AT",
+    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
     mainEntity: alle.map((item) => ({
       "@type": "Question",
       name: item.q,

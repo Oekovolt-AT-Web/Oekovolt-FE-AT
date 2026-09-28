@@ -58,8 +58,8 @@ export default function LegalShell({ titel, pfad, lead, children }) {
               <a href="tel:+498245967880" className="mt-4 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
                 <Phone aria-hidden="true" className="h-4 w-4 text-ov-300" /> +49 8245 96 788 0
               </a>
-              <a href="mailto:office@oekovolt.de" className="mt-2 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
-                <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" /> office@oekovolt.de
+              <a href="mailto:office@oekovolt.com" className="mt-2 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
+                <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" /> office@oekovolt.com
               </a>
             </div>
           </aside>

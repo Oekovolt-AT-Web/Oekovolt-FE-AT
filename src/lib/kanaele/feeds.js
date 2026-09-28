@@ -27,7 +27,7 @@ export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-DE", b
       <guid isPermaLink="true">${xml(e.url)}</guid>
       <pubDate>${rfc822(e.datum)}</pubDate>
       ${e.kategorie ? `<category>${xml(e.kategorie)}</category>` : ""}
-      <dc:creator>${xml(e.autor || "Ökovolt Deutschland")}</dc:creator>
+      <dc:creator>${xml(e.autor || "Ökovolt Österreich")}</dc:creator>
       <description>${cdata(e.teaser || klartextHtml(e.inhalt, 300))}</description>
       ${e.inhalt ? `<content:encoded>${cdata(e.inhalt)}</content:encoded>` : ""}
       ${e.bildAbsolut ? `<media:content url="${xml(e.bildAbsolut)}" medium="image"><media:description>${xml(e.bildAlt || e.titel)}</media:description></media:content>
@@ -63,7 +63,7 @@ export function jsonFeed({ titel, beschreibung, pfad, homePfad = "/", eintraege,
     description: beschreibung,
     language: "de-DE",
     icon: `${BASE_URL}/Logo_ov_4cDeutschland-removebg-preview.png`,
-    authors: [{ name: "Ökovolt Deutschland", url: BASE_URL }],
+    authors: [{ name: "Ökovolt Österreich", url: BASE_URL }],
     items: eintraege.map((e) => ({
       id: e.url,
       url: e.url,

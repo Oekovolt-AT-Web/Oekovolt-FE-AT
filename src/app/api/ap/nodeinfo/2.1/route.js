@@ -10,7 +10,7 @@ export function GET() {
       services: { inbound: [], outbound: ["rss2.0"] },
       openRegistrations: false,
       usage: { users: { total: FEDIVERSE_KONTEN.length, activeMonth: FEDIVERSE_KONTEN.length, activeHalfyear: FEDIVERSE_KONTEN.length } },
-      metadata: { nodeName: "Ökovolt Deutschland", nodeDescription: "Neuigkeiten und Fachartikel der ÖKOVOLT GmbH Solartechnik" },
+      metadata: { nodeName: "Ökovolt Österreich", nodeDescription: "Neuigkeiten und Fachartikel der ÖKOVOLT GmbH Solartechnik" },
     },
     {
       headers: {

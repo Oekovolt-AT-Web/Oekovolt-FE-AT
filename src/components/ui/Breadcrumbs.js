@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "./cn";
 
-const BASE = "https://www.oekovolt.de";
+const BASE = "https://www.oekovolt.com";
 
 /**
  * Brotkrumen – sichtbar UND als BreadcrumbList-Schema.

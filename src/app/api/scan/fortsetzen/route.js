@@ -23,7 +23,7 @@ export async function POST(request) {
   try {
     const s = await fortsetzenStarten(e.token);
     if (!s) return antwort({ fehler: "abgelaufen" }, 410);
-    const origin = process.env.NODE_ENV === "production" ? "https://www.oekovolt.de" : new URL(request.url).origin;
+    const origin = process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : new URL(request.url).origin;
     const url = `${origin}/scan/${s.token}`;
     const qrSvg = await QRCode.toString(url, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#03122b", light: "#ffffff" } });
     return antwort({ url, qrSvg, gueltigBis: s.gueltigBis, gueltigMinuten: GUELTIG_MINUTEN });

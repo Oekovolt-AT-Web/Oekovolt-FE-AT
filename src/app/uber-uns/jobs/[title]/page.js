@@ -19,7 +19,7 @@ import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 
 
 const JOBS_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 
 async function fetchAllJobs() {
   if (!isApiConfigured()) {
@@ -93,10 +93,10 @@ export async function generateMetadata({ params }) {
       openGraph: {
         type: "website",
         url: canonical,
-        siteName: "Ökovolt Deutschland",
+        siteName: "Ökovolt Österreich",
         title: seitenTitel,
         description,
-        locale: "de_DE",
+        locale: "de_AT",
         images: [{
           url: ogBild,
           width: 1200,
@@ -159,7 +159,7 @@ export default async function JobDetailPage({ params }) {
     hiringOrganization: {
       "@type": "Organization",
       "@id": `${BASE_URL}/#organization`,
-      name: "Ökovolt Deutschland",
+      name: "Ökovolt Österreich",
       sameAs: BASE_URL,
       logo: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
     },
@@ -333,7 +333,7 @@ export default async function JobDetailPage({ params }) {
             />
             <ol className="mt-10 space-y-5">
               {[
-                { icon: Send, t: "E-Mail mit Lebenslauf senden", x: `An office@oekovolt.de mit dem Betreff „Bewerbung: ${j.titel}“.` },
+                { icon: Send, t: "E-Mail mit Lebenslauf senden", x: `An office@oekovolt.com mit dem Betreff „Bewerbung: ${j.titel}“.` },
                 { icon: Phone, t: "Wir melden uns bei Ihnen", x: "Für ein erstes Gespräch – telefonisch oder persönlich." },
                 { icon: Users, t: "Kennenlernen", x: "Sie lernen Team und Aufgaben kennen und stellen all Ihre Fragen." },
               ].map((s, i) => (

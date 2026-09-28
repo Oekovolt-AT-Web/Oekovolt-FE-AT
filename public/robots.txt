@@ -43,4 +43,4 @@ Allow: /
 Disallow: /api/
 Disallow: /private/
 
-Sitemap: https://www.oekovolt.de/sitemap.xml
+Sitemap: https://www.oekovolt.com/sitemap.xml

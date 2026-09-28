@@ -12,7 +12,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import LexikonExplorer from "@/components/Lexikon/LexikonExplorer";
 import { BEGRIFFE, KATEGORIEN, LEXIKON_STAND, begriffeNachBuchstabe } from "@/data/lexikon";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 const PAGE_URL = `${BASE_URL}/wissen/lexikon`;
 const ANZAHL = BEGRIFFE.length;
 
@@ -29,7 +29,7 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Deutschland",
+    siteName: "Ökovolt Österreich",
     title: `Photovoltaik-Lexikon: ${ANZAHL} Fachbegriffe von A bis Z`,
     description: DESCRIPTION,
     images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Lexikon" }],
@@ -58,7 +58,7 @@ export default function LexikonPage() {
         url: PAGE_URL,
         name: TITLE,
         description: DESCRIPTION,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE_URL}/#website` },
         publisher: { "@id": `${BASE_URL}/#organization` },
         dateModified: LEXIKON_STAND,
@@ -70,7 +70,7 @@ export default function LexikonPage() {
         name: "Ökovolt Photovoltaik-Lexikon",
         description: "Fachbegriffe rund um Photovoltaik, Stromspeicher, E-Mobilität, Netzanschluss und Förderung in Deutschland.",
         url: PAGE_URL,
-        inLanguage: "de-DE",
+        inLanguage: "de-AT",
         publisher: { "@id": `${BASE_URL}/#organization` },
         hasDefinedTerm: BEGRIFFE.map((b) => ({
           "@type": "DefinedTerm",

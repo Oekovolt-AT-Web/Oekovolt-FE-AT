@@ -276,7 +276,7 @@ export function Autorenbox({ artikel }) {
         <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
           <Link href="/uber-uns/team" className="font-semibold text-ov-700 hover:underline">Unser Team</Link>
           <Link href="/wissen/lexikon" className="font-semibold text-ov-700 hover:underline">Photovoltaik-Lexikon</Link>
-          <a href="mailto:office@oekovolt.de" className="font-semibold text-ov-700 hover:underline">Fehler gefunden? Schreiben Sie uns</a>
+          <a href="mailto:office@oekovolt.com" className="font-semibold text-ov-700 hover:underline">Fehler gefunden? Schreiben Sie uns</a>
         </p>
       </div>
     </div>

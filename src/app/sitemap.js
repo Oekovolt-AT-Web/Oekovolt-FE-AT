@@ -8,7 +8,7 @@ import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
 import { normalisiereApiProjekt } from "@/components/Project/projektDaten";
 import { REGIONEN } from "@/data/regionen";
 
-const BASE_URL = "https://www.oekovolt.de";
+const BASE_URL = "https://www.oekovolt.com";
 // ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
 // bei jedem Build einen neuen lastmod - Google wurde also bei jedem Deploy
 // gemeldet, saemtliche Seiten haetten sich geaendert. Das entwertet das
