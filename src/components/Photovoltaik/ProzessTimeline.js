@@ -17,86 +17,87 @@ import {
   UserRound,
   UtilityPole,
 } from "lucide-react";
+import { FIRMA } from "@/lib/site";
 
 /**
- * Prozess-Timeline „Photovoltaik aus einer Hand".
+ * Prozess-Timeline „Photovoltaik aus einer Hand“ – Gewerbeprojekt in Österreich.
  *
- * Sechs Phasen von der Beratung bis zum Service – jede mit typischer Dauer
- * (als Orientierung), klarer Aufteilung „Was Sie tun / Was wir tun" und den
- * passenden Schritten aus dem Backoffice (fourth_card_information_table).
+ * Sechs Phasen von der Lastganganalyse bis zum Betrieb – jede mit typischer
+ * Dauer (als Orientierung) und klarer Aufteilung „Was Sie tun / Was wir tun“.
+ * Netzanschluss nach österreichischem Ablauf: Netzzugangsantrag beim
+ * Netzbetreiber, TOR Stromerzeugungsanlagen, Fertigstellungsmeldung durch den
+ * Elektrotechniker, Stromabnehmer (Händler oder OeMAG), Herkunftsnachweise.
+ * Die frühere Anbindung an Backoffice-Schritte (Prop `schritte`) bleibt als
+ * Schnittstelle erhalten, wird aber nicht mehr befüllt.
  *
  * Links (ab lg) eine mitlaufende Übersicht mit aktueller Phase, rechts die
  * Timeline mit einer Fortschrittslinie, die sich beim Scrollen füllt.
- * Bei prefers-reduced-motion ist die Linie von Anfang an gefüllt und es gibt
- * keine Übergänge – die Phasen-Anzeige aktualisiert sich trotzdem.
+ * Bei prefers-reduced-motion ist die Linie von Anfang an gefüllt.
  */
 
 const PHASEN = [
   {
     icon: MessageSquareText,
-    kurz: "Beratung",
-    titel: "Beratung & Vor-Ort-Termin",
-    dauer: "wenige Tage bis ca. 2 Wochen",
-    api: ["anfrage", "erstkontakt"],
-    leadVon: "erstkontakt",
-    lead: "Ein Fachberater meldet sich, klärt Ihren Bedarf und schaut sich Dach, Zählerschrank und Leitungswege bei Ihnen vor Ort an.",
-    sie: ["Anfrage online oder telefonisch stellen", "Stromverbrauch der letzten Jahre bereithalten", "Vor-Ort-Termin wahrnehmen"],
-    wir: ["Bedarf und Ziele klären (Speicher, Wallbox, Wärmepumpe)", "Dach, Statik-Hinweise und Zählerschrank prüfen", "Offene Fragen ehrlich beantworten"],
+    kurz: "Analyse",
+    titel: "Lastganganalyse & Standortbegehung",
+    dauer: "ca. 1–3 Wochen",
+    api: [],
+    lead: "Wir werten Ihren Lastgang aus, besichtigen Dach, Tragwerk und Elektroverteilung und klären das Ziel: Eigenverbrauch, Peak Shaving, Volleinspeisung oder Nachhaltigkeitsbericht.",
+    sie: ["Lastgang (Viertelstundenwerte) aus dem Netzbetreiber-Portal bereitstellen", "Dachpläne und Statikunterlagen, falls vorhanden", "Ansprechpartner für Technik und Einkauf benennen"],
+    wir: ["Lastgang und Stromrechnungen auswerten", "Dach, Tragwerksreserve, Brandabschnitte und Verteilung prüfen", "Schneelast- und Windzone für den Standort bestimmen"],
   },
   {
     icon: PencilRuler,
     kurz: "Planung",
-    titel: "Planung & Angebot inkl. Ertragsprognose",
-    dauer: "ca. 1–2 Wochen",
-    api: ["projektierung", "angebot"],
-    leadVon: "projektierung",
-    lead: "Wir vermessen Ihr Dach, planen die Modulbelegung im Detail und rechnen transparent vor, was die Anlage erzeugt und spart.",
-    sie: ["Angebot in Ruhe prüfen", "Varianten vergleichen, Fragen stellen", "Auftrag erteilen"],
-    wir: ["Modulbelegung und Anlagengröße planen", "Ertragsprognose und Wirtschaftlichkeit erstellen", "Individuelles Angebot inkl. Förderhinweisen"],
+    titel: "Planung, Statik & Wirtschaftlichkeit",
+    dauer: "ca. 2–4 Wochen",
+    api: [],
+    lead: "Belegungsplan, Stringplanung, Statik-Nachweis und eine Wirtschaftlichkeitsrechnung, die Geschäftsführung und Einkauf nachvollziehen können.",
+    sie: ["Varianten prüfen und entscheiden", "Förderstrategie und Finanzierung festlegen", "Auftrag erteilen"],
+    wir: ["Modulbelegung, Unterkonstruktion und Wechselrichter-Topologie planen", "Ertragsprognose, Eigenverbrauch und Amortisation rechnen", "Brandschutzkonzept nach OVE R 11-1 vorbereiten"],
+    hinweis: "Förderungen wie der EAG-Investitionszuschuss müssen vor der Bestellung beantragt werden – wir planen die Fördercalls in den Zeitplan ein.",
   },
   {
     icon: UtilityPole,
-    kurz: "Anmeldung",
-    titel: "Netzanfrage & Anmeldung beim Netzbetreiber",
-    dauer: "meist wenige Wochen, je nach Netzbetreiber",
+    kurz: "Netz",
+    titel: "Netzzugangsantrag & Genehmigungen",
+    dauer: "wenige Wochen bis Monate, je nach Netzbetreiber und Größe",
     api: [],
-    lead: "Bevor montiert wird, stellen wir die Netzanfrage mit allen technischen Unterlagen und stimmen uns mit Ihrem Netzbetreiber ab.",
-    sie: ["Vollmacht unterschreiben – mehr nicht"],
-    wir: ["Netzanschlussbegehren mit Datenblättern und Schaltplan stellen", "Rückfragen des Netzbetreibers klären", "Montagetermin mit Ihnen koordinieren"],
-    hinweis: "Die Bearbeitungszeit hängt vom Netzbetreiber ab – sie ist oft der größte Zeitfaktor im ganzen Projekt.",
+    lead: "Wir stellen den Netzzugangsantrag beim zuständigen Netzbetreiber, klären Anschlusspunkt und -leistung und – wo nötig – Bauanzeige oder Baubewilligung nach der Bauordnung des Bundeslandes.",
+    sie: ["Vollmacht unterschreiben", "Netzzugangsvertrag gegenzeichnen"],
+    wir: ["Netzzugangsantrag mit Datenblättern und Schaltplan einreichen", "Anforderungen nach TOR Stromerzeugungsanlagen (Typ A/B) klären", "Bau- bzw. elektrizitätsrechtliche Verfahren vorbereiten"],
+    hinweis: "Ab 250 kW (Typ B) oder mit Mittelspannungsanschluss sind Netzprüfung und Parkregler-Nachweise der größte Zeitfaktor im Projekt.",
   },
   {
     icon: HardHat,
     kurz: "Montage",
-    titel: "Montage durch unser eigenes Team",
-    dauer: "meist 1–2 Tage beim Einfamilienhaus",
-    api: ["montage"],
-    leadVon: "montage",
-    lead: "Unterkonstruktion, Module, Wechselrichter und auf Wunsch Speicher – sauber montiert und verkabelt von unserem eigenen Montageteam.",
-    sie: ["Zugang zu Dach und Technikraum ermöglichen"],
-    wir: ["Unterkonstruktion passend zur Dacheindeckung setzen", "Module, Wechselrichter und Speicher installieren", "DC- und AC-Verkabelung, Baustelle besenrein übergeben"],
+    titel: "Montage & Elektroinstallation",
+    dauer: "wenige Tage bis mehrere Wochen, je nach Größe",
+    api: [],
+    lead: "Unterkonstruktion, Module, Wechselrichter, Verkabelung und auf Wunsch Speicher und Parkregler – mit Absturzsicherung und abgestimmt auf Ihren Betriebsablauf.",
+    sie: ["Zugang zu Dach, Technikräumen und Verteilung ermöglichen", "Sicherheitsunterweisung und Betriebszeiten abstimmen"],
+    wir: ["Montage nach Belegungsplan und Statik", "Elektroinstallation nach ÖVE/ÖNORM E 8101", "Kennzeichnung und Feuerwehrplan-Unterlagen"],
   },
   {
     icon: PlugZap,
-    kurz: "Übergabe",
-    titel: "Inbetriebnahme & Marktstammdatenregister",
-    dauer: "direkt nach Montage · MaStR binnen 1 Monat",
-    api: ["übergabe", "uebergabe"],
-    leadVon: "übergabe",
-    lead: "Wir nehmen die Anlage in Betrieb, dokumentieren alles im Inbetriebnahmeprotokoll und erklären Ihnen Anlage und App.",
-    sie: ["Einweisung mitnehmen", "Solarstrom ab dem ersten Tag nutzen"],
-    wir: ["Inbetriebnahme und Protokoll", "Fertigmeldung an den Netzbetreiber", "Eintrag ins Marktstammdatenregister"],
-    hinweis: "Die Registrierung im Marktstammdatenregister ist innerhalb eines Monats nach Inbetriebnahme Pflicht. Den Zählertausch terminiert der Messstellenbetreiber.",
+    kurz: "Inbetriebnahme",
+    titel: "Prüfung, Fertigstellungsmeldung & Inbetriebnahme",
+    dauer: "direkt nach Montage",
+    api: [],
+    lead: "Wir prüfen die Anlage, melden sie über das Partnerportal des Netzbetreibers fertig und nehmen sie mit Parkregler und Monitoring in Betrieb.",
+    sie: ["Stromabnehmer für den Überschuss wählen (Händler, OeMAG oder PPA)", "Einweisung wahrnehmen"],
+    wir: ["Erstprüfung und Dokumentation nach ÖVE/ÖNORM EN 62446", "Fertigstellungsmeldung durch unseren Elektrotechniker", "Registrierung in der Herkunftsnachweisdatenbank der E-Control"],
+    hinweis: "Die Einspeisung wird freigegeben, sobald Fertigstellungsmeldung und Stromabnehmer beim Netzbetreiber vorliegen.",
   },
   {
     icon: Activity,
-    kurz: "Service",
-    titel: "Monitoring & Service",
+    kurz: "Betrieb",
+    titel: "Monitoring, Wartung & Service",
     dauer: "über die gesamte Laufzeit",
     api: [],
-    lead: "Ihre Anlage wird laufend überwacht. Fällt die Leistung ab, merken wir es – und unser eigenes Serviceteam kümmert sich.",
-    sie: ["Erträge in der App verfolgen", "Bei Fragen einfach anrufen"],
-    wir: ["Monitoring und Leistungskontrolle", "Wartung und Störungsbehebung durch eigenes Serviceteam", "Erweiterungen wie Speicher oder Wallbox"],
+    lead: "Wir überwachen die Anlage mit eigenen Fernwartungs- und SCADA-Systemen, erkennen Leistungsabfälle früh und bieten Wartungsverträge nach Anlagengröße.",
+    sie: ["Erträge im Portal verfolgen", "Wartungsvertrag wählen"],
+    wir: ["Monitoring, Fernwartung und Störungsbehebung", "Wiederkehrende Prüfung und Wartung", "Erweiterung um Speicher, Ladeinfrastruktur oder Energiegemeinschaft"],
   },
 ];
 
@@ -160,15 +161,15 @@ export default function ProzessTimeline({ schritte = [] }) {
             Von der ersten Frage bis zum <span className="ov-text-gradient-light">eigenen Solarstrom</span>
           </h2>
           <p className="ov-lead mt-5 text-white/70">
-            Sechs Phasen, ein Ansprechpartner. Sie treffen die Entscheidungen – Planung, Montage, Anmeldung und Service
-            übernehmen wir. Vom Erstgespräch bis zur Inbetriebnahme vergehen meist einige Wochen.
+            Sechs Phasen, ein Ansprechpartner. Sie treffen die Entscheidungen – Planung, Netzanschluss, Montage und Betrieb
+            übernehmen wir. Bei Dachanlagen bis rund 250 kWp vergehen meist drei bis sechs Monate.
           </p>
 
           <dl className="mt-8 grid grid-cols-3 gap-3 lg:hidden">
             {[
               ["6", "Phasen"],
               ["1", "Ansprechpartner"],
-              ["1–2", "Montagetage*"],
+              ["3–6", "Monate bis 250 kWp*"],
             ].map(([w, l]) => (
               <div key={l} className="rounded-2xl bg-white/[0.05] px-4 py-4 ring-1 ring-white/10">
                 <dt className="sr-only">{l}</dt>
@@ -210,11 +211,11 @@ export default function ProzessTimeline({ schritte = [] }) {
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <a
-              href="tel:+498245967880"
+              href={FIRMA.telefonHref}
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-white ring-1 ring-inset ring-white/35 transition-colors hover:bg-white/10"
             >
               <Phone aria-hidden="true" className="h-4 w-4" />
-              08245 96 788 0
+              {FIRMA.telefon}
             </a>
           </div>
         </div>
@@ -300,8 +301,8 @@ export default function ProzessTimeline({ schritte = [] }) {
         })}
       </ol>
       <p className="pl-14 pt-6 text-[12.5px] leading-relaxed text-white/45 md:pl-20">
-          * Alle Zeitangaben sind Orientierungswerte aus typischen Projekten (Stand 2026). Die tatsächliche Dauer hängt von
-          Anlagengröße, Wetter und der Bearbeitungszeit des Netzbetreibers ab.
+          * Alle Zeitangaben sind Orientierungswerte (Stand 2026). Die tatsächliche Dauer hängt von Anlagengröße,
+          Lieferzeiten, Förderfristen und der Bearbeitungszeit des Netzbetreibers ab.
       </p>
       </div>
     </div>

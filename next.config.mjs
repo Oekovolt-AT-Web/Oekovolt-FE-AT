@@ -35,52 +35,40 @@ const nextConfig = {
       // BEVOR diese Redirects ausgewertet werden. Alle Quellen daher OHNE
       // abschliessenden Slash notieren, sonst greifen sie nie.
 
-      // --- Alte WordPress-Projektseiten (Referenzen) ---
-      {
-        source: "/ravensburg-flachdach",
-        destination: "/referenzen/projekte/ravensburg-flachdach",
-        permanent: true,
-      },
-      {
-        source: "/buchloe-einfamilienhaus-satteldach",
-        destination: "/referenzen/projekte/buchloe-einfamilienhaus-satteldach",
-        permanent: true,
-      },
-      {
-        source: "/mering-flachdach-ost-west",
-        destination: "/referenzen/projekte/mering-flachdach-ost-west",
-        permanent: true,
-      },
-      {
-        source: "/salzburg-flachdach-blechfalzdach",
-        destination: "/referenzen/projekte/salzburg-flachdach-blechfalzdach",
-        permanent: true,
-      },
-      {
-        source: "/bad-woerishofen-flachdach-fassadenanlage",
-        destination: "/referenzen/projekte",
-        permanent: true,
-      },
-      {
-        source: "/mindelheim-3",
-        destination: "/referenzen/projekte",
-        permanent: true,
-      },
-      {
-        source: "/logwin-solution-austria-gmbh-traiskirchen-wien",
-        destination: "/referenzen/projekte",
-        permanent: true,
-      },
+      // --- Weitere Domains der österreichischen Gesellschaft ---
+      { source: "/:path*", has: [{ type: "host", value: "oekovolt.at" }], destination: "https://www.oekovolt.com/:path*", permanent: true },
+      { source: "/:path*", has: [{ type: "host", value: "www.oekovolt.at" }], destination: "https://www.oekovolt.com/:path*", permanent: true },
 
-      // --- Foerderungen: Schreibfehler "ostallgau" -> "ostallgaeu" ---
-      // generateSlug() bildet "Ostallgaeu" aus "Ostallgäu" (ae/oe/ue).
-      {
-        source:
-          "/forderungen/landesforderungen/landesfoerderungen-in-bayern-landkreis-ostallgau",
-        destination:
-          "/forderungen/landesforderungen/landesfoerderungen-in-bayern-landkreis-ostallgaeu",
-        permanent: true,
-      },
+      // --- Alte URLs der bisherigen oekovolt.com (Linkkraft erhalten) ---
+      { source: "/dienstleistungen/agri-photovoltaik", destination: "/agri-pv", permanent: true },
+
+      // --- Ratgeber: entfernte bzw. umbenannte Artikel ---
+      { source: "/ratgeber/photovoltaik-mehrfamilienhaus", destination: "/ratgeber/gemeinschaftliche-erzeugungsanlage", permanent: true },
+      { source: "/ratgeber/kfw-kredit-270", destination: "/service/finanzierung", permanent: true },
+      { source: "/ratgeber/paragraf-14a-enwg", destination: "/ratgeber/smart-meter-pflicht", permanent: true },
+      { source: "/ratgeber/solarspitzengesetz", destination: "/ratgeber/elwg-elektrizitaetswirtschaftsgesetz", permanent: true },
+      { source: "/ratgeber/balkonkraftwerk", destination: "/ratgeber/solaranlage-kosten", permanent: true },
+      { source: "/ratgeber/heizstab-photovoltaik", destination: "/ratgeber/eigenverbrauch-erhoehen", permanent: true },
+
+      // --- Kurz-URLs und Synonyme ---
+      { source: "/agri-photovoltaik", destination: "/agri-pv", permanent: true },
+      { source: "/freiflaeche", destination: "/freiflaechen-photovoltaik", permanent: true },
+      { source: "/solarpark", destination: "/freiflaechen-photovoltaik", permanent: true },
+      { source: "/eza-regler", destination: "/technik/parkregler", permanent: true },
+      { source: "/parkregler", destination: "/technik/parkregler", permanent: true },
+      { source: "/scada", destination: "/technik/scada", permanent: true },
+      { source: "/wartung", destination: "/service/wartung", permanent: true },
+      { source: "/e-check", destination: "/service/e-check", permanent: true },
+      { source: "/reststromvermarktung", destination: "/service/direktvermarktung", permanent: true },
+      { source: "/energiegemeinschaft", destination: "/energiegemeinschaften", permanent: true },
+      { source: "/ehora", destination: "/standort-check", permanent: true },
+      { source: "/schneelast", destination: "/standort-check", permanent: true },
+      { source: "/award", destination: "/pv-award", permanent: true },
+      { source: "/elektriker-partner", destination: "/partner", permanent: true },
+      { source: "/gemeinden", destination: "/kommunen", permanent: true },
+      { source: "/hotellerie", destination: "/hotellerie-tourismus", permanent: true },
+      { source: "/leasing", destination: "/service/finanzierung", permanent: true },
+      { source: "/blackout", destination: "/service/notstrom", permanent: true },
 
       // --- Alte Einzelseiten ---
       {
@@ -107,7 +95,7 @@ const nextConfig = {
       // --- Kategorie-Einstiege ohne eigene Seite ---
       {
         source: "/service",
-        destination: "/dienstleistungen/photovoltaik",
+        destination: "/service/wartung",
         permanent: true,
       },
       {
@@ -117,7 +105,7 @@ const nextConfig = {
       },
       {
         source: "/produkte",
-        destination: "/produkte/photovoltaikanlage",
+        destination: "/technik",
         permanent: true,
       },
 
@@ -130,7 +118,7 @@ const nextConfig = {
       },
       {
         source: "/ueber-uns/:path*",
-        destination: "/uber-uns/team",
+        destination: "/uber-uns",
         permanent: true,
       },
       {
@@ -260,7 +248,7 @@ const nextConfig = {
 
   async rewrites() {
     return [
-      // Fediverse (ActivityPub): @oekovolt@oekovolt.de, @ratgeber@oekovolt.de
+      // Fediverse (ActivityPub): @oekovolt@oekovolt.com, @ratgeber@oekovolt.com
       { source: "/.well-known/webfinger", destination: "/api/ap/webfinger" },
       { source: "/.well-known/nodeinfo", destination: "/api/ap/nodeinfo" },
       { source: "/.well-known/host-meta", destination: "/api/ap/host-meta" },

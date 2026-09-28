@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock } from "lucide-react";
 import Fortsetzen from "@/components/Scan/Fortsetzen";
 import { fortsetzenInfo, tokenGueltig } from "@/lib/scan/backend";
+import { KONTAKT } from "@/data/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -33,8 +34,8 @@ export default async function FortsetzenSeite({ params }) {
               <Link href="/solarrechner" className="inline-flex h-12 items-center justify-center rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white hover:bg-ov-700">
                 Zum Solarrechner
               </Link>
-              <a href="tel:+498245967880" className="inline-flex h-12 items-center justify-center rounded-full px-6 text-[15px] font-semibold text-ink-800 ring-1 ring-inset ring-ink-200">
-                08245 96 788 0
+              <a href={KONTAKT.telefonHref} className="inline-flex h-12 items-center justify-center rounded-full px-6 text-[15px] font-semibold text-ink-800 ring-1 ring-inset ring-ink-200">
+                {KONTAKT.telefon}
               </a>
             </div>
           </div>

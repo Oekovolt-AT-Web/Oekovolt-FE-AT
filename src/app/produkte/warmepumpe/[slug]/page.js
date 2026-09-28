@@ -2,9 +2,10 @@
 
 import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import HerstellerDetail, { kuerzen } from "@/components/Produktdetail/HerstellerDetail";
+import HerstellerDetail, { istBelegterPartner, kuerzen } from "@/components/Produktdetail/HerstellerDetail";
 import { generateSlug } from "@/lib/slugify";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL } from "@/lib/site";
 
 
 // Use the single shared slug function so URLs match the sitemap exactly.
@@ -124,10 +125,11 @@ export async function generateMetadata({ params }) {
   // Jetzt den Hersteller mit dem Titel holen
   const manufacturer = await fetchManufacturerByName(item.title);
   const name = manufacturer?.title || item.title;
-  const url = `https://www.oekovolt.com/produkte/warmepumpe/${slug}`;
-  const title = `${name} Wärmepumpe: Produkte & Einbau | Ökovolt`;
+  const url = `${BASE_URL}/produkte/warmepumpe/${slug}`;
+  const langerTitel = `${name} Wärmepumpe: Planung & Einbau | Ökovolt`;
+  const title = langerTitel.length <= 60 ? langerTitel : `${name} Wärmepumpe | Ökovolt`;
   const description = kuerzen(
-    `${name} bei Ökovolt: ${manufacturer?.main_description || item.main_description || ""}`.trim(),
+    `${name} Wärmepumpe in Österreich – Planung und Einbau durch Ökovolt: ${manufacturer?.main_description || item.main_description || ""}`.trim(),
     155
   );
 
@@ -135,15 +137,17 @@ export async function generateMetadata({ params }) {
     title,
     description,
     alternates: { canonical: url, languages: hreflangLanguages(url) },
-    robots: { index: true, follow: true },
+    // Nur Marken mit belegter Zusammenarbeit in Österreich indexieren
+    robots: { index: istBelegterPartner(name), follow: true },
     openGraph: {
       type: "website",
+      locale: "de_AT",
       url,
       siteName: "Ökovolt Österreich",
       title,
       description,
       images: [{
-        url: "https://www.oekovolt.com/og-image.jpg",
+        url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: `${name} Wärmepumpe`

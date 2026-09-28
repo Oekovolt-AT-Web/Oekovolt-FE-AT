@@ -1,9 +1,10 @@
 // src/app/forderungen/steuerlich/page.js
+//
+// Steuerrecht Photovoltaik Österreich: IFB, Gewinnfreibetrag, AfA, USt,
+// Elektrizitätsabgabe, Land- und Forstwirtschaft, Kleinunternehmer, Private.
 
-import React from "react";
-import { BadgeEuro, Calculator, ClipboardCheck, FileText, Percent, Receipt, ScrollText, Zap } from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { hreflangLanguages } from "@/lib/hreflang";
+import Link from "next/link";
+import { Building2, Calculator, ClipboardCheck, FileText, Landmark, Percent, Receipt, Sun, Tractor } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -11,202 +12,103 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
-import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import SteuerCheck from "@/components/Forderungen/Steuerlich/SteuerCheck";
-import CmsProse from "@/components/Forderungen/Shared/CmsProse";
-import { Checkliste, Hinweis, HowTo, Kennzahlen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { Checkliste, Hinweis, HowTo, Kennzahlen, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { ENERGIEGEMEINSCHAFTEN, STAND, STEUER } from "@/components/Forderungen/Shared/bund";
+import { BASE_URL } from "@/lib/site";
+import { hreflangLanguages } from "@/lib/hreflang";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.steuerlich.api.get_steuerlich_data`;
+const PAGE_URL = `${BASE_URL}/forderungen/steuerlich`;
+const TITLE = "Photovoltaik & Steuer 2026: IFB 22 %, AfA, USt | Ökovolt";
+const DESCRIPTION = "PV und Steuer in Österreich 2026: Investitionsfreibetrag 22 %, AfA 20 Jahre, Elektrizitätsabgabe, Umsatzsteuer, Landwirtschaft und Private – mit IFB-Rechner.";
 
-async function fetchSteuerlichData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const STEUERLICH_PAGE_URL = "https://www.oekovolt.com/forderungen/steuerlich";
-const TITLE = "PV-Anlage steuerfrei: 0 % MwSt. & Steuerbefreiung | Ökovolt";
-const DESCRIPTION = "Photovoltaik & Steuer 2026: 0 % Umsatzsteuer, Einkommensteuerbefreiung bis 30 kWp je Einheit, Gewerbesteuer – mit Steuer-Check und Schritt-für-Schritt-Anleitung.";
-const KEYWORDS = [
-  "PV-Anlage steuerfrei",
-  "PV-Anlage Steuer",
-  "Photovoltaik Steuer",
-  "Photovoltaik steuerfrei",
-  "Nullsteuersatz Photovoltaik",
-  "Photovoltaikanlage Steuererklärung",
-  "§ 3 Nr. 72 EStG",
-  "Jahressteuergesetz 2024",
-  "Ökovolt",
-];
-
-export async function generateMetadata() {
-  const data = await fetchSteuerlichData();
-  const bannerData = data?.message?.banner;
-  const bild = bannerData?.image ? `/api/image?path=${bannerData.image}` : "/og-image.jpg";
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Investitionsfreibetrag Photovoltaik", "IFB 22 Prozent", "Photovoltaik Steuer Österreich", "PV Abschreibung Nutzungsdauer", "Elektrizitätsabgabe Eigenverbrauch", "Umsatzsteuer Photovoltaik 2026", "Photovoltaik Landwirtschaft Steuer"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
+    locale: "de_AT",
     title: TITLE,
     description: DESCRIPTION,
-    keywords: KEYWORDS,
-    alternates: { canonical: STEUERLICH_PAGE_URL, languages: hreflangLanguages(STEUERLICH_PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "article",
-      url: STEUERLICH_PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Österreich" }],
-    },
-    twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
-  };
-}
-
-const img = (p) => (p ? `/api/image?path=${p}` : "/Images/Jobs/jobs3.jpg");
-
-// Fachliche Korrekturen am CMS-Text (JStG 2024), bis der Eintrag im Backoffice angepasst ist
-const CMS_KORREKTUREN = [
-  [
-    "15 kWp pro Einheit bei Mehrfamilienhäusern",
-    "30 kWp pro Wohn- oder Gewerbeeinheit bei Mehrfamilienhäusern und gemischt genutzten Gebäuden (für Anlagen ab 2025; davor 15 kWp je Einheit) – insgesamt höchstens 100 kWp je Betreiber",
-  ],
-];
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Steuerliche Vorteile für Photovoltaik in Österreich" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
 const UEBERSICHT = [
-  {
-    art: "Umsatzsteuer beim Kauf",
-    regel: <><strong className="text-ov-700">0 %</strong> auf Lieferung und Installation von Modulen, Wechselrichter und Speicher</>,
-    grenze: "Wohngebäude, öffentliche und gemeinwohlorientierte Gebäude; bis 30 kWp ohne Nachweis",
-    norm: "§ 12 Abs. 3 UStG, seit 01.01.2023",
-    tun: "Nichts – der Installateur weist 0 % auf der Rechnung aus",
-  },
-  {
-    art: "Einkommensteuer",
-    regel: <><strong className="text-ov-700">steuerfrei</strong>: Einspeisevergütung und Stromverkauf</>,
-    grenze: "30 kWp je Wohn- oder Gewerbeeinheit, max. 100 kWp je Betreiber (Freigrenze)",
-    norm: "§ 3 Nr. 72 EStG, erweitert durch JStG 2024",
-    tun: "Keine Anlage EÜR, keine Gewinnermittlung",
-  },
-  {
-    art: "Gewerbesteuer",
-    regel: <><strong className="text-ov-700">befreit</strong>, wenn die Einkommensteuerbefreiung greift</>,
-    grenze: "gekoppelt an § 3 Nr. 72 EStG",
-    norm: "§ 3 Nr. 32 GewStG",
-    tun: "Keine Gewerbesteuererklärung für die Anlage",
-  },
-  {
-    art: "Umsatzsteuer im Betrieb",
-    regel: "Kleinunternehmerregelung: keine Umsatzsteuer auf die Einspeisevergütung",
-    grenze: "Umsatz Vorjahr ≤ 25.000 €, laufendes Jahr ≤ 100.000 €",
-    norm: "§ 19 UStG (seit 2025)",
-    tun: "Meist gilt sie automatisch – ein Fragebogen zur steuerlichen Erfassung ist in der Regel nicht nötig",
-  },
-];
-
-const BEISPIELE = [
-  { fall: "Einfamilienhaus, 10 kWp + 8 kWh Speicher", ust: "0 %", est: "steuerfrei", hinweis: "Der Standardfall: keine Steuererklärung für die Anlage nötig." },
-  { fall: "Mehrfamilienhaus mit 6 Wohnungen, 60 kWp (ab 2025)", ust: "0 %", est: "steuerfrei", hinweis: "Grenze 6 × 30 = 180 kWp, gedeckelt auf 100 kWp je Betreiber." },
-  { fall: "Wohnhaus + Garage/Carport, zusammen 28 kWp", ust: "0 %", est: "steuerfrei", hinweis: "Nebengebäude auf dem Wohngrundstück sind begünstigt." },
-  { fall: "Gewerbehalle mit einer Einheit, 50 kWp", ust: "19 %", est: "steuerpflichtig", hinweis: "Über 30 kWp je Einheit – Vorsteuerabzug und Abschreibung nutzen." },
-  { fall: "Landwirt: Wohnhaus 15 kWp + Scheune 90 kWp", ust: "0 % / 19 %", est: "steuerpflichtig", hinweis: "Zusammen 105 kWp – über 100 kWp entfällt die Befreiung für beide Anlagen." },
+  { art: "Investitionsfreibetrag (IFB)", regel: <><strong className="text-ov-700">22 %</strong> für PV, Speicher, Ladestationen (Öko); sonst 20 %</>, grenze: `Anschaffung ${STEUER.ifb.zeitraum}; max. 1 Mio. € Bemessungsgrundlage je Wirtschaftsjahr; ab 2027 wieder 15 % bzw. 10 %`, norm: "§ 11 EStG; § 124b Z 480 EStG; Öko-IFB-VO BGBl. II Nr. 155/2023", fuer: "Unternehmen, Landwirtschaft mit Gewinnermittlung" },
+  { art: "Gewinnfreibetrag", regel: "Grundfreibetrag 15 % des Gewinns bis 33.000 €", grenze: "investitionsbedingt 13 % über 33.000 €; insgesamt max. 46.400 €; nicht zusätzlich zum IFB für dasselbe Wirtschaftsgut", norm: "§ 10 EStG", fuer: "natürliche Personen mit betrieblichen Einkünften" },
+  { art: "Abschreibung (AfA)", regel: "Nutzungsdauer 20 Jahre linear oder degressiv mit max. 30 %", grenze: "Halbjahres-AfA bei Inbetriebnahme im 2. Halbjahr", norm: "§ 7 EStG; EStR 2000; PV-Erlass 30.07.2025", fuer: "alle betrieblichen Anlagen" },
+  { art: "Umsatzsteuer", regel: <><strong className="text-ov-700">20 %</strong> – Vorsteuerabzug für Unternehmer</>, grenze: "0-%-Satz für PV bis 35 kWp endete mit 31.03.2025", norm: "§ 10 UStG; § 28 Abs. 62 UStG (ausgelaufen)", fuer: "alle Käufer; Vorsteuerabzug nur für Unternehmer" },
+  { art: "Elektrizitätsabgabe", regel: <><strong className="text-ov-700">befreit</strong> für selbst erzeugten und verbrauchten Ökostrom</>, grenze: "ohne Mengengrenze; Anzeige beim Finanzamt; Einspeisung nicht steuerbar", norm: "§ 2 Abs. 1 Z 4 ElAbgG; ElAbg-ESBV", fuer: "alle Betreiber, auch EEG-Mitglieder" },
+  { art: "Einkommensteuer Private", regel: "Einspeiseerlöse steuerfrei bis 12.500 kWh je Person und Jahr", grenze: "Anlage max. 35 kWp Engpass- und 25 kW Anschlussleistung", norm: "§ 3 Abs. 1 Z 39 EStG", fuer: "Private ohne Betriebszuordnung" },
+  { art: "Kleinunternehmer", regel: "USt-befreit bis 55.000 € Bruttoumsatz", grenze: "10 % Toleranz; Einspeisung an Energieversorger im Reverse Charge", norm: "§ 6 Abs. 1 Z 27 UStG; § 19 Abs. 1d UStG", fuer: "kleine Betreiber, Vereine" },
 ];
 
 const FAQ = [
   {
-    q: "Ist eine PV-Anlage 2026 wirklich komplett steuerfrei?",
-    a: "Für die allermeisten privaten Anlagen ja. Beim Kauf fallen nach § 12 Abs. 3 UStG 0 % Umsatzsteuer an, die Erträge sind nach § 3 Nr. 72 EStG bis 30 kWp je Wohn- oder Gewerbeeinheit (höchstens 100 kWp je Betreiber) einkommensteuerfrei, und die Gewerbesteuer entfällt ebenfalls. Eine Steuererklärung für die Anlage ist dann nicht nötig.",
+    q: "Wie hoch ist der Investitionsfreibetrag für Photovoltaik 2026?",
+    a: `Für PV-Anlagen, Stromspeicher und E-Ladestationen beträgt der Investitionsfreibetrag 22 %, wenn sie zwischen 01.11.2025 und 31.12.2026 angeschafft oder hergestellt werden. Danach gilt wieder der reguläre Öko-Satz von 15 %. Bemessungsgrundlage sind die Anschaffungskosten bis 1 Mio. € je Wirtschaftsjahr; der IFB wird zusätzlich zur Abschreibung als Betriebsausgabe abgezogen (${STEUER.ifb.norm}).`,
   },
   {
-    q: "Muss ich meine PV-Anlage beim Finanzamt anmelden?",
-    a: "In der Regel nicht. Wer die Einkommensteuerbefreiung und die Kleinunternehmerregelung nutzt, muss laut Finanzverwaltung keinen Fragebogen zur steuerlichen Erfassung abgeben. Pflicht bleiben dagegen die Anmeldung beim Netzbetreiber und die Registrierung im Marktstammdatenregister innerhalb eines Monats nach Inbetriebnahme.",
+    q: "Gilt 2026 noch der 0-%-Umsatzsteuersatz für PV-Anlagen?",
+    a: "Nein. Der Nullsteuersatz für PV-Module bis 35 kWp (§ 28 Abs. 62 UStG) wurde mit dem Budgetsanierungsmaßnahmengesetz 2025 beendet und galt nur bis 31.03.2025 – für Verträge bis 06.03.2025 bei Lieferung bis 31.12.2025. 2026 fallen 20 % Umsatzsteuer an. Unternehmer holen sie sich als Vorsteuer zurück.",
   },
   {
-    q: "Gilt der Nullsteuersatz auch für einen nachgerüsteten Speicher?",
-    a: "Ja. Batteriespeicher sind auch dann mit 0 % begünstigt, wenn sie später zu einer bestehenden Anlage dazugekauft werden. Gleiches gilt für Wechselrichter, Unterkonstruktion und die Montage. Nicht begünstigt sind dagegen Wallbox und Wärmepumpe – dort fallen 19 % an.",
+    q: "Wie lange wird eine PV-Anlage abgeschrieben?",
+    a: "Die Finanzverwaltung setzt für Photovoltaikanlagen eine Nutzungsdauer von 20 Jahren an, also 5 % linear pro Jahr. Alternativ ist die degressive AfA mit bis zu 30 % vom Restbuchwert zulässig. Bei Inbetriebnahme im zweiten Halbjahr steht im ersten Jahr nur die halbe AfA zu.",
   },
   {
-    q: "Was passiert, wenn meine Anlage größer als 30 kWp ist?",
-    a: "Die Grenze nach § 3 Nr. 72 EStG ist eine Freigrenze: Wird sie überschritten, sind alle Erträge der Anlage steuerpflichtig – nicht nur der Teil darüber. Dann ermitteln Sie den Gewinn per Einnahmen-Überschuss-Rechnung und schreiben die Anlage über 20 Jahre ab. Bei Mehrfamilienhäusern zählt die Grenze je Einheit, bis maximal 100 kWp.",
+    q: "Muss ich für selbst verbrauchten Solarstrom Elektrizitätsabgabe zahlen?",
+    a: "Nein. Selbst erzeugter und selbst verbrauchter Strom aus erneuerbaren Quellen ist nach § 2 Abs. 1 Z 4 ElAbgG ohne Mengengrenze befreit – auch Strom, der innerhalb einer Erneuerbare-Energie-Gemeinschaft verbraucht wird. Voraussetzung sind eine Anzeige beim Finanzamt und Aufzeichnungen über Erzeugung und Verbrauch.",
   },
   {
-    q: "Muss ich den selbst verbrauchten Solarstrom versteuern?",
-    a: "Nein. Seit dem Nullsteuersatz fällt auf den Eigenverbrauch keine Umsatzsteuer (unentgeltliche Wertabgabe) mehr an, und einkommensteuerlich ist er bei befreiten Anlagen ohnehin irrelevant.",
+    q: "Wie wird eine PV-Anlage in der Land- und Forstwirtschaft besteuert?",
+    a: "Eine Volleinspeise-Anlage ist immer ein eigener Gewerbebetrieb. Bei Überschusseinspeisung liegt ein land- und forstwirtschaftlicher Nebenbetrieb vor, wenn mehr Strom im Betrieb verbraucht wird als privat verbraucht und eingespeist zusammen – sonst ebenfalls ein Gewerbebetrieb. Pauschalierte Betriebe versteuern die Einspeisung umsatzsteuerlich mit 13 %. Bei pauschaler Gewinnermittlung steht kein Investitionsfreibetrag zu.",
   },
   {
-    q: "Brauche ich für eine PV-Anlage ein Gewerbe?",
-    a: "Steuerlich ist für befreite Anlagen kein Gewerbe nötig. Ob eine Gewerbeanmeldung verlangt wird, ist Gewerberecht und wird von Kommunen unterschiedlich gehandhabt – bei kleinen, steuerfreien Anlagen in der Regel nicht. Im Zweifel kurz beim Gewerbeamt nachfragen.",
+    q: "Sind Einspeiseerlöse für Private steuerfrei?",
+    a: "Ja, bis 12.500 kWh eingespeisten Stroms je Person und Jahr, wenn die Anlage höchstens 35 kWp Engpass- und 25 kW Anschlussleistung hat (§ 3 Abs. 1 Z 39 EStG). Darüber ist nur der übersteigende Teil steuerpflichtig.",
   },
   {
-    q: "Lohnt sich der Verzicht auf die Kleinunternehmerregelung noch?",
-    a: "Früher ließ man sich oft zur Regelbesteuerung umstellen, um die 19 % Vorsteuer vom Kaufpreis zurückzubekommen. Durch den Nullsteuersatz gibt es beim Kauf keine Umsatzsteuer mehr – der Verzicht bringt privaten Betreibern daher meist nur noch Aufwand.",
+    q: "Kürzt der EAG-Investitionszuschuss die Abschreibung?",
+    a: "Steuerfreie Zuschüsse aus öffentlichen Mitteln kürzen grundsätzlich die Anschaffungskosten – damit sinken AfA und Bemessungsgrundlage des IFB entsprechend. Die genaue Behandlung Ihres Falls stimmen Sie mit Ihrer Steuerberatung ab; unser IFB-Rechner berücksichtigt den Zuschuss bereits.",
   },
 ];
 
-export default async function Steuerlich() {
-  const response = await fetchSteuerlichData();
-  const data = response?.message;
-  const banner = data?.banner;
-  const body = data?.body;
-
-  const webPageSchema = {
+export default function Steuerlich() {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": `${STEUERLICH_PAGE_URL}/#webpage`,
-    url: STEUERLICH_PAGE_URL,
-    name: banner?.title || "Steuerliche Förderungen für Photovoltaik | Ökovolt Österreich",
+    "@id": `${PAGE_URL}/#webpage`,
+    url: PAGE_URL,
+    name: "Photovoltaik und Steuer in Österreich 2026",
     description: DESCRIPTION,
     inLanguage: "de-AT",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: "2026-09-13",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${BASE_URL}/#organization` },
+    dateModified: STAND.iso,
   };
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        breadcrumbs={[{ name: "Förderungen" }, { name: "Steuerliche Vorteile" }]}
-        eyebrow="Photovoltaik & Steuer · Stand 2026"
-        title={<>PV-Anlage <span className="ov-text-gradient">steuerfrei</span> betreiben</>}
-        lead="0 % Umsatzsteuer beim Kauf, keine Einkommensteuer auf die Erträge, keine Gewerbesteuer: So funktionieren die Steuervorteile für Photovoltaik – und wann sie nicht greifen."
-        image={{ src: img(banner?.image), alt: banner?.image_alt_text || "Monteure installieren Solarmodule auf einem Dach" }}
-        points={["0 % MwSt. auf Anlage & Speicher", "Steuerfrei bis 30 kWp je Einheit", "Keine Steuererklärung nötig", "Mit interaktivem Steuer-Check"]}
+        breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Steuerliche Vorteile" }]}
+        eyebrow={`Photovoltaik & Steuer · Rechtsstand ${STAND.kurz}`}
+        title={<>Photovoltaik und Steuer: <span className="ov-text-gradient">22 % Investitionsfreibetrag</span> bis Jahresende</>}
+        lead="Für Unternehmen ist 2026 steuerlich ein Ausnahmejahr: Der Investitionsfreibetrag für PV, Speicher und Ladestationen liegt noch bis 31.12.2026 bei 22 %. Dazu kommen Abschreibung, Vorsteuerabzug und die Befreiung von der Elektrizitätsabgabe – hier mit Paragraph, Grenze und IFB-Rechner."
+        image={{ src: "/Images/Referenzen/Projekte-1.jpg", alt: "Photovoltaikanlage auf einem Betriebsgebäude" }}
+        points={["IFB 22 % bis 31.12.2026", "AfA 20 Jahre oder 30 % degressiv", "Elektrizitätsabgabe befreit", "Mit IFB-Rechner"]}
         actions={[
-          { label: "Angebot mit 0 % MwSt.", href: "/angebot" },
-          { label: "Zum Steuer-Check", href: "#steuer-check", icon: Calculator },
+          { label: "Projekt anfragen", href: "/angebot" },
+          { label: "Zum IFB-Rechner", href: "#ifb-rechner", icon: Calculator },
         ]}
         badge={
           <div className="flex items-center gap-4">
@@ -214,10 +116,8 @@ export default async function Steuerlich() {
               <Percent aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
-                19 % <span className="text-[14px] font-semibold text-ink-500">gespart</span>
-              </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">durch den Nullsteuersatz auf die Rechnung</p>
+              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">22 %</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">IFB für Anschaffung bis 31.12.2026</p>
             </div>
           </div>
         }
@@ -225,19 +125,18 @@ export default async function Steuerlich() {
 
       <Kennzahlen
         items={[
-          { wert: "0 %", label: "Umsatzsteuer auf PV & Speicher" },
-          { wert: "30 kWp", label: "steuerfrei je Wohn- oder Gewerbeeinheit" },
-          { wert: "100 kWp", label: "Obergrenze je Betreiber" },
-          { wert: "0 €", label: "Gewerbesteuer bei befreiten Anlagen" },
+          { wert: "22 %", label: "IFB für PV, Speicher, Ladestationen" },
+          { wert: "20 Jahre", label: "Nutzungsdauer laut Finanzverwaltung" },
+          { wert: "0 €", label: "Elektrizitätsabgabe auf Eigenverbrauch" },
+          { wert: "20 %", label: "USt – der 0-%-Satz ist ausgelaufen" },
         ]}
       />
 
-      {/* Steuer-Check */}
-      <Section tone="sand" space="lg" id="steuer-check" className="scroll-mt-24">
+      <Section tone="sand" space="lg" id="ifb-rechner" className="scroll-mt-24">
         <SectionHeading
-          eyebrow="Interaktiver Steuer-Check"
-          title={<>Ist Ihre Anlage <span className="ov-text-gradient">steuerfrei</span>?</>}
-          lead="Gebäude, Leistung und Kosten einstellen – Sie sehen sofort, welche Steuerregeln für Ihre Anlage gelten und wie viel der Nullsteuersatz spart."
+          eyebrow="IFB-Rechner"
+          title={<>Was bringt der <span className="ov-text-gradient">Investitionsfreibetrag</span> Ihrem Betrieb?</>}
+          lead="Anschaffungskosten, Förderung und Rechtsform eingeben – Sie sehen IFB, Abschreibung und Steuerwirkung im ersten Jahr."
           align="center"
           className="mb-12"
         />
@@ -246,187 +145,147 @@ export default async function Steuerlich() {
         </Reveal>
       </Section>
 
-      {/* Überblick */}
       <Section tone="white" space="lg">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             eyebrow="Die Regeln auf einen Blick"
-            title={body?.title || "Photovoltaik Steuer 2026: Nullsteuersatz, Steuerbefreiung & Meldepflichten"}
-            lead="Seit 2023 ist der Betrieb einer privaten Photovoltaikanlage in Deutschland weitgehend steuerfrei. Vier Regeln entscheiden darüber – hier mit Grenze, Rechtsgrundlage und dem, was Sie tatsächlich tun müssen."
+            title="Photovoltaik-Steuerrecht 2026 in sieben Zeilen"
+            lead="Welche Regel gilt, mit welcher Grenze, auf welcher Rechtsgrundlage – und für wen."
           />
-          <StandPille className="shrink-0 self-start md:self-auto">Rechtsstand September 2026</StandPille>
+          <StandPille className="shrink-0 self-start md:self-auto">Rechtsstand {STAND.label}</StandPille>
         </div>
         <Reveal>
           <Tabelle
-            caption="Steuerregeln für Photovoltaikanlagen 2026"
+            dicht
+            caption={`Steuerregeln für Photovoltaikanlagen in Österreich, Stand ${STAND.label}`}
             spalten={[
-              { key: "art", label: "Steuerart", breite: "w-[17%]" },
+              { key: "art", label: "Thema", breite: "w-[15%]" },
               { key: "regel", label: "Regel" },
-              { key: "grenze", label: "Grenze" },
-              { key: "norm", label: "Rechtsgrundlage", breite: "w-[16%]", className: "text-[14px]" },
-              { key: "tun", label: "Ihr Aufwand" },
+              { key: "grenze", label: "Grenze / Voraussetzung" },
+              { key: "norm", label: "Rechtsgrundlage", breite: "w-[17%]", className: "text-[14px]" },
+              { key: "fuer", label: "Für wen", breite: "w-[15%]" },
             ]}
             zeilen={UEBERSICHT}
           />
         </Reveal>
+        <Hinweis titel="0 % Umsatzsteuer ist Geschichte" ton="warn" className="mt-8">
+          {STEUER.ust} Angebote, die 2026 noch mit 0 % werben, sind falsch. Für Unternehmer ändert sich wenig, weil sie die Vorsteuer abziehen; für Private und Gemeinden im Hoheitsbereich ist die Umsatzsteuer ein echter Kostenfaktor.
+        </Hinweis>
       </Section>
 
-      {/* Nullsteuersatz: was zählt */}
+      {/* Nach Zielgruppe */}
       <Section tone="sand" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Nullsteuersatz im Detail"
-            title="Was 0 % Umsatzsteuer bekommt – und was nicht"
-            lead="Der Nullsteuersatz nach § 12 Abs. 3 UStG gilt für die Lieferung und Installation der Anlage und ihrer wesentlichen Komponenten an den Betreiber. Entscheidend ist, was auf der Rechnung steht."
-          >
-            <Hinweis titel="Achtung bei Miete und Pacht" className="mt-8">
-              Wer eine Anlage mietet oder pachtet, zahlt auf die Raten in der Regel 19 % – der Nullsteuersatz gilt nur für die Lieferung, also den Kauf.
-            </Hinweis>
-          </SectionHeading>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Reveal className="rounded-3xl bg-white p-6 ring-1 ring-ov-200 md:p-7">
-              <p className="flex items-center gap-2 font-display text-[18px] font-bold text-ov-700">
-                <BadgeEuro aria-hidden="true" className="h-5 w-5" /> 0 % Umsatzsteuer
+        <SectionHeading eyebrow="Nach Zielgruppe" title="Was für Unternehmen, Landwirtschaft, Gemeinden und Private gilt" className="mb-10" />
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            {
+              icon: Building2,
+              titel: "Unternehmen",
+              punkte: ["IFB 22 % zusätzlich zur AfA (Anschaffung bis 31.12.2026)", "Vorsteuerabzug aus 20 % USt", "Elektrizitätsabgabe auf Eigenverbrauch entfällt", "IFB schließt den investitionsbedingten Gewinnfreibetrag für dasselbe Wirtschaftsgut aus", "Behaltefrist 4 Jahre, sonst Nachversteuerung"],
+              link: { href: "/gewerbe", label: "Photovoltaik für Gewerbe und Industrie" },
+            },
+            {
+              icon: Tractor,
+              titel: "Land- und Forstwirtschaft",
+              punkte: ["Volleinspeisung = eigener Gewerbebetrieb", "Überschusseinspeisung mit überwiegend betrieblichem Verbrauch = Nebenbetrieb", "Nebenbetriebs-Einkünfte zählen nicht zur 55.000-€-Grenze der LuF-PauschVO 2015", "USt-Pauschalierung: Einspeisung 13 %, Privatentnahme 10 %", "Bei pauschaler Gewinnermittlung kein IFB"],
+              link: { href: "/landwirtschaft", label: "Photovoltaik für die Landwirtschaft" },
+            },
+            {
+              icon: Landmark,
+              titel: "Gemeinden",
+              punkte: ["Einordnung: Hoheitsbereich oder Betrieb gewerblicher Art – entscheidet über den Vorsteuerabzug", "Eigenverbrauch in Gemeindegebäuden von der Elektrizitätsabgabe befreit", "Energiegemeinschaft mit Bürgern: Gewinnerzielung nicht im Vordergrund", "Vergabe nach Bundesvergabegesetz beachten"],
+              link: { href: "/kommunen", label: "Photovoltaik für Gemeinden" },
+            },
+            {
+              icon: Sun,
+              titel: "Private",
+              punkte: ["20 % USt ohne Vorsteuerabzug", "Einspeiseerlöse bis 12.500 kWh je Person steuerfrei (Anlage bis 35 kWp)", "Eigenverbrauch abgabenfrei", "Keine AfA und kein IFB ohne betriebliche Nutzung"],
+              link: { href: "/forderungen/landesforderungen", label: "Landesförderungen für Private" },
+            },
+          ].map((z, i) => (
+            <Reveal key={z.titel} delay={(i % 2) * 70} className="flex flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
+              <p className="flex items-center gap-2 font-display text-[20px] font-bold text-ink-900">
+                <z.icon aria-hidden="true" className="h-5 w-5 text-ov-600" /> {z.titel}
               </p>
-              <Checkliste
-                className="mt-5"
-                items={[
-                  "Solarmodule, auch Balkonkraftwerke",
-                  "Wechselrichter und Energiemanager",
-                  "Batteriespeicher – auch nachgerüstet",
-                  "Unterkonstruktion und Solarkabel",
-                  "Montage, Gerüst und Anschluss als Teil der Installation",
-                  "Notstrom- bzw. Backup-Einheit der Anlage",
-                ]}
-              />
+              <Checkliste className="mt-5" items={z.punkte} />
+              <Link href={z.link.href} className="mt-auto pt-6 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">{z.link.label}</Link>
             </Reveal>
-            <Reveal delay={80} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
-              <p className="flex items-center gap-2 font-display text-[18px] font-bold text-ink-700">
-                <Receipt aria-hidden="true" className="h-5 w-5" /> 19 % Umsatzsteuer
-              </p>
-              <Checkliste
-                variante="nein"
-                className="mt-5"
-                items={[
-                  "Wallbox fürs E-Auto",
-                  "Wärmepumpe und Heizstab",
-                  "Dachsanierung oder neue Eindeckung",
-                  "Miete, Pacht oder Leasing der Anlage",
-                  "Spätere Wartung und Reparaturarbeiten",
-                  "Gewerbedach über 30 kWp ohne Wohnbezug",
-                ]}
-              />
-            </Reveal>
-          </div>
+          ))}
         </div>
       </Section>
 
-      {/* CMS-Text */}
-      {body?.rules && (
-        <Section tone="white" space="lg">
-          <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
-            <Reveal as="article">
-              <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
-                Im Detail erklärt
-              </p>
-              <h2 className="ov-h2 mt-4 text-ink-900">Steuerregeln für private Betreiber</h2>
-              {body?.description && <p className="ov-lead mt-5 text-ink-600">{body.description}</p>}
-              <CmsProse html={body.rules} korrekturen={CMS_KORREKTUREN} className="mt-8" />
-            </Reveal>
-            <aside className="lg:sticky lg:top-28 lg:self-start">
-              <div className="rounded-3xl bg-navy-950 p-6 text-white md:p-7">
-                <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">Merksätze</p>
-                <Checkliste
-                  dark
-                  className="mt-5"
-                  items={[
-                    "0 % gilt nur für den Kauf – nicht für Miete.",
-                    "30 kWp je Einheit, 100 kWp je Betreiber.",
-                    "Grenze überschritten = ganze Anlage steuerpflichtig.",
-                    "Marktstammdatenregister ist trotzdem Pflicht.",
-                  ]}
-                />
-              </div>
-              <p className="mt-4 px-2 text-[12.5px] leading-relaxed text-ink-500">
-                Allgemeine Information, keine Steuerberatung. Im Einzelfall – etwa bei Vermietung, Gewerbe oder mehreren Anlagen – empfehlen wir eine steuerliche Beratung.
-              </p>
-            </aside>
-          </div>
-        </Section>
-      )}
-
-      {/* Beispiele */}
-      <Section tone="sand" space="lg">
+      {/* Beispiel */}
+      <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow="Typische Konstellationen"
-          title="So werden gängige Anlagen besteuert"
-          lead="Fünf Fälle aus der Praxis – für Anlagen, die ab 2025 in Betrieb gehen."
+          eyebrow="Rechenbeispiel"
+          title="GmbH, 200.000 € Anschaffungskosten, Inbetriebnahme November 2026"
+          lead="Beispielwerte zur Veranschaulichung – ohne EAG-Zuschuss, lineare AfA, KöSt 23 %."
           className="mb-10"
         />
         <Reveal>
           <Tabelle
-            caption="Beispiele zur Besteuerung von Photovoltaikanlagen"
+            dicht
+            caption="Beispielrechnung Investitionsfreibetrag und AfA"
             spalten={[
-              { key: "fall", label: "Anlage", breite: "w-[30%]" },
-              { key: "ust", label: "Umsatzsteuer", breite: "w-[13%]", className: "font-display font-bold text-ink-900" },
-              { key: "est", label: "Einkommensteuer", breite: "w-[16%]", className: "font-display font-bold text-ink-900" },
-              { key: "hinweis", label: "Warum" },
+              { key: "pos", label: "Position", breite: "w-[34%]" },
+              { key: "rechnung", label: "Rechnung" },
+              { key: "betrag", label: "Betrag", className: "font-display font-bold text-ov-700" },
             ]}
-            zeilen={BEISPIELE}
+            zeilen={[
+              { pos: "Investitionsfreibetrag", rechnung: "200.000 € × 22 %", betrag: "44.000 €" },
+              { pos: "AfA 1. Jahr (Halbjahres-AfA)", rechnung: "200.000 € ÷ 20 Jahre × ½", betrag: "5.000 €" },
+              { pos: "Betriebsausgaben 1. Jahr", rechnung: "IFB + AfA", betrag: "49.000 €" },
+              { pos: "Steuerwirkung 1. Jahr", rechnung: "49.000 € × 23 % KöSt", betrag: "11.270 €" },
+              { pos: "Vergleich: Anschaffung 2027", rechnung: "200.000 € × 15 % IFB + 5.000 € AfA, × 23 %", betrag: "8.050 €" },
+            ]}
           />
         </Reveal>
+        <p className="mt-5 max-w-3xl text-[14.5px] leading-relaxed text-ink-600">
+          Entscheidend ist der Zeitpunkt der Anschaffung bzw. Fertigstellung. Wer 2026 noch profitieren will, braucht einen realistischen Bauzeitplan – mehr dazu im Ratgeber{" "}
+          <Link href="/ratgeber/investitionsfreibetrag-photovoltaik" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Investitionsfreibetrag für Photovoltaik</Link>.
+        </p>
       </Section>
 
-      {/* HowTo */}
-      <Section tone="white" space="lg">
+      <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading
             eyebrow="Schritt für Schritt"
-            title="Steuerlich richtig starten: Ihre PV-Anlage in 5 Schritten"
-            lead="Von der Rechnung bis zur Ablage – so bleibt Ihre Anlage sauber steuerfrei. Die Anmeldungen bei Netzbetreiber und Marktstammdatenregister übernehmen wir für unsere Kunden."
+            title="Steuerlich richtig umsetzen"
+            lead="Die fünf Punkte, die wir mit Ihrer Steuerberatung abstimmen – von der Bestellung bis zur Behaltefrist."
             className="lg:sticky lg:top-28 lg:self-start"
           />
           <HowTo
-            name="PV-Anlage steuerlich richtig anmelden und steuerfrei betreiben"
-            beschreibung="Anleitung für private Betreiber einer Photovoltaikanlage in Deutschland (Rechtsstand 2026)."
-            dauer="P30D"
+            name="PV-Anlage im Betrieb steuerlich richtig umsetzen"
+            beschreibung={`Anleitung für Unternehmen in Österreich, Rechtsstand ${STAND.label}.`}
             schritte={[
-              { icon: FileText, name: "Rechnung mit 0 % prüfen", text: "Das Angebot und die Schlussrechnung weisen für Module, Speicher und Montage 0 % Umsatzsteuer mit Hinweis auf § 12 Abs. 3 UStG aus. Separat berechnete Wallbox oder Wärmepumpe tragen 19 %." },
-              { icon: Zap, name: "Anlage beim Netzbetreiber anmelden", text: "Vor der Inbetriebnahme meldet der Fachbetrieb die Anlage beim örtlichen Netzbetreiber an – Voraussetzung für Zähler und Einspeisevergütung." },
-              { icon: ClipboardCheck, name: "Marktstammdatenregister innerhalb eines Monats", text: "Anlage und Speicher binnen eines Monats nach Inbetriebnahme im Marktstammdatenregister der Bundesnetzagentur registrieren. Ohne Eintrag kann die Vergütung zurückgehalten werden." },
-              { icon: ScrollText, name: "Befreiung prüfen – Finanzamt meist nicht nötig", text: "Liegt die Anlage innerhalb der Grenzen des § 3 Nr. 72 EStG und gilt die Kleinunternehmerregelung, ist kein Fragebogen zur steuerlichen Erfassung und keine Anlage EÜR erforderlich." },
-              { icon: Receipt, name: "Unterlagen aufbewahren", text: "Rechnungen, Inbetriebnahmeprotokoll, MaStR-Bestätigung und Abrechnungen des Netzbetreibers aufheben – sie belegen die Befreiung und helfen beim späteren Verkauf der Immobilie." },
+              { icon: ClipboardCheck, name: "Anschaffungszeitpunkt planen", text: "Für 22 % IFB muss die Anlage bis 31.12.2026 angeschafft bzw. hergestellt sein. Bauzeit, Netzanschluss und Lieferzeiten realistisch einplanen." },
+              { icon: Receipt, name: "Förderung und Anschaffungskosten abstimmen", text: "EAG-Zuschuss und Landesförderung kürzen die Anschaffungskosten. Rechnungen getrennt nach PV, Speicher und Ladestation ausweisen lassen." },
+              { icon: FileText, name: "IFB und AfA in der Steuererklärung", text: "IFB im Jahr der Anschaffung geltend machen und im Anlagenverzeichnis ausweisen; lineare oder degressive AfA wählen." },
+              { icon: Percent, name: "Befreiung von der Elektrizitätsabgabe anzeigen", text: "Eigenerzeugung aus Erneuerbaren beim Finanzamt anzeigen und Erzeugung sowie Eigenverbrauch aufzeichnen." },
+              { icon: Building2, name: "Behaltefrist dokumentieren", text: "Die Anlage 4 Jahre im inländischen Betrieb halten – bei Verkauf oder Verbringung ins Ausland wird der IFB nachversteuert." },
             ]}
           />
         </div>
       </Section>
 
-      <SolarrechnerTeaser
-        href="/solarrechner"
-        cta="Zum Solarrechner"
-        titel="Steuerfrei – und wie viel bringt die Anlage?"
-        text="Mit 0 % Umsatzsteuer rechnet sich Ihre Anlage schneller. Der Solarrechner zeigt Ertrag, Ersparnis und Amortisation für Ihr Dach."
-      />
-
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Photovoltaik und Steuern – kurz & ehrlich"
-            lead="Allgemeine Information nach Rechtsstand September 2026. Für Ihren Einzelfall ist eine Steuerberatung verbindlich."
-          />
+          <SectionHeading eyebrow="Häufige Fragen" title="Photovoltaik und Steuer – kurz beantwortet" lead={`Allgemeine Information nach Rechtsstand ${STAND.label}. Verbindlich ist die Beratung durch Ihre Steuerberatung.`} />
           <Faq items={FAQ} />
         </div>
       </Section>
 
+      <Section tone="sand" space="md">
+        <Quellen stand={STAND.label} quellen={[...STEUER.quellen, ENERGIEGEMEINSCHAFTEN.quellen[2]]} hinweis="Allgemeine Information, keine Steuerberatung. Für Vermietung, Landwirtschaft, Gemeinden und mehrere Anlagen empfehlen wir die Abstimmung mit Ihrer Steuerberatung." />
+      </Section>
+
       <Querverweise pfad="/forderungen/steuerlich" />
       <CtaBand
-        eyebrow="Kostenlos & unverbindlich"
-        title="Ihre Anlage – mit 0 % Umsatzsteuer und allen Anmeldungen."
-        text="Wir planen Ihre Anlage so, dass sie steuerlich im grünen Bereich bleibt, und übernehmen Netzanmeldung und Marktstammdatenregister für Sie."
-        primary={{ label: "Angebot anfragen", href: "/angebot" }}
-        secondary={{ label: "Förder-Check starten", href: "/foerdercheck" }}
+        eyebrow="Noch 2026 umsetzen"
+        title="Mit 22 % IFB bauen – solange es geht."
+        text="Wir planen Ihre Anlage mit einem Bauzeitplan, der zur Frist passt, und liefern die Unterlagen, die Ihre Steuerberatung für IFB, AfA und Förderung braucht."
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
+        secondary={{ label: "Bundesförderung ansehen", href: "/forderungen/bundesfoerderung" }}
       />
     </div>
   );

@@ -1,19 +1,13 @@
-import { getBaseUrl, isBuilding } from "@/lib/baseUrl"
+// src/lib/api/forderungen/landesforderungen_api.js
+//
+// Landesförderungen Österreich. Die Daten liegen statisch im Code – deshalb
+// kein HTTP-Umweg über die eigene API-Route, sondern direkter Import.
 
-// src/lib/api/landesforderungen.js
+import { alleBundeslaender, STAND } from "@/data/bundeslaender";
+
 export async function getLandesforderungen() {
-  // Skip during build
-  if (isBuilding()) {
-    return { message: null };
-  }
-
-  const baseUrl = getBaseUrl();
-  const url = `${baseUrl}/api/forderungen/landesforderungen`;
-  
-  const res = await fetch(url);
-
-  if (!res.ok) return null;
-
-  const data = await res.json();
-    return data;
+  return {
+    stand: STAND,
+    laender: alleBundeslaender().map((l) => ({ key: l.key, name: l.name, slug: l.slug, kurz: l.kurz, foerderart: l.foerderart })),
+  };
 }

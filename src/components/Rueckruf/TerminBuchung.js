@@ -1,5 +1,6 @@
 "use client";
 
+import { FIRMA } from "@/lib/site";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,8 +18,8 @@ const ICONS = { Phone, Video, MapPin };
 const SCHRITTE = ["Art", "Termin", "Kontakt"];
 
 const langDatum = (iso) =>
-  new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", weekday: "long", day: "numeric", month: "long" }).format(new Date(iso));
-const uhrzeit = (iso) => new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+  new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "long", day: "numeric", month: "long" }).format(new Date(iso));
+const uhrzeit = (iso) => new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
 const FEHLERTEXT = {
   einwilligung: "Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.",
@@ -161,7 +162,7 @@ export default function TerminBuchung({ kalender = null }) {
   const [daten, setDaten] = useState({ laden: false, tage: [], verfuegbar: true, live: true });
   const [tagIndex, setTagIndex] = useState(0);
   const [slot, setSlot] = useState("");
-  const [werte, setWerte] = useState({ name: "", email: "", telefon: "", plz: "", adresse: "", thema: "", nachricht: "" });
+  const [werte, setWerte] = useState({ name: "", firma: "", email: "", telefon: "", plz: "", adresse: "", thema: "", nachricht: "" });
   const [einwilligung, setEinwilligung] = useState(false);
   const [beruehrt, setBeruehrt] = useState({});
   const [senden, setSenden] = useState(false);
@@ -217,7 +218,7 @@ export default function TerminBuchung({ kalender = null }) {
     const f = {};
     if (werte.name.trim().length < 2) f.name = "Bitte Ihren Namen angeben.";
     if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(werte.email.trim())) f.email = "Bitte eine gültige E-Mail-Adresse angeben.";
-    if (!telefonNormalisieren(werte.telefon)) f.telefon = "Bitte eine gültige Telefonnummer (DE, AT, CH) angeben.";
+    if (!telefonNormalisieren(werte.telefon)) f.telefon = "Bitte eine gültige Telefonnummer (AT, DE, CH) angeben.";
     if (!/^\d{4,5}$/.test(werte.plz.trim())) f.plz = "Bitte eine gültige Postleitzahl angeben.";
     if (art?.mitAdresse && werte.adresse.trim().length < 5) f.adresse = "Für den Vor-Ort-Termin brauchen wir Straße und Ort.";
     return f;
@@ -235,7 +236,8 @@ export default function TerminBuchung({ kalender = null }) {
     setSenden(true);
     setFehler("");
     const b = berlin(new Date(slot));
-    const nachricht = [werte.nachricht.trim(), art.mitAdresse && werte.adresse.trim() ? `Adresse: ${werte.adresse.trim()}` : ""].filter(Boolean).join("\n\n");
+    // Unternehmen/Organisation kennt das Termin-Backend nicht als eigenes Feld -> in die Nachricht
+    const nachricht = [werte.firma.trim() ? `Unternehmen/Organisation: ${werte.firma.trim()}` : "", werte.nachricht.trim(), art.mitAdresse && werte.adresse.trim() ? `Adresse: ${werte.adresse.trim()}` : ""].filter(Boolean).join("\n\n");
     try {
       const r = await fetch("/api/termin", {
         method: "POST",
@@ -302,14 +304,14 @@ export default function TerminBuchung({ kalender = null }) {
         <KalenderLinks
           className="mt-8 justify-center"
           titel={`Ökovolt: ${art.titel}`}
-          beschreibung={`${art.titel} mit Ökovolt (${art.dauer} Min.). Fragen oder Terminänderung: 08245 96 788 0 · office@oekovolt.com`}
+          beschreibung={`${art.titel} mit Ökovolt (${art.dauer} Min.). Fragen oder Terminänderung: ${FIRMA.telefon} · ${FIRMA.email}`}
           ort={ort}
           start={slot}
           minuten={art.dauer}
         />
         <div className="mx-auto mt-10 grid max-w-2xl gap-3 border-t border-ink-100 pt-8 text-left sm:grid-cols-3">
           {[
-            { t: "Vorbereiten", x: "Stromrechnung und – falls vorhanden – Fotos von Dach und Zählerschrank bereitlegen." },
+            { t: "Vorbereiten", x: "Strom- bzw. Netzrechnung, falls vorhanden Lastgang (15-Minuten-Werte) sowie Fotos oder Pläne von Dach und Trafo/Zählerplatz bereitlegen." },
             { t: "Ändern", x: "Termin passt nicht mehr? Kurze Nachricht an office@oekovolt.com genügt." },
             { t: "Vorab rechnen", x: <>Mit dem <Link href="/solarrechner" className="font-semibold text-ov-700 underline underline-offset-2">Solarrechner</Link> schon Ertrag und Ersparnis prüfen.</> },
           ].map((k) => (
@@ -397,7 +399,7 @@ export default function TerminBuchung({ kalender = null }) {
               <div>
                 <h2 className="font-display text-[24px] font-extrabold tracking-tight text-ink-900 md:text-[28px]">Wann passt es Ihnen?</h2>
                 <p className="mt-2 text-[15.5px] text-ink-600">
-                  {art.titel} · {art.dauer} Minuten · deutsche Zeit
+                  {art.titel} · {art.dauer} Minuten · österreichische Zeit
                 </p>
                 {!daten.live && <p className="mt-1 text-[13px] text-ink-500">Die Verfügbarkeit wird bei der Buchung geprüft.</p>}
               </div>
@@ -461,7 +463,7 @@ export default function TerminBuchung({ kalender = null }) {
                         <span className={cn("text-[12px] font-semibold uppercase", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>{d.label.slice(0, 2)}</span>
                         <span className={cn("ov-num font-display text-[21px] font-extrabold leading-tight", zu_ && "line-through decoration-1")}>{Number(ta)}</span>
                         <span className={cn("text-[11.5px]", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>
-                          {zu_ ? hinweis : new Intl.DateTimeFormat("de-DE", { month: "short" }).format(new Date(Date.UTC(2026, Number(mo) - 1, 1)))}
+                          {zu_ ? hinweis : new Intl.DateTimeFormat("de-AT", { month: "short" }).format(new Date(Date.UTC(2026, Number(mo) - 1, 1)))}
                         </span>
                       </button>
                     );
@@ -535,7 +537,8 @@ export default function TerminBuchung({ kalender = null }) {
             <p className="mt-2 text-[15.5px] text-ink-600">Wohin dürfen wir die Bestätigung schicken?</p>
 
             <div className="mt-7 grid gap-4 sm:grid-cols-2">
-              <Feld label="Vor- und Nachname" name="name" autoComplete="name" wert={werte.name} setze={setze} verlasse={verlasse} fehler={beruehrt.name && feldFehler.name} className="sm:col-span-2" />
+              <Feld label="Vor- und Nachname" name="name" autoComplete="name" wert={werte.name} setze={setze} verlasse={verlasse} fehler={beruehrt.name && feldFehler.name} />
+              <Feld label="Unternehmen / Gemeinde (optional)" name="firma" autoComplete="organization" wert={werte.firma} setze={setze} verlasse={verlasse} />
               <Feld label="E-Mail" name="email" type="email" inputMode="email" autoComplete="email" wert={werte.email} setze={setze} verlasse={verlasse} fehler={beruehrt.email && feldFehler.email} />
               <Feld label="Telefon" name="telefon" type="tel" inputMode="tel" autoComplete="tel" wert={werte.telefon} setze={setze} verlasse={verlasse} fehler={beruehrt.telefon && feldFehler.telefon} />
               <Feld label="PLZ" name="plz" inputMode="numeric" autoComplete="postal-code" wert={werte.plz} setze={setze} verlasse={verlasse} fehler={beruehrt.plz && feldFehler.plz} />
@@ -571,7 +574,7 @@ export default function TerminBuchung({ kalender = null }) {
                 rows={3}
                 value={werte.nachricht}
                 onChange={setze("nachricht")}
-                placeholder="z. B. Dachart, Jahresverbrauch, Wunsch nach Speicher oder Wallbox"
+                placeholder="z. B. Hallendach, Jahresverbrauch, Lastgang vorhanden, Netzebene, Speicher oder Ladepunkte gewünscht"
                 className="w-full rounded-2xl bg-white px-4 py-3 text-[16px] text-ink-900 ring-1 ring-inset ring-ink-200 placeholder:text-ink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
               />
             </label>

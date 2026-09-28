@@ -1,269 +1,260 @@
-// Ratgeber: Photovoltaik nach 20 Jahren (Ü20) – Weiterbetrieb, Eigenverbrauch, Direktvermarktung, Repowering
-// Recherchestand 13.09.2026: §§ 21, 23b, 53 EEG 2023; Verbraucherzentrale (Stand 08/2026);
-// MsbG §§ 29, 30 (gesetze-im-internet.de). Rechenbeispiele mit den Annahmen des Solarrechners.
+// Ratgeber: Photovoltaik nach Tarifende bzw. nach 20 Jahren – Weiterbetrieb, Marktpreis, Eigenverbrauch, Repowering (Österreich)
+// Quellen: OeMAG – Marktpreise 2026 (monatlich, ab 2024 im Nachhinein ermittelt; Jänner 8,842 bis Juli 6,146,
+// August 8,997 ct/kWh PV; Ausgleichsenergie-Abzug 0,408 ct/kWh), OeMAG-FAQ (Tarifverzicht/Umstellung auf Marktpreis),
+// TOR Stromerzeugungsanlagen Typ A V1.4 (gültig ab 01.06.2026) für getauschte Wechselrichter,
+// IEC TS 62446-3 / ESV 2012 (Zustandsprüfung), Richtlinie 2012/19/EU (WEEE, PV-Module als Elektroaltgeräte).
+// Tariflaufzeiten nach Ökostromgesetz im jeweiligen OeMAG-Vertrag prüfen (typisch 13 Jahre, ÖSG 2012).
 
-import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { SPEICHER } from "@/lib/rechner/annahmen";
-import { berechne } from "@/lib/solarrechner";
-
-const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
-const eur10 = (n) => (Math.round(n / 10) * 10).toLocaleString("de-DE") + " €";
-const kwh = (n) => (Math.round(n / 10) * 10).toLocaleString("de-DE") + " kWh";
-const ctStr = (n) => String(Math.round(n * 10) / 10).replace(".", ",");
-const jahre = (x) => (x ? x.toFixed(0) : "über 20");
-
-// Ü20-Anschlussvergütung: Jahresmarktwert Solar 2025 (4,508 ct) abzüglich
-// Vermarktungspauschale 2026 (0,23 ct) – Orientierungswert.
-const MARKTWERT_2025 = 4.51;
-const PAUSCHALE_2026 = 0.23;
-const UE20_CT = MARKTWERT_2025 - PAUSCHALE_2026;
-const STROM_CT = ANNAHMEN.strompreis * 100;
-
-// Beispielanlage: 5 kWp aus 2006, nach 20 Jahren rund 10 % Leistungsverlust
-// (0,5 %/Jahr wie im Solarrechner) -> gerechnet wie 4,5 kWp.
-const VERBRAUCH = 4500;
-const ALT = berechne({ kwp: 4.5, ausrichtung: "sued", neigung: "mittel", verbrauch: VERBRAUCH, speicherKwh: 0 });
-const ALT_SP = berechne({ kwp: 4.5, ausrichtung: "sued", neigung: "mittel", verbrauch: VERBRAUCH, speicherKwh: 5 });
-const NEU = berechne({ kwp: 10, ausrichtung: "sued", neigung: "mittel", verbrauch: VERBRAUCH, speicherKwh: 0 });
-
-const voll = (ALT.jahresertrag * UE20_CT) / 100;
-const mitEv = (r) => (r.eigenverbrauch * STROM_CT) / 100 + (r.eingespeist * UE20_CT) / 100;
-const A_VOLL = voll;
-const A_EV = mitEv(ALT);
-const A_SP = mitEv(ALT_SP);
-const SPEICHER_KOSTEN = 5 * SPEICHER.preisProKwh + SPEICHER.nachruestAufschlag;
-const SP_AMORT = SPEICHER_KOSTEN / (A_SP - A_EV);
+const MP = { jan: 8.842, feb: 8.457, mar: 5.72, apr: 6.772, mai: 6.772, jun: 6.772, jul: 6.146, aug: 8.997 }; // ct/kWh, OeMAG PV 2026
+const ct = (x) => x.toFixed(2).replace(".", ",");
 
 const artikel = {
   slug: "photovoltaik-nach-20-jahren",
-  title: "Ü20-Photovoltaik: Was nach 20 Jahren EEG-Förderung gilt",
-  seoTitle: "Ü20 Photovoltaik 2026: Optionen nach 20 Jahren | Ökovolt",
-  kurzTitel: "Photovoltaik nach 20 Jahren",
+  title: "Photovoltaik nach Tarifende und 20 Jahren: Weiterbetrieb oder Repowering?",
+  seoTitle: "PV nach 20 Jahren: Weiterbetrieb & Repowering | Ökovolt",
+  kurzTitel: "PV nach 20 Jahren",
   description:
-    "Ü20 Photovoltaik: Was nach 20 Jahren EEG-Förderung gilt. Weiter einspeisen, auf Eigenverbrauch umrüsten, Speicher oder Repowering – mit Rechenbeispiel.",
+    "Photovoltaik nach Ende des Einspeisetarifs und nach 20 Jahren: Marktpreis, Stromhändler, Eigenverbrauch, Zustandsprüfung, Repowering und Rückbau in Österreich.",
   excerpt:
-    "Ende 2026 fallen die Anlagen des Baujahrs 2006 aus der Förderung. Sie dürfen weiter einspeisen – bekommen aber nur noch den Marktwert. Vier Wege im Vergleich, mit ehrlicher Rechnung.",
-  hauptKeyword: "ü20 photovoltaik",
-  keywords: ["Ü20 Photovoltaik", "Photovoltaik nach 20 Jahren", "EEG-Förderung ausgelaufen", "Anschlussvergütung", "ausgeförderte PV-Anlage", "PV-Anlage Eigenverbrauch umrüsten", "Repowering Photovoltaik"],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
-  kategorie: "Förderung, Steuern & Recht",
+    "Wenn der geförderte Einspeisetarif ausläuft oder die Anlage 20 Jahre alt wird, stellen sich drei Fragen: Wohin mit dem Strom, wie gut ist die Anlage noch – und lohnt sich ein Repowering? Mit Marktpreisen 2026 und Entscheidungshilfe.",
+  hauptKeyword: "photovoltaik nach 20 jahren",
+  keywords: [
+    "Photovoltaik nach 20 Jahren",
+    "PV Tarifende Österreich",
+    "OeMAG Marktpreis nach Tarifende",
+    "PV-Anlage Weiterbetrieb",
+    "Repowering Photovoltaik",
+    "Photovoltaik alte Anlage Wechselrichter tauschen",
+    "PV-Module entsorgen Österreich",
+  ],
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
+  kategorie: "Kosten & Wirtschaftlichkeit",
   bild: "/Images/Team/solar-power-6860359_1280.jpg",
-  bildAlt: "Monteure mit Schutzhelm arbeiten an Solarmodulen auf einem Dach",
-  badge: { wert: `~${ctStr(UE20_CT)} ct`, text: "je kWh Anschlussvergütung (Orientierung 2026)" },
+  bildAlt: "Ältere Photovoltaikanlage auf einem Dach vor blauem Himmel",
+  badge: { wert: `${ct(MP.aug)} ct`, text: "OeMAG-Marktpreis PV im August 2026 je kWh" },
 
   kurzFazit: [
-    "**Nach 20 Jahren endet die feste EEG-Vergütung, nicht der Betrieb.** Anlagen bis 100 kW dürfen weiter einspeisen und erhalten bis Ende 2032 automatisch eine Anschlussvergütung.",
-    `Diese orientiert sich am Jahresmarktwert Solar abzüglich einer Vermarktungspauschale – 2025 lag der Marktwert bei rund ${ctStr(MARKTWERT_2025)} ct/kWh, die Pauschale beträgt 2026 ${ct(PAUSCHALE_2026)} ct.`,
-    `Wirtschaftlich besser ist meist die **Umstellung auf Eigenverbrauch**: Jede selbst genutzte Kilowattstunde spart rund ${ctStr(STROM_CT)} ct statt ${ctStr(UE20_CT)} ct Erlös.`,
-    "Ein Speicher allein rechnet sich an einer 20 Jahre alten Anlage selten. Sind Module oder Wechselrichter am Ende, ist ein **Repowering** mit deutlich mehr Leistung oft die bessere Investition.",
+    "**Eine PV-Anlage hört nach Ende des geförderten Einspeisetarifs nicht auf zu arbeiten – sie verliert nur die Tarifförderung.** Gut gewartete Module liefern oft 25 bis 30 Jahre und länger Strom; getauscht werden müssen meist nur Wechselrichter und einzelne Komponenten.",
+    `**Für den Überschuss gibt es nach Tarifende drei Wege:** Marktpreis über die OeMAG (2026 monatlich zwischen ${ct(MP.mar)} und ${ct(MP.aug)} ct/kWh für PV), einen Vertrag mit einem Stromhändler oder die Teilnahme an einer Energiegemeinschaft.`,
+    "**Wirtschaftlich zählt nach Tarifende vor allem der Eigenverbrauch:** Jede selbst genutzte Kilowattstunde spart Energiepreis, Netzentgelte und Abgaben – im Betrieb ein Vielfaches des Marktpreises.",
+    "**Vor der Entscheidung steht die Zustandsprüfung:** Prüfbefund, I-U-Kennlinien und Thermografie zeigen, ob Weiterbetrieb, Teilsanierung oder Repowering mit neuen, leistungsstärkeren Modulen sinnvoll ist.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Was passiert mit meiner PV-Anlage nach 20 Jahren?",
-      tocLabel: "Kurze Antwort",
+      titel: "Was passiert mit einer PV-Anlage nach Tarifende?",
+      tocLabel: "Nach Tarifende",
       bloecke: [
         {
           typ: "p",
-          text: "**Nach Ablauf der 20-jährigen EEG-Förderung darf Ihre Anlage ohne Unterbrechung weiterlaufen und weiter einspeisen.** Der Netzbetreiber muss den Strom abnehmen und vergüten. Statt der alten, festen Vergütung von oft 50 Cent und mehr je Kilowattstunde erhalten Sie aber nur noch die sogenannte [Anschlussvergütung](/wissen/lexikon#anschlussverguetung) – den Marktwert des Solarstroms abzüglich einer Pauschale. Eine Anmeldung oder ein neuer Vertrag ist dafür nicht nötig.",
-        },
-        {
-          typ: "p",
-          text: "Die Förderung läuft 20 Jahre plus das Jahr der Inbetriebnahme. Eine Anlage, die irgendwann im Jahr 2006 ans Netz ging, erhält ihre feste Vergütung also bis zum 31. Dezember 2026. Nach Branchenberichten betrifft das allein in diesem Jahr rund 60.000 Anlagen; weil der Photovoltaik-Zubau ab 2009 stark anstieg, werden es in den Folgejahren deutlich mehr.",
+          text: "**Nach Ende des Fördervertrags mit der OeMAG läuft die Anlage technisch unverändert weiter; es endet nur die Abnahme zum geförderten Tarif.** In Österreich wurden Einspeisetarife nach dem Ökostromgesetz für eine begrenzte Laufzeit vergeben – nach dem Ökostromgesetz 2012 typischerweise 13 Jahre. Viele Verträge aus den Jahren ab 2013 laufen deshalb ab 2026 aus. Die genaue Laufzeit steht in Ihrem OeMAG-Vertrag.",
         },
         {
           typ: "karten",
+          cols: 3,
           items: [
-            { titel: "1. Weiter voll einspeisen", text: "Keine Umbauten, automatische Anschlussvergütung. Einfach, aber der Erlös deckt bei kleinen Anlagen kaum die laufenden Kosten." },
-            { titel: "2. Auf Eigenverbrauch umrüsten", text: "Strom selbst nutzen, Überschuss einspeisen. Erfordert einen Umbau am Zählerplatz – ist aber meist die wirtschaftlichste Variante." },
-            { titel: "3. Direktvermarktung", text: "Verkauf über einen Direktvermarkter. Für kleine Dachanlagen wegen Gebühren und Messtechnik selten lohnend." },
-            { titel: "4. Repowering", text: "Alte Module und Wechselrichter durch neue ersetzen. Die neue Anlage liefert auf gleicher Fläche deutlich mehr Leistung; ob sie neu EEG-vergütet wird, ist vorab zu klären." },
-          ],
-        },
-      ],
-    },
-    {
-      id: "anschlussverguetung",
-      titel: "Anschlussvergütung: So viel bekommen Ü20-Anlagen",
-      tocLabel: "Anschlussvergütung",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ausgeförderte Anlagen bis 100 kW erhalten nach § 21 EEG eine Einspeisevergütung in Höhe des Jahresmarktwerts Solar, gedeckelt auf 10 Cent je Kilowattstunde (§ 23b EEG).** Davon ziehen die Netzbetreiber eine Pauschale für die Vermarktungskosten ab, die jedes Jahr im Oktober für das Folgejahr veröffentlicht wird. Mit einem intelligenten Messsystem halbiert sich dieser Abzug (§ 53 EEG). Die Regelung gilt nach dem Solarpaket I bis zum 31. Dezember 2032.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Kennzahlen zur Ü20-Anschlussvergütung, Stand September 2026",
-          kopf: ["Kennzahl", "Wert", "Hinweis"],
-          zeilen: [
-            ["Jahresmarktwert Solar 2025", `${ctStr(MARKTWERT_2025)} ct/kWh`, "Basis für die Abrechnung 2025; der Wert für 2026 steht erst Anfang 2027 fest"],
-            ["Vermarktungspauschale 2025", "0,72 ct/kWh", "mit intelligentem Messsystem halbiert"],
-            ["Vermarktungspauschale 2026", `${ct(PAUSCHALE_2026)} ct/kWh`, "mit intelligentem Messsystem halbiert"],
-            ["Deckel", "10 ct/kWh", "gilt seit 2023 für den anzulegenden Jahresmarktwert"],
-            ["**Orientierung 2026**", `**ca. ${ctStr(UE20_CT)} ct/kWh**`, "wenn der Marktwert auf dem Niveau von 2025 bleibt"],
-            ["Befristung", "31.12.2032", "danach nur noch Eigenverbrauch oder Direktvermarktung"],
-          ],
-          markierteZeile: 4,
-          minBreite: 620,
-          fussnote: "Quellen: § 23b und § 53 EEG 2023, Verbraucherzentrale, Übertragungsnetzbetreiber (netztransparenz.de). Weil viel Solarstrom zur Mittagszeit die Börsenpreise drückt, liegt der Marktwert Solar meist unter dem durchschnittlichen Börsenstrompreis.",
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Warum der Solarmarktwert so niedrig ist",
-          text: "Solarstrom wird überwiegend dann erzeugt, wenn alle Anlagen gleichzeitig liefern. An sonnigen Mittagen sinken die Börsenpreise deshalb stark, teils bis ins Negative. Wie oft das inzwischen vorkommt, zeigt unser Ratgeber [Negative Strompreise](/ratgeber/negative-strompreise).",
-        },
-      ],
-    },
-    {
-      id: "rechnung",
-      titel: "Rechenbeispiel: Welche Variante lohnt sich?",
-      tocLabel: "Rechenbeispiel",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Für eine typische Ü20-Anlage bringt die Umstellung auf Eigenverbrauch pro Jahr ein Mehrfaches der reinen Einspeisung.** Unser Beispiel: eine 5-kWp-Anlage von 2006 auf einem Süddach, ein Haushalt mit ${VERBRAUCH.toLocaleString("de-DE")} kWh Jahresverbrauch. Nach 20 Jahren hat die Anlage rund 10 % Leistung verloren und erzeugt noch etwa ${kwh(ALT.jahresertrag)} im Jahr. Gerechnet wird mit ${ctStr(STROM_CT)} ct Strompreis und ${ctStr(UE20_CT)} ct Anschlussvergütung.`,
-        },
-        {
-          typ: "tabelle",
-          caption: "Ü20-Anlage 5 kWp (Baujahr 2006): jährlicher Vorteil nach Variante",
-          kopf: ["", "Volleinspeisung", "Eigenverbrauch", "Eigenverbrauch + 5 kWh Speicher"],
-          zeilen: [
-            ["Selbst genutzt", "0 kWh", kwh(ALT.eigenverbrauch), kwh(ALT_SP.eigenverbrauch)],
-            ["Eingespeist", kwh(ALT.jahresertrag), kwh(ALT.eingespeist), kwh(ALT_SP.eingespeist)],
-            ["Stromkosten-Ersparnis", "0 €", eur10((ALT.eigenverbrauch * STROM_CT) / 100), eur10((ALT_SP.eigenverbrauch * STROM_CT) / 100)],
-            ["Anschlussvergütung", eur10(A_VOLL), eur10((ALT.eingespeist * UE20_CT) / 100), eur10((ALT_SP.eingespeist * UE20_CT) / 100)],
-            ["**Vorteil pro Jahr (vor Kosten)**", `**${eur10(A_VOLL)}**`, `**${eur10(A_EV)}**`, `**${eur10(A_SP)}**`],
-            ["Einmalige Investition", "keine", "Umbau Zählerplatz, ab ca. 200 €", `Speicher ca. ${eur10(SPEICHER_KOSTEN)} + Umbau`],
-          ],
-          hervorheben: 2,
-          minBreite: 700,
-          fussnote: `Orientierungswerte ohne laufende Kosten wie Versicherung, Messstellenbetrieb und Anlagencheck. Eigenverbrauch und Autarkie berechnet mit denselben Kurven wie unser Solarrechner; Speicherpreis ${SPEICHER.preisProKwh} €/kWh plus ${eur(SPEICHER.nachruestAufschlag)} Nachrüstaufschlag wie im Stromspeicher-Rechner.`,
-        },
-        {
-          typ: "p",
-          text: `Die Volleinspeisung bringt in diesem Beispiel rund ${eur10(A_VOLL)} im Jahr. Nach Abzug von Versicherung, Zählermiete und gelegentlicher Wartung bleibt davon wenig bis nichts – die Verbraucherzentrale kommt für kleine Anlagen sogar auf ein Minus. Mit Eigenverbrauch steigt der Vorteil auf etwa ${eur10(A_EV)}, weil jede selbst genutzte Kilowattstunde mehr als siebenmal so viel wert ist wie eine eingespeiste.`,
-        },
-        {
-          typ: "p",
-          text: `Der Speicher erhöht den Vorteil um weitere rund ${eur10(A_SP - A_EV)} pro Jahr. Bei Kosten von etwa ${eur10(SPEICHER_KOSTEN)} bräuchte er rund ${jahre(SP_AMORT)} Jahre, um sich zu bezahlen – länger, als Module und Wechselrichter einer 20 Jahre alten Anlage realistisch noch halten. Ein Speicher ist deshalb vor allem dann sinnvoll, wenn er ohnehin mit einer späteren Modernisierung weitergenutzt wird.`,
-        },
-        {
-          typ: "tool",
-          href: "/rechner/stromspeicher",
-          titel: "Rechnet sich ein Speicher für Ihre Anlage?",
-          text: "Anlagengröße, Verbrauch und Speichergröße eingeben – inklusive Nachrüstung an einer bestehenden Anlage.",
-          label: "Zum Stromspeicher-Rechner",
-        },
-      ],
-    },
-    {
-      id: "umruesten",
-      titel: "Auf Eigenverbrauch umrüsten: So geht es",
-      tocLabel: "Eigenverbrauch umrüsten",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Für den Wechsel von Voll- auf Überschusseinspeisung muss ein Elektrofachbetrieb die Anlage so umklemmen, dass der Solarstrom zuerst ins Hausnetz fließt, und einen Zweirichtungszähler setzen lassen.** Viele Altanlagen haben einen eigenen Einspeisezähler; nach dem Umbau misst ein gemeinsamer [Zweirichtungszähler](/wissen/lexikon#zweirichtungszaehler) Bezug und Einspeisung. Ist der Zählerschrank veraltet, kann eine Erneuerung nötig werden – dann steigen die Kosten deutlich über die Mindestsumme.",
-        },
-        {
-          typ: "ablauf",
-          schritte: [
-            ["Anlagencheck", "Module, Verkabelung, Wechselrichter und Befestigung prüfen lassen. Die Verbraucherzentrale nennt dafür rund 250 bis 300 €. Bei beschädigten Modulen oder Isolationsfehlern zuerst reparieren."],
-            ["Umbau planen", "Messkonzept und Zählerplatz mit dem Fachbetrieb klären. Er meldet die Änderung beim Netzbetreiber an."],
-            ["Zähler tauschen", "Der Messstellenbetreiber setzt einen Zweirichtungszähler oder ein intelligentes Messsystem."],
-            ["Register aktualisieren", "Den Wechsel der Einspeiseart im [Marktstammdatenregister](/wissen/lexikon#marktstammdatenregister) eintragen."],
-            ["Verbrauch verlagern", "Waschmaschine, Spülmaschine, Warmwasser und E-Auto möglichst in die Sonnenstunden legen – siehe [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen)."],
+            { titel: "Weiter einspeisen", text: "Zum Marktpreis über die OeMAG-Marktpreis-Bilanzgruppe oder über einen Stromhändler – Vertrag rechtzeitig vor Tarifende abschließen." },
+            { titel: "Eigenverbrauch steigern", text: "Anlage auf Eigenverbrauch umstellen, Speicher, Wärmepumpe oder Ladepunkte einbinden – der wirtschaftlich stärkste Hebel." },
+            { titel: "Repowering", text: "Alte Module durch neue, leistungsstärkere ersetzen, Wechselrichter erneuern – oft mit deutlich mehr Leistung auf gleicher Fläche." },
           ],
         },
         {
           typ: "kasten",
           variant: "wichtig",
-          titel: "Der Wechselrichter ist oft das schwächste Glied",
-          text: "Wechselrichter halten typischerweise 10 bis 20 Jahre; an vielen Ü20-Anlagen wurde er bereits einmal getauscht oder steht kurz davor. Ein neues Gerät muss den heute geltenden Netzanschlussregeln entsprechen. Wer ohnehin tauscht, sollte gleich einen Hybridwechselrichter prüfen, an den sich später ein Speicher anschließen lässt – Grundlagen im Ratgeber [Wechselrichter](/ratgeber/wechselrichter-photovoltaik).",
-        },
-        {
-          typ: "h3",
-          text: "Smart Meter: Pflicht oder nicht?",
-        },
-        {
-          typ: "p",
-          text: "Anlagen mit **mehr als 7 kW** gehören nach § 29 Messstellenbetriebsgesetz zu den Pflichteinbaufällen für ein intelligentes Messsystem mit Steuerungseinrichtung – auch Bestandsanlagen, die der Messstellenbetreiber schrittweise bis 2032 ausstattet. Die jährlichen Kosten sind gedeckelt: für Anlagen über 7 bis 15 kW auf 50 € für den Anlagenbetreiber, dazu bis zu 50 € für die Steuerungseinrichtung. Kleinere Ü20-Anlagen sind optionale Einbaufälle. Ein Vorteil des Smart Meters: Die Vermarktungspauschale halbiert sich. Mehr dazu im Ratgeber [Smart-Meter-Pflicht](/ratgeber/smart-meter-pflicht).",
+          titel: "Keine Lücke entstehen lassen",
+          text: "Speist eine Anlage nach Tarifende ohne gültigen Abnahmevertrag ein, erhält der Betreiber für diesen Strom unter Umständen keine Vergütung. Klären Sie spätestens drei Monate vor Vertragsende, wer den Überschuss abnimmt – und ob Messung und Zählpunkt angepasst werden müssen.",
         },
       ],
     },
     {
-      id: "direktvermarktung",
-      titel: "Direktvermarktung: Für wen sie sich lohnt",
-      tocLabel: "Direktvermarktung",
+      id: "vermarktung",
+      titel: "Wohin mit dem Überschuss: Marktpreis, Stromhändler, Energiegemeinschaft",
+      tocLabel: "Überschuss vermarkten",
       bloecke: [
         {
           typ: "p",
-          text: "**Statt der Anschlussvergütung können Sie den Strom über einen Direktvermarkter an der Börse verkaufen (sonstige Direktvermarktung).** Für Anlagen über 100 kW ist das nach Förderende der Regelfall. Kleine Anlagen können freiwillig wechseln, zahlen dann aber Grund- und Dienstleistungsentgelte, brauchen ein intelligentes Messsystem mit viertelstündlicher Messung und müssen ab 25 kW fernsteuerbar sein.",
+          text: "**Der einfachste Weg nach Tarifende ist der Marktpreis der OeMAG: Seit 2024 wird er monatlich im Nachhinein ermittelt und orientiert sich an den mengengewichteten Day-Ahead-Preisen der Strombörse, abzüglich der Kosten für Ausgleichsenergie.** Für 2026 beträgt dieser Abzug bei Photovoltaik 0,408 ct/kWh. In einzelnen Monaten wird ein Anteil von 60 % des Marktpreises nach § 41 Abs. 1 ÖSG herangezogen.",
+        },
+        {
+          typ: "tabelle",
+          caption: "OeMAG-Marktpreis für Photovoltaik 2026 in ct/kWh, Stand September 2026",
+          kopf: ["Monat", "Marktpreis PV", "Monat", "Marktpreis PV"],
+          zeilen: [
+            ["Jänner", ct(MP.jan), "Mai", ct(MP.mai)],
+            ["Februar", ct(MP.feb), "Juni", ct(MP.jun)],
+            ["März", ct(MP.mar), "Juli", ct(MP.jul)],
+            ["April", ct(MP.apr), "August", ct(MP.aug)],
+          ],
+          minBreite: 480,
+          fussnote: "Quelle: OeMAG, Marktpreise 2026 (Photovoltaik und andere Energieträger außer Windkraft). Werte werden monatlich im Nachhinein veröffentlicht.",
         },
         {
           typ: "p",
-          text: "Für die typische Ü20-Dachanlage mit 3 bis 10 kW übersteigen die Kosten meist den Mehrerlös gegenüber der Anschlussvergütung. Interessant wird die Direktvermarktung bei größeren Anlagen auf Hallen- oder Stalldächern – oder wenn nach 2032 die Anschlussvergütung wegfällt. Details bietet unsere Seite [Direktvermarktung](/service/direktvermarktung).",
+          text: "Auffällig ist das Sommerloch: In den ertragsstarken Monaten April bis Juli lag der Marktpreis 2026 zwischen rund 6,1 und 6,8 ct/kWh, weil zur Mittagszeit viel Solarstrom am Markt ist. Genau dann liefert die Anlage die meiste Energie. Stromhändler bieten teils Festpreise oder Spotpreis-Modelle; Energiegemeinschaften ermöglichen den Verkauf an Mitglieder in der Nähe mit reduzierten Netzentgelten. Die Details vergleichen die Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis), [Reststromvermarktung](/ratgeber/reststromvermarktung) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden).",
+        },
+        {
+          typ: "tabelle",
+          caption: "Vermarktungswege nach Tarifende im Vergleich",
+          kopf: ["Weg", "Erlös", "Aufwand", "Geeignet für"],
+          zeilen: [
+            ["OeMAG-Marktpreis", "monatlicher Marktpreis minus Ausgleichsenergie", "gering, Antrag bzw. Tarifverzicht bei der OeMAG", "Standardlösung für kleine und mittlere Anlagen"],
+            ["Stromhändler", "Fix- oder Spotpreis, je nach Vertrag", "Vertragsvergleich, ggf. Viertelstundenmessung", "Anlagen mit größeren Überschüssen"],
+            ["Energiegemeinschaft (EEG/BEG)", "vereinbarter Preis mit Mitgliedern, reduzierte Netzentgelte im Nahbereich", "Gründung oder Beitritt, Abrechnung", "Betriebe und Gemeinden mit Partnern in der Nähe"],
+            ["Direktvermarktung", "Marktpreis abzüglich Dienstleistungsentgelt", "Fernsteuerbarkeit, Fahrpläne", "große Anlagen, Parks"],
+          ],
+          minBreite: 660,
+        },
+      ],
+    },
+    {
+      id: "eigenverbrauch",
+      titel: "Eigenverbrauch statt Einspeisung: der stärkste Hebel",
+      tocLabel: "Eigenverbrauch",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Nach Tarifende ist jede selbst genutzte Kilowattstunde mehrfach so viel wert wie eine eingespeiste.** Wer selbst verbraucht, spart nicht nur den Energiepreis, sondern auch Netznutzungs- und Netzverlustentgelt, Elektrizitätsabgabe (2026 für Unternehmen 0,82 ct/kWh) und Erneuerbaren-Förderkosten. Für Betriebe mit Tagverbrauch liegt der Wert einer eigenen Kilowattstunde deshalb meist deutlich über 15 ct netto, während der Sommer-Marktpreis bei rund 6 bis 7 ct lag.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Volleinspeiser umbauen:** Ältere Anlagen speisen oft über einen eigenen Zählpunkt voll ein. Ein Umbau auf Überschusseinspeisung macht den Strom im Gebäude nutzbar – der Netzbetreiber muss eingebunden werden.",
+            "**Verbraucher verschieben:** Kühlung, Druckluft, Warmwasser, Ladepunkte und Wärmepumpen in die Mittagsstunden legen – siehe [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen).",
+            "**Speicher nachrüsten:** Ein Speicher verschiebt Mittagsstrom in Abend und Nacht und kann Lastspitzen kappen. Wichtig ist die Verträglichkeit mit dem bestehenden Wechselrichter (AC-Kopplung) – mehr unter [Stromspeicher](/produkte/stromspeicher).",
+            "**Energiemanagement:** Ein [Energiemanagementsystem](/ratgeber/energiemanagementsystem) steuert Verbraucher nach Erzeugung und Tarif.",
+          ],
+        },
+      ],
+    },
+    {
+      id: "beispiel",
+      titel: "Beispielrechnung: Was eine 50-kWp-Anlage nach Tarifende bringt",
+      tocLabel: "Beispielrechnung",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Wie stark der Eigenverbrauch nach Tarifende zählt, zeigt eine typische landwirtschaftliche oder gewerbliche Anlage mit 50 kWp aus dem Jahr 2013.** Wir nehmen an, dass sie heute noch rund 47.000 kWh im Jahr erzeugt (ca. 940 kWh/kWp inklusive Alterung) und bisher voll eingespeist hat.",
+        },
+        {
+          typ: "tabelle",
+          caption: "50-kWp-Bestandsanlage nach Tarifende: Wert des Stroms pro Jahr (Beispielrechnung)",
+          kopf: ["Szenario", "Eigenverbrauch", "Einspeisung zum Marktpreis", "Wert pro Jahr (ca.)"],
+          zeilen: [
+            ["Volleinspeisung zum Marktpreis", "0 kWh", "47.000 kWh × 6,8 ct", "3.200 €"],
+            ["Umbau, 30 % Eigenverbrauch", "14.100 kWh × 18 ct", "32.900 kWh × 6,8 ct", "4.800 €"],
+            ["Umbau + Lastverschiebung, 50 % Eigenverbrauch", "23.500 kWh × 18 ct", "23.500 kWh × 6,8 ct", "5.800 €"],
+            ["Umbau + Speicher, 70 % Eigenverbrauch", "32.900 kWh × 18 ct", "14.100 kWh × 6,8 ct", "6.900 €"],
+          ],
+          hervorheben: 3,
+          markierteZeile: 2,
+          minBreite: 680,
+          fussnote: "Annahmen: Marktpreis rund 6,8 ct/kWh (Sommermonate 2026 laut OeMAG gerundet), Wert der selbst genutzten Kilowattstunde 18 ct netto (Energiepreis, Netzentgelte, Abgaben – betriebsindividuell sehr unterschiedlich). Ohne Kosten für Umbau, Speicher und Wartung.",
+        },
+        {
+          typ: "p",
+          text: "Die Rechnung zeigt die Richtung, nicht Ihr Ergebnis: Ob sich Umbau und Speicher lohnen, hängt von Ihrem Lastgang ab. Betriebe mit hohem Tagverbrauch – Milchviehbetriebe mit Kühlung, Werkstätten, Hotels im Sommer – profitieren am meisten. Für Gemeinden kommen Energiegemeinschaften mit Schulen, Kläranlagen oder Bauhöfen in Frage, um Überschüsse vor Ort zu nutzen.",
+        },
+      ],
+    },
+    {
+      id: "zustand",
+      titel: "Wie gut ist die Anlage noch? Zustandsprüfung vor der Entscheidung",
+      tocLabel: "Zustandsprüfung",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Bevor Sie über Weiterbetrieb oder Repowering entscheiden, sollte der technische Zustand gemessen – nicht geschätzt – werden.** Module altern langsam, aber unterschiedlich: Neben der normalen [Degradation](/wissen/lexikon#degradation) treten mit den Jahren Delamination, Rückseitenfolienrisse, verfärbte Einbettung, defekte Bypassdioden oder [PID](/wissen/lexikon#pid) auf. Wechselrichter haben meist eine kürzere Lebensdauer als Module.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Zustandsprüfung einer älteren PV-Anlage",
+          kopf: ["Prüfung", "Was sie zeigt", "Hinweis"],
+          zeilen: [
+            ["Monitoring-Auswertung", "Ertragsentwicklung über Jahre, Performance Ratio, Ausfälle", "Vergleich mit Einstrahlungsdaten"],
+            ["Sichtprüfung", "Glasbruch, Delamination, Folienrisse, Korrosion, Kabel und Stecker", "besonders Stecker und Kabelbinder altern"],
+            ["Isolationsmessung", "Feuchte oder beschädigte Leitungen und Module", "sicherheitsrelevant"],
+            ["I-U-Kennlinie", "tatsächliche Leistung je String im Vergleich zum Datenblatt", "Grundlage für Repowering-Entscheidung"],
+            ["Thermografie", "Hotspots, Diodenfehler, Stringausfälle", "am effizientesten per Drohne"],
+            ["Unterkonstruktion & Dach", "Tragfähigkeit, Korrosion, Dachhaut unter den Modulen", "Dachsanierung ggf. mit Repowering kombinieren"],
+          ],
+          minBreite: 640,
+        },
+        {
+          typ: "p",
+          text: "Für Betriebe ist die wiederkehrende Prüfung nach ESV 2012 ohnehin Pflicht – sie lässt sich mit der Zustandsbewertung verbinden, siehe [E-Check für PV-Anlagen](/ratgeber/e-check-photovoltaik). Wie Wärmebilder aus der Luft ausgewertet werden, erklärt der Ratgeber [PV-Thermografie mit Drohne](/ratgeber/pv-thermografie-drohne).",
+        },
+      ],
+    },
+    {
+      id: "sicherheit",
+      titel: "Sicherheit alter Anlagen: Was heute nachgerüstet werden sollte",
+      tocLabel: "Sicherheit nachrüsten",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Anlagen aus den 2000er- und frühen 2010er-Jahren wurden nach damaligem Stand errichtet – bei Brandschutz, Überspannungsschutz und Kennzeichnung hat sich seither viel getan.** Ein Bestandsschutz entbindet nicht davon, erkannte Gefahren zu beseitigen, und Versicherer bewerten alte Anlagen zunehmend kritisch.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Feuerwehr-Kennzeichnung und Plan** nach aktueller OVE-Richtlinie R 11-1 (Ausgabe 2022) ergänzen, DC-Leitungswege im Gebäude dokumentieren – siehe [Brandschutz bei Photovoltaik](/ratgeber/photovoltaik-brandschutz).",
+            "**Steckverbinder und Kabelbinder** tauschen, wenn sie spröde sind; Mischverbindungen unterschiedlicher Hersteller beseitigen.",
+            "**Überspannungsschutz** prüfen und nach OVE-Richtlinie R 6-2-2 ergänzen; alte Ableiter sind häufig verbraucht.",
+            "**Wechselrichterstandort** kontrollieren: Brandlast, Belüftung, Abstand zu brennbaren Materialien – besonders in landwirtschaftlichen Gebäuden.",
+            "**Monitoring nachrüsten**, wenn nur ein Display vorhanden ist – Ausfälle werden sonst erst spät bemerkt.",
+          ],
         },
       ],
     },
     {
       id: "repowering",
-      titel: "Repowering: Neue Module, neue Vergütung",
+      titel: "Repowering: Wann lohnt sich der Tausch?",
       tocLabel: "Repowering",
       bloecke: [
         {
           typ: "p",
-          text: "**Beim Repowering ersetzen Sie die alten Module und den Wechselrichter durch eine neue, meist deutlich leistungsstärkere Anlage.** Wirtschaftlich zählt vor allem der höhere Eigenverbrauch; ob die neue Anlage zusätzlich wieder 20 Jahre EEG-Vergütung erhält, hängt von der rechtlichen Einordnung ab (siehe Kasten). Weil Module von 2006 oft nur 150 bis 200 Watt leisteten und heutige Module 400 Watt und mehr erreichen, passt auf dieselbe Dachfläche etwa die doppelte Leistung.",
+          text: "**Repowering lohnt sich vor allem dann, wenn die Dachfläche knapp, der Eigenverbrauch hoch und die alte Anlage deutlich unter ihrer Nennleistung ist.** Moderne Module leisten auf gleicher Fläche ein Vielfaches älterer Generationen, und neue Wechselrichter erfüllen die aktuellen Netzanschlussregeln inklusive Blindleistungs- und Wirkleistungssteuerung.",
         },
         {
           typ: "tabelle",
-          caption: `Repowering-Beispiel: neue 10-kWp-Anlage auf dem Dach der alten 5-kWp-Anlage (${VERBRAUCH.toLocaleString("de-DE")} kWh Verbrauch, ohne Speicher)`,
-          kopf: ["Kennzahl", "Wert"],
+          caption: "Entscheidungshilfe: Weiterbetrieb, Teilsanierung oder Repowering",
+          kopf: ["Situation", "Empfehlung"],
           zeilen: [
-            ["Investition (Richtwert)", eur(NEU.investition)],
-            ["Jahresertrag", kwh(NEU.jahresertrag)],
-            ["Autarkie", `${Math.round(NEU.autarkie * 100)} %`],
-            [`Vergütung neuer Anlagen ab ${VERGUETUNG.gueltigAbLabel} (bis 10 kWp)`, `${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct/kWh – Anspruch im Einzelfall klären`],
-            ["Vorteil pro Jahr", eur(NEU.nutzenProJahr)],
-            ["Amortisation", `ca. ${NEU.amortisationJahre ? NEU.amortisationJahre.toFixed(1).replace(".", ",") : "über 20"} Jahre`],
+            ["Module in gutem Zustand, Wechselrichter läuft", "weiterbetreiben, Monitoring und Prüfintervalle beibehalten"],
+            ["Module gut, Wechselrichter defekt oder am Lebensende", "Wechselrichter tauschen (neues Gerät muss aktuelle TOR erfüllen), ggf. Speicher mitplanen"],
+            ["einzelne Module defekt, keine Ersatzmodule verfügbar", "Teil-Repowering: betroffene Strings mit neuen Modulen und passender Elektronik neu aufbauen"],
+            ["starke Degradation, Sicherheitsmängel, Dachsanierung ansteht", "Repowering der gesamten Anlage, Dach und Unterkonstruktion gleich mit erneuern"],
+            ["hoher Strombedarf, wenig Fläche", "Repowering mit Leistungserhöhung – Netzanschluss und Förderung neu prüfen"],
           ],
-          fussnote: `Werte aus dem Rechenkern unseres Solarrechners, gerechnet mit der Vergütung einer Neuanlage (Anlagenpreis ${Math.round(preisProKwp(10)).toLocaleString("de-DE")} €/kWp bei 10 kWp, ohne Kosten für Demontage und Entsorgung der Altanlage). Keine Angebote.`,
+          minBreite: 620,
         },
         {
           typ: "kasten",
           variant: "recht",
-          titel: "Neue Vergütung nach Repowering: vorab klären",
-          text: "Die Verbraucherzentrale geht davon aus, dass eine komplett neue Anlage auf dem Dach einer Ü20-Anlage als Neuanlage 20 Jahre zu den aktuellen Sätzen vergütet wird. Nach dem Wortlaut von § 38b Abs. 2 EEG gelten Solaranlagen, die Anlagen **an demselben Standort ersetzen**, bis zur bisherigen Leistung jedoch als zum Zeitpunkt der ersetzten Anlagen in Betrieb genommen – bei ausgeförderten Anlagen hieße das: für diesen Leistungsanteil keine neue Förderung. Die Einordnung ist nicht abschließend geklärt. Lassen Sie sie vor der Bestellung vom Netzbetreiber schriftlich bestätigen; bei Streit hilft die Clearingstelle EEG|KWKG.",
-        },
-        {
-          typ: "p",
-          text: "Ein Repowering lohnt sich besonders, wenn das Dach ohnehin saniert werden muss, die alten Module deutliche Schäden oder starke Leistungsverluste zeigen oder künftig eine Wärmepumpe oder ein E-Auto dazukommt. Wie das bei uns abläuft, zeigt die Seite [Repowering](/service/repowering).",
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Speicher und Wechselrichter herstellerneutral auswählen",
-          text: "Für Nachrüstung und Repowering kommen sowohl AC-gekoppelte Speicher als auch Hybridwechselrichter infrage. Ökovolt ist Partner von Sigenergy, Fronius, Huawei, Solis, BYD und meteocontrol – entscheidend für die Auswahl ist aber, was technisch zur vorhandenen Anlage und zu Ihrem Verbrauch passt.",
+          titel: "Netzbetreiber und Förderung einbinden",
+          text: "Ein Wechselrichtertausch oder eine Leistungserhöhung ist eine Änderung der Erzeugungsanlage und beim Netzbetreiber zu melden; neue Geräte müssen die aktuelle TOR Stromerzeugungsanlagen erfüllen (Typ A, Version 1.4, seit 1. Juni 2026). Erweiterungen können über den EAG-Investitionszuschuss förderfähig sein – Details im Ratgeber [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss). Ökovolt bietet [Repowering](/service/repowering) inklusive Netzbetreiber-Abstimmung an.",
         },
       ],
     },
     {
-      id: "pflichten",
-      titel: "Steuern, Versicherung und Pflichten nach dem Förderende",
-      tocLabel: "Steuern & Pflichten",
+      id: "rueckbau",
+      titel: "Rückbau und Entsorgung alter Module",
+      tocLabel: "Rückbau & Entsorgung",
       bloecke: [
+        {
+          typ: "p",
+          text: "**PV-Module sind Elektroaltgeräte und dürfen nicht über den Bauschutt entsorgt werden; sie werden über die Sammel- und Verwertungssysteme für Elektroaltgeräte zurückgenommen.** Die EU-Richtlinie 2012/19/EU (WEEE) bezieht Photovoltaikmodule ausdrücklich ein; in Österreich ist sie in der Elektroaltgeräteverordnung umgesetzt. Glas, Aluminium und Kupfer lassen sich weitgehend recyceln.",
+        },
         {
           typ: "checkliste",
           punkte: [
-            "**Einkommensteuer:** Einnahmen aus Anlagen bis 30 kWp auf Wohngebäuden sind nach § 3 Nr. 72 EStG steuerfrei – das gilt auch für Ü20-Anlagen. Details im Ratgeber [Photovoltaik und Steuern](/ratgeber/photovoltaik-steuern).",
-            "**Marktstammdatenregister:** Änderungen wie der Wechsel der Einspeiseart oder eine Stilllegung müssen dort und beim Netzbetreiber gemeldet werden.",
-            "**Versicherung:** Alte Spezialpolicen prüfen. Oft ist eine Absicherung über die Wohngebäudeversicherung günstiger – siehe [Photovoltaik-Versicherung](/ratgeber/photovoltaik-versicherung).",
-            "**Betriebssicherheit:** Sie bleiben als Betreiber für den sicheren Zustand verantwortlich. Ein regelmäßiger Anlagencheck ist bei 20 Jahre alten Komponenten besonders sinnvoll.",
-            "**Stilllegung:** Wer die Anlage abbaut, muss sie abmelden und die Module fachgerecht entsorgen; Hersteller und Händler sind zur Rücknahme verpflichtet.",
+            "Rückbau nur durch Fachbetrieb: Module stehen bei Licht unter Spannung, DC-Leitungen sicher trennen.",
+            "Rücknahme über Hersteller, Importeur oder Sammelsystem klären – bei gewerblichen Mengen vorab anmelden.",
+            "Funktionsfähige Module können als Gebrauchtware weiterverwendet werden, wenn Prüfprotokolle vorliegen.",
+            "Wechselrichter, Speicher und Kabel getrennt entsorgen; Batterien nach den Vorgaben für Altbatterien.",
+            "Abmeldung beim Netzbetreiber und bei der OeMAG, Anpassung der Versicherung – siehe [Photovoltaik-Versicherung](/ratgeber/photovoltaik-versicherung).",
           ],
         },
       ],
@@ -271,39 +262,62 @@ const artikel = {
   ],
 
   faq: [
-    { q: "Was bekomme ich nach 20 Jahren für meinen Solarstrom?", a: `Anlagen bis 100 kW erhalten automatisch die Anschlussvergütung: den Jahresmarktwert Solar (2025 rund ${ctStr(MARKTWERT_2025)} ct/kWh, höchstens 10 ct) abzüglich einer Vermarktungspauschale von ${ct(PAUSCHALE_2026)} ct/kWh im Jahr 2026. Mit intelligentem Messsystem halbiert sich die Pauschale.` },
-    { q: "Muss ich meine Ü20-Anlage beim Netzbetreiber neu anmelden?", a: "Für den reinen Weiterbetrieb mit Volleinspeisung nein – die Anschlussvergütung greift automatisch. Wer auf Eigenverbrauch umrüstet, Komponenten tauscht oder stilllegt, muss das dem Netzbetreiber und im Marktstammdatenregister melden." },
-    { q: "Wie lange gilt die Anschlussvergütung für Ü20-Anlagen?", a: "Nach dem Solarpaket I bis zum 31. Dezember 2032. Danach bleiben Eigenverbrauch, Direktvermarktung oder ein Repowering als neue Anlage." },
-    { q: "Lohnt sich ein Stromspeicher für eine Ü20-Anlage?", a: "Nur in wenigen Fällen. Der zusätzliche Eigenverbrauch bringt meist einige Hundert Euro im Jahr, der Speicher kostet mehrere Tausend. Sinnvoll ist er, wenn er bei einer späteren Modernisierung weitergenutzt wird oder mit einem ohnehin fälligen Hybridwechselrichter kommt." },
-    { q: "Bekomme ich nach einem Modultausch wieder EEG-Vergütung?", a: "Das ist nicht eindeutig geregelt. Nach § 38b Abs. 2 EEG übernehmen Ersatzanlagen am selben Standort bis zur bisherigen Leistung das alte Inbetriebnahmedatum – bei ausgeförderten Anlagen entstünde für diesen Anteil keine neue Förderung. Die Verbraucherzentrale geht bei einer komplett neuen Anlage dagegen von 20 Jahren Vergütung aus. Lassen Sie die Einordnung vorab vom Netzbetreiber bestätigen." },
-    { q: "Muss ich für eine Ü20-Anlage Steuern zahlen?", a: "Bei Anlagen bis 30 kWp auf Wohngebäuden in der Regel nicht: Einnahmen und Entnahmen sind nach § 3 Nr. 72 EStG von der Einkommensteuer befreit." },
-    { q: "Brauche ich für meine Ü20-Anlage einen Smart Meter?", a: "Bei mehr als 7 kW installierter Leistung ist die Anlage ein Pflichteinbaufall; der Messstellenbetreiber stattet sie bis spätestens 2032 aus. Die Kosten sind gesetzlich gedeckelt. Kleinere Anlagen können freiwillig umgerüstet werden." },
+    {
+      q: "Wie lange bekomme ich den Einspeisetarif der OeMAG?",
+      a: "Die Laufzeit steht in Ihrem Fördervertrag. Nach dem Ökostromgesetz 2012 wurden PV-Tarife typischerweise für 13 Jahre vergeben. Nach Ende der Laufzeit können Sie zum Marktpreis weiter einspeisen oder zu einem Stromhändler wechseln.",
+    },
+    {
+      q: "Was bekomme ich nach Tarifende für meinen Solarstrom?",
+      a: `Bei der OeMAG den monatlichen Marktpreis für Photovoltaik – 2026 lag er zwischen ${ct(MP.mar)} ct/kWh (März) und ${ct(MP.aug)} ct/kWh (August). Stromhändler und Energiegemeinschaften bieten eigene Modelle. Wirtschaftlich attraktiver ist meist der Eigenverbrauch.`,
+    },
+    {
+      q: "Wie lange halten Solarmodule?",
+      a: "Gut gewartete Module liefern oft 25 bis 30 Jahre und länger Strom, mit langsam sinkender Leistung. Wechselrichter werden in dieser Zeit meist mindestens einmal getauscht. Ob eine Anlage noch gut ist, zeigen Kennlinienmessung und Thermografie.",
+    },
+    {
+      q: "Lohnt sich ein Repowering alter PV-Anlagen?",
+      a: "Oft ja, wenn die Fläche knapp ist, der Eigenverbrauch hoch und die alte Anlage stark degradiert. Neue Module leisten auf gleicher Fläche ein Vielfaches. Netzanschluss und mögliche Förderung für die Erweiterung sind vorab zu klären.",
+    },
+    {
+      q: "Muss ich einen Wechselrichtertausch melden?",
+      a: "Ja, eine Änderung der Erzeugungsanlage ist dem Netzbetreiber zu melden. Neue Wechselrichter müssen die aktuellen TOR Stromerzeugungsanlagen erfüllen. Die Meldung übernimmt in der Regel der ausführende Elektrotechniker.",
+    },
+    {
+      q: "Wie entsorge ich alte Solarmodule?",
+      a: "Über die Rücknahme- und Sammelsysteme für Elektroaltgeräte, nicht über den Bauschutt. Hersteller und Importeure sind in die Rücknahme eingebunden. Den Rückbau sollte ein Fachbetrieb übernehmen, weil Module bei Licht Spannung erzeugen.",
+    },
+    {
+      q: "Kann ich eine alte Volleinspeise-Anlage auf Eigenverbrauch umstellen?",
+      a: "Ja, in der Regel durch einen Umbau der Zählung auf Überschusseinspeisung. Der Netzbetreiber muss eingebunden werden, und die Anlage muss die geltenden Anschlussbedingungen erfüllen. Das lohnt sich besonders bei hohem Tagverbrauch im Betrieb.",
+    },
+    {
+      q: "Soll ich bei einer alten Anlage gleich einen Speicher nachrüsten?",
+      a: "Wenn Sie nach Tarifende auf Eigenverbrauch umstellen, kann ein Speicher den Anteil deutlich erhöhen. Bei bestehenden Wechselrichtern ist meist ein AC-gekoppelter Speicher die einfachste Lösung. Steht ohnehin ein Wechselrichtertausch an, kann ein Hybridwechselrichter PV und Speicher gemeinsam versorgen – rechnen Sie beide Varianten anhand Ihres Lastgangs durch.",
+    },
   ],
 
   passend: [
-    { href: "/service/repowering", titel: "Repowering", text: "Alte Anlage modernisieren, neue Vergütung sichern." },
-    { href: "/ratgeber/einspeiseverguetung-2026", titel: "Einspeisevergütung 2026", text: "Die aktuellen Sätze für neue Anlagen." },
-    { href: "/ratgeber/stromspeicher-kosten", titel: "Stromspeicher Kosten", text: "Preise je kWh und Nachrüstung." },
-    { href: "/ratgeber/smart-meter-pflicht", titel: "Smart-Meter-Pflicht", text: "Wer ein intelligentes Messsystem braucht." },
+    { href: "/service/repowering", titel: "Repowering", text: "Alte Anlagen modernisieren und erweitern." },
+    { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "Überschuss nach Tarifende verkaufen." },
+    { href: "/ratgeber/oemag-marktpreis", titel: "OeMAG-Marktpreis", text: "Berechnung und Historie." },
+    { href: "/ratgeber/eigenverbrauch-erhoehen", titel: "Eigenverbrauch erhöhen", text: "Mehr Solarstrom selbst nutzen." },
   ],
 
   quellen: [
-    { titel: "Verbraucherzentrale – Photovoltaik: Was tun mit der Ü20-Anlage, wenn die EEG-Förderung endet?", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/photovoltaik-was-tun-mit-der-ue20anlage-wenn-die-eegfoerderung-endet-50846", stand: "08/2026" },
-    { titel: "§ 23b EEG 2023 – Einspeisevergütung bei ausgeförderten Anlagen", url: "https://www.gesetze-im-internet.de/eeg_2014/__23b.html", stand: "09/2026" },
-    { titel: "§ 21 EEG 2023 – Einspeisevergütung", url: "https://www.gesetze-im-internet.de/eeg_2014/__21.html", stand: "09/2026" },
-    { titel: "Clearingstelle EEG|KWKG – Möglichkeiten nach Ablauf des Vergütungszeitraums", url: "https://www.clearingstelle-eeg-kwkg.de/haeufige-rechtsfrage/69", stand: "09/2026" },
-    { titel: "Clearingstelle EEG|KWKG – Erweitern oder Repowern zu früheren Vergütungssätzen?", url: "https://www.clearingstelle-eeg-kwkg.de/haeufige-rechtsfrage/100", stand: "09/2026" },
-    { titel: "Solarenergie-Förderverein Deutschland – Grundlagen für den Weiterbetrieb von Ü20-Anlagen", url: "https://www.sfv.de/weiterbetrieb-ue20-grundlagen", stand: "01/2026" },
-    { titel: "DGS – Der Jahresmarktwert Solar 2025", url: "https://www.dgs.de/newsletter/der-jahresmarktwert-solar-2025/", stand: "01/2026" },
-    { titel: "§ 29 Messstellenbetriebsgesetz – Ausstattung mit intelligenten Messsystemen", url: "https://www.gesetze-im-internet.de/messbg/__29.html", stand: "09/2026" },
+    { titel: "OeMAG – Marktpreise 2026 und Marktpreis-Antrag", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
+    { titel: "OeMAG – FAQ (Umstellung vom Tarif auf den Marktpreis)", url: "https://www.oem-ag.at/service/faqs", stand: "09/2026" },
+    { titel: "E-Control – Steuern und Abgaben auf Strom (Elektrizitätsabgabe 2026)", url: "https://www.e-control.at/industrie/strom/strompreis/steuern", stand: "09/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen Typ A, Version 1.4", url: "https://www.e-control.at/documents/1785851/1811582/TOR+Stromerzeugungsanlagen+Typ+A+Version+1.4+%287%29.pdf/093752f5-e220-0731-b8a8-bfa85ccb7287?t=1780897058735", stand: "06/2026" },
+    { titel: "IEC – IEC TS 62446-3:2017, Outdoor infrared thermography of PV modules and plants", url: "https://webstore.iec.ch/en/publication/28628", stand: "09/2026" },
+    { titel: "EUR-Lex – Richtlinie 2012/19/EU über Elektro- und Elektronik-Altgeräte (WEEE)", url: "https://eur-lex.europa.eu/eli/dir/2012/19/oj", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Ü20-Anlage modernisieren?", text: "Ertrag und Amortisation einer neuen Anlage berechnen.", href: "/solarrechner", label: "Zum Solarrechner" },
+  seitenCta: { titel: "Anlage in die Jahre gekommen?", text: "Zustandsprüfung und Repowering-Konzept.", href: "/service/repowering", label: "Repowering anfragen" },
   cta: {
-    title: "Weiterbetreiben, umrüsten oder erneuern? Wir prüfen Ihre Ü20-Anlage.",
-    text: "Anlagencheck vor Ort, ehrliche Rechnung für alle Varianten und auf Wunsch Umbau, Speicher oder Repowering mit Anmeldung aus einer Hand.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Repowering ansehen", href: "/service/repowering" },
+    title: "Alte Anlage, neue Chancen – prüfen, weiterbetreiben oder repowern.",
+    text: "Ökovolt bewertet den Zustand Ihrer PV-Anlage mit Messung und Thermografie und plant Weiterbetrieb oder Repowering – für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich.",
+    primary: { label: "Repowering anfragen", href: "/service/repowering" },
+    secondary: { label: "E-Check anfragen", href: "/service/e-check" },
   },
 };
 

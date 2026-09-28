@@ -70,7 +70,7 @@ export default function WaermepumpeRechner() {
       icon: Sun,
       teile: [
         { k: "energie", v: r.solar.reststrom * (wpTarif / 100), farbe: "bg-navy-400", l: "Netzstrom" },
-        { k: "solar", v: r.solar.solarKwh * (r.solar.satzCt / 100), farbe: "bg-ov-500", l: "Solarstrom (entgangene Vergütung)" },
+        { k: "solar", v: r.solar.solarKwh * (r.solar.satzCt / 100), farbe: "bg-ov-500", l: "Solarstrom (entgangener Einspeiseerlös)" },
         { k: "neben", v: r.solar.nebenkosten, farbe: "bg-navy-100", l: "Wartung" },
       ],
       summe: r.solar.summe,
@@ -138,7 +138,7 @@ export default function WaermepumpeRechner() {
                 ]}
               />
               {heizung === "oel" ? (
-                <Regler label="Heizölpreis" wert={oelPreis} min={60} max={180} step={1} format={(v) => `${fmt(v)} €/100 l`} minLabel="60 €" maxLabel="180 €" onChange={setOelPreis} />
+                <Regler label="Heizölpreis" wert={oelPreis} min={80} max={260} step={1} format={(v) => `${fmt(v)} €/100 l`} minLabel="80 €" maxLabel="260 €" onChange={setOelPreis} />
               ) : (
                 <Regler label="Gaspreis" wert={gasPreis} min={6} max={20} step={0.1} format={(v) => `${fmt(v, 1)} ct/kWh`} minLabel="6 ct" maxLabel="20 ct" onChange={setGasPreis} />
               )}
@@ -162,7 +162,7 @@ export default function WaermepumpeRechner() {
                   </button>
                 )}
               </div>
-              <Regler label="Strompreis Wärmepumpe" wert={wpTarif} min={18} max={40} step={0.5} format={(v) => `${fmt(v, 1)} ct/kWh`} minLabel="18 ct" maxLabel="40 ct" onChange={setWpTarif} hinweis="Wärmepumpentarif oder Haushaltsstrom mit § 14a-Reduzierung" />
+              <Regler label="Strompreis Wärmepumpe" wert={wpTarif} min={18} max={40} step={0.5} format={(v) => `${fmt(v, 1)} ct/kWh`} minLabel="18 ct" maxLabel="40 ct" onChange={setWpTarif} hinweis="Arbeitspreis inkl. Netz, Abgaben und USt. – ohne Grundpauschalen" />
             </Gruppe>
 
             <Gruppe titel="Photovoltaik">
@@ -241,7 +241,7 @@ export default function WaermepumpeRechner() {
             <ul className="flex flex-wrap gap-x-4 gap-y-1 pt-1 text-[12px] text-ink-500">
               <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ink-400" aria-hidden="true" />Brennstoff</li>
               <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-navy-400" aria-hidden="true" />Netzstrom</li>
-              {r.solar && <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ov-500" aria-hidden="true" />Solarstrom ({fmt(r.solar.satzCt, 1)} ct entgangene Vergütung)</li>}
+              {r.solar && <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ov-500" aria-hidden="true" />Solarstrom ({fmt(r.solar.satzCt, 1)} ct entgangener Einspeiseerlös)</li>}
               <li className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-full bg-ink-200" aria-hidden="true" />Grundpreis, Wartung</li>
             </ul>
           </div>
@@ -270,12 +270,19 @@ export default function WaermepumpeRechner() {
               <Gift aria-hidden="true" className="h-5 w-5" />
             </span>
             <div>
-              <p className="font-display text-[16.5px] font-bold">
-                BEG-Förderung: <span className="ov-num">{fmtEur(r.foerderung.min)}</span> bis <span className="ov-num">{fmtEur(r.foerderung.max)}</span> Zuschuss möglich
-              </p>
+              {r.foerderung.verfuegbar ? (
+                <p className="font-display text-[16.5px] font-bold">
+                  Förderung: <span className="ov-num">{fmtEur(r.foerderung.min)}</span> bis <span className="ov-num">{fmtEur(r.foerderung.max)}</span> Zuschuss möglich
+                </p>
+              ) : (
+                <p className="font-display text-[16.5px] font-bold">Förderung Österreich: Stand September 2026</p>
+              )}
               <p className="mt-1.5 text-[13.5px] leading-relaxed text-white/70">
-                KfW 458: {W.foerderung.grundProzent} % Grundförderung, mit Klimageschwindigkeits- und Einkommensbonus bis {W.foerderung.maxProzent} % – bei
-                max. {fmtEur(W.foerderung.kostenDeckelErsteWe)} förderfähigen Kosten (erste Wohneinheit). Antrag vor Vertragsabschluss.{" "}
+                {W.foerderung.hinweis}{" "}
+                <Link href="/forderungen/landesforderungen" className="font-semibold text-ov-300 underline decoration-ov-300/40 underline-offset-2 hover:decoration-current">
+                  Landesförderungen
+                </Link>
+                {" · "}
                 <Link href="/foerdercheck" className="font-semibold text-ov-300 underline decoration-ov-300/40 underline-offset-2 hover:decoration-current">
                   Förder-Check
                 </Link>
@@ -312,7 +319,7 @@ function MonatsChart({ monate, mitPv }) {
 
   return (
     <div ref={ref} className="relative px-2 pb-4 pt-2 md:px-3">
-      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} className="block" role="img" aria-label={`Monatlicher Strombedarf der Wärmepumpe, höchster Wert im Januar mit ${fmt(Math.round(monate[0].wp))} kWh${mitPv ? `, davon ${fmt(Math.round(monate[0].solar))} kWh Solarstrom` : ""}.`}>
+      <svg width="100%" height={H} viewBox={`0 0 ${W} ${H}`} className="block" role="img" aria-label={`Monatlicher Strombedarf der Wärmepumpe, höchster Wert im Jänner mit ${fmt(Math.round(monate[0].wp))} kWh${mitPv ? `, davon ${fmt(Math.round(monate[0].solar))} kWh Solarstrom` : ""}.`}>
         {ticks.map((v) => (
           <g key={v}>
             <line x1={P.l} x2={W - P.r} y1={y(v)} y2={y(v)} stroke={FARBE.raster} />

@@ -7,6 +7,7 @@ import { cn } from "@/components/ui/cn";
 import useFokusFalle from "@/components/ui/useFokusFalle";
 import { herkunft } from "@/lib/herkunft";
 import { ereignis } from "@/lib/statistik";
+import { KONTAKT } from "@/data/navigation";
 
 const SCHRITTE = [
   { feld: "zaehler", label: "Stromzähler", icon: Gauge },
@@ -22,7 +23,7 @@ const FEHLER = {
   plz: "Bitte eine gültige Postleitzahl angeben.",
   einwilligung: "Bitte stimmen Sie der Verarbeitung zu.",
   zu_viele: "Zu viele Anfragen – bitte versuchen Sie es in einigen Minuten erneut.",
-  nicht_konfiguriert: "Diese Funktion ist gerade nicht verfügbar. Rufen Sie uns gern an: 08245 96 788 0.",
+  nicht_konfiguriert: `Diese Funktion ist gerade nicht verfügbar. Rufen Sie uns gern an: ${KONTAKT.telefon} oder schreiben Sie an ${KONTAKT.email}.`,
   backend: "Das hat nicht geklappt. Bitte erneut versuchen.",
 };
 

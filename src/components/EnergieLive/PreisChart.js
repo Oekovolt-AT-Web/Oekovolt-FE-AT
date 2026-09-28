@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Sigma, TrendingDown } from "lucide-react";
 import useLiveDaten, { useBreite } from "./useLiveDaten";
 import { preisTage, zeitfenster, achse, ct, uhr, spanne, tagLang, stundenmittel, zahl } from "./berechnung";
-import { dynamischBrutto } from "@/lib/energy";
+import { dynamischBrutto, TARIF_ANNAHMEN } from "@/lib/energy";
 import KeineDaten from "./KeineDaten";
 
 // Farben (nur im Diagramm): Preislinie Markenblau, Negativpreise Markengrün
@@ -22,7 +22,7 @@ const F = {
 };
 
 /**
- * Day-Ahead-Preis (DE-LU) in 15-Minuten-Auflösung für heute bzw. morgen.
+ * Day-Ahead-Preis der Gebotszone AT in 15-Minuten-Auflösung für heute bzw. morgen.
  * Negative Preise grün, günstigstes 3-Stunden-Fenster markiert, Fadenkreuz-Tooltip
  * (Maus, Touch und Pfeiltasten) und Tabellenansicht.
  */
@@ -121,7 +121,7 @@ export default function PreisChart({ initial }) {
       <div className="flex flex-col gap-5 border-b border-ink-100 p-5 sm:p-6 md:flex-row md:items-center md:justify-between md:p-8">
         <div>
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
-            Day-Ahead · DE-LU · {tage.aufloesungMin === 15 ? "15 Min." : "stündlich"}
+            Day-Ahead · Gebotszone AT · {tage.aufloesungMin === 15 ? "15 Min." : "stündlich"}
           </p>
           <h3 className="ov-h3 mt-2 text-ink-900">Börsenstrompreis {istHeute ? "heute" : "morgen"}, {tagLang(tag.start)}</h3>
         </div>
@@ -363,8 +363,9 @@ export default function PreisChart({ initial }) {
       </details>
 
       <p className="border-t border-ink-100 px-5 py-4 text-[12.5px] leading-relaxed text-ink-500 md:px-8">
-        Börsenpreise netto ohne Netzentgelte, Umlagen und Steuern. *Orientierung für dynamische Tarife: Börsenpreis plus ca. 19,5 ct/kWh
-        Netzentgelt, Abgaben und Marge, zzgl. 19 % MwSt. Quelle: {tage.quelle || "Energy-Charts (Fraunhofer ISE)"}.
+        Börsenpreise netto ohne Netzentgelte, Abgaben und Steuern. *Orientierung für dynamische Tarife in Österreich: Börsenpreis plus ca.{" "}
+        {zahl(TARIF_ANNAHMEN.aufschlagCt)} ct/kWh Netzentgelte, Abgaben und Lieferantenaufschlag, zzgl. {Math.round(TARIF_ANNAHMEN.mwst * 100)} % USt – je
+        nach Netzgebiet deutlich verschieden. Quelle: {tage.quelle || "Energy-Charts (Fraunhofer ISE)"}.
       </p>
     </div>
   );

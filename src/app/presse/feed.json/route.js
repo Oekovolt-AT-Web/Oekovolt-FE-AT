@@ -8,7 +8,7 @@ export async function GET() {
   return Response.json(
     jsonFeed({
       titel: "Ökovolt – Presse & Neuigkeiten",
-      beschreibung: "Pressemitteilungen, Unternehmensnews und Projekte der ÖKOVOLT GmbH Solartechnik.",
+      beschreibung: "Pressemitteilungen, Unternehmensnews und Projekte der Ökovolt Solartechnik GmbH (Österreich).",
       pfad: "/presse/feed.json",
       homePfad: "/presse",
       eintraege,

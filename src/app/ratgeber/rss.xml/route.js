@@ -6,8 +6,8 @@ export const dynamic = "force-static";
 export function GET() {
   return new Response(
     rss({
-      titel: "Ökovolt Ratgeber – Photovoltaik, Speicher & Energiewende",
-      beschreibung: "Fundierte Fachartikel zu Photovoltaik, Stromspeicher, Wärmepumpe, E-Mobilität, Förderung und Recht.",
+      titel: "Ökovolt Ratgeber Österreich – Photovoltaik für Betriebe, Gemeinden & Landwirtschaft",
+      beschreibung: "Fachartikel nach österreichischer Rechtslage: Wirtschaftlichkeit, EAG-Förderung, Steuern, Netzanschluss, Speicher, Energiegemeinschaften und E-Mobilität.",
       pfad: "/ratgeber/rss.xml",
       eintraege: ratgeberEintraege(60),
     }),

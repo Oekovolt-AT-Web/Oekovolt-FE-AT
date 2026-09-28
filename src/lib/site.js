@@ -42,10 +42,10 @@ export const FIRMA = {
     { name: "Andreas Wegscheider", anteil: "51 %" },
     { name: "Salzburg AG für Energie, Verkehr und Telekommunikation", anteil: "49 %" },
   ],
-  geo: { lat: 48.0466, lng: 12.8255 },
+  geo: { lat: 48.0428, lng: 12.8417 },
   oeffnungszeiten: [
     { tage: "Mo – Do", zeit: "08:00 – 16:00" },
-    { tage: "Fr", zeit: "08:00 – 12:00" },
+    { tage: "Fr", zeit: "08:00 – 13:00" },
   ],
   social: {
     facebook: "https://www.facebook.com/Oekovolt/",

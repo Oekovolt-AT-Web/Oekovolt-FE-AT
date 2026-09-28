@@ -4,7 +4,7 @@ import { Zap } from "lucide-react";
 import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
 import { LiveDot } from "@/components/ui/LiveTicker";
 
-/** Schwebende Kennzahl im Hero: aktueller Börsenstrompreis (live). */
+/** Schwebende Kennzahl im Hero: aktueller Börsenstrompreis der Gebotszone AT (live). */
 export default function LivePreisBadge({ startwert }) {
   const d = useEnergyLive();
   const aktuell = d?.preis?.aktuell?.eurMwh ?? startwert ?? null;
@@ -17,7 +17,7 @@ export default function LivePreisBadge({ startwert }) {
       </span>
       <div>
         <p className="flex items-center gap-1.5 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-ov-600">
-          <LiveDot className="bg-ov-500" /> Börsenstrom jetzt
+          <LiveDot className="bg-ov-500" /> Börsenstrom AT jetzt
         </p>
         <p className="mt-1 font-display text-[22px] font-extrabold leading-none text-ink-900">
           {aktuell != null ? <span className="ov-num">{fmtCt(aktuell)}</span> : "–"} <span className="text-[14px] font-semibold text-ink-500">ct/kWh</span>

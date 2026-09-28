@@ -14,7 +14,7 @@ const AUSRICHTUNGEN = [
   { id: "ost-west", label: "Ost / West" },
 ];
 
-const eur = (n) => Math.round(n).toLocaleString("de-DE");
+const eur = (n) => Math.round(n).toLocaleString("de-AT");
 
 /** Mini-Rechner im Hero: drei Eingaben, sofortiges Ergebnis, Übergabe an den Konfigurator. */
 export default function HeroRechner() {
@@ -51,7 +51,7 @@ export default function HeroRechner() {
           <div className="flex items-baseline justify-between">
             <label htmlFor="hero-verbrauch" className="text-[13.5px] text-white/70">Stromverbrauch pro Jahr</label>
             <output htmlFor="hero-verbrauch" className="ov-num font-display text-[22px] font-extrabold">
-              {verbrauch.toLocaleString("de-DE")} <span className="text-[14px] font-bold text-white/60">kWh</span>
+              {verbrauch.toLocaleString("de-AT")} <span className="text-[14px] font-bold text-white/60">kWh</span>
             </output>
           </div>
           <input
@@ -88,7 +88,7 @@ export default function HeroRechner() {
 
         <div className="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-2xl bg-white/10">
           {[
-            { l: "Anlage", w: `${r.kwp.toLocaleString("de-DE")} kWp` },
+            { l: "Anlage", w: `${r.kwp.toLocaleString("de-AT")} kWp` },
             { l: "Autarkie", w: `${Math.round(r.autarkie * 100)} %` },
             { l: "Amortisation", w: r.amortisationJahre ? `~${Math.round(r.amortisationJahre)} J.` : "–" },
           ].map((k) => (

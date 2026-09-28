@@ -1,7 +1,7 @@
 // src/app/ratgeber/page.js
 
 import Link from "next/link";
-import { ArrowUpRight, BatteryCharging, BookOpen, Calculator, Cpu, Euro, HelpCircle, Scale, Thermometer } from "lucide-react";
+import { ArrowUpRight, BatteryCharging, BookOpen, Calculator, Car, Cpu, Euro, HelpCircle, Network, Scale } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -13,30 +13,36 @@ import { ArtikelKarte } from "@/components/Ratgeber/Bausteine";
 import RatgeberListe from "@/components/Ratgeber/RatgeberListe";
 import FolgenBox from "@/components/Kanaele/FolgenBox";
 import { KATEGORIEN, alleArtikel, artikelPfad } from "@/lib/ratgeber";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
-import { WALLBOX, spanne } from "@/data/wallbox";
 import { BEGRIFFE } from "@/data/lexikon";
+import { BASE_URL, SITE_NAME, LOCALE } from "@/lib/site";
 
 const KATEGORIE_ICONS = {
   "Kosten & Wirtschaftlichkeit": Euro,
   "Technik & Planung": Cpu,
   "Speicher & Eigenverbrauch": BatteryCharging,
-  "Wärmepumpe & E-Mobilität": Thermometer,
+  "E-Mobilität & Sektorkopplung": Car,
   "Förderung, Steuern & Recht": Scale,
+  "Netz, Energiegemeinschaften & Markt": Network,
 };
 
-const BASE_URL = "https://www.oekovolt.com";
 const PAGE_URL = `${BASE_URL}/ratgeber`;
 
 const DESCRIPTION =
-  "Photovoltaik verständlich erklärt: Kosten, Speicher, Wärmepumpe, Förderung und Recht 2026 – über 40 fundierte Ratgeber vom Fachbetrieb aus dem Allgäu.";
+  "Photovoltaik-Ratgeber für Österreich: Wirtschaftlichkeit, EAG-Förderung, Steuern, Netzanschluss, Speicher und Energiegemeinschaften für Betriebe und Gemeinden.";
 
-// Deutschlandspezifischer Content -> kein hreflang, nur Canonical.
+// Österreichspezifischer Content -> kein hreflang, nur Canonical.
 export const metadata = {
-  title: "PV-Ratgeber 2026: Kosten, Förderung & Technik | Ökovolt",
+  title: "PV-Ratgeber Österreich 2026: Gewerbe & Förderung | Ökovolt",
   description: DESCRIPTION,
-  keywords: ["Photovoltaik Ratgeber", "Solaranlage Ratgeber", "Einspeisevergütung", "Photovoltaik Kosten", "Photovoltaik Förderung", "Wallbox Installation"],
+  keywords: [
+    "Photovoltaik Ratgeber Österreich",
+    "Photovoltaik Gewerbe",
+    "EAG Investitionszuschuss",
+    "Investitionsfreibetrag Photovoltaik",
+    "Photovoltaik Kosten Österreich",
+    "Energiegemeinschaft",
+    "OeMAG Marktpreis",
+  ],
   alternates: {
     canonical: PAGE_URL,
     types: {
@@ -49,17 +55,18 @@ export const metadata = {
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Österreich",
-    title: "Photovoltaik-Ratgeber | Ökovolt",
+    siteName: SITE_NAME,
+    locale: LOCALE,
+    title: "Photovoltaik-Ratgeber Österreich | Ökovolt",
     description: DESCRIPTION,
-    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Ratgeber" }],
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Ratgeber Österreich" }],
   },
 };
 
 export default function RatgeberPage() {
   const artikel = alleArtikel();
   // Redaktionell empfohlene Artikel (suchstärkste Themen); Fallback: neueste
-  const EMPFOHLEN = ["photovoltaik-lohnt-sich", "stromspeicher-kosten", "waermepumpe-mit-photovoltaik"];
+  const EMPFOHLEN = ["photovoltaik-gewerbe", "eag-investitionszuschuss", "investitionsfreibetrag-photovoltaik"];
   const empfohlen = EMPFOHLEN.map((s) => artikel.find((a) => a.slug === s)).filter(Boolean);
   const [top, ...rest] = empfohlen.length === EMPFOHLEN.length ? empfohlen : artikel;
 
@@ -69,7 +76,7 @@ export default function RatgeberPage() {
       {
         "@type": "CollectionPage",
         "@id": `${PAGE_URL}/#collection`,
-        name: "Photovoltaik-Ratgeber",
+        name: "Photovoltaik-Ratgeber Österreich",
         description: DESCRIPTION,
         inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE_URL}/#website` },
@@ -89,12 +96,12 @@ export default function RatgeberPage() {
     ],
   };
 
-  // Zitierfähige Kennzahlen – alle aus den zentralen Datenquellen.
+  // Zitierfähige Kennzahlen – Stand 09/2026, Quellen jeweils im verlinkten Ratgeber.
   const fakten = [
-    { wert: `${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct`, text: `Einspeisevergütung je kWh für Anlagen bis 10 kWp (Inbetriebnahme ab ${VERGUETUNG.gueltigAbLabel})`, href: "/ratgeber/einspeiseverguetung-2026" },
-    { wert: `~${Math.round((10 * preisProKwp(10)) / 1000)}.000 €`, text: "kostet eine schlüsselfertige 10-kWp-Anlage 2026 ohne Speicher", href: "/ratgeber/solaranlage-kosten" },
-    { wert: "0 %", text: "Umsatzsteuer auf PV-Anlagen und Speicher an Wohngebäuden (§ 12 Abs. 3 UStG)", href: "/forderungen/steuerlich" },
-    { wert: spanne([WALLBOX.gesamtVon, WALLBOX.gesamtBis]).replace(" €", ""), text: "Euro kostet eine 11-kW-Wallbox inklusive Installation im Einfamilienhaus", href: "/ratgeber/wallbox-installation" },
+    { wert: "22 %", text: "Öko-Investitionsfreibetrag auf PV-Anlagen und Speicher, die bis 31. Dezember 2026 angeschafft werden (§ 11 EStG)", href: "/ratgeber/investitionsfreibetrag-photovoltaik" },
+    { wert: "8.–22.10.", text: "letzter EAG-Fördercall 2026 für Photovoltaik und Stromspeicher – bis 130 €/kWp (C) bzw. 120 €/kWp (D)", href: "/ratgeber/eag-investitionszuschuss" },
+    { wert: "806 €", text: "je kWp netto kostete eine schlüsselfertige 30–50-kWp-Anlage in Österreich laut BMWET-Marktstatistik 2024", href: "/ratgeber/solaranlage-kosten" },
+    { wert: "0 ct", text: "Elektrizitätsabgabe auf selbst erzeugten und selbst verbrauchten Solarstrom – ohne Mengengrenze", href: "/ratgeber/photovoltaik-steuern" },
   ];
 
   return (
@@ -104,23 +111,23 @@ export default function RatgeberPage() {
       <PageHero
         variant="dark"
         breadcrumbs={[{ name: "Ratgeber" }]}
-        eyebrow="Wissen vom Fachbetrieb · Stand September 2026"
+        eyebrow="Fachwissen für Österreich · Stand September 2026"
         title={
           <>
             Photovoltaik-<span className="ov-text-gradient-light">Ratgeber</span>
           </>
         }
-        lead="Was kostet eine Anlage, wie viel bringt die Einspeisung, welche Wallbox passt? Hier beantworten wir die Fragen, die uns in der Beratung am häufigsten gestellt werden – ehrlich, gründlich und ohne Fachchinesisch."
+        lead="Rechnet sich PV für Ihren Betrieb, welche Förderung und welcher Freibetrag gelten, was verlangt der Netzbetreiber? Wir beantworten die Fragen von Geschäftsführung, Technik und Einkauf – nach österreichischer Rechtslage, mit Zahlen und Quellen."
         stats={[
           { value: artikel.length, label: "ausführliche Ratgeber" },
           { value: BEGRIFFE.length, label: "Begriffe im Lexikon" },
-          { value: 15, suffix: "+", label: "Jahre Praxiserfahrung" },
+          { value: new Date().getFullYear() - 2012, label: "Jahre PV-Praxis in Österreich (seit 2012)" },
         ]}
       />
 
       <Section tone="sand" space="lg">
         <SectionHeading eyebrow="Themenbereiche" title="Wählen Sie Ihr Thema" className="mb-10" />
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {KATEGORIEN.map((k, i) => {
             const liste = artikel.filter((a) => a.kategorie === k);
             const Icon = KATEGORIE_ICONS[k] || BookOpen;
@@ -175,7 +182,7 @@ export default function RatgeberPage() {
           <SectionHeading
             eyebrow="Nichts verpassen"
             title="Neue Fachartikel direkt in Ihren Feed"
-            lead="Folgen Sie dem Ratgeber im Fediverse – zum Beispiel über Mastodon oder Threads, auch mit dem Konto Ihrer Kommune oder Ihres Stadtwerks –, abonnieren Sie den RSS-Feed oder aktivieren Sie Push-Benachrichtigungen. Ohne Algorithmus, ohne Werbung."
+            lead="Folgen Sie dem Ratgeber im Fediverse – zum Beispiel über Mastodon oder Threads, auch mit dem Konto Ihrer Gemeinde oder Ihres Energieversorgers –, abonnieren Sie den RSS-Feed oder aktivieren Sie Push-Benachrichtigungen. Ohne Algorithmus, ohne Werbung."
           />
           <FolgenBox konten={["ratgeber"]} pushThema="ratgeber" />
         </div>
@@ -192,7 +199,7 @@ export default function RatgeberPage() {
             items={[
               { icon: BookOpen, title: "Photovoltaik-Lexikon", text: `${BEGRIFFE.length} Fachbegriffe von Autarkiegrad bis Zyklenfestigkeit – jeweils mit Definition in einem Satz.`, href: "/wissen/lexikon" },
               { icon: HelpCircle, title: "Häufige Fragen", text: "Kurze Antworten zu Planung, Kosten, Speicher, Anmeldung und Service – mit Suche.", href: "/faqs" },
-              { icon: Calculator, title: "Solarrechner", text: `Ertrag, Autarkie und Amortisation mit ${Math.round(ANNAHMEN.strompreis * 100)} ct Strompreis und den EEG-Sätzen 2026.`, href: "/solarrechner" },
+              { icon: Calculator, title: "Rechner", text: "Ertrag, Eigenverbrauch, Speicher und Amortisation für Ihr Dach – als erste Orientierung vor dem Angebot.", href: "/rechner" },
             ]}
           />
         </div>
@@ -203,7 +210,7 @@ export default function RatgeberPage() {
           <SectionHeading
             eyebrow="Auf einen Blick"
             title="Zahlen, die Sie 2026 kennen sollten"
-            lead="Die wichtigsten Richtwerte aus unseren Ratgebern – regelmäßig geprüft und mit der ausführlichen Erklärung verlinkt."
+            lead="Die wichtigsten Werte zur österreichischen Rechts- und Förderlage – regelmäßig geprüft und mit der ausführlichen Erklärung und den Quellen verlinkt."
           />
           <ul className="grid gap-4 sm:grid-cols-2">
             {fakten.map((f, i) => (
@@ -221,7 +228,7 @@ export default function RatgeberPage() {
 
       <CtaBand
         title="Genug gelesen? Wir rechnen Ihr Projekt konkret durch."
-        text="Aus Richtwerten wird ein Angebot: Wir prüfen Dach, Zählerschrank und Verbrauch und planen die Anlage, die zu Ihnen passt – vom Fachbetrieb aus Türkheim."
+        text="Aus Richtwerten wird ein Angebot: Wir werten Ihren Lastgang aus, prüfen Dach, Statik und Netzanschluss und planen die Anlage, die zu Ihrem Betrieb passt – Ökovolt aus Ostermiething, seit 2012 in ganz Österreich."
       />
     </>
   );

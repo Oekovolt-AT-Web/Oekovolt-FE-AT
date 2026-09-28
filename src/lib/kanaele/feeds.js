@@ -16,7 +16,7 @@ const rfc822 = (d) => new Date(d || Date.now()).toUTCString();
 /**
  * Einträge: [{ titel, url, datum, aktualisiert, teaser, inhalt (HTML), kategorie, bildAbsolut, bildAlt, autor }]
  */
-export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-DE", bild = `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp` }) {
+export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-AT", bild = `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp` }) {
   const selbst = `${BASE_URL}${pfad}`;
   const letzte = eintraege.reduce((m, e) => Math.max(m, new Date(e.aktualisiert || e.datum || 0).getTime()), 0);
   const items = eintraege
@@ -45,7 +45,7 @@ export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-DE", b
     <atom:link href="${xml(selbst)}" rel="self" type="application/rss+xml" />
     <description>${xml(beschreibung)}</description>
     <language>${sprache}</language>
-    <copyright>© ${new Date().getFullYear()} ÖKOVOLT GmbH Solartechnik</copyright>
+    <copyright>© ${new Date().getFullYear()} Ökovolt Solartechnik GmbH</copyright>
     <lastBuildDate>${rfc822(letzte || Date.now())}</lastBuildDate>
     <ttl>30</ttl>
     <image><url>${xml(bild)}</url><title>${xml(titel)}</title><link>${BASE_URL}</link></image>
@@ -61,8 +61,8 @@ export function jsonFeed({ titel, beschreibung, pfad, homePfad = "/", eintraege,
     home_page_url: `${BASE_URL}${homePfad}`,
     feed_url: `${BASE_URL}${pfad}`,
     description: beschreibung,
-    language: "de-DE",
-    icon: `${BASE_URL}/Logo_ov_4cDeutschland-removebg-preview.png`,
+    language: "de-AT",
+    icon: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
     authors: [{ name: "Ökovolt Österreich", url: BASE_URL }],
     items: eintraege.map((e) => ({
       id: e.url,

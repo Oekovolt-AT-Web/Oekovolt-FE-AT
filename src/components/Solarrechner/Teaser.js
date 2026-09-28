@@ -13,7 +13,7 @@ export default function SolarrechnerTeaser({
   href = "/solarrechner",
   cta = "Zum Solarrechner",
   titel = "Was bringt Ihnen eine PV-Anlage?",
-  text = "Anlagengröße, Verbrauch und Dach eingeben – Sie sehen sofort Jahresertrag, Ersparnis, Autarkie und Amortisation.",
+  text = "Für Betrieb, Landwirtschaft oder Haus: Anlagengröße, Verbrauch und Dach eingeben – Sie sehen sofort Jahresertrag, Eigenverbrauch, Ersparnis und Amortisation.",
   className = "",
 }) {
   return (

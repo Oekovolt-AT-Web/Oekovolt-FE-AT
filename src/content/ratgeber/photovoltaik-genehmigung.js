@@ -1,265 +1,289 @@
-// Ratgeber: Photovoltaik-Genehmigung – Baurecht, Denkmalschutz, Abstände, Brandschutz
-// Recherchestand 13.09.2026 (MBO, BauGB, EEG § 2, OVG NRW 27.11.2024, Leitfaden Hessen).
+// Ratgeber: Photovoltaik-Genehmigung in Österreich – Baurecht und Elektrizitätsrecht der Länder
+// Recherchestand 28.09.2026, Gesetzestexte in geltender Fassung über jusline.at (Stand 29.09.2026) geprüft:
+// BO für Wien §§ 60, 62a; NÖ BO 2014 §§ 15, 17; Oö. BauO 1994 § 26; Stmk. BauG §§ 19–21, 101b;
+// Bgld. BauG §§ 1, 18c, 18d; Vbg. BauG; WElWG 2005; Oö. ElWOG 2006 § 5; Stmk. ElWOG 2005 §§ 5, 7;
+// K-ElWOG §§ 6, 9; Bgld. ElWG 2006 §§ 5, 7; NÖ ElWG 2005 (§ 5 seit 13.06.2022 weggefallen).
+// Salzburg, Tirol, Kärnten (Baurecht) nicht im Wortlaut geprüft – im Text als „im Einzelfall prüfen“ gekennzeichnet.
 
 const artikel = {
   slug: "photovoltaik-genehmigung",
-  title: "Photovoltaik-Genehmigung: Wann Sie einen Antrag brauchen",
-  seoTitle: "Photovoltaik Genehmigung 2026: Wann nötig? | Ökovolt",
+  title: "Photovoltaik-Genehmigung in Österreich: Bau- und Elektrizitätsrecht",
+  seoTitle: "PV-Genehmigung Österreich: Bundesländer | Ökovolt",
   kurzTitel: "Photovoltaik-Genehmigung",
   description:
-    "Photovoltaik Genehmigung: Dachanlagen sind verfahrensfrei. Wann Denkmalschutz, Bebauungsplan, Brandschutz oder Abstände doch eine Erlaubnis verlangen.",
+    "Photovoltaik-Genehmigung in Österreich: wann Bauanzeige, Baubewilligung oder elektrizitätsrechtliche Genehmigung nötig ist – Schwellenwerte je Bundesland 2026.",
   excerpt:
-    "Für die typische Dachanlage brauchen Sie keinen Bauantrag – regelfrei ist sie trotzdem nicht. Was bei Denkmalschutz, Reihenhaus-Brandwänden, Gartenanlagen und Nachbarn gilt.",
-  hauptKeyword: "photovoltaik genehmigung",
-  keywords: ["Photovoltaik Genehmigung", "PV-Anlage Baugenehmigung", "Solaranlage genehmigungspflichtig", "Photovoltaik Denkmalschutz", "PV-Anlage Abstand Brandwand", "Solaranlage Abstand Nachbar", "Photovoltaik verfahrensfrei"],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+    "Dachanlagen sind in den meisten Ländern baurechtlich frei oder nur meldepflichtig. Für Gewerbe- und Freiflächenanlagen entscheiden Leistung, Widmung und das Elektrizitätsrecht des Landes – mit Schwellen zwischen 15 kW und 1 MW.",
+  hauptKeyword: "photovoltaik genehmigung österreich",
+  keywords: [
+    "Photovoltaik Genehmigung Österreich",
+    "PV-Anlage Baubewilligung",
+    "PV Bauanzeige",
+    "elektrizitätsrechtliche Genehmigung PV",
+    "Photovoltaik Freifläche Genehmigung",
+    "PV Genehmigung Bundesland",
+    "Photovoltaik Betriebsanlage Genehmigung",
+  ],
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Förderung, Steuern & Recht",
   bild: "/Images/Team/download-1.jpg",
-  bildAlt: "Fachkräfte mit Schutzhelm prüfen eine Photovoltaikanlage auf einem Flachdach",
-  badge: { wert: "Kein Bauantrag", text: "für übliche Dachanlagen auf Wohnhäusern" },
+  bildAlt: "Planungsunterlagen für eine Photovoltaikanlage auf einem Besprechungstisch",
+  badge: { wert: "2 Rechtsbereiche", text: "Baurecht der Gemeinde und Elektrizitätsrecht des Landes" },
 
   kurzFazit: [
-    "**Photovoltaikanlagen auf oder an Dach und Fassade sind in allen Bundesländern grundsätzlich verfahrensfrei** – ein Bauantrag ist nicht nötig.",
-    "Verfahrensfrei heißt nicht regelfrei: **Denkmalschutz, Bebauungsplan, Statik und Brandschutz** gelten weiter und können eine Erlaubnis oder Abweichung erfordern.",
-    "Bei Baudenkmälern brauchen Sie eine denkmalrechtliche Erlaubnis. Seit § 2 EEG haben Solaranlagen dabei **regelmäßig Vorrang** – das OVG NRW hat das im November 2024 bestätigt.",
-    "Freistehende Anlagen im Garten sind meist bis **3 m Höhe und 9 m Länge** verfahrensfrei; größere Freiflächenanlagen brauchen eine Baugenehmigung und oft einen Bebauungsplan.",
+    "**In Österreich regeln die neun Bundesländer, ob eine PV-Anlage genehmigt werden muss – getrennt nach Baurecht und Elektrizitätsrecht.** Eine Dachanlage ist baurechtlich meist bewilligungsfrei oder nur meldepflichtig; Ausnahmen gelten in Schutzzonen und bei Denkmalschutz.",
+    "Elektrizitätsrechtlich reichen die Schwellen von **15 kW** (Wien: darüber Anzeige) über **200 kW** (Steiermark: Genehmigung) und **500 kW** (Kärnten, Burgenland) bis **1.000 kW** (Oberösterreich: bis dahin bewilligungsfrei).",
+    "Freiflächenanlagen brauchen fast immer eine passende **Widmung** sowie eine baurechtliche Bewilligung – in der Steiermark etwa ab **100 kWp** im vereinfachten Verfahren und ab **500 kWp** im Vollverfahren.",
+    "Für Anlagen auf bestehenden Gebäuden gelten seit der EU-Richtlinie RED III verkürzte Entscheidungsfristen – z. B. **ein Monat** für Anlagen bis 100 kWp in der Steiermark und im Burgenland.",
   ],
 
   abschnitte: [
     {
-      id: "antwort",
-      titel: "Braucht eine PV-Anlage eine Baugenehmigung?",
-      tocLabel: "Kurze Antwort",
+      id: "grundsatz",
+      titel: "Braucht eine PV-Anlage in Österreich eine Genehmigung?",
+      tocLabel: "Grundsatz",
       bloecke: [
         {
           typ: "p",
-          text: "**Nein, für eine übliche Photovoltaikanlage auf dem Dach eines Wohnhauses brauchen Sie keine Baugenehmigung.** Die Musterbauordnung (§ 61 MBO) und alle Landesbauordnungen stellen Solaranlagen in, an und auf Dach- und Außenwandflächen verfahrensfrei. Sie müssen also weder einen Bauantrag stellen noch eine Genehmigung abwarten – das gilt für Aufdach- und Indach-Anlagen ebenso wie für Module an der Fassade.",
+          text: "**Ob eine PV-Anlage genehmigt werden muss, hängt vom Bundesland, vom Standort (Dach, Fassade oder Freifläche) und von der Leistung ab.** Es gibt keine bundesweit einheitliche Regel: Baurecht, Raumordnung und das Elektrizitätsrecht für Erzeugungsanlagen sind Landessache. Hinzu kommen Bundesrecht wie das Denkmalschutzgesetz und – bei Betrieben – das Gewerberecht. Mit dem Netzanschluss hat die Genehmigung nichts zu tun; den regelt der Netzbetreiber (siehe [PV-Anlage anmelden](/ratgeber/photovoltaik-anmelden)).",
         },
         {
-          typ: "p",
-          text: "Verfahrensfrei bedeutet aber nur, dass das Bauamt die Anlage nicht vorab prüft. Alle öffentlich-rechtlichen Vorschriften gelten trotzdem, und für ihre Einhaltung sind Sie als Bauherr verantwortlich. In der Praxis kommt es auf vier Punkte an: **Denkmalschutz, Bebauungsplan oder Gestaltungssatzung, Brandschutz und Statik.** Wer hier etwas übersieht, riskiert im schlimmsten Fall eine Rückbauanordnung.",
+          typ: "karten",
+          cols: 3,
+          items: [
+            { titel: "Baurecht", text: "Bauordnung bzw. Baugesetz des Landes; zuständig ist die Gemeinde (Bürgermeister als Baubehörde). Formen: bewilligungsfrei, Meldung, Bauanzeige, vereinfachtes Verfahren, Baubewilligung." },
+            { titel: "Elektrizitätsrecht", text: "Landes-Elektrizitätswirtschaftsgesetz; zuständig meist die Bezirksverwaltungsbehörde oder Landesregierung. Anzeige- oder Genehmigungspflicht ab einer bestimmten Engpassleistung." },
+            { titel: "Sonstiges Recht", text: "Raumordnung (Widmung bei Freiflächen), Naturschutz, Ortsbild- und Denkmalschutz, Gewerberecht bei Betriebsanlagen, Luftfahrt (Blendung nahe Flughäfen), Wasserrecht." },
+          ],
         },
         {
           typ: "kasten",
           variant: "info",
-          titel: "Genehmigung ist nicht gleich Anmeldung",
-          text: "Unabhängig vom Baurecht muss jede netzgekoppelte Anlage beim Netzbetreiber angemeldet und innerhalb eines Monats nach Inbetriebnahme im [Marktstammdatenregister](/wissen/lexikon#marktstammdatenregister) eingetragen werden. Das ist keine Genehmigung, sondern eine Meldepflicht – alle Schritte erklärt der Ratgeber [Photovoltaik anmelden](/ratgeber/photovoltaik-anmelden).",
+          titel: "Die Länder koordinieren ihre Regeln nicht",
+          text: "PV Austria hat 2024 rund 36 verschiedene Gesetze in den neun Ländern gezählt, die für die Genehmigung von PV-Anlagen relevant sind. Die folgende Übersicht nennt die wichtigsten Schwellen, ersetzt aber nicht die Prüfung im Einzelfall – insbesondere bei Anlagen über 100 kWp und auf Freiflächen.",
         },
       ],
     },
     {
-      id: "anlagentypen",
-      titel: "Genehmigung nach Anlagentyp: die Übersicht",
-      tocLabel: "Übersicht Anlagentypen",
+      id: "baurecht",
+      titel: "Baurecht: Dachanlagen meist frei, Freiflächen bewilligungspflichtig",
+      tocLabel: "Baurecht je Land",
       bloecke: [
+        {
+          typ: "p",
+          text: "**Auf Dächern und Fassaden sind PV-Anlagen in den meisten Ländern bewilligungsfrei oder nur meldepflichtig; Freiflächenanlagen brauchen ab einer bestimmten Größe eine Baubewilligung.** Die Tabelle zeigt die im Gesetzestext geprüften Regeln (Stand 29. 9. 2026).",
+        },
         {
           typ: "tabelle",
-          caption: "Baurechtliche Einordnung von Solaranlagen nach Anlagentyp, Stand September 2026",
-          kopf: ["Anlagentyp", "Bauantrag nötig?", "Worauf Sie trotzdem achten müssen"],
+          caption: "Baurechtliche Behandlung von PV-Anlagen nach Bundesland, Stand September 2026",
+          kopf: ["Bundesland", "Dach / Gebäude", "Freifläche und Sonderfälle", "Rechtsgrundlage"],
           zeilen: [
-            ["Aufdach- oder Indach-Anlage auf Wohnhaus", "**nein**, verfahrensfrei", "Denkmalschutz, Gestaltungssatzung, Brandwand-Abstand bei Reihen- und Doppelhäusern, Statik"],
-            ["Aufgeständerte Anlage auf Flachdach", "**nein**, verfahrensfrei", "Ballast und Windlast, Abstand zum Dachrand, Gebäudehöhe bei hoher Aufständerung"],
-            ["Fassadenanlage", "**nein**, verfahrensfrei", "Brandschutzanforderungen an Außenwände, besonders bei höheren Gebäuden"],
-            ["Freistehende Anlage im Garten", "bis 3 m Höhe und 9 m Gesamtlänge **nein**", "Grenzabstände, Bebauungsplan; im Außenbereich meist unzulässig"],
-            ["Solarcarport", "**je nach Land und Größe**", "Grenzbebauung, Stellplatzsatzung, Bebauungsplan – Details im [Solarcarport-Ratgeber](/ratgeber/solarcarport)"],
-            ["Freiflächenanlage (Solarpark)", "**ja**", "Bebauungsplan nötig; privilegiert nur bis 200 m an Autobahnen und zweigleisigen Schienenwegen"],
-            ["Balkonkraftwerk", "**nein**", "Anmeldung im Marktstammdatenregister; Mieter und Wohnungseigentümer brauchen die Zustimmung, haben aber Anspruch darauf"],
-            ["Anlage auf Baudenkmal oder im Ensemble", "**denkmalrechtliche Erlaubnis**", "Antrag vor der Montage bei der Unteren Denkmalschutzbehörde"],
+            ["Wien", "bewilligungsfrei, außer im Grünland-Schutzgebiet, bei Bausperre und in Schutzzonen", "über 15 kW bewilligungspflichtig, wenn keine elektrizitätsrechtliche Anzeige- oder Bewilligungspflicht besteht", "§ 60 Abs. 1 lit. j, § 62a Abs. 1 Z 24a BO für Wien"],
+            ["Niederösterreich", "bewilligungs- und meldefrei; in Schutzzonen und Altortgebieten bei Einsehbarkeit vereinfachtes Verfahren", "über 100 kW im Grünland: vereinfachtes Verfahren (Widmungsprüfung)", "§ 15 Abs. 1 Z 8 und 13, § 17 Z 14 NÖ BO 2014"],
+            ["Oberösterreich", "frei, wenn nach Oö. ElWOG nicht bewilligungspflichtig; Sonderregeln für hohe Aufständerungen (über 2 m frei stehend bzw. über 1,5 m über Dachfläche)", "Widmung erforderlich; Details im Oö. Leitfaden", "§ 26 Z 15 Oö. BauO 1994"],
+            ["Steiermark", "meldepflichtig (Dach, Fassade, vorspringende Bauteile)", "bis 100 kWp meldepflichtig; über 100 kWp vereinfachtes Verfahren; über 500 kWp Baubewilligung; über 3,5 m Höhe vereinfachtes Verfahren", "§§ 19, 20, 21 Stmk. BauG"],
+            ["Burgenland", "bis 20 kW bei Gebäudeklassen 1–3 und dachparalleler Montage (max. 15° Aufständerung, max. 30 cm Abstand) ausgenommen; sonst Baubewilligung", "Baubewilligung; Nachweis, dass die Anschlusskapazität reicht", "§ 1 Abs. 2 Z 7, § 18d Bgld. BauG"],
+            ["Vorarlberg", "frei, wenn dach- oder wandparallel mit max. 0,30 m Abstand und Abstandsflächen eingehalten", "Bauverfahren nach BauG; beschleunigte Verfahren nach § 34d", "§ 20 Abs. 2 BauG (Vbg.)"],
+            ["Kärnten", "PV auf gewerblichen Betriebsanlagen mit gewerberechtlicher Bewilligungspflicht vom Baurecht ausgenommen; sonst Landesrecht prüfen", "Widmung; Flächenbegrenzungen im Kärntner Raumordnungsrecht", "K-BO 1996, K-ROG 2021"],
+            ["Salzburg, Tirol", "im Einzelfall prüfen (Leitfäden der Länder)", "Widmung und Bewilligung nach Landesrecht", "Landesbaurecht"],
           ],
           minBreite: 760,
-          fussnote: "Grundlage sind § 61 MBO und die Landesbauordnungen, die im Detail abweichen – etwa bei Gebäudeklassen oder den Maßen freistehender Anlagen. Maßgeblich ist die Bauordnung Ihres Landes.",
+          fussnote: "Vereinfachte Darstellung auf Basis der geltenden Gesetzestexte (jusline.at, Stand 29. 9. 2026). Für Salzburg, Tirol und Kärnten wurden die Bauordnungen nicht vollständig im Wortlaut geprüft. Gemeinden können über Bebauungspläne zusätzliche Vorgaben machen. Keine Rechtsberatung.",
         },
         {
           typ: "p",
-          text: "Einige Länder schränken die Verfahrensfreiheit an Details ein. Bei großen oder hohen Gebäuden lohnt deshalb ein Blick in die Vorschrift, und beim Maß für freistehende Anlagen nennen einzelne Länder abweichende Längen. Einen interaktiven Schnell-Check nach Anlagentyp finden Sie auf unserer Seite [Baurecht für Photovoltaik](/forderungen/baurecht).",
+          text: "Die Pflicht, bei Neubauten PV-Anlagen zu errichten, ist ein eigenes Thema – dazu der Ratgeber [PV-Pflicht in den Bundesländern](/ratgeber/solarpflicht-bundeslaender). Eine Übersicht über baurechtliche Rahmenbedingungen bietet auch unsere Seite [Baurecht](/forderungen/baurecht).",
         },
       ],
     },
     {
-      id: "denkmalschutz",
-      titel: "Photovoltaik und Denkmalschutz: Erlaubnis ja, Verbot selten",
-      tocLabel: "Denkmalschutz",
+      id: "elektrizitaetsrecht",
+      titel: "Elektrizitätsrecht: Ab welcher Leistung braucht es eine Genehmigung?",
+      tocLabel: "Elektrizitätsrecht",
       bloecke: [
         {
           typ: "p",
-          text: "**Auf einem Baudenkmal, in einem geschützten Ensemble und oft auch in der Umgebung eines Denkmals brauchen Sie vor der Montage eine denkmalrechtliche Erlaubnis.** Diese Pflicht gilt unabhängig von der baurechtlichen Verfahrensfreiheit und auch für kleine Anlagen. Zuständig ist die Untere Denkmalschutzbehörde, meist beim Landratsamt oder bei der Stadt. Ob Ihr Haus betroffen ist, zeigt die Denkmalliste oder der Denkmal-Atlas Ihres Landes.",
+          text: "**Die Landes-Elektrizitätsgesetze verlangen für Erzeugungsanlagen ab einer bestimmten Engpassleistung eine Anzeige oder Genehmigung – die Schwellen unterscheiden sich stark.** Für Gewerbeanlagen zwischen 100 und 1.000 kWp ist das oft das entscheidende Verfahren, weil es Nachbarn, Sachverständige und Auflagen einbezieht.",
         },
         {
-          typ: "p",
-          text: "Die Chancen auf eine Erlaubnis sind in den vergangenen Jahren deutlich gestiegen. Seit dem 1. Januar 2023 bestimmt **§ 2 EEG**, dass die Errichtung und der Betrieb von Anlagen für erneuerbare Energien im überragenden öffentlichen Interesse liegen. In behördlichen Abwägungen – auch im Denkmalrecht der Länder – haben Solaranlagen damit regelmäßig Vorrang; die Behörde muss begründen, warum im Einzelfall der Denkmalschutz ausnahmsweise überwiegt.",
+          typ: "tabelle",
+          caption: "Elektrizitätsrechtliche Pflichten für PV-Anlagen nach Landesrecht, Stand September 2026",
+          kopf: ["Land", "genehmigungsfrei", "Anzeige / vereinfacht", "Genehmigung", "Rechtsgrundlage"],
+          zeilen: [
+            ["Wien", "bis 15 kW", "Anzeige bis 50 kW; vereinfachtes Verfahren über 50 bis 250 kW", "über 250 kW", "§§ 6, 7, 8 WElWG 2005"],
+            ["Oberösterreich", "bis 1.000 kW sowie PV auf bestehenden oder künftigen künstlichen Strukturen (außer Wasserflächen)", "–", "über 1.000 kW auf Freiflächen", "§ 5 Abs. 2 Z 1a Oö. ElWOG 2006"],
+            ["Steiermark", "bis 200 kW", "vereinfachtes Verfahren auf Antrag bis 500 kW", "über 200 kW", "§§ 5, 7 Stmk. ElWOG 2005"],
+            ["Kärnten", "bis 500 kW", "vereinfachtes Verfahren bis 1.000 kW", "über 500 kW", "§§ 6, 9 K-ElWOG"],
+            ["Burgenland", "bis 100 kWp", "Anzeige über 100 bis 500 kWp (gilt nach drei Monaten ohne Zurückweisung als bewilligt)", "über 500 kWp", "§§ 5, 7 Bgld. ElWG 2006"],
+            ["Niederösterreich", "allgemeine Genehmigungspflicht (§ 5 NÖ ElWG 2005) seit 13. 6. 2022 aufgehoben", "–", "Bau- und Raumordnungsrecht maßgeblich", "NÖ ElWG 2005"],
+            ["Salzburg, Tirol, Vorarlberg", "im Einzelfall prüfen", "–", "–", "Landes-Elektrizitätsgesetze"],
+          ],
+          minBreite: 820,
+          fussnote: "Schwellen beziehen sich auf die Engpassleistung der Erzeugungsanlage. Anlagen, die gewerbe-, berg- oder abfallrechtlich genehmigt werden, sind in mehreren Ländern vom Elektrizitätsrecht ausgenommen. Stand der Gesetzestexte: 29. 9. 2026. Keine Rechtsberatung.",
         },
         {
           typ: "kasten",
           variant: "recht",
-          titel: "OVG NRW: Solaranlagen auf Denkmälern regelmäßig zu genehmigen",
-          text: "Das Oberverwaltungsgericht Nordrhein-Westfalen hat am 27. November 2024 in zwei Grundsatzurteilen (Az. 10 A 2281/23 und 10 A 1477/23) entschieden, dass das öffentliche Interesse am Ausbau erneuerbarer Energien die Belange des Denkmalschutzes bei Solaranlagen in der Regel überwiegt. Geklagt hatten der Eigentümer eines Einfamilienhauses in einer denkmalgeschützten Siedlung in Düsseldorf – mit einer von der Straße aus teilweise sichtbaren Dachfläche – und der Träger einer denkmalgeschützten Schule in Siegen. Nur besondere denkmalfachliche Gründe können eine Anlage verhindern.",
+          titel: "Konzentration bei Betriebsanlagen",
+          text: "Mehrere Landesgesetze nehmen Erzeugungsanlagen vom Elektrizitätsrecht aus, wenn sie gewerberechtlichen Vorschriften unterliegen – etwa § 5 Abs. 2 Z 1 Stmk. ElWOG 2005 oder § 6 Abs. 2 K-ElWOG. Eine PV-Anlage auf einer genehmigten Betriebsanlage kann dann im Rahmen der Betriebsanlagengenehmigung nach der Gewerbeordnung zu behandeln sein. Ob eine Änderung der Betriebsanlage anzeige- oder genehmigungspflichtig ist, hängt vom Einzelfall ab – klären Sie das früh mit der Bezirkshauptmannschaft.",
+        },
+      ],
+    },
+    {
+      id: "freiflaeche",
+      titel: "Freiflächenanlagen: Widmung, Zonierung und Bewilligung",
+      tocLabel: "Freiflächen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Eine PV-Freiflächenanlage braucht in allen Ländern eine raumordnungsrechtliche Grundlage – meist eine eigene Widmung (z. B. Grünland-Photovoltaik) oder eine Eignungszone des Landes.** Ohne passende Widmung hilft auch eine elektrizitätsrechtliche Genehmigung nicht. Mehrere Länder haben Zonierungen für größere Anlagen erlassen; in Kärnten begrenzt das Raumordnungsrecht die Fläche einzelner Anlagen.",
+        },
+        {
+          typ: "ablauf",
+          schritte: [
+            ["Flächenverfügbarkeit sichern", "Pacht- oder Kaufvertrag mit aufschiebender Bedingung (Widmung, Netzzusage), Dienstbarkeiten für Kabeltrassen."],
+            ["Netzanfrage stellen", "Ohne Netzzusage ist eine Widmung wirtschaftlich wertlos – bei Anlagen über 1 MW meist Anschluss in der Mittelspannung oder am Umspannwerk."],
+            ["Widmungsverfahren anstoßen", "Änderung des Flächenwidmungsplans durch die Gemeinde; Prüfung von Landschaftsbild, Naturschutz, Boden und Blendung. Dauer: mehrere Monate."],
+            ["Bau- und elektrizitätsrechtliche Verfahren", "Je nach Land getrennte oder konzentrierte Verfahren; Gutachten zu Statik, Brandschutz (TRVB 162 N für Anlagen über 2 ha) und Netzrückwirkungen."],
+            ["Förderung und Vermarktung", "EAG-Marktprämie über Ausschreibung oder Investitionszuschuss mit Abschlägen für Freiflächen; alternativ PPA."],
+          ],
         },
         {
           typ: "p",
-          text: "Auch die Länder haben reagiert. Nordrhein-Westfalen berücksichtigt Klimaschutz und erneuerbare Energien seit 2022 ausdrücklich im Denkmalschutzgesetz, Baden-Württemberg hat Leitlinien veröffentlicht, nach denen Photovoltaik auf Kulturdenkmalen in der Regel zu genehmigen ist, wenn sie reversibel und gestalterisch angepasst ausgeführt wird. So verbessern Sie Ihre Chancen:",
+          text: "Details zu Widmung und Zonierung je Bundesland lesen Sie im Ratgeber [Freiflächen-Photovoltaik und Widmung](/ratgeber/freiflaechen-photovoltaik-widmung) und – für Doppelnutzung mit Landwirtschaft – [Agri-PV in Österreich](/ratgeber/agri-pv-oesterreich).",
+        },
+      ],
+    },
+    {
+      id: "fristen",
+      titel: "Wie schnell müssen Behörden entscheiden?",
+      tocLabel: "Entscheidungsfristen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Seit der Umsetzung der EU-Erneuerbaren-Richtlinie (RED III) gelten für Solaranlagen auf bestehenden Gebäuden und künstlichen Strukturen kurze Entscheidungsfristen.** Einige Beispiele aus den geprüften Landesgesetzen:",
         },
         {
-          typ: "checkliste",
+          typ: "liste",
           punkte: [
-            "**Dachflächen wählen, die vom öffentlichen Raum wenig einsehbar sind** – etwa die straßenabgewandte Seite.",
-            "**Vollschwarze Module** mit schwarzem Rahmen oder rahmenlose Glas-Glas-Module verwenden, die sich ruhig in die Dachfläche einfügen.",
-            "**Geschlossene, rechteckige Modulfelder** mit gleichmäßigem Abstand zu First, Traufe und Ortgang planen.",
-            "**Reversible Montage** ohne Eingriff in historische Substanz beschreiben; Indach-Lösungen oder Solardachziegel prüfen, wenn die Behörde darauf Wert legt.",
-            "**Antrag mit Fotos, Modulbelegungsplan und Datenblatt** einreichen und das Gespräch mit der Behörde vorab suchen.",
+            "**Steiermark:** Über Bewilligungen von PV-Anlagen über 3,50 m Höhe mit einer Leistung bis 100 kW entscheidet die Behörde binnen einem Monat (§ 101b Stmk. BauG); elektrizitätsrechtlich binnen drei Monaten ab Vollständigkeitsbestätigung für Anlagen auf künstlichen Strukturen.",
+            "**Burgenland:** Baurechtliche Entscheidung über PV bis 100 kWpeak binnen einem Monat; ohne Entscheidung gilt die Genehmigung als erteilt (§ 18c Bgld. BauG).",
+            "**Niederösterreich:** Vollständigkeitsbestätigung für Anlagen zur Erzeugung erneuerbarer Energie binnen 45 Tagen (§ 5 Abs. 2a NÖ BO 2014).",
+            "**Kärnten:** Das elektrizitätsrechtliche Verfahren für Solaranlagen auf künstlichen Strukturen darf nicht länger als drei Monate dauern (K-ElWOG).",
+            "**Vorarlberg:** Besondere Verfahrensbestimmungen für Solaranlagen nach § 34d BauG (Sammelgesetz LGBl. Nr. 21/2025).",
           ],
-        },
-        {
-          typ: "kasten",
-          variant: "wichtig",
-          text: "Die Erlaubnis muss vor Beginn der Montage vorliegen. Eine ohne Erlaubnis errichtete Anlage auf einem Denkmal kann eine Rückbauanordnung und ein Bußgeld nach sich ziehen – auch wenn sie nachträglich genehmigungsfähig gewesen wäre.",
-        },
-      ],
-    },
-    {
-      id: "bebauungsplan",
-      titel: "Bebauungsplan und Gestaltungssatzung",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ein Bebauungsplan oder eine örtliche Gestaltungssatzung kann Vorgaben zu Dachform, Farbe oder Aufbauten enthalten, die auch eine verfahrensfreie PV-Anlage einhalten muss.** Das betrifft vor allem historische Ortskerne und Neubaugebiete mit strengen Gestaltungsregeln. Manche neuere Bebauungspläne schreiben Solaranlagen umgekehrt sogar vor.",
-        },
-        {
-          typ: "p",
-          text: "Hilfreich ist **§ 248 BauGB**: In Gebieten mit Bebauungsplan sind bei Solaranlagen in, an und auf Dach- und Außenwandflächen geringfügige Abweichungen vom festgesetzten Maß der baulichen Nutzung, der Bauweise und der überbaubaren Grundstücksfläche zulässig, soweit nachbarliche Interessen und baukulturelle Belange nicht entgegenstehen. Eine leicht über die Firsthöhe ragende Aufständerung scheitert daran also nicht automatisch. Weicht die Anlage stärker ab, beantragen Sie beim Bauamt eine Abweichung oder Befreiung.",
-        },
-        {
-          typ: "p",
-          text: "Im **Außenbereich** – etwa bei Hofstellen und Aussiedlerhöfen – sind Anlagen auf Dächern und Außenwänden zulässig genutzter Gebäude nach § 35 Abs. 1 Nr. 8 BauGB privilegiert, wenn sie dem Gebäude baulich untergeordnet sind. Für land- und forstwirtschaftliche Betriebe sind zusätzlich besondere Solaranlagen wie Agri-PV bis 25.000 m² Grundfläche je Hofstelle privilegiert (§ 35 Abs. 1 Nr. 9 BauGB).",
-        },
-      ],
-    },
-    {
-      id: "brandschutz",
-      titel: "Brandschutz: Abstand zur Brandwand bei Reihen- und Doppelhäusern",
-      tocLabel: "Brandschutz",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Bei Reihen- und Doppelhäusern darf eine PV-Anlage die Brand- oder Gebäudeabschlusswand zum Nachbarhaus nicht überbrücken – je nach Ausführung ist ein Abstand von 0 bis 1,25 m einzuhalten.** Die Bauministerkonferenz hat die Regel in der Musterbauordnung im September 2022 gelockert und dabei nicht mehr zwischen Glas-Glas- und Glas-Folien-Modulen unterschieden.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Abstand von Solaranlagen zu Brandwänden nach der geänderten Musterbauordnung",
-          kopf: ["Abstand", "Voraussetzung", "Typischer Fall"],
-          zeilen: [
-            ["**0 m**", "Brandwand ist mindestens 30 cm über die Bedachung geführt und schützt die Anlage vor Brandübertragung", "Mehrfamilienhäuser, Gewerbe mit hochgezogener Brandwand"],
-            ["**0,50 m**", "Anlage ist dachintegriert oder höchstens 30 cm über der Dachhaut montiert", "Reihen- und Doppelhäuser der Gebäudeklassen 1 bis 3, Brandwand endet unter der Dachhaut"],
-            ["**1,25 m**", "alle übrigen Anlagen, zum Beispiel hoch aufgeständerte Module", "Flachdach mit steiler Aufständerung nahe der Brandwand"],
-          ],
-          minBreite: 640,
-          fussnote: "Die Musterbauordnung ist eine Vorlage; bindend wird die Regel erst mit Übernahme ins Landesrecht. Einige Länder haben abweichende Maße festgelegt oder die Abstände für Gebäude geringer Höhe gestrichen. Maßgeblich ist die Bauordnung Ihres Landes.",
-        },
-        {
-          typ: "p",
-          text: "Auf einem Reihenmittelhaus mit 5 bis 6 m Breite kostet ein halber Meter Abstand auf beiden Seiten spürbar Fläche – oft eine Modulspalte je Seite. Bei der Planung sollte der Fachbetrieb deshalb die Landesregel kennen und Modulformat sowie Belegung darauf abstimmen. Zusätzlich gilt: DC-Leitungen dürfen Brandwände nur mit geeigneten Abschottungen durchqueren, und die Feuerwehr sollte über die Anlage informiert werden können – etwa über ein Hinweisschild am Hausanschluss.",
-        },
-      ],
-    },
-    {
-      id: "abstaende",
-      titel: "Abstandsflächen und Nachbarrecht",
-      tocLabel: "Abstände & Nachbarn",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Eine Dachanlage löst in der Regel keine eigenen Abstandsflächen aus, weil sie Teil des bestehenden Gebäudes ist.** Anders kann es bei hoch aufgeständerten Anlagen am Rand eines Flachdachs aussehen, wenn sich dadurch die maßgebliche Wandhöhe erhöht – das sollte vorab geklärt werden.",
-        },
-        {
-          typ: "p",
-          text: "Freistehende Solaranlagen im Garten dürfen nach dem Muster der Bauordnungen **bis 3 m Höhe und 9 m Länge je Grundstücksgrenze** (insgesamt 18 m auf dem Grundstück) in den Abstandsflächen stehen, also auch nah an der Grenze. Größere Anlagen müssen die regulären Abstandsflächen einhalten und brauchen meist eine Genehmigung.",
-        },
-        {
-          typ: "h3",
-          text: "Blendung: Wann Nachbarn sich wehren können",
-        },
-        {
-          typ: "p",
-          text: "Moderne Module sind entspiegelt, reflektieren aber je nach Sonnenstand dennoch Licht. Nachbarn müssen unwesentliche Beeinträchtigungen nach § 906 BGB dulden. Als Orientierung für eine erhebliche Blendung ziehen Gerichte häufig die Hinweise der Bund/Länder-Arbeitsgemeinschaft Immissionsschutz (LAI) heran: **mehr als 30 Minuten am Tag oder 30 Stunden im Jahr** an einem schutzwürdigen Raum wie Wohnzimmer oder Terrasse. Kritisch sind vor allem flach geneigte Ost- oder Westdächer gegenüber höher gelegenen Fenstern. Ein Blendgutachten oder eine angepasste Belegung räumt das Problem vor der Montage aus.",
         },
       ],
     },
     {
       id: "sonderfaelle",
-      titel: "Weitere Hürden: Statik, Asbest, WEG und Mietrecht",
+      titel: "Sonderfälle: Denkmalschutz, Ortsbild, Brandschutz, Blendung",
       tocLabel: "Sonderfälle",
       bloecke: [
         {
-          typ: "karten",
-          items: [
-            { titel: "Statik", text: "Eine Anlage wiegt aufgeständert mit Ballast deutlich mehr als eine Aufdach-Anlage auf dem Steildach. Die Standsicherheit muss auch ohne Bauantrag nachgewiesen sein – bei Flachdächern und älteren Dachstühlen empfiehlt sich ein Statiker. Mehr dazu im Ratgeber [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach)." },
-            { titel: "Asbestzementdach", text: "Das Überbauen und Bearbeiten von Asbestzementplatten ist nach Gefahrstoffrecht grundsätzlich verboten. Vor der Montage muss das Dach fachgerecht saniert werden – das gehört in die Kostenplanung." },
-            { titel: "Eigentümergemeinschaft", text: "Eine Dachanlage auf einem Mehrfamilienhaus ist eine bauliche Veränderung und braucht einen Beschluss der Eigentümerversammlung. Welche Modelle es für die Stromverteilung gibt, erklärt der Ratgeber [Photovoltaik im Mehrfamilienhaus](/ratgeber/photovoltaik-mehrfamilienhaus)." },
-            { titel: "Mieter", text: "Mieter brauchen für Anlagen am Gebäude die Zustimmung des Vermieters. Für Steckersolargeräte besteht seit Oktober 2024 ein Anspruch darauf; Einzelheiten stehen im [Balkonkraftwerk-Ratgeber](/ratgeber/balkonkraftwerk)." },
+          typ: "p",
+          text: "**Auch eine bewilligungsfreie Anlage muss alle bautechnischen Vorschriften einhalten – bewilligungsfrei heißt nicht regelfrei.** Die häufigsten Stolpersteine bei Gewerbe- und Gemeindeprojekten:",
+        },
+        {
+          typ: "checkliste",
+          punkte: [
+            "**Denkmalschutz:** Veränderungen an denkmalgeschützten Gebäuden brauchen eine Bewilligung des Bundesdenkmalamts; Schutzzonen und Altortgebiete haben eigene Ortsbildregeln.",
+            "**Brandschutz:** OIB-Richtlinie 2 bzw. 2.1 (Ausgabe 2023) verlangt u. a. 1 m Abstand zur Mitte brandabschnittsbildender Wände, 3 m zu Feuerwehr-Dachausstiegen und Modulfelder von höchstens 40 m – siehe [Photovoltaik und Brandschutz](/ratgeber/photovoltaik-brandschutz).",
+            "**Statik:** Nachweis der Tragfähigkeit für Eigengewicht, Schnee (ÖNORM B 1991-1-3) und Wind (ÖNORM B 1991-1-4); bei Leichtdächern oft der limitierende Faktor.",
+            "**Blendung:** Nahe Flughäfen, Bahnen und Straßen kann ein Blendgutachten verlangt werden.",
+            "**Betriebsanlage:** Änderungen an genehmigten Betriebsanlagen mit der Bezirkshauptmannschaft abstimmen (Gewerbeordnung).",
+            "**Nachbarrecht:** Abstandsflächen und Höhen bei aufgeständerten Anlagen und Carports beachten.",
           ],
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "Unterlagen früh zusammenstellen",
+          text: "Für Verfahren über 100 kWp brauchen Sie meist Lageplan, Belegungsplan, statischen Nachweis, Brandschutzkonzept, technischen Bericht mit Engpassleistung und Netzanschlusspunkt, Flächenwidmungsauszug und Eigentümerzustimmung. Wer diese Unterlagen parallel zur Netzanfrage erstellt, spart Monate. Unsere [Richtlinien-Übersicht](/forderungen/richtlinien) sammelt die relevanten Normen.",
         },
       ],
     },
     {
       id: "vorgehen",
-      titel: "Schritt für Schritt zur rechtssicheren Anlage",
+      titel: "Vorgehen für Betriebe und Gemeinden",
       tocLabel: "Vorgehen",
       bloecke: [
         {
-          typ: "ablauf",
-          schritte: [
-            ["Schutzstatus prüfen", "In der Denkmalliste und im Geoportal der Gemeinde nachsehen, ob Denkmal- oder Ensembleschutz, ein Bebauungsplan oder eine Gestaltungssatzung gelten."],
-            ["Solarpflicht klären", "Bei Neubau oder Dachsanierung prüfen, ob Ihr Land eine Mindestanlage vorschreibt – Übersicht im Ratgeber [Solarpflicht nach Bundesland](/ratgeber/solarpflicht-bundeslaender)."],
-            ["Dach technisch bewerten", "Statik, Dacheindeckung, Brandwand-Abstände und Verschattung vor Ort prüfen lassen und die Modulbelegung darauf abstimmen."],
-            ["Erlaubnis beantragen, falls nötig", "Denkmalrechtliche Erlaubnis oder Abweichung vom Bebauungsplan mit Belegungsplan, Fotos und Datenblättern beantragen – und erst nach Bescheid bestellen."],
-            ["Montieren und anmelden", "Nach der Montage meldet der Elektrofachbetrieb die Anlage beim Netzbetreiber an; Sie tragen sie im Marktstammdatenregister ein."],
+          typ: "p",
+          text: "**Klären Sie Genehmigung, Netzanschluss und Förderung gemeinsam, weil jede Entscheidung die anderen beeinflusst.** Eine Anlage mit 250 kWp kann in Wien ein vereinfachtes elektrizitätsrechtliches Verfahren auslösen, in Oberösterreich dagegen elektrizitätsrechtlich frei sein; eine Aufteilung in mehrere Anlagen ändert daran in der Regel nichts, weil Anlagen hinter einem Netzanschlusspunkt als Einheit gelten.",
+        },
+        {
+          typ: "liste",
+          nummeriert: true,
+          punkte: [
+            "Standort und Leistung grob festlegen (Dachflächen, Lastgang, Netzanschluss).",
+            "Landesrecht prüfen: Baurecht, Elektrizitätsrecht, Raumordnung, Schutzzonen.",
+            "Netzanfrage beim Netzbetreiber stellen – siehe [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss).",
+            "Unterlagen für Bau- und Elektrizitätsrecht erstellen, bei Betrieben Gewerberecht klären.",
+            "Förderansuchen einbringen, dann Verfahren abwickeln und Bescheide abwarten.",
+            "Nach Fertigstellung Fertigstellungsanzeigen an Behörde (wo vorgesehen) und Netzbetreiber.",
           ],
         },
         {
-          typ: "tool",
-          href: "/solarrechner",
-          titel: "Lohnt sich die Anlage auf Ihrem Dach?",
-          text: "Wenn die Genehmigungsfrage geklärt ist: Ertrag, Autarkie und Amortisation mit Ihren Werten berechnen.",
-          label: "Zum Solarrechner",
+          typ: "p",
+          text: "Gemeinden haben zusätzlich Vergabe- und Beteiligungsfragen zu lösen – dazu der Ratgeber [Photovoltaik für Gemeinden](/ratgeber/photovoltaik-gemeinde) und unsere Seite für [Gemeinden](/kommunen).",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Brauche ich eine Baugenehmigung für eine Photovoltaikanlage auf dem Dach?", a: "In der Regel nein. Solaranlagen in, an und auf Dach- und Außenwandflächen sind nach allen Landesbauordnungen verfahrensfrei. Trotzdem müssen Sie Denkmalschutz, Bebauungsplan, Brandschutz und Statik beachten." },
-    { q: "Wie groß darf eine PV-Anlage ohne Genehmigung sein?", a: "Für Dachanlagen gibt es keine Größengrenze, sie sind unabhängig von der Leistung verfahrensfrei. Bei freistehenden Anlagen im Garten gilt meist eine Grenze von 3 m Höhe und 9 m Gesamtlänge; darüber ist in der Regel eine Baugenehmigung nötig." },
-    { q: "Darf ich auf einem denkmalgeschützten Haus eine Solaranlage bauen?", a: "Meist ja, aber nur mit denkmalrechtlicher Erlaubnis. Wegen des überragenden öffentlichen Interesses nach § 2 EEG ist sie regelmäßig zu erteilen, wie das OVG NRW 2024 entschieden hat. Unauffällige, schwarze Module auf wenig einsehbaren Dachflächen erhöhen die Chancen." },
-    { q: "Welchen Abstand muss eine PV-Anlage zur Brandwand haben?", a: "Nach der Musterbauordnung 0,50 m bei dachintegrierten oder flach montierten Anlagen, 1,25 m bei allen übrigen und keinen Abstand, wenn die Brandwand mindestens 30 cm über das Dach geführt ist. Die Länder haben das teils abweichend übernommen." },
-    { q: "Kann der Nachbar gegen meine Solaranlage vorgehen?", a: "Baurechtlich kaum, solange die Anlage verfahrensfrei und vorschriftsgemäß ist. Zivilrechtlich kann er sich bei erheblicher Blendung wehren; als Orientierung gelten mehr als 30 Minuten pro Tag oder 30 Stunden pro Jahr an schutzwürdigen Räumen." },
-    { q: "Brauche ich für einen Solarcarport eine Genehmigung?", a: "Das hängt von Land und Größe ab. Kleine Carports sind in vielen Ländern verfahrensfrei, größere oder grenznahe brauchen eine Genehmigung. Die Solarmodule auf dem Dach ändern daran grundsätzlich nichts." },
-    { q: "Muss ich die PV-Anlage beim Bauamt anzeigen?", a: "Für verfahrensfreie Dachanlagen nein. Pflicht sind dagegen die Anmeldung beim Netzbetreiber und die Registrierung im Marktstammdatenregister innerhalb eines Monats nach Inbetriebnahme." },
+    {
+      q: "Brauche ich für eine PV-Anlage auf dem Dach eine Baubewilligung?",
+      a: "In den meisten Bundesländern nicht. Wien, Niederösterreich, Oberösterreich und Vorarlberg stellen dachparallele Anlagen weitgehend frei, die Steiermark verlangt eine Meldung. Ausnahmen gelten in Schutzzonen, bei Denkmalschutz, bei hohen Aufständerungen und im Burgenland für Anlagen über 20 kW.",
+    },
+    {
+      q: "Ab wann braucht eine PV-Anlage eine elektrizitätsrechtliche Genehmigung?",
+      a: "Das hängt vom Land ab: In Wien ist über 15 kW eine Anzeige und über 250 kW eine Genehmigung nötig, in der Steiermark über 200 kW, in Kärnten und im Burgenland über 500 kW. Oberösterreich stellt PV bis 1.000 kW und auf Gebäuden frei. In Niederösterreich wurde die allgemeine Genehmigungspflicht 2022 aufgehoben.",
+    },
+    {
+      q: "Braucht eine Freiflächenanlage eine Widmung?",
+      a: "Ja, praktisch immer. Freiflächenanlagen setzen eine passende Widmung im Flächenwidmungsplan oder eine Eignungszone des Landes voraus. Zusätzlich ist meist eine Baubewilligung nötig – in der Steiermark etwa ab 100 kWp im vereinfachten und ab 500 kWp im Vollverfahren.",
+    },
+    {
+      q: "Wie lange dauert eine PV-Genehmigung?",
+      a: "Meldungen und Anzeigen sind oft in wenigen Wochen erledigt. Für Anlagen auf Gebäuden gelten verkürzte Fristen, in der Steiermark und im Burgenland ein Monat für Anlagen bis 100 kWp. Freiflächenanlagen mit Widmungsänderung brauchen dagegen häufig mehrere Monate bis über ein Jahr.",
+    },
+    {
+      q: "Gilt die Betriebsanlagengenehmigung auch für die PV-Anlage?",
+      a: "Möglicherweise. Mehrere Landes-Elektrizitätsgesetze nehmen Anlagen aus, die dem Gewerberecht unterliegen. Ob die PV-Anlage eine anzeige- oder genehmigungspflichtige Änderung der Betriebsanlage ist, hängt von Ausführung und Auswirkungen ab – klären Sie das mit der Bezirkshauptmannschaft.",
+    },
+    {
+      q: "Wer kümmert sich um die Genehmigung?",
+      a: "Rechtlich ist der Anlagenbetreiber verantwortlich. In der Praxis erstellt der Errichter die technischen Unterlagen und bereitet Anzeigen und Anträge vor. Ökovolt übernimmt bei Gewerbe- und Gemeindeprojekten die Abstimmung mit Behörden und Netzbetreiber.",
+    },
   ],
 
   passend: [
-    { href: "/forderungen/baurecht", titel: "Baurecht für Photovoltaik", text: "Genehmigungs-Check in 30 Sekunden." },
-    { href: "/ratgeber/solarpflicht-bundeslaender", titel: "Solarpflicht nach Bundesland", text: "Welche Länder eine Anlage vorschreiben." },
-    { href: "/ratgeber/photovoltaik-anmelden", titel: "Photovoltaik anmelden", text: "Netzbetreiber, Marktstammdatenregister, Finanzamt." },
-    { href: "/angebot", titel: "Angebot anfragen", text: "Planung inklusive Prüfung von Dach und Vorgaben." },
+    { href: "/ratgeber/solarpflicht-bundeslaender", titel: "PV-Pflicht in den Bundesländern", text: "Wo Neubauten Photovoltaik brauchen." },
+    { href: "/ratgeber/photovoltaik-brandschutz", titel: "Photovoltaik und Brandschutz", text: "OIB-RL 2, OVE R 11-1 und Feuerwehr." },
+    { href: "/forderungen/baurecht", titel: "Baurecht im Überblick", text: "Rahmenbedingungen für PV nach Bundesland." },
+    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Freiflächen & Widmung", text: "Zonierung, Pacht und Netz." },
   ],
 
   quellen: [
-    { titel: "BauGB § 35 – Bauen im Außenbereich (gesetze-im-internet.de)", url: "https://www.gesetze-im-internet.de/bbaug/__35.html", stand: "09/2026" },
-    { titel: "BauGB § 248 – Sonderregelung zur sparsamen und effizienten Nutzung von Energie", url: "https://www.gesetze-im-internet.de/bbaug/__248.html", stand: "09/2026" },
-    { titel: "EEG § 2 – Besondere Bedeutung der erneuerbaren Energien", url: "https://www.gesetze-im-internet.de/eeg_2014/__2.html", stand: "09/2026" },
-    { titel: "Hessisches Wirtschaftsministerium – Leitfaden Solaranlagen: einzuhaltende Abstände auf Dächern", url: "https://wirtschaft.hessen.de/sites/wirtschaft.hessen.de/files/2023-04/leitfaden_solaranlagen_final.pdf", stand: "04/2023" },
-    { titel: "Energie-Atlas Bayern – Genehmigungspflicht von Photovoltaikanlagen", url: "https://www.energieatlas.bayern.de/erneuerbare-energien/photovoltaik/themenplattform-planen-genehmigen/genehmigungspflicht", stand: "09/2026" },
-    { titel: "Ministerium für Landesentwicklung und Wohnen Baden-Württemberg – PV und Denkmalschutz", url: "https://mlw.baden-wuerttemberg.de/de/denkmalschutz/pv-und-denkmalschutz", stand: "09/2026" },
-    { titel: "Legal Tribune Online – OVG NRW, Urteile vom 27.11.2024, 10 A 2281/23 und 10 A 1477/23", url: "https://www.lto.de/recht/nachrichten/n/ovg-nrw-10a228123-10a147723-denkmalschutz-solar-photovoltaik-baurecht", stand: "11/2024" },
-    { titel: "Stiftung Umweltenergierecht – Das überragende öffentliche Interesse: § 2 EEG 2023 in der Praxis", url: "https://stiftung-umweltenergierecht.de/blog/das-ueberragende-oeffentliche-interesse-%C2%A7-2-eeg-2023-in-der-praxis/", stand: "09/2026" },
+    { titel: "Bauordnung für Wien, §§ 60, 62a (geltende Fassung, jusline.at)", url: "https://www.jusline.at/gesetz/bo_fuer_wien/gesamt", stand: "09/2026" },
+    { titel: "NÖ Bauordnung 2014, §§ 5, 15, 17 (geltende Fassung, jusline.at)", url: "https://www.jusline.at/gesetz/noe__bo_2014/gesamt", stand: "09/2026" },
+    { titel: "Steiermärkisches Baugesetz, §§ 19–21, 101b (geltende Fassung, jusline.at)", url: "https://www.jusline.at/gesetz/stmk_baug/gesamt", stand: "09/2026" },
+    { titel: "Burgenländisches Baugesetz 1997, §§ 1, 18c, 18d (geltende Fassung, jusline.at)", url: "https://www.jusline.at/gesetz/bgld_baug/gesamt", stand: "09/2026" },
+    { titel: "Oö. Elektrizitätswirtschafts- und -organisationsgesetz 2006, § 5 (jusline.at)", url: "https://www.jusline.at/gesetz/ooe_elwog_2006/gesamt", stand: "09/2026" },
+    { titel: "Wiener Elektrizitätswirtschaftsgesetz 2005 (jusline.at)", url: "https://www.jusline.at/gesetz/welwg_2005/gesamt", stand: "09/2026" },
+    { titel: "Stmk. ElWOG 2005, K-ElWOG, Bgld. ElWG 2006 (jusline.at)", url: "https://www.jusline.at/gesetz/stmk_elwog_2005/gesamt", stand: "09/2026" },
+    { titel: "PV Austria – 9 Länder, rund 36 Gesetze: Genehmigungs-Wirrwarr (OTS)", url: "https://www.ots.at/presseaussendung/OTS_20240526_OTS0007/9-laender-rund-36-verschiedene-gesetze-pv-austria-kritisiert-genehmigungs-wirrwarr-in-den-bundeslaendern", stand: "05/2024" },
   ],
 
-  seitenCta: { titel: "Genehmigung in 30 Sekunden prüfen", text: "Anlagentyp wählen, drei Fragen beantworten.", href: "/forderungen/baurecht", label: "Zum Genehmigungs-Check" },
+  seitenCta: { titel: "Genehmigung klären?", text: "Wir prüfen Bau- und Elektrizitätsrecht für Ihren Standort.", href: "/angebot", label: "Projekt anfragen" },
   cta: {
-    title: "Wir klären Baurecht und Denkmalschutz vor der Bestellung.",
-    text: "Vor-Ort-Prüfung von Dach, Brandwand-Abständen und Vorgaben – und Anmeldung beim Netzbetreiber aus einer Hand.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Baurecht im Überblick", href: "/forderungen/baurecht" },
+    title: "Genehmigung, Netz und Förderung – sauber aufeinander abgestimmt.",
+    text: "Ökovolt Solartechnik plant PV-Anlagen für Betriebe, Landwirtschaft und Gemeinden in allen neun Bundesländern und kennt die Unterschiede im Landesrecht.",
+    primary: { label: "Projekt anfragen", href: "/angebot" },
+    secondary: { label: "Lösungen für Gemeinden", href: "/kommunen" },
   },
 };
 

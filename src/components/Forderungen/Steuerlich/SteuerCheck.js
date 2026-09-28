@@ -1,210 +1,167 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
-import { Building, Building2, CircleCheck, CircleAlert, Home, Store } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Calculator, CircleAlert, Info } from "lucide-react";
 
 /**
- * Steuer-Check für Photovoltaikanlagen (Orientierung, keine Steuerberatung).
+ * IFB-Rechner: Investitionsfreibetrag, Steuerwirkung und AfA für PV,
+ * Speicher und Ladestationen (Österreich, Rechtsstand 09/2026).
  *
- * Regeln (Stand 2026):
- *  - § 12 Abs. 3 UStG: 0 % für Lieferung + Installation auf/bei Wohngebäuden,
- *    öffentlichen und gemeinwohlorientierten Gebäuden. Bis 30 kWp (MaStR)
- *    gilt die Gebäudevoraussetzung laut BMF-Schreiben vom 27.02.2023 als erfüllt.
- *  - § 3 Nr. 72 EStG (JStG 2024): Anlagen ab 2025 bis 30 kWp je Wohn- oder
- *    Gewerbeeinheit, zusammen höchstens 100 kWp je Steuerpflichtigem.
- *    Anlagen 2022–2024: 30 kWp bei Einfamilienhäusern und Gewerbeimmobilien,
- *    15 kWp je Einheit bei übrigen Gebäuden. Freigrenze – wird sie
- *    überschritten, ist die ganze Anlage steuerpflichtig.
- *  - § 3 Nr. 32 GewStG: Gewerbesteuerfreiheit folgt der Einkommensteuer.
+ * Grundlagen: § 11 EStG (IFB 10/15 %, befristet 20/22 % für Anschaffungen
+ * 01.11.2025–31.12.2026, max. 1 Mio. € Bemessungsgrundlage je Wirtschaftsjahr),
+ * § 7 EStG (Nutzungsdauer PV 20 Jahre, degressiv max. 30 %, Halbjahres-AfA).
+ * Vereinfachte Orientierung – keine Steuerberatung.
  */
 
-const GEBAEUDE = [
-  { id: "efh", label: "Ein-/Zweifamilienhaus", icon: Home, wohnen: true },
-  { id: "mfh", label: "Mehrfamilienhaus", icon: Building2, wohnen: true },
-  { id: "gemischt", label: "Wohn- & Geschäftshaus", icon: Building, wohnen: true },
-  { id: "gewerbe", label: "Gewerbe / Halle", icon: Store, wohnen: false },
+const eur = (n) => Math.round(n).toLocaleString("de-AT") + " €";
+
+const STEUERSAETZE = [
+  { id: "koest", label: "GmbH / AG (KöSt 23 %)", satz: 0.23 },
+  { id: "est40", label: "Einzelunternehmen, Grenzsteuersatz 40 %", satz: 0.4 },
+  { id: "est48", label: "Einzelunternehmen, Grenzsteuersatz 48 %", satz: 0.48 },
+  { id: "est50", label: "Einzelunternehmen, Grenzsteuersatz 50 %", satz: 0.5 },
 ];
 
-const euro = (n) => n.toLocaleString("de-DE", { maximumFractionDigits: 0 }) + " €";
-const zahl = (n) => n.toLocaleString("de-DE", { maximumFractionDigits: 1 });
-
-function Regler({ label, wert, min, max, step = 1, einheit, onChange, hilfe }) {
-  const id = useId();
+function Feld({ label, hilfe, children }) {
   return (
-    <div>
-      <div className="flex items-baseline justify-between gap-4">
-        <label htmlFor={id} className="text-[14.5px] font-semibold text-ink-800">{label}</label>
-        <output htmlFor={id} className="ov-num font-display text-[18px] font-extrabold text-ink-900">
-          {einheit === "€" ? euro(wert) : `${zahl(wert)} ${einheit}`}
-        </output>
-      </div>
-      <input
-        id={id}
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={wert}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="ov-range mt-3 w-full"
-        style={{ "--ov-fill": `${((wert - min) / (max - min)) * 100}%` }}
-      />
-      {hilfe && <p className="mt-1.5 text-[12.5px] text-ink-500">{hilfe}</p>}
-    </div>
+    <label className="block">
+      <span className="text-[14.5px] font-semibold text-ink-800">{label}</span>
+      {hilfe && <span className="mt-0.5 block text-[13px] text-ink-500">{hilfe}</span>}
+      <span className="mt-2 block">{children}</span>
+    </label>
   );
 }
 
+const eingabe = "ov-num h-12 w-full rounded-2xl bg-sand-50 px-4 text-[16px] font-semibold text-ink-900 ring-1 ring-ink-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-ov-500";
+
 export default function SteuerCheck() {
-  const [gebaeude, setGebaeude] = useState("efh");
-  const [kwp, setKwp] = useState(10);
-  const [einheiten, setEinheiten] = useState(6);
-  const [weitere, setWeitere] = useState(0);
-  const [kosten, setKosten] = useState(16000);
-  const [ab2025, setAb2025] = useState(true);
+  const [kosten, setKosten] = useState("150000");
+  const [zuschuss, setZuschuss] = useState("0");
+  const [zeitpunkt, setZeitpunkt] = useState("2026");
+  const [halbjahr, setHalbjahr] = useState("zweites");
+  const [steuer, setSteuer] = useState("koest");
+  const [gewinn, setGewinn] = useState("bilanz");
 
-  const g = GEBAEUDE.find((x) => x.id === gebaeude);
-  const mehrereEinheiten = gebaeude === "mfh" || gebaeude === "gemischt";
-  const anzahl = mehrereEinheiten ? einheiten : 1;
-
-  const ergebnis = useMemo(() => {
-    // Umsatzsteuer
-    const ustNull = g.wohnen || kwp <= 30;
-    const ustGrund = g.wohnen
-      ? kwp <= 30
-        ? "Wohngebäude und höchstens 30 kWp – die Voraussetzungen gelten ohne weiteren Nachweis als erfüllt."
-        : "Die Anlage steht auf einem Wohngebäude. Über 30 kWp muss der Gebäudebezug im Zweifel belegt werden."
-      : kwp <= 30
-        ? "Bis 30 kWp gilt die Gebäudevoraussetzung nach BMF-Schreiben als erfüllt – auch auf dem Firmendach."
-        : "Über 30 kWp auf einem reinen Gewerbegebäude gelten 19 %. Als Unternehmer holen Sie sich die Vorsteuer in der Regel zurück.";
-
-    // Einkommensteuer
-    const jeEinheit = ab2025 ? 30 : gebaeude === "efh" || gebaeude === "gewerbe" ? 30 : 15;
-    const grenzeGebaeude = ab2025 || mehrereEinheiten ? jeEinheit * anzahl : 30;
-    const gesamt = kwp + weitere;
-    const gebaeudeOk = kwp <= grenzeGebaeude;
-    const gesamtOk = gesamt <= 100;
-    const estFrei = gebaeudeOk && gesamtOk;
-    const estGrund = estFrei
-      ? `${zahl(kwp)} kWp liegen unter der Grenze von ${zahl(grenzeGebaeude)} kWp für dieses Gebäude${weitere > 0 ? ` und Ihre Anlagen zusammen unter 100 kWp` : ""}. Keine Gewinnermittlung, keine Anlage EÜR.`
-      : !gebaeudeOk
-        ? `Die Grenze für dieses Gebäude liegt bei ${zahl(grenzeGebaeude)} kWp. Weil es eine Freigrenze ist, sind dann alle Erträge der Anlage steuerpflichtig – mit Gewinnermittlung und Abschreibung.`
-        : `Zusammen betreiben Sie ${zahl(gesamt)} kWp – mehr als die 100 kWp je Person. Damit entfällt die Befreiung für alle Anlagen.`;
-
+  const e = useMemo(() => {
+    const k = Math.max(0, Number(String(kosten).replace(/\D/g, "")) || 0);
+    const z = Math.min(k, Math.max(0, Number(String(zuschuss).replace(/\D/g, "")) || 0));
+    const ak = k - z; // steuerfreie Zuschüsse kürzen die Anschaffungskosten
+    const satzIfb = gewinn === "pauschal" ? 0 : zeitpunkt === "2026" ? 0.22 : 0.15;
+    const basis = Math.min(ak, 1_000_000);
+    const ifb = basis * satzIfb;
+    const s = STEUERSAETZE.find((x) => x.id === steuer)?.satz ?? 0.23;
+    const faktor = halbjahr === "zweites" ? 0.5 : 1;
+    const afaLinear = (ak / 20) * faktor;
+    const afaDegressiv = ak * 0.3 * faktor;
     return {
-      ustNull,
-      ustGrund,
-      ersparnis: ustNull ? Math.round(kosten * 0.19) : 0,
-      estFrei,
-      estGrund,
-      grenzeGebaeude,
+      ak,
+      satzIfb,
+      ifb,
+      ersparnisIfb: ifb * s,
+      afaLinear,
+      afaDegressiv,
+      ersparnisJahr1: (ifb + afaDegressiv) * s,
+      gedeckelt: ak > 1_000_000,
+      pauschal: gewinn === "pauschal",
     };
-  }, [g, kwp, weitere, kosten, ab2025, gebaeude, mehrereEinheiten, anzahl]);
+  }, [kosten, zuschuss, zeitpunkt, halbjahr, steuer, gewinn]);
 
   return (
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_80px_-50px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        {/* Eingaben */}
-        <form className="space-y-8 border-b border-ink-100 p-6 sm:p-8 lg:border-b-0 lg:border-r md:p-10" onSubmit={(e) => e.preventDefault()}>
+      <div className="grid lg:grid-cols-[1fr_1fr]">
+        <div className="space-y-6 border-b border-ink-100 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+          <p className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+            <Calculator aria-hidden="true" className="h-4 w-4 text-ov-600" /> Ihre Investition
+          </p>
+          <Feld label="Anschaffungskosten netto" hilfe="PV-Anlage, Speicher und Ladestationen inkl. Montage">
+            <input inputMode="numeric" value={kosten} onChange={(ev) => setKosten(ev.target.value.replace(/\D/g, ""))} className={eingabe} aria-describedby="hinweis-kosten" />
+          </Feld>
+          <Feld label="EAG-Zuschuss bzw. andere steuerfreie Förderung" hilfe="kürzt die Anschaffungskosten für AfA und IFB">
+            <input inputMode="numeric" value={zuschuss} onChange={(ev) => setZuschuss(ev.target.value.replace(/\D/g, ""))} className={eingabe} />
+          </Feld>
           <fieldset>
-            <legend className="text-[14.5px] font-semibold text-ink-800">Auf welchem Gebäude?</legend>
-            <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-              {GEBAEUDE.map((o) => {
-                const an = gebaeude === o.id;
-                return (
-                  <label
-                    key={o.id}
-                    className={`relative flex min-h-[52px] min-w-0 cursor-pointer items-center gap-3 rounded-2xl px-3.5 py-3 text-[14px] font-semibold leading-snug transition-all focus-within:ring-2 focus-within:ring-ov-500 ${an ? "bg-ov-50 text-ov-800 ring-2 ring-ov-500" : "bg-sand-50 text-ink-700 ring-1 ring-ink-200 hover:ring-ink-300"}`}
-                  >
-                    <input type="radio" name="gebaeude" value={o.id} checked={an} onChange={() => setGebaeude(o.id)} className="sr-only" />
-                    <o.icon aria-hidden="true" className={`h-5 w-5 shrink-0 ${an ? "text-ov-600" : "text-ink-400"}`} />
-                    {o.label}
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
-
-          <Regler label="Leistung der Anlage" wert={kwp} min={1} max={120} step={0.5} einheit="kWp" onChange={setKwp} />
-          {mehrereEinheiten && (
-            <Regler label="Wohn- und Gewerbeeinheiten im Gebäude" wert={einheiten} min={2} max={20} einheit="Einheiten" onChange={setEinheiten} />
-          )}
-          <Regler
-            label="Weitere eigene PV-Anlagen"
-            wert={weitere}
-            min={0}
-            max={100}
-            einheit="kWp"
-            onChange={setWeitere}
-            hilfe="Leistung aller anderen Anlagen, die Sie (oder Ihre Gesellschaft) betreiben."
-          />
-          <Regler label="Kosten der Anlage (netto)" wert={kosten} min={2000} max={120000} step={500} einheit="€" onChange={setKosten} />
-
-          <fieldset>
-            <legend className="text-[14.5px] font-semibold text-ink-800">Inbetriebnahme</legend>
-            <div className="mt-3 inline-flex rounded-full bg-ink-100 p-1">
+            <legend className="text-[14.5px] font-semibold text-ink-800">Anschaffung bzw. Fertigstellung</legend>
+            <div className="mt-2 inline-flex flex-wrap gap-1 rounded-full bg-ink-100 p-1">
               {[
-                { v: true, l: "ab 2025" },
-                { v: false, l: "2022–2024" },
+                { id: "2026", label: "01.11.2025 – 31.12.2026" },
+                { id: "2027", label: "ab 2027" },
               ].map((o) => (
-                <label key={o.l} className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${ab2025 === o.v ? "bg-white text-ink-900 shadow-sm" : "text-ink-500"}`}>
-                  <input type="radio" name="inbetriebnahme" checked={ab2025 === o.v} onChange={() => setAb2025(o.v)} className="sr-only" />
-                  {o.l}
+                <label key={o.id} className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${zeitpunkt === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-600"}`}>
+                  <input type="radio" name="zeitpunkt" className="sr-only" checked={zeitpunkt === o.id} onChange={() => setZeitpunkt(o.id)} />
+                  {o.label}
                 </label>
               ))}
             </div>
           </fieldset>
-        </form>
+          <fieldset>
+            <legend className="text-[14.5px] font-semibold text-ink-800">Inbetriebnahme im Wirtschaftsjahr</legend>
+            <div className="mt-2 inline-flex flex-wrap gap-1 rounded-full bg-ink-100 p-1">
+              {[
+                { id: "erstes", label: "1. Halbjahr" },
+                { id: "zweites", label: "2. Halbjahr" },
+              ].map((o) => (
+                <label key={o.id} className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${halbjahr === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-600"}`}>
+                  <input type="radio" name="halbjahr" className="sr-only" checked={halbjahr === o.id} onChange={() => setHalbjahr(o.id)} />
+                  {o.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <Feld label="Rechtsform und Steuersatz">
+            <select value={steuer} onChange={(ev) => setSteuer(ev.target.value)} className={eingabe}>
+              {STEUERSAETZE.map((s) => (
+                <option key={s.id} value={s.id}>{s.label}</option>
+              ))}
+            </select>
+          </Feld>
+          <Feld label="Gewinnermittlung">
+            <select value={gewinn} onChange={(ev) => setGewinn(ev.target.value)} className={eingabe}>
+              <option value="bilanz">Bilanz oder Einnahmen-Ausgaben-Rechnung</option>
+              <option value="pauschal">Pauschalierung (z. B. Kleinunternehmer- oder LuF-Pauschalierung)</option>
+            </select>
+          </Feld>
+        </div>
 
-        {/* Ergebnis */}
-        <div className="flex flex-col gap-4 bg-sand-50/60 p-6 sm:p-8 md:p-10" aria-live="polite">
-          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ihr Ergebnis</p>
-
-          <Ergebnis
-            ok={ergebnis.ustNull}
-            titel="Umsatzsteuer beim Kauf"
-            wert={ergebnis.ustNull ? "0 %" : "19 %"}
-            text={ergebnis.ustGrund}
-            extra={ergebnis.ustNull ? `Sie sparen rund ${euro(ergebnis.ersparnis)} gegenüber 19 % Umsatzsteuer.` : null}
-            norm="§ 12 Abs. 3 UStG"
-          />
-          <Ergebnis
-            ok={ergebnis.estFrei}
-            titel="Einkommensteuer auf Erträge"
-            wert={ergebnis.estFrei ? "steuerfrei" : "steuerpflichtig"}
-            text={ergebnis.estGrund}
-            norm="§ 3 Nr. 72 EStG"
-          />
-          <Ergebnis
-            ok={ergebnis.estFrei}
-            titel="Gewerbesteuer"
-            wert={ergebnis.estFrei ? "befreit" : "prüfen"}
-            text={ergebnis.estFrei ? "Die Befreiung folgt automatisch der Einkommensteuer." : "Ohne Einkommensteuerbefreiung kann Gewerbesteuer anfallen – der Freibetrag von 24.500 € deckt kleinere Anlagen meist ab."}
-            norm="§ 3 Nr. 32 GewStG"
-          />
-
-          <p className="mt-auto pt-2 text-[12.5px] leading-relaxed text-ink-500">
-            Vereinfachte Orientierung nach Rechtsstand 2026, keine Steuerberatung. Sonderfälle (Vermietung der Anlage, Leasing, Mitunternehmerschaften) bitte mit Steuerberatung klären.
+        <div className="flex flex-col bg-sand-50/60 p-6 sm:p-8" aria-live="polite">
+          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ergebnis – Orientierung</p>
+          <dl className="mt-5 space-y-4">
+            <div className="rounded-2xl bg-white p-5 ring-1 ring-ink-200/70">
+              <dt className="text-[13.5px] text-ink-500">Investitionsfreibetrag ({Math.round(e.satzIfb * 100)} %)</dt>
+              <dd className="ov-num mt-1 font-display text-[30px] font-extrabold leading-none tracking-tight text-ov-700">{eur(e.ifb)}</dd>
+              <dd className="mt-2 text-[14px] text-ink-600">Steuerwirkung: <strong className="text-ink-900">{eur(e.ersparnisIfb)}</strong> – zusätzlich zur Abschreibung</dd>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
+                <dt className="text-[13px] text-ink-500">AfA linear, 1. Jahr (20 Jahre)</dt>
+                <dd className="ov-num mt-1 font-display text-[20px] font-bold text-ink-900">{eur(e.afaLinear)}</dd>
+              </div>
+              <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
+                <dt className="text-[13px] text-ink-500">AfA degressiv 30 %, 1. Jahr</dt>
+                <dd className="ov-num mt-1 font-display text-[20px] font-bold text-ink-900">{eur(e.afaDegressiv)}</dd>
+              </div>
+            </div>
+            <div className="rounded-2xl bg-navy-950 p-5 text-white">
+              <dt className="text-[13.5px] text-white/70">Steuerwirkung im 1. Jahr (IFB + degressive AfA)</dt>
+              <dd className="ov-num mt-1 font-display text-[26px] font-extrabold">{eur(e.ersparnisJahr1)}</dd>
+            </div>
+          </dl>
+          {e.pauschal && (
+            <p className="mt-4 flex gap-2 rounded-2xl bg-sun-300/25 p-4 text-[14px] leading-relaxed text-ink-800 ring-1 ring-sun-400/50">
+              <CircleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sun-500" />
+              Bei pauschaler Gewinnermittlung steht kein Investitionsfreibetrag zu. Ob eine PV-Anlage im land- und forstwirtschaftlichen Betrieb als Nebenbetrieb oder eigener Gewerbebetrieb gilt, entscheidet die Verwendung des Stroms.
+            </p>
+          )}
+          {e.gedeckelt && (
+            <p className="mt-4 flex gap-2 text-[13.5px] leading-relaxed text-ink-600">
+              <Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+              Die Bemessungsgrundlage des IFB ist auf 1 Mio. € je Wirtschaftsjahr begrenzt.
+            </p>
+          )}
+          <p id="hinweis-kosten" className="mt-auto pt-6 text-[12.5px] leading-relaxed text-ink-500">
+            Vereinfachte Berechnung ohne Gewinnfreibetrag, Verlustvorträge und Mindest-KöSt. Degressive und lineare AfA sind Alternativen. Der IFB setzt eine Behaltedauer von 4 Jahren voraus und schließt den investitionsbedingten Gewinnfreibetrag für dasselbe Wirtschaftsgut aus. Keine Steuerberatung.
           </p>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Ergebnis({ ok, titel, wert, text, extra, norm }) {
-  const Icon = ok ? CircleCheck : CircleAlert;
-  return (
-    <div className={`rounded-3xl bg-white p-5 ring-1 transition-colors ${ok ? "ring-ov-200" : "ring-sun-400/60"}`}>
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-2.5">
-          <Icon aria-hidden="true" className={`h-5 w-5 shrink-0 ${ok ? "text-ov-600" : "text-sun-500"}`} />
-          <p className="font-semibold text-ink-900">{titel}</p>
-        </div>
-        <p className={`font-display text-[20px] font-extrabold leading-none ${ok ? "text-ov-700" : "text-ink-900"}`}>{wert}</p>
-      </div>
-      <p className="mt-2.5 text-[14.5px] leading-relaxed text-ink-600">{text}</p>
-      {extra && <p className="mt-2 text-[14.5px] font-semibold text-ov-700">{extra}</p>}
-      <p className="mt-2 text-[12px] font-medium uppercase tracking-wider text-ink-500">{norm}</p>
     </div>
   );
 }

@@ -54,8 +54,8 @@ export default function LivePreis() {
         </p>
         <h3 className="ov-h3 mt-3 text-white">Dynamische Stromtarife</h3>
         <p className="mt-3 text-[15.5px] leading-relaxed text-white/70">
-          Seit 2025 muss jeder Stromanbieter einen dynamischen Tarif anbieten. Der Preis folgt der Strombörse – nutzbar ist das nur mit intelligentem
-          Messsystem, das Ihren Verbrauch viertelstündlich erfasst.
+          Dynamische Tarife folgen dem Day-Ahead-Preis der Gebotszone Österreich. Nutzbar ist das nur mit einem Smart Meter, der Ihren Verbrauch in
+          Viertelstundenwerten erfasst – ein Opt-out ist mit dynamischem Tarif nicht möglich (§ 54 ElWG).
         </p>
 
         <div className="mt-6 grid grid-cols-3 gap-2.5">

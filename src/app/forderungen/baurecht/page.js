@@ -1,10 +1,10 @@
 // src/app/forderungen/baurecht/page.js
+//
+// Baurecht, Elektrizitätsrecht und Raumordnung für Photovoltaik in den neun
+// Bundesländern. Daten aus @/data/bundeslaender.
 
-import React from "react";
 import Link from "next/link";
-import { ArrowRight, Castle, ClipboardCheck, FileSearch, Flame, Landmark, ListChecks, MapPinned, Ruler, Sun, Zap } from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { hreflangLanguages } from "@/lib/hreflang";
+import { ClipboardCheck, FileSearch, Landmark, ListChecks, MapPinned, PlugZap, Scale } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,192 +13,125 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import GenehmigungsCheck from "@/components/Forderungen/Baurecht/GenehmigungsCheck";
-import CmsProse from "@/components/Forderungen/Shared/CmsProse";
-import { Hinweis, HowTo, Kennzahlen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { AmpelChip, Checkliste, Hinweis, HowTo, Kennzahlen, PruefenMarke, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { alleBundeslaender, AMPEL, STAND } from "@/data/bundeslaender";
+import { BASE_URL } from "@/lib/site";
+import { hreflangLanguages } from "@/lib/hreflang";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.baurecht.api.get_baurecht_data`;
+const PAGE_URL = `${BASE_URL}/forderungen/baurecht`;
+const TITLE = "PV-Genehmigung: Bauordnungen der 9 Bundesländer | Ökovolt";
+const DESCRIPTION = "Braucht Ihre PV-Anlage eine Bewilligung? Bauordnung, Elektrizitätsrecht und Widmung in allen neun Bundesländern – Dach, Freifläche, Agri-PV, Denkmalschutz.";
 
-async function fetchBaurechtData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const BAURECHT_PAGE_URL = "https://www.oekovolt.com/forderungen/baurecht";
-const TITLE = "Baurecht Photovoltaik: Genehmigung nach Bundesland | Ökovolt";
-const DESCRIPTION = "Braucht Ihre PV-Anlage eine Genehmigung? Baurecht 2026: verfahrensfreie Dachanlagen, Solarpflicht je Bundesland, Denkmalschutz & Brandschutz – mit Genehmigungs-Check.";
-
-export async function generateMetadata() {
-  const data = await fetchBaurechtData();
-  const bannerData = data?.message?.banner;
-  const bild = bannerData?.image ? `/api/image?path=${bannerData.image}` : "/og-image.jpg";
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Photovoltaik Genehmigung Österreich", "PV Anlage Bewilligung Bundesland", "Photovoltaik Bauordnung", "Grünland Photovoltaik Widmung", "Photovoltaik Denkmalschutz", "Freiflächen Photovoltaik Genehmigung", "Solarpflicht Österreich"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
+    locale: "de_AT",
     title: TITLE,
     description: DESCRIPTION,
-    keywords: [
-      "Photovoltaik Baurecht",
-      "PV-Anlage Genehmigung",
-      "Bauvorschriften Photovoltaik",
-      "Solarpflicht",
-      "Solarpflicht Bundesländer",
-      "Photovoltaik Denkmalschutz",
-      "Photovoltaik genehmigungsfrei",
-      "Photovoltaik Vorschriften Bundesländer",
-      "Ökovolt",
-    ],
-    alternates: { canonical: BAURECHT_PAGE_URL, languages: hreflangLanguages(BAURECHT_PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "article",
-      url: BAURECHT_PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt Österreich" }],
-    },
-    twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
-  };
-}
-
-const img = (p) => (p ? `/api/image?path=${p}` : "/Images/Jobs/download.jpg");
-
-// Fachliche Korrektur am CMS-Text (Solarpaket I, Mai 2024), bis der Eintrag im Backoffice angepasst ist
-const CMS_KORREKTUREN = [
-  ["Vereinfachte Anmeldung beim Netzbetreiber", "Keine gesonderte Anmeldung beim Netzbetreiber mehr nötig (seit Solarpaket I, Mai 2024)"],
-  ["Anmeldung im Marktstammdatenregister ist erforderlich", "Anmeldung im Marktstammdatenregister ist erforderlich (vereinfachtes Verfahren, bis 2.000 Wp Modulleistung)"],
-];
-
-const ANLAGEN = [
-  { typ: "Dachanlage (Aufdach/Indach)", recht: <strong className="text-ov-700">verfahrensfrei</strong>, achten: "Statik, Brandschutzabstand bei Reihenhäusern, Denkmalschutz, Gestaltungssatzung" },
-  { typ: "Flachdach, aufgeständert", recht: <strong className="text-ov-700">verfahrensfrei</strong>, achten: "Ballast und Windlast, Gebäudehöhe bei starker Aufständerung, Abstand zu Dachrand und Brandwand" },
-  { typ: "Fassadenanlage", recht: <strong className="text-ov-700">verfahrensfrei</strong>, achten: "Brandschutz der Fassade bei höheren Gebäuden, Denkmalschutz" },
-  { typ: "Solarcarport", recht: <strong className="text-sun-500">je nach Größe</strong>, achten: "Als Garage/Carport meist bis ca. 30 m² verfahrensfrei (nicht im Außenbereich), Grenzabstand, Bebauungsplan" },
-  { typ: "Freiflächenanlage im Garten", recht: <strong className="text-sun-500">bis 3 m × 9 m frei</strong>, achten: "Größere Anlagen: Baugenehmigung, im Außenbereich meist Bebauungsplan" },
-  { typ: "Solarpark / große Freifläche", recht: <strong className="text-navy-700">genehmigungspflichtig</strong>, achten: "Bebauungsplan; privilegiert nur bis 200 m an Autobahnen und zweigleisigen Schienenwegen (§ 35 BauGB)" },
-  { typ: "Balkonkraftwerk", recht: <strong className="text-ov-700">frei</strong>, achten: "Bis 800 W Wechselrichter, nur Marktstammdatenregister; Mieter/WEG: Anspruch auf Zustimmung" },
-];
-
-const SOLARPFLICHT = [
-  { land: "Baden-Württemberg", neubau: "Wohn- und Nichtwohngebäude (seit 2022)", bestand: "grundlegende Dachsanierung (seit 2023)", parken: "ab 35 Stellplätzen" },
-  { land: "Bayern", neubau: "Nichtwohngebäude (seit 2023); Wohngebäude: Soll-Regel", bestand: "Dachsanierung Nichtwohngebäude (seit 2025)", parken: "–" },
-  { land: "Berlin", neubau: "Neubau (seit 2023), mind. 30 % der Dachfläche", bestand: "wesentlicher Dachumbau", parken: "–" },
-  { land: "Brandenburg", neubau: "Nichtwohngebäude (Angaben uneinheitlich)", bestand: "–", parken: "–" },
-  { land: "Bremen", neubau: "Nichtwohn- und Wohngebäude (gestaffelt 2024/2025)", bestand: "Dachsanierung", parken: "–" },
-  { land: "Hamburg", neubau: "Neubau (seit 2023)", bestand: "Dacherneuerung (seit 2024)", parken: "ab 35 Stellplätzen" },
-  { land: "Hessen", neubau: "nur Landesgebäude", bestand: "–", parken: "ab 50 Stellplätzen" },
-  { land: "Mecklenburg-Vorpommern", neubau: "keine Pflicht", bestand: "–", parken: "–" },
-  { land: "Niedersachsen", neubau: "Neubau (seit 2025)", bestand: "Dachsanierung (seit 2025)", parken: "ab 25 Stellplätzen" },
-  { land: "Nordrhein-Westfalen", neubau: "Nichtwohngebäude (2024), Wohngebäude (2025)", bestand: "Dachsanierung (ab 2026)", parken: "ab 35 Stellplätzen" },
-  { land: "Rheinland-Pfalz", neubau: "Nichtwohngebäude (seit 2023); Wohngebäude: „solar-ready“", bestand: "–", parken: "ab 50 Stellplätzen" },
-  { land: "Saarland", neubau: "keine landesweite Pflicht", bestand: "–", parken: "–" },
-  { land: "Sachsen", neubau: "keine Pflicht", bestand: "–", parken: "–" },
-  { land: "Sachsen-Anhalt", neubau: "keine Pflicht", bestand: "–", parken: "–" },
-  { land: "Schleswig-Holstein", neubau: "Nichtwohn- (2023) und Wohngebäude (2025)", bestand: "Dachsanierung (seit 2025)", parken: "ab 70 Stellplätzen" },
-  { land: "Thüringen", neubau: "keine Pflicht", bestand: "–", parken: "–" },
-];
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Genehmigung von Photovoltaikanlagen in Österreich" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
 const FAQ = [
   {
-    q: "Brauche ich für eine Photovoltaikanlage auf dem Dach eine Baugenehmigung?",
-    a: "In aller Regel nein. Solaranlagen in, an und auf Dach- und Außenwandflächen sind nach der Musterbauordnung und den Landesbauordnungen verfahrensfrei. Trotzdem müssen Sie materielle Vorgaben einhalten – etwa Denkmalschutz, Bebauungsplan, Statik und Brandschutzabstände.",
+    q: "Braucht eine PV-Anlage auf dem Dach in Österreich eine Baubewilligung?",
+    a: "In den meisten Bundesländern nicht. Oberösterreich, Niederösterreich, die Steiermark, Salzburg, Vorarlberg und Wien stellen dachparallele oder integrierte Anlagen bewilligungsfrei; Tirol bis 100 m² Modulfläche, das Burgenland bis 20 kWp an kleineren Gebäuden. Ausnahmen gelten in Schutzzonen, Altstadt- und Ortsbildschutzgebieten sowie bei denkmalgeschützten Gebäuden.",
   },
   {
-    q: "Darf ich eine PV-Anlage auf ein denkmalgeschütztes Haus bauen?",
-    a: "Oft ja, aber nur mit denkmalrechtlicher Erlaubnis. Seit 2023 liegen erneuerbare Energien im überragenden öffentlichen Interesse. Mehrere Länder – etwa Baden-Württemberg und Bayern – erteilen die Erlaubnis inzwischen in der Regel, wenn die Anlage untergeordnet, farblich angepasst oder vom öffentlichen Raum kaum einsehbar ist. Die Erlaubnis muss vor der Montage vorliegen.",
+    q: "Ab welcher Leistung braucht eine PV-Anlage eine elektrizitätsrechtliche Bewilligung?",
+    a: "Die Schwellen unterscheiden sich stark: Wien verlangt über 50 kW eine Genehmigung (über 15 kW eine Anzeige), Tirol über 250 kW (Anzeige ab 100 kW), Vorarlberg und das Burgenland über 500 kWp, Niederösterreich, Oberösterreich und die Steiermark erst über 1.000 kW. In Salzburg ist PV unabhängig von der Leistung frei, wenn ein befugtes Unternehmen errichtet. In Oberösterreich und Kärnten sind Anlagen auf Gebäuden generell ausgenommen.",
   },
   {
-    q: "Welche Abstände muss eine Solaranlage zum Nachbarn einhalten?",
-    a: "Dachanlagen lösen in der Regel keine eigenen Abstandsflächen aus. Bei Reihen- und Doppelhäusern verlangen viele Landesbauordnungen aber einen Brandschutzabstand zur Brand- bzw. Gebäudeabschlusswand – nach dem Muster 0,5 m bei flach anliegenden und bis 1,25 m bei aufgeständerten Anlagen. Einige Länder haben das für niedrige Gebäude gestrichen. Freistehende Anlagen und Carports müssen die Grenzabstände der Landesbauordnung beachten.",
+    q: "Brauche ich für eine Freiflächenanlage eine Umwidmung?",
+    a: "In der Regel ja. Niederösterreich verlangt über 50 kW die Widmung „Grünland-Photovoltaikanlagen“, Oberösterreich über 50 m² Modulfläche eine Sonderwidmung, Salzburg über 200 m² eine Kennzeichnung, Kärnten die Widmung „Grünland – Photovoltaikanlage“ (max. 4 ha). Die Steiermark und das Burgenland lenken große Anlagen in Vorrang- bzw. Eignungszonen.",
   },
   {
-    q: "Gibt es eine Solarpflicht für mein Haus?",
-    a: "Das hängt vom Bundesland ab. In Baden-Württemberg, Berlin, Hamburg, Niedersachsen, NRW, Schleswig-Holstein und Bremen gilt für Neubauten eine Solarpflicht, teils auch bei grundlegender Dachsanierung. Bayern und Rheinland-Pfalz verpflichten vor allem Nichtwohngebäude; in Sachsen, Sachsen-Anhalt, Thüringen und Mecklenburg-Vorpommern besteht keine Pflicht. Bestandsgebäude ohne Dachsanierung sind fast nirgends betroffen.",
+    q: "Darf ich eine PV-Anlage auf ein denkmalgeschütztes Gebäude bauen?",
+    a: "Nur mit Bewilligung des Bundesdenkmalamts nach § 5 Denkmalschutzgesetz. Das Amt prüft Sichtbarkeit, Farbe und Eingriff in die Substanz; dachintegrierte oder vom öffentlichen Raum kaum einsehbare Lösungen haben gute Chancen. Die Bewilligung muss vor der Bestellung vorliegen – auch weil der EAG-Zuschuss alle Genehmigungen beim Antrag verlangt.",
   },
   {
-    q: "Brauche ich für ein Balkonkraftwerk die Zustimmung des Vermieters?",
-    a: "Sie brauchen sie – haben aber seit Oktober 2024 einen Anspruch darauf. Steckersolargeräte sind im Mietrecht (§ 554 BGB) und im Wohnungseigentumsrecht (§ 20 WEG) privilegierte bauliche Veränderungen. Vermieter oder Eigentümergemeinschaft können nur bei Unzumutbarkeit ablehnen und über die Art der Ausführung mitentscheiden.",
+    q: "Gibt es in Österreich eine PV-Pflicht für Neubauten?",
+    a: "Wien hat die strengste Regel: Seit 15.07.2026 verlangt § 118e der Bauordnung bei Nichtwohn-Neubauten 1 kWp je 100 m² konditionierter Brutto-Grundfläche und bei Wohnbauten eine Leistung nach Formel. Vorarlberg verpflichtet Einkaufszentren und größere Handelsbetriebe. In den übrigen Ländern sind die Regeln uneinheitlich – wir prüfen sie für Ihr Bauvorhaben.",
   },
   {
-    q: "Was muss ich nach der Montage anmelden?",
-    a: "Die Anlage wird vor Inbetriebnahme beim Netzbetreiber angemeldet und muss innerhalb eines Monats nach Inbetriebnahme im Marktstammdatenregister der Bundesnetzagentur registriert werden – auch der Speicher. Eine Baugenehmigung oder Bauanzeige ist für Dachanlagen nicht erforderlich.",
+    q: "Was ändert das Erneuerbaren-Ausbau-Beschleunigungsgesetz?",
+    a: "Das EABG (BGBl. I Nr. 47/2026) setzt die EU-Richtlinie RED III um: Beschleunigungsgebiete für erneuerbare Energie und ein konzentriertes Genehmigungsverfahren. Teile gelten seit Juli 2026, der Rest ab 01.01.2027. Oberösterreich arbeitet an Verordnungen für PV-Beschleunigungsgebiete und Ausschlusszonen, die 2026 beschlossen werden sollen.",
   },
 ];
 
-export default async function Baurecht() {
-  const response = await fetchBaurechtData();
-  const data = response?.message;
-  const banner = data?.banner;
-  const body = data?.body;
+export default function Baurecht() {
+  const laender = alleBundeslaender();
+  const zeilen = laender.map((l) => ({
+    land: <Link href={`/forderungen/landesforderungen/${l.slug}`} className="text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{l.name}</Link>,
+    bo: l.recht.bauordnung,
+    dach: (
+      <>
+        <AmpelChip wert={l.recht.ampel.dach} label={AMPEL[l.recht.ampel.dach].label} />
+        <span className="mt-1.5 block text-[14px]">{l.recht.dach}</span>
+        {l.recht.dachPruefen && <PruefenMarke stand={STAND.label} />}
+      </>
+    ),
+    frei: (
+      <>
+        <AmpelChip wert={l.recht.ampel.freiflaeche} label={AMPEL[l.recht.ampel.freiflaeche].label} />
+        <span className="mt-1.5 block text-[14px]">{l.recht.freiflaeche}</span>
+      </>
+    ),
+    el: (
+      <>
+        <AmpelChip wert={l.recht.ampel.elektrizitaet} label={AMPEL[l.recht.ampel.elektrizitaet].label} />
+        <span className="mt-1.5 block text-[14px]">{l.recht.elektrizitaet}</span>
+      </>
+    ),
+  }));
+  const raum = laender.map((l) => ({ land: l.name, regel: l.recht.raumordnung, ortsbild: l.recht.ortsbild }));
+  const pflicht = laender.map((l) => ({ land: l.name, pflicht: <>{l.recht.pvPflicht}{l.recht.pvPflichtPruefen && <span className="block"><PruefenMarke stand={STAND.label} /></span>}</> }));
+  const pfade = Object.fromEntries(laender.map((l) => [l.key, `/forderungen/landesforderungen/${l.slug}`]));
 
-  const webPageSchema = {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": `${BAURECHT_PAGE_URL}/#webpage`,
-    url: BAURECHT_PAGE_URL,
-    name: body?.title || "Baurecht für Photovoltaik | Ökovolt Österreich",
+    "@id": `${PAGE_URL}/#webpage`,
+    url: PAGE_URL,
+    name: "Genehmigung von Photovoltaikanlagen in den neun Bundesländern",
     description: DESCRIPTION,
     inLanguage: "de-AT",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: "2026-09-13",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${BASE_URL}/#organization` },
+    dateModified: STAND.iso,
   };
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        breadcrumbs={[{ name: "Förderungen" }, { name: "Baurecht" }]}
-        eyebrow="Baurecht Photovoltaik · Stand 2026"
-        title={<>Braucht Ihre PV-Anlage eine <span className="ov-text-gradient">Genehmigung</span>?</>}
-        lead="Für die meisten Dachanlagen: nein. Worauf es trotzdem ankommt – Denkmalschutz, Bebauungsplan, Brandschutz und Solarpflicht – erklären wir hier je Anlagentyp und Bundesland."
-        image={{ src: img(banner?.image), alt: banner?.image_alt_text || "Solarmodule vor Windkraftanlagen im Sonnenuntergang" }}
-        points={["Dachanlagen verfahrensfrei", "Solarpflicht aller 16 Länder", "Denkmal- & Brandschutz", "Genehmigungs-Check"]}
+        breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Baurecht" }]}
+        eyebrow={`Baurecht & Genehmigung · Stand ${STAND.kurz}`}
+        title={<>PV-Genehmigung in Österreich: <span className="ov-text-gradient">neun Länder, neun Regeln</span></>}
+        lead="Ob eine PV-Anlage frei, anzeige- oder bewilligungspflichtig ist, entscheiden in Österreich Bauordnung, Landes-Elektrizitätsrecht und Raumordnung des jeweiligen Bundeslandes. Hier stehen die Schwellen aller neun Länder mit Paragraph – und ein Check für Ihr Projekt."
+        image={{ src: "/Images/Jobs/download.jpg", alt: "Montage von Photovoltaikmodulen auf einem Dach" }}
+        points={["Tabelle aller 9 Bauordnungen", "Elektrizitätsrecht mit Schwellen", "Widmung für Freiflächen", "Genehmigungs-Check"]}
         actions={[
-          { label: "Planung anfragen", href: "/angebot" },
-          { label: "Genehmigungs-Check", href: "#genehmigungs-check", icon: ListChecks },
+          { label: "Projekt anfragen", href: "/angebot" },
+          { label: "Zum Genehmigungs-Check", href: "#genehmigungs-check", icon: ListChecks },
         ]}
         badge={
           <div className="flex items-center gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <ClipboardCheck aria-hidden="true" className="h-6 w-6" />
+              <Scale aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[20px] font-extrabold leading-none text-ink-900">Kein Bauantrag</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">für übliche Dachanlagen auf Wohnhäusern</p>
+              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">3 Rechtsgebiete</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Bau, Elektrizität, Raumordnung</p>
             </div>
           </div>
         }
@@ -206,164 +139,143 @@ export default async function Baurecht() {
 
       <Kennzahlen
         items={[
-          { wert: "0", label: "Bauanträge für übliche Dachanlagen" },
-          { wert: "3 × 9 m", label: "verfahrensfrei für Anlagen im Garten (Höhe × Länge)" },
-          { wert: "200 m", label: "privilegierte Freiflächen an Autobahn & Schiene" },
-          { wert: "1 Monat", label: "Frist fürs Marktstammdatenregister" },
+          { wert: "9", label: "Bauordnungen geprüft" },
+          { wert: "15 kW – 1 MW", label: "Spanne der elektrizitätsrechtlichen Schwellen" },
+          { wert: "50 kW", label: "Widmungsschwelle Grünland in Niederösterreich" },
+          { wert: "4 ha", label: "Freiflächen-Obergrenze in Kärnten" },
         ]}
       />
 
       <Section tone="sand" space="lg" id="genehmigungs-check" className="scroll-mt-24">
         <SectionHeading
-          eyebrow="Interaktiver Genehmigungs-Check"
-          title={<>In 30 Sekunden zur <span className="ov-text-gradient">Einschätzung</span></>}
-          lead="Anlagentyp wählen, drei Fragen beantworten – Sie sehen, ob ein Antrag nötig ist und was vor der Bestellung zu klären bleibt."
+          eyebrow="Genehmigungs-Check"
+          title={<>Braucht Ihre Anlage eine <span className="ov-text-gradient">Bewilligung</span>?</>}
+          lead="Bundesland, Anlagenart und Leistung wählen – Sie sehen für Baurecht, Elektrizitätsrecht und Raumordnung, was voraussichtlich nötig ist."
           align="center"
           className="mb-12"
         />
         <Reveal dir="scale">
-          <GenehmigungsCheck />
+          <GenehmigungsCheck laenderPfade={pfade} />
         </Reveal>
       </Section>
 
-      <Section tone="white" space="lg">
+      <Section tone="white" space="lg" id="bundeslaender">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            eyebrow="Nach Anlagentyp"
-            title="Welche Solaranlage braucht was?"
-            lead="Grundlage ist § 61 der Musterbauordnung, den alle Länder in ihre Bauordnungen übernommen haben – mit Abweichungen im Detail. Verfahrensfrei heißt: kein Bauantrag, aber alle Vorschriften gelten weiter."
+            eyebrow="Alle neun Bundesländer"
+            title="Bauordnung und Elektrizitätsrecht im Vergleich"
+            lead="Die Ampel zeigt den Regelfall: frei, ab einer Schwelle anzeigepflichtig oder ab einer Schwelle bewilligungs- bzw. widmungspflichtig. Die Details stehen im Text daneben."
           />
-          <StandPille className="shrink-0 self-start md:self-auto">Stand September 2026</StandPille>
-        </div>
-        <Reveal>
-          <Tabelle
-            caption="Baurechtliche Einordnung von Solaranlagen nach Anlagentyp"
-            spalten={[
-              { key: "typ", label: "Anlagentyp", breite: "w-[26%]" },
-              { key: "recht", label: "Baurecht", breite: "w-[20%]" },
-              { key: "achten", label: "Worauf Sie achten müssen" },
-            ]}
-            zeilen={ANLAGEN}
-          />
-        </Reveal>
-      </Section>
-
-      <Section tone="sand" space="lg">
-        <div className="mb-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-          <SectionHeading
-            eyebrow="Landesbauordnungen & Klimaschutzgesetze"
-            title="Solarpflicht 2026: Übersicht aller 16 Bundesländer"
-            lead="Eine Solarpflicht betrifft vor allem Neubauten und grundlegende Dachsanierungen – bestehende Häuser ohne Umbau sind fast nirgends verpflichtet. Die Regeln stehen teils in der Bauordnung, teils im Klimaschutzgesetz des Landes."
-          />
-          <Hinweis ton="warn" titel="Details ändern sich laufend">
-            Schwellenwerte, Ausnahmen und Stichtage unterscheiden sich stark. Für eine konkrete Planung gilt die aktuelle Fassung des Landesrechts. Bundesweite Solaranforderungen im neuen Gebäudemodernisierungsgesetz sind in der Diskussion.
-          </Hinweis>
+          <StandPille className="shrink-0 self-start md:self-auto">Rechtsstand {STAND.label}</StandPille>
         </div>
         <Reveal>
           <Tabelle
             dicht
-            caption="Solarpflicht nach Bundesland (Stand 2026)"
+            caption={`Genehmigungspflichten für Photovoltaikanlagen nach Bundesland, Stand ${STAND.label}`}
             spalten={[
-              { key: "land", label: "Bundesland", breite: "w-[20%]" },
-              { key: "neubau", label: "Neubau" },
-              { key: "bestand", label: "Bestand / Dachsanierung" },
-              { key: "parken", label: "Parkplätze", breite: "w-[16%]" },
+              { key: "land", label: "Land", breite: "w-[10%]" },
+              { key: "bo", label: "Gesetz", breite: "w-[13%]", className: "text-[14px]" },
+              { key: "dach", label: "Dach & Fassade" },
+              { key: "frei", label: "Freifläche (Baurecht)" },
+              { key: "el", label: "Elektrizitätsrecht" },
             ]}
-            zeilen={SOLARPFLICHT}
+            zeilen={zeilen}
           />
         </Reveal>
-        <p className="mt-5 text-[13px] leading-relaxed text-ink-500">
-          Vereinfachte Übersicht, Quellen u. a. Öko-Zentrum NRW und Landesrecht. Die Förderlage je Land finden Sie unter{" "}
-          <Link href="/forderungen/landesforderungen" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
-            Photovoltaik-Förderung nach Bundesland
-          </Link>.
+        <Hinweis titel="Frei heißt nicht regelfrei" className="mt-8">
+          Auch bewilligungsfreie Anlagen müssen Bebauungsplan, Orts- und Landschaftsbild, Statik und Brandschutz einhalten. Die Baubehörde kann sonst nachträglich einschreiten – in Oberösterreich ausdrücklich nach § 49 Abs. 6 Oö. BauO 1994.
+        </Hinweis>
+      </Section>
+
+      <Section tone="sand" space="lg" id="freiflaeche">
+        <div className="mb-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Raumordnung"
+            title="Freiflächen und Agri-PV: Widmung und Zonenpläne je Land"
+            lead="Für Freiflächen entscheidet die Raumordnung. Mehrere Länder haben überörtliche Zonenpläne erlassen – wer dort plant, spart Zeit, wer daneben plant, braucht gute Argumente."
+          />
+          <div className="grid gap-3 self-end sm:grid-cols-2">
+            {[
+              { t: "Niederösterreich", x: "Sektorales Raumordnungsprogramm PV mit festen Zonen (bis 5 + 5 ha je Zone)" },
+              { t: "Steiermark", x: "Sachprogramm Solarenergie mit 36 Vorrangzonen" },
+              { t: "Burgenland", x: "Eignungszonenverordnung und Photovoltaikabgabe" },
+              { t: "Kärnten", x: "Photovoltaikanlagen-Verordnung 2024, max. 4 ha" },
+            ].map((z) => (
+              <div key={z.t} className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
+                <p className="flex items-center gap-2 font-semibold text-ink-900"><MapPinned aria-hidden="true" className="h-4 w-4 text-ov-600" />{z.t}</p>
+                <p className="mt-1 text-[14px] leading-relaxed text-ink-600">{z.x}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Reveal>
+          <Tabelle
+            dicht
+            caption="Raumordnung und Ortsbildschutz für Photovoltaik nach Bundesland"
+            spalten={[
+              { key: "land", label: "Land", breite: "w-[14%]" },
+              { key: "regel", label: "Widmung / Zonen Freifläche" },
+              { key: "ortsbild", label: "Ortsbild & Denkmal", breite: "w-[30%]" },
+            ]}
+            zeilen={raum}
+          />
+        </Reveal>
+        <p className="mt-6 max-w-3xl text-[15px] leading-relaxed text-ink-600">
+          Wie wir Flächen prüfen, pachten und entwickeln, zeigen{" "}
+          <Link href="/freiflaechen-photovoltaik" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Freiflächen-Photovoltaik</Link> und{" "}
+          <Link href="/agri-pv" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Agri-PV</Link>. Schneelast, Wind und Hagel am Standort prüft der{" "}
+          <Link href="/standort-check" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Standort-Check</Link>.
         </p>
       </Section>
 
-      {/* Sonderfälle */}
-      <Section tone="navy" space="lg" className="overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-20 h-[440px] w-[440px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative">
-          <SectionHeading
-            dark
-            eyebrow="Verfahrensfrei heißt nicht regelfrei"
-            title="Vier Stellen, an denen Projekte wirklich scheitern"
-            lead="Kein Bauantrag bedeutet nicht, dass alles erlaubt ist. Diese Punkte klären wir bei jeder Planung, bevor bestellt wird."
-            className="mb-12"
-          />
-          <div className="grid gap-4 md:grid-cols-2">
-            {[
-              { icon: Castle, t: "Denkmalschutz", x: "Am Einzeldenkmal, im Ensemble und oft auch in dessen Umgebung ist eine denkmalrechtliche Erlaubnis nötig. Seit erneuerbare Energien im überragenden öffentlichen Interesse liegen (§ 2 EEG), wird sie deutlich häufiger erteilt – Baden-Württemberg etwa „regelmäßig“, wenn die Anlage untergeordnet und farblich angepasst ist." },
-              { icon: Flame, t: "Brandschutz", x: "Solaranlagen dürfen Brandwände nicht überbrücken. Nach Musterbauordnung gelten Abstände von 0,5 m (flach anliegend) bis 1,25 m – entfallen, wenn die Brandwand 0,30 m über das Dach geführt ist. Einige Länder haben die Abstände für Gebäude geringer Höhe gestrichen. Bei größeren Gebäuden kommen Feuerwehr-Zugänge hinzu." },
-              { icon: MapPinned, t: "Bebauungsplan & Gestaltungssatzung", x: "Örtliche Satzungen können Farbe, Aufständerung oder Anordnung der Module regeln, besonders in Altstädten. Verfahrensfreiheit entbindet nicht davon – im Zweifel wird eine Abweichung beantragt." },
-              { icon: Ruler, t: "Statik & Lasten", x: "Schnee- und Windlastzonen nach DIN EN 1991 unterscheiden sich stark – im Allgäu und an der Küste liegen sie hoch. Unterkonstruktion und Dachtragwerk müssen dafür ausgelegt sein; bei Flachdächern zählt zusätzlich der Ballast." },
-            ].map((k, i) => (
-              <Reveal key={k.t} delay={i * 70} className="rounded-3xl bg-white/[0.04] p-7 ring-1 ring-white/10 md:p-8">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-ov-300">
-                  <k.icon aria-hidden="true" className="h-6 w-6" />
-                </span>
-                <h3 className="ov-h3 mt-6 text-white">{k.t}</h3>
-                <p className="mt-3 text-[15.5px] leading-relaxed text-white/65">{k.x}</p>
-              </Reveal>
-            ))}
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <SectionHeading eyebrow="Denkmal & Ortsbild" title="Was bei geschützten Gebäuden gilt" lead="Denkmalschutz ist Bundessache, Ortsbildschutz Landes- und Gemeindesache. Beides kann eine sonst freie Anlage bewilligungspflichtig machen." />
+            <Checkliste
+              className="mt-8"
+              items={[
+                { title: "Bundesdenkmalamt", text: "Jede Veränderung eines Denkmals braucht eine Bewilligung nach § 5 DMSG – vor der Bestellung." },
+                { title: "Schutzzonen Wien", text: "PV in Schutzzonen und im Grünland-Schutzgebiet ist nach § 60 Abs. 1 lit. j BO bewilligungspflichtig." },
+                { title: "Altstadt Salzburg und Graz", text: "Altstadterhaltungsgesetze schränken sichtbare Anlagen ein; die Freistellung gilt dort nicht." },
+                { title: "Gemeindeverordnungen", text: "In Vorarlberg können Gemeinden die Freistellung per Verordnung ausschließen, in Niederösterreich gilt in Schutzzonen die Anzeigepflicht." },
+              ]}
+            />
+          </div>
+          <div>
+            <SectionHeading eyebrow="PV-Pflicht" title="Solarpflichten in den Bauordnungen" />
+            <Reveal className="mt-8">
+              <Tabelle
+                dicht
+                caption="PV-Pflichten im Baurecht der Bundesländer"
+                spalten={[
+                  { key: "land", label: "Land", breite: "w-[28%]" },
+                  { key: "pflicht", label: "Regel" },
+                ]}
+                zeilen={pflicht}
+              />
+            </Reveal>
           </div>
         </div>
       </Section>
 
-      {body?.rules && (
-        <Section tone="white" space="lg">
-          <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
-            <Reveal as="article">
-              <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
-                Im Detail erklärt
-              </p>
-              <h2 className="ov-h2 mt-4 text-ink-900">{body.title || "Baurecht für Photovoltaikanlagen"}</h2>
-              {body.description && <p className="ov-lead mt-5 text-ink-600">{body.description}</p>}
-              <CmsProse html={body.rules} korrekturen={CMS_KORREKTUREN} className="mt-8" />
-            </Reveal>
-            <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
-              {[
-                { href: "/forderungen/richtlinien", icon: Zap, t: "Normen & Netzanschluss", x: "VDE-AR-N 4105, EEG und Marktstammdatenregister" },
-                { href: "/forderungen/steuerlich", icon: Landmark, t: "Steuerliche Vorteile", x: "0 % Umsatzsteuer und Einkommensteuerbefreiung" },
-                { href: "/forderungen/landesforderungen", icon: Sun, t: "Förderung nach Bundesland", x: "Zuschüsse und Darlehen an Ihrem Standort" },
-              ].map((l) => (
-                <Link key={l.href} href={l.href} className="group ov-card-hover flex items-start gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-200">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200">
-                    <l.icon aria-hidden="true" className="h-5 w-5" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-1.5 font-display text-[16.5px] font-bold text-ink-900 group-hover:text-ov-700">
-                      {l.t}
-                      <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </span>
-                    <span className="mt-1 block text-[14px] leading-snug text-ink-500">{l.x}</span>
-                  </span>
-                </Link>
-              ))}
-            </aside>
-          </div>
-        </Section>
-      )}
-
       <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading
-            eyebrow="Schritt für Schritt"
-            title="Von der Idee zur rechtssicheren Anlage"
-            lead="So klären Sie die baurechtlichen Fragen in der richtigen Reihenfolge – bevor Geld für Material ausgegeben ist."
+            eyebrow="Genehmigungsweg"
+            title="In fünf Schritten zur genehmigten Anlage"
+            lead="So gehen wir bei Gewerbe- und Freiflächenprojekten vor – rechtzeitig vor dem EAG-Förderantrag."
             className="lg:sticky lg:top-28 lg:self-start"
           />
           <HowTo
-            name="Baurechtliche Voraussetzungen für eine Photovoltaikanlage prüfen"
-            beschreibung="Anleitung zur Prüfung von Genehmigung, Denkmalschutz, Bebauungsplan und Anmeldung einer PV-Anlage in Deutschland (Stand 2026)."
+            name="Genehmigung einer Photovoltaikanlage in Österreich klären"
+            beschreibung={`Genehmigungsweg für PV-Anlagen nach Landesrecht, Stand ${STAND.label}.`}
             schritte={[
-              { icon: FileSearch, name: "Denkmalliste und Bebauungsplan prüfen", text: "Im Denkmal-Atlas des Landes und im Geoportal der Gemeinde nachsehen, ob Denkmalschutz, Ensembleschutz oder Gestaltungsvorgaben für das Grundstück gelten." },
-              { icon: Castle, name: "Erlaubnis beantragen, falls nötig", text: "Bei Denkmalschutz die Erlaubnis bei der Unteren Denkmalschutzbehörde beantragen. Bei Abweichungen vom Bebauungsplan eine Abweichung oder Befreiung beim Bauamt beantragen." },
-              { icon: Ruler, name: "Statik und Brandschutz planen", text: "Tragfähigkeit von Dach und Unterkonstruktion für die regionale Schnee- und Windlast nachweisen und Abstände zu Brandwänden nach Landesbauordnung einplanen." },
-              { icon: Zap, name: "Netzanschluss beantragen", text: "Der Fachbetrieb stellt das Netzanschlussbegehren beim Netzbetreiber nach VDE-AR-N 4105. Erst nach dessen Rückmeldung wird die Anlage angeschlossen." },
-              { icon: ClipboardCheck, name: "Inbetriebnahme und Registrierung", text: "Nach Montage Inbetriebnahmeprotokoll erstellen und Anlage sowie Speicher innerhalb eines Monats im Marktstammdatenregister eintragen." },
+              { icon: FileSearch, name: "Standort und Widmung prüfen", text: "Flächenwidmungs- und Bebauungsplan, Schutzzonen, Denkmalschutz, Naturschutz- und Wasserschutzgebiete sowie Abstände zu Straßen klären." },
+              { icon: Landmark, name: "Anlaufstelle des Landes einbinden", text: "Jedes Land hat eine Anlaufstelle für erneuerbare Energie. Bei Freiflächen früh mit Gemeinde und Land sprechen – die Widmung dauert oft Monate." },
+              { icon: ClipboardCheck, name: "Anzeigen und Bewilligungen einreichen", text: "Bauanzeige, elektrizitätsrechtliche Anzeige oder Bewilligung, Naturschutz – je nach Land und Größe. Bei gewerblichen Betriebsanlagen die GewO mitdenken." },
+              { icon: PlugZap, name: "Netzzugang parallel beantragen", text: "Der Netzbetreiber prüft Kapazität und Anschlusspunkt. In Tirol ist der Nachweis der Anschlusskapazität Teil der Bauanzeige." },
+              { icon: ListChecks, name: "Fertigstellung melden", text: "Fertigstellungsmeldung an den Netzbetreiber; in Tirol zusätzlich an die Baubehörde, die die Feuerwehr informiert." },
             ]}
           />
         </div>
@@ -371,22 +283,31 @@ export default async function Baurecht() {
 
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Baurecht & Photovoltaik – kurz beantwortet"
-            lead="Allgemeine Orientierung, keine Rechtsauskunft. Für Ihr Grundstück klären wir die Fragen im Rahmen der Planung."
-          />
+          <SectionHeading eyebrow="Häufige Fragen" title="Genehmigung – kurz beantwortet" lead={`Allgemeine Information, keine Rechtsauskunft. Rechtsstand ${STAND.label}. Mehr im Ratgeber `}>
+            <Link href="/ratgeber/photovoltaik-genehmigung" className="mt-2 inline-block text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Photovoltaik-Genehmigung in Österreich</Link>
+          </SectionHeading>
           <Faq items={FAQ} />
         </div>
       </Section>
 
+      <Section tone="sand" space="md">
+        <Quellen
+          stand={STAND.label}
+          quellen={[
+            ...laender.flatMap((l) => l.recht.quellen),
+            { label: "USP – Erneuerbaren-Ausbau-Beschleunigungsgesetz (EABG)", url: "https://www.usp.gv.at/aktuelles/gesetzliche-neuerungen/Bundesgesetzblatt/erneuerbaren-ausbau-beschleunigungsgesetz-eabg.html" },
+          ]}
+          hinweis="Rechtsgrundlagen im RIS (Landesrecht, konsolidierte Fassung) und Leitfäden der Länder. Werte mit Prüfvermerk ließen sich nur über Sekundärquellen belegen."
+        />
+      </Section>
+
       <Querverweise pfad="/forderungen/baurecht" />
       <CtaBand
-        eyebrow="Planung vom Fachbetrieb"
-        title="Wir klären Baurecht, Denkmalschutz und Anmeldung für Sie."
-        text="Von der Prüfung des Bebauungsplans über die Statik bis zur Netzanmeldung: Sie bekommen eine Anlage, die rechtlich und technisch sauber geplant ist."
-        primary={{ label: "Kostenlose Planung anfragen", href: "/angebot" }}
-        secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
+        eyebrow="Genehmigung aus einer Hand"
+        title="Wir klären Bauordnung, Widmung und Netz für Ihr Projekt."
+        text="Von der Anzeige bis zur Widmung einer Freifläche: Wir kennen die Verfahren in allen neun Bundesländern und stimmen sie mit Förderantrag und Netzanschluss ab."
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
+        secondary={{ label: "Normen & Netzanschluss", href: "/forderungen/richtlinien" }}
       />
     </div>
   );

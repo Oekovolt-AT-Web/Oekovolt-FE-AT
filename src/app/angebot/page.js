@@ -9,11 +9,12 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import FeaturedLogos from "@/components/photovoltaikanlage/partners";
+import { BASE_URL } from "@/lib/site";
 
-const PAGE_URL = "https://www.oekovolt.com/angebot";
-const TITEL = "Photovoltaik Angebot anfragen – in 2 Minuten | Ökovolt";
+const PAGE_URL = `${BASE_URL}/angebot`;
+const TITEL = "PV-Angebot für Betriebe anfragen | Ökovolt";
 const BESCHREIBUNG =
-  "Solaranlage, Speicher, Wallbox oder Wärmepumpe konfigurieren und sofort eine Ersteinschätzung zu Größe, Ertrag und Ersparnis erhalten. Kostenlos & unverbindlich.";
+  "PV für Gewerbe, Landwirtschaft und Gemeinden in Österreich: Objekt, Fläche, Verbrauch und Netzebene angeben – Ersteinschätzung zu Größe und Ertrag erhalten.";
 
 export const metadata = {
   title: TITEL,
@@ -27,7 +28,7 @@ export const metadata = {
     siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Angebots-Konfigurator" }],
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Angebots-Konfigurator" }],
   },
 };
 
@@ -41,13 +42,14 @@ const schema = {
   inLanguage: "de-AT",
   description: BESCHREIBUNG,
   offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-  provider: { "@id": "https://www.oekovolt.com/#organization" },
+  provider: { "@id": `${BASE_URL}/#organization` },
 };
 
 const FAQ = [
   { q: "Ist die Anfrage wirklich kostenlos?", a: "Ja. Die Ersteinschätzung, das Beratungsgespräch und das Angebot sind für Sie kostenlos und unverbindlich." },
-  { q: "Was passiert nach dem Absenden?", a: "Ein Energieberater von Ökovolt meldet sich persönlich bei Ihnen, klärt offene Fragen zu Dach und Verbrauch und bereitet auf dieser Grundlage ein individuelles Angebot vor." },
-  { q: "Wie genau ist die Ersteinschätzung?", a: "Sie beruht auf Erfahrungswerten zu Ertrag, Eigenverbrauch und Preisen je kWp. Verschattung, Dachstatik, Zählerschrank und Ihr Verbrauchsprofil fließen erst in das verbindliche Angebot ein." },
+  { q: "Was passiert nach dem Absenden?", a: "Eine Projektleiterin oder ein Projektleiter von Ökovolt aus Ostermiething meldet sich persönlich, klärt Fläche, Lastgang und Netzanschluss und bereitet auf dieser Grundlage ein individuelles Angebot mit Wirtschaftlichkeitsrechnung und Förderprüfung vor." },
+  { q: "Wie genau ist die Ersteinschätzung?", a: "Sie ist ein Richtwert: Für Betriebe legen wir die Anlage eigenverbrauchsorientiert auf etwa 70 % des Jahresverbrauchs aus, begrenzt durch die angegebene Fläche, und rechnen mit dem spezifischen Ertrag je kWp. Verschattung, Statik, Netzanschluss und Ihr Lastgang fließen erst in das verbindliche Angebot ein; Preise nennen wir im Gewerbe erst nach dieser Prüfung." },
+  { q: "Welche Unterlagen helfen bei Gewerbeprojekten?", a: "Die letzte Strom- und Netzrechnung (Jahresverbrauch, Netzebene, Leistungspreis), der Lastgang in 15-Minuten-Werten vom Netzbetreiber, Dachpläne oder Fotos sowie Angaben zu Trafo bzw. Zählerplatz. Sie können uns die Unterlagen nach der Anfrage einfach per E-Mail schicken." },
   { q: "Was passiert mit meinen Daten?", a: "Wir nutzen Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage und geben sie nicht an Dritte weiter. Details finden Sie in unserer Datenschutzerklärung." },
 ];
 
@@ -67,10 +69,10 @@ export default function AngebotPage() {
               <Eyebrow dark className="mb-5">Angebots-Konfigurator</Eyebrow>
             </div>
             <h1 className="ov-h1 ov-hero-in" style={{ "--ov-delay": "120ms" }}>
-              Ihre Solaranlage in <span className="ov-text-gradient-light whitespace-nowrap">2 Minuten</span> konfiguriert.
+              Ihr PV-Projekt in <span className="ov-text-gradient-light whitespace-nowrap">2 Minuten</span> erfasst.
             </h1>
             <p className="ov-lead ov-hero-in mt-6 max-w-2xl text-white/70" style={{ "--ov-delay": "200ms" }}>
-              Fünf kurze Fragen – und Sie sehen sofort, welche Anlagengröße zu Ihnen passt und was sie Ihnen jedes Jahr bringt. Kostenlos, unverbindlich, persönlich betreut.
+              Fünf kurze Fragen zu Vorhaben, Objekt, Fläche, Verbrauch und Netzanschluss – Sie sehen sofort Anlagengröße, Ertrag und Förderkategorie als Richtwert. Für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich; kostenlos und unverbindlich.
             </p>
           </div>
         </div>
@@ -90,10 +92,10 @@ export default function AngebotPage() {
         <SectionHeading eyebrow="Nach Ihrer Anfrage" title="So geht es weiter" align="center" className="mb-14" />
         <Steps
           items={[
-            { icon: Handshake, title: "Persönliches Gespräch", text: "Wir klären Ihre Ziele, Ihren Verbrauch und offene Fragen – telefonisch oder vor Ort." },
-            { icon: Ruler, title: "Planung Ihrer Anlage", text: "Dachfläche, Ausrichtung und Verschattung fließen in eine exakte Auslegung ein." },
-            { icon: ClipboardCheck, title: "Transparentes Angebot", text: "Sie erhalten ein verbindliches Angebot mit Wirtschaftlichkeitsrechnung." },
-            { icon: Wrench, title: "Montage & Anmeldung", text: "Unser Team installiert fachgerecht und übernimmt die Anmeldung beim Netzbetreiber." },
+            { icon: Handshake, title: "Persönliches Gespräch", text: "Wir klären Ziele, Lastgang und offene Fragen – telefonisch, per Video oder vor Ort." },
+            { icon: Ruler, title: "Standort- & Netzprüfung", text: "Fläche, Statik, Schneelast, Verschattung und Netzanschluss fließen in eine exakte Auslegung ein." },
+            { icon: ClipboardCheck, title: "Transparentes Angebot", text: "Verbindliches Angebot mit Wirtschaftlichkeitsrechnung, Förder- und IFB-Prüfung." },
+            { icon: Wrench, title: "Bau & Betrieb", text: "Netzantrag, Montage durch den eigenen Fachbetrieb, Inbetriebnahme, Monitoring und Wartung." },
           ]}
         />
       </Section>

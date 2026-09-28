@@ -1,306 +1,310 @@
-// Ratgeber: Photovoltaik Ost-West – Ertrag, Eigenverbrauch, Flachdach, Beispiel
-// Ertrags- und Profilwerte: eigene Auswertung von PVGIS 5.3 (JRC), Standort Kassel,
-// Stundenreihen 2019–2023 bzw. Mittel 2005–2023, 14 % Systemverluste, abgerufen 09/2026.
-// Eigenverbrauch: eigene Stundensimulation mit dem Haushaltslastprofil der Website-Rechner.
-// Wirtschaftlichkeit: Rechenkern des Solarrechners (berechne).
+// Ratgeber: Photovoltaik Ost-West – Ertrag, Tagesprofil, Netzanschluss, Flachdach (Österreich)
+// Daten: EU JRC PVGIS 5.3 – Jahreswerte (PVcalc) für alle Landeshauptstädte sowie Stundenreihen
+// (seriescalc) für Linz 2019–2023, 14 % Systemverluste, eigene Auswertung vom 28.09.2026.
 
-import { ANNAHMEN, AUSRICHTUNGEN } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { berechne } from "@/lib/solarrechner";
-
-const n0 = (v) => Math.round(v).toLocaleString("de-DE");
-const eur = (v) => `${n0(v)} €`;
-const pct = (v) => `${Math.round(v * 100)} %`;
-const jahre = (r) => (r.amortisationJahre ? `${r.amortisationJahre.toFixed(1).replace(".", ",")} Jahre` : "über 20 Jahre");
-const OW_FAKTOR = AUSRICHTUNGEN.find((a) => a.id === "ost-west")?.faktor ?? 0.85;
-
-// Wirtschaftlichkeit (Solarrechner): 4.500 kWh Haushalt bzw. 9.000 kWh mit Wärmepumpe/E-Auto
-const S10 = berechne({ kwp: 10, ausrichtung: "sued", neigung: "mittel", verbrauch: 4500, speicherKwh: 0 });
-const OW10 = berechne({ kwp: 10, ausrichtung: "ost-west", neigung: "mittel", verbrauch: 4500, speicherKwh: 0 });
-const OW10S = berechne({ kwp: 10, ausrichtung: "ost-west", neigung: "mittel", verbrauch: 4500, speicherKwh: 8 });
-const OW15G = berechne({ kwp: 15, ausrichtung: "ost-west", neigung: "mittel", verbrauch: 9000, speicherKwh: 0 });
-const S8G = berechne({ kwp: 8, ausrichtung: "sued", neigung: "mittel", verbrauch: 9000, speicherKwh: 0 });
-
-// PVGIS 5.3, Kassel, Juni-Mittel 2019–2023, Leistung in Watt je kWp zur vollen Stunde (MESZ)
-const PROFIL = [
-  ["6 Uhr", 14, 43],
-  ["8 Uhr", 159, 210],
-  ["10 Uhr", 414, 355],
-  ["12 Uhr", 508, 432],
-  ["14 Uhr", 535, 456],
-  ["16 Uhr", 394, 340],
-  ["18 Uhr", 195, 219],
-  ["19 Uhr", 82, 165],
-  ["20 Uhr", 26, 82],
+// [Stadt, Süd 30°, Ost 10°, West 10°]
+const STAEDTE = [
+  ["Wien", 1166, 975, 975],
+  ["St. Pölten", 1133, 945, 953],
+  ["Linz", 1134, 946, 955],
+  ["Salzburg", 1066, 896, 914],
+  ["Innsbruck", 1347, 1088, 1079],
+  ["Bregenz", 1128, 927, 943],
+  ["Klagenfurt", 1240, 1027, 1035],
+  ["Graz", 1211, 998, 991],
+  ["Eisenstadt", 1190, 993, 995],
 ];
+
+// Mittleres Tagesprofil im Juni, Linz, Wh je kWp und Stunde (Ortszeit, Stunde beginnend)
+const PROFIL = [
+  [6, 19, 36],
+  [7, 72, 115],
+  [8, 193, 223],
+  [9, 339, 345],
+  [10, 460, 443],
+  [11, 555, 519],
+  [12, 593, 548],
+  [13, 582, 537],
+  [14, 560, 519],
+  [15, 501, 472],
+  [16, 414, 403],
+  [17, 291, 304],
+  [18, 168, 205],
+  [19, 55, 106],
+];
+
+const f0 = (x) => Math.round(x).toLocaleString("de-AT");
+const p1 = (x) => String(Math.round(x * 1000) / 10).replace(".", ",") + " %";
 
 const artikel = {
   slug: "photovoltaik-ost-west",
-  title: "Photovoltaik Ost-West: Ertrag, Eigenverbrauch und Wirtschaftlichkeit",
-  seoTitle: "Photovoltaik Ost-West: Ertrag & Eigenverbrauch | Ökovolt",
+  title: "Photovoltaik Ost-West: Ertrag, Tagesprofil und Netzanschluss",
+  seoTitle: "Photovoltaik Ost-West: Ertrag & Vorteile | Ökovolt",
   kurzTitel: "Photovoltaik Ost-West",
   description:
-    "Photovoltaik Ost-West: rund 80–85 % des Süd-Ertrags, flacheres Tagesprofil, kaum Verluste durch die 60-%-Regel. Ertragsdaten, Flachdach-Aufständerung und Rechenbeispiel.",
+    "Photovoltaik Ost-West in Österreich: PVGIS-Ertrag aller Landeshauptstädte, mehr kWp pro Dach, breiteres Tagesprofil und niedrigere Einspeisespitzen erklärt.",
   excerpt:
-    "Ost-West-Dächer liefern weniger Strom als Süddächer – aber zu besseren Zeiten und oft auf doppelter Fläche. Was das in Kilowattstunden und Euro bedeutet, mit eigenen Simulationsdaten.",
+    "Ost-West liefert je kWp rund 83 % einer Südanlage – passt aber deutlich mehr Leistung aufs Flachdach und schont den Netzanschluss. Die Zahlen aus PVGIS für alle Landeshauptstädte und ein Hallendach im Vergleich.",
   hauptKeyword: "photovoltaik ost west",
   keywords: [
     "Photovoltaik Ost-West",
-    "PV-Anlage Ost-West-Ausrichtung",
-    "Ost-West oder Süd Photovoltaik",
-    "Ost-West Aufständerung Flachdach",
-    "Ost-West Ertrag",
-    "Lohnt sich Photovoltaik Ost-West",
-    "Ost-West Eigenverbrauch",
+    "Ost-West-Ausrichtung Ertrag",
+    "PV Ost West Flachdach",
+    "Ost-West oder Süd",
+    "Ost-West Photovoltaik Gewerbe",
+    "Einspeisespitze reduzieren",
+    "Ost-West Satteldach Photovoltaik",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
   bild: "/Images/Home/download-2.jpg",
   bildAlt: "Aufgeständerte Modulreihen einer Photovoltaikanlage auf einem Flachdach",
-  badge: { wert: "80–85 %", text: "des Süd-Ertrags je kWp bei Ost-West-Ausrichtung (PVGIS)" },
+  badge: { wert: "−13 %", text: "niedrigere Spitzenleistung als Süd 30° (Linz)" },
 
   kurzFazit: [
-    "**Eine Ost-West-Anlage erzeugt je kWp rund 80 bis 85 % des Ertrags eines optimalen Süddachs** – bei 30° Dachneigung etwa 81 %, flach aufgeständert mit 10 bis 15° etwa 84 %.",
-    "**Der Solarstrom verteilt sich breiter über den Tag:** In unserer Simulation erzeugt Ost-West morgens und abends deutlich mehr, die Spitzenleistung liegt rund ein Viertel niedriger.",
-    "**Der Eigenverbrauch in Kilowattstunden bleibt fast gleich.** Der Minderertrag trifft vor allem die gering vergütete Einspeisung.",
-    "**Die 60-%-Einspeisegrenze kostet Ost-West kaum Ertrag** (HTW Berlin: 1,1 % statt 9,0 % bei Süd, Volleinspeisung ohne Speicher).",
-    "Da sich beide Dachseiten belegen lassen, passt oft **deutlich mehr Leistung aufs Dach** – ideal für Wärmepumpe und E-Auto.",
+    "**Eine Ost-West-Anlage mit 10° Neigung liefert in Österreich je kWp rund 80 bis 86 % des Ertrags einer 30°-Südanlage** – in Linz 950 statt 1.134 kWh/kWp, in Graz 995 statt 1.211 kWh/kWp (PVGIS).",
+    "Auf dem Flachdach gleicht die dichtere Belegung das mehr als aus: Ohne Reihenabstand passen oft **30 bis 60 % mehr kWp** aufs Dach, der Stromertrag je Quadratmeter Dach steigt.",
+    "Die **Spitzenleistung** sinkt deutlich: In Linz erreicht Ost-West maximal 0,76 kW je kWp, Süd 30° 0,88 kW. Mit einem Wechselrichter von nur 70 % der Modulleistung gehen bei Ost-West praktisch **0 %** Ertrag verloren, bei Süd 30° rund 1,3 %.",
+    "Das Tagesprofil wird breiter: Im Juni liefert Ost-West zwischen 7 und 8 Uhr **rund 60 % mehr** und zwischen 19 und 20 Uhr **fast doppelt so viel** wie Süd 30°. Bei flacher Neigung ist die Verschiebung aus der Mittagsspitze aber moderat.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Lohnt sich Photovoltaik mit Ost-West-Ausrichtung?",
-      tocLabel: "Kurzantwort",
+      titel: "Lohnt sich Ost-West statt Süd?",
+      tocLabel: "Ost-West oder Süd?",
       bloecke: [
         {
           typ: "p",
-          text: `**Ja – eine Ost-West-Anlage lohnt sich in den meisten Fällen, obwohl sie je kWp etwa 15 bis 20 % weniger Strom erzeugt als ein ideales Süddach.** Sie liefert morgens und abends mehr Strom, wenn im Haushalt tatsächlich verbraucht wird, hat eine niedrigere Mittagsspitze und kann beide Dachseiten nutzen. Unser [Solarrechner](/solarrechner) rechnet für Ost-West mit ${pct(OW_FAKTOR)} des Süd-Ertrags.`,
+          text: "**Auf Flachdächern ist Ost-West für Gewerbebetriebe oft die wirtschaftlichere Wahl, auf geneigten Süddächern bleibt Süd überlegen.** Der Grund: Je kWp liefert eine [Ost-West-Ausrichtung](/wissen/lexikon#ost-west-ausrichtung) rund ein Sechstel weniger Strom. Weil die Module aber Rücken an Rücken stehen und sich kaum gegenseitig verschatten, fällt der Reihenabstand weg – auf derselben Dachfläche lässt sich deutlich mehr Leistung installieren.",
         },
         {
           typ: "p",
-          text: `In unserem Beispiel mit 10 kWp und 4.500 kWh Verbrauch amortisiert sich die Ost-West-Anlage nach rund ${jahre(OW10)}, das Süddach nach ${jahre(S10)}. Beides liegt deutlich unter der Lebensdauer von 25 bis 30 Jahren. Für Hausbesitzer mit Ost-West-Dach lautet die Frage in der Praxis ohnehin nicht „Ost-West oder Süd“, sondern „Ost-West oder gar keine Anlage“ – und dann spricht fast alles für die Anlage.`,
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Was „Ost-West“ bedeutet",
-          text: "Bei einer [Ost-West-Ausrichtung](/wissen/lexikon#ost-west-ausrichtung) zeigen die Module zur Hälfte nach Osten und zur Hälfte nach Westen – entweder auf den beiden Seiten eines Satteldachs oder als dachförmige Aufständerung auf einem Flachdach. Maßgeblich ist der [Azimut](/wissen/lexikon#azimut): Abweichungen von 20 bis 30° Richtung Süden verbessern den Ertrag spürbar.",
+          text: "Dazu kommen drei Vorteile, die in der Ertragstabelle nicht sichtbar sind: niedrigere Einspeisespitzen, die den Netzanschluss entlasten; ein breiteres Tagesprofil, das besser zu Betrieben mit Früh- oder Spätschicht passt; und eine geringere Windangriffsfläche, die mit weniger Ballast auskommt. Diese Punkte entscheiden bei Hallendächern häufiger über die Systemwahl als die reine Kilowattstunde pro kWp.",
         },
       ],
     },
     {
       id: "ertrag",
-      titel: "Wie viel Ertrag bringt eine Ost-West-Anlage?",
-      tocLabel: "Ertrag",
+      titel: "Ertrag: Ost-West und Süd in allen Landeshauptstädten",
+      tocLabel: "Ertrag je kWp",
       bloecke: [
         {
           typ: "p",
-          text: "**Je flacher die Module, desto kleiner der Unterschied zum Süddach.** Bei 10 bis 15° Neigung – typisch für Ost-West-Aufständerungen auf Flachdächern – erreicht Ost-West rund 84 bis 85 % des Optimums. Auf einem 45° steilen Satteldach sind es nur noch etwa 77 %. Fraunhofer ISE nennt für ein Westdach mit 45° Neigung rund 26 % weniger Ertrag als ein Süddach gleicher Neigung.",
+          text: "**Ost-West mit 10° Neigung erreicht in allen Landeshauptstädten zwischen 80 und 86 % des Ertrags einer 30°-Südanlage.** In sechs der neun Städte liefert die West-Hälfte etwas mehr als die Ost-Hälfte – ein Hinweis auf häufigere Morgennebel; in Graz und Innsbruck ist es umgekehrt.",
         },
         {
           typ: "tabelle",
-          caption: "Spezifischer Jahresertrag Ost-West im Vergleich zum Süddach, Standort Kassel (Mitte Deutschlands)",
-          kopf: ["Ausrichtung & Neigung", "Ertrag (kWh/kWp)", "Relativ zum Optimum", "Typische Anwendung"],
-          zeilen: [
-            ["Süd, 35–40°", "ca. 980", "100 %", "Süddach (Referenz)"],
-            ["Ost-West, 10°", "ca. 830", "85 %", "Flachdach, aerodynamische Aufständerung"],
-            ["Ost-West, 15°", "ca. 820", "84 %", "Flachdach, Aufständerung"],
-            ["Ost-West, 20°", "ca. 820", "83 %", "flach geneigtes Satteldach, Bungalow"],
-            ["Ost-West, 30°", "ca. 800", "81 %", "übliches Satteldach"],
-            ["Ost-West, 45°", "ca. 760", "77 %", "steiles Satteldach"],
-            ["Nur Ost oder nur West, 30°", "ca. 800", "81–82 %", "Pultdach, einseitige Belegung"],
-          ],
-          hervorheben: 2,
-          markierteZeile: 4,
-          minBreite: 620,
-          fussnote: "Quelle: eigene Berechnung mit PVGIS 5.3 (JRC), Mittel 2005–2023, 14 % Systemverluste, unverschattet. An der Küste liegen alle Werte rund 3 % niedriger, im Voralpenland rund 10 bis 13 % höher – das Verhältnis bleibt gleich.",
+          caption: "Spezifischer Ertrag in kWh/kWp: Süd 30° vs. Ost-West 10° (PVGIS 5.3, Mittel 2005–2023)",
+          kopf: ["Stadt", "Süd 30°", "Ost 10°", "West 10°", "Ost-West gesamt", "Anteil an Süd 30°"],
+          zeilen: STAEDTE.map(([s, sued, ost, west]) => [s, f0(sued), f0(ost), f0(west), f0((ost + west) / 2), p1((ost + west) / 2 / sued)]),
+          hervorheben: 5,
+          markierteZeile: 2,
+          fussnote: "Quelle: EU JRC, PVGIS 5.3, eigene Abfragen vom 28.09.2026 (Ortszentren, 14 % Systemverluste, ohne Verschattung und Schnee). Ost-West gesamt = Mittel beider Dachhälften bei gleicher Leistung.",
         },
         {
           typ: "p",
-          text: "Über das Jahr verteilt sich der Unterschied ungleich: Im Juni erzeugt ein Ost-West-Dach mit 30° fast so viel wie ein Süddach (in unserer Auswertung rund 95 %), im Dezember nur etwa die Hälfte. Wer eine [Wärmepumpe](/ratgeber/waermepumpe-mit-photovoltaik) plant, sollte das berücksichtigen: Im Winter fehlt Ost-West-Anlagen mehr Ertrag als im Sommer. Regionale Werte für alle Ausrichtungen finden Sie im Ratgeber [Ertrag pro kWp](/ratgeber/photovoltaik-ertrag-pro-kwp).",
-        },
-      ],
-    },
-    {
-      id: "tagesprofil",
-      titel: "Tagesprofil: Strom dann, wenn Sie ihn brauchen",
-      tocLabel: "Tagesprofil",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ost-West-Anlagen erzeugen früher am Morgen und länger am Abend Strom, dafür ist die Mittagsspitze niedriger.** Die Tabelle zeigt die mittlere Leistung an Junitagen für eine Anlage in der Mitte Deutschlands. Um 7 Uhr liefert Ost-West fast dreimal, um 19 Uhr doppelt so viel wie ein Süddach.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Mittlere Leistung im Juni je kWp: Süd 35° und Ost-West 30° im Vergleich (Kassel, 2019–2023)",
-          kopf: ["Uhrzeit (MESZ)", "Süd 35° (W je kWp)", "Ost-West 30° (W je kWp)", "Ost-West im Verhältnis"],
-          zeilen: [
-            ["7 Uhr", "48", "130", "271 %"],
-            ...PROFIL.filter(([u]) => u !== "6 Uhr").map(([uhr, sued, ow]) => [uhr, n0(sued), n0(ow), `${Math.round((ow / sued) * 100)} %`]),
-          ],
-          hervorheben: 2,
-          minBreite: 560,
-          fussnote: "Quelle: eigene Auswertung stündlicher PVGIS-5.3-Reihen (Monatsmittel inklusive bewölkter Tage). An klaren Tagen liegen die Spitzen höher. Ost-West: je halbe Leistung nach Osten und Westen.",
-        },
-        {
-          typ: "kennzahl",
-          wert: "−25 %",
-          titel: "niedrigere Spitzenleistung bei Ost-West 30°",
-          text: "In den Stundenwerten 2019–2023 erreichte die Süd-Anlage höchstens 0,85 kW je kWp, die Ost-West-Anlage 0,64 kW. Das entlastet Wechselrichter, Netzanschluss und die 60-%-Grenze.",
-        },
-        {
-          typ: "p",
-          text: `**Was bringt das beim Eigenverbrauch?** Wir haben einen Haushalt mit 4.500 kWh und dem Lastprofil unserer Rechner stündlich mit beiden Ausrichtungen simuliert (10 kWp, ohne Speicher). Ergebnis: Die Süd-Anlage erzeugt rund 10.000 kWh, die Ost-West-Anlage rund 8.100 kWh – der **selbst genutzte Solarstrom ist aber praktisch gleich** (etwa 1.740 bzw. 1.770 kWh). Die Eigenverbrauchsquote steigt dadurch von rund 17 auf 22 %. Die fehlenden Kilowattstunden wären fast vollständig ins Netz geflossen – zu ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct statt rund ${Math.round(ANNAHMEN.strompreis * 100)} ct Ersparnis je kWh.`,
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Verbrauch an die Sonne anpassen",
-          text: "Mit Ost-West lohnt es sich besonders, Spülmaschine, Waschmaschine oder Warmwasser-Wärmepumpe morgens bzw. am späten Nachmittag laufen zu lassen. Ein [Energiemanagementsystem](/ratgeber/energiemanagementsystem) kann das automatisch übernehmen – weitere Hebel im Ratgeber [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen).",
-        },
-      ],
-    },
-    {
-      id: "solarspitzen",
-      titel: "Vorteil bei 60-%-Regel und negativen Strompreisen",
-      tocLabel: "60-%-Regel",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Weil Ost-West-Anlagen mittags weniger Spitzenleistung erreichen, verlieren sie durch die 60-%-Einspeisegrenze kaum Ertrag.** Seit dem [Solarspitzengesetz](/ratgeber/solarspitzengesetz) dürfen Neuanlagen unter 25 kW ohne intelligentes Messsystem höchstens 60 % ihrer Leistung ins Netz einspeisen (§ 9 Abs. 2 EEG). Nach Berechnungen der HTW Berlin, zitiert von der Verbraucherzentrale Hamburg, liegen die Abregelungsverluste bei Volleinspeisung ohne Speicher bei **1,1 % für West-Ost- und 9,0 % für Südausrichtung**. Mit Eigenverbrauch und Speicher sinken beide Werte.",
-        },
-        {
-          typ: "p",
-          text: "Ähnlich wirkt sich das bei [negativen Strompreisen](/ratgeber/negative-strompreise) aus. Die HTW Berlin hat ermittelt, dass 2024 rund 18 % des Ertrags einer Süd-Anlage auf Stunden mit negativen Börsenstrompreisen entfielen – typischerweise sonnige Mittagsstunden. Neuanlagen erhalten nach § 51 EEG für solche Zeiträume keine Vergütung, sobald ein intelligentes Messsystem eingebaut ist; die Zeiten werden am Ende des Förderzeitraums angehängt. Ost-West verlagert einen Teil des Ertrags aus diesen Stunden heraus.",
-        },
-        {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Wechselrichter kleiner, Einspeisung dynamisch begrenzen",
-          text: "Wegen der niedrigeren Spitzen kann der Wechselrichter bei Ost-West meist kleiner ausfallen, etwa 7 bis 8 kW für 10 kWp. Jede Dachseite braucht einen eigenen MPP-Tracker. Die 60-%-Grenze sollte dynamisch am Netzanschlusspunkt umgesetzt werden – mehr im Ratgeber [Wechselrichter für Photovoltaik](/ratgeber/wechselrichter-photovoltaik).",
+          text: "Mit steigender Neigung verliert Ost-West weiter: In Linz liefern 20° Ost-West rund 934 kWh/kWp, 30° Ost-West rund 910 kWh/kWp. Für Satteldächer mit Ost-West-First, wie sie bei Maschinenhallen und Stallgebäuden häufig sind, ist das trotzdem ein solider Wert – rund 80 % einer Südanlage. Die vollständigen Standortwerte finden Sie im Ratgeber [Ertrag pro kWp](/ratgeber/photovoltaik-ertrag-pro-kwp).",
         },
       ],
     },
     {
       id: "flachdach",
-      titel: "Ost-West-Aufständerung auf dem Flachdach",
-      tocLabel: "Flachdach",
+      titel: "Auf dem Flachdach: Mehr kWp, mehr Strom pro Quadratmeter",
+      tocLabel: "Flachdach-Vergleich",
       bloecke: [
         {
           typ: "p",
-          text: "**Auf Flachdächern ist die Ost-West-Aufständerung mit 10 bis 15° Neigung heute der Standard, weil sie deutlich mehr Leistung auf dieselbe Fläche bringt.** Die Module stehen paarweise Rücken an Rücken wie ein flaches Zeltdach. Zwischen den Reihen ist kaum Abstand nötig, weil sich die niedrigen Module kaum gegenseitig verschatten. Nach Süden aufgeständerte Reihen brauchen dagegen große Abstände, damit die tief stehende Wintersonne die nächste Reihe nicht verschattet.",
+          text: "**Auf einem Flachdach mit 1.000 m² nutzbarer Fläche erzeugt eine Ost-West-Anlage in Linz rund ein Drittel mehr Strom als eine nach Süden aufgeständerte.** Südreihen brauchen Abstand, damit sie sich im Winter nicht verschatten; Ost-West-Reihen stehen dicht an dicht.",
         },
         {
           typ: "tabelle",
-          caption: "Flachdach: Süd-Aufständerung und Ost-West-Aufständerung im Vergleich (Orientierung)",
-          kopf: ["", "Süd-Aufständerung (ca. 20–30°)", "Ost-West-Aufständerung (ca. 10–15°)"],
+          caption: "Beispiel: 1.000 m² nutzbare Flachdachfläche bei Linz, Stand 09/2026",
+          kopf: ["System", "installierbare Leistung (Richtwert)", "kWh/kWp", "Jahresertrag", "Ertrag je m² Dach"],
           zeilen: [
-            ["Leistung auf 100 m² nutzbarer Fläche", "ca. 10–12 kWp", "ca. 15–18 kWp"],
-            ["Ertrag je kWp (Mitte Deutschlands)", "ca. 950–980 kWh", "ca. 820–830 kWh"],
-            ["Jahresertrag auf 100 m²", "ca. 9.500–11.800 kWh", "ca. 12.300–14.900 kWh"],
-            ["Windlast und Ballast", "höher (größere Angriffsfläche)", "geringer, aerodynamisch geschlossen"],
-            ["Tagesprofil", "Mittagsspitze", "breit, morgens und abends mehr"],
-            ["Selbstreinigung durch Regen", "gut", "etwas schlechter bei 10°"],
+            ["Süd 10°, mit Reihenabstand", "ca. 110 kWp", "1.040", "ca. 114 MWh", "ca. 114 kWh"],
+            ["Ost-West 10°, ohne Reihenabstand", "ca. 160 kWp", "950", "ca. 152 MWh", "ca. 152 kWh"],
           ],
-          hervorheben: 2,
-          minBreite: 620,
-          fussnote: "Belegungsdichte nach Herstellerangaben und Fachportalen, stark abhängig von System, Randabständen und Aufbauten. Erträge: PVGIS 5.3; Verschattungsverluste zwischen Süd-Reihen sind nicht eingerechnet.",
+          hervorheben: 3,
+          fussnote: "Belegungsdichte als Richtwert für Module mit ca. 22–23 % Wirkungsgrad; tatsächlich abhängig von Randzonen, Aufbauten, Brandschutzabständen, Statik und Wartungswegen. Erträge: PVGIS 5.3, Linz.",
         },
         {
           typ: "p",
-          text: "Wichtig sind Statik und Befestigung: Ballastierte Systeme belasten die Dachkonstruktion zusätzlich, Durchdringungen der Dachhaut müssen dauerhaft dicht sein. Mindestabstände zum Dachrand, Blitzschutz und Brandschutz bestimmen, wie viel Fläche tatsächlich nutzbar ist. Alle Details dazu erklärt der Ratgeber [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach).",
+          text: "Mehr Leistung bedeutet allerdings auch mehr Investition, mehr Last auf dem Dach und mehr Überschuss. Ob sich die zusätzlichen kWp rechnen, entscheidet der Lastgang des Betriebs. Statik, Ballast und Befestigung auf Hallendächern behandelt der Ratgeber [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach), die Auslegung nach Verbrauch [PV-Anlage Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen).",
         },
       ],
     },
     {
-      id: "beispiel",
-      titel: "Rechenbeispiel: Süd, Ost-West und Ost-West mit Speicher",
-      tocLabel: "Rechenbeispiel",
+      id: "tagesprofil",
+      titel: "Tagesprofil: Wann Ost-West Strom liefert",
+      tocLabel: "Tagesprofil",
       bloecke: [
         {
           typ: "p",
-          text: "**Das folgende Beispiel zeigt, was Ost-West in Euro bedeutet.** Gerechnet mit dem Rechenkern unseres Solarrechners, Anlagenpreise und Strompreis wie dort hinterlegt. Die Varianten A bis C gelten für einen Haushalt mit 4.500 kWh, die Varianten D und E für ein Haus mit Wärmepumpe und E-Auto (9.000 kWh).",
+          text: "**Ost-West verteilt die Erzeugung gleichmäßiger über den Tag: morgens und abends mehr, mittags weniger als eine Südanlage.** Die Auswertung der PVGIS-Stundenwerte für Linz zeigt, wie groß der Effekt bei flacher Neigung tatsächlich ist.",
         },
         {
           typ: "tabelle",
-          caption: "Wirtschaftlichkeit Süd und Ost-West im Vergleich, Stand September 2026",
-          kopf: ["Variante", "Investition", "Jahresertrag", "Autarkie", "Vorteil pro Jahr", "Amortisation"],
-          zeilen: [
-            ["A: Süd, 10 kWp", eur(S10.investition), `${n0(S10.jahresertrag)} kWh`, pct(S10.autarkie), eur(S10.nutzenProJahr), jahre(S10)],
-            ["B: Ost-West, 10 kWp", eur(OW10.investition), `${n0(OW10.jahresertrag)} kWh`, pct(OW10.autarkie), eur(OW10.nutzenProJahr), jahre(OW10)],
-            ["C: Ost-West, 10 kWp + 8 kWh Speicher", eur(OW10S.investition), `${n0(OW10S.jahresertrag)} kWh`, pct(OW10S.autarkie), eur(OW10S.nutzenProJahr), jahre(OW10S)],
-            ["D: Süddach, nur 8 kWp Platz (9.000 kWh)", eur(S8G.investition), `${n0(S8G.jahresertrag)} kWh`, pct(S8G.autarkie), eur(S8G.nutzenProJahr), jahre(S8G)],
-            ["E: Ost-West beidseitig, 15 kWp (9.000 kWh)", eur(OW15G.investition), `${n0(OW15G.jahresertrag)} kWh`, pct(OW15G.autarkie), eur(OW15G.nutzenProJahr), jahre(OW15G)],
-          ],
-          hervorheben: 4,
-          minBreite: 720,
-          fussnote: "Orientierungswerte, keine Angebote. Vorteil pro Jahr = Stromersparnis + Einspeiseerlös − Betriebskosten im ersten Jahr. Der Solarrechner bildet die bessere zeitliche Verteilung von Ost-West nicht gesondert ab und rechnet damit eher vorsichtig.",
+          caption: "Mittlere Erzeugung im Juni in Wh je kWp und Stunde, Linz (PVGIS 5.3, 2019–2023)",
+          kopf: ["Stunde (Ortszeit)", "Süd 30°", "Ost-West 10°", "Differenz"],
+          zeilen: PROFIL.map(([h, s, ow]) => [`${h}:00–${h + 1}:00`, f0(s), f0(ow), `${ow - s > 0 ? "+" : ""}${f0(ow - s)}`]),
+          fussnote: "Eigene Auswertung der PVGIS-Stundenreihen (seriescalc) für Linz, Juni 2019–2023, 14 % Verluste; Zeitangaben in Sommerzeit. Ost-West = Mittel aus 10° Ost und 10° West bei gleicher Leistung.",
         },
         {
           typ: "p",
-          text: `Die Ost-West-Anlage (B) bringt im Jahr rund ${eur(S10.nutzenProJahr - OW10.nutzenProJahr)} weniger als das gleich große Süddach (A) – fast ausschließlich entgangene Einspeisevergütung. Mit Speicher (C) steigt die Autarkie auf ${pct(OW10S.autarkie)}. Interessant wird Ost-West, wenn der Verbrauch hoch ist: Ein Haus, dessen Süddach nur 8 kWp fasst (D), deckt ${pct(S8G.autarkie)} seines Bedarfs; ein Ost-West-Haus mit beidseitig 15 kWp (E) ${pct(OW15G.autarkie)} – bei einem jährlichen Vorteil von ${eur(OW15G.nutzenProJahr)} statt ${eur(S8G.nutzenProJahr)}.`,
+          text: "In der Stunde ab 7 Uhr liefert Ost-West rund 60 % mehr, in der Stunde ab 19 Uhr fast doppelt so viel wie Süd 30°, zur Mittagszeit rund 8 % weniger. Übers Jahr fallen bei Ost-West 50 % des Ertrags zwischen 11 und 15 Uhr an, bei Süd 30° 52 %. Die Verschiebung aus der Mittagsspitze ist also real, aber moderat. Wer das Profil stärker verschieben will, braucht steilere Ost-West-Flächen, Fassaden oder vertikale bifaziale Module, wie sie in der [Agri-PV](/ratgeber/agri-pv-oesterreich) eingesetzt werden.",
         },
-        { typ: "tool", href: "/solarrechner", titel: "Ost-West für Ihr Dach berechnen", text: "Ausrichtung „Ost / West“ wählen, Größe und Verbrauch eingeben – mit Speicher-Vergleich und 20-Jahres-Cashflow.", label: "Zum Solarrechner" },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Mittagspreise und negative Strompreise",
+          text: "An sonnigen Tagen fallen die Day-Ahead-Preise der Gebotszone Österreich zur Mittagszeit stark und werden an Wochenenden und Feiertagen immer öfter negativ. Jede Kilowattstunde am Morgen oder Abend ist dann mehr wert als eine zu Mittag. Für eingespeisten Überschuss verbessert Ost-West daher den Erlös leicht, für den Eigenverbrauch in Betrieben mit Schichtbeginn um 6 oder 7 Uhr passt das Profil besser. Mehr im Ratgeber [Negative Strompreise](/ratgeber/negative-strompreise).",
+        },
+      ],
+    },
+    {
+      id: "netz",
+      titel: "Netzanschluss und Wechselrichter: Der unterschätzte Vorteil",
+      tocLabel: "Netz & Wechselrichter",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ost-West-Anlagen erreichen nie die volle Modulleistung auf beiden Dachhälften gleichzeitig – deshalb kann der Wechselrichter deutlich kleiner sein als die Modulleistung, ohne nennenswert Ertrag zu verschenken.** Das spart Wechselrichterkosten und reduziert die maximale Einspeiseleistung, die der Netzbetreiber am Anschlusspunkt freigeben muss.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Spitzenleistung und Verlust durch Wechselrichter-Begrenzung (Clipping), Linz",
+          kopf: ["Kennwert", "Süd 30°", "Süd 10°", "Ost-West 10°"],
+          zeilen: [
+            ["Maximale Stundenleistung je kWp", "0,88 kW", "0,82 kW", "0,76 kW"],
+            ["Ertragsverlust bei Wechselrichter = 80 % der Modulleistung", "0,1 %", "0,0 %", "0,0 %"],
+            ["Ertragsverlust bei Wechselrichter = 70 % der Modulleistung", "1,3 %", "0,3 %", "0,0 %"],
+            ["Ertragsverlust bei Wechselrichter = 60 % der Modulleistung", "5,4 %", "2,9 %", "1,3 %"],
+          ],
+          hervorheben: 3,
+          fussnote: "Eigene Auswertung der PVGIS-Stundenwerte 2019–2023 (14 % Verluste). Stundenmittel glätten kurze Spitzen; reale Kurzzeitspitzen liegen etwas höher. Die Auslegung erfolgt mit Wechselrichterdaten und Netzvorgaben im Einzelfall.",
+        },
+        {
+          typ: "p",
+          text: "Ein [DC/AC-Verhältnis](/wissen/lexikon#wechselrichter) von 1,3 bis 1,4 ist bei Ost-West deshalb Standard. Wenn der Netzbetreiber die Einspeiseleistung begrenzt, ist Ost-West oft der Schlüssel, um trotzdem viel Modulleistung zu installieren. Wie Netzbetreiber Einspeisung und Blindleistung steuern und welche Regelung große Anlagen brauchen, erklären die Ratgeber [Wechselrichter](/ratgeber/wechselrichter-photovoltaik) und [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss) sowie unsere Seite zum [Parkregler](/technik/parkregler).",
+        },
+      ],
+    },
+    {
+      id: "eigenverbrauch",
+      titel: "Eigenverbrauch im Betrieb: Was Ost-West im Lastgang bringt",
+      tocLabel: "Eigenverbrauch",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Bei gleicher installierter Leistung erzeugt Ost-West weniger Strom, erreicht aber eine höhere Eigenverbrauchsquote – die Autarkie bleibt nahezu gleich.** Das zeigt unsere Simulation für einen Produktionsbetrieb bei Linz mit rund 400 MWh Jahresverbrauch, 30 kW Grundlast und 75 kW werktags zwischen 6 und 18 Uhr.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Modellrechnung 300 kWp, Betrieb mit ca. 400 MWh/a bei Linz",
+          kopf: ["System", "PV-Ertrag", "Eigenverbrauchsquote", "Autarkie", "Einspeisung", "max. Einspeiseleistung"],
+          zeilen: [
+            ["Süd 10°, 300 kWp", "317 MWh", "52 %", "41 %", "151 MWh", "215 kW"],
+            ["Ost-West 10°, 300 kWp", "289 MWh", "56 %", "41 %", "126 MWh", "197 kW"],
+          ],
+          fussnote: "Eigene Simulation mit PVGIS-Stundenwerten Linz 2019–2023 und synthetischem Lastprofil; Modellwerte, keine Prognose für einen konkreten Betrieb. Details im Ratgeber PV-Anlage Größe berechnen.",
+        },
+        {
+          typ: "p",
+          text: "Die rund 28 MWh, die Ost-West weniger erzeugt, wären im Modell fast vollständig eingespeist worden – der Betrieb deckt mit beiden Varianten 41 % seines Bedarfs. Wirtschaftlich zählt deshalb der Wert des Überschusses: Wird er nur zu niedrigen Mittagspreisen verkauft, verliert Ost-West kaum etwas; bringt er über ein PPA oder eine [Energiegemeinschaft](/energiegemeinschaften) gute Erlöse, spricht mehr für die höhere Erzeugung. Diese Rechnung sollte für jedes Hallendach mit dem echten Lastgang gemacht werden.",
+        },
       ],
     },
     {
       id: "planung",
-      titel: "Planungstipps für Ost-West-Anlagen",
-      tocLabel: "Planungstipps",
+      titel: "Checkliste für Ost-West auf dem Hallendach",
+      tocLabel: "Checkliste",
       bloecke: [
         {
           typ: "checkliste",
           punkte: [
-            "**Beide Dachseiten belegen,** wenn Verbrauch oder Zukunftspläne (Wärmepumpe, E-Auto) das hergeben – Gerüst und Anmeldung fallen nur einmal an.",
-            "**Je Dachseite ein eigener MPP-Tracker** – Ost- und West-Module nicht im selben String mischen.",
-            "**Wechselrichter moderat kleiner wählen** (DC/AC-Verhältnis etwa 1,25 bis 1,4), weil beide Seiten nie gleichzeitig ihre Spitze erreichen.",
-            "**Verschattung am Morgen und Abend prüfen:** Bäume, Nachbarhäuser und Gauben werfen bei tief stehender Sonne lange Schatten – genau in den ertragsstarken Stunden von Ost-West. Mehr im Ratgeber [Verschattung](/ratgeber/photovoltaik-verschattung).",
-            "**Speicher auf den Abend- und Nachtverbrauch auslegen,** nicht auf die Anlagengröße – als Obergrenze nennt die HTW Berlin rund 1,5 kWh nutzbare Kapazität je 1.000 kWh Jahresverbrauch.",
-            "**Flachdach: Statik und Ballast prüfen lassen,** Dachabdichtung und Randabstände einplanen.",
+            "Statik prüfen: Eigengewicht, Ballast, Schnee- und Windlast für die gesamte Belegung nachweisen lassen.",
+            "Randzonen und Ecken freihalten oder mechanisch sichern – dort sind die Windsogkräfte am höchsten.",
+            "Wartungsgassen und Brandschutzabstände vor der Belegungsplanung festlegen, nicht danach.",
+            "Wechselrichter mit DC/AC-Verhältnis von etwa 1,3 bis 1,4 auslegen und Ost- und Westseite auf getrennte MPP-Tracker legen.",
+            "Netzanfrage mit der tatsächlichen Wechselrichterleistung stellen; eine eventuelle Einspeisebegrenzung mit einplanen.",
+            "Monitoring je String vorsehen, damit Verschmutzung und Schnee auf flachen Modulen früh auffallen.",
           ],
         },
+      ],
+    },
+    {
+      id: "grenzen",
+      titel: "Grenzen: Schnee, Verschmutzung, Statik",
+      tocLabel: "Grenzen",
+      bloecke: [
         {
-          typ: "p",
-          text: "Wie groß die Anlage insgesamt sein sollte, erklärt der Ratgeber [PV-Anlage: Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen). Für Hausbesitzer mit Ost-West-Dach planen wir Module, Wechselrichter und Speicher als Gesamtsystem – mehr zur [Photovoltaikanlage](/produkte/photovoltaikanlage) und zum [Stromspeicher](/produkte/stromspeicher).",
+          typ: "liste",
+          punkte: [
+            "**Schnee:** Flache Ost-West-Systeme mit 10° bleiben nach Schneefall am längsten bedeckt. In schneereichen Lagen verlieren sie im Winter mehr Ertrag und die Schneelast liegt voll auf den Modulen – siehe [Schneelast und Photovoltaik](/ratgeber/schneelast-photovoltaik).",
+            "**Verschmutzung:** Flache Module reinigen sich schlechter durch Regen. In der Nähe von Stallabluft, Mühlen oder Staub aus der Produktion kann eine regelmäßige [Reinigung](/service/reinigung) sinnvoll sein.",
+            "**Statik:** Mehr Module bedeuten mehr Last. Ost-West-Systeme sind aerodynamisch günstig und kommen oft mit weniger Ballast je Modul aus, die Gesamtlast auf dem Dach steigt dennoch.",
+            "**Wartungswege und Brandschutz:** Dichte Belegung darf Wartungsgassen, Rauchabzüge und Brandschutzabstände nicht verdrängen.",
+            "**Verschattung durch Aufbauten:** Lichtkuppeln, Lüftungsanlagen und Attiken werfen morgens und abends lange Schatten auf flache Module – gerade dann, wenn Ost-West seinen Vorteil ausspielen soll. Mehr im Ratgeber [Verschattung](/ratgeber/photovoltaik-verschattung).",
+          ],
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Wie viel weniger Ertrag bringt eine Ost-West-Anlage?", a: "Je nach Neigung etwa 15 bis 23 % weniger als ein optimal ausgerichtetes Süddach. Flach aufgeständert mit 10 bis 15° erreicht Ost-West rund 84 bis 85 %, auf einem 30° geneigten Satteldach rund 81 %." },
-    { q: "Ist Ost-West besser als Süd?", a: "Beim Jahresertrag je kWp nein, beim Tagesprofil ja: Ost-West liefert morgens und abends mehr, hat eine niedrigere Mittagsspitze und verliert kaum Ertrag durch die 60-%-Einspeisegrenze. Den selbst genutzten Strom erzielt eine gleich große Ost-West-Anlage in unserer Simulation praktisch genauso." },
-    { q: "Lohnt sich eine Ost-West-Anlage mit Speicher?", a: "Oft ja. Ein Speicher verschiebt den Überschuss vom Tag in die Nacht – das funktioniert bei Ost-West genauso wie bei Süd. Im Beispiel mit 10 kWp und 8 kWh steigt die Autarkie auf rund 70 %. Ob sich das rechnet, zeigt der [Stromspeicher-Rechner](/rechner/stromspeicher)." },
-    { q: "Welche Neigung ist bei Ost-West optimal?", a: "Je flacher, desto höher der Jahresertrag: 10 bis 15° sind auf Flachdächern üblich. Unter 10° verschmutzen Module stärker und Regen reinigt sie schlechter." },
-    { q: "Brauche ich für Ost-West einen besonderen Wechselrichter?", a: "Der Wechselrichter braucht mindestens zwei MPP-Tracker, damit Ost- und Westseite getrennt geregelt werden. Wegen der niedrigeren Spitzenleistung kann er etwas kleiner ausgelegt werden als bei einem Süddach." },
-    { q: "Wie viel kWp passen bei Ost-West auf ein Flachdach?", a: "Auf 100 m² nutzbarer Fläche je nach System etwa 15 bis 18 kWp, bei Süd-Aufständerung eher 10 bis 12 kWp. Randabstände, Aufbauten und die Statik bestimmen die tatsächliche Belegung." },
-    { q: "Lohnt sich Photovoltaik nur auf dem Westdach?", a: "Ja, oft sogar gut: Ein Westdach mit 30° Neigung erreicht rund 80 % des Süd-Optimums und erzeugt am Nachmittag und frühen Abend viel Strom – passend zum typischen Verbrauch nach Feierabend." },
+    {
+      q: "Wie viel weniger Ertrag bringt Ost-West?",
+      a: "Mit 10° Neigung rund 14 bis 20 % weniger je kWp als eine 30°-Südanlage. In Linz sind es laut PVGIS 950 statt 1.134 kWh/kWp, in Wien 975 statt 1.166 kWh/kWp.",
+    },
+    {
+      q: "Warum wird auf Flachdächern oft Ost-West gebaut?",
+      a: "Weil ohne Reihenabstand deutlich mehr Module aufs Dach passen. Auf derselben Fläche erzeugt eine Ost-West-Anlage dadurch meist rund ein Drittel mehr Strom, obwohl jedes einzelne kWp weniger liefert.",
+    },
+    {
+      q: "Verringert Ost-West die Mittagsspitze?",
+      a: "Ja, aber bei 10° Neigung moderat: Die maximale Leistung liegt rund 13 % unter Süd 30°, der Anteil der Erzeugung zwischen 11 und 15 Uhr sinkt von 52 auf 50 %. Morgens und abends liefert Ost-West dafür deutlich mehr.",
+    },
+    {
+      q: "Kann der Wechselrichter bei Ost-West kleiner sein?",
+      a: "Ja. Ein Wechselrichter mit 70 % der Modulleistung verursacht bei Ost-West laut Stundenauswertung praktisch keinen Ertragsverlust, bei Süd 30° rund 1,3 %. Das spart Kosten und schont den Netzanschluss.",
+    },
+    {
+      q: "Ist Ost-West auch für Satteldächer sinnvoll?",
+      a: "Ja, bei Ost-West-Firstrichtung ist die Belegung beider Dachseiten üblich. Mit 20 bis 30° Neigung liefern die Flächen in Linz rund 910 bis 935 kWh/kWp – etwa 80 % einer Südanlage, bei doppelter Fläche.",
+    },
+    {
+      q: "Brauche ich für Ost-West einen eigenen Wechselrichter je Dachseite?",
+      a: "Nicht zwingend einen eigenen Wechselrichter, aber getrennte MPP-Tracker. Ost- und Westmodule arbeiten zu unterschiedlichen Tageszeiten im Leistungsmaximum; in einem gemeinsamen String würden sie sich gegenseitig ausbremsen. Moderne Gewerbewechselrichter haben dafür mehrere Tracker.",
+    },
+    {
+      q: "Passt Ost-West zu meinem Betrieb?",
+      a: "Besonders gut, wenn der Betrieb früh beginnt oder bis in den Abend arbeitet, wenn der Netzanschluss knapp ist oder das Flachdach möglichst dicht belegt werden soll. Die Entscheidung sollte auf einer Simulation mit dem eigenen Lastgang beruhen.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/photovoltaik-flachdach", titel: "Photovoltaik auf dem Flachdach", text: "Aufständerung, Ballast, Statik und Abstände." },
-    { href: "/ratgeber/photovoltaik-ertrag-pro-kwp", titel: "Ertrag pro kWp", text: "Ertragstabellen nach Region, Monat und Ausrichtung." },
-    { href: "/ratgeber/wechselrichter-photovoltaik", titel: "Wechselrichter für Photovoltaik", text: "Auslegung mit zwei MPP-Trackern und Überbelegung." },
-    { href: "/angebot", titel: "Angebot anfragen", text: "Ost-West-Anlage für Ihr Dach planen lassen." },
+    { href: "/gewerbe", titel: "PV für Gewerbe & Industrie", text: "Planung nach Lastgang, Hallen- und Flachdächer." },
+    { href: "/ratgeber/photovoltaik-flachdach", titel: "Photovoltaik auf dem Flachdach", text: "Ballast, Statik und Hallendächer." },
+    { href: "/ratgeber/pv-anlage-groesse-berechnen", titel: "PV-Größe berechnen", text: "Dimensionierung nach Lastgang." },
+    { href: "/technik/parkregler", titel: "Parkregler", text: "Einspeisung und Blindleistung nach TOR." },
   ],
 
   quellen: [
-    { titel: "European Commission JRC – PVGIS 5.3 (Photovoltaic Geographical Information System)", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
-    { titel: "Fraunhofer ISE – Aktuelle Fakten zur Photovoltaik in Deutschland (Fassung 20.08.2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/aktuelle-fakten-zur-photovoltaik-in-deutschland.html", stand: "08/2026" },
-    { titel: "Verbraucherzentrale Hamburg – Solarspitzen und Fördergelder: Neue Regeln für Photovoltaikanlagen", url: "https://www.vzhh.de/themen/bauen-immobilien-energie/erneuerbare-energien/solarspitzen-foerdergelder-neue-regeln-fuer-photovoltaikanlagen", stand: "09/2025" },
-    { titel: "HTW Berlin – Nullvergütung bei negativen Börsenstrompreisen und weitere Konstruktionsfehler des Solarspitzen-Gesetzes", url: "https://solar.htw-berlin.de/publikationen/nullverguetung-solarspitzen-gesetz/", stand: "04/2025" },
-    { titel: "§ 9 EEG 2023 – Technische Vorgaben", url: "https://www.gesetze-im-internet.de/eeg_2014/__9.html", stand: "09/2026" },
-    { titel: "§ 51 EEG 2023 – Verringerung des Zahlungsanspruchs bei negativen Preisen", url: "https://www.gesetze-im-internet.de/eeg_2014/__51.html", stand: "09/2026" },
+    { titel: "EU JRC – PVGIS 5.3, Jahres- und Stundenwerte (PVcalc, seriescalc)", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
+    { titel: "EU JRC – PVGIS API, Dokumentation", url: "https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/getting-started-pvgis/api-non-interactive-service_en", stand: "09/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen (Netzanschluss, Version 1.4)", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor", stand: "09/2026" },
+    { titel: "Fraunhofer ISE – Photovoltaics Report (Juli 2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/photovoltaics-report.html", stand: "09/2026" },
+    { titel: "HORA – Schneelast und Wind je Standort", url: "https://hora.gv.at/", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Ost-West-Dach?", text: "Wir berechnen, wie viel Leistung und Eigenverbrauch Ihr Dach bringt.", href: "/angebot", label: "Anlage planen lassen" },
+  seitenCta: { titel: "Ost-West oder Süd?", text: "Wir simulieren beide Varianten für Ihr Dach.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Ost-West-Dach? Oft mehr Potenzial als gedacht.",
-    text: "Wir prüfen beide Dachseiten, Verschattung und Statik vor Ort und rechnen Varianten mit und ohne Speicher – ehrlich, auch wenn eine Seite sich nicht lohnt.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/solarrechner" },
+    title: "Ost-West oder Süd – wir rechnen beide Varianten.",
+    text: "Mit Ihrem Lastgang, der Statik Ihres Dachs und der Netzkapazität am Anschlusspunkt ermitteln wir die wirtschaftlichste Belegung.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Gewerbe & Industrie", href: "/gewerbe" },
   },
 };
 

@@ -22,15 +22,15 @@ export const DEMO = [
   },
   {
     slug: "demo-beispielmeldung-kommunen",
-    titel: "[DEMO] Beispielmeldung: Leitfaden Photovoltaik für Kommunen",
+    titel: "[DEMO] Beispielmeldung: Leitfaden Photovoltaik für Gemeinden",
     kategorie: "Kommunen & Stadtwerke",
     veroeffentlicht_am: tage(4),
-    teaser: "Platzhalter: So könnte ein Leitfaden für Kommunen, Stadtwerke und Klimaschutzmanager angekündigt werden.",
+    teaser: "Platzhalter: So könnte ein Leitfaden für Gemeinden, Stadtwerke und Energiebeauftragte angekündigt werden.",
     inhalt: "<p>Platzhalter für die Entwicklung.</p>",
     bild: "/Images/Dienstleistungen/Photovoltaik/download-2.jpg",
     bild_alt: "Photovoltaik auf Reihenhausdächern",
     auf_website: 1, im_rss_feed: 1, auf_tv: 1, im_fediverse: 1,
-    tv_dauer_sekunden: 12, hashtags: "Kommunen Stadtwerke Energiewende",
+    tv_dauer_sekunden: 12, hashtags: "Gemeinden Stadtwerke Energiewende",
   },
   {
     slug: "demo-beispielmeldung-presse",

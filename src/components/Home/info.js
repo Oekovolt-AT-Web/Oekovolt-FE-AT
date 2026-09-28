@@ -12,22 +12,23 @@ export default function SolutionsPage({ data }) {
   const stats = useMemo(() => [
     {
       icon: <Sun className="text-[35px] text-[#669933]/90" />,
-      value: toNumber(data?.pv_kraftwerke, 5000),
+      value: toNumber(data?.pv_kraftwerke, 0),
       label: "PV-Kraftwerke",
     },
     {
       icon: <Factory className="text-[35px] text-[#669933]/90" />,
-      value: toNumber(data?.leistung, 340000),
+      value: toNumber(data?.leistung, 0),
       suffix: "kWp",
       label: "Leistung",
     },
     {
       icon: <ChartLine className="text-[35px] text-[#669933]/90" />,
-      value: toNumber(data?.co2_einsparung, 112000),
+      value: toNumber(data?.co2_einsparung, 0),
       suffix: "t",
       label: "Co2-Einsparung",
     },
-  ], [data?.pv_kraftwerke, data?.leistung, data?.co2_einsparung]);
+  // Keine Rückfallwerte: Gruppen-Kennzahlen der DE-Website gelten nicht für Österreich.
+  ].filter((s) => s.value > 0), [data?.pv_kraftwerke, data?.leistung, data?.co2_einsparung]);
 
   const [counters, setCounters] = useState(stats.map(() => 0));
   const countersRef = useRef(null);
@@ -110,7 +111,7 @@ export default function SolutionsPage({ data }) {
                 {item.icon}
               </span>
               <div className="mb-1 text-[34px] font-semibold leading-none tabular-nums text-[#669933] md:text-[42px]">
-                {counters[i]?.toLocaleString("de-DE")}
+                {counters[i]?.toLocaleString("de-AT")}
                 {item.suffix && (
                   <span className="ml-1 text-[20px] font-medium md:text-[24px]">
                     {item.suffix}

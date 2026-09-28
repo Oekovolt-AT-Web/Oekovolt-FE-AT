@@ -1,14 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { ArrowDown, ArrowDownRight, ArrowUpRight, Leaf, Sun, Wind, Gauge, RefreshCw } from "lucide-react";
+import { ArrowDown, ArrowDownRight, ArrowUpRight, Leaf, Sun, Waves, Gauge, RefreshCw } from "lucide-react";
 import { LiveDot } from "@/components/ui/LiveTicker";
 import useLiveDaten from "./useLiveDaten";
 import { preisTage, zeitfenster, ct, gw, uhr, spanne, zahl } from "./berechnung";
 
 /**
- * Live-Kennzahlen im dunklen Seitenkopf: Börsenpreis jetzt (Hero-Zahl) mit
- * Tagesverlauf-Sparkline, Tagestief/-hoch, Erneuerbare, Solar, Wind, Last.
+ * Live-Kennzahlen im dunklen Seitenkopf: Börsenpreis Gebotszone AT jetzt (Hero-Zahl) mit
+ * Tagesverlauf-Sparkline, Tagestief/-hoch, Erneuerbare, Solar, Wasserkraft/Wind, Last mit Import/Export.
  */
 export default function LiveKennzahlen({ initial }) {
   const { daten, jetzt } = useLiveDaten(initial);
@@ -18,7 +18,7 @@ export default function LiveKennzahlen({ initial }) {
   const aktuell = tage.aktuell;
   const fenster = useMemo(() => (heute ? zeitfenster(heute.punkte, 180, tage.schrittMs).guenstig : null), [heute, tage.schrittMs]);
 
-  const nachts = e.solarMw != null && e.solarMw < 100;
+  const nachts = e.solarMw != null && e.solarMw < 20;
   const eeAnteil = e.eeAnteil != null ? Math.round(e.eeAnteil) : null;
 
   // Position des aktuellen Preises innerhalb der Tagesspanne (0–1)
@@ -119,8 +119,13 @@ export default function LiveKennzahlen({ initial }) {
           wert={e.solarMw != null ? `${gw(e.solarMw)} GW` : "–"}
           sub={nachts ? "nachts keine Erzeugung" : e.solarAnteil != null ? `${Math.round(e.solarAnteil)} % des Verbrauchs` : "Einspeisung jetzt"}
         />
-        <Kachel icon={Wind} farbe="text-navy-200" label="Wind" wert={e.windMw != null ? `${gw(e.windMw)} GW` : "–"} sub="an Land und auf See" />
-        <Kachel icon={Gauge} farbe="text-white/80" label="Verbrauch" wert={e.lastMw != null ? `${gw(e.lastMw)} GW` : "–"} sub="Netzlast Deutschland" />
+        {/* Österreich: Wasserkraft ist die tragende erneuerbare Quelle – Wind als Zusatzwert */}
+        {e.wasserMw != null ? (
+          <Kachel icon={Waves} farbe="text-navy-200" label="Wasserkraft" wert={`${gw(e.wasserMw)} GW`} sub={e.windMw != null ? `Laufwasser & Speicher · Wind ${gw(e.windMw)} GW` : "Laufwasser & Speicher"} />
+        ) : (
+          <Kachel icon={Waves} farbe="text-navy-200" label="Wind" wert={e.windMw != null ? `${gw(e.windMw)} GW` : "–"} sub="Windkraft an Land" />
+        )}
+        <Kachel icon={Gauge} farbe="text-white/80" label="Verbrauch" wert={e.lastMw != null ? `${gw(e.lastMw)} GW` : "–"} sub={e.importMw != null ? (e.importMw >= 0 ? `Netzlast AT · Import ${gw(e.importMw)} GW` : `Netzlast AT · Export ${gw(-e.importMw)} GW`) : "Netzlast Österreich"} />
         <p className="col-span-2 flex flex-wrap items-center justify-between gap-2 px-1 text-[12.5px] text-white/50">
           <span>Erzeugung: Stand {e.zeitpunkt ? `${uhr(e.zeitpunkt)} Uhr` : "–"}</span>
           <a href="#preisverlauf" className="inline-flex min-h-11 items-center gap-1.5 font-semibold text-white/80 hover:text-white">

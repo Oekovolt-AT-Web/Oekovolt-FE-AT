@@ -1,4 +1,4 @@
-import { Check, CircleAlert, CalendarClock, X } from "lucide-react";
+import { ArrowUpRight, Check, CircleAlert, CalendarClock, X } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import Reveal from "@/components/ui/Reveal";
 
@@ -183,6 +183,61 @@ export function Kennzahlen({ items = [] }) {
           </div>
         ))}
       </dl>
+    </div>
+  );
+}
+
+/** Kennzeichnung für Werte, die nicht an einer Primärquelle belegt sind. */
+export function PruefenMarke({ stand = "", className }) {
+  return (
+    <span className={cn("mt-1 inline-flex items-center gap-1 rounded-full bg-sun-300/35 px-2 py-0.5 text-[11.5px] font-semibold text-ink-800", className)}>
+      <CircleAlert aria-hidden="true" className="h-3 w-3 text-sun-500" />
+      {stand ? `Stand ${stand}, ` : ""}bitte bei der Förderstelle prüfen
+    </span>
+  );
+}
+
+const AMPEL_TON = {
+  frei: "bg-ov-100 text-ov-800 ring-ov-200",
+  anzeige: "bg-sun-300/40 text-ink-900 ring-sun-400/50",
+  bewilligung: "bg-navy-100 text-navy-800 ring-navy-200",
+};
+
+/** Kleiner Status-Chip für die Rechts-Ampel (frei / Anzeige / Bewilligung). */
+export function AmpelChip({ wert, label, className }) {
+  return (
+    <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-semibold ring-1", AMPEL_TON[wert] || AMPEL_TON.anzeige, className)}>
+      {label}
+    </span>
+  );
+}
+
+/**
+ * Quellenblock mit Prüfdatum – am Ende jeder Förder- und Rechtsseite.
+ * quellen: [{ label, url }]
+ */
+export function Quellen({ quellen = [], stand, titel = "Quellen und Stand", hinweis, className }) {
+  const eindeutig = quellen.filter((q, i, a) => q?.url && a.findIndex((x) => x.url === q.url) === i);
+  if (!eindeutig.length) return null;
+  return (
+    <div className={cn("rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8", className)}>
+      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
+        <h2 className="font-display text-[20px] font-bold text-ink-900">{titel}</h2>
+        {stand && <StandPille>Prüfdatum {stand}</StandPille>}
+      </div>
+      {hinweis && <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-ink-600">{hinweis}</p>}
+      <ol className="mt-5 grid gap-x-8 gap-y-2.5 md:grid-cols-2">
+        {eindeutig.map((q, i) => (
+          <li key={q.url} className="flex gap-3 text-[14px] leading-snug">
+            <span className="ov-num w-6 shrink-0 text-right text-ink-400">{i + 1}.</span>
+            <a href={q.url} target="_blank" rel="noopener noreferrer" className="group inline-flex items-start gap-1 text-ink-700 underline decoration-ink-200 underline-offset-2 hover:text-ov-700 hover:decoration-ov-300">
+              {q.label}
+              <ArrowUpRight aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-400 group-hover:text-ov-600" />
+              <span className="sr-only">(externer Link, neues Fenster)</span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

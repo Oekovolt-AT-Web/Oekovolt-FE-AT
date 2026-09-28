@@ -1,9 +1,9 @@
 // Standortgenauer Solarertrag aus PVGIS (EU JRC) – Server-Komponente, reines SVG.
 
-const MONATE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+const MONATE = ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 const de = (n, d = 0) => Number(n).toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, kwp = 10 }) {
+export default function RegionErtrag({ name, ort, referenz, referenzName = "Ostermiething", istReferenz = false, quelle, abgerufen, kwp = 100 }) {
   const monate = ort.monate_sued35.map((m) => m * kwp);
   const max = Math.max(...monate, ...referenz.monate_sued35.map((m) => m * kwp));
   const diff = (ort.sued35_kwh_kwp / referenz.sued35_kwh_kwp - 1) * 100;
@@ -25,10 +25,12 @@ export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, k
               <span aria-hidden="true" className="h-2.5 w-2.5 rounded-sm bg-ov-500" />
               {name}
             </span>
-            <span className="flex items-center gap-1.5">
-              <span aria-hidden="true" className="h-0.5 w-3 bg-navy-900" />
-              Türkheim (Firmensitz)
-            </span>
+            {!istReferenz && (
+              <span className="flex items-center gap-1.5">
+                <span aria-hidden="true" className="h-0.5 w-3 bg-navy-900" />
+                {referenzName} (Firmensitz)
+              </span>
+            )}
           </span>
         </figcaption>
         <div className="overflow-x-auto">
@@ -39,7 +41,7 @@ export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, k
               return (
                 <g key={MONATE[i]}>
                   <rect x={i * breite + 6} y={H - h} width={breite - 12} height={h} rx="5" className="fill-ov-500" />
-                  <line x1={i * breite + 3} x2={(i + 1) * breite - 3} y1={H - r} y2={H - r} className="stroke-navy-900" strokeWidth="2" />
+                  {!istReferenz && <line x1={i * breite + 3} x2={(i + 1) * breite - 3} y1={H - r} y2={H - r} className="stroke-navy-900" strokeWidth="2" />}
                   <text x={i * breite + breite / 2} y={H + 18} textAnchor="middle" className="fill-ink-600 text-[12px]">
                     {MONATE[i]}
                   </text>
@@ -49,8 +51,8 @@ export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, k
           </svg>
         </div>
         <p className="mt-3 text-[12.5px] leading-relaxed text-ink-600">
-          Simulation für Süddach mit 35° Neigung inklusive Geländehorizont. Quelle: {quelle}, abgerufen {new Date(abgerufen).toLocaleDateString("de-DE")}. Die Werte sind
-          physikalische Simulationen und liegen erfahrungsgemäß über dem, was wir in Angeboten vorsichtig ansetzen.
+          Simulation für Süddach mit 35° Neigung inklusive Geländehorizont. Quelle: {quelle}, abgerufen {new Date(abgerufen).toLocaleDateString("de-AT")}. Die Werte sind
+          physikalische Simulationen; in Angeboten rechnen wir mit Ihrem Dach, Ihrer Verschattung und vorsichtigeren Annahmen.
         </p>
       </figure>
 
@@ -62,7 +64,9 @@ export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, k
               {de(ort.sued35_kwh_kwp)} <span className="text-[16px] font-bold text-ink-600">kWh</span>
             </dd>
             <dd className="mt-2 text-[13.5px] text-ink-700">
-              {Math.abs(diff) < 0.5 ? "gleichauf mit" : `${de(Math.abs(diff), 1)} % ${diff > 0 ? "mehr als" : "weniger als"}`} am Firmensitz Türkheim
+              {istReferenz
+                ? "Bezugswert für alle Regionalseiten – hier liegt unser Firmensitz"
+                : `${Math.abs(diff) < 0.5 ? "gleichauf mit dem Wert" : `${de(Math.abs(diff), 1)} % ${diff > 0 ? "mehr als" : "weniger als"}`} am Firmensitz ${referenzName}`}
             </dd>
           </div>
           <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
@@ -83,9 +87,9 @@ export default function RegionErtrag({ name, ort, referenz, quelle, abgerufen, k
           </div>
         </dl>
         <p className="mt-5 text-[14.5px] leading-relaxed text-ink-700">
-          Eine {kwp}-kWp-Anlage auf einem Süddach in {name} kommt rechnerisch auf rund {de(Math.round((ort.sued35_kwh_kwp * kwp) / 100) * 100)} kWh im Jahr. Der ertragsstärkste
-          Wintermonat ist der {["Januar", "Februar", "", "", "", "", "", "", "", "", "November", "Dezember"][staerksterWinter]} mit etwa {de(ort.monate_sued35[staerksterWinter] * kwp)} kWh.
-          Standort auf {de(ort.hoehe_m)} m über Normalnull.
+          Eine Gewerbeanlage mit {kwp} kWp auf einem Süddach in {name} kommt rechnerisch auf rund {de(Math.round((ort.sued35_kwh_kwp * kwp) / 1000) * 1000)} kWh im Jahr. Der ertragsstärkste
+          Wintermonat ist der {["Jänner", "Februar", "", "", "", "", "", "", "", "", "November", "Dezember"][staerksterWinter]} mit etwa {de(ort.monate_sued35[staerksterWinter] * kwp)} kWh.
+          Referenzpunkt Ortszentrum auf rund {de(ort.hoehe_m)} m Seehöhe.
         </p>
       </div>
     </div>

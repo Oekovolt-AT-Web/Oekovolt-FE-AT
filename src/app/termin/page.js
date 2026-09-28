@@ -1,5 +1,4 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
 import { Suspense } from "react";
 import {
   BadgeCheck,
@@ -11,6 +10,7 @@ import {
   Timer,
 } from "lucide-react";
 import { TERMIN_ARTEN } from "@/data/erreichbarkeit";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import TerminBuchung from "@/components/Rueckruf/TerminBuchung";
 import RueckrufFormular from "@/components/Rueckruf/RueckrufFormular";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -30,10 +30,10 @@ const TAGE_VORAUS = 30;
 
 const iso = (d) => d.toISOString().split("T")[0];
 
-const PAGE_URL = "https://www.oekovolt.com/termin";
-const TITEL = "Beratungstermin online buchen – Photovoltaik | Ökovolt";
+const PAGE_URL = `${BASE_URL}/termin`;
+const TITEL = "PV-Beratungstermin online buchen | Ökovolt";
 const BESCHREIBUNG =
-  "Kostenlose Photovoltaik-Beratung direkt online buchen: per Telefon, Video oder vor Ort. Freie Termine in Echtzeit – oder Sofort-Rückruf anfordern.";
+  "Photovoltaik-Beratung für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich online buchen: Telefon, Video oder vor Ort – oder Rückruf anfordern.";
 
 export const metadata = {
   title: TITEL,
@@ -49,7 +49,7 @@ export const metadata = {
     description: BESCHREIBUNG,
     images: [
       {
-        url: "https://www.oekovolt.com/og-image.jpg",
+        url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: "Beratungstermin bei Ökovolt buchen",
@@ -61,27 +61,27 @@ export const metadata = {
 const FAQ = [
   {
     q: "Was kostet die Beratung?",
-    a: "Nichts. Telefon-, Video- und Vor-Ort-Beratung sind kostenlos und unverbindlich – Sie gehen keinerlei Verpflichtung ein.",
+    a: "Nichts. Telefon-, Video- und Vor-Ort-Beratung sind kostenlos und unverbindlich. Weitergehende Leistungen wie ein Energieaudit oder eine Ausführungsplanung vereinbaren wir – falls gewünscht – vorab gesondert mit Ihnen.",
   },
   {
     q: "Wie läuft die Video-Beratung ab?",
-    a: "Sie erhalten mit der Bestätigung einen Link zur Video-Beratung – nutzbar am Computer, Tablet oder Smartphone. Am geteilten Bildschirm besprechen wir Ihr Dach, die mögliche Anlagengröße und die Wirtschaftlichkeit.",
+    a: "Sie erhalten mit der Bestätigung einen Link zur Video-Beratung – nutzbar am Computer, Tablet oder Smartphone. Am geteilten Bildschirm besprechen wir Luftbild und Belegung Ihrer Dach- oder Freifläche, Ihren Lastgang, die mögliche Anlagengröße, den Netzanschluss und die Wirtschaftlichkeit.",
   },
   {
-    q: "Wie funktioniert der Sofort-Rückruf?",
-    a: "Sie geben Ihre Nummer ein – ist eine Beraterin oder ein Berater frei, klingelt Ihr Telefon in der Regel innerhalb einer Minute. Außerhalb unserer Öffnungszeiten wählen Sie einfach eine Wunschzeit.",
+    q: "Wie funktioniert der Rückruf?",
+    a: "Sie geben Ihre Nummer und eine Wunschzeit innerhalb unserer Öffnungszeiten ein. Eine Beraterin oder ein Berater aus unserem Team in Ostermiething ruft Sie zu dieser Zeit an – ohne Callcenter.",
   },
   {
     q: "Kann ich den Termin verschieben?",
-    a: "Ja, jederzeit und kostenfrei. Antworten Sie einfach auf die Bestätigungs-E-Mail oder rufen Sie uns unter 08245 96 788 0 an.",
+    a: `Ja, jederzeit und kostenfrei. Antworten Sie einfach auf die Bestätigungs-E-Mail oder rufen Sie uns unter ${FIRMA.telefon} an.`,
   },
   {
     q: "Was sollte ich zum Termin bereithalten?",
-    a: "Ideal sind Ihre letzte Stromrechnung (Jahresverbrauch), grobe Angaben zum Dach und – falls vorhanden – Fotos von Dach und Zählerschrank. Für eine erste Einschätzung reicht aber auch ein kurzes Gespräch.",
+    a: "Für Betriebe ideal: die letzte Strom- und Netzrechnung (Jahresverbrauch, Netzebene, Leistungspreis), falls vorhanden den Lastgang in 15-Minuten-Werten vom Netzbetreiber, Dachpläne oder Fotos sowie Angaben zu Trafo bzw. Zählerplatz. Für eine erste Einschätzung reicht aber auch ein kurzes Gespräch.",
   },
   {
     q: "In welchem Gebiet sind Vor-Ort-Termine möglich?",
-    a: "Das hängt von Ihrem Standort und dem Projekt ab. Liegt Ihr Objekt weiter von Türkheim entfernt, stimmen wir den Vor-Ort-Termin vorab telefonisch mit Ihnen ab – oft ist eine Video-Beratung der schnellere erste Schritt.",
+    a: "In ganz Österreich – in allen neun Bundesländern. Liegt Ihr Objekt weiter von Ostermiething (Oberösterreich) entfernt, stimmen wir den Vor-Ort-Termin vorab telefonisch ab und bündeln ihn mit anderen Terminen in der Region. Oft ist eine Video-Beratung mit Luftbild der schnellere erste Schritt.",
   },
 ];
 
@@ -110,7 +110,7 @@ const schema = {
         },
         result: {
           "@type": "Reservation",
-          name: "Kostenlose Photovoltaik-Beratung",
+          name: "Kostenlose Photovoltaik-Beratung für Betriebe, Landwirtschaft und Gemeinden",
         },
       },
     },
@@ -186,8 +186,9 @@ export default async function TerminPage() {
                 style={{ "--ov-delay": "200ms" }}
               >
                 Telefon, Video oder vor Ort: Wählen Sie Ihren Wunschtermin aus
-                unseren freien Zeiten. Kostenlos, unverbindlich und mit einem
-                echten Fachberater aus Türkheim.
+                unseren freien Zeiten. Kostenlos, unverbindlich und direkt mit
+                unserem Team aus Ostermiething – für Projekte in ganz
+                Österreich.
               </p>
             </div>
             <div
@@ -220,27 +221,27 @@ export default async function TerminPage() {
               title={
                 <>
                   Wir rufen Sie{" "}
-                  <span className="ov-text-gradient">sofort zurück.</span>
+                  <span className="ov-text-gradient">zu Ihrer Wunschzeit zurück.</span>
                 </>
               }
-              lead="Nummer eingeben – ist ein Berater frei, klingelt Ihr Telefon in der Regel in unter einer Minute. Außerhalb der Öffnungszeiten rufen wir zu Ihrer Wunschzeit an."
+              lead="Nummer und Wunschzeit eingeben – wir rufen Sie zur gewählten Zeit an. Ideal für eine erste Einordnung Ihres Projekts: Fläche, Verbrauch, Netzanschluss, Förderung."
             />
             <ul className="mt-10 grid gap-4 sm:grid-cols-2">
               {[
                 {
                   icon: Timer,
-                  t: "Rückruf in Sekunden",
-                  x: "Automatische Verbindung mit einem freien Fachberater.",
+                  t: "Rückruf zur Wunschzeit",
+                  x: "Sie wählen den Zeitpunkt, wir rufen an – ohne Warteschleife.",
                 },
                 {
                   icon: BadgeCheck,
                   t: "Echte Fachleute",
-                  x: "Kein Callcenter – Beratung direkt vom Fachbetrieb.",
+                  x: "Kein Callcenter – Beratung direkt vom Elektrotechnik-Fachbetrieb.",
                 },
                 {
                   icon: CalendarCheck2,
-                  t: "Wunschzeit möglich",
-                  x: "Abends oder am Wochenende angefragt? Wir rufen pünktlich an.",
+                  t: "Auch außerhalb der Öffnungszeiten",
+                  x: "Abends oder am Wochenende angefragt? Wir rufen zur nächsten gewählten Zeit an.",
                 },
                 {
                   icon: PhoneCall,
@@ -291,22 +292,22 @@ export default async function TerminPage() {
             {
               icon: Handshake,
               title: "Beratung",
-              text: "Wir klären Ziele, Verbrauch und Dach – und beantworten alle Fragen.",
+              text: "Wir klären Ziele, Lastgang, Fläche und Netzanschluss – und beantworten Ihre Fragen.",
             },
             {
               icon: Home,
-              title: "Dach-Check",
-              text: "Bei Bedarf prüfen wir Dach, Statik und Zählerschrank direkt vor Ort.",
+              title: "Standort-Check",
+              text: "Bei Bedarf prüfen wir Dach bzw. Freifläche, Statik, Schneelastzone und Trafo/Zählerplatz vor Ort.",
             },
             {
               icon: Ruler,
               title: "Planung & Angebot",
-              text: "Sie erhalten ein transparentes Angebot mit Wirtschaftlichkeitsrechnung.",
+              text: "Sie erhalten ein transparentes Angebot mit Wirtschaftlichkeitsrechnung und Förderprüfung.",
             },
             {
               icon: CalendarCheck2,
-              title: "Montage",
-              text: "Installation, Anmeldung und Inbetriebnahme – alles aus einer Hand.",
+              title: "Bau & Betrieb",
+              text: "Netzantrag, Montage, Inbetriebnahme und Wartung – alles aus einer Hand.",
             },
           ]}
         />
@@ -315,7 +316,7 @@ export default async function TerminPage() {
       <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Fragen zum Termin" title="Gut zu wissen" />
-          <Faq items={FAQ} />
+          <Faq items={FAQ} schema={false} />
         </div>
       </Section>
     </div>

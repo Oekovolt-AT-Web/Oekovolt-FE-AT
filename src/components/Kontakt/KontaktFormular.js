@@ -6,6 +6,7 @@ import { AlertCircle, ArrowRight, Loader2, Lock, RotateCcw } from "lucide-react"
 import { submitContact } from "@/lib/api/contact/create_contact";
 import { herkunftText } from "@/lib/herkunft";
 import { ereignis } from "@/lib/statistik";
+import { FIRMA } from "@/lib/site";
 
 const LEER = {
   firstName: "",
@@ -16,10 +17,11 @@ const LEER = {
   plz: "",
   ort: "",
   street: "",
+  firma: "",
   acceptTerms: false,
 };
 
-const THEMEN = ["Photovoltaik", "Stromspeicher", "Wärmepumpe", "Wallbox", "Service & Wartung", "Sonstiges"];
+const THEMEN = ["Gewerbe & Industrie", "Freifläche & Agri-PV", "Landwirtschaft", "Gemeinde", "Speicher & Laden", "Service & Wartung", "Energiegemeinschaft", "Presse", "Sonstiges"];
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -32,7 +34,7 @@ function pruefe(name, wert) {
     case "street":
       return wert.trim() ? "" : "Bitte geben Sie Straße und Hausnummer an.";
     case "plz":
-      return !wert.trim() ? "Bitte geben Sie Ihre Postleitzahl an." : /^\d{4,5}$/.test(wert.trim()) ? "" : "Bitte eine gültige Postleitzahl angeben, z. B. 86842.";
+      return !wert.trim() ? "Bitte geben Sie Ihre Postleitzahl an." : /^\d{4,5}$/.test(wert.trim()) ? "" : "Bitte eine gültige Postleitzahl angeben, z. B. 5121.";
     case "ort":
       return wert.trim() ? "" : "Bitte geben Sie Ihren Ort an.";
     case "email":
@@ -97,7 +99,9 @@ export default function KontaktFormular() {
 
     setStatus("sendet");
     setServerFehler("");
-    const nachricht = `${werte.message.trim()}\n\n—\n${herkunftText()}`;
+    // Unternehmen/Organisation ist im Kontakt-Backend kein eigenes Feld -> vorne in die Nachricht
+    const firma = werte.firma.trim();
+    const nachricht = `${firma ? `Unternehmen/Organisation: ${firma}\n\n` : ""}${werte.message.trim()}\n\n—\n${herkunftText()}`;
     const payload = {
       thema: thema || "",
       vorname: werte.firstName.trim(),
@@ -140,7 +144,7 @@ export default function KontaktFormular() {
           {[
             ["Wir lesen Ihr Anliegen", "und ordnen es dem passenden Ansprechpartner zu."],
             ["Wir rufen Sie zurück", "oder antworten per E-Mail – ganz wie es passt."],
-            ["Auf Wunsch kommen wir vorbei", "und schauen uns Dach, Zählerschrank und Verbrauch vor Ort an."],
+            ["Auf Wunsch kommen wir vorbei", "– in ganz Österreich – und sehen uns Dach oder Fläche, Trafo/Zählerplatz und Lastgang vor Ort an."],
           ].map(([t, s], i) => (
             <li key={t} className="flex gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ov-600 font-display text-[14px] font-bold text-white">{i + 1}</span>
@@ -197,18 +201,19 @@ export default function KontaktFormular() {
       <div className="grid gap-5 sm:grid-cols-2">
         <Feld name="firstName" label="Vorname" autoComplete="given-name" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="lastName" label="Nachname" autoComplete="family-name" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="firma" label="Unternehmen / Gemeinde / Betrieb" optional autoComplete="organization" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} className="sm:col-span-2" />
         <Feld name="email" label="E-Mail-Adresse" type="email" autoComplete="email" inputMode="email" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="phone" label="Telefonnummer" type="tel" autoComplete="tel" inputMode="tel" hinweis="Für kurze Rückfragen" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
         <Feld name="street" label="Straße und Hausnummer" autoComplete="street-address" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} className="sm:col-span-2" />
-        <Feld name="plz" label="PLZ" inputMode="numeric" autoComplete="postal-code" placeholder="86842" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
-        <Feld name="ort" label="Ort" autoComplete="address-level2" placeholder="Türkheim" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="plz" label="PLZ" inputMode="numeric" autoComplete="postal-code" placeholder="5121" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
+        <Feld name="ort" label="Ort" autoComplete="address-level2" placeholder="Ostermiething" werte={werte} fehler={fehler} onChange={aendern} onBlur={verlassen} />
       </div>
 
       <Feld
         name="message"
         label="Ihre Nachricht"
         mehrzeilig
-        placeholder="z. B. Einfamilienhaus, Süddach, ca. 4.500 kWh Verbrauch – wir interessieren uns für eine PV-Anlage mit Speicher."
+        placeholder="z. B. Produktionshalle mit Flachdach, ca. 3.000 m², Jahresverbrauch rund 800.000 kWh, Netzebene 6 – wir interessieren uns für PV mit Speicher."
         werte={werte}
         fehler={fehler}
         onChange={aendern}
@@ -248,7 +253,7 @@ export default function KontaktFormular() {
           <AlertCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0" />
           <p>
             Ihre Nachricht konnte leider nicht gesendet werden{serverFehler ? ` (${serverFehler})` : ""}. Bitte versuchen Sie es erneut oder rufen Sie uns
-            direkt an: <a href="tel:+498245967880" className="font-semibold underline">08245 96 788 0</a>.
+            direkt an: <a href={FIRMA.telefonHref} className="font-semibold underline">{FIRMA.telefon}</a>.
           </p>
         </div>
       )}
@@ -280,7 +285,7 @@ export default function KontaktFormular() {
   );
 }
 
-function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, onChange, onBlur, className, ...rest }) {
+function Feld({ name, label, type = "text", mehrzeilig, hinweis, optional = false, werte, fehler, onChange, onBlur, className, ...rest }) {
   const f = fehler[name];
   const ok = !f && String(werte[name]).trim() && !pruefe(name, werte[name]);
   const klassen = `peer w-full rounded-2xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-inset transition-all placeholder:text-ink-500 focus:ring-2 ${
@@ -291,7 +296,8 @@ function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, 
     <div className={[mehrzeilig ? "" : "min-w-0", className].filter(Boolean).join(" ")}>
       <label htmlFor={`kf-${name}`} className="mb-2 flex items-baseline justify-between gap-3 text-[14px] font-semibold text-ink-800">
         <span>
-          {label} <span className="text-ov-600" aria-hidden="true">*</span>
+          {label}{" "}
+          {optional ? <span className="font-normal text-ink-500">(optional)</span> : <span className="text-ov-600" aria-hidden="true">*</span>}
         </span>
         {hinweis && (
           <span id={`${name}-hinweis`} className="text-[12.5px] font-normal text-ink-500">
@@ -322,7 +328,7 @@ function Feld({ name, label, type = "text", mehrzeilig, hinweis, werte, fehler, 
             value={werte[name]}
             onChange={onChange}
             onBlur={onBlur}
-            required
+            required={!optional}
             aria-invalid={!!f}
             aria-describedby={beschreibung}
             className={`${klassen} h-13 pr-10`}

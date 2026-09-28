@@ -47,7 +47,7 @@ export const cookieServices = {
           { name: "Vereinigte Staaten", sub: "A" },
           { name: "Australien" },
           { name: "Brasilien" },
-          { name: "KanadaA", sub: "A" },
+          { name: "Kanada", sub: "A" },
           { name: "Chile" },
           { name: "Hong Kong" },
           { name: "Indien" },
@@ -281,10 +281,10 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             <div className="w-[100%] flex-1 md:w-[60%]">
               <p className="text-gray-600 text-sm">
                 Wir verwenden Cookies und ähnliche Technologien auf unserer Website und verarbeiten personenbezogene
-                Daten über Sie, wie Ihre IP-Adresse. Nur mit Ihrer Einwilligung werden Google Analytics und Inhalte von Drittanbietern (Google Maps) geladen. Die Datenverarbeitung kann
-                mit Ihrer Einwilligung oder auf der Grundlage eines berechtigten Interesses erfolgen, dem Sie
-                widersprechen können. Sie haben das Recht, nur in essenzielle Services einzuwilligen und Ihre
-                Einwilligung zu einem späteren Zeitpunkt in der Datenschutzerklärung zu ändern oder zu widerrufen.
+                Daten über Sie, wie Ihre IP-Adresse. Nur mit Ihrer Einwilligung (§ 165 Abs. 3 TKG 2021, Art. 6 Abs. 1 lit. a
+                DSGVO) werden Google Analytics und Inhalte von Drittanbietern (Google Maps) geladen. Technisch notwendige
+                Speicherungen – etwa Ihre Auswahl in diesem Dialog – erfolgen ohne Einwilligung. Sie können Ihre Einwilligung
+                jederzeit über „Privatsphäre-Einstellungen“ im Seitenfuß ändern oder mit Wirkung für die Zukunft widerrufen.
                 Nachfolgend finden Sie eine Übersicht über alle Services, die von dieser Website genutzt werden. Sie
                 können detaillierte Informationen zu jedem Service einsehen und diesen einzeln zustimmen oder von Ihrem
                 Widerspruchsrecht Gebrauch machen.
@@ -312,11 +312,10 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             </div>
           </div>
           <p className="text-gray-600 mt-1 p-6 pb-2 text-xs">
-            Google Analytics und Google Maps können personenbezogene Daten in Drittländern (u. a. USA) verarbeiten. Indem Sie in die Nutzung
-            dieser Services einwilligen, erklären Sie sich auch mit der Verarbeitung Ihrer Daten in diesen unsicheren
-            Drittländern gemäß Art. 49 Abs. 1 lit. a DSGVO einverstanden. Dies birgt das Risiko, dass Ihre Daten von
-            Behörden zu Kontroll- und Überwachungszwecken verarbeitet werden, möglicherweise ohne die Möglichkeit eines
-            Rechtsbehelfs.
+            Google Analytics und Google Maps können personenbezogene Daten auch in Drittländern (u. a. USA) verarbeiten. Für
+            die USA stützt sich die Übermittlung auf den Angemessenheitsbeschluss der EU-Kommission zum EU-US Data Privacy
+            Framework (Art. 45 DSGVO). Ein Zugriff von Behörden des Drittlands auf die Daten kann dennoch nicht vollständig
+            ausgeschlossen werden. Einzelheiten finden Sie in unserer Datenschutzerklärung.
           </p>
           <div className="mt-3">
             <button
@@ -371,10 +370,9 @@ export default function CookieBanner({ forceShow = false, onClose }) {
               <div className="flex items-center justify-start gap-2">
                 <p className="text-sm text-gray-500 ml-8">
                   Funktionale Dienste sind notwendig, um Funktionen über die grundlegende Funktionalität hinaus
-                  bereitzustellen, wie schönere Schriftarten, Videowiedergabe oder interaktive Web 2.0-Funktionen.
-                  Inhalte von z.B. Videoplattformen und Social-Media-Plattformen sind standardmäßig blockiert und können
-                  zugestimmt werden. Wenn dem Dienst zugestimmt wird, werden diese Inhalte automatisch ohne weitere
-                  manuelle Zustimmung geladen.&nbsp;&nbsp;
+                  bereitzustellen, etwa interaktive Karten. Inhalte von Drittanbietern sind standardmäßig blockiert.
+                  Wenn Sie einem Dienst zustimmen, werden diese Inhalte automatisch ohne weitere manuelle Zustimmung
+                  geladen.&nbsp;&nbsp;
                   <button
                     type="button"
                     onClick={() => toggleCategoryDetails("functional")}

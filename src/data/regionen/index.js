@@ -1,55 +1,81 @@
-// Regionalseiten /photovoltaik/[stadt] – je Stadt eine Datei mit eigenen, recherchierten Inhalten.
-// Neue Stadt: Datei anlegen, hier eintragen, Koordinaten in scripts/regionen-pvgis.mjs ergänzen
-// und `node scripts/regionen-pvgis.mjs` ausführen.
+// Regionalseiten /photovoltaik/[stadt] – je Ort eine Datei mit eigenen, recherchierten Inhalten.
+// Neuer Ort: Koordinaten in scripts/regionen-pvgis.mjs ergänzen, `node scripts/regionen-pvgis.mjs`
+// ausführen, Datei anlegen und hier eintragen. Landesweite Angaben: ./laender.js
 
-import memmingen from "./memmingen";
-import augsburg from "./augsburg";
-import kempten from "./kempten";
-import ulm from "./ulm";
-import muenchen from "./muenchen";
-import garmischPartenkirchen from "./garmisch-partenkirchen";
-import ingolstadt from "./ingolstadt";
-import friedrichshafen from "./friedrichshafen";
-import rosenheim from "./rosenheim";
-import konstanz from "./konstanz";
-import landshut from "./landshut";
-import stuttgart from "./stuttgart";
-import regensburg from "./regensburg";
-import nuernberg from "./nuernberg";
-import heilbronn from "./heilbronn";
-import fuerth from "./fuerth";
-import erlangen from "./erlangen";
-import karlsruhe from "./karlsruhe";
-import wuerzburg from "./wuerzburg";
-import heidelberg from "./heidelberg";
-import freiburg from "./freiburg";
-import passau from "./passau";
-import mannheim from "./mannheim";
-import frankfurt from "./frankfurt";
+import ostermiething from "./ostermiething";
+import linz from "./linz";
+import wels from "./wels";
+import steyr from "./steyr";
+import braunau from "./braunau";
+import riedImInnkreis from "./ried-im-innkreis";
+import voecklabruck from "./voecklabruck";
+import gmunden from "./gmunden";
+import salzburg from "./salzburg";
+import hallein from "./hallein";
+import bischofshofen from "./bischofshofen";
+import zellAmSee from "./zell-am-see";
+import innsbruck from "./innsbruck";
+import kufstein from "./kufstein";
+import woergl from "./woergl";
+import kitzbuehel from "./kitzbuehel";
+import lienz from "./lienz";
+import bregenz from "./bregenz";
+import dornbirn from "./dornbirn";
+import feldkirch from "./feldkirch";
+import klagenfurt from "./klagenfurt";
+import villach from "./villach";
+import wolfsberg from "./wolfsberg";
+import graz from "./graz";
+import leoben from "./leoben";
+import kapfenberg from "./kapfenberg";
+import weiz from "./weiz";
+import hartberg from "./hartberg";
+import eisenstadt from "./eisenstadt";
+import neusiedlAmSee from "./neusiedl-am-see";
+import wien from "./wien";
+import stPoelten from "./st-poelten";
+import wienerNeustadt from "./wiener-neustadt";
+import amstetten from "./amstetten";
+import krems from "./krems";
+import tulln from "./tulln";
+import moedling from "./moedling";
 
 export const REGIONEN = {
-  memmingen,
-  augsburg,
-  kempten,
-  ulm,
-  muenchen,
-  "garmisch-partenkirchen": garmischPartenkirchen,
-  ingolstadt,
-  friedrichshafen,
-  rosenheim,
-  konstanz,
-  landshut,
-  stuttgart,
-  regensburg,
-  nuernberg,
-  heilbronn,
-  fuerth,
-  erlangen,
-  karlsruhe,
-  wuerzburg,
-  heidelberg,
-  freiburg,
-  passau,
-  mannheim,
-  frankfurt,
+  ostermiething,
+  linz,
+  wels,
+  steyr,
+  braunau,
+  "ried-im-innkreis": riedImInnkreis,
+  voecklabruck,
+  gmunden,
+  salzburg,
+  hallein,
+  bischofshofen,
+  "zell-am-see": zellAmSee,
+  innsbruck,
+  kufstein,
+  woergl,
+  kitzbuehel,
+  lienz,
+  bregenz,
+  dornbirn,
+  feldkirch,
+  klagenfurt,
+  villach,
+  wolfsberg,
+  graz,
+  leoben,
+  kapfenberg,
+  weiz,
+  hartberg,
+  eisenstadt,
+  "neusiedl-am-see": neusiedlAmSee,
+  wien,
+  "st-poelten": stPoelten,
+  "wiener-neustadt": wienerNeustadt,
+  amstetten,
+  krems,
+  tulln,
+  moedling,
 };

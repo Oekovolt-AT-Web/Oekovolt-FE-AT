@@ -1,5 +1,6 @@
 "use client";
 
+import { FIRMA } from "@/lib/site";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, CalendarClock, Check, Loader2, Lock, Phone, PhoneCall } from "lucide-react";
@@ -17,10 +18,10 @@ const tageLokal = () =>
   slotsFuerArt("telefon").map((d) => ({ ...d, buchbar: d.slots.length > 0, slots: d.slots.map((s) => ({ ...s, frei: true })) }));
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PLZ_REGEX = /^\d{4,5}$/;
+const PLZ_REGEX = /^\d{4,5}$/; // Österreich 4-stellig, Nachbarländer 5-stellig
 
 const datumText = (iso) =>
-  new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+  new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
 /**
  * Rückruf anfordern – bucht einen kurzen Rückruf-Termin ("Telefonische
@@ -94,7 +95,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
     e.preventDefault();
     setBeruehrt({ telefon: true, email: true, plz: true, name: true });
     if (!name.trim()) return setFehler("Bitte geben Sie Ihren Namen an.");
-    if (!telefonOk) return setFehler("Bitte eine gültige deutsche, österreichische oder Schweizer Rufnummer angeben.");
+    if (!telefonOk) return setFehler("Bitte eine gültige österreichische, deutsche oder Schweizer Rufnummer angeben.");
     if (!emailOk) return setFehler("Bitte eine gültige E-Mail-Adresse angeben.");
     if (!plzOk) return setFehler("Bitte eine gültige Postleitzahl angeben.");
     if (!wunschzeit) return setFehler("Bitte wählen Sie eine Wunschzeit.");
@@ -138,7 +139,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         kalenderLaden();
         setFehler("Diese Zeit wurde gerade vergeben. Bitte wählen Sie eine andere Uhrzeit.");
       } else {
-        setFehler("Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: 08245 96 788 0.");
+        setFehler(`Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: ${FIRMA.telefon}.`);
       }
       setZustand("form");
     }
@@ -163,7 +164,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           className="mt-6 justify-center"
           dunkel={dunkel}
           titel="Rückruf von Ökovolt"
-          beschreibung="Ökovolt ruft Sie zu Ihrer Anfrage zurück. Fragen vorab: 08245 96 788 0"
+          beschreibung={`Ökovolt ruft Sie zu Ihrer Anfrage zurück. Fragen vorab: ${FIRMA.telefon}`}
           start={ergebnis.wunschzeit}
           minuten={15}
         />
@@ -205,7 +206,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             Freie Zeiten werden geladen …
           </p>
         ) : !tage.some((d) => d.buchbar) ? (
-          <p className={cn("text-[14px]", t.leise)}>Gerade sind keine Zeiten verfügbar. Rufen Sie uns gern direkt an: 08245 96 788 0.</p>
+          <p className={cn("text-[14px]", t.leise)}>Gerade sind keine Zeiten verfügbar. Rufen Sie uns gern direkt an: {FIRMA.telefon}.</p>
         ) : (
           <>
             <div className="ov-no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
@@ -336,7 +337,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             value={plz}
             onChange={(e) => setPlz(e.target.value)}
             onBlur={() => setBeruehrt((b) => ({ ...b, plz: true }))}
-            placeholder="86842"
+            placeholder="5121"
             aria-invalid={plzFehler}
             className={cn("h-12 w-full rounded-2xl px-4 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, plzFehler && "ring-red-400")}
           />
@@ -376,7 +377,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           rows={2}
           value={nachricht}
           onChange={(e) => setNachricht(e.target.value)}
-          placeholder="z. B. Dachart, Jahresverbrauch, Wunsch nach Speicher"
+          placeholder="z. B. Hallendach 2.000 m², ca. 400.000 kWh Verbrauch, Lastgang vorhanden"
           className={cn("w-full resize-y rounded-2xl px-4 py-3 text-[15px] leading-relaxed ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld)}
         />
       </label>

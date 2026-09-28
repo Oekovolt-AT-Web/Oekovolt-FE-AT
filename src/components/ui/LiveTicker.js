@@ -11,21 +11,22 @@ export function LiveDot({ className }) {
 }
 
 /**
- * Schlanker Live-Ticker: Börsenstrompreis, Anteil Erneuerbarer, Solar/Wind.
+ * Schlanker Live-Ticker (Strommarkt Österreich, Gebotszone AT): Börsenstrompreis, Anteil Erneuerbarer, Solar/Wind.
  * Rendert serverseitig einen ruhigen Platzhalter gleicher Höhe (kein Layout-Sprung).
  */
 export default function LiveTicker({ className }) {
   const d = useEnergyLive();
   const p = d?.preis?.aktuell;
   const e = d?.erzeugung;
-  const solarAktiv = e?.solarMw > 500;
+  // Österreich: ab rund 100 MW Solarleistung ist „Solar“ die aussagekräftigere Kennzahl
+  const solarAktiv = e?.solarMw > 100;
 
   return (
     <Link
       href="/energie-live"
       className={cn("group flex min-w-0 items-center gap-4 text-[12.5px] text-white/75 transition-colors hover:text-white", className)}
     >
-      <span className="sr-only">Zum Live-Dashboard: </span>
+      <span className="sr-only">Zum Live-Dashboard Strommarkt Österreich: </span>
       <span className="flex items-center gap-2 font-semibold uppercase tracking-[0.14em] text-ov-300">
         <LiveDot />
         Live

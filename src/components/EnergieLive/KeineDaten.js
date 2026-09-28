@@ -10,7 +10,7 @@ export default function KeineDaten({ titel, text }) {
       <h3 className="ov-h3 mt-5 text-ink-900">{titel}</h3>
       <p className="mt-3 max-w-lg text-[15.5px] leading-relaxed text-ink-600">{text}</p>
       <a
-        href="https://www.energy-charts.info/?l=de&c=DE"
+        href="https://www.energy-charts.info/?l=de&c=AT"
         target="_blank"
         rel="noopener noreferrer"
         className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-[14.5px] font-semibold text-ov-700 ring-1 ring-inset ring-ink-200 hover:bg-ink-50"

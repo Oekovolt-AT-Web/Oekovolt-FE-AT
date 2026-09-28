@@ -3,25 +3,31 @@
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Droplet, Flame, Leaf, SlidersHorizontal, Sun, Thermometer } from "lucide-react";
+import { WAERMEPUMPE } from "@/lib/rechner/annahmen";
 import { VERGUETUNG } from "@/data/einspeiseverguetung";
 
 /**
  * Heizkostenvergleich Öl / Gas / Wärmepumpe / Wärmepumpe + PV.
  * Reine Energiekosten pro Jahr – Orientierung mit offen gelegten und
- * anpassbaren Annahmen (Stand 2026). Kein Angebot, keine Prognose.
+ * anpassbaren Annahmen (Stand 09/2026, Österreich). Kein Angebot, keine Prognose.
+ * Alle Preise und Faktoren kommen aus den zentralen Rechner-Annahmen
+ * (src/lib/rechner/annahmen.js, Quellen dort: E-Control Gaspreismonitor,
+ * EU Weekly Oil Bulletin, BMIMI Marktentwicklung 2024) und dem OeMAG-Rechensatz
+ * (src/data/einspeiseverguetung.js) – nicht hier abtippen.
  */
 
-// Standardannahmen 2026 (Endkundenpreise brutto, gerundet, bewusst vorsichtig)
+const W = WAERMEPUMPE;
 const WP_ANNAHMEN = {
-  gasCtKwh: 11, // Gas inkl. CO₂-Preis, Bestands-/Neukundenmix
-  oelEurLiter: 1.1, // Heizöl, stark schwankend
-  wpStromCtKwh: 26, // Wärmepumpentarif (mit § 14a-Modul teils darunter)
-  wirkungsgradGas: 0.9, // Gas-Brennwertkessel im Jahresmittel
-  wirkungsgradOel: 0.85, // Öl-Kessel im Jahresmittel
-  kwhProLiterOel: 10,
-  co2Gas: 0.201, // kg CO₂ je kWh Brennstoff
-  co2Oel: 0.266,
-  co2Strommix: 0.36, // kg CO₂ je kWh Strommix Deutschland (gerundet)
+  gasCtKwh: W.heizungen.gas.preisStandard, // Erdgas Haushalt, Gesamtpreis brutto
+  oelEurLiter: W.heizungen.oel.preisStandard / 100, // €/Liter Heizöl
+  wpStromCtKwh: W.wpTarifCt, // vermeidbarer Haushalts-Arbeitspreis brutto
+  marktpreisCtKwh: VERGUETUNG.saetze[0].teileinspeisung, // Erlös für eingespeisten Überschuss
+  wirkungsgradGas: W.heizungen.gas.nutzungsgrad,
+  wirkungsgradOel: W.heizungen.oel.nutzungsgrad,
+  kwhProLiterOel: W.heizungen.oel.kwhJeLiter,
+  co2Gas: W.heizungen.gas.co2, // kg CO₂ je kWh Brennstoff
+  co2Oel: W.heizungen.oel.co2,
+  co2Strommix: W.co2Strom, // kg CO₂ je kWh Wärmepumpenstrom (heizgradtag-gewichtet, AT 2024)
 };
 
 const BEDARF_PRESETS = [
@@ -47,7 +53,7 @@ export default function Heizkostenvergleich() {
   const [gas, setGas] = useState(WP_ANNAHMEN.gasCtKwh);
   const [oel, setOel] = useState(WP_ANNAHMEN.oelEurLiter);
   const [strom, setStrom] = useState(WP_ANNAHMEN.wpStromCtKwh);
-  const einspeisung = VERGUETUNG.saetze[0].teileinspeisung;
+  const einspeisung = WP_ANNAHMEN.marktpreisCtKwh;
 
   const r = useMemo(() => {
     const a = WP_ANNAHMEN;
@@ -60,7 +66,7 @@ export default function Heizkostenvergleich() {
       { k: "oel", label: "Ölheizung", icon: Droplet, kosten: (oelKwh / a.kwhProLiterOel) * oel, co2: oelKwh * a.co2Oel, detail: `${zahl(oelKwh / a.kwhProLiterOel)} Liter Heizöl`, farbe: "bg-ink-400" },
       { k: "gas", label: "Gasheizung", icon: Flame, kosten: (gasKwh * gas) / 100, co2: gasKwh * a.co2Gas, detail: `${zahl(gasKwh)} kWh Gas`, farbe: "bg-navy-300" },
       { k: "wp", label: "Wärmepumpe", icon: Thermometer, kosten: (wpStrom * strom) / 100, co2: wpStrom * a.co2Strommix, detail: `${zahl(wpStrom)} kWh Strom`, farbe: "bg-ov-400" },
-      // Eigener PV-Strom „kostet“ die entgangene Einspeisevergütung
+      // Eigener PV-Strom „kostet“ den entgangenen Erlös aus der Einspeisung
       { k: "wppv", label: "Wärmepumpe + PV", icon: Sun, kosten: (netzKwh * strom + pvKwh * einspeisung) / 100, co2: netzKwh * a.co2Strommix, detail: `${zahl(pvKwh)} kWh vom eigenen Dach`, farbe: "bg-ov-600", hervor: true },
     ];
     return { zeilen, max: Math.max(...zeilen.map((z) => z.kosten)), wpStrom };
@@ -106,7 +112,7 @@ export default function Heizkostenvergleich() {
                 </button>
               ))}
             </div>
-            <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Tipp: bisheriger Gasverbrauch in kWh × 0,9 oder Liter Heizöl × 8,5.</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-ink-500">Tipp: bisheriger Gasverbrauch in kWh × 0,88 oder Liter Heizöl × 8,5.</p>
           </div>
 
           <div className="mt-7">
@@ -215,9 +221,9 @@ export default function Heizkostenvergleich() {
         </div>
       </div>
       <p className="border-t border-ink-100 px-6 py-4 text-[12.5px] leading-relaxed text-ink-500 md:px-8">
-        Orientierung, kein Angebot. Annahmen Stand 2026: Wirkungsgrad Gas-Brennwert 90 %, Öl-Kessel 85 %; 10 kWh je Liter Heizöl; selbst genutzter Solarstrom
-        wird mit der entgangenen Einspeisevergütung ({zahl(einspeisung, 2)} ct/kWh) bewertet. Ohne Grundgebühren, Wartung, Schornsteinfeger und künftige
-        Preisänderungen (z. B. steigender CO₂-Preis). CO₂-Werte gerundet, Strommix Deutschland ca. {zahl(WP_ANNAHMEN.co2Strommix * 1000)} g/kWh.
+        Orientierung, kein Angebot. Annahmen Stand 09/2026: Nutzungsgrad Gaskessel {zahl(WP_ANNAHMEN.wirkungsgradGas * 100)} %, Ölkessel {zahl(WP_ANNAHMEN.wirkungsgradOel * 100)} %; {zahl(WP_ANNAHMEN.kwhProLiterOel)} kWh je Liter Heizöl; selbst genutzter Solarstrom
+        wird mit dem entgangenen Erlös aus der Einspeisung (Richtwert {zahl(einspeisung)} ct/kWh Marktpreis) bewertet. Ohne Grundgebühren, Wartung, Rauchfangkehrer und
+        künftige Preisänderungen (z. B. CO₂-Bepreisung). Preise: Richtwerte Österreich (E-Control, EU Oil Bulletin); CO₂ Wärmepumpenstrom ca. {zahl(WP_ANNAHMEN.co2Strommix * 1000)} g/kWh (Stromaufbringung AT 2024, heizgradtag-gewichtet).
       </p>
     </div>
   );

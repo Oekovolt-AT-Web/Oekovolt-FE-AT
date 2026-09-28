@@ -15,7 +15,7 @@ import { ALLGEMEIN, WALLBOX as W, satzFuer } from "./annahmen.js";
  * @param {number} e.kraftstoffPreis    €/l
  * @param {number} e.kraftstoffVerbrauch l/100 km
  * @param {number} e.strompreisCt       Netzstrom zu Hause ct/kWh
- * @param {number} e.kwp                für den Einspeisesatz (entgangene Vergütung)
+ * @param {number} e.kwp                für den Einspeise-Rechensatz (entgangener Erlös)
  */
 export function rechneWallbox(e) {
   const {
@@ -55,7 +55,7 @@ export function rechneWallbox(e) {
   const kwhNetzZuhause = kwhZuhause - kwhSolar;
   const solarSzenario = {
     zuhause: kwhNetzZuhause * strom,
-    // Solarstrom kostet die entgangene Einspeisevergütung
+    // Solarstrom kostet den entgangenen Einspeiseerlös (OeMAG-Marktpreis/Tarif)
     solar: kwhSolar * satz,
     oeffentlich: kwhOeffentlich * oeffentlich,
   };

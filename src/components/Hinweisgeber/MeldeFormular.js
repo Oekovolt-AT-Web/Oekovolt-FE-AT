@@ -202,7 +202,7 @@ export default function MeldeFormular() {
             <Frage titel="Möchten Sie anonym bleiben?" hinweis="Beides ist möglich. Auch bei anonymer Meldung können Sie über Ihr persönliches Postfach mit der Meldestelle kommunizieren.">
               <div className="grid gap-3 sm:grid-cols-2">
                 <WahlKarte aktiv={f.anonym} onClick={() => setze("anonym", true)} icon={EyeOff} titel="Anonym melden" text="Keine Angaben zu Ihrer Person. Kontakt ausschließlich über Ihr Postfach mit Fall-Nummer und Schlüssel." empfohlen />
-                <WahlKarte aktiv={!f.anonym} onClick={() => setze("anonym", false)} icon={UserRound} titel="Mit Kontaktdaten" text="Die Meldestelle kann Sie direkt erreichen. Ihre Identität wird vertraulich behandelt (§ 8 HinSchG)." />
+                <WahlKarte aktiv={!f.anonym} onClick={() => setze("anonym", false)} icon={UserRound} titel="Mit Kontaktdaten" text="Die Meldestelle kann Sie direkt erreichen. Ihre Identität wird vertraulich behandelt (§ 7 HSchG)." />
               </div>
               {!f.anonym && (
                 <div className="ov-step-vor mt-8 grid gap-4 sm:grid-cols-2">
@@ -241,7 +241,7 @@ export default function MeldeFormular() {
               {status === "fehler" && (
                 <div role="alert" className="mt-5 rounded-2xl bg-red-50 p-5 text-[14px] leading-relaxed text-red-900 ring-1 ring-red-200">
                   <p className="font-semibold">Die Meldung konnte gerade nicht übermittelt werden.</p>
-                  <p className="mt-1">Ihre Eingaben sind noch da – bitte versuchen Sie es in einigen Minuten erneut. Alternativ erreichen Sie die Meldestelle auf den <a href="#meldewege" className="font-semibold underline">weiteren Meldewegen</a> (z. B. per Post) oder wenden sich an die <a href={EXTERNE_MELDESTELLE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold underline">externe Meldestelle des Bundes</a>.</p>
+                  <p className="mt-1">Ihre Eingaben sind noch da – bitte versuchen Sie es in einigen Minuten erneut. Alternativ erreichen Sie die Meldestelle auf den <a href="#meldewege" className="font-semibold underline">weiteren Meldewegen</a> (z. B. per Post) oder wenden sich an die <a href={EXTERNE_MELDESTELLE_URL} target="_blank" rel="noopener noreferrer" className="font-semibold underline">externe Stelle beim BAK</a>.</p>
                 </div>
               )}
             </Frage>

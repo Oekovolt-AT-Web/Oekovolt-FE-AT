@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import { Check, Minus, X } from "lucide-react";
 
 /**
- * Umschalter: Ferraris-Zähler, moderne Messeinrichtung, intelligentes
- * Messsystem. Links eine stilisierte Zähler-Grafik, rechts die Eigenschaften.
+ * Umschalter: Ferraris-Zähler, Smart Meter mit Opt-out, Smart Meter mit
+ * Viertelstundenwerten (Österreich, ElWG § 54). Links eine stilisierte
+ * Zähler-Grafik, rechts die Eigenschaften. Die internen IDs (mme, imsys)
+ * bleiben aus Kompatibilitätsgründen.
+ * Quellen: Oesterreichs Energie (Rollout ~97 % Ende 2025),
+ * Netz NÖ zu ElWG § 54 (https://netz-noe.at/energiezukunft/elwg-zu-smart-meter).
  */
 
 const ZAEHLER = [
@@ -14,44 +18,44 @@ const ZAEHLER = [
     tab: "Ferraris-Zähler",
     kurz: "Analog",
     titel: "Der alte Drehscheibenzähler",
-    text: "Eine Aluminiumscheibe dreht sich, ein Zählwerk summiert die Kilowattstunden. Abgelesen wird einmal im Jahr – per Hand. Bis spätestens 2032 werden diese Zähler ersetzt.",
+    text: "Eine Aluminiumscheibe dreht sich, ein Zählwerk summiert die Kilowattstunden, abgelesen wird einmal im Jahr. In Österreich ist der Tausch weitgehend abgeschlossen – Ende 2025 hatten rund 97 % der Zählpunkte ein digitales Messgerät.",
     eigenschaften: [
       ["Messung", "nur Gesamtverbrauch", 0],
       ["Verbrauch einsehen", "Ablesen am Zähler", 0],
       ["Datenübertragung", "keine", 0],
       ["Dynamischer Stromtarif", "nicht möglich", 0],
-      ["Steuerung nach § 14a EnWG", "nicht möglich", 0],
-      ["Kosten (Preisobergrenze)", "nicht gedeckelt", 1],
+      ["Energiegemeinschaft", "nicht möglich", 0],
+      ["Mit PV, Wallbox, Wärmepumpe", "wird getauscht", 1],
     ],
   },
   {
     id: "mme",
-    tab: "Moderne Messeinrichtung",
-    kurz: "Digital",
-    titel: "Digitaler Zähler ohne Funk",
-    text: "Die moderne Messeinrichtung zeigt Verbrauch der letzten Tage, Wochen und Monate im Display – sendet aber nichts. Sie ist der Mindeststandard für alle Haushalte.",
+    tab: "Smart Meter · Opt-out",
+    kurz: "Opt-out",
+    titel: "Smart Meter mit reduzierter Auslesung",
+    text: "Beim Opt-out nach § 54 Abs. 2 ElWG werden Tages- und Viertelstundenwerte weder gespeichert noch übertragen – der Zähler liefert nur, was für die Abrechnung nötig ist. Nicht möglich bei PV-Anlage, Wallbox, Wärmepumpe, Speicher, dynamischem Tarif oder Teilnahme an einer Energiegemeinschaft.",
     eigenschaften: [
-      ["Messung", "Tages-, Wochen-, Monatswerte", 1],
-      ["Verbrauch einsehen", "am Display", 1],
-      ["Datenübertragung", "keine", 0],
+      ["Messung", "Zählerstände für die Abrechnung", 1],
+      ["Verbrauch einsehen", "am Display, Jahresabrechnung", 1],
+      ["Datenübertragung", "nur Abrechnungswerte", 1],
       ["Dynamischer Stromtarif", "nicht möglich", 0],
-      ["Steuerung nach § 14a EnWG", "nicht möglich", 0],
-      ["Kosten (Preisobergrenze)", "max. 20 € / Jahr", 2],
+      ["Energiegemeinschaft", "nicht möglich", 0],
+      ["Mit PV, Wallbox, Wärmepumpe", "nicht zulässig", 0],
     ],
   },
   {
     id: "imsys",
-    tab: "Intelligentes Messsystem",
-    kurz: "Smart Meter",
-    titel: "Digitaler Zähler + Smart-Meter-Gateway",
-    text: "Erst mit dem Gateway wird der Zähler smart: Er misst viertelstündlich, überträgt die Daten verschlüsselt nach BSI-Standard und ermöglicht Tarife, Steuerung und Energiemanagement.",
+    tab: "Smart Meter · Viertelstunde",
+    kurz: "Opt-in",
+    titel: "Viertelstundenwerte im Kundenportal",
+    text: "Der Smart Meter misst Bezug und – bei PV-Anlagen – Einspeisung in Viertelstundenwerten und überträgt sie verschlüsselt an den Netzbetreiber. Im Kundenportal Ihres Netzbetreibers sehen Sie die Werte in der Regel am Folgetag; Echtzeitwerte liefert die Kundenschnittstelle des Zählers.",
     eigenschaften: [
       ["Messung", "alle 15 Minuten", 2],
-      ["Verbrauch einsehen", "App / Kundenportal", 2],
-      ["Datenübertragung", "verschlüsselt über Gateway", 2],
+      ["Verbrauch einsehen", "Kundenportal des Netzbetreibers", 2],
+      ["Datenübertragung", "verschlüsselt an den Netzbetreiber", 2],
       ["Dynamischer Stromtarif", "möglich", 2],
-      ["Steuerung nach § 14a EnWG", "möglich (mit Steuerbox)", 2],
-      ["Kosten (Preisobergrenze)", "30–50 € / Jahr im Haushalt", 1],
+      ["Energiegemeinschaft", "möglich", 2],
+      ["Mit PV, Wallbox, Wärmepumpe", "Standard", 2],
     ],
   },
 ];
@@ -65,14 +69,14 @@ function Grafik({ id, bewegung }) {
           <stop offset="1" stopColor="#eef0f4" />
         </linearGradient>
       </defs>
-      {/* Gateway (nur iMSys) */}
+      {/* Kommunikationsmodul (nur Viertelstunden-Messung) */}
       <g style={{ opacity: id === "imsys" ? 1 : 0, transform: id === "imsys" ? "translateX(0)" : "translateX(20px)", transition: "all 500ms cubic-bezier(.22,1,.36,1)" }}>
         <rect x="214" y="92" width="92" height="124" rx="14" fill="#03122b" />
         <rect x="228" y="108" width="64" height="8" rx="4" fill="#669933" />
         <circle cx="236" cy="200" r="4" fill="#8cba58">
           {bewegung && <animate attributeName="opacity" values="1;0.3;1" dur="1.6s" repeatCount="indefinite" />}
         </circle>
-        <text x="260" y="162" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">GATEWAY</text>
+        <text x="260" y="162" textAnchor="middle" fill="#ffffff" fontSize="11" fontWeight="700">FUNK · PLC</text>
         <path d="M244 60 a24 24 0 0 1 32 0 M236 50 a36 36 0 0 1 48 0" fill="none" stroke="#669933" strokeWidth="4" strokeLinecap="round" />
         <circle cx="260" cy="72" r="5" fill="#669933" />
       </g>
@@ -116,7 +120,7 @@ function Grafik({ id, bewegung }) {
           {id === "ferraris" ? "ANALOG" : id === "mme" ? "DIGITAL" : "SMART"}
         </text>
       </g>
-      {/* Kabel zum Gateway */}
+      {/* Kabel zum Kommunikationsmodul */}
       <path d="M192 170 C 206 170, 204 150, 214 150" fill="none" stroke="#669933" strokeWidth="3" style={{ opacity: id === "imsys" ? 1 : 0, transition: "opacity 400ms" }} />
     </svg>
   );

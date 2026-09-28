@@ -173,7 +173,7 @@ export default function ReferenzKarte({
         )
       : standorte;
   }, [suche, standorte]);
-  // Alle Projekte zählen – auch die am Firmensitz (Türkheim)
+  // Alle Projekte zählen – auch die am Firmensitz (Ostermiething)
   const projekteAmSitz = firmensitz.projekte?.length || 0;
   const gesamtProjekte = projekteAmSitz + standorte.reduce((s, o) => s + (o.projekte?.length || o.anzahl || 0), 0);
   const anzahlOrte = standorte.length + (projekteAmSitz ? 1 : 0);
@@ -257,7 +257,7 @@ export default function ReferenzKarte({
                   {firmensitz.label}
                 </span>
                 <span className="block text-[12.5px] text-white/55">
-                  {[firmensitz.plz, firmensitz.land || "Deutschland", "Firmensitz"].filter(Boolean).join(" · ")}
+                  {[firmensitz.plz, firmensitz.land || "Österreich", "Firmensitz"].filter(Boolean).join(" · ")}
                   {firmensitz.projekte?.length > 0 && (
                     <span className="text-ov-300">
                       {" "}

@@ -4,7 +4,8 @@
 //  - doppelter Eintrag „Türkenfeld" bei 47.49 / 9.69 liegt in Vorarlberg (Hörbranz) -> Label „Vorarlberg"
 //  - „Innsbruck" lag bei 47.10 / 9.49 (Rheintal) -> Koordinaten von Innsbruck
 
-export const FIRMENSITZ = { id: "tuerkheim", label: "Türkheim", lat: 48.0636, lng: 10.6395, land: "Deutschland", sitz: true };
+// Firmensitz der Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething (Koordinaten: OpenStreetMap)
+export const FIRMENSITZ = { id: "ostermiething", label: "Ostermiething", plz: "5121", lat: 48.0428, lng: 12.8417, land: "Österreich", sitz: true };
 
 const ROH = [
   { lat: 47.7811014, lng: 9.612468, label: "Ravensburg" },

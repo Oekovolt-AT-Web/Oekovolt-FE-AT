@@ -5,15 +5,16 @@ import RechnerSeite, { rechnerMetadata } from "@/components/Rechner/RechnerSeite
 import StromspeicherRechner from "@/components/Rechner/StromspeicherRechner";
 import SectionHeading from "@/components/ui/SectionHeading";
 import { SPEICHER, ALLGEMEIN, VERGUETUNG, fmt } from "@/lib/rechner/annahmen";
+import { PREISQUELLEN } from "@/data/solarrechner";
 
 const PFAD = "/rechner/stromspeicher";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "Stromspeicher-Rechner: Größe & Ersparnis | Ökovolt",
+  title: "Stromspeicher-Rechner Österreich: Größe & Ersparnis | Ökovolt",
   description:
-    "Stromspeicher-Rechner 2026: Autarkie, Ersparnis und Amortisation stündlich simuliert – inklusive wirtschaftlich optimaler Speichergröße. Jetzt kostenlos rechnen.",
-  keywords: ["Stromspeicher Rechner", "Speichergröße berechnen", "Batteriespeicher lohnt sich", "Autarkie berechnen", "PV Speicher Amortisation"],
+    "Stromspeicher-Rechner für Österreich: Autarkie, Ersparnis und Amortisation stündlich simuliert – mit wirtschaftlich optimaler Speichergröße. Kostenlos rechnen.",
+  keywords: ["Stromspeicher Rechner Österreich", "Speichergröße berechnen", "Batteriespeicher lohnt sich", "Autarkie berechnen", "PV Speicher Amortisation"],
 });
 
 const FAQ = [
@@ -23,15 +24,15 @@ const FAQ = [
   },
   {
     q: "Warum erreicht man mit Speicher keine 100 % Autarkie?",
-    a: "Im Winter erzeugt eine PV-Anlage in Süddeutschland nur etwa ein Zehntel ihres Jahresertrags auf drei Monate verteilt. An trüben Tagen reicht der Strom nicht einmal für den Tagesbedarf, ein Speicher kann dann nichts zwischenspeichern. Realistisch sind 60–80 % Autarkie – mehr nur mit sehr großer Anlage und hohem Aufwand.",
+    a: "Im Winter erzeugt eine PV-Anlage in Österreich – abseits sonniger Hochlagen – nur etwa ein Zehntel ihres Jahresertrags auf drei Monate verteilt. An trüben Tagen reicht der Strom nicht einmal für den Tagesbedarf, ein Speicher kann dann nichts zwischenspeichern. Realistisch sind 60–80 % Autarkie – mehr nur mit sehr großer Anlage und hohem Aufwand.",
   },
   {
     q: "Wie rechnet der Stromspeicher-Rechner?",
-    a: "Er simuliert ein ganzes Jahr in Stundenschritten (8.760 Stunden): Solarertrag nach Monat und Tageszeit mit wechselnd sonnigen und trüben Tagen, Haushaltslast nach typischem Tagesprofil, optional E-Auto und Wärmepumpe. Der Speicher lädt Überschüsse und entlädt bei Bedarf – mit Wirkungsgrad, nutzbarer Kapazität und Standby-Verbrauch. Die Ersparnis ergibt sich aus weniger Netzbezug abzüglich entgangener Einspeisevergütung; über die Nutzungsdauer rechnen wir – wie im Solarrechner – mit leicht steigendem Strompreis.",
+    a: "Er simuliert ein ganzes Jahr in Stundenschritten (8.760 Stunden): Solarertrag nach Monat und Tageszeit mit wechselnd sonnigen und trüben Tagen, Haushaltslast nach typischem Tagesprofil, optional E-Auto und Wärmepumpe. Der Speicher lädt Überschüsse und entlädt bei Bedarf – mit Wirkungsgrad, nutzbarer Kapazität und Standby-Verbrauch. Die Ersparnis ergibt sich aus weniger Netzbezug abzüglich entgangenem Einspeiseerlös (OeMAG-Marktpreis bzw. Einspeisetarif); über die Nutzungsdauer rechnen wir – wie im Solarrechner – mit leicht steigendem Strompreis.",
   },
   {
     q: "Lohnt sich das Nachrüsten eines Speichers?",
-    a: "Oft ja, aber es ist teurer als die Installation zusammen mit der PV-Anlage: Häufig wird ein eigener Batterie-Wechselrichter (AC-Kopplung) und ein zweiter Montagetermin nötig. Stellen Sie im Rechner „Nachrüsten“ ein, dann wird ein Aufschlag berücksichtigt. Besonders lohnend ist das Nachrüsten, wenn die EEG-Vergütung einer Altanlage ausläuft.",
+    a: "Oft ja, aber es ist teurer als die Installation zusammen mit der PV-Anlage: Häufig wird ein eigener Batterie-Wechselrichter (AC-Kopplung) und ein zweiter Montagetermin nötig. Stellen Sie im Rechner „Nachrüsten“ ein, dann wird ein Aufschlag berücksichtigt. Besonders lohnend ist das Nachrüsten, wenn eine alte Anlage aus einem fixen Ökostromtarif fällt und der Überschuss nur noch den Marktpreis bringt. Der EAG-Investitionszuschuss fördert Speicher nur gemeinsam mit einer PV-Anlage.",
   },
   {
     q: "Wie lange hält ein Stromspeicher?",
@@ -39,7 +40,7 @@ const FAQ = [
   },
   {
     q: "Brauche ich mit Speicher einen dynamischen Stromtarif?",
-    a: "Nicht zwingend. Ein Speicher erhöht vor allem Ihren Eigenverbrauch. Mit einem dynamischen Tarif und passendem Energiemanagement kann er zusätzlich günstigen Netzstrom nutzen – das lohnt sich vor allem mit E-Auto oder Wärmepumpe. Wie viel das heute bringt, zeigt unser Dynamischer-Tarif-Rechner.",
+    a: "Nicht zwingend. Ein Speicher erhöht vor allem Ihren Eigenverbrauch. Mit einem Spotpreis-Tarif und passendem Energiemanagement kann er zusätzlich günstigen Netzstrom nutzen – das lohnt sich vor allem mit E-Auto oder Wärmepumpe. Achtung: Netzbezug in den Speicher und spätere Rückspeisung sind derzeit netzentgeltpflichtig. Wie viel ein dynamischer Tarif heute bringt, zeigt unser Dynamischer-Tarif-Rechner.",
   },
 ];
 
@@ -64,7 +65,7 @@ export default function Page() {
           <SectionHeading
             eyebrow="So rechnen wir"
             title="Ein Speicher lohnt sich, wenn er oft voll wird – und oft leer."
-            lead="Jede Kilowattstunde, die der Speicher abends liefert, ersetzt Netzstrom für rund 33 Cent – statt für knapp 8 Cent eingespeist zu werden. Wie oft das passiert, entscheidet über die Wirtschaftlichkeit."
+            lead={`Jede Kilowattstunde, die der Speicher abends liefert, ersetzt Netzstrom für rund ${fmt(ALLGEMEIN.strompreis * 100)} Cent – statt für etwa ${fmt(VERGUETUNG.saetze[0].teileinspeisung)} Cent eingespeist zu werden. Wie oft das passiert, entscheidet über die Wirtschaftlichkeit.`}
           />
           <div className="ov-prose mt-8 max-w-2xl">
             <p>
@@ -79,10 +80,10 @@ export default function Page() {
         </>
       }
       annahmen={[
-        ["PV-Ertrag (Süd, Süddeutschland)", `${fmt(ALLGEMEIN.ertragProKwp)} kWh/kWp`],
-        ["Strompreis Netzbezug", `${fmt(ALLGEMEIN.strompreis * 100)} ct/kWh`],
-        ["Einspeisevergütung bis 10 kWp", `${fmt(VERGUETUNG.saetze[0].teileinspeisung, 2)} ct/kWh`],
-        ["Speicherpreis mit PV-Anlage", `${fmt(SPEICHER.preisProKwh)} €/kWh`],
+        ["PV-Ertrag (Süd, Österreich)", `${fmt(ALLGEMEIN.ertragProKwp)} kWh/kWp`],
+        ["Strompreis Netzbezug (vermeidbar)", `${fmt(ALLGEMEIN.strompreis * 100)} ct/kWh`],
+        ["Einspeiseerlös (Rechensatz)", `${fmt(VERGUETUNG.saetze[0].teileinspeisung, 1)} ct/kWh`],
+        ["Speicherpreis mit PV-Anlage (brutto)", `${fmt(SPEICHER.preisProKwh)} €/kWh`],
         ["Aufschlag Nachrüstung", `${fmt(SPEICHER.nachruestAufschlag)} €`],
         ["Nutzbare Kapazität · Wirkungsgrad", `${fmt(SPEICHER.nutzbarAnteil * 100)} % · ${fmt(SPEICHER.wirkungsgradJeRichtung ** 2 * 100)} %`],
         ["Betrachtungsdauer · Strompreis", `${SPEICHER.lebensdauerJahre} Jahre · +${fmt(SPEICHER.strompreisSteigerung * 100)} %/Jahr`],
@@ -90,16 +91,18 @@ export default function Page() {
         ["Wärmepumpe", `${fmt(SPEICHER.wpStromKwh)} kWh Strom/Jahr`],
       ]}
       quellen={[
-        { name: "Bundesnetzagentur (EEG-Sätze)", url: VERGUETUNG.quelle.url },
+        { name: "OeMAG – Marktpreis", url: VERGUETUNG.quelle.url },
+        { name: "BMWET/FH Technikum Wien – PV-Batteriespeichersysteme, Marktentwicklung 2024", url: "https://www.bmwet.gv.at/dam/jcr:35a533b7-5724-464b-8737-ad014c18cd03/PV-Speichersysteme%20-%20Marktentwicklung%202024.pdf" },
+        PREISQUELLEN.find((q) => q.name.startsWith("PVGIS")),
         { name: "HTW Berlin – Unabhängigkeitsrechner (Plausibilisierung)", url: "https://solar.htw-berlin.de/rechner/unabhaengigkeitsrechner/" },
       ]}
       faq={FAQ}
       faqTitel="Stromspeicher: Fragen & Antworten"
       cta={{
         title: "Die richtige Speichergröße – geplant mit Ihren echten Werten.",
-        text: "Wir prüfen Ihren Lastgang, Ihr Dach und vorhandene Technik und empfehlen einen Speicher, der sich wirklich rechnet – herstellerunabhängig.",
+        text: "Wir prüfen Ihren Lastgang, Ihr Dach und vorhandene Technik und empfehlen einen Speicher, der sich wirklich rechnet – herstellerunabhängig, in ganz Österreich. Für Betriebe bewerten wir zusätzlich Peak Shaving und Notstrom.",
         primary: { label: "Speicher-Angebot anfragen", href: "/angebot" },
-        secondary: { label: "Zum Solarrechner", href: "/solarrechner" },
+        secondary: { label: "Gewerbespeicher", href: "/gewerbespeicher" },
       }}
     />
   );

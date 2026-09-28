@@ -9,8 +9,9 @@ import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { TOOLS } from "./tools";
 import { STAND } from "@/lib/rechner/annahmen";
+import { BASE_URL, SITE_NAME } from "@/lib/site";
 
-const BASE = "https://www.oekovolt.com";
+const BASE = BASE_URL;
 
 /** Metadaten für eine Rechner-Seite */
 export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
@@ -23,8 +24,9 @@ export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
+      locale: "de_AT",
       url,
-      siteName: "Ökovolt Österreich",
+      siteName: SITE_NAME,
       title,
       description,
       images: [{ url: `${BASE}/Logo-Oekovolt-Gruen-mit-Weiss.webp`, width: 1200, height: 630, alt: title }],

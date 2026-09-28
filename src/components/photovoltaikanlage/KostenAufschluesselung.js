@@ -37,7 +37,7 @@ const SCHNELLWAHL = [5, 8, 10, 15, 20, 30];
 const eur = (n) => `${(Math.round(n / 10) * 10).toLocaleString("de-DE")} €`;
 const zahl = (n, s = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: s, maximumFractionDigits: s });
 
-/** Gewichteter Einspeisesatz (Teileinspeisung) über die EEG-Stufen */
+/** Gewichteter Einspeise-Rechensatz (OeMAG-Marktpreis) über die Größenklassen */
 function mischsatz(kwp) {
   let rest = kwp;
   let summe = 0;
@@ -146,7 +146,7 @@ export default function KostenAufschluesselung() {
       {/* Ergebnis */}
       <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr]">
         <div className="p-6 md:p-8">
-          <p className="text-[13px] font-medium text-ink-500">Richtpreis schlüsselfertig (Endpreis, 0 % USt.)</p>
+          <p className="text-[13px] font-medium text-ink-500">Richtpreis schlüsselfertig (brutto inkl. 20 % USt.)</p>
           <p className="mt-1 font-display text-[clamp(2.4rem,1.8rem+2.4vw,3.6rem)] font-extrabold leading-none tracking-tight text-ink-900" aria-live="polite">
             <span className="ov-num">≈ {eur(summe)}</span>
           </p>
@@ -185,7 +185,7 @@ export default function KostenAufschluesselung() {
         <div className="grid grid-cols-2 gap-px border-t border-ink-100 bg-ink-100 lg:border-l lg:border-t-0">
           <Kachel icon={LayoutGrid} label="Dachfläche" wert={`ca. ${zahl(kwp * ANNAHMEN.qmProKwp)} m²`} />
           <Kachel icon={Sun} label="Jahresertrag (Süd)" wert={`ca. ${zahl(kwp * ANNAHMEN.ertragProKwpSued)} kWh`} />
-          <Kachel icon={Coins} label="Einspeisevergütung" wert={`${zahl(mischsatz(kwp), 2)} ct/kWh`} hinweis={`Stand ${VERGUETUNG.gueltigAbLabel}`} />
+          <Kachel icon={Coins} label="Einspeiseerlös (Marktpreis)" wert={`${zahl(mischsatz(kwp), 2)} ct/kWh`} hinweis={`Stand ${VERGUETUNG.gueltigAbLabel}`} />
           <Kachel icon={Wrench} label="Laufende Kosten" wert={`ca. ${zahl(kwp * ANNAHMEN.betriebskostenProKwp)} €/Jahr`} hinweis="Versicherung, Wartung, Zähler" />
           <div className="col-span-2 flex flex-col justify-center gap-3 bg-sand-50 p-5 md:p-6">
             <p className="text-[14px] leading-relaxed text-ink-600">Was bringt Ihnen diese Größe konkret? Ersparnis und Amortisation rechnen Sie im Solarrechner durch.</p>

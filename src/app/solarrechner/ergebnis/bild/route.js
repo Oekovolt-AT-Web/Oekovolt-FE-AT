@@ -6,7 +6,7 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { berechne } from "@/lib/solarrechner";
 import { alsBerechnung, eingabenAusParams } from "@/lib/rechnerTeilen";
-import { AUSRICHTUNGEN } from "@/data/solarrechner";
+import { AUSRICHTUNGEN, zielgruppeGrenzen } from "@/data/solarrechner";
 
 export const runtime = "nodejs";
 
@@ -32,11 +32,13 @@ export async function GET(request) {
   const r = berechne(alsBerechnung(e));
   const m = await mittel();
   const richtung = AUSRICHTUNGEN.find((a) => a.id === e.ausrichtung)?.label || "";
+  const betrieb = r.zielgruppe !== "privat";
+  const verbrauchTxt = e.verbrauch >= 10000 ? `${de(e.verbrauch / 1000)} MWh` : `${de(e.verbrauch)} kWh`;
 
   const kacheln = [
-    { l: "Autarkie", w: `${Math.round(r.autarkie * 100)} %` },
-    { l: "Amortisation", w: r.amortisationJahre != null ? `${de(r.amortisationJahre, 1)} Jahre` : "über 20 Jahre" },
-    { l: "CO2-Einsparung pro Jahr", w: `${de(r.co2ProJahr / 1000, 1)} t` },
+    betrieb ? { l: "Eigenverbrauch", w: `${Math.round(r.eigenverbrauchsquote * 100)} %` } : { l: "Autarkie", w: `${Math.round(r.autarkie * 100)} %` },
+    { l: "Amortisation", w: r.amortisationJahre != null ? `${de(r.amortisationJahre, 1)} Jahre` : `über ${r.jahre} Jahre` },
+    { l: "CO2 vermieden pro Jahr", w: `${de(r.co2ProJahr / 1000, 1)} t` },
   ];
 
   return new ImageResponse(
@@ -50,11 +52,11 @@ export async function GET(request) {
 
         <div style={{ display: "flex", flexDirection: "column", marginTop: 48 }}>
           <div style={{ display: "flex", fontSize: 30, color: "#b5dc8a", fontWeight: 600 }}>
-            {`${de(e.kwp, e.kwp % 1 ? 1 : 0)} kWp · ${richtung}${e.speicher ? ` · ${e.speicher} kWh Speicher` : ""} · ${de(e.verbrauch)} kWh Verbrauch`}
+            {`${betrieb ? `${zielgruppeGrenzen(r.zielgruppe).label} · ` : ""}${de(e.kwp, e.kwp % 1 ? 1 : 0)} kWp · ${richtung}${e.speicher ? ` · ${de(e.speicher)} kWh Speicher` : ""} · ${verbrauchTxt} Verbrauch`}
           </div>
           <div style={{ display: "flex", alignItems: "baseline", marginTop: 14, fontFamily: "Manrope" }}>
             <span style={{ fontSize: 112, lineHeight: 1, letterSpacing: -3 }}>{`${de(Math.round(r.nutzenProJahr))} €`}</span>
-            <span style={{ fontSize: 34, marginLeft: 22, color: "rgba(255,255,255,0.8)", fontFamily: "Inter" }}>Vorteil im 1. Jahr</span>
+            <span style={{ fontSize: 34, marginLeft: 22, color: "rgba(255,255,255,0.8)", fontFamily: "Inter" }}>{betrieb ? "Vorteil im 1. Jahr (netto)" : "Vorteil im 1. Jahr"}</span>
           </div>
         </div>
 

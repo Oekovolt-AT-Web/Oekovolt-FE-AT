@@ -31,7 +31,7 @@ export function speicherKosten(kwh, nachruesten = false) {
 
 /**
  * Wirtschaftlicher Vergleich einer Speichergröße gegen "ohne Speicher".
- * Ersparnis = vermiedener Netzbezug × Strompreis − entgangene Einspeisevergütung.
+ * Ersparnis = vermiedener Netzbezug × Strompreis − entgangener Einspeiseerlös.
  */
 function bewerte(ohne, mit, kwp) {
   const satz = satzFuer(kwp, "teileinspeisung") / 100;
@@ -42,7 +42,7 @@ function bewerte(ohne, mit, kwp) {
 
 /**
  * Wirtschaftlichkeit über die Nutzungsdauer: der ersetzte Strompreis steigt
- * jährlich (wie im Solarrechner), die Einspeisevergütung bleibt nominal fest.
+ * jährlich (wie im Solarrechner), der Einspeise-Rechensatz bleibt nominal konstant.
  * @returns {{ summe: number, amortisation: number|null }}
  */
 function lebenszyklus(ohne, mit, kwp, kosten) {

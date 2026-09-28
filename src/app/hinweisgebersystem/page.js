@@ -10,11 +10,12 @@ import Faq from "@/components/ui/Faq";
 import Reveal from "@/components/ui/Reveal";
 import MeldeFormular from "@/components/Hinweisgeber/MeldeFormular";
 import { ABLAUF, FAQ, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL } from "@/data/hinweisgeber";
+import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
 
-const PAGE_URL = "https://www.oekovolt.com/hinweisgebersystem";
+const PAGE_URL = `${BASE_URL}/hinweisgebersystem`;
 const TITEL = "Hinweisgebersystem – vertraulich melden | Ökovolt";
 const BESCHREIBUNG =
-  "Verstöße vertraulich und auf Wunsch anonym melden: das interne Hinweisgebersystem der ÖKOVOLT GmbH Solartechnik nach dem Hinweisgeberschutzgesetz (HinSchG).";
+  `Rechtsverstöße vertraulich und auf Wunsch anonym melden: das interne Hinweisgebersystem der ${FIRMA.name} nach dem HinweisgeberInnenschutzgesetz (HSchG).`;
 
 export const metadata = {
   title: TITEL,
@@ -23,12 +24,12 @@ export const metadata = {
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    locale: "de_AT",
+    locale: LOCALE,
     url: PAGE_URL,
-    siteName: "Ökovolt Österreich",
+    siteName: SITE_NAME,
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Hinweisgebersystem" }],
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Hinweisgebersystem" }],
   },
 };
 
@@ -39,8 +40,8 @@ const schema = {
   url: PAGE_URL,
   name: TITEL,
   description: BESCHREIBUNG,
-  isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-  about: { "@id": "https://www.oekovolt.com/#organization" },
+  isPartOf: { "@id": `${BASE_URL}/#website` },
+  about: { "@id": `${BASE_URL}/#organization` },
 };
 
 export default function HinweisgebersystemPage() {
@@ -51,9 +52,9 @@ export default function HinweisgebersystemPage() {
       <PageHero
         variant="dark"
         breadcrumbs={[{ name: "Hinweisgebersystem" }]}
-        eyebrow="Hinweisgeberschutzgesetz (HinSchG)"
+        eyebrow="HinweisgeberInnenschutzgesetz (HSchG)"
         title={<>Verstöße melden – <span className="ov-text-gradient-light">vertraulich und sicher.</span></>}
-        lead="Ihr Hinweis hilft uns, Fehlverhalten aufzudecken und abzustellen. Über dieses Portal erreichen Sie direkt die unabhängige interne Meldestelle der ÖKOVOLT GmbH Solartechnik – auf Wunsch vollständig anonym."
+        lead={`Ihr Hinweis hilft uns, Rechtsverstöße aufzudecken und abzustellen. Über dieses Portal erreichen Sie direkt die interne Stelle der ${FIRMA.name} – auf Wunsch vollständig anonym.`}
         points={["Anonym möglich", "IP-Adresse wird nicht mit der Meldung gespeichert", "Schutz vor Repressalien", "Rückmeldung innerhalb von 3 Monaten"]}
         actions={[
           { label: "Meldung abgeben", href: "#meldung" },
@@ -85,10 +86,10 @@ export default function HinweisgebersystemPage() {
             cols={3}
             items={[
               { icon: EyeOff, title: "Anonymität", text: "Keine Pflichtangaben zu Ihrer Person; Ihre IP-Adresse wird nicht mit der Meldung gespeichert. Die Kommunikation läuft über Fall-Nummer und Zugangsschlüssel." },
-              { icon: UserCheck, title: "Unabhängige Meldestelle", text: "Nur die benannten, zur Verschwiegenheit verpflichteten Personen haben Zugriff. Sie sind bei der Bearbeitung nicht weisungsgebunden." },
-              { icon: Scale, title: "Schutz vor Repressalien", text: "Benachteiligungen wegen einer Meldung in gutem Glauben sind nach § 36 HinSchG verboten." },
+              { icon: UserCheck, title: "Unabhängige Meldestelle", text: "Nur die benannten, zur Vertraulichkeit verpflichteten Personen der internen Stelle haben Zugriff. Sie sind unparteiisch und bei der Bearbeitung nicht weisungsgebunden." },
+              { icon: Scale, title: "Schutz vor Repressalien", text: "Vergeltungsmaßnahmen wegen eines berechtigten Hinweises sind nach § 20 HSchG rechtsunwirksam und begründen Schadenersatzansprüche." },
               { icon: FileLock2, title: "Sichere Übertragung", text: "Die Verbindung ist durchgängig verschlüsselt. Ihr Zugangsschlüssel wird nur als Hash gespeichert." },
-              { icon: ShieldCheck, title: "Gesetzliche Fristen", text: "Eingangsbestätigung spätestens nach 7 Tagen, Rückmeldung spätestens nach 3 Monaten (§ 17 HinSchG)." },
+              { icon: ShieldCheck, title: "Gesetzliche Fristen", text: "Eingangsbestätigung spätestens nach 7 Kalendertagen, Rückmeldung spätestens 3 Monate danach (§ 13 HSchG)." },
               { icon: KeyRound, title: "Ihr Postfach", text: "Beantworten Sie Rückfragen und verfolgen Sie den Stand – ohne Ihre Identität preiszugeben." },
             ]}
           />
@@ -104,7 +105,7 @@ export default function HinweisgebersystemPage() {
               <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">
                 Alternativ können Sie sich an die{" "}
                 <a href={EXTERNE_MELDESTELLE_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline">
-                  externe Meldestelle des Bundes beim Bundesamt für Justiz
+                  externe Stelle beim Bundesamt zur Korruptionsprävention und Korruptionsbekämpfung (BAK)
                 </a>{" "}
                 wenden.
               </p>
@@ -120,8 +121,8 @@ export default function HinweisgebersystemPage() {
           title={MELDESTELLE.telefon ? "Lieber telefonisch, per Post oder im Gespräch?" : "Lieber per Post oder im persönlichen Gespräch?"}
           lead={
             MELDESTELLE.telefon
-              ? "Sie können Ihre Meldung auch mündlich oder schriftlich abgeben. Auf Wunsch ist ein persönliches Gespräch mit der Meldestelle möglich (§ 16 Abs. 3 HinSchG)."
-              : "Sie können Ihre Meldung auch schriftlich per Post abgeben. Auf Wunsch ist ein persönliches Gespräch mit der Meldestelle möglich (§ 16 Abs. 3 HinSchG)."
+              ? "Sie können Ihre Meldung auch mündlich oder schriftlich abgeben. Auf Wunsch ist ein persönliches Gespräch mit der internen Stelle möglich."
+              : "Sie können Ihre Meldung auch schriftlich per Post abgeben. Auf Wunsch ist ein persönliches Gespräch mit der internen Stelle möglich."
           }
           className="mb-10"
         />

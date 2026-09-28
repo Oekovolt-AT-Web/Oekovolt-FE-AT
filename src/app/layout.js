@@ -66,7 +66,7 @@ const siteSchema = {
       hasMap: "https://www.google.com/maps?q=%C3%96kovolt+Solartechnik+GmbH,+Gewerbegebiet+10,+5121+Ostermiething",
       openingHoursSpecification: [
         { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "08:00", closes: "16:00" },
-        { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday"], opens: "08:00", closes: "12:00" },
+        { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday"], opens: "08:00", closes: "13:00" },
       ],
       telephone: "+43-6278-71030",
       email: FIRMA.email,
@@ -225,8 +225,8 @@ export default function RootLayout({ children }) {
         {/* Geo targeting */}
         <meta name="geo.region" content="AT-4" />
         <meta name="geo.placename" content="Ostermiething, Oberösterreich, Österreich" />
-        <meta name="geo.position" content="48.0466;12.8255" />
-        <meta name="ICBM" content="48.0466, 12.8255" />
+        <meta name="geo.position" content="48.0428;12.8417" />
+        <meta name="ICBM" content="48.0428, 12.8417" />
         {/* Language */}
         <meta httpEquiv="content-language" content="de-AT" />
         {/* Keine Vorverbindungen zu Google: Verbindungen zu Drittanbietern erst nach Einwilligung */}

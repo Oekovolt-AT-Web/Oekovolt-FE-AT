@@ -10,44 +10,46 @@ import FeatureGrid from "@/components/ui/FeatureGrid";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import LexikonExplorer from "@/components/Lexikon/LexikonExplorer";
-import { BEGRIFFE, KATEGORIEN, LEXIKON_STAND, begriffeNachBuchstabe } from "@/data/lexikon";
+import { BEGRIFFE, KATEGORIEN, LEXIKON_STAND, begriffeNachBuchstabe, buchstabeVon } from "@/data/lexikon";
+import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 
-const BASE_URL = "https://www.oekovolt.com";
 const PAGE_URL = `${BASE_URL}/wissen/lexikon`;
 const ANZAHL = BEGRIFFE.length;
 
-const TITLE = `Photovoltaik-Lexikon: ${ANZAHL} Fachbegriffe A–Z | Ökovolt`;
-const DESCRIPTION = `Photovoltaik einfach erklärt: ${ANZAHL} Fachbegriffe von Autarkiegrad über kWp und LFP bis Solarspitzengesetz und § 14a EnWG – präzise, aktuell (2026), mit Rechnern.`;
+const TITLE = `PV-Lexikon Österreich: ${ANZAHL} Fachbegriffe | Ökovolt`;
+const DESCRIPTION = `Photovoltaik in Österreich erklärt: ${ANZAHL} Begriffe von EAG, OeMAG und TOR Erzeuger über Leistungspreis und EZA-Regler bis Schneelast – präzise, Stand 2026.`;
 
-// Deutschlandspezifische Rechtsbegriffe (EEG, EnWG) -> kein hreflang.
+// Österreichspezifische Rechtsbegriffe (EAG, ElWOG/ElWG, TOR) -> kein hreflang.
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ["Photovoltaik Lexikon", "Photovoltaik Glossar", "PV Begriffe", "Solaranlage Fachbegriffe", "kWp Bedeutung", "Autarkiegrad", "Solarspitzengesetz"],
+  keywords: ["Photovoltaik Lexikon", "PV Glossar Österreich", "Erneuerbare-Energie-Gemeinschaft", "OeMAG Marktpreis", "TOR Erzeuger", "EZA-Regler", "Leistungspreis", "Investitionsfreibetrag Photovoltaik"],
   alternates: { canonical: PAGE_URL },
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,
-    siteName: "Ökovolt Österreich",
-    title: `Photovoltaik-Lexikon: ${ANZAHL} Fachbegriffe von A bis Z`,
+    siteName: SITE_NAME,
+    locale: "de_AT",
+    title: `Photovoltaik-Lexikon Österreich: ${ANZAHL} Fachbegriffe von A bis Z`,
     description: DESCRIPTION,
     images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Photovoltaik-Lexikon" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `Photovoltaik-Lexikon: ${ANZAHL} Fachbegriffe von A bis Z`,
+    title: `Photovoltaik-Lexikon Österreich: ${ANZAHL} Fachbegriffe von A bis Z`,
     description: DESCRIPTION,
     images: [`${BASE_URL}/og-image.jpg`],
   },
 };
 
-const BELIEBT = ["autarkiegrad", "kwp", "einspeiseverguetung", "solarspitzengesetz", "paragraf-14a-enwg", "lfp", "ueberschussladen"];
+const BELIEBT = ["eeg", "marktpreis-oemag", "tor-erzeuger", "eza-regler", "leistungspreis", "ifb", "schneelastzone"];
 
 export default function LexikonPage() {
   const gruppen = begriffeNachBuchstabe();
   const namen = Object.fromEntries(BEGRIFFE.map((b) => [b.id, b.begriff]));
-  const fokus = BEGRIFFE.find((b) => b.id === "solarspitzengesetz");
+  // Begriff im Fokus: die Doppeldeutigkeit von „EEG“ (AT: Energiegemeinschaft, DE: Fördergesetz)
+  const fokus = BEGRIFFE.find((b) => b.id === "eeg");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +70,7 @@ export default function LexikonPage() {
         "@type": "DefinedTermSet",
         "@id": `${PAGE_URL}/#termset`,
         name: "Ökovolt Photovoltaik-Lexikon",
-        description: "Fachbegriffe rund um Photovoltaik, Stromspeicher, E-Mobilität, Netzanschluss und Förderung in Deutschland.",
+        description: "Fachbegriffe rund um Photovoltaik, Stromspeicher, E-Mobilität, Netzanschluss, Strommarkt, Förderung und Steuern in Österreich – für Gewerbe, Landwirtschaft, Gemeinden und Private.",
         url: PAGE_URL,
         inLanguage: "de-AT",
         publisher: { "@id": `${BASE_URL}/#organization` },
@@ -78,6 +80,7 @@ export default function LexikonPage() {
           name: b.begriff,
           description: b.kurz,
           url: `${PAGE_URL}#${b.id}`,
+          termCode: b.id,
           ...(b.synonyme?.length ? { alternateName: b.synonyme } : {}),
           inDefinedTermSet: { "@id": `${PAGE_URL}/#termset` },
         })),
@@ -98,7 +101,7 @@ export default function LexikonPage() {
             Photovoltaik-Lexikon: <span className="ov-text-gradient-light">Fachbegriffe</span> von A bis Z
           </>
         }
-        lead="Von Autarkiegrad bis Zyklenfestigkeit: Jeder Begriff mit einer klaren Definition in einem Satz, einer verständlichen Erklärung und dem Weg zum passenden Rechner – geschrieben vom Fachbetrieb, nicht vom Werbetexter."
+        lead="Von EAG und OeMAG über TOR Erzeuger, Leistungspreis und EZA-Regler bis Schneelastzone: jeder Begriff mit einer Definition in einem Satz, der österreichischen Rechtslage und dem Weg zum passenden Rechner – geschrieben vom Fachbetrieb, nicht vom Werbetexter."
         stats={[
           { value: ANZAHL, label: "Fachbegriffe erklärt" },
           { value: KATEGORIEN.length, label: "Themenfelder" },
@@ -115,7 +118,7 @@ export default function LexikonPage() {
             <div className="ov-glass relative rounded-[2rem] p-7">
               <div className="flex items-center justify-between">
                 <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-300">Begriff im Fokus</p>
-                <span aria-hidden="true" className="font-display text-[56px] font-extrabold leading-none text-white/10">S</span>
+                <span aria-hidden="true" className="font-display text-[56px] font-extrabold leading-none text-white/10">{buchstabeVon(fokus)}</span>
               </div>
               <p className="-mt-3 font-display text-[26px] font-extrabold tracking-tight text-white">{fokus.begriff}</p>
               <p className="mt-3 text-[15px] leading-relaxed text-white/75">{fokus.kurz}</p>
@@ -148,14 +151,14 @@ export default function LexikonPage() {
         <SectionHeading
           eyebrow="Vom Begriff zur Entscheidung"
           title="Verstanden – und jetzt?"
-          lead="Das Lexikon erklärt die Begriffe. Was sie für Ihr Haus bedeuten, zeigen Rechner, Ratgeber und unsere Antworten auf die häufigsten Fragen."
+          lead="Das Lexikon erklärt die Begriffe. Was sie für Ihren Betrieb, Ihre Gemeinde oder Ihr Haus bedeuten, zeigen Rechner, Ratgeber und unsere Antworten auf die häufigsten Fragen."
           className="mb-12"
         />
         <FeatureGrid
           cols={3}
           items={[
-            { icon: Calculator, title: "Solarrechner", text: "Ertrag, Autarkie und Amortisation mit Ihren eigenen Werten – inklusive 20-Jahres-Cashflow.", href: "/solarrechner" },
-            { icon: BookOpen, title: "Ratgeber", text: "Einspeisevergütung, Kosten und Wallbox-Installation ausführlich und mit Stand 2026 erklärt.", href: "/ratgeber" },
+            { icon: Calculator, title: "Solarrechner", text: "Ertrag, Eigenverbrauch und Amortisation für Privat, Gewerbe und Landwirtschaft – mit Betriebstagen, Schichten und 20-Jahres-Cashflow.", href: "/solarrechner" },
+            { icon: BookOpen, title: "Ratgeber", text: "OeMAG-Marktpreis, EAG-Förderung, TOR Erzeuger, Energiegemeinschaften und Kosten ausführlich mit Stand 2026 erklärt.", href: "/ratgeber" },
             { icon: HelpCircle, title: "Häufige Fragen", text: "Kurze, ehrliche Antworten zu Planung, Förderung, Montage und Service.", href: "/faqs" },
           ]}
         />
@@ -171,7 +174,7 @@ export default function LexikonPage() {
       <Querverweise pfad="/wissen/lexikon" />
       <CtaBand
         title="Genug Theorie? Wir rechnen Ihr Dach durch."
-        text="Persönliche Beratung vom Fachbetrieb aus Türkheim – wir erklären jeden Begriff, der in Ihrem Angebot steht, und planen die Anlage, die wirklich zu Ihrem Verbrauch passt."
+        text={`Persönliche Beratung vom Elektrotechnik-Fachbetrieb aus ${FIRMA.ort} – wir erklären jeden Begriff, der in Ihrem Angebot steht, und planen die Anlage, die zu Ihrem Lastgang passt.`}
       />
     </>
   );

@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Leaf, Sun, Wind, Zap } from "lucide-react";
 
-const datumLang = (d) => new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", weekday: "long", day: "numeric", month: "long" }).format(d);
-const uhr = (d) => new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", hour: "2-digit", minute: "2-digit" }).format(d);
-const datumKurz = (iso) => (iso ? new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric" }).format(new Date(iso)) : "");
+const datumLang = (d) => new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "long", day: "numeric", month: "long" }).format(d);
+const uhr = (d) => new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit" }).format(d);
+const datumKurz = (iso) => (iso ? new Intl.DateTimeFormat("de-AT", { day: "numeric", month: "long", year: "numeric" }).format(new Date(iso)) : "");
 const kurzUrl = (u) => String(u || "").replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 
 /**
@@ -134,7 +134,7 @@ export default function TvAnzeige({ start = [], standort = "", standardDauer = 1
           <div className="flex items-center gap-[2.2em] text-[1.35em]">
             <span className="flex items-center gap-[0.5em]">
               <Zap aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#f5b700]" />
-              Börsenstrom <b>{(strom.preis?.aktuell?.eurMwh / 10).toLocaleString("de-DE", { maximumFractionDigits: 1 })} ct/kWh</b>
+              Börsenstrom <b>{(strom.preis?.aktuell?.eurMwh / 10).toLocaleString("de-AT", { maximumFractionDigits: 1 })} ct/kWh</b>
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Leaf aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#8cc152]" />
@@ -142,11 +142,11 @@ export default function TvAnzeige({ start = [], standort = "", standardDauer = 1
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Sun aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#f5b700]" />
-              Solar <b>{((strom.erzeugung?.solarMw ?? 0) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW</b>
+              Solar <b>{((strom.erzeugung?.solarMw ?? 0) / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW</b>
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Wind aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#8cc152]" />
-              Wind <b>{((strom.erzeugung?.windMw ?? 0) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW</b>
+              Wind <b>{((strom.erzeugung?.windMw ?? 0) / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW</b>
             </span>
           </div>
         )}
@@ -173,16 +173,16 @@ function MarkenFolie({ strom, farben }) {
       <div className="max-w-[55%]">
         <p className="text-[1.4em] font-bold uppercase tracking-[0.2em] text-[#8cc152]">Ökovolt · Photovoltaik aus einer Hand</p>
         <h1 className="mt-[0.5em] text-[5em] font-extrabold leading-[1.05] tracking-tight">Energie, die sich rechnet.</h1>
-        <p className={`mt-[0.8em] text-[1.9em] leading-snug ${farben.leise}`}>Photovoltaik, Stromspeicher, Wallbox und Wärmepumpe – geplant und installiert vom Fachbetrieb aus Türkheim.</p>
+        <p className={`mt-[0.8em] text-[1.9em] leading-snug ${farben.leise}`}>Photovoltaik für Gewerbe, Landwirtschaft und Gemeinden – geplant, gebaut und betrieben von Ökovolt aus Ostermiething.</p>
         <p className="mt-[1.4em] text-[1.9em] font-bold text-[#8cc152]">oekovolt.com · +43 6278 71030</p>
       </div>
       {strom?.erzeugung && (
         <div className="grid grid-cols-2 gap-[1.2em]">
           {[
             { l: "Anteil Erneuerbare jetzt", w: `${Math.round(strom.erzeugung.eeAnteil)} %` },
-            { l: "Börsenstrompreis", w: `${(strom.preis.aktuell.eurMwh / 10).toLocaleString("de-DE", { maximumFractionDigits: 1 })} ct` },
-            { l: "Solarleistung DE", w: `${(strom.erzeugung.solarMw / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW` },
-            { l: "Windleistung DE", w: `${(strom.erzeugung.windMw / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW` },
+            { l: "Börsenstrompreis", w: `${(strom.preis.aktuell.eurMwh / 10).toLocaleString("de-AT", { maximumFractionDigits: 1 })} ct` },
+            { l: "Solarleistung AT", w: `${(strom.erzeugung.solarMw / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW` },
+            { l: "Windleistung AT", w: `${(strom.erzeugung.windMw / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW` },
           ].map((k) => (
             <div key={k.l} className="min-w-[14em] rounded-[1.2em] bg-white/5 p-[1.6em] ring-1 ring-white/10">
               <p className="text-[3.2em] font-extrabold tabular-nums">{k.w}</p>

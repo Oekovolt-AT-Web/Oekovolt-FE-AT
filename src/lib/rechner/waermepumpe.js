@@ -56,7 +56,8 @@ export function rechneWaermepumpe(e) {
     strom: wpStrom * (wpTarifCt / 100),
     nebenkosten: W.wpNebenkosten,
     summe: wpStrom * (wpTarifCt / 100) + W.wpNebenkosten,
-    co2: wpStrom * ALLGEMEIN.co2Strommix,
+    // Heizungs-WP: heizgradtag-gewichteter CO₂-Faktor (Winterstrom), siehe annahmen.js
+    co2: wpStrom * (W.co2Strom ?? ALLGEMEIN.co2Strommix),
   };
 
   // --- Wärmepumpe mit PV-Anteil (stündliche Jahressimulation) ---
@@ -69,7 +70,7 @@ export function rechneWaermepumpe(e) {
     const anteil = wpStrom > 0 ? solarKwh / wpStrom : 0;
     const satz = satzFuer(kwp, "teileinspeisung") / 100;
     const reststrom = wpStrom - solarKwh;
-    // Solarstrom "kostet" die entgangene Einspeisevergütung
+    // Solarstrom "kostet" den entgangenen Einspeiseerlös (OeMAG-Marktpreis/Tarif)
     const stromkosten = reststrom * (wpTarifCt / 100) + solarKwh * satz;
     solar = {
       anteil,
@@ -78,7 +79,7 @@ export function rechneWaermepumpe(e) {
       strom: stromkosten,
       nebenkosten: W.wpNebenkosten,
       summe: stromkosten + W.wpNebenkosten,
-      co2: reststrom * ALLGEMEIN.co2Strommix,
+      co2: reststrom * (W.co2Strom ?? ALLGEMEIN.co2Strommix),
       satzCt: satz * 100,
     };
     monate = sim.monate.map((m) => ({ name: m.name, wp: m.wp, solar: m.wpSolar }));
@@ -89,8 +90,9 @@ export function rechneWaermepumpe(e) {
   }
 
   const best = solar || netz;
+  // Österreich: Bundesförderung derzeit ausgeschöpft -> Beträge 0, nur Hinweis (siehe annahmen.js)
   const f = W.foerderung;
-  const foerderfaehig = Math.min(f.investitionOrientierung, f.kostenDeckelErsteWe);
+  const foerderfaehig = f.verfuegbar ? Math.min(f.investitionOrientierung, f.kostenDeckelErsteWe) : 0;
 
   return {
     bedarf,
@@ -107,6 +109,8 @@ export function rechneWaermepumpe(e) {
       min: foerderfaehig * (f.grundProzent / 100),
       max: foerderfaehig * (f.maxProzent / 100),
       foerderfaehig,
+      verfuegbar: Boolean(f.verfuegbar),
+      hinweis: f.hinweis,
     },
   };
 }

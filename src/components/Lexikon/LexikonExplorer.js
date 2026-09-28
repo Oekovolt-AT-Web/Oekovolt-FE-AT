@@ -3,6 +3,7 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Search, X } from "lucide-react";
+import { KONTAKT } from "@/data/navigation";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -192,8 +193,8 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
             <Link href="/faqs" className="inline-flex h-11 items-center rounded-full bg-ink-900 px-5 text-[14px] font-semibold text-white hover:bg-ink-800">
               Häufige Fragen
             </Link>
-            <a href="tel:+498245967880" className="inline-flex h-11 items-center rounded-full px-5 text-[14px] font-semibold text-ink-800 ring-1 ring-ink-200 hover:bg-ink-50">
-              08245 96 788 0
+            <a href={KONTAKT.telefonHref} className="inline-flex h-11 items-center rounded-full px-5 text-[14px] font-semibold text-ink-800 ring-1 ring-ink-200 hover:bg-ink-50">
+              {KONTAKT.telefon}
             </a>
           </div>
         </div>
@@ -228,6 +229,10 @@ function Eintrag({ b, namen, kategorien }) {
     >
       {/* dl-Gruppe enthält nur dt/dd – Themen-Chip steckt mit im dt */}
       <dt className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
+        {/* Alias-Anker (z. B. IDs der deutschen Fassung) – landen auf diesem Eintrag */}
+        {b.alias?.map((a) => (
+          <span key={a} id={a} aria-hidden="true" className="absolute left-0 top-0 scroll-mt-[220px] lg:scroll-mt-[170px]" />
+        ))}
         <a href={`#${b.id}`} className="font-display text-[19px] font-extrabold leading-snug tracking-tight text-ink-900 hover:text-ov-700">
           {b.begriff}
         </a>

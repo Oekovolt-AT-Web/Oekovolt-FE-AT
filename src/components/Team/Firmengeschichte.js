@@ -1,20 +1,23 @@
 // src/components/Team/Firmengeschichte.js
 //
-// Firmengeschichte der ÖKOVOLT-Gruppe: Zeitleiste, die beiden Generationen
-// der Geschäftsführung, die Salzburg-AG-Partnerschaft, die Gruppenstruktur
-// und die oeffentlich abfragbaren Registerdaten.
+// Unternehmensgeschichte aus Sicht der österreichischen Gesellschaft:
+// Zeitleiste, Haltung, Verbund mit dem Stammhaus, Generationen, die
+// Partnerschaft mit der Salzburg AG (Gesellschafterin seit 2021), die Rolle der
+// Ökovolt Solartechnik GmbH, Gruppenstruktur und Registerdaten.
 //
-// Fuer den dunklen Abschnitt (tone="navy") gebaut.
-// Inhalte: @/data/unternehmen
+// Alle Bausteine sind einzeln exportiert, damit /uber-uns und /uber-uns/team
+// unterschiedliche Ausschnitte zeigen können. Für dunkle Abschnitte
+// (Section tone="navy") gebaut. Inhalte: @/data/unternehmen
 
+import Link from "next/link";
 import {
+  ArrowUpRight,
   Building2,
   Code,
   ExternalLink,
   Flag,
   Handshake,
   Home,
-  MapPin,
   Network,
   ShieldCheck,
   Sunrise,
@@ -26,14 +29,13 @@ import Reveal from "@/components/ui/Reveal";
 import {
   BETEILIGUNGEN,
   CLAIM,
-  HALTUNG,
-  HEUTE,
-  MARKE,
   GENERATIONEN,
   GESELLSCHAFTEN,
   GRUPPE,
+  HALTUNG,
+  HEUTE,
   MEILENSTEINE,
-  ROLLEN_DE,
+  ROLLEN_AT,
   SALZBURG_AG,
   STAND,
   URSPRUNG,
@@ -42,9 +44,8 @@ import {
 const ICONS = { Building2, Code, Flag, Handshake, Home, Network, ShieldCheck, Sunrise, TrendingUp, Wrench };
 
 /**
- * Laenderkennzeichen als Text-Badge statt Flaggen-Emoji.
- * Windows stellt Regional-Indicator-Paare (🇩🇪) grundsaetzlich nicht als
- * Flagge dar - und ohne Emoji-Font erscheinen sie als leere Kaestchen.
+ * Länderkennzeichen als Text-Badge statt Flaggen-Emoji (Windows stellt
+ * Regional-Indicator-Paare nicht als Flagge dar).
  */
 function Land({ code, name }) {
   return (
@@ -58,7 +59,7 @@ function Land({ code, name }) {
 }
 
 const datumLang = (iso) =>
-  new Date(iso).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+  new Date(iso).toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric" });
 
 /* ------------------------------------------------------------------ Bausteine */
 
@@ -85,7 +86,7 @@ function Kennzahl({ wert, label }) {
 
 /* ------------------------------------------------------------------ Zeitleiste */
 
-function Zeitleiste() {
+export function Zeitleiste() {
   return (
     <ol className="relative mx-auto mt-14 max-w-5xl md:mt-20">
       <div
@@ -101,12 +102,9 @@ function Zeitleiste() {
             key={m.jahr}
             delay={i * 70}
             dir={rechts ? "right" : "left"}
-            // Ab md ruecken die Stationen zusammen (-mt-24), damit die
-            // Karten links und rechts ineinandergreifen. Die erste darf das
-            // nicht, sonst rutscht sie in den Vorspann.
-            // Bewusst ueber den Index statt md:first:mt-0: Erstes Kind der
-            // <ol> ist die Zeitleisten-Linie, `:first-child` trifft also nie
-            // eine Station.
+            // Ab md rücken die Stationen zusammen (-mt-24), damit die Karten
+            // links und rechts ineinandergreifen – außer der ersten. Bewusst
+            // über den Index: erstes Kind der <ol> ist die Zeitleisten-Linie.
             className={`relative grid gap-4 pb-10 pl-14 last:pb-0 md:grid-cols-2 md:gap-16 md:pb-6 md:pl-0 ${
               i === 0 ? "md:mt-0" : "md:-mt-24"
             }`}
@@ -187,9 +185,9 @@ function Person({ p, delay }) {
   );
 }
 
-function Generationen() {
+export function Generationen({ className = "mt-20 md:mt-28" }) {
   return (
-    <div className="mt-20 space-y-14 md:mt-28">
+    <div className={`space-y-14 ${className}`}>
       {GENERATIONEN.map((g) => (
         <div key={g.id}>
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1 border-b border-white/10 pb-4">
@@ -212,7 +210,7 @@ function Generationen() {
 
 /* ---------------------------------------------------------------- Salzburg AG */
 
-function Partnerschaft() {
+export function Partnerschaft() {
   const s = SALZBURG_AG;
   return (
     <div className="mt-20 md:mt-28">
@@ -234,16 +232,14 @@ function Partnerschaft() {
           </li>
         ))}
       </ul>
-
     </div>
   );
 }
 
 /* -------------------------------------------- Betreiber aus Überzeugung */
 
-function Haltung() {
-  // Platzhalter-Kennzahlen (wert: null) bleiben unsichtbar, damit nie ein
-  // "[X]" auf der Seite steht.
+export function Haltung() {
+  // Platzhalter-Kennzahlen (wert: null) bleiben unsichtbar.
   const zahlen = HEUTE.filter((z) => z.wert);
   return (
     <div className="mt-20 md:mt-28">
@@ -272,9 +268,9 @@ function Haltung() {
   );
 }
 
-/* ------------------------------------------------------------- Ursprung DE */
+/* ------------------------------------------------------------- Verbund */
 
-function Ursprung() {
+export function Ursprung() {
   return (
     <div className="mt-20 md:mt-28">
       <Ueberschrift kopf={URSPRUNG.kopf} titel={URSPRUNG.titel} />
@@ -294,68 +290,66 @@ function Ursprung() {
   );
 }
 
-/* ------------------------------------------------------ Wer macht heute was */
+/* ------------------------------------------- Was die AT-Gesellschaft macht */
 
-function RollenDe() {
-  const r = ROLLEN_DE;
+export function RollenAt() {
+  const r = ROLLEN_AT;
   return (
     <div className="mt-20 md:mt-28">
       <Ueberschrift kopf={r.kopf} titel={r.titel}>
         {r.lead}
       </Ueberschrift>
 
-      <div className="mx-auto mt-10 grid max-w-5xl gap-4 lg:grid-cols-3">
-        {r.eintraege.map((e, i) => (
-          <Reveal
-            key={e.name}
-            delay={i * 80}
-            className={`ov-glass rounded-3xl p-6 ${e.hervorgehoben ? "ring-1 ring-ov-400/40" : ""}`}
-          >
-            <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">{e.rolle}</p>
-            <p className="mt-2 font-display text-[17px] font-bold text-white">{e.name}</p>
-            <p className="mt-2 text-[14.5px] leading-relaxed text-white/60">{e.text}</p>
-          </Reveal>
-        ))}
+      <div className="mx-auto mt-10 grid max-w-5xl gap-4 sm:grid-cols-2">
+        {r.eintraege.map((e, i) => {
+          const Icon = ICONS[e.icon];
+          const klassen = `ov-glass group block h-full rounded-3xl p-6 transition-colors ${e.hervorgehoben ? "ring-1 ring-ov-400/40" : ""}`;
+          const inhalt = (
+            <>
+              <div className="flex items-center gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-500/20 text-ov-300">
+                  {Icon && <Icon aria-hidden="true" className="h-5 w-5" />}
+                </span>
+                <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">{e.rolle}</p>
+              </div>
+              <p className="mt-4 flex items-start justify-between gap-3 font-display text-[17px] font-bold text-white">
+                {e.name}
+                {e.href && (
+                  <ArrowUpRight aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-white/40 transition-colors group-hover:text-ov-300" />
+                )}
+              </p>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-white/60">{e.text}</p>
+            </>
+          );
+          return (
+            <Reveal key={e.name} delay={i * 80}>
+              {e.href ? (
+                <Link href={e.href} className={`${klassen} hover:bg-white/[0.08]`}>
+                  {inhalt}
+                </Link>
+              ) : (
+                <div className={klassen}>{inhalt}</div>
+              )}
+            </Reveal>
+          );
+        })}
       </div>
-
-      <p className="mx-auto mt-12 max-w-5xl text-[13px] font-semibold uppercase tracking-[0.14em] text-white/40">
-        Eine Betreibergesellschaft je Solarpark
-      </p>
-      <div className="mx-auto mt-4 grid max-w-5xl gap-3 sm:grid-cols-3">
-        {r.parks.map((pk) => (
-          <div key={pk.name} className="rounded-2xl bg-white/[0.05] p-5 ring-1 ring-white/10">
-            <p className="font-display text-[15.5px] font-bold text-white">{pk.name}</p>
-            <p className="mt-1.5 flex flex-wrap items-center gap-x-2 text-[13.5px] font-semibold text-ov-300">
-              <MapPin aria-hidden="true" className="h-3.5 w-3.5" />
-              {pk.ort}
-              {pk.jahr && <span className="text-white/40">· {pk.jahr}</span>}
-            </p>
-            <p className="mt-2 text-[14px] leading-snug text-white/55">{pk.text}</p>
-          </div>
-        ))}
-      </div>
-
-      {r.weitere?.length > 0 && (
-        <p className="mx-auto mt-6 max-w-5xl text-[13.5px] leading-relaxed text-white/45">
-          Weitere Beteiligungen laut Jahresabschluss 2021:{" "}
-          {r.weitere.map((w) => w.name).join(" · ")}
-        </p>
-      )}
     </div>
   );
 }
 
 /* ------------------------------------------------------------------- Gruppe */
 
-function Gruppe() {
+export function Gruppe() {
   const holding = GRUPPE.find((g) => g.ebene === 0);
   const landes = GRUPPE.filter((g) => g.ebene === 1);
   const beteiligungen = GRUPPE.filter((g) => g.ebene === 2);
 
   return (
     <div className="mt-20 md:mt-28">
-      <Ueberschrift kopf="Unternehmensgruppe" titel="Die ÖKOVOLT Gruppe">
-        Eine starke Struktur für Photovoltaik, Projektentwicklung und Vertrieb.
+      <Ueberschrift kopf="Unternehmensgruppe" titel="Die Ökovolt Gruppe">
+        Zwei operative Landesgesellschaften, Projekt- und Betreibergesellschaften für große Flächen – und ein
+        Digitalpartner für Leittechnik und IT-Sicherheit.
       </Ueberschrift>
 
       {holding && (
@@ -404,13 +398,13 @@ function Gruppe() {
 
 /* --------------------------------------------------------- Registerdaten */
 
-function Register() {
-  const eintraege = [GESELLSCHAFTEN.de, GESELLSCHAFTEN.at];
+export function Register() {
+  const eintraege = [GESELLSCHAFTEN.at, GESELLSCHAFTEN.de];
   return (
     <div className="mt-20 md:mt-28">
       <Ueberschrift kopf="Transparenz" titel="Öffentlich abfragbar">
-        Jede Angabe zu unseren operativen Gesellschaften lässt sich im Handelsregister bzw. im
-        österreichischen Firmenbuch nachschlagen.
+        Jede Angabe zu unseren operativen Gesellschaften lässt sich im österreichischen Firmenbuch bzw. im deutschen
+        Handelsregister nachschlagen.
       </Ueberschrift>
 
       <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
@@ -425,7 +419,8 @@ function Register() {
                 ["Register", g.register],
                 ["Registergericht", g.gericht],
                 ["Eingetragen", g.eingetragen],
-                ["USt-IdNr.", g.ustId],
+                [g.flagge === "AT" ? "UID" : "USt-IdNr.", g.ustId],
+                ["GISA-Zahl", g.gisa],
               ]
                 .filter(([, wert]) => wert)
                 .map(([label, wert]) => (
@@ -469,8 +464,17 @@ function Register() {
   );
 }
 
-/* --------------------------------------------------------------------- Seite */
+export function Claim({ className = "mt-20 md:mt-28" }) {
+  return (
+    <p className={`text-center font-display text-[clamp(1.15rem,1rem+0.7vw,1.5rem)] font-extrabold leading-snug text-white ${className}`}>
+      {CLAIM}
+    </p>
+  );
+}
 
+/* --------------------------------------------------------------------- Gesamt */
+
+/** Komplette Unternehmensgeschichte (alle Bausteine). */
 export default function Firmengeschichte() {
   return (
     <div className="relative">
@@ -479,13 +483,10 @@ export default function Firmengeschichte() {
       <Ursprung />
       <Generationen />
       <Partnerschaft />
-      <RollenDe />
+      <RollenAt />
       <Gruppe />
       <Register />
-
-      <p className="mt-20 text-center font-display text-[clamp(1.15rem,1rem+0.7vw,1.5rem)] font-extrabold leading-snug text-white md:mt-28">
-        {CLAIM}
-      </p>
+      <Claim />
     </div>
   );
 }

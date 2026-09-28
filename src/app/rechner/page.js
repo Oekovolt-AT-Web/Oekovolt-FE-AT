@@ -17,32 +17,35 @@ import { rechneWaermepumpe } from "@/lib/rechner/waermepumpe";
 import { rechneWallbox } from "@/lib/rechner/wallbox";
 import { fmt } from "@/lib/rechner/annahmen";
 import { berechne as solarBerechne } from "@/lib/solarrechner";
+import { ANNAHMEN } from "@/data/solarrechner";
+import { VERGUETUNG } from "@/data/einspeiseverguetung";
+import { BASE_URL, FIRMA } from "@/lib/site";
 
 export const revalidate = 900;
 
 const PFAD = "/rechner";
-const BASE = "https://www.oekovolt.com";
+const BASE = BASE_URL;
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "Rechner & Tools für PV, Speicher & Wärmepumpe | Ökovolt",
+  title: "PV-Rechner & Tools Österreich: Solar, Speicher | Ökovolt",
   description:
-    "Kostenlose Energie-Rechner 2026: Solar, Stromspeicher, Wärmepumpe, E-Auto und dynamischer Stromtarif mit Live-Börsenpreisen. Jetzt in Sekunden durchrechnen.",
-  keywords: ["Photovoltaik Rechner", "Energie Rechner", "Stromspeicher Rechner", "Wärmepumpe Rechner", "Wallbox Rechner", "dynamischer Stromtarif Rechner"],
+    "Kostenlose Rechner für Österreich: Solarrechner für Betrieb, Hof und Haus, Standort-Check, Speicher, Wärmepumpe, E-Auto und Spotpreis-Tarif mit Börsendaten.",
+  keywords: ["Photovoltaik Rechner Österreich", "PV Rechner Gewerbe", "Standort-Check Schneelast", "Stromspeicher Rechner", "Wärmepumpe Rechner", "dynamischer Stromtarif Österreich"],
 });
 
-const TZ = "Europe/Berlin";
+const TZ = "Europe/Vienna";
 const tagVon = (t) => new Intl.DateTimeFormat("sv-SE", { timeZone: TZ }).format(new Date(t));
 const uhr = (t) => new Intl.DateTimeFormat("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: TZ }).format(new Date(t));
 
 const FAQ = [
   {
     q: "Wie genau sind die Ökovolt-Rechner?",
-    a: "Die Rechner liefern eine fundierte Orientierung: Stromspeicher und Wärmepumpe werden stündlich über ein ganzes Jahr simuliert, der Tarifrechner nutzt echte Börsenpreise. Alle Annahmen legen wir auf jeder Seite offen. Ein verbindliches Angebot erstellen wir nach Prüfung Ihres Dachs, Ihres Verbrauchs und Ihrer Technik vor Ort.",
+    a: "Die Rechner liefern eine fundierte Orientierung für Österreich: Betriebe, Stromspeicher und Wärmepumpen werden stündlich über ein ganzes Jahr simuliert, der Tarifrechner nutzt echte Börsenpreise der Gebotszone Österreich. Alle Annahmen legen wir auf jeder Seite mit Quelle offen. Ein verbindliches Angebot erstellen wir nach Prüfung von Dach, Lastgang, Netzanschluss und Technik vor Ort.",
   },
   {
     q: "Welchen Rechner sollte ich zuerst nutzen?",
-    a: "Planen Sie eine neue Photovoltaikanlage, starten Sie mit dem Solarrechner. Haben Sie bereits PV, zeigt der Stromspeicher-Rechner, ob sich eine Batterie lohnt. Wer die Heizung tauschen möchte, nutzt den Wärmepumpen-Rechner; E-Auto-Fahrer den Laderechner. Der Dynamischer-Tarif-Rechner lohnt sich für alle mit Smart Meter und flexiblen Verbrauchern.",
+    a: "Planen Sie eine neue Photovoltaikanlage für Betrieb, Hof oder Haus, starten Sie mit dem Solarrechner; den Standort mit Schneelast, Hagel und Ertrag prüft der Standort-Check. Haben Sie bereits PV, zeigt der Stromspeicher-Rechner, ob sich eine Batterie lohnt. Wer die Heizung tauschen möchte, nutzt den Wärmepumpen-Rechner, E-Auto-Fahrer den Laderechner. Der Dynamischer-Tarif-Rechner lohnt sich für alle mit Smart Meter und flexiblen Verbrauchern.",
   },
   {
     q: "Kosten die Rechner etwas oder muss ich mich anmelden?",
@@ -50,20 +53,22 @@ const FAQ = [
   },
   {
     q: "Mit welchen Preisen rechnen die Tools?",
-    a: "Mit vorsichtigen Richtwerten, Stand September 2026: Netzstrom 33 ct/kWh, EEG-Vergütung nach aktuellem Satz, Speicher rund 450 €/kWh, Gas und Heizöl nach aktuellem Marktschnitt. Die meisten Werte können Sie im Rechner an Ihre eigene Situation anpassen.",
+    a: `Mit vorsichtigen, belegten Richtwerten, Stand September 2026: vermeidbarer Haushalts-Strompreis ${Math.round(ANNAHMEN.strompreis * 100)} ct/kWh, im Betrieb je nach Verbrauch netto, Einspeiseerlös ${String(VERGUETUNG.saetze[0].teileinspeisung).replace(".", ",")} ct/kWh auf Basis OeMAG-Marktpreis, Anlagen- und Speicherpreise aus der österreichischen Marktstatistik, Gas und Heizöl nach E-Control-Preismonitor und EU-Ölpreisbericht. Die meisten Werte können Sie im Rechner an Ihre Situation anpassen.`,
   },
 ];
 
 export default async function RechnerHub() {
   const snap = await getEnergySnapshot();
+  const erzeugung = snap.erzeugung?.zeitpunkt ? snap.erzeugung : null;
   const heute = tagVon(Date.now());
   const heutePunkte = snap.preis.punkte.filter((p) => tagVon(p.t) === heute);
   const aktuell = snap.preis.aktuell;
   const minHeute = snap.preis.heute?.min;
 
   // Kleine Beispielrechnungen für die Vorschauen – mit derselben Logik wie die Rechner
-  const wp = rechneWaermepumpe({ flaeche: 150, standard: "1995", heizung: "gas", preis: 11.5, jaz: 3.5, pv: "pv", kwp: 10 });
-  const pv = solarBerechne({ kwp: 10, ausrichtung: "sued", neigung: "mittel", verbrauch: 4500, speicherKwh: 8 });
+  const wp = rechneWaermepumpe({ flaeche: 150, standard: "1995", heizung: "gas", preis: 12, jaz: 3.5, pv: "pv", kwp: 10 });
+  // Vorschau Solarrechner: Gewerbebetrieb (Zielgruppe der AT-Seite)
+  const pv = solarBerechne({ kwp: 100, ausrichtung: "ost-west", neigung: "flach", verbrauch: 250000, speicherKwh: 0, zielgruppe: "gewerbe", betriebstage: 5, schichten: 1 });
   const ea = rechneWallbox({ km: 15000, verbrauch: 18, anteilZuhause: 0.8, anteilPv: 0.4, kraftstoff: "benzin" });
 
   const itemList = {
@@ -90,8 +95,8 @@ export default async function RechnerHub() {
         <div className="flex h-full flex-col gap-4">
           <dl className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
-              ["Jahresertrag", `${fmt(Math.round(pv.jahresertrag / 100) * 100)} kWh`],
-              ["Autarkie", `${Math.round(pv.autarkie * 100)} %`],
+              ["Jahresertrag", `${fmt(Math.round(pv.jahresertrag / 1000))} MWh`],
+              ["Eigenverbrauch", `${Math.round(pv.eigenverbrauchsquote * 100)} %`],
               ["Amortisation", pv.amortisationJahre ? `${fmt(pv.amortisationJahre, 1)} J.` : "–"],
             ].map(([k, v]) => (
               <div key={k} className="rounded-2xl bg-white p-3 ring-1 ring-ink-200/70 sm:p-4">
@@ -101,7 +106,7 @@ export default async function RechnerHub() {
             ))}
           </dl>
           <div className="flex flex-1 flex-col justify-between gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 md:p-6">
-            <p className="mb-3 text-[12.5px] text-ink-500">Beispiel: 10 kWp, Süddach, 4.500 kWh Verbrauch, 8 kWh Speicher · Ertrag je Monat</p>
+            <p className="mb-3 text-[12.5px] text-ink-500">Beispiel Gewerbe: 100 kWp Ost-West auf dem Hallendach, 250 MWh Verbrauch, Mo–Fr eine Schicht · Ertrag je Monat</p>
             <VorschauSolar />
           </div>
         </div>
@@ -157,7 +162,7 @@ export default async function RechnerHub() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ov-400 opacity-60 motion-reduce:animate-none" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-ov-400" />
               </span>
-              Börsenpreis heute{aktuell ? <> · jetzt <strong className="ov-num text-white">{fmt(aktuell.eurMwh / 10, 1)} ct</strong></> : null}
+              Börsenpreis Österreich heute{aktuell ? <> · jetzt <strong className="ov-num text-white">{fmt(aktuell.eurMwh / 10, 1)} ct</strong></> : null}
             </span>
             {minHeute && (
               <span>
@@ -175,9 +180,9 @@ export default async function RechnerHub() {
       vorschau: (
         <dl className="grid grid-cols-2 gap-2">
           {[
-            ["Solar", snap.erzeugung.solarMw != null ? `${fmt(snap.erzeugung.solarMw / 1000, 1)} GW` : "–", "text-sun-300"],
-            ["Wind", snap.erzeugung.windMw != null ? `${fmt(snap.erzeugung.windMw / 1000, 1)} GW` : "–", "text-white"],
-            ["Erneuerbar", snap.erzeugung.eeAnteil != null ? `${fmt(snap.erzeugung.eeAnteil)} %` : "–", "text-ov-300"],
+            ["Solar AT", erzeugung?.solarMw != null ? `${fmt(erzeugung.solarMw / 1000, 1)} GW` : "–", "text-sun-300"],
+            ["Wasserkraft", erzeugung?.wasserMw != null ? `${fmt(erzeugung.wasserMw / 1000, 1)} GW` : "–", "text-white"],
+            ["Erneuerbar", erzeugung?.eeAnteil != null ? `${fmt(erzeugung.eeAnteil)} %` : "–", "text-ov-300"],
             ["Endpreis dyn.", aktuell ? `${fmt(dynamischBrutto(aktuell.eurMwh))} ct` : "–", "text-white"],
           ].map(([k, v, farbe]) => (
             <div key={k} className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
@@ -191,11 +196,17 @@ export default async function RechnerHub() {
     {
       id: "foerdercheck",
       ton: "sand",
-      vorschau: <VorschauCheckliste punkte={["0 % MwSt. auf PV", "KfW-Heizungsförderung", "Landesprogramme"]} />,
+      vorschau: <VorschauCheckliste punkte={["EAG-Investitionszuschuss", "Investitionsfreibetrag", "Landesförderungen"]} />,
+    },
+    {
+      id: "standort-check",
+      klasse: "sm:col-span-2 lg:col-span-1",
+      ton: "hell",
+      vorschau: <VorschauCheckliste punkte={["Schneelast sₖ (eHORA)", "Wind, Hagel & Naturgefahren", "PV-Ertrag (PVGIS)"]} />,
     },
     {
       id: "angebot",
-      klasse: "sm:col-span-2 lg:col-span-4",
+      klasse: "sm:col-span-2 lg:col-span-3",
       ton: "gruen",
       vorschau: <VorschauSchritte />,
     },
@@ -210,9 +221,9 @@ export default async function RechnerHub() {
         breadcrumbs={[{ name: "Rechner & Tools" }]}
         eyebrow="Rechner & Tools"
         title={<>Erst rechnen, <span className="ov-text-gradient-light">dann entscheiden.</span></>}
-        lead="Acht kostenlose Werkzeuge rund um Solarstrom, Speicher, Wärmepumpe und E-Auto – mit transparenten Annahmen, stündlicher Simulation und Live-Daten vom Strommarkt."
+        lead="Kostenlose Werkzeuge rund um Photovoltaik für Betriebe, Landwirtschaft, Gemeinden und Private in Österreich – mit transparenten Annahmen, stündlicher Simulation, Standortdaten und Börsenpreisen der Gebotszone Österreich."
         stats={[
-          { value: 8, label: "kostenlose Tools" },
+          { value: TOOLS.length, label: "kostenlose Tools" },
           { value: 8760, label: "Stunden je Simulation" },
           { value: 15, suffix: " min", label: "Takt der Börsenpreise" },
         ]}
@@ -253,12 +264,13 @@ export default async function RechnerHub() {
                 </thead>
                 <tbody className="divide-y divide-ink-100">
                   {[
-                    ["Neue PV-Anlage planen", "solarrechner", "Ertrag, Amortisation"],
+                    ["PV für Betrieb, Hof oder Haus planen", "solarrechner", "Eigenverbrauch, Amortisation"],
+                    ["Standort prüfen (Schnee, Hagel, Ertrag)", "standort-check", "Lasten & Naturgefahren"],
                     ["Speicher nachrüsten oder mitkaufen", "stromspeicher", "Autarkie, optimale Größe"],
                     ["Gas- oder Ölheizung ersetzen", "waermepumpe", "Heizkosten, CO₂, Förderung"],
                     ["E-Auto anschaffen", "wallbox", "Kosten je 100 km"],
                     ["Smart Meter / neuen Tarif", "dynamisch", "Tageskosten, Ladefenster"],
-                    ["Zuschüsse klären", "foerdercheck", "passende Förderungen"],
+                    ["Förderungen & Steuervorteile klären", "foerdercheck", "passende Förderungen"],
                   ].map(([frage, id, ergebnis]) => {
                     const t = toolById(id);
                     return (
@@ -289,7 +301,7 @@ export default async function RechnerHub() {
 
       <CtaBand
         title="Aus Zahlen wird ein Plan – mit Ihrem Fachbetrieb."
-        text="Sie haben gerechnet – wir prüfen Dach, Verbrauch und Technik vor Ort und machen daraus ein belastbares Angebot. Persönlich, aus Türkheim, seit über 15 Jahren."
+        text={`Sie haben gerechnet – wir prüfen Dach, Lastgang, Netzanschluss und Technik und machen daraus ein belastbares Angebot. Persönlich, aus ${FIRMA.ort}, für ganz Österreich – seit ${FIRMA.gegruendet}.`}
         primary={{ label: "Angebot anfragen", href: "/angebot" }}
         secondary={{ label: "Zum Solarrechner", href: "/solarrechner" }}
       />

@@ -6,9 +6,12 @@ import { ChevronDown } from "lucide-react";
 import { herstellerId } from "./ids";
 
 /**
- * Filterbare Herstellerübersicht (Kategorien aus dem Backoffice).
+ * Filterbare Herstellerübersicht.
  * Alle Karten werden serverseitig gerendert (SEO); der Filter blendet nur aus.
- * props: kategorien [{ name, hersteller: [{ title, main_description, banner_image, logo_image, ... }] }]
+ * props: kategorien [{ name, hersteller: [{ title, main_description, bild?, banner_image?, logo_image?, tag?, fakten? }] }]
+ *   bild   – lokaler Bildpfad (hat Vorrang vor banner_image aus dem Backoffice)
+ *   tag    – kurze Hervorhebung, z. B. „Hersteller aus Österreich“
+ *   fakten – [["Sitz", "Pettenbach, OÖ"], …] für eine kompakte Kerndatenliste
  */
 
 const img = (p) => (p ? `/api/image?path=${p}` : "/Images/Dienstleistungen/Photovoltaik/photovoltaikmodule.png");
@@ -20,7 +23,7 @@ function Karte({ h, kategorie, index }) {
     <article id={herstellerId(h.title)} className="group ov-card-hover flex h-full w-full scroll-mt-28 flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200">
       <div className="relative aspect-[16/9] overflow-hidden bg-ink-100">
         <Image
-          src={img(h.banner_image)}
+          src={h.bild || img(h.banner_image)}
           alt={h.alt_banner_image?.trim() || `${h.title} – Produktbild`}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
@@ -38,8 +41,19 @@ function Karte({ h, kategorie, index }) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-6 md:p-7">
+        {h.tag && <p className="mb-2 inline-flex self-start rounded-full bg-ov-50 px-3 py-1 text-[12px] font-semibold text-ov-700 ring-1 ring-ov-200">{h.tag}</p>}
         <h4 className="ov-h3 text-ink-900">{h.title}</h4>
         <p className={`mt-3 text-[15px] leading-relaxed text-ink-600 ${!offen && lang ? "line-clamp-4" : ""}`}>{h.main_description}</p>
+        {Array.isArray(h.fakten) && h.fakten.length > 0 && (
+          <dl className="mt-4 divide-y divide-ink-100 rounded-2xl text-[13.5px] ring-1 ring-ink-200/70">
+            {h.fakten.map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-3 px-4 py-2">
+                <dt className="text-ink-500">{k}</dt>
+                <dd className="text-right font-semibold text-ink-800">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
         {lang && (
           <button
             type="button"

@@ -28,7 +28,7 @@ export default function ErzeugungChart({ initial }) {
       gesamt += z.summe;
       ee += QUELLEN.filter((q) => q.ee).reduce((a, q) => a + z[q.key], 0);
       if (z.solar > solarMax.solar) solarMax = z;
-      if (z.windOnshore + z.windOffshore > windMax.windOnshore + windMax.windOffshore) windMax = z;
+      if (z.windOnshore > windMax.windOnshore) windMax = z;
       if ((z.last || 0) > (lastMax.last || 0)) lastMax = z;
     }
     const schrittH = (zeilen[1].t - zeilen[0].t) / STUNDE;
@@ -131,7 +131,7 @@ export default function ErzeugungChart({ initial }) {
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl ring-1 ring-ink-200/70">
       <div className="flex flex-col gap-2 border-b border-ink-100 p-5 sm:p-6 md:flex-row md:items-end md:justify-between md:p-8">
         <div>
-          <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Nettostromerzeugung · Deutschland</p>
+          <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Nettostromerzeugung · Österreich</p>
           <h3 className="ov-h3 mt-2 text-ink-900">Woher der Strom in den letzten 24 Stunden kam</h3>
         </div>
         <p className="text-[13px] text-ink-500">
@@ -260,8 +260,8 @@ export default function ErzeugungChart({ initial }) {
         <dl className="grid grid-cols-2 gap-px border-t border-ink-100 bg-ink-100 sm:grid-cols-4 xl:grid-cols-1 xl:border-l xl:border-t-0">
           <Kennzahl icon={Leaf} label="Anteil Erneuerbare" wert={`${Math.round(kennzahlen.eeQuote)} %`} sub="der Erzeugung in 24 h" />
           <Kennzahl icon={Sun} label="Solar-Spitze" wert={`${gw(kennzahlen.solarMax.solar)} GW`} sub={kennzahlen.solarMax.solar > 50 ? `um ${uhr(kennzahlen.solarMax.t)} Uhr` : "keine Solarerzeugung"} />
-          <Kennzahl icon={Wind} label="Wind-Spitze" wert={`${gw(kennzahlen.windMax.windOnshore + kennzahlen.windMax.windOffshore)} GW`} sub={`um ${uhr(kennzahlen.windMax.t)} Uhr`} />
-          <Kennzahl icon={Factory} label="Erzeugt in 24 h" wert={`${zahl(kennzahlen.gwh / 1000, 2)} TWh`} sub={`Lastspitze ${gw(kennzahlen.lastMax.last)} GW`} />
+          <Kennzahl icon={Wind} label="Wind-Spitze" wert={`${gw(kennzahlen.windMax.windOnshore)} GW`} sub={`um ${uhr(kennzahlen.windMax.t)} Uhr`} />
+          <Kennzahl icon={Factory} label="Erzeugt in 24 h" wert={`${zahl(kennzahlen.gwh, 0)} GWh`} sub={`Lastspitze ${gw(kennzahlen.lastMax.last)} GW`} />
         </dl>
       </div>
 
@@ -299,8 +299,10 @@ export default function ErzeugungChart({ initial }) {
 
       <p className="border-t border-ink-100 px-5 py-4 text-[12.5px] leading-relaxed text-ink-500 md:px-8">
         Stand der Erzeugungsdaten: {uhr(letzte.t)} Uhr (Meldungen laufen mit etwas Verzögerung ein). Liegt die Linie über dem Stapel, wird Strom
-        importiert oder aus Speichern entnommen; liegt sie darunter, exportiert Deutschland. „Sonstige“: Müll, Öl, Grubengas, Geothermie,
-        Pumpspeicher. Quelle: Energy-Charts (Fraunhofer ISE), CC BY 4.0.
+        importiert; liegt sie darunter, exportiert Österreich oder pumpt Wasser in Speicherseen. Österreich ist eng mit Deutschland, Tschechien,
+        der Schweiz, Italien, Slowenien und Ungarn verbunden – der Handel über die Grenzen ist daher oft größer als in anderen Ländern.
+        „Speicherkraft“: Speicherkraftwerke mit natürlichem Zufluss; „Sonstige“: Pumpspeicher-Erzeugung, Müll, Geothermie und übrige Anlagen.
+        Quelle: Energy-Charts (Fraunhofer ISE), CC BY 4.0.
       </p>
     </div>
   );

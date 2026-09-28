@@ -1,258 +1,258 @@
-// Ratgeber: Photovoltaik-Versicherung
-// Beitragsspannen: Stiftung Warentest (Finanztest 04/2025). Ertragsbeispiel aus
-// Solarrechner-Kern und Monatsverteilung der Rechner-Profile.
-
-import { ANNAHMEN } from "@/data/solarrechner";
-import { berechne } from "@/lib/solarrechner";
-import { PV_MONAT } from "@/lib/rechner/profile";
-
-const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
-
-const BSP = berechne({ kwp: 10, ausrichtung: "sued", neigung: "mittel", verbrauch: 4500, speicherKwh: 0 });
-const WERT_JAHR = BSP.ersparnis + BSP.einspeiseErloes; // wirtschaftlicher Wert des Jahresertrags
-const ANTEIL_JUNI_JULI = PV_MONAT[5] + PV_MONAT[6];
-const AUSFALL = WERT_JAHR * ANTEIL_JUNI_JULI;
-const BETRIEB = 10 * ANNAHMEN.betriebskostenProKwp;
+// Ratgeber: Photovoltaik-Versicherung in Österreich (Gewerbe, Landwirtschaft, Gemeinden, Privat nachrangig)
+// Quellen: VVO (Extremwetter 2023: > 1 Mrd. € versicherte Schäden; Deckung Sturm/Hagel/Schneedruck üblich,
+// Hochwasser/Erdbeben begrenzt), Österreichische Hagelversicherung (Pressemeldung 09/2026; Produkte für
+// Landwirtschaft), Hagelregister (VKF/EPZ), HORA, OVE-Richtlinien R 11-1 und R 6-2, ESV 2012.
+// Keine Prämienangaben (keine belastbare Marktquelle). Ökovolt berät/vermittelt, bietet keine Versicherungsprodukte.
 
 const artikel = {
   slug: "photovoltaik-versicherung",
-  title: "Photovoltaik-Versicherung: Sinnvoller Schutz und Kosten 2026",
-  seoTitle: "Photovoltaik-Versicherung 2026: Schutz & Kosten | Ökovolt",
+  title: "Photovoltaik-Versicherung: Welche Deckung Betriebe wirklich brauchen",
+  seoTitle: "Photovoltaik-Versicherung Österreich: Deckung | Ökovolt",
   kurzTitel: "Photovoltaik-Versicherung",
   description:
-    "Photovoltaik-Versicherung 2026: Wohngebäudeversicherung oder Allgefahrenschutz, Haftpflicht, Ertragsausfall und Speicher – mit Kosten, Checkliste und Praxistipps.",
+    "Photovoltaik-Versicherung in Österreich: Hagel, Sturm, Schneedruck, Elektronik, Ertragsausfall, Haftpflicht – welche Deckung Betriebe brauchen. Mit Checkliste.",
   excerpt:
-    "Reicht die Wohngebäudeversicherung für Ihre Solaranlage? Welche Schäden sie nicht abdeckt, was eine PV-Versicherung kostet und welche Leistungen wirklich zählen.",
+    "Hagel, Sturm, Schneedruck, Überspannung, Marderbiss: Welche Risiken eine PV-Anlage in Österreich trägt, welche Versicherung sie abdeckt und welche Auflagen Versicherer stellen – mit Checkliste für den Vertrag.",
   hauptKeyword: "photovoltaik versicherung",
   keywords: [
-    "Photovoltaik Versicherung",
-    "PV-Anlage Versicherung Kosten",
-    "Photovoltaik Wohngebäudeversicherung",
-    "Allgefahrenversicherung Photovoltaik",
-    "Betreiberhaftpflicht Photovoltaik",
-    "Stromspeicher versichern",
+    "Photovoltaik Versicherung Österreich",
+    "PV-Anlage versichern Gewerbe",
+    "Hagelschaden Photovoltaik",
+    "Elektronikversicherung Photovoltaik",
     "Ertragsausfallversicherung PV",
+    "Photovoltaik Betriebshaftpflicht",
+    "PV-Anlage Sturmschaden",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Kosten & Wirtschaftlichkeit",
   bild: "/Images/Jobs/jobs2.jpg",
-  bildAlt: "Fachkraft prüft Photovoltaikmodule auf einem Dach",
-  badge: { wert: "65–137 €", text: "pro Jahr für eine separate PV-Versicherung (Stiftung Warentest)" },
+  bildAlt: "Techniker in Warnjacke zeigt bei einer Kontrolle auf ein Solarmodul",
+  badge: { wert: "> 1 Mrd. €", text: "versicherte Extremwetterschäden in Österreich 2023 (VVO)" },
 
   kurzFazit: [
-    "**Eine Versicherungspflicht für private PV-Anlagen gibt es nicht – sinnvoll ist ein Schutz trotzdem**, weil Reparaturen schnell vierstellige Beträge kosten.",
-    "**Mindestens** gehört die Anlage in die Wohngebäudeversicherung (Feuer, Blitz, Sturm, Hagel). Zusatzbausteine gibt es laut Stiftung Warentest ab rund 35 € im Jahr.",
-    "**Umfassender** ist eine eigene Photovoltaik-Versicherung (Allgefahrenschutz): Sie deckt auch Überspannung, Marderbiss, Diebstahl, Bedienfehler, Schneelast und Ertragsausfall. Gute Tarife kosteten im Test 65 bis 137 € pro Jahr.",
-    "**Haftpflicht** nicht vergessen: Fällt ein Modul vom Dach, haftet der Betreiber. Viele Privathaftpflicht-Tarife schließen PV-Anlagen ein – prüfen Sie die Bedingungen.",
+    "**Eine PV-Anlage braucht drei Arten von Schutz: Sachschutz (Feuer, Sturm, Hagel, Schneedruck, Elektronik), Schutz vor Ertragsausfall und Haftpflicht.** Welche davon schon über Gebäude- oder Betriebsbündelversicherung laufen, muss im Einzelfall geprüft werden.",
+    "**Das Wetterrisiko ist real:** Der Versicherungsverband Österreich (VVO) schätzte die versicherten Extremwetterschäden 2023 auf über 1 Mrd. €. Sturm, Hagel und Schneedruck sind in Gebäudepolizzen üblich, Hochwasser und Erdbeben nur begrenzt gedeckt.",
+    "**Die Elektronik- bzw. Allgefahrenversicherung schließt die größten Lücken** – etwa Überspannung, Kurzschluss, Bedienfehler, Marderbiss und Diebstahl, die eine reine Feuer-/Sturmdeckung nicht erfasst.",
+    "**Versicherer stellen Auflagen:** fachgerechte Errichtung, Prüfbefund, Brandschutz nach OVE-Richtlinie R 11-1, Blitz- und Überspannungsschutz sowie dokumentierte Wartung. Wer sie nicht erfüllt, riskiert Leistungskürzungen.",
   ],
 
   abschnitte: [
     {
-      id: "noetig",
-      titel: "Braucht eine PV-Anlage eine Versicherung?",
-      tocLabel: "Pflicht oder sinnvoll?",
+      id: "antwort",
+      titel: "Braucht eine PV-Anlage eine eigene Versicherung?",
+      tocLabel: "Eigene Versicherung?",
       bloecke: [
         {
           typ: "p",
-          text: "**Gesetzlich vorgeschrieben ist eine Versicherung für private Photovoltaikanlagen nicht, empfehlenswert ist sie aber fast immer.** Eine Anlage kostet heute schnell 10.000 € und mehr, hängt jahrzehntelang Wind und Wetter aus und enthält empfindliche Elektronik. Bei Krediten oder Mietmodellen verlangen Bank oder Anbieter oft einen Versicherungsnachweis.",
+          text: "**Eine eigene Polizze ist nicht immer nötig – eine bewusst geprüfte Deckung aber schon.** Bei Unternehmen und Gemeinden lässt sich die PV-Anlage oft in die bestehende Betriebsbündel- oder Gebäudeversicherung einschließen; entscheidend sind Versicherungssumme, versicherte Gefahren und Ausschlüsse. Eine PV-Anlage auf dem Dach ist ein technisch komplexes Wirtschaftsgut mit hohem Wert je Quadratmeter – eine Standard-Gebäudepolizze bildet das häufig nicht vollständig ab.",
+        },
+        {
+          typ: "karten",
+          cols: 3,
+          items: [
+            { titel: "Sachschaden", text: "Zerstörung oder Beschädigung durch Feuer, Blitz, Sturm, Hagel, Schneedruck, Überspannung, Diebstahl, Tierbiss oder Bedienfehler." },
+            { titel: "Ertragsausfall", text: "Entgangene Stromkostenersparnis und Einspeiseerlöse, bis die Anlage repariert ist – bei Gewerbeanlagen oft der größere Posten." },
+            { titel: "Haftpflicht", text: "Schäden Dritter, etwa durch herabfallende Module, Brand auf Nachbargebäude oder Rückwirkungen auf das Netz." },
+          ],
+        },
+      ],
+    },
+    {
+      id: "risiken",
+      titel: "Welche Risiken sind für PV-Anlagen in Österreich relevant?",
+      tocLabel: "Risiken in Österreich",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**In Österreich stehen Hagel, Sturm und Schneedruck an erster Stelle, gefolgt von Überspannung durch Blitz, Brand und Tierbiss.** Die Naturgefahren sind regional sehr unterschiedlich: Alpine Lagen tragen hohe Schneelasten, das Alpenvorland und die Südost-Steiermark sind hagelexponiert. Einen standortgenauen Überblick liefert die Naturgefahrenplattform [HORA](https://www.hora.gv.at/) des Bundes.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Risiken einer PV-Anlage und typische Versicherungssparte",
+          kopf: ["Risiko", "Typischer Schaden", "Meist gedeckt über"],
+          zeilen: [
+            ["Hagel", "Glasbruch, Zellrisse, Leistungsverlust", "Gebäude-/Sturmversicherung, Elektronikversicherung"],
+            ["Sturm", "abgehobene Module, beschädigte Unterkonstruktion und Dachhaut", "Sturmversicherung (oft ab definierter Windgeschwindigkeit)"],
+            ["Schneedruck", "verbogene Rahmen, gebrochene Module, Dachschäden", "Gebäude-/Sturmversicherung, Elektronikversicherung"],
+            ["Blitz / Überspannung", "defekte Wechselrichter, Optimierer, Monitoring", "Elektronikversicherung; direkter Blitz auch Feuerversicherung"],
+            ["Brand", "Anlage und Gebäude, Betriebsunterbrechung", "Feuerversicherung, Betriebsunterbrechung"],
+            ["Tierbiss, Diebstahl, Vandalismus", "angefressene Leitungen, fehlende Module", "Elektronikversicherung (Allgefahren)"],
+            ["Bedienfehler, Kurzschluss, Konstruktionsfehler", "Wechselrichter- und Speicherschäden", "Elektronik-/Maschinenbruchversicherung"],
+            ["Hochwasser, Erdbeben", "Wechselrichter und Speicher im Keller", "nur begrenzt, Summen und Selbstbehalte prüfen"],
+          ],
+          minBreite: 700,
+          fussnote: "Übliche Zuordnung; tatsächlicher Umfang ergibt sich aus Polizze und Bedingungen des jeweiligen Versicherers.",
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Hagel: Module mit Reserve wählen",
+          text: "Die Modulnorm IEC 61215 prüft Hagelbeständigkeit mit 25-mm-Eiskugeln. In Österreich treten deutlich größere Körner auf. Das Hagelregister von VKF und Elementarschaden Präventionszentrum listet geprüfte Bauprodukte nach Hagelwiderstandsklassen (HW 1 bis HW 5, entsprechend Korndurchmessern von 1 bis 5 cm). Wie man Module und Neigung auf den Standort abstimmt, erklärt der Ratgeber [Hagel und Photovoltaik](/ratgeber/hagel-photovoltaik).",
         },
         {
           typ: "p",
-          text: "Zwei Arten von Risiken sollten Sie unterscheiden: **Schäden an der eigenen Anlage** (Sachschäden und entgangener Ertrag) und **Schäden, die Ihre Anlage bei anderen verursacht** (Haftpflicht). Für beides gibt es unterschiedliche Versicherungen – und genau hier entstehen die meisten Lücken.",
+          text: "Die Österreichische Hagelversicherung ist auf landwirtschaftliche Kulturen spezialisiert – für die PV-Anlage selbst sind Sach- und Elektronikversicherer zuständig. Relevant wird die Hagelversicherung bei [Agri-PV](/agri-pv): Dort sollten Anlage und darunter wachsende Kulturen getrennt und abgestimmt versichert werden. Allein Anfang September 2026 meldete die Hagelversicherung nach späten Unwettern landwirtschaftliche Schäden von rund 5 Mio. € in fünf Bundesländern.",
+        },
+      ],
+    },
+    {
+      id: "sparten",
+      titel: "Welche Versicherungen gibt es für PV-Anlagen?",
+      tocLabel: "Versicherungsarten",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Für Gewerbe-PV-Anlagen kombiniert man üblicherweise fünf Bausteine: Montage-, Sach- bzw. Elektronik-, Betriebsunterbrechungs-, Haftpflicht- und – bei Finanzierung – eine Absicherung nach Vorgabe der Bank.** Die Tabelle zeigt, wofür welcher Baustein zuständig ist.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Versicherungsbausteine für Photovoltaikanlagen im Überblick",
+          kopf: ["Baustein", "Deckt", "Wichtig bei"],
+          zeilen: [
+            ["Montageversicherung", "Schäden während der Errichtung bis zur Abnahme (Diebstahl von Material, Sturm, Montagefehler)", "Errichter oder Bauherr – Zuständigkeit im Werkvertrag klären"],
+            ["Feuer- / Gebäudeversicherung (inkl. Sturm, Hagel, Schneedruck)", "benannte Gefahren an Gebäude und mitversicherter Anlage", "Summenanpassung nach Errichtung, Einschluss ausdrücklich bestätigen"],
+            ["Elektronik- / Allgefahrenversicherung", "alle nicht ausgeschlossenen Gefahren, inkl. Überspannung, Kurzschluss, Bedienfehler, Tierbiss, Diebstahl", "Kern der PV-Deckung für Betriebe"],
+            ["Betriebsunterbrechung / Ertragsausfall", "entgangene Ersparnis und Erlöse bis zur Wiederherstellung", "hoher Eigenverbrauch, lange Lieferzeiten von Wechselrichtern"],
+            ["Betriebshaftpflicht", "Personen- und Sachschäden Dritter", "Einschluss der Stromerzeugung und -einspeisung bestätigen lassen"],
+          ],
+          minBreite: 700,
+        },
+        {
+          typ: "p",
+          text: "Für Speicher gelten dieselben Überlegungen, oft mit zusätzlichen Auflagen zu Aufstellort, Brandabschnitt und Temperaturüberwachung – mehr im Ratgeber [Brandschutz bei Photovoltaik](/ratgeber/photovoltaik-brandschutz). Bei privaten Anlagen genügt häufig der Einschluss in die Eigenheimversicherung plus eine Elektronikdeckung; bei alpinen [Chalets](/chalets) mit hohen Schneelasten lohnt ein genauer Blick auf Schneedruck und Lawinengefahren.",
+        },
+      ],
+    },
+    {
+      id: "auflagen",
+      titel: "Welche Auflagen stellen Versicherer?",
+      tocLabel: "Auflagen der Versicherer",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Versicherer verlangen den Nachweis, dass die Anlage fachgerecht errichtet, geprüft und instand gehalten wird.** Die konkreten Obliegenheiten stehen in den Bedingungen – werden sie verletzt, kann der Versicherer im Schadenfall die Leistung kürzen oder verweigern.",
+        },
+        {
+          typ: "checkliste",
+          punkte: [
+            "**Errichtung durch befugten Elektrotechniker** mit Erstprüfungsprotokoll und Anlagendokumentation.",
+            "**Prüfbefund:** Wiederkehrende Prüfung nach ESV 2012 bzw. im vom Versicherer verlangten Intervall – siehe [E-Check für PV-Anlagen](/ratgeber/e-check-photovoltaik).",
+            "**Brandschutz:** Kennzeichnung, Feuerwehrplan und Maßnahmen nach OVE-Richtlinie R 11-1, Abstände zu Brandwänden.",
+            "**Blitz- und Überspannungsschutz** nach OVE-Richtlinien R 6-2-1 und R 6-2-2 bzw. Blitzschutzkonzept des Gebäudes.",
+            "**Wartung und Monitoring:** Nachweis regelmäßiger Kontrollen, Fehlermeldungen werden bearbeitet.",
+            "**Statik:** Nachweis für Schnee- und Windlasten nach ÖNORM B 1991-1-3 und B 1991-1-4.",
+            "**Meldung von Änderungen:** Erweiterungen, Speicher, Wechselrichtertausch und Summenänderungen dem Versicherer melden.",
+          ],
         },
         {
           typ: "kasten",
           variant: "wichtig",
-          titel: "Anlage dem Versicherer melden",
-          text: "Wer eine PV-Anlage installiert, verändert das versicherte Gebäude. Melden Sie die Anlage Ihrem Wohngebäudeversicherer – sonst drohen Streit über den Versicherungsschutz oder eine Unterversicherung. Gleiches gilt, wenn später ein [Stromspeicher](/ratgeber/stromspeicher-kosten) oder eine Wallbox dazukommt.",
+          titel: "Unterversicherung vermeiden",
+          text: "Wird eine PV-Anlage nachträglich auf ein versichertes Gebäude gebaut, ohne die Versicherungssumme anzupassen, droht Unterversicherung: Der Versicherer zahlt dann im Schadenfall nur anteilig – auch für Schäden am Gebäude. Melden Sie die Anlage mit dem Neuwert und lassen Sie sich den Einschluss schriftlich bestätigen.",
         },
       ],
     },
     {
-      id: "schutz-vergleich",
-      titel: "Wohngebäudeversicherung oder Photovoltaik-Versicherung?",
-      tocLabel: "Wohngebäude vs. PV-Versicherung",
+      id: "ertragsausfall",
+      titel: "Ertragsausfall: der unterschätzte Posten",
+      tocLabel: "Ertragsausfall",
       bloecke: [
         {
           typ: "p",
-          text: "**Die Wohngebäudeversicherung schützt nur gegen die klassischen Gebäudegefahren, eine Photovoltaik-Versicherung als Allgefahrenschutz auch gegen die typischen Technikschäden.** Welcher Schutz passt, hängt vom Wert der Anlage und davon ab, wie viel Risiko Sie selbst tragen möchten.",
+          text: "**Bei Gewerbeanlagen ist der Ertragsausfall nach einem Schaden oft teurer als die Reparatur selbst, weil Ersatzteile Wochen brauchen und jede fehlende Kilowattstunde teuren Netzbezug auslöst.** Eine Betriebsunterbrechungs- oder Ertragsausfallversicherung ersetzt den entgangenen Wert für einen vereinbarten Zeitraum.",
         },
         {
           typ: "tabelle",
-          caption: "Welche Versicherung zahlt bei welchem Schaden? (typischer Leistungsumfang)",
-          kopf: ["Schadenursache", "Wohngebäudeversicherung", "PV-Versicherung (Allgefahren)", "Haftpflicht"],
+          caption: "Beispiel: Wert eines zweimonatigen Totalausfalls im Sommer (Beispielrechnung)",
+          kopf: ["Anlage", "Ertrag Juni + Juli (ca.)", "Wert bei 15 ct/kWh", "Wert bei 20 ct/kWh"],
           zeilen: [
-            ["Feuer, Blitzeinschlag", "ja", "ja", "–"],
-            ["Sturm (ab Windstärke 8), Hagel", "ja", "ja", "–"],
-            ["Überspannung durch Blitz in der Nähe", "nur mit Zusatzklausel", "ja", "–"],
-            ["Marder- und Tierbiss an Kabeln", "meist nein", "ja", "–"],
-            ["Diebstahl, Vandalismus", "meist nein", "ja", "–"],
-            ["Bedien- und Konstruktionsfehler, Kurzschluss", "nein", "ja", "–"],
-            ["Schneedruck", "nur mit Elementarschutz", "ja", "–"],
-            ["Ertragsausfall nach einem Schaden", "nein", "ja (Dauer begrenzt)", "–"],
-            ["Batteriespeicher", "je nach Tarif", "wenn eingeschlossen", "–"],
-            ["Modul fällt auf Passanten oder Nachbarauto", "–", "–", "ja"],
+            ["100 kWp", "27.000 kWh", "4.050 €", "5.400 €"],
+            ["300 kWp", "81.000 kWh", "12.150 €", "16.200 €"],
+            ["1.000 kWp", "270.000 kWh", "40.500 €", "54.000 €"],
           ],
-          hervorheben: 2,
-          minBreite: 680,
-          fussnote: "Typische Bedingungen, keine Rechtsberatung. Der tatsächliche Umfang steht in den Versicherungsbedingungen Ihres Tarifs. Sturm gilt bei Versicherern in der Regel erst ab Windstärke 8 (Verbraucherzentrale).",
+          hervorheben: 3,
+          minBreite: 600,
+          fussnote: "Annahmen: rund 1.050 kWh/kWp im Jahr, davon etwa 13 % je Sommermonat; 15 ct als Mischwert aus Eigenverbrauch und Einspeisung, 20 ct bei überwiegendem Eigenverbrauch. Ohne Leistungspreiseffekte.",
+        },
+        {
+          typ: "p",
+          text: "Wichtig sind Haftzeit, Karenzzeit (die ersten Tage sind oft nicht gedeckt) und die Bewertungsgrundlage: Wird der Ertrag aus Monitoringdaten, aus einer Prognose oder aus dem Vorjahr abgeleitet? Ein gutes Monitoring ist deshalb auch Versicherungsvorsorge – siehe [Fernwartung](/technik/fernwartung). Wie hoch der Wert Ihres Eigenverbrauchs ist, zeigt der Ratgeber [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen).",
+        },
+      ],
+    },
+    {
+      id: "zielgruppen",
+      titel: "Besonderheiten für Landwirtschaft, Hotellerie und Gemeinden",
+      tocLabel: "Branchen-Besonderheiten",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Je nach Branche verschieben sich die Schwerpunkte: In der Landwirtschaft zählen Brand- und Tierrisiken, in der Hotellerie Schnee und Betriebsunterbrechung, bei Gemeinden Haftung und Vergabe.** Ein Blick auf die typischen Konstellationen hilft, die Deckung passend zu wählen.",
         },
         {
           typ: "karten",
-          cols: 2,
+          cols: 3,
           items: [
-            { titel: "Einschluss in die Wohngebäudeversicherung", text: "Günstig und einfach: Die Anlage wird als Gebäudebestandteil mitversichert, ggf. mit Zusatzbaustein. Deckt Feuer, Blitzeinschlag, Sturm und Hagel. Technische Defekte, Überspannung ohne Klausel, Diebstahl oder Ertragsausfall sind meist nicht dabei." },
-            { titel: "Photovoltaik-Versicherung (Allgefahren)", text: "Eigene Police nur für die Anlage, meist inklusive Wechselrichter, Verkabelung und optional Speicher. Versichert sind alle Gefahren, die nicht ausdrücklich ausgeschlossen sind – plus Ertragsausfall. Etwas teurer, aber deutlich umfassender." },
+            { titel: "Landwirtschaft", text: "Anlagen auf Ställen, Scheunen und Maschinenhallen: Brandlast aus Heu und Stroh, Ammoniak, Marder und Nager. Feuerversicherung des Gebäudes und Elektronikdeckung der Anlage abstimmen; bei Agri-PV auch die Kulturversicherung. Mehr unter [Landwirtschaft](/landwirtschaft)." },
+            { titel: "Hotellerie & Tourismus", text: "Hohe Schneelasten, Lawinen- und Murengefahr in alpinen Lagen, Betrieb in der Hochsaison. Ertragsausfall und Mehrkosten für Ersatzstrom einbeziehen, Zugang im Winter klären – siehe [Photovoltaik für Hotels](/ratgeber/photovoltaik-hotel)." },
+            { titel: "Gemeinden", text: "Anlagen auf Schulen, Bauhöfen und Kläranlagen: Haftung gegenüber Nutzern, Einbindung in kommunale Sammelverträge, Vergabe der Versicherungsleistung nach Bundesvergabegesetz. Mehr im Ratgeber [Photovoltaik für Gemeinden](/ratgeber/photovoltaik-gemeinde)." },
           ],
         },
         {
+          typ: "h3",
+          text: "Neuwert oder Zeitwert – was passiert mit älteren Anlagen?",
+        },
+        {
           typ: "p",
-          text: "Die Verbraucherzentrale empfiehlt, die Anlage **wenigstens in die Wohngebäudeversicherung** einzuschließen und für größere oder teurere Anlagen eine spezielle [Photovoltaikversicherung](/wissen/lexikon#photovoltaikversicherung) abzuschließen. Manche Anbieter kalkulieren diese für die ersten ein bis drei Jahre bereits in den Anlagenpreis ein – fragen Sie danach und notieren Sie das Ablaufdatum.",
+          text: "Viele Elektronikpolizzen leisten in den ersten Jahren Neuwertersatz und wechseln danach auf den Zeitwert oder staffeln Abzüge nach Alter. Bei einer Anlage mit 25 Jahren Lebensdauer ist das ein erheblicher Unterschied. Prüfen Sie deshalb, ab welchem Anlagenalter Abzüge greifen, und passen Sie die Versicherungssumme an, wenn Module, Wechselrichter oder Speicher erneuert oder erweitert werden. Hinzu kommt ein praktisches Problem: Baugleiche Ersatzmodule sind nach einigen Jahren oft nicht mehr lieferbar. Gute Bedingungen regeln, dass bei Nichtverfügbarkeit gleichwertige Module eingesetzt und notwendige Anpassungen an Unterkonstruktion oder Stringplanung mitversichert sind – sonst bleibt der Betreiber auf Mehrkosten sitzen. Wie ein Weiterbetrieb älterer Anlagen wirtschaftlich gelingt, zeigt der Ratgeber [Photovoltaik nach 20 Jahren](/ratgeber/photovoltaik-nach-20-jahren).",
         },
       ],
     },
     {
-      id: "haftpflicht",
-      titel: "Betreiberhaftpflicht: Schäden bei anderen absichern",
-      tocLabel: "Haftpflicht",
+      id: "schadenfall",
+      titel: "Was tun im Schadenfall?",
+      tocLabel: "Schadenfall",
       bloecke: [
         {
-          typ: "p",
-          text: "**Als Betreiber haften Sie, wenn Ihre Anlage anderen einen Schaden zufügt – etwa wenn sich bei Sturm ein Modul löst und ein Auto oder eine Person trifft.** Eine Photovoltaik-Versicherung zahlt dafür nicht, zuständig ist die Haftpflichtversicherung. Stiftung Warentest bezeichnet die private Haftpflicht deshalb als unverzichtbar.",
-        },
-        {
-          typ: "liste",
-          punkte: [
-            "**Private Haftpflicht:** Viele Tarife schließen PV-Anlagen auf dem selbst genutzten Haus ein, teils mit Grenzen bei Anlagengröße oder Einspeisung. Prüfen Sie die Bedingungen oder lassen Sie sich den Einschluss schriftlich bestätigen.",
-            "**Haus- und Grundbesitzerhaftpflicht:** Nötig bei vermieteten Gebäuden, etwa beim Mehrfamilienhaus mit [Mieterstrom](/produkte/mieterstrom) oder gemeinschaftlicher Gebäudeversorgung.",
-            "**Betriebshaftpflicht:** Für Unternehmen und Landwirte; die Anlage muss dort ausdrücklich als Risiko genannt sein. Mehr zu Anlagen im Betrieb im Ratgeber [Photovoltaik für Gewerbe](/ratgeber/photovoltaik-gewerbe).",
+          typ: "ablauf",
+          schritte: [
+            ["Sicherheit herstellen", "Bei Brand, herabhängenden Modulen oder offenen Leitungen Bereich absperren; Anlage nur durch Fachkräfte freischalten lassen – DC-Leitungen stehen unter Spannung, solange Licht einfällt."],
+            ["Schaden dokumentieren", "Fotos, Monitoringdaten (Ertragseinbruch mit Zeitstempel), Wetterdaten und Zeugen festhalten."],
+            ["Versicherer sofort informieren", "Schadenmeldung innerhalb der vertraglichen Frist, Reparaturen erst nach Freigabe – außer Notmaßnahmen zur Schadensminderung."],
+            ["Gutachten und Messungen", "Thermografie, Kennlinienmessung oder EL-Prüfung belegen verdeckte Schäden, etwa Mikrorisse nach Hagel."],
+            ["Reparatur und Wiederinbetriebnahme", "Instandsetzung durch Fachbetrieb, Prüfung vor Wiederinbetriebnahme nach § 8 ESV 2012, Prüfbefund an den Versicherer."],
           ],
         },
         {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Während der Montage haftet der Installateur",
-          text: "Bis zur Abnahme trägt beim Werkvertrag grundsätzlich der ausführende Betrieb die Gefahr für das Werk (§ 644 BGB). Schäden während der Montage sind Sache seiner Betriebshaftpflicht bzw. Montageversicherung. Ab der Abnahme sollte Ihr eigener Schutz stehen – schließen Sie die Versicherung also vor dem Inbetriebnahmetermin ab.",
-        },
-      ],
-    },
-    {
-      id: "kosten",
-      titel: "Was kostet eine Photovoltaik-Versicherung?",
-      tocLabel: "Kosten",
-      bloecke: [
-        {
           typ: "p",
-          text: "**Eine eigene Photovoltaik-Versicherung mit gutem Mindestschutz kostete im Test der Stiftung Warentest 65 bis 137 € im Jahr, Zusatzbausteine zur Wohngebäudeversicherung gab es ab rund 35 €.** Von 95 geprüften Tarifen erfüllten 57 den empfohlenen Mindestschutz. Der Beitrag hängt vor allem von Anlagenwert, Selbstbeteiligung, Region und Leistungsumfang ab.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Jahresbeiträge für Einfamilienhaus-Anlagen im Überblick",
-          kopf: ["Absicherung", "Beitrag pro Jahr", "Quelle / Hinweis"],
-          zeilen: [
-            ["Zusatzbaustein in der Wohngebäudeversicherung", "ab ca. 35 €", "Stiftung Warentest, Finanztest 04/2025"],
-            ["Separate PV-Versicherung mit Mindestschutz", "ca. 65–137 €", "Stiftung Warentest, Finanztest 04/2025"],
-            ["Speicher-Einschluss", "je nach Tarif inklusive oder Aufpreis", "Speicherwert als Versicherungssumme angeben"],
-            ["Private Haftpflicht mit PV-Einschluss", "oft ohne Mehrbeitrag", "Bedingungen prüfen"],
-          ],
-          hervorheben: 1,
-          minBreite: 600,
-        },
-        {
-          typ: "p",
-          text: `Zum Vergleich: Für alle laufenden Kosten einer 10-kWp-Anlage – Versicherung, Zählermiete, Wartung und Rücklage für den Wechselrichter – kalkulieren wir im [Solarrechner](/solarrechner) rund ${ANNAHMEN.betriebskostenProKwp} € je kWp, also etwa ${eur(BETRIEB)} im Jahr. Die Versicherung ist davon ein überschaubarer Teil. Wie sich die Betriebskosten auf die Wirtschaftlichkeit auswirken, zeigt der Ratgeber [Amortisation Photovoltaik](/ratgeber/photovoltaik-amortisation).`,
-        },
-        {
-          typ: "kennzahl",
-          wert: eur(AUSFALL),
-          titel: "Ertragsverlust, wenn eine 10-kWp-Anlage im Juni und Juli stillsteht",
-          text: `In diesen zwei Monaten entstehen rund ${Math.round(ANTEIL_JUNI_JULI * 100)} % des Jahresertrags. Dazu kommen die Reparaturkosten – ein getauschter Wechselrichter oder mehrere Module mit Gerüst sind schnell vierstellig. Genau dafür ist die Ertragsausfall-Leistung gedacht.`,
+          text: "Gerade bei Hagel ist der Nachweis entscheidend: Zellrisse ohne sichtbaren Glasbruch zeigen sich oft erst Monate später als Leistungsverlust. Eine zeitnahe Inspektion – etwa per [Drohnen-Thermografie](/ratgeber/pv-thermografie-drohne) – sichert Ihre Ansprüche.",
         },
       ],
     },
     {
       id: "checkliste",
-      titel: "Checkliste: Darauf kommt es beim Tarif an",
-      tocLabel: "Tarif-Checkliste",
+      titel: "Checkliste: Versicherungsvertrag für die PV-Anlage prüfen",
+      tocLabel: "Checkliste Vertrag",
       bloecke: [
-        {
-          typ: "p",
-          text: "**Stiftung Warentest nennt sieben Leistungen als Mindestschutz.** Darüber hinaus lohnen sich einige Details, die im Schadensfall über Hunderte Euro entscheiden:",
-        },
         {
           typ: "checkliste",
           punkte: [
-            "**Ertragsausfall** nach einem versicherten Schaden – mit ausreichender Dauer und nachvollziehbarer Berechnung (Pauschale je kWp oder tatsächlicher Ertrag).",
-            "**Tierbiss** (Marder, Nager) an Kabeln und Dämmung.",
-            "**Diebstahl** von Modulen, Wechselrichter und Speicher.",
-            "**Überspannung** durch Blitz, auch ohne direkten Einschlag.",
-            "**Bedienungs- und Konstruktionsfehler** sowie Kurzschluss.",
-            "**Schneelast** auf Modulen und Unterkonstruktion.",
-            "**Batteriespeicher** mitversichert, inklusive Brandfolgeschäden.",
-            "**Neuwertentschädigung** statt Zeitwert und ausreichende Versicherungssumme – sonst droht Unterversicherung.",
-            "**Nebenkosten** wie Gerüst, Demontage, Entsorgung und Aufräumarbeiten eingeschlossen.",
-            "**Grobe Fahrlässigkeit** mitversichert und eine Selbstbeteiligung, die zu Ihrem Budget passt.",
+            "Ist die PV-Anlage (inkl. Speicher und Ladepunkte) ausdrücklich eingeschlossen und mit dem Neuwert versichert?",
+            "Sind Hagel, Sturm, Schneedruck, Überspannung, Tierbiss, Diebstahl und Bedienfehler gedeckt?",
+            "Wie hoch sind Selbstbehalte, und gelten sie je Schaden oder je Ereignis?",
+            "Ist ein Ertragsausfall mit ausreichender Haftzeit versichert, und wie wird er berechnet?",
+            "Deckt die Betriebshaftpflicht die Stromerzeugung und Einspeisung?",
+            "Welche Obliegenheiten gelten (Prüfintervalle, Wartung, Brandschutz, Blitzschutz)?",
+            "Sind Aufräum-, Demontage- und Wiedermontagekosten sowie Gerüst oder Hubsteiger mitversichert?",
+            "Gilt Neuwert- oder Zeitwertersatz, und ab welchem Anlagenalter ändert sich das?",
           ],
         },
         {
           typ: "kasten",
           variant: "tipp",
-          titel: "Garantie ist keine Versicherung",
-          text: "Hersteller- und Leistungsgarantien decken Produktionsfehler und übermäßigen Leistungsverlust – aber keine Sturm-, Hagel- oder Marderschäden. Eine gute Garantie senkt das Risiko, ersetzt den Versicherungsschutz jedoch nicht.",
-        },
-      ],
-    },
-    {
-      id: "speicher-wallbox",
-      titel: "Stromspeicher, Wallbox und Balkonkraftwerk mitversichern",
-      tocLabel: "Speicher & Co.",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ein Batteriespeicher erhöht den Versicherungswert Ihrer Anlage um mehrere tausend Euro und sollte ausdrücklich eingeschlossen sein.** Viele PV-Tarife bieten ihn als Option an. Geben Sie beim Abschluss die Speicherkosten in der Versicherungssumme an und melden Sie eine spätere Nachrüstung. Die Verbraucherzentrale rät außerdem, Speicher nicht in hochwassergefährdeten Kellern aufzustellen.",
-        },
-        {
-          typ: "liste",
-          punkte: [
-            "**Wallbox:** fest installiert meist Teil des Gebäudes und damit in der Wohngebäudeversicherung – bei Überspannung und Diebstahl lohnt der Blick in die Bedingungen. Hintergründe: [Wallbox-Installation](/ratgeber/wallbox-installation).",
-            "**Balkonkraftwerk:** gilt meist als beweglicher Gegenstand und fällt eher unter die Hausratversicherung; die Haftpflicht sollte Steckersolargeräte ausdrücklich einschließen. Mehr im Ratgeber [Balkonkraftwerk](/ratgeber/balkonkraftwerk).",
-            "**Energiemanagement und Smart Meter:** in der Regel über die Elektronik-Deckung der PV-Versicherung abgedeckt, sofern sie zur Anlage gehören.",
-          ],
-        },
-      ],
-    },
-    {
-      id: "vorbeugen",
-      titel: "Schäden vorbeugen: Was Versicherer und Verbraucherschützer empfehlen",
-      tocLabel: "Vorbeugen",
-      bloecke: [
-        {
-          typ: "karten",
-          cols: 2,
-          items: [
-            { titel: "Überspannungsschutz", text: "Laut Verbraucherzentrale ist ein interner Blitzschutz bei PV-Anlagen seit 2018 Pflicht. Lassen Sie sich den [Überspannungsschutz](/wissen/lexikon#ueberspannungsschutz) im Übergabeprotokoll bestätigen." },
-            { titel: "Hagelfeste Module", text: "Glas-Glas-Module gelten als widerstandsfähiger gegen Hagel als Glas-Folien-Module. Mehr dazu im [Solarmodule-Vergleich](/ratgeber/solarmodule-vergleich)." },
-            { titel: "Monitoring", text: "Ein Ertragseinbruch fällt über die App schnell auf. Das begrenzt den Ertragsausfall – manche Versicherer setzen eine Überwachung sogar voraus. Tipps unter [Reinigung & Wartung](/ratgeber/photovoltaik-reinigung-wartung)." },
-            { titel: "Regelmäßige Prüfung", text: "Die Verbraucherzentrale empfiehlt regelmäßige Sichtkontrollen und alle fünf Jahre eine Fachprüfung. Ein Prüfprotokoll hilft auch im Schadensfall." },
-          ],
-        },
-      ],
-    },
-    {
-      id: "schadensfall",
-      titel: "Im Schadensfall richtig vorgehen",
-      tocLabel: "Schadensfall",
-      bloecke: [
-        {
-          typ: "ablauf",
-          schritte: [
-            ["Sicherheit zuerst", "Beschädigte Module und Kabel nicht berühren – auch bei Tageslicht liegt Gleichspannung an. Bei Brand die Feuerwehr auf die PV-Anlage hinweisen."],
-            ["Anlage abschalten lassen", "Den Fachbetrieb informieren, der die Anlage sicher vom Netz trennt und den Schaden begutachtet."],
-            ["Dokumentieren", "Fotos vom Schaden, Ertragsdaten aus dem Monitoring vor und nach dem Ereignis, Wetterdaten (z. B. Sturm- oder Hagelmeldung) sichern."],
-            ["Schaden melden", "Den Versicherer unverzüglich informieren, Rechnungen, Anlagendaten und Kostenvoranschlag einreichen. Keine Reparatur ohne Absprache beauftragen, außer zur Schadensminderung."],
-            ["Ertragsausfall belegen", "Für die Entschädigung Ertragsdaten des Vorjahres oder die Prognose aus der Planung bereithalten."],
-          ],
+          titel: "Unabhängige Beratung einholen",
+          text: "Ökovolt bietet keine eigenen Versicherungsprodukte an, unterstützt aber bei der [Versicherungsberatung](/service/versicherung): Wir liefern die technischen Unterlagen, die Versicherer brauchen, und erklären, welche Risiken Ihre Anlage konkret trägt. Die Polizze schließen Sie mit Ihrem Versicherer oder Makler ab.",
         },
       ],
     },
@@ -260,55 +260,61 @@ const artikel = {
 
   faq: [
     {
-      q: "Ist eine PV-Anlage automatisch in der Wohngebäudeversicherung mitversichert?",
-      a: "Nicht automatisch. Fest montierte Dachanlagen können als Gebäudebestandteil gelten, viele Versicherer verlangen aber eine Meldung oder einen Zusatzbaustein. Melden Sie die Anlage in jedem Fall, damit Versicherungssumme und Schutz passen.",
+      q: "Ist eine PV-Anlage in der Gebäudeversicherung mitversichert?",
+      a: "Oft ja, aber nicht automatisch und meist nur gegen benannte Gefahren wie Feuer, Sturm, Hagel und Schneedruck. Melden Sie die Anlage mit dem Neuwert und lassen Sie sich den Einschluss bestätigen, sonst droht Unterversicherung. Schäden durch Überspannung, Kurzschluss oder Tierbiss deckt meist erst eine Elektronikversicherung.",
     },
     {
-      q: "Was kostet eine Photovoltaik-Versicherung im Jahr?",
-      a: "Separate PV-Versicherungen mit gutem Mindestschutz kosteten im Test der Stiftung Warentest (04/2025) 65 bis 137 € im Jahr. Zusatzbausteine zur Wohngebäudeversicherung gibt es ab rund 35 €.",
+      q: "Zahlt die Versicherung Hagelschäden an Solarmodulen?",
+      a: "Ja, wenn Hagel als Gefahr eingeschlossen ist – in Gebäude- und Elektronikpolizzen ist das üblich. Wichtig ist der Nachweis: Mikrorisse ohne Glasbruch werden oft erst durch Thermografie oder EL-Prüfung sichtbar. Melden Sie Schäden rasch und dokumentieren Sie sie.",
     },
     {
-      q: "Brauche ich eine extra Haftpflicht für meine Solaranlage?",
-      a: "Meist nicht, wenn Ihre private Haftpflicht PV-Anlagen auf dem selbst genutzten Haus einschließt. Das ist bei vielen Tarifen der Fall, aber nicht bei allen. Bei vermieteten oder gewerblich genutzten Gebäuden brauchen Sie eine Haus- und Grundbesitzer- oder Betriebshaftpflicht.",
+      q: "Was kostet eine Photovoltaik-Versicherung?",
+      a: "Die Prämie hängt von Versicherungssumme, Standort (Hagel- und Schneelastzone), versicherten Gefahren, Selbstbehalt und Einschluss des Ertragsausfalls ab. Für Österreich gibt es keine allgemein gültige Preisstatistik – vergleichen Sie Angebote mit identischem Deckungsumfang.",
     },
     {
-      q: "Zahlt die Versicherung bei Hagelschaden an Solarmodulen?",
-      a: "Ja, Hagel ist sowohl in der Wohngebäudeversicherung als auch in einer PV-Versicherung versichert. Nur die PV-Versicherung ersetzt aber in der Regel auch den Ertragsausfall bis zur Reparatur.",
+      q: "Brauche ich eine Haftpflichtversicherung für die PV-Anlage?",
+      a: "Ja. Unternehmen sollten den Einschluss in die Betriebshaftpflicht bestätigen lassen, einschließlich Stromerzeugung und Einspeisung. Private Betreiber prüfen ihre Haushalts- bzw. Eigenheimhaftpflicht.",
     },
     {
-      q: "Ist ein Stromspeicher in der PV-Versicherung enthalten?",
-      a: "Nicht immer. Viele Tarife bieten den Speicher als Option an. Achten Sie darauf, dass der Speicherwert in der Versicherungssumme enthalten ist, und melden Sie einen nachgerüsteten Speicher.",
+      q: "Welche Auflagen stellen Versicherer an PV-Anlagen?",
+      a: "Typisch sind fachgerechte Errichtung, Prüfbefund, Brandschutzmaßnahmen nach OVE-Richtlinie R 11-1, Blitz- und Überspannungsschutz, statischer Nachweis und dokumentierte Wartung. Die konkreten Obliegenheiten stehen in den Versicherungsbedingungen.",
     },
     {
-      q: "Lohnt sich eine Photovoltaik-Versicherung für kleine Anlagen?",
-      a: "Bei kleinen Anlagen reicht oft der Einschluss in die Wohngebäudeversicherung plus Haftpflicht. Je teurer die Anlage und je höher der Eigenverbrauch, desto eher lohnt ein Allgefahrenschutz mit Ertragsausfall.",
+      q: "Ist ein Ertragsausfall nach einem Schaden versichert?",
+      a: "Nur wenn eine Betriebsunterbrechungs- oder Ertragsausfalldeckung vereinbart ist. Achten Sie auf Haftzeit, Karenzzeit und die Berechnungsgrundlage – Monitoringdaten erleichtern den Nachweis.",
     },
     {
-      q: "Sind Marderschäden an der PV-Anlage versichert?",
-      a: "In der Wohngebäudeversicherung meist nicht. Eine Photovoltaik-Versicherung mit Mindestschutz nach Stiftung Warentest deckt Tierbiss dagegen ab.",
+      q: "Wer haftet, wenn ein Modul vom Dach fällt?",
+      a: "Grundsätzlich der Betreiber bzw. Gebäudeeigentümer, der für den sicheren Zustand der Anlage verantwortlich ist. Gedeckt ist das über die Betriebs- oder Gebäudehaftpflicht, sofern die PV-Anlage eingeschlossen ist. Regelmäßige Kontrollen der Befestigung – besonders nach Stürmen – sind Teil der Sorgfaltspflicht.",
+    },
+    {
+      q: "Muss ich die Versicherung informieren, wenn ich einen Speicher nachrüste?",
+      a: "Ja. Ein Speicher erhöht den Versicherungswert und verändert das Brandrisiko. Melden Sie Nachrüstungen, Erweiterungen und Wechselrichtertausch, damit Summe und Obliegenheiten angepasst werden und keine Unterversicherung entsteht.",
     },
   ],
 
   passend: [
-    { href: "/ratgeber/solaranlage-kosten", titel: "Was kostet eine Solaranlage?", text: "Preise je kWp und laufende Kosten." },
-    { href: "/ratgeber/photovoltaik-reinigung-wartung", titel: "Reinigung & Wartung", text: "Prüfungen, Monitoring und Kosten." },
-    { href: "/ratgeber/stromspeicher-kosten", titel: "Stromspeicher Kosten", text: "Preise, Nachrüstung und Wirtschaftlichkeit." },
-    { href: "/angebot", titel: "Angebot anfragen", text: "Anlage mit sauberem Übergabeprotokoll." },
+    { href: "/service/versicherung", titel: "Versicherungsberatung", text: "Technische Unterlagen und Risikoeinschätzung für Ihre Polizze." },
+    { href: "/ratgeber/hagel-photovoltaik", titel: "Hagel und Photovoltaik", text: "Hagelwiderstand, Module und Standort." },
+    { href: "/ratgeber/photovoltaik-brandschutz", titel: "Brandschutz bei PV", text: "OVE R 11-1, Feuerwehr, Speicher." },
+    { href: "/ratgeber/e-check-photovoltaik", titel: "E-Check für PV-Anlagen", text: "Prüfbefund als Versicherungsnachweis." },
   ],
 
   quellen: [
-    { titel: "Stiftung Warentest – Photovoltaikversicherung: Guten Schutz gibt es für unter 100 Euro im Jahr", url: "https://www.test.de/Photovoltaikversicherung-Guten-Schutz-gibt-es-fuer-unter-100-Euro-im-Jahr-5138152-0/", stand: "04/2025" },
-    { titel: "Verbraucherzentrale – Photovoltaik: Was bei der Planung einer Solaranlage wichtig ist", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/photovoltaik-was-bei-der-planung-einer-solaranlage-wichtig-ist-5574", stand: "08/2026" },
-    { titel: "Verbraucherzentrale – Regen, Hagel, Sturm und Gewitter: Wofür haftet welche Versicherung?", url: "https://www.verbraucherzentrale.de/wissen/geld-versicherungen/weitere-versicherungen/regen-hagel-sturm-und-gewitter-wofuer-haftet-welche-versicherung-13903", stand: "08/2026" },
-    { titel: "§ 644 BGB – Gefahrtragung beim Werkvertrag", url: "https://www.gesetze-im-internet.de/bgb/__644.html", stand: "09/2026" },
+    { titel: "VVO – Extremwetter: Erste Schätzungen für 2023 – über 1 Mrd. Euro Schäden", url: "https://www.vvo.at/presse-artikel/extremwetter-erste-schaetzungen-fuer-2023-ueber-1-mrd-euro-schaeden/", stand: "01/2024" },
+    { titel: "Österreichische Hagelversicherung – Spätes Hagelunwetter 2026 (Presseaussendung)", url: "https://www.hagel.at/presseaussendungen/spaetes-hagelunwetter-2026/", stand: "09/2026" },
+    { titel: "Hagelregister (VKF / Elementarschaden Präventionszentrum)", url: "https://www.hagelregister.at/", stand: "09/2026" },
+    { titel: "HORA – Natural Hazard Overview & Risk Assessment Austria", url: "https://www.hora.gv.at/", stand: "09/2026" },
+    { titel: "OVE – Richtlinien R 11-1 (Feuerwehr) und R 6-2 (Blitz- und Überspannungsschutz PV)", url: "https://www.ove.at/ove-standardization/normen-produkte/richtlinien/", stand: "09/2026" },
+    { titel: "RIS – Elektroschutzverordnung 2012 (ESV 2012)", url: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007835", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Alle Kosten im Blick", text: "Investition, Betriebskosten und Amortisation berechnen.", href: "/solarrechner", label: "Zum Solarrechner" },
+  seitenCta: { titel: "Richtig versichert?", text: "Technische Unterlagen und Risikoeinschätzung für Ihre Polizze.", href: "/service/versicherung", label: "Beratung anfragen" },
   cta: {
-    title: "Gut geplant ist halb versichert.",
-    text: "Planung, Montage und Anmeldung aus einer Hand – vom Fachbetrieb aus Türkheim mit über 15 Jahren Erfahrung. Fragen Sie uns auch nach den Anlagendaten für Ihren Versicherer.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Kontakt aufnehmen", href: "/kontakt" },
+    title: "Ihre PV-Anlage richtig abgesichert – ohne Lücken.",
+    text: "Wir liefern die technischen Nachweise, die Versicherer verlangen, und prüfen Ihre Anlage auf Risiken – für Betriebe und Gemeinden in ganz Österreich.",
+    primary: { label: "Versicherungsberatung", href: "/service/versicherung" },
+    secondary: { label: "E-Check anfragen", href: "/service/e-check" },
   },
 };
 

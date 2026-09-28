@@ -113,7 +113,7 @@ const VideoBanner = ({ videoSrc, mobileVideoSrc, mediaSrc, mobileMediaSrc, media
 
       <div className="relative z-10 mx-auto flex min-h-[440px] max-w-3xl flex-col items-center justify-center px-6 pb-20 pt-16 text-center sm:min-h-[500px] sm:pb-16 lg:min-h-[560px]">
         <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.2em] text-white/75 sm:text-[13px]">
-          Ökovolt Solartechnik · Allgäu & Bayern
+          Ökovolt Österreich · seit 2012
         </p>
 
         <h1 className="text-balance text-[30px] font-semibold leading-[1.15] tracking-tight text-white sm:text-[38px] lg:text-[52px]">
@@ -122,7 +122,7 @@ const VideoBanner = ({ videoSrc, mobileVideoSrc, mediaSrc, mobileMediaSrc, media
 
         <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-white/85 sm:text-[18px]">
           {subtitle ||
-            "Planung, Montage und Anmeldung aus einer Hand – vom Fachbetrieb aus Türkheim."}
+            "Planung, Bau und Betrieb aus einer Hand – vom Fachbetrieb aus Ostermiething."}
         </p>
 
         {/* Der Hero hatte bisher keinen einzigen Handlungsaufruf. Primär der

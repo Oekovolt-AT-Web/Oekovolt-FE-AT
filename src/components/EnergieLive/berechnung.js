@@ -1,7 +1,8 @@
 // Reine Rechen- und Formatierhilfen für das Strommarkt-Dashboard.
 // Ohne "use client": wird von Server- und Client-Komponenten genutzt.
 
-export const TZ = "Europe/Berlin";
+// Österreichische Ortszeit (identisch mit MEZ/MESZ, aber fachlich korrekt benannt).
+export const TZ = "Europe/Vienna";
 export const STUNDE = 3600000;
 
 const datumFmt = new Intl.DateTimeFormat("sv-SE", { timeZone: TZ });
@@ -9,9 +10,9 @@ const uhrFmt = new Intl.DateTimeFormat("de-DE", { hour: "2-digit", minute: "2-di
 const tagFmt = new Intl.DateTimeFormat("de-DE", { weekday: "long", day: "numeric", month: "long", timeZone: TZ });
 const kurzTagFmt = new Intl.DateTimeFormat("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: TZ });
 
-/** YYYY-MM-DD in deutscher Zeit */
+/** YYYY-MM-DD in österreichischer Zeit (Name aus Kompatibilitätsgründen beibehalten) */
 export const berlinTag = (t) => datumFmt.format(new Date(t));
-/** hh:mm in deutscher Zeit */
+/** hh:mm in österreichischer Zeit */
 export const uhr = (t) => uhrFmt.format(new Date(t));
 /** „Sonntag, 13. September" */
 export const tagLang = (t) => tagFmt.format(new Date(t));
@@ -142,19 +143,20 @@ export function achse(lo, hi, ziel = 5) {
 /* Stromerzeugung                                                      */
 /* ------------------------------------------------------------------ */
 
-// Farbpalette mit dem Validator des dataviz-Skills geprüft (Hell, Fläche #ffffff):
-// Stapelnachbarn CVD ΔE ≥ 17,3, Normalsicht ΔE ≥ 22,8. Einige helle Töne liegen
-// unter 3:1 Kontrast – deshalb immer Legende, Tooltip und Tabellenansicht.
+// Farbpalette mit dem Validator des dataviz-Skills geprüft (Hell, Fläche #ffffff);
+// die Nachbarschaften im Stapel entsprechen der geprüften deutschen Fassung
+// (Biomasse–Wasser–Dunkelblau–Hellblau–Solar). Einige helle Töne liegen unter
+// 3:1 Kontrast – deshalb immer Legende, Tooltip und Tabellenansicht.
+// Österreich: keine Kohle- und keine Offshore-Erzeugung; Wasserkraft getrennt nach
+// Laufwasser und Speicherkraftwerken; Pumpspeicher-Erzeugung steckt in „Sonstige“.
 // Reihenfolge = Stapel von unten nach oben.
 export const QUELLEN = [
-  { key: "braunkohle", name: "Braunkohle", farbe: "#a0561c", ee: false },
-  { key: "steinkohle", name: "Steinkohle", farbe: "#4a3aa7", ee: false },
   { key: "gas", name: "Erdgas", farbe: "#f29a4a", ee: false },
   { key: "sonstige", name: "Sonstige", farbe: "#c4cad5", ee: false, text: "#151a24" },
   { key: "biomasse", name: "Biomasse", farbe: "#2d7a1f", ee: true },
-  { key: "wasser", name: "Wasserkraft", farbe: "#1aa7c4", ee: true },
-  { key: "windOffshore", name: "Wind auf See", farbe: "#1e4fa3", ee: true },
-  { key: "windOnshore", name: "Wind an Land", farbe: "#5aa3ec", ee: true },
+  { key: "laufwasser", name: "Laufwasser", farbe: "#1aa7c4", ee: true },
+  { key: "speicherwasser", name: "Speicherkraft", farbe: "#1e4fa3", ee: true },
+  { key: "windOnshore", name: "Wind", farbe: "#5aa3ec", ee: true },
   { key: "solar", name: "Solar", farbe: "#eda100", ee: true },
 ];
 

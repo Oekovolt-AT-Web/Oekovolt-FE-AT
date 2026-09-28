@@ -1,38 +1,35 @@
 import PrivacyPolicy from "@/components/Datenschutz/datenschutz";
 import LegalShell from "@/components/Reusable/LegalShell";
-import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, SITE_NAME, LOCALE } from "@/lib/site";
+
+const PAGE_URL = `${BASE_URL}/datenschutz`;
+const TITEL = "Datenschutzerklärung | Ökovolt";
+const BESCHREIBUNG =
+  "Datenschutz bei Ökovolt Österreich: welche Daten wir nach DSGVO, DSG und TKG 2021 verarbeiten, wofür, wie lange – und Ihre Rechte bei der Datenschutzbehörde.";
 
 export const metadata = {
-  alternates: { canonical: "https://www.oekovolt.com/datenschutz", languages: hreflangLanguages("https://www.oekovolt.com/datenschutz") },
-  title: "Datenschutzerklärung | Ökovolt GmbH Solartechnik",
-  description:
-    "Datenschutz bei Ökovolt: Erfahren Sie, wie wir Ihre personenbezogenen Daten schützen, verarbeiten und welche Rechte Ihnen nach DSGVO zustehen.",
-  keywords: [
-    "Datenschutz",
-    "ÖKOVOLT GmbH",
-    "DSGVO",
-    "Google Analytics",
-    "Cookies",
-  ],
+  title: TITEL,
+  description: BESCHREIBUNG,
+  alternates: { canonical: PAGE_URL },
+  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    url: "https://www.oekovolt.com/datenschutz",
-    title: "Datenschutzerklärung | Ökovolt GmbH Solartechnik",
-    description: "Datenschutzrechtliche Bestimmungen und Ihre Rechte bei ÖKOVOLT GmbH.",
-    images: [
-      {
-        url: "https://www.oekovolt.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Österreich",
-      },
-    ],
+    locale: LOCALE,
+    url: PAGE_URL,
+    siteName: SITE_NAME,
+    title: TITEL,
+    description: BESCHREIBUNG,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: SITE_NAME }],
   },
 };
 
 export default function DatenschutzPage() {
   return (
-    <LegalShell titel="Datenschutzerklärung" pfad="/datenschutz" lead="Wie wir Ihre personenbezogenen Daten verarbeiten und welche Rechte Ihnen nach der DSGVO zustehen.">
+    <LegalShell
+      titel="Datenschutzerklärung"
+      pfad="/datenschutz"
+      lead="Wie wir Ihre personenbezogenen Daten verarbeiten und welche Rechte Ihnen nach der DSGVO und dem österreichischen Datenschutzgesetz zustehen."
+    >
       <PrivacyPolicy />
     </LegalShell>
   );

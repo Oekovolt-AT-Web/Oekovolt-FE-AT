@@ -1,8 +1,13 @@
 // uber-uns/jobs/page.js
+//
+// Stellen der Ökovolt Solartechnik GmbH (Österreich). Quelle: src/data/stellen.js.
+// Die früher angebundenen Backoffice-Endpunkte (oekovoltdeutchland … jobsde_data)
+// liefern die Stellen der deutschen Gesellschaft und werden auf oekovolt.com
+// bewusst NICHT mehr gelesen.
 
 import {
-  Briefcase, CalendarCheck, ClipboardList, Compass, GraduationCap, HardHat, Headset, Leaf, Mail, MessagesSquare, Rocket, Send, ShieldCheck,
-  TrendingUp, Users, Wrench, Zap,
+  Briefcase, CalendarCheck, ClipboardList, Compass, GraduationCap, HardHat, Leaf, Mail, MessagesSquare, MonitorDot, Rocket, Scale, Send, ShieldCheck,
+  TrendingUp, Users, Zap,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -14,237 +19,128 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import JobsListe from "@/components/Jobs/JobsListe";
-import { alleStellen, bewerbungsLink } from "@/components/Jobs/jobDaten";
-import { bildUrl } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { alleStellen, bewerbungsLink, euro } from "@/components/Jobs/jobDaten";
+import { KV, LEHRLINGSEINKOMMEN } from "@/data/stellen";
+import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.jobs_page.api.get_jobs_de`;
-const JOBS_LIST_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
-const JOBS_PAGE_URL = "https://www.oekovolt.com/uber-uns/jobs";
+const JOBS_PAGE_URL = `${BASE_URL}/uber-uns/jobs`;
+const TITEL = "Jobs Photovoltaik Österreich – Karriere | Ökovolt";
+const BESCHREIBUNG =
+  "Jobs bei Ökovolt in Ostermiething: Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Lehre Elektrotechnik – mit KV-Mindestentgelt je Stelle.";
 
-async function fetchJobsPageData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-async function fetchJobsList() {
-  if (!isApiConfigured()) {
-    return [];
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(JOBS_LIST_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      console.error(`Jobs API returned ${response.status}`);
-      return [];
-    }
-
-    const data = await response.json();
-    if (Array.isArray(data?.message)) {
-      return data.message;
-    }
-    return [];
-  } catch (error) {
-    console.error("Error fetching jobs list:", error);
-    return [];
-  }
-}
-
-export async function generateMetadata() {
-  const seoData = await fetchJobsPageData();
-
-  const defaultKeywords = [
-    "Solar Jobs",
-    "Photovoltaik Karriere",
-    "Erneuerbare Energien Stellen",
-    "Ökovolt Jobs",
-    "Energiebranche Karriere",
-  ];
-
-  // Process keywords - combine API keywords with defaults if available
-  const apiKeywords = seoData?.keywords
-    ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
-    : defaultKeywords;
-
-  const title = "Jobs & Karriere in der Photovoltaik | Ökovolt";
-  const description = "Jobs in der Energiewende: Elektromeister, Ingenieure, SPS- & KI-Entwickler, Cyber Security, Energy Trader, Juristen, CFO & Monteure bei Ökovolt in Türkheim.";
-
-  return {
-    title,
-    description,
-    keywords: apiKeywords,
-    alternates: { canonical: JOBS_PAGE_URL, languages: hreflangLanguages(JOBS_PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      locale: "de_AT",
-      url: JOBS_PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title,
-      description,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Jobs" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["https://www.oekovolt.com/og-image.jpg"],
-    },
-  };
-}
-
-// Vorteile: Titel aus dem Backoffice, Texte in Sie-Form (inhaltlich identisch)
-const VORTEIL_TEXT = {
-  "Sinnvolle Arbeit": "Sie tragen aktiv zur Energiewende bei und arbeiten an nachhaltigen Projekten mit echtem Mehrwert.",
-  "Berufliche Weiterentwicklung": "Wir fördern unsere Mitarbeitenden mit Schulungen, Workshops und Weiterbildungsmöglichkeiten.",
-  "Dynamisches Umfeld": "Abwechslungsreiche Aufgaben mit spannenden Herausforderungen und moderner Technik.",
-  "Langfristige Perspektiven": "Erneuerbare Energien sind die Zukunft – ein Arbeitsplatz in einer wachsenden Branche.",
+export const metadata = {
+  title: TITEL,
+  description: BESCHREIBUNG,
+  keywords: ["Photovoltaik Jobs Österreich", "Elektrotechniker Job Oberösterreich", "PV Monteur Job", "Lehre Elektrotechnik Innviertel", "Ökovolt Karriere"],
+  alternates: { canonical: JOBS_PAGE_URL, languages: hreflangLanguages(JOBS_PAGE_URL) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: JOBS_PAGE_URL,
+    siteName: SITE_NAME,
+    title: TITEL,
+    description: BESCHREIBUNG,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Jobs bei Ökovolt Österreich" }],
+  },
+  twitter: { card: "summary_large_image", title: TITEL, description: BESCHREIBUNG, images: [`${BASE_URL}/og-image.jpg`] },
 };
-const VORTEIL_ICONS = [Leaf, GraduationCap, Zap, TrendingUp];
+
+const VORTEILE = [
+  { icon: Leaf, title: "Sinnvolle Arbeit", text: "Jede Anlage, die Sie mitbauen, erzeugt über Jahrzehnte erneuerbaren Strom für Betriebe, Höfe und Gemeinden." },
+  { icon: GraduationCap, title: "Weiterbildung", text: "Herstellerschulungen, Prüf- und Messtechnik, Netzanschluss und Leittechnik – wir investieren in Ihr Know-how." },
+  { icon: Zap, title: "Eigene Technik", text: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung: Sie arbeiten nicht nur mit Fremdsystemen." },
+  { icon: TrendingUp, title: "Perspektive", text: "Photovoltaik, Speicher und Netzintegration wachsen – und mit ihnen die Aufgaben im Team." },
+];
 
 const FELDER = [
-  { icon: Compass, title: "Planung & Engineering", text: "Elektroplanung in AutoCAD, Projektierung bis Mittelspannung, Ladeinfrastruktur und Netzanschluss – für Anlagen vom Eigenheim bis zum Industriedach." },
-  { icon: Zap, title: "Elektrotechnik & Meister", text: "Verantwortung für Nieder- und Mittelspannung, Übergabestationen, Zählerplätze und Inbetriebnahmen." },
-  { icon: ClipboardList, title: "Automatisierung & Software", text: "SPS, Niagara Framework, Java und Monitoring: Energiesysteme intelligent regeln und überwachen." },
-  { icon: ShieldCheck, title: "IT-Sicherheit, Daten & KI", text: "Cyber Security mit dem SOC der Ökovolt Gruppe, Machine Learning, KI-Algorithmen und Softwareentwicklung in Python, C und C++." },
-  { icon: TrendingUp, title: "Energiehandel & Klima", text: "Stromhandel am Spotmarkt, Direktvermarktung sowie CO₂-Bilanzen, Emissionshandel und Nachhaltigkeitsberichte." },
-  { icon: Briefcase, title: "Recht, Compliance & Finanzen", text: "Energierecht mit der Rechtsabteilung der Ökovolt Gruppe, Datenschutz, NIS2 und Regulierung – und die Finanzleitung als CFO." },
-  { icon: HardHat, title: "Montage, Service & Vertrieb", text: "DC-Montage durch Dachdecker, Speicher- und Wärmepumpentechnik sowie Vertrieb für Privat- und Gewerbekunden." },
+  { icon: Compass, title: "Projekt & Planung", text: "Projektleitung und Elektroplanung für Dach- und Freiflächenanlagen – vom Belegungsplan bis zur Übergabe." },
+  { icon: ClipboardList, title: "Netzanschluss", text: "Netzzugang, TOR Erzeuger, Parkregler und Inbetriebnahme mit dem Netzbetreiber." },
+  { icon: MonitorDot, title: "Leittechnik", text: "SCADA, Fernwartung und Monitoring – gemeinsam mit der Solensa GmbH für IT-Sicherheit." },
+  { icon: HardHat, title: "Montage & Service", text: "Elektro- und Mechanikmontage, Wartung, Prüfung und Drohnen-Thermografie in ganz Österreich." },
+  { icon: Briefcase, title: "Vertrieb & Beratung", text: "Key Account Gewerbe und Energieberatung für Betriebe, Landwirtschaft und Gemeinden." },
+  { icon: GraduationCap, title: "Lehre", text: "Lehrberuf Elektrotechnik – mit Photovoltaik und Speichern von Anfang an." },
 ];
 
 const ABLAUF = [
-  { icon: Send, title: "Bewerbung senden", text: "Lebenslauf und ein paar Sätze zu Ihnen per E-Mail an office@oekovolt.com – ein aufwendiges Anschreiben ist nicht nötig." },
+  { icon: Send, title: "Bewerbung senden", text: `Lebenslauf und ein paar Sätze zu Ihnen per E-Mail an ${FIRMA.email} – ein aufwendiges Anschreiben ist nicht nötig.` },
   { icon: MessagesSquare, title: "Erstes Gespräch", text: "Wir melden uns bei Ihnen und lernen uns am Telefon oder persönlich kennen." },
-  { icon: Users, title: "Kennenlernen", text: "Sie lernen Team und Aufgaben kennen und stellen all Ihre Fragen – gern auch bei uns in Türkheim." },
+  { icon: Users, title: "Kennenlernen", text: "Sie lernen Team und Aufgaben kennen und stellen all Ihre Fragen – gern bei uns in Ostermiething." },
   { icon: Rocket, title: "Start im Team", text: "Einarbeitung im Team und Schulungen, damit Sie gut in Ihre neue Aufgabe starten." },
 ];
 
+const lehrlingText = LEHRLINGSEINKOMMEN.map((l) => `${l.lehrjahr}. Lehrjahr € ${euro(l.betrag)}`).join(", ");
+
 const FAQ = [
   {
-    q: "Kann ich mich auch ohne ausgeschriebene Stelle bewerben?",
-    a: "Ja. Wir freuen uns jederzeit über Initiativbewerbungen an office@oekovolt.com. Schreiben Sie kurz, welcher Bereich Sie interessiert – Planung, Montage, Technik, Vertrieb oder Verwaltung.",
+    q: "Welcher Kollektivvertrag gilt bei Ökovolt?",
+    a: `Die ${FIRMA.name} ist Mitglied der Landesinnung der Elektro-, Gebäude-, Alarm- und Kommunikationstechniker. Für Arbeiter:innen gilt deshalb der ${KV.arbeiter.name}, für Angestellte der ${KV.angestellte.name}. Das jeweilige Mindestentgelt steht in jeder Stellenanzeige.`,
   },
   {
-    q: "Welche Qualifikation erwarten Sie?",
-    a: "Wir suchen ausgewiesene Fachkräfte: abgeschlossene Ausbildung, Meister, Techniker oder Studium (Dipl.-Ing., M.Sc., B.Eng.) und Berufserfahrung in der jeweiligen Disziplin. Photovoltaik-Erfahrung ist ein Plus – wer in Elektrotechnik, Automatisierung, SHK oder im Dachdeckerhandwerk exzellent ist, lernt die PV-spezifischen Themen bei uns mit Herstellerschulungen schnell.",
+    q: "Warum steht in jeder Anzeige ein Mindestgehalt?",
+    a: "Das Gleichbehandlungsgesetz (§ 9 Abs 2 GlBG) verlangt in Österreich, dass Stellenanzeigen das kollektivvertragliche Mindestentgelt nennen und angeben, ob eine Überzahlung möglich ist. Das tatsächliche Gehalt vereinbaren wir je nach Qualifikation und Erfahrung – die Bereitschaft zur Überzahlung ist gegeben.",
   },
   {
-    q: "Welche Unterlagen soll ich schicken?",
-    a: "Ein aktueller Lebenslauf reicht für den ersten Schritt. Zeugnisse, Zertifikate oder Führerscheinangaben können Sie gern ergänzen. Am besten senden Sie alles als PDF.",
+    q: "Wie hoch ist das Lehrlingseinkommen in der Elektrotechnik?",
+    a: `Laut Kollektivvertrag (Stand 1.1.2026) beträgt das Lehrlingseinkommen brutto pro Monat: ${lehrlingText}.`,
   },
   {
     q: "Wo arbeite ich bei Ökovolt?",
-    a: "Unser Firmensitz ist in Türkheim im Unterallgäu. Montage- und Serviceeinsätze finden bei unseren Kundinnen und Kunden in der Region und darüber hinaus statt.",
+    a: `Unser Firmensitz ist in ${FIRMA.plz} ${FIRMA.ort} im Innviertel, nahe Salzburg. Montage- und Serviceteams sind in ganz Österreich im Einsatz; Tag- und Nächtigungsgeld richten sich nach dem Kollektivvertrag.`,
   },
   {
-    q: "Gibt es Weiterbildungsmöglichkeiten?",
-    a: "Ja. Wir investieren in Schulungen, Workshops und Weiterbildung, damit Sie mit der Technik wachsen – von Speichern über Wallboxen bis zu Energiemanagementsystemen.",
+    q: "Kann ich mich auch ohne ausgeschriebene Stelle bewerben?",
+    a: `Ja. Wir freuen uns jederzeit über Initiativbewerbungen an ${FIRMA.email}. Schreiben Sie kurz, welcher Bereich Sie interessiert – Planung, Montage, Netzanschluss, Leittechnik, Service oder Vertrieb.`,
   },
 ];
 
-export default async function JobsPage() {
-  const [data, jobsList] = await Promise.all([
-    fetchJobsPageData(),
-    fetchJobsList(),
-  ]);
+export default function JobsPage() {
+  const jobs = alleStellen([]);
 
-  const jobs = alleStellen(jobsList);
-
-  const jobListingSchema = jobs.length > 0 ? {
+  const schema = {
     "@context": "https://schema.org",
-    "@type": "ItemList",
-    "@id": `${JOBS_PAGE_URL}/#joblist`,
-    name: "Stellenangebote bei Ökovolt Solartechnik",
-    url: JOBS_PAGE_URL,
-    numberOfItems: jobs.length,
-    itemListElement: jobs.map((job, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${JOBS_PAGE_URL}/${job.slug}`,
-      name: job.titel,
-    })),
-  } : null;
-
-  const webPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${JOBS_PAGE_URL}/#webpage`,
-    url: JOBS_PAGE_URL,
-    name: data?.title || "Karriere bei Ökovolt | Jobs in der Solarbranche",
-    description: data?.description?.trim() || "Starten Sie Ihre Karriere in der Photovoltaik-Branche. Wir bieten spannende Jobs und Ausbildungsplätze im Bereich erneuerbare Energien.",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${JOBS_PAGE_URL}/#webpage`,
+        url: JOBS_PAGE_URL,
+        name: TITEL,
+        description: BESCHREIBUNG,
+        inLanguage: "de-AT",
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+        about: { "@id": `${BASE_URL}/#organization` },
+      },
+      {
+        "@type": "ItemList",
+        "@id": `${JOBS_PAGE_URL}/#joblist`,
+        name: `Stellenangebote der ${FIRMA.name}`,
+        numberOfItems: jobs.length,
+        itemListElement: jobs.map((job, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: `${JOBS_PAGE_URL}/${job.slug}`,
+          name: job.titel,
+        })),
+      },
+    ],
   };
-
-  const vorteile = (data?.second_card_table?.length ? data.second_card_table : Object.keys(VORTEIL_TEXT).map((k) => ({ primary_paragraph: k }))).map((v, i) => ({
-    icon: VORTEIL_ICONS[i % VORTEIL_ICONS.length],
-    title: v.primary_paragraph,
-    text: VORTEIL_TEXT[v.primary_paragraph] || v.secondary_paragraph,
-  }));
-
-  // Einleitung ohne direkte Du-Ansprache am Anfang
-  const intro = (typeof data?.first_card_table === "string" ? data.first_card_table : "").replace(/^Werde Teil[^.]*\.\s*/, "");
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
-      {jobListingSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobListingSchema) }} />
-      )}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
         variant="immersive"
-        breadcrumbs={[{ name: "Über uns", href: "/uber-uns/team" }, { name: "Jobs" }]}
-        eyebrow="Karriere bei Ökovolt"
+        breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Jobs" }]}
+        eyebrow="Karriere bei Ökovolt Österreich"
         title={<>Jobs mit Zukunft: Machen Sie die <span className="ov-text-gradient-light">Energiewende</span> zum Beruf</>}
-        lead="Wir suchen ganzjährig die besten Köpfe der Branche: Ingenieure, Meister, Planer, Software- und KI-Experten, Security-Analysten, Trader, Juristen, Monteure und Vertriebsprofis, die Energiesysteme auf höchstem Niveau bauen wollen."
-        image={{ src: bildUrl(data?.image, "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg"), alt: data?.alt_image || "Solarmodule einer Photovoltaikanlage" }}
-        points={[`${jobs.length} offene Stellen ganzjährig`, "Firmensitz in Türkheim", "Premium-Partner wie Fronius, Huawei & BYD", "Herstellerschulungen & Weiterbildung"]}
+        lead="Wir bauen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich – mit eigener Leittechnik. Dafür suchen wir Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Lehrlinge."
+        image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" }}
+        points={[`${jobs.length} offene Stellen`, "Firmensitz Ostermiething", "KV-Mindestentgelt in jeder Anzeige", "Lehre Elektrotechnik"]}
         actions={[
-          { label: jobs.length ? "Offene Stellen ansehen" : "Jetzt bewerben", href: "#stellen" },
+          { label: "Offene Stellen ansehen", href: "#stellen" },
           { label: "Initiativ bewerben", href: bewerbungsLink(), icon: Mail },
         ]}
       />
@@ -255,9 +151,11 @@ export default async function JobsPage() {
           <SectionHeading
             eyebrow="Offene Stellen"
             title={<>Ihr nächster Job – <span className="ov-text-gradient">mit Sinn</span></>}
-            lead="Alle aktuellen Stellenangebote von Ökovolt. Ein Klick zeigt Aufgaben, Anforderungen und wie Sie sich bewerben."
+            lead="Alle aktuellen Stellenangebote der Ökovolt Solartechnik GmbH. Ein Klick zeigt Aufgaben, Anforderungen, Kollektivvertrag und Mindestentgelt."
           />
-          {intro && <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">{intro.split(/(?<=\.)\s/).slice(0, 2).join(" ")}</p>}
+          <p className="hidden text-[15px] leading-relaxed text-ink-600 lg:block lg:pb-1">
+            Arbeitsort ist Ostermiething oder – bei Montage und Service – ganz Österreich mit Start ab Ostermiething.
+          </p>
         </div>
         <JobsListe jobs={jobs} />
       </Section>
@@ -272,13 +170,13 @@ export default async function JobsPage() {
               dark
               eyebrow="Warum Ökovolt"
               title={<>Ihre Vorteile <span className="ov-text-gradient-light">bei Ökovolt</span></>}
-              lead={data?.second_card_description?.trim() || "Wir legen großen Wert auf ein attraktives Arbeitsumfeld mit offener Kultur, Vertrauen und Teamarbeit."}
+              lead="Ein Errichter mit eigener Technik, kurzen Wegen und Projekten in ganz Österreich."
             />
             <Reveal className="mt-10 grid grid-cols-3 gap-3 border-t border-white/15 pt-8">
               {[
-                { w: "15+", l: "Jahre Photovoltaik-Erfahrung" },
-                { w: String(FELDER.length), l: "Tätigkeitsfelder von Technik bis Vertrieb" },
-                { w: "Allgäu", l: "Firmensitz in Türkheim" },
+                { w: "2012", l: "in Österreich gegründet" },
+                { w: "30 MWp", l: "allein 2021 errichtet" },
+                { w: "9", l: "Bundesländer im Einsatzgebiet" },
               ].map((k) => (
                 <div key={k.l}>
                   <p className="font-display text-[clamp(1.5rem,1.1rem+1.4vw,2.25rem)] font-extrabold leading-none text-white">{k.w}</p>
@@ -287,27 +185,51 @@ export default async function JobsPage() {
               ))}
             </Reveal>
           </div>
-          <FeatureGrid items={vorteile} cols={2} tone="dark" />
+          <FeatureGrid items={VORTEILE} cols={2} tone="dark" />
         </div>
       </Section>
 
       {/* Tätigkeitsfelder */}
       <Section tone="white" space="lg">
         <div className="mb-12 grid items-end gap-6 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Tätigkeitsfelder"
-            title={data?.fifth_card_title || "Vielfältige Karrieremöglichkeiten in der Photovoltaik"}
-          />
+          <SectionHeading eyebrow="Tätigkeitsfelder" title="Sechs Wege in die Photovoltaik" />
           <div className="flex items-start gap-4 rounded-3xl bg-ov-50 p-5 ring-1 ring-ov-200 lg:mb-1">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
               <ShieldCheck aria-hidden="true" className="h-5 w-5" />
             </span>
             <p className="text-[15px] leading-relaxed text-ink-700">
-              <strong className="text-ink-900">Für Spitzenkräfte:</strong> Wir suchen ganzjährig Meister, Ingenieure, Informatiker, Juristen und erfahrene Fachkräfte – und bieten dafür anspruchsvolle Projekte und echte Verantwortung.
+              <strong className="text-ink-900">Quereinstieg möglich:</strong> Wer in Elektrotechnik, Metall, Bau oder Automatisierung zu Hause ist, lernt die PV-spezifischen Themen bei uns schnell.
             </p>
           </div>
         </div>
-        <FeatureGrid items={FELDER} cols={4} />
+        <FeatureGrid items={FELDER} cols={3} />
+      </Section>
+
+      {/* Entgelt & Kollektivvertrag */}
+      <Section tone="green" space="lg">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Entgelt"
+            title="Kollektivvertrag und Mindestentgelt – transparent je Stelle"
+            lead="Für Ökovolt gelten die Kollektivverträge des Elektro- und Metallgewerbes. Jede Anzeige nennt Einstufung und kollektivvertragliches Mindestentgelt nach § 9 Abs 2 GlBG; die Bereitschaft zur Überzahlung ist gegeben."
+          />
+          <Reveal className="grid gap-4 sm:grid-cols-2">
+            {[KV.arbeiter, KV.angestellte].map((k) => (
+              <a
+                key={k.link}
+                href={k.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group ov-card-hover flex h-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ov-200 hover:ring-ov-400"
+              >
+                <Scale aria-hidden="true" className="h-6 w-6 text-ov-600" />
+                <p className="mt-4 font-display text-[17px] font-bold text-ink-900">{k.kurz}</p>
+                <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{k.name}</p>
+                <p className="mt-auto pt-4 text-[14px] font-semibold text-ov-700 group-hover:text-ov-800">Lohn- bzw. Gehaltstabelle bei der WKO</p>
+              </a>
+            ))}
+          </Reveal>
+        </div>
       </Section>
 
       {/* Bewerbungsprozess */}
@@ -325,7 +247,7 @@ export default async function JobsPage() {
             <Mail aria-hidden="true" className="h-5 w-5" />
             Bewerbung per E-Mail senden
           </a>
-          <a href="tel:+498245967880" className="inline-flex h-14 items-center gap-2.5 rounded-full bg-white px-8 text-[16px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50">
+          <a href={FIRMA.telefonHref} className="inline-flex h-14 items-center gap-2.5 rounded-full bg-white px-8 text-[16px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50">
             <CalendarCheck aria-hidden="true" className="h-5 w-5 text-ov-600" />
             Vorab Fragen klären
           </a>
@@ -335,11 +257,14 @@ export default async function JobsPage() {
       {/* Branche */}
       <Section tone="white" space="lg">
         <SplitMedia
-          eyebrow={data?.third_card_title || "Beruf & Perspektiven"}
-          title={data?.fourth_card_title || "Arbeiten in einer zukunftssicheren Branche"}
-          text={(data?.fourth_card_description || []).map((o) => o.option).slice(0, 2)}
-          points={(data?.fifth_card_options_table || []).map((o) => o.option.replace(/\.$/, ""))}
-          image={{ src: bildUrl(data?.third_card_first_image, "/Images/Jobs/jobs1.jpg"), alt: data?.third_card_fisrt_alt_text || "Mitarbeiter installieren eine Photovoltaikanlage" }}
+          eyebrow="Beruf & Perspektiven"
+          title="Arbeiten, wo die Energiewende gebaut wird"
+          text={[
+            "Das Erneuerbaren-Ausbau-Gesetz sieht bis 2030 einen Zubau von 11 TWh Strom aus Photovoltaik vor (§ 4 Abs 4 EAG). Damit neue Anlagen ins Netz dürfen, braucht es Menschen, die sie sauber planen, anschließen, regeln und über Jahrzehnte betreuen.",
+            "Bei Ökovolt arbeiten Sie an Gewerbedächern, Freiflächen- und Agri-PV-Anlagen und Gemeindeprojekten – und an der Technik, die diese Anlagen steuerbar macht.",
+          ]}
+          points={["Projekte in allen neun Bundesländern", "Eigene Parkregler, Fernwartung und SCADA", "Kurze Wege zwischen Planung, Montage und Service"]}
+          image={{ src: "/Images/Jobs/jobs1.jpg", alt: "Mitarbeiter installieren eine Photovoltaikanlage" }}
         />
       </Section>
 
@@ -348,7 +273,7 @@ export default async function JobsPage() {
           <SectionHeading
             eyebrow="Häufige Fragen"
             title="Karriere bei Ökovolt"
-            lead={<>Noch etwas unklar? Schreiben Sie uns an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.com</a> oder rufen Sie an.</>}
+            lead={<>Noch etwas unklar? Schreiben Sie uns an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">{FIRMA.email}</a> oder rufen Sie an: <a href={FIRMA.telefonHref} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">{FIRMA.telefon}</a>.</>}
           />
           <Faq items={FAQ} />
         </div>
@@ -357,10 +282,10 @@ export default async function JobsPage() {
       <Querverweise pfad="/uber-uns/jobs" />
       <CtaBand
         eyebrow="Werden Sie Teil des Teams"
-        title="Gestalten Sie die Energiewende mit – von Türkheim aus."
+        title="Gestalten Sie die Energiewende mit – von Ostermiething aus."
         text="Senden Sie uns Ihren Lebenslauf und ein paar Sätze zu Ihnen. Wir melden uns persönlich bei Ihnen."
         primary={{ label: "Jetzt bewerben", href: bewerbungsLink() }}
-        secondary={null}
+        secondary={{ label: "Elektro-Partner werden", href: "/partner", icon: Briefcase }}
       />
     </div>
   );

@@ -2,63 +2,55 @@
 
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BadgeEuro, Building2, Landmark, MapPin, Sun, SearchCheck } from "lucide-react";
-import { KARTE_PFADE, KARTE_VIEWBOX } from "@/components/Forderungen/Shared/kartePfade";
+import { ArrowRight, BadgeEuro, BatteryCharging, Building2, MapPin, SearchCheck, Sun, Users } from "lucide-react";
+import { KARTE_PFADE, KARTE_QUELLE, KARTE_VIEWBOX } from "@/components/Forderungen/Shared/kartePfade";
 
 /**
- * Interaktive Deutschlandkarte der Förderlage.
+ * Interaktive Österreichkarte der Förderlage.
  *
  * Zwei Ebenen:
- *  - „Förderlage“: Was bekommen private Eigenheimbesitzer im Land zusätzlich
- *    zur Bundesförderung (Zuschuss, Darlehen, kommunal, nichts)?
- *  - „Solarertrag“: typischer Jahresertrag je kWp – er wiegt über 20 Jahre
- *    oft schwerer als ein einmaliger Zuschuss.
+ *  - „Förderlage“: Was fördert das Land zusätzlich zum Bund (EAG, KPC)?
+ *  - „Solarertrag“: PVGIS-Jahresertrag je kWp – über 20 Jahre oft
+ *    wichtiger als ein einmaliger Zuschuss.
  *
- * Bedienung: Maus (Hover zeigt Vorschau, Klick wählt), Tastatur (Tab/Pfeiltasten,
- * Enter/Leertaste wählt) und auf kleinen Bildschirmen zusätzlich ein Auswahlfeld.
- * laender: [{ key, name, kuerzel, foerderart, ertrag, kurz, programm, kommunal, portal, href, stand }]
+ * Bedienung: Maus (Hover = Vorschau, Klick = Auswahl), Tastatur (Tab bzw.
+ * Pfeiltasten, Enter/Leertaste) und auf kleinen Bildschirmen ein Auswahlfeld.
+ * laender: [{ key, name, kuerzel, foerderart, ertrag, kurz, unternehmen, speicher, eg, netz, href, stand }]
  */
 
 const FOERDER_FARBEN = {
   zuschuss: { fill: "fill-ov-600", text: "fill-white", chip: "bg-ov-600 text-white", punkt: "bg-ov-600" },
-  darlehen: { fill: "fill-navy-500", text: "fill-white", chip: "bg-navy-500 text-white", punkt: "bg-navy-500" },
-  kommunal: { fill: "fill-ov-200", text: "fill-ov-900", chip: "bg-ov-100 text-ov-800", punkt: "bg-ov-200 ring-1 ring-ov-300" },
+  gezielt: { fill: "fill-ov-200", text: "fill-ov-900", chip: "bg-ov-100 text-ov-800", punkt: "bg-ov-200 ring-1 ring-ov-300" },
   bund: { fill: "fill-ink-200", text: "fill-ink-700", chip: "bg-ink-100 text-ink-700", punkt: "bg-ink-200 ring-1 ring-ink-300" },
 };
 
 const FOERDER_LABEL = {
-  zuschuss: "Landeszuschuss",
-  darlehen: "Landesdarlehen",
-  kommunal: "Kommunale Programme",
-  bund: "Nur Bundesförderung",
+  zuschuss: "Breites Landesprogramm",
+  gezielt: "Gezielte Landesprogramme",
+  bund: "Bundesförderung + Beratung",
 };
 
 const ERTRAG_STUFEN = [
-  { bis: 910, label: "unter 910", fill: "fill-sand-100", text: "fill-ink-700", punkt: "bg-sand-100 ring-1 ring-ink-300" },
-  { bis: 970, label: "910–970", fill: "fill-sun-300", text: "fill-ink-800", punkt: "bg-sun-300" },
-  { bis: 995, label: "970–995", fill: "fill-sun-400", text: "fill-ink-900", punkt: "bg-sun-400" },
-  { bis: 9999, label: "ab 995", fill: "fill-sun-500", text: "fill-ink-900", punkt: "bg-sun-500" },
+  { bis: 1140, label: "unter 1.140", fill: "fill-sun-300", text: "fill-ink-800", punkt: "bg-sun-300" },
+  { bis: 1180, label: "1.140–1.180", fill: "fill-sun-400", text: "fill-ink-900", punkt: "bg-sun-400" },
+  { bis: 1220, label: "1.180–1.220", fill: "fill-sun-500", text: "fill-ink-900", punkt: "bg-sun-500" },
+  { bis: 99999, label: "ab 1.220", fill: "fill-ov-600", text: "fill-white", punkt: "bg-ov-600" },
 ];
 
-// Beschriftungen, die vom Flächenschwerpunkt abweichen (Stadtstaaten, Enklaven)
+// Beschriftungen, die vom Flächenschwerpunkt abweichen
 const LABEL_POS = {
-  brandenburg: [452, 282],
-  bayern: [312, 548],
-  niedersachsen: [196, 226],
-  saarland: [58, 492],
+  niederoesterreich: [455, 70],
+  tirol: [170, 205],
+  burgenland: [546, 146],
 };
-// Stadtstaaten: Beschriftung als Etikett mit Hinweislinie neben der Fläche
-const ETIKETT = {
-  berlin: [411, 196],
-  hamburg: [196, 112],
-  bremen: [128, 150],
-};
+// Wien als Etikett neben der Fläche
+const ETIKETT = { wien: [585, 60] };
 
 const mittel = (e) => Math.round((e[0] + e[1]) / 2);
 const stufe = (e) => ERTRAG_STUFEN.find((s) => mittel(e) < s.bis);
-const kwh = (n) => n.toLocaleString("de-DE");
+const kwh = (n) => n.toLocaleString("de-AT");
 
-export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
+export default function Foerderkarte({ laender = [], startKey = "oberoesterreich" }) {
   const [ebene, setEbene] = useState("foerderung");
   const [auswahl, setAuswahl] = useState(startKey);
   const [hover, setHover] = useState(null);
@@ -68,17 +60,16 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
   const reihenfolge = useMemo(() => laender.map((l) => l.key), [laender]);
   const aktiv = nachKey[hover || auswahl] || laender[0];
 
-  // Ausgewähltes Land zuletzt zeichnen, damit die Kontur oben liegt
+  // Ausgewähltes Land zuletzt zeichnen (Kontur oben), Wien immer über Niederösterreich
   const zeichenfolge = useMemo(() => {
     const keys = Object.keys(KARTE_PFADE).filter((k) => nachKey[k]);
-    const staaten = ["berlin", "hamburg", "bremen"];
-    const basis = keys.filter((k) => !staaten.includes(k) && k !== auswahl);
-    const oben = keys.filter((k) => staaten.includes(k) && k !== auswahl);
-    return [...basis, ...(staaten.includes(auswahl) ? [] : [auswahl]), ...oben, ...(staaten.includes(auswahl) ? [auswahl] : [])].filter((k) => nachKey[k]);
+    const basis = keys.filter((k) => k !== auswahl && k !== "wien");
+    const oben = auswahl === "wien" ? ["wien"] : [auswahl, "wien"];
+    return [...basis, ...oben].filter((k) => nachKey[k]);
   }, [auswahl, nachKey]);
 
   const zaehler = useMemo(() => {
-    const z = { zuschuss: 0, darlehen: 0, kommunal: 0, bund: 0 };
+    const z = { zuschuss: 0, gezielt: 0, bund: 0 };
     laender.forEach((l) => (z[l.foerderart] += 1));
     return z;
   }, [laender]);
@@ -101,16 +92,16 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
 
   if (!aktiv) return null;
   const farbe = FOERDER_FARBEN[aktiv.foerderart];
-  const ertragProzent = Math.min(100, Math.max(6, ((mittel(aktiv.ertrag) - 820) / (1080 - 820)) * 100));
+  const ertragProzent = Math.min(100, Math.max(6, ((mittel(aktiv.ertrag) - 1050) / (1400 - 1050)) * 100));
 
   return (
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_80px_-50px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
         {/* Karte */}
         <div className="relative border-b border-ink-100 p-5 sm:p-8 lg:border-b-0 lg:border-r">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">
-              {ebene === "foerderung" ? "Förderlage für Eigenheime" : "Solarertrag in kWh je kWp"}
+              {ebene === "foerderung" ? "Landesförderung zusätzlich zum Bund" : "Solarertrag in kWh je kWp (PVGIS)"}
             </p>
             <div role="group" aria-label="Kartenebene" className="inline-flex rounded-full bg-ink-100 p-1">
               {[
@@ -135,25 +126,18 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
             </div>
           </div>
 
-          <div className="relative mx-auto mt-4 max-w-[470px]">
-            <svg
-              viewBox={KARTE_VIEWBOX}
-              className="h-auto w-full overflow-visible"
-              role="group"
-              aria-label="Deutschlandkarte: Bundesland auswählen"
-              onMouseLeave={() => setHover(null)}
-            >
-              <title>Förderlage und Solarertrag der 16 Bundesländer</title>
+          <div className="relative mx-auto mt-6 max-w-[640px]">
+            <svg viewBox={KARTE_VIEWBOX} className="h-auto w-full overflow-visible" role="group" aria-label="Österreichkarte: Bundesland auswählen" onMouseLeave={() => setHover(null)}>
+              <title>Förderlage und Solarertrag der neun Bundesländer</title>
               {zeichenfolge.map((key) => {
                 const land = nachKey[key];
-                const pfad = KARTE_PFADE[key];
                 const gewaehlt = key === auswahl;
                 const f = ebene === "foerderung" ? FOERDER_FARBEN[land.foerderart] : stufe(land.ertrag);
                 return (
                   <path
                     key={key}
                     ref={(el) => (pfadRefs.current[key] = el)}
-                    d={pfad.d}
+                    d={KARTE_PFADE[key].d}
                     fillRule="evenodd"
                     tabIndex={0}
                     role="button"
@@ -164,29 +148,30 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
                     onFocus={() => setAuswahl(key)}
                     onKeyDown={(e) => tasten(e, key)}
                     className={`${f.fill} cursor-pointer outline-none transition-[fill,opacity,stroke-width] duration-300 hover:opacity-85 focus-visible:opacity-90 ${gewaehlt ? "stroke-navy-900" : "stroke-white"}`}
-                    strokeWidth={gewaehlt ? 2.4 : 1.1}
+                    strokeWidth={gewaehlt ? 2.2 : 1}
                     strokeLinejoin="round"
                   />
                 );
               })}
               {zeichenfolge.map((key) => {
                 const land = nachKey[key];
-                const [x, y] = LABEL_POS[key] || [KARTE_PFADE[key].cx, KARTE_PFADE[key].cy];
                 const f = ebene === "foerderung" ? FOERDER_FARBEN[land.foerderart] : stufe(land.ertrag);
                 const et = ETIKETT[key];
+                const p = KARTE_PFADE[key];
                 if (et) {
                   const gewaehlt = key === auswahl;
                   return (
                     <g key={`t-${key}`} aria-hidden="true" className="pointer-events-none select-none">
-                      <line x1={KARTE_PFADE[key].cx} y1={KARTE_PFADE[key].cy} x2={et[0]} y2={et[1]} className="stroke-navy-900/50" strokeWidth={0.8} />
-                      <circle cx={KARTE_PFADE[key].cx} cy={KARTE_PFADE[key].cy} r={1.8} className="fill-navy-900" />
-                      <rect x={et[0] - 15} y={et[1] - 9} width={30} height={18} rx={9} className={gewaehlt ? "fill-navy-900" : "fill-white stroke-ink-300"} strokeWidth={0.8} />
+                      <line x1={p.cx} y1={p.cy} x2={et[0]} y2={et[1]} className="stroke-navy-900/50" strokeWidth={0.8} />
+                      <circle cx={p.cx} cy={p.cy} r={1.8} className="fill-navy-900" />
+                      <rect x={et[0] - 14} y={et[1] - 9} width={28} height={18} rx={9} className={gewaehlt ? "fill-navy-900" : "fill-white stroke-ink-300"} strokeWidth={0.8} />
                       <text x={et[0]} y={et[1] + 0.5} textAnchor="middle" dominantBaseline="central" className={`font-display font-bold ${gewaehlt ? "fill-white" : "fill-ink-800"}`} style={{ fontSize: 10.5 }}>
                         {land.kuerzel}
                       </text>
                     </g>
                   );
                 }
+                const [x, y] = LABEL_POS[key] || [p.cx, p.cy];
                 return (
                   <text
                     key={`t-${key}`}
@@ -196,7 +181,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
                     dominantBaseline="central"
                     aria-hidden="true"
                     className={`pointer-events-none select-none font-display font-bold ${f.text}`}
-                    style={{ fontSize: key === "saarland" ? 10 : 14, letterSpacing: "0.02em" }}
+                    style={{ fontSize: key === "vorarlberg" || key === "burgenland" ? 11 : 15, letterSpacing: "0.02em" }}
                   >
                     {land.kuerzel}
                   </text>
@@ -206,7 +191,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
           </div>
 
           {/* Legende */}
-          <ul className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2.5 text-[13.5px] text-ink-600 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6">
+          <ul className="mt-6 grid grid-cols-1 gap-x-4 gap-y-2.5 text-[13.5px] text-ink-600 sm:flex sm:flex-wrap sm:justify-center sm:gap-x-6">
             {ebene === "foerderung"
               ? Object.keys(FOERDER_FARBEN).map((k) => (
                   <li key={k} className="flex items-center gap-2">
@@ -221,6 +206,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
                   </li>
                 ))}
           </ul>
+          <p className="mt-4 text-center text-[11.5px] text-ink-400">{KARTE_QUELLE}</p>
         </div>
 
         {/* Seitenpanel */}
@@ -239,56 +225,39 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
           </label>
 
           <div className="flex items-start gap-4">
-            <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl font-display text-[18px] font-extrabold ${farbe.chip}`}>
-              {aktiv.kuerzel}
-            </span>
+            <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl font-display text-[18px] font-extrabold ${farbe.chip}`}>{aktiv.kuerzel}</span>
             <div className="min-w-0">
               <h3 className="font-display text-[26px] font-extrabold leading-tight tracking-tight text-ink-900">{aktiv.name}</h3>
               <p className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-ink-500">
-                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${farbe.chip}`}>
-                  {FOERDER_LABEL[aktiv.foerderart]}
-                </span>
+                <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${farbe.chip}`}>{FOERDER_LABEL[aktiv.foerderart]}</span>
                 Stand {aktiv.stand}
               </p>
             </div>
           </div>
 
-          <p className="mt-5 text-[16px] font-medium leading-relaxed text-ink-800">{aktiv.kurz}</p>
+          <p className="mt-5 text-[15.5px] font-medium leading-relaxed text-ink-800">{aktiv.kurz}</p>
 
           <dl className="mt-6 space-y-4">
-            <div className="flex gap-3">
-              <dt className="sr-only">Landesprogramm</dt>
-              <Landmark aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
-              <dd className="text-[14.5px] leading-relaxed text-ink-600">
-                <span className="block font-semibold text-ink-900">Landesprogramm</span>
-                {aktiv.programm ? `${aktiv.programm.name} · ${aktiv.programm.art}` : "Kein Landesprogramm für private Anlagen"}
-              </dd>
-            </div>
-            <div className="flex gap-3">
-              <dt className="sr-only">Kommunale Programme</dt>
-              <Building2 aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
-              <dd className="min-w-0 flex-1 text-[14.5px] leading-relaxed text-ink-600">
-                <span className="block font-semibold text-ink-900">
-                  {aktiv.kommunal.length > 0 ? `${aktiv.kommunal.length} aktive${aktiv.kommunal.length === 1 ? "s" : ""} Programm${aktiv.kommunal.length === 1 ? "" : "e"}` : "Keine aktiven Programme bekannt"}
-                </span>
-                {aktiv.kommunal.length > 0 && (
-                  <ul className="mt-1.5 space-y-1.5">
-                    {aktiv.kommunal.slice(0, 3).map((k) => (
-                      <li key={`${k.ort}-${k.programm}`} className="flex flex-wrap justify-between gap-x-3 border-b border-dashed border-ink-200 pb-1.5 last:border-0">
-                        <span>{k.ort === aktiv.name ? k.programm : k.ort}</span>
-                        <span className="font-semibold text-ov-700">{k.hoeheKurz}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </dd>
-            </div>
+            {[
+              { icon: Building2, label: "Unternehmen", wert: aktiv.unternehmen },
+              { icon: BatteryCharging, label: "Speicher", wert: aktiv.speicher },
+              { icon: Users, label: "Energiegemeinschaften", wert: aktiv.eg },
+            ].map((z) => (
+              <div key={z.label} className="flex gap-3">
+                <dt className="sr-only">{z.label}</dt>
+                <z.icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
+                <dd className="text-[14.5px] leading-relaxed text-ink-600">
+                  <span className="block font-semibold text-ink-900">{z.label}</span>
+                  {z.wert}
+                </dd>
+              </div>
+            ))}
             <div className="flex gap-3">
               <dt className="sr-only">Solarertrag</dt>
               <Sun aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-sun-500" />
               <dd className="flex-1 text-[14.5px] leading-relaxed text-ink-600">
                 <span className="flex items-baseline justify-between gap-3">
-                  <span className="font-semibold text-ink-900">Solarertrag</span>
+                  <span className="font-semibold text-ink-900">Solarertrag (PVGIS)</span>
                   <span className="ov-num font-semibold text-ink-800">{kwh(aktiv.ertrag[0])}–{kwh(aktiv.ertrag[1])} kWh/kWp</span>
                 </span>
                 <span aria-hidden="true" className="mt-2 block h-2 overflow-hidden rounded-full bg-ink-200/70">
@@ -296,13 +265,13 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
                 </span>
               </dd>
             </div>
-            {aktiv.portal && (
+            {aktiv.netz && (
               <div className="flex gap-3">
-                <dt className="sr-only">Anlaufstelle</dt>
+                <dt className="sr-only">Netzbetreiber</dt>
                 <MapPin aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
                 <dd className="text-[14.5px] leading-relaxed text-ink-600">
-                  <span className="block font-semibold text-ink-900">Anlaufstelle</span>
-                  {aktiv.portal}
+                  <span className="block font-semibold text-ink-900">Netzbetreiber</span>
+                  {aktiv.netz}
                 </dd>
               </div>
             )}
@@ -311,7 +280,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
           <div className="mt-6 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
             <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Immer zusätzlich – bundesweit</p>
             <ul className="mt-2.5 flex flex-wrap gap-1.5 text-[12.5px] font-medium text-ink-700">
-              {["0 % Umsatzsteuer", "Einkommensteuerfrei", "EEG-Vergütung", "KfW-Kredit 270"].map((b) => (
+              {["EAG-Investitionszuschuss", "EAG-Marktprämie", "Investitionsfreibetrag", "Elektrizitätsabgabe frei"].map((b) => (
                 <li key={b} className="rounded-full bg-ov-50 px-2.5 py-1 ring-1 ring-ov-100">{b}</li>
               ))}
             </ul>
@@ -322,7 +291,7 @@ export default function Foerderkarte({ laender = [], startKey = "bayern" }) {
               href={aktiv.href}
               className="group inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700"
             >
-              Förderung in {aktiv.name.length > 14 ? aktiv.kuerzel : aktiv.name}
+              Förderung in {aktiv.name.length > 12 ? aktiv.kuerzel : aktiv.name}
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link

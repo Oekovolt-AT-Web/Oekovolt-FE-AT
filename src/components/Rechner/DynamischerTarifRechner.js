@@ -7,7 +7,7 @@ import { cn } from "@/components/ui/cn";
 import useEnergyLive, { fmtUhr } from "@/components/ui/useEnergyLive";
 import { Auswahl, Gruppe, Kennzahl, Regler, Tooltip, Zahl, useBreite } from "./bausteine";
 import { MobilKurz } from "./StromspeicherRechner";
-import { rechneDynamisch, berlinTag, PROFILE } from "@/lib/rechner/dynamischerTarif";
+import { rechneDynamisch, wienTag, PROFILE } from "@/lib/rechner/dynamischerTarif";
 import { fmt, fmtEur } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
 
@@ -17,9 +17,12 @@ const ct = (v, s = 1) => `${fmt(v, s)} ct`;
 /**
  * @param {object} props
  * @param {object} props.start     { stand, preis: { quelle, aufloesungMin, punkte } } – serverseitiger Snapshot
- * @param {object} props.annahmen  TARIF_ANNAHMEN aus @/lib/energy
+ *                                 der Gebotszone Österreich (getEnergySnapshot aus @/lib/energy)
+ * @param {object} props.annahmen  TARIF_ANNAHMEN aus @/lib/energy (Österreich)
  */
 export default function DynamischerTarifRechner({ start, annahmen }) {
+  // Live-Aktualisierung über den gemeinsamen Endpunkt /api/energie/live (Gebotszone AT,
+  // serverseitig gecacht) – so kommen auch die Preise für morgen ohne Neuladen an.
   const live = useEnergyLive({ voll: true });
   const daten = live?.preis?.punkte?.length ? live : start;
   const preis = daten?.preis || { punkte: [], aufloesungMin: 15 };
@@ -40,9 +43,9 @@ export default function DynamischerTarifRechner({ start, annahmen }) {
   const [tagWahl, setTagWahl] = useState("heute");
   const [fenster, setFenster] = useState(3);
 
-  const heute = berlinTag(jetzt);
-  const morgen = berlinTag(jetzt + 86400000);
-  const hatMorgen = preis.punkte.some((p) => berlinTag(p.t) === morgen);
+  const heute = wienTag(jetzt);
+  const morgen = wienTag(jetzt + 86400000);
+  const hatMorgen = preis.punkte.some((p) => wienTag(p.t) === morgen);
   const tag = tagWahl === "morgen" && hatMorgen ? morgen : heute;
 
   const profil = {
@@ -228,12 +231,12 @@ export default function DynamischerTarifRechner({ start, annahmen }) {
               </div>
 
               <p className="mt-4 text-[12.5px] leading-relaxed text-ink-500">
-                Datenquelle: Day-Ahead-Preise DE-LU von{" "}
-                <a href="https://www.energy-charts.info" target="_blank" rel="noopener noreferrer" className="font-medium text-ink-700 underline decoration-ink-300 underline-offset-2 hover:decoration-current">
+                Datenquelle: Day-Ahead-Preise der Gebotszone Österreich (AT) von{" "}
+                <a href="https://www.energy-charts.info/charts/price_spot_market/chart.htm?l=de&c=AT" target="_blank" rel="noopener noreferrer" className="font-medium text-ink-700 underline decoration-ink-300 underline-offset-2 hover:decoration-current">
                   Energy-Charts (Fraunhofer ISE)
                 </a>
-                , Lizenz CC BY 4.0{preis.quelle && !String(preis.quelle).includes("Energy-Charts") ? ` · ersatzweise ${preis.quelle}` : ""} · Stand {fmtUhr(new Date(daten?.stand || jetzt).getTime())} Uhr.
-                Endpreis = (Börsenpreis + {fmt(annahmen.aufschlagCt, 1)} ct Netzentgelt, Abgaben & Marge) × {fmt(1 + annahmen.mwst, 2)} MwSt.
+                , Daten: Bundesnetzagentur | SMARD.de, Lizenz CC BY 4.0{preis.quelle && !String(preis.quelle).includes("Energy-Charts") ? ` · ersatzweise ${preis.quelle}` : ""} · Stand {fmtUhr(new Date(daten?.stand || jetzt).getTime())} Uhr.
+                Endpreis = (Börsenpreis + {fmt(annahmen.aufschlagCt, 1)} ct Netzentgelte, Abgaben & Lieferantenaufschlag) × {fmt(1 + annahmen.mwst, 2)} (20 % USt.). Grundpauschalen sind nicht enthalten.
               </p>
             </>
           )}

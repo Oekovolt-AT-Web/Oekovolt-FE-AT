@@ -25,7 +25,7 @@ export function ladeEnergie(voll = false) {
   return p;
 }
 
-/** Live-Strommarktdaten (Kennzahlen). Aktualisiert alle 5 Minuten. */
+/** Live-Strommarktdaten Österreich (Gebotszone AT, Kennzahlen). Aktualisiert alle 5 Minuten. */
 export default function useEnergyLive({ voll = false, intervall = 5 * 60000 } = {}) {
   const [daten, setDaten] = useState(null);
 
@@ -50,4 +50,4 @@ export const fmtGw = (mw) =>
   (mw / 1000).toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 export const fmtUhr = (t) =>
-  new Intl.DateTimeFormat("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }).format(new Date(t));
+  new Intl.DateTimeFormat("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Vienna" }).format(new Date(t));

@@ -4,7 +4,7 @@ import { ArrowRight, CalendarDays } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { slugPfad } from "@/lib/kanaele/veroeffentlichungen";
 
-export const datumDe = (iso) => (iso ? new Date(iso).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }) : "");
+export const datumDe = (iso) => (iso ? new Date(iso).toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Vienna" }) : "");
 
 export default function MeldungKarte({ m, gross = false }) {
   return (

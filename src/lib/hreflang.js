@@ -41,18 +41,12 @@ export const SHARED_PATHS = new Set([
   "/uber-uns/jobs",
   "/kontakt",
   "/faqs",
-  "/impressum",
-  "/datenschutz",
-  "/agb",
+  // Impressum, Datenschutz und AGB bewusst NICHT: verschiedene Gesellschaften
+  // (DE: ÖKOVOLT GmbH Solartechnik, AT: Ökovolt Solartechnik GmbH).
   // Hersteller-Detailseiten
   "/produkte/stromspeicher/solis",
-  "/produkte/stromspeicher/wuerth",
   "/produkte/stromspeicher/byd",
-  "/produkte/stromspeicher/akcome",
   "/produkte/stromspeicher/huawei",
-  "/produkte/warmepumpe/schrack",
-  "/produkte/warmepumpe/schweizer",
-  "/produkte/warmepumpe/trina",
   "/produkte/warmepumpe/fronius",
 ]);
 

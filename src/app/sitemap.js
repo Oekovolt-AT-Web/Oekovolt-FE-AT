@@ -1,12 +1,14 @@
 // src/app/sitemap.js
 
-import { generateSlug, generateJobSlug } from "@/lib/slugify";
+import { generateSlug } from "@/lib/slugify";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { sitemapLanguages } from "@/lib/hreflang";
 import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
 import { normalisiereApiProjekt } from "@/components/Project/projektDaten";
 import { REGIONEN } from "@/data/regionen";
+import { LAENDER_SLUGS, STAND as LAENDER_STAND } from "@/data/bundeslaender";
+import { istBelegterPartner } from "@/components/Produktdetail/HerstellerDetail";
 
 const BASE_URL = "https://www.oekovolt.com";
 // ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
@@ -19,11 +21,13 @@ const BASE_URL = "https://www.oekovolt.com";
 // Foerderungen, Hersteller) nutzen weiter den echten `modified`-Zeitstempel
 // aus dem Backoffice.
 const CONTENT_DATE = new Date("2026-06-06");   // letzter groesserer Inhaltsstand
-const UPDATED_2026_09 = new Date("2026-09-13"); // Redesign 2026 (alle Hauptseiten neu gestaltet)
+const UPDATED_2026_09 = new Date("2026-09-28"); // Umstellung auf Österreich (alle Hauptseiten neu)
 // Rechtstexte aendern sich praktisch nie
-const LEGAL_DATE = new Date("2025-01-01");
+const LEGAL_DATE = new Date("2026-09-28");
 // Regionalseiten: Stand der Recherche (Förderprogramme, Netzbetreiber)
-const REGIONEN_DATUM = new Date("2026-09-14");
+const REGIONEN_DATUM = new Date("2026-09-29");
+// Start der österreichischen Inhalte auf oekovolt.com
+const AT_START = new Date("2026-09-28");
 const STATIC_PAGES = [
   { path: "", changeFrequency: "weekly", priority: 1.0, lastModified: UPDATED_2026_09 },
   { path: "/dienstleistungen/photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
@@ -74,6 +78,34 @@ const STATIC_PAGES = [
   { path: "/impressum", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/datenschutz", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/agb", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
+  { path: "/hinweisgeberschutz", changeFrequency: "yearly", priority: 0.3, lastModified: AT_START },
+
+  // Österreich (Launch oekovolt.com, Gewerbe-Schwerpunkt)
+  { path: "/uber-uns", changeFrequency: "monthly", priority: 0.7, lastModified: AT_START },
+  { path: "/freiflaechen-photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/agri-pv", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/hotellerie-tourismus", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/gewerbespeicher", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/ladeinfrastruktur", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/energiegemeinschaften", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/chalets", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/standort-check", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/technik", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/technik/parkregler", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/technik/fernwartung", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/technik/scada", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/service/wartung", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/service/e-check", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/service/reinigung", changeFrequency: "monthly", priority: 0.7, lastModified: AT_START },
+  { path: "/service/drohneninspektion", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/service/versicherung", changeFrequency: "monthly", priority: 0.7, lastModified: AT_START },
+  { path: "/service/energieberatung", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/service/notstrom", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
+  { path: "/service/nachhaltigkeitsmarketing", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
+  { path: "/forderungen/bundesfoerderung", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/pv-award", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
+  { path: "/sponsoring", changeFrequency: "monthly", priority: 0.5, lastModified: AT_START },
+  { path: "/partner", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
 ];
 
 // Helper function to make authenticated fetch requests.
@@ -121,20 +153,6 @@ async function fetchAllProjects() {
   return (Array.isArray(liste) ? liste : []).map(normalisiereApiProjekt).filter((p) => p.slug);
 }
 
-// Fetch jobs data
-async function fetchAllJobs() {
-  const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.jobs.api.jobsde_data`;
-  const data = await authenticatedFetch(API_URL);
-  return data?.message || [];
-}
-
-// Fetch landesforderungen data
-async function fetchAllLandesforderungen() {
-  const API_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages`;
-  const data = await authenticatedFetch(API_URL);
-  return data?.message || [];
-}
-
 // Fetch stromspeicher manufacturers from the stromspeicher page API
 async function fetchStromspeicherManufacturers() {
   const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
@@ -176,14 +194,10 @@ export default async function sitemap() {
   // already returns [] on failure, so a partial outage never breaks the sitemap.
   const [
     projects,
-    jobs,
-    landesforderungen,
     stromspeicherManufacturers,
     warmepumpeManufacturers,
   ] = await Promise.all([
     fetchAllProjects(),
-    fetchAllJobs(),
-    fetchAllLandesforderungen(),
     fetchStromspeicherManufacturers(),
     fetchWarmepumpeManufacturers(),
   ]);
@@ -201,9 +215,9 @@ export default async function sitemap() {
     }
   });
 
-  // 2. Job pages – ganzjährige Stellen aus src/data/stellen.js …
-  const jobSlugs = new Set(jobs.map((job) => generateJobSlug(job.name || job.title)).filter(Boolean));
-  STELLEN.filter((s) => !jobSlugs.has(s.slug)).forEach((s) => {
+  // 2. Stellen – ausschließlich aus src/data/stellen.js (österreichische Stellen).
+  //    Das Backoffice liefert die Stellen der deutschen Gesellschaft, die hier nicht gelten.
+  STELLEN.forEach((s) => {
     dynamicEntries.push({
       url: `${BASE_URL}/uber-uns/jobs/${s.slug}`,
       lastModified: new Date(STELLEN_DATUM),
@@ -212,35 +226,21 @@ export default async function sitemap() {
     });
   });
 
-  // … und Stellen aus dem Backoffice
-  jobs.forEach((job) => {
-    const slug = generateJobSlug(job.name || job.title);
-    if (slug) {
-      dynamicEntries.push({
-        url: `${BASE_URL}/uber-uns/jobs/${slug}`,
-        lastModified: job.modified ? new Date(job.modified) : CONTENT_DATE,
-        changeFrequency: "weekly",
-        priority: 0.5,
-      });
-    }
-  });
-
-  // 3. Landesforderungen pages
-  landesforderungen.forEach((item) => {
-    const title = item.firstcard_title || item.name || '';
-    const slug = generateSlug(title);
-    if (slug) {
-      dynamicEntries.push({
-        url: `${BASE_URL}/forderungen/landesforderungen/${slug}`,
-        lastModified: item.modified ? new Date(item.modified) : CONTENT_DATE,
-        changeFrequency: "monthly",
-        priority: 0.6,
-      });
-    }
+  // 3. Landesförderungen – statisch aus src/data/bundeslaender.js (neun Bundesländer)
+  LAENDER_SLUGS.forEach((l) => {
+    const languages = sitemapLanguages(l.pfad);
+    dynamicEntries.push({
+      url: `${BASE_URL}${l.pfad}`,
+      lastModified: new Date(LAENDER_STAND.iso),
+      changeFrequency: "monthly",
+      priority: 0.7,
+      ...(languages ? { alternates: { languages } } : {}),
+    });
   });
 
   // 4. Stromspeicher manufacturer pages (from stromspeicher page API)
-  stromspeicherManufacturers.forEach((manufacturer) => {
+  // Nur belegte Partner – alle anderen Herstellerseiten stehen auf noindex.
+  stromspeicherManufacturers.filter((m) => istBelegterPartner(m.title)).forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
     if (slug) {
       const languages = sitemapLanguages(`/produkte/stromspeicher/${slug}`);
@@ -255,7 +255,8 @@ export default async function sitemap() {
   });
 
   // 5. Warmepumpe manufacturer pages (from warmepumpe page API)
-  warmepumpeManufacturers.forEach((manufacturer) => {
+  // Nur belegte Partner – alle anderen Herstellerseiten stehen auf noindex.
+  warmepumpeManufacturers.filter((m) => istBelegterPartner(m.title)).forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
     if (slug) {
       const languages = sitemapLanguages(`/produkte/warmepumpe/${slug}`);

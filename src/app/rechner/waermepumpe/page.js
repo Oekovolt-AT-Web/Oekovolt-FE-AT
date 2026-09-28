@@ -12,14 +12,14 @@ export const metadata = rechnerMetadata({
   pfad: PFAD,
   title: "Wärmepumpen-Rechner: Kosten vs. Gas & Öl | Ökovolt",
   description:
-    "Wärmepumpen-Rechner 2026: Heizkosten und CO₂ von Gas oder Öl mit Wärmepumpe und Solarstrom vergleichen – inkl. BEG-Förderung. Jetzt kostenlos rechnen.",
-  keywords: ["Wärmepumpe Rechner", "Wärmepumpe Kosten Vergleich Gas", "Wärmepumpe mit PV", "Heizkosten Wärmepumpe berechnen", "Jahresarbeitszahl", "BEG Förderung Wärmepumpe 2026"],
+    "Wärmepumpen-Rechner für Österreich: Heizkosten und CO₂ von Gas oder Heizöl mit Wärmepumpe und Solarstrom vergleichen – mit E-Control-Preisen. Kostenlos.",
+  keywords: ["Wärmepumpe Rechner Österreich", "Wärmepumpe Kosten Vergleich Gas", "Wärmepumpe mit PV", "Heizkosten Wärmepumpe berechnen", "Jahresarbeitszahl", "Raus aus Öl und Gas"],
 });
 
 const FAQ = [
   {
     q: "Was kostet der Betrieb einer Wärmepumpe im Jahr?",
-    a: "Das hängt vor allem vom Wärmebedarf und der Jahresarbeitszahl (JAZ) ab. Ein Einfamilienhaus mit 15.000 kWh Wärmebedarf braucht bei einer JAZ von 3,5 rund 4.300 kWh Strom. Mit einem Wärmepumpentarif von 26 ct/kWh sind das etwa 1.100 € plus rund 150 € Wartung – mit Solarstrom vom eigenen Dach entsprechend weniger.",
+    a: `Das hängt vor allem vom Wärmebedarf und der Jahresarbeitszahl (JAZ) ab. Ein Einfamilienhaus mit 15.000 kWh Wärmebedarf braucht bei einer JAZ von 3,5 rund 4.300 kWh Strom. Mit rund ${W.wpTarifCt} ct/kWh sind das etwa ${fmt(Math.round((4300 * W.wpTarifCt) / 100 / 50) * 50)} € plus rund ${W.wpNebenkosten} € Wartung – mit Solarstrom vom eigenen Dach entsprechend weniger.`,
   },
   {
     q: "Welche Jahresarbeitszahl ist realistisch?",
@@ -31,7 +31,7 @@ const FAQ = [
   },
   {
     q: "Welche Förderung gibt es 2026 für eine Wärmepumpe?",
-    a: `Über die BEG-Heizungsförderung der KfW (Programm 458) erhalten Selbstnutzer ${W.foerderung.grundProzent} % Grundförderung. Boni – etwa der Klimageschwindigkeitsbonus beim Tausch einer alten fossilen Heizung und der Einkommensbonus – können den Zuschuss auf bis zu ${W.foerderung.maxProzent} % erhöhen. Seit der Richtlinie vom Juli 2026 sind für die erste Wohneinheit höchstens ${fmt(W.foerderung.kostenDeckelErsteWe)} € förderfähig. Der Antrag muss vor Vertragsabschluss gestellt werden; Stand September 2026, bitte vor Antrag bei der KfW prüfen.`,
+    a: "Die Bundesförderung „Raus aus Öl und Gas“ für den Heizungstausch war für 2026 im Juli ausgeschöpft; neue Registrierungen sind derzeit nicht möglich, bereits registrierte Projekte bleiben gültig. Für 2027 und 2028 ist ein geringeres Budget angekündigt. Daneben fördern die Bundesländer den Heizungstausch mit eigenen Programmen, Betriebe über die Umweltförderung im Inland (KPC). Stand September 2026 – wir prüfen vor dem Auftrag, was für Sie gilt.",
   },
   {
     q: "Funktioniert eine Wärmepumpe auch im Altbau?",
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: "Warum steigen die Kosten für Gas und Öl weiter?",
-    a: "Auf fossile Brennstoffe wird ein CO₂-Preis erhoben, der schrittweise steigt – mit dem Übergang in den europäischen Emissionshandel (ETS 2) wird eine weitere Verteuerung erwartet. Der Rechner nutzt heutige Preise; über 20 Jahre Nutzungsdauer dürfte der Vorteil der Wärmepumpe daher eher größer ausfallen.",
+    a: "In Österreich wird auf fossile Brennstoffe seit 2022 ein nationaler CO₂-Preis erhoben; mit dem Übergang in den europäischen Emissionshandel für Gebäude und Verkehr (ETS 2) wird eine weitere Verteuerung erwartet. Der Rechner nutzt heutige Preise; über 20 Jahre Nutzungsdauer dürfte der Vorteil der Wärmepumpe daher eher größer ausfallen.",
   },
 ];
 
@@ -51,12 +51,12 @@ export default function Page() {
       breadcrumb="Wärmepumpen-Rechner"
       eyebrow="Wärmepumpen-Rechner"
       title={<>Gas, Öl oder <span className="ov-text-gradient-light">Wärmepumpe</span>?</>}
-      lead="Jährliche Heizkosten und CO₂ im direkten Vergleich – mit Netzstrom oder mit Solarstrom vom eigenen Dach, inklusive Förderhinweis."
-      chips={["Kostenlos & ohne Anmeldung", "Mit PV-Anteil je Monat", "BEG-Förderung 2026"]}
+      lead="Jährliche Heizkosten und CO₂ im direkten Vergleich – mit Netzstrom oder mit Solarstrom vom eigenen Dach, gerechnet mit österreichischen Gas-, Heizöl- und Strompreisen."
+      chips={["Kostenlos & ohne Anmeldung", "Mit PV-Anteil je Monat", "Preise E-Control 09/2026"]}
       app={{
         name: "Ökovolt Wärmepumpen-Rechner",
         description: "Vergleicht die jährlichen Heizkosten und CO₂-Emissionen von Gas- oder Ölheizung mit einer Wärmepumpe mit Netzstrom und mit Photovoltaik-Anteil.",
-        featureList: ["Heizwärmebedarf nach Wohnfläche und Baujahr", "Kostenvergleich Gas/Öl vs. Wärmepumpe", "Solarstrom-Anteil je Monat", "CO₂-Bilanz", "BEG-Förderhinweis"],
+        featureList: ["Heizwärmebedarf nach Wohnfläche und Baujahr", "Kostenvergleich Gas/Heizöl vs. Wärmepumpe", "Solarstrom-Anteil je Monat", "CO₂-Bilanz mit österreichischem Strommix", "Förderhinweis Österreich"],
       }}
       rechner={<WaermepumpeRechner />}
       erklaerung={
@@ -73,33 +73,34 @@ export default function Page() {
             </p>
             <p>
               Mit Photovoltaik simulieren wir ein ganzes Jahr in Stundenschritten: Haushalt und Wärmepumpe verbrauchen gleichzeitig, der Solarstrom wird anteilig verteilt.
-              Solarstrom setzen wir nicht mit null an, sondern mit der entgangenen Einspeisevergütung – so bleibt der Vergleich ehrlich.
+              Solarstrom setzen wir nicht mit null an, sondern mit dem entgangenen Einspeiseerlös – so bleibt der Vergleich ehrlich.
               Mehr zur Technik lesen Sie auf unserer Seite zur <Link href="/produkte/warmepumpe">Wärmepumpe</Link>, zur Kombination mit Speicher im <Link href="/rechner/stromspeicher">Stromspeicher-Rechner</Link>.
             </p>
           </div>
         </>
       }
       annahmen={[
-        ["Gaspreis (Standard)", `${fmt(W.heizungen.gas.preisStandard, 1)} ct/kWh`],
-        ["Heizölpreis (Standard)", `${fmt(W.heizungen.oel.preisStandard)} €/100 l`],
+        ["Gaspreis (Standard, gesamt brutto)", `${fmt(W.heizungen.gas.preisStandard, 1)} ct/kWh`],
+        ["Heizölpreis (Standard, brutto)", `${fmt(W.heizungen.oel.preisStandard)} €/100 l`],
         ["Nutzungsgrad Gas · Öl", `${fmt(W.heizungen.gas.nutzungsgrad * 100)} % · ${fmt(W.heizungen.oel.nutzungsgrad * 100)} %`],
-        ["Nebenkosten Gas · Öl · WP", `${fmt(W.heizungen.gas.nebenkosten)} · ${fmt(W.heizungen.oel.nebenkosten)} · ${fmt(W.wpNebenkosten)} €/Jahr`],
+        ["Wartung & Rauchfangkehrer Gas · Öl · WP", `${fmt(W.heizungen.gas.nebenkosten)} · ${fmt(W.heizungen.oel.nebenkosten)} · ${fmt(W.wpNebenkosten)} €/Jahr`],
         ["Wärmepumpen-Strompreis", `${fmt(W.wpTarifCt)} ct/kWh`],
-        ["CO₂ Gas · Öl · Strommix", `${fmt(W.heizungen.gas.co2 * 1000)} · ${fmt(W.heizungen.oel.co2 * 1000)} · ${fmt(ALLGEMEIN.co2Strommix * 1000)} g/kWh`],
+        ["CO₂ Gas · Öl · Heizstrom AT", `${fmt(W.heizungen.gas.co2 * 1000)} · ${fmt(W.heizungen.oel.co2 * 1000)} · ${fmt(W.co2Strom * 1000)} g/kWh`],
         ["Haushaltsstrom neben WP", `${fmt(W.haushaltKwh)} kWh/Jahr`],
-        ["Solarstrom bewertet mit", `${fmt(VERGUETUNG.saetze[0].teileinspeisung, 2)} ct/kWh (Vergütung)`],
+        ["Solarstrom bewertet mit", `${fmt(VERGUETUNG.saetze[0].teileinspeisung, 1)} ct/kWh (Einspeiseerlös)`],
         ["Speicher bei „PV + Speicher“", `${W.speicherMitPv} kWh`],
       ]}
       quellen={[
-        { name: "KfW – Heizungsförderung (458)", url: "https://www.kfw.de/458" },
-        { name: "BDEW Gaspreisanalyse", url: "https://www.bdew.de/service/daten-und-grafiken/bdew-gaspreisanalyse/" },
-        { name: "Umweltbundesamt (Emissionsfaktoren)" },
+        { name: "E-Control Preismonitor (Gas, 09/2026)", url: "https://www.e-control.at/preismonitor" },
+        { name: "EU Weekly Oil Bulletin (Heizöl AT, 21.09.2026)", url: "https://energy.ec.europa.eu/data-and-analysis/weekly-oil-bulletin_en" },
+        { name: "Marktentwicklung 2024 (CO₂-Koeffizient Strom)", url: "https://nachhaltigwirtschaften.at/resources/nw_pdf/schriftenreihe-2025-23a_marktstatistik-2024.pdf" },
+        { name: "Raus aus Öl und Gas (KPC)", url: "https://www.umweltfoerderung.at" },
       ]}
       faq={FAQ}
       faqTitel="Wärmepumpe – Kosten, JAZ & Förderung"
       cta={{
         title: "Wärmepumpe und Photovoltaik – aus einer Hand geplant.",
-        text: "Wir prüfen Heizlast, Vorlauftemperatur und Aufstellort, kombinieren Wärmepumpe, PV und Speicher sinnvoll und unterstützen Sie beim Förderantrag.",
+        text: "Wir prüfen Heizlast, Vorlauftemperatur und Aufstellort, kombinieren Wärmepumpe, PV und Speicher sinnvoll und prüfen, welche Landes- oder Bundesförderung für Sie offensteht.",
         primary: { label: "Wärmepumpen-Angebot anfragen", href: "/angebot?waermepumpe=1" },
         secondary: { label: "Förder-Check starten", href: "/foerdercheck" },
       }}

@@ -1,306 +1,321 @@
-// Ratgeber: Energiemanagementsystem (HEMS) für Photovoltaik
-// § 14a-Werte aus src/data/wallbox.js (zentrale Zahlen der Website).
-
-import { WALLBOX } from "@/data/wallbox";
-import { SOLAR } from "@/lib/rechner/annahmen";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-
-const P14A = WALLBOX.paragraf14a;
-const kw = (n) => `${n.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} kW`;
-const ctStr = (n) => String(Math.round(n * 1000) / 10).replace(".", ",");
-
-// Gleichzeitigkeitsfaktoren nach BNetzA-Festlegung BK6-22-300 (Anlage 1)
-const GZF = [
-  { n: 2, f: 0.8 },
-  { n: 3, f: 0.75 },
-  { n: 4, f: 0.7 },
-  { n: 5, f: 0.65 },
-  { n: 6, f: 0.6 },
-  { n: 7, f: 0.55 },
-  { n: 8, f: 0.5 },
-  { n: "9 und mehr", f: 0.45 },
-];
-const minLeistung = (n, f) => P14A.drosselungKw + (n - 1) * f * P14A.drosselungKw;
+// Ratgeber: Energiemanagementsystem (EMS) für PV im Gewerbe – Österreich
+// Quellen: TOR Verteilernetzanschluss NS V1.3.1 (Ladeeinrichtungen > 3,68 kVA: bidirektionale Schnittstelle,
+// offenes Protokoll wie OCPP/EEBUS, externe Leistungsbeschränkung; Summenleistung ≥ 10 kVA: VNB kann aussetzen,
+// außer EMS verhindert Überschreitung der vereinbarten Leistung; > 250 kW Ladeleistung: Wirkleistungsvorgaben),
+// TOR Stromerzeugungsanlagen Typ A V1.4, OeMAG-Marktpreise 2026, ISO 50001 (Managementsystem-Norm),
+// Energy-Charts (Day-Ahead-Preise AT). Keine Produkt- oder Preiszusagen.
 
 const artikel = {
   slug: "energiemanagementsystem",
-  title: "Energiemanagementsystem für Photovoltaik: Funktionen & Standards",
-  seoTitle: "Energiemanagementsystem Photovoltaik: HEMS erklärt | Ökovolt",
+  title: "Energiemanagementsystem für Betriebe: PV, Speicher und Lasten steuern",
+  seoTitle: "Energiemanagementsystem (EMS) für Betriebe | Ökovolt",
   kurzTitel: "Energiemanagementsystem",
   description:
-    "Energiemanagementsystem für Photovoltaik: Was ein HEMS steuert, welche Standards zählen (SG Ready, EEBus, OCPP), was § 14a EnWG verlangt und was es kostet.",
+    "Energiemanagementsystem für Gewerbe: PV-Überschuss, Peak Shaving, Ladepunkte, Wärmepumpen, Spotpreise, Schnittstellen und TOR-Anforderungen in Österreich.",
   excerpt:
-    "Speicher, Wallbox, Wärmepumpe und dynamischer Tarif – wer mehrere Verbraucher hat, braucht eine Steuerung, die sie koordiniert. Wie ein HEMS funktioniert, welche Schnittstellen 2026 wichtig sind und worauf Sie beim Kauf achten.",
-  hauptKeyword: "energiemanagementsystem photovoltaik",
+    "Ein Energiemanagementsystem verteilt Solarstrom, Speicherladung und Netzbezug in Echtzeit – und hält die Anschlussleistung ein. Was ein EMS im Betrieb leisten muss, welche Schnittstellen zählen und wie Sie das richtige System auswählen.",
+  hauptKeyword: "energiemanagementsystem",
   keywords: [
-    "Energiemanagementsystem Photovoltaik",
-    "HEMS Photovoltaik",
-    "Home Energy Management System",
-    "Energiemanager PV-Anlage",
-    "EMS § 14a EnWG",
-    "SG Ready EEBus",
-    "Energiemanagement Wärmepumpe Wallbox",
+    "Energiemanagementsystem Gewerbe",
+    "EMS Photovoltaik",
+    "Energiemanagement PV Speicher",
+    "Lastmanagement Ladepunkte",
+    "Peak Shaving EMS",
+    "Energiemanagementsystem Österreich",
+    "OCPP EEBus Modbus",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Speicher & Eigenverbrauch",
   bild: "/Images/Ratgeber/energiemanagementsystem.jpg",
-  bildAlt: "Schnittbild eines Hauses mit Energieflüssen zwischen Photovoltaik, Sigenergy-Speicher, Wallbox und Haushalt",
-  badge: { wert: kw(P14A.drosselungKw), text: "Mindestleistung je steuerbarer Verbrauchseinrichtung nach § 14a EnWG" },
+  bildAlt: "Energiemanagement-Gateway einer Photovoltaikanlage mit Speicher",
+  badge: { wert: "> 3,68 kVA", text: "ab dieser Leistung brauchen Ladeeinrichtungen laut TOR eine offene, steuerbare Schnittstelle" },
 
   kurzFazit: [
-    "**Ein Energiemanagementsystem (HEMS) misst die Energieflüsse im Haus und steuert Speicher, Wallbox, Wärmepumpe und weitere Verbraucher so, dass möglichst viel Solarstrom selbst genutzt wird.**",
-    "Sinnvoll wird es, sobald **mehr als ein großer flexibler Verbraucher** vorhanden ist – typischerweise PV mit Speicher plus E-Auto oder Wärmepumpe.",
-    `Seit 2024 gilt § 14a EnWG: Neue Wärmepumpen und Wallboxen über ${kw(P14A.drosselungKw)} dürfen vom Netzbetreiber bei Engpässen gedimmt werden. Ein EMS kann mehrere Geräte **gemeinsam** steuern und die Mindestleistung sinnvoll verteilen.`,
-    "Wichtige Schnittstellen 2026: **SG Ready** und zunehmend **EEBus** für Wärmepumpen, **OCPP** oder Herstellerprotokolle für Wallboxen, **Modbus/SunSpec** für Wechselrichter und Speicher.",
+    "**Ein Energiemanagementsystem (EMS) misst Erzeugung, Verbrauch und Netzbezug in Echtzeit und steuert PV, Speicher, Ladepunkte, Wärmepumpen und flexible Lasten so, dass möglichst viel Solarstrom selbst genutzt und die vereinbarte Anschlussleistung nicht überschritten wird.**",
+    "**Die TOR machen Steuerbarkeit zur Pflicht:** Ladeeinrichtungen über 3,68 kVA müssen über ein offenes Protokoll (etwa OCPP oder EEBUS) ansteuerbar sein; ab 10 kVA Summenleistung kann ein EMS, das die vereinbarte Leistung einhält, ein Aussetzen des Anschlusses durch den Netzbetreiber vermeiden.",
+    "**Im Gewerbe verdient ein EMS dreifach:** mehr Eigenverbrauch (Solarstrom statt Netzbezug), niedrigerer Leistungspreis durch Peak Shaving und – mit Speicher oder flexiblen Lasten – günstigere Stunden bei Spotpreis-Tarifen.",
+    "**Entscheidend sind offene Schnittstellen und IT-Sicherheit:** Modbus TCP, SunSpec, OCPP, EEBUS, SG-Ready und OPC UA verhindern Herstellerbindung; Fernzugriffe gehören abgesichert und dokumentiert.",
   ],
 
   abschnitte: [
     {
-      id: "antwort",
+      id: "was-ist",
       titel: "Was ist ein Energiemanagementsystem?",
-      tocLabel: "Die kurze Antwort",
+      tocLabel: "Was ist ein EMS?",
       bloecke: [
         {
           typ: "p",
-          text: "**Ein Energiemanagementsystem für Photovoltaik – kurz HEMS (Home Energy Management System) – ist die Steuerzentrale für Strom im Haus.** Es erfasst über Zähler und Wechselrichter, wie viel Solarstrom gerade erzeugt, verbraucht, gespeichert und eingespeist wird, und entscheidet laufend, welches Gerät den Überschuss bekommt: Speicher, E-Auto, Wärmepumpe oder Heizstab.",
+          text: "**Ein Energiemanagementsystem ist eine Steuerung, die Energieflüsse im Gebäude oder Betrieb misst und aktiv regelt – im Sekunden- bis Minutentakt.** Die zentrale Messgröße ist die Leistung am Netzanschlusspunkt: Fließt Strom ins Netz, schaltet das EMS Verbraucher zu oder lädt den Speicher; droht eine Lastspitze, drosselt es Ladepunkte oder entlädt den Speicher. Der Begriff [Energiemanagementsystem](/wissen/lexikon#energiemanagementsystem) ist im Lexikon erklärt.",
         },
         {
-          typ: "p",
-          text: `Der wirtschaftliche Kern ist derselbe wie beim Eigenverbrauch insgesamt: Jede Kilowattstunde, die im Haus bleibt, spart rund ${ctStr(SOLAR.strompreis)} ct Netzstrom statt ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct Vergütung zu bringen. Ein HEMS macht daraus ein System, das nicht nur auf den Moment reagiert, sondern mit Wetterprognosen, Stromtarifen und Netzbetreibersignalen plant. Grundbegriffe erklärt das Lexikon unter [Energiemanagementsystem](/wissen/lexikon#energiemanagementsystem).`,
+          typ: "karten",
+          cols: 3,
+          items: [
+            { titel: "Messen", text: "Zähler am Netzanschlusspunkt, Unterzähler für große Verbraucher, Wechselrichter- und Speicherdaten, Wetterprognose." },
+            { titel: "Entscheiden", text: "Regeln und Prognosen: Überschuss verteilen, Lastspitze begrenzen, günstige Spotpreis-Stunden nutzen, Prioritäten einhalten." },
+            { titel: "Steuern", text: "Sollwerte an Speicher, Ladepunkte, Wärmepumpen, Heizstäbe, Kältetechnik und Wechselrichter über offene Schnittstellen." },
+          ],
         },
         {
           typ: "kasten",
           variant: "info",
-          titel: "Brauche ich überhaupt ein eigenes HEMS?",
-          text: "Nicht immer. Wer nur PV und Speicher hat, ist mit dem Energiemanagement im Hybridwechselrichter gut versorgt. Wer eine Wallbox mit Überschussladen ergänzt, kommt oft mit deren eingebauter PV-Funktion aus. Ein übergreifendes HEMS lohnt sich, wenn **mehrere große Verbraucher** um den Überschuss konkurrieren, ein dynamischer Tarif genutzt oder die Steuerung nach § 14a EnWG gebündelt werden soll.",
+          titel: "Nicht verwechseln: EMS und Energiemanagement nach ISO 50001",
+          text: "Die ISO 50001 beschreibt ein Managementsystem – also Organisation, Ziele, Messkonzepte und kontinuierliche Verbesserung des Energieeinsatzes. Große Unternehmen in Österreich müssen nach dem Bundes-Energieeffizienzgesetz regelmäßig Energieaudits durchführen oder ein anerkanntes Managementsystem betreiben. Das technische EMS liefert dafür Messdaten und setzt Maßnahmen automatisch um – es ersetzt das Managementsystem aber nicht.",
         },
       ],
     },
     {
       id: "funktionen",
-      titel: "Was ein HEMS 2026 können sollte",
+      titel: "Welche Funktionen braucht ein EMS im Betrieb?",
       tocLabel: "Funktionen",
       bloecke: [
         {
-          typ: "karten",
-          cols: 3,
-          items: [
-            { titel: "Überschusssteuerung", text: "Verteilt Solarüberschuss nach Prioritäten, etwa: erst Haushalt, dann Wärmepumpe, dann Speicher, dann E-Auto – oder umgekehrt, je nach Tageszeit und Ladestand." },
-            { titel: "Prognosen", text: "Nutzt Wetter- und Verbrauchsprognosen, damit der Speicher nicht vormittags voll ist und mittags abgeregelt werden muss." },
-            { titel: "Dynamische Tarife", text: "Legt Netzbezug in günstige Stunden, zum Beispiel das Laden des E-Autos in der Nacht oder die Wärmepumpe in Preistäler." },
-            { titel: "§ 14a EnWG", text: "Setzt Steuersignale des Netzbetreibers um und verteilt die zulässige Mindestleistung auf mehrere Geräte." },
-            { titel: "Lastmanagement", text: "Verhindert, dass Wallbox, Wärmepumpe und Herd gleichzeitig den Hausanschluss überlasten." },
-            { titel: "Monitoring", text: "Zeigt Erzeugung, Verbrauch und Einsparung übersichtlich an und meldet Störungen." },
+          typ: "p",
+          text: "**Im Gewerbe muss ein EMS mindestens vier Aufgaben beherrschen: Überschussnutzung, Lastspitzenbegrenzung, Ladepunkt-Management und die Einhaltung von Netzvorgaben.** Je nach Betrieb kommen Wärme- und Kältesteuerung, dynamische Tarife und Notstrombetrieb hinzu.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Funktionen eines gewerblichen Energiemanagementsystems",
+          kopf: ["Funktion", "Was sie tut", "Nutzen"],
+          zeilen: [
+            ["PV-Überschusssteuerung", "Verbraucher und Speicher nach Überschuss am Netzanschlusspunkt zuschalten", "höherer Eigenverbrauch"],
+            ["Peak Shaving", "Bezugsleistung auf einen Grenzwert begrenzen (Speicher entladen, Lasten drosseln)", "niedrigerer Leistungspreis bei Lastprofilmessung"],
+            ["Dynamisches Lastmanagement Ladepunkte", "verfügbare Leistung auf Ladepunkte verteilen, Prioritäten je Fahrzeug", "Anschlussleistung einhalten, Flotte zuverlässig laden"],
+            ["Wärme- und Kältesteuerung", "Wärmepumpen (SG-Ready/EEBUS), Pufferspeicher, Kühlzellen nach Überschuss und Preis", "thermische Speicher als günstige Batterie"],
+            ["Spotpreis-Optimierung", "flexible Lasten und Speicher in günstige Day-Ahead-Stunden verschieben", "niedrigere Energiekosten bei dynamischem Tarif"],
+            ["Einspeisebegrenzung", "Wirkleistung an Vorgaben des Netzbetreibers oder negative Preise anpassen", "Netzkonformität, keine Einspeisung bei negativen Preisen"],
+            ["Ersatzstrom-Logik", "Prioritäten und Lastabwurf im Inselbetrieb", "Versorgung kritischer Lasten"],
+            ["Monitoring & Reporting", "Kennzahlen, Lastgänge, Berichte, Alarme", "Nachweise für Audit, ESG-Bericht, Wartung"],
           ],
+          minBreite: 700,
         },
         {
           typ: "p",
-          text: "Zusätzlich an Bedeutung gewonnen hat die **Einspeisebegrenzung**: Neue Anlagen unter 25 kW dürfen nach dem [Solarspitzengesetz](/ratgeber/solarspitzengesetz) ohne intelligentes Messsystem mit Steuerungseinrichtung nur 60 % ihrer Leistung einspeisen, und in Stunden mit negativen Börsenstrompreisen entfällt die Vergütung. Ein HEMS kann Speicher und Verbraucher gezielt in diese Stunden legen, statt Ertrag abzuregeln. Wie die Überschusssteuerung konkret beim E-Auto funktioniert, erklärt der Ratgeber [PV-Überschussladen](/ratgeber/pv-ueberschussladen).",
+          text: "Wie viel das Kappen der Lastspitze bringt, erklärt der Ratgeber [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis); die Verschiebung in günstige Stunden behandelt [Dynamischer Stromtarif](/ratgeber/dynamischer-stromtarif-lohnt-sich). Die Grundlagen der Eigenverbrauchsoptimierung finden Sie unter [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen).",
         },
       ],
     },
     {
-      id: "arten",
-      titel: "Welche Arten von Energiemanagementsystemen gibt es?",
-      tocLabel: "Systemarten",
+      id: "tor",
+      titel: "Was die TOR für Steuerbarkeit und Lastmanagement verlangen",
+      tocLabel: "TOR & Netzbetreiber",
       bloecke: [
         {
           typ: "p",
-          text: "**Grob unterscheiden sich HEMS danach, ob sie Teil eines Hersteller-Ökosystems sind oder Geräte verschiedener Marken verbinden.** Beides kann richtig sein – entscheidend ist, welche Geräte Sie haben und künftig anschaffen wollen.",
+          text: "**Die TOR Verteilernetzanschluss (Niederspannung, Version 1.3.1) verlangen, dass Ladeeinrichtungen über 3,68 kVA über eine bidirektionale digitale Schnittstelle mit einem offenen Standardprotokoll – genannt werden OCPP und EEBUS – mit anderen Komponenten kommunizieren und eine externe Leistungsbeschränkung erlauben.** Die Fähigkeit kann auch über ein dauerhaft verbundenes Lade- oder Energiemanagementsystem erfüllt werden.",
         },
         {
           typ: "tabelle",
-          caption: "Arten von Energiemanagementsystemen im Überblick (Stand September 2026)",
-          kopf: ["Art", "Stärken", "Grenzen", "Passt zu"],
+          caption: "EMS-relevante Regelungen der TOR Verteilernetzanschluss Niederspannung V1.3.1",
+          kopf: ["Regelung", "Inhalt", "Rolle des EMS"],
           zeilen: [
-            ["EMS im Wechselrichter/Speicher", "ohne Zusatzhardware, gut abgestimmt, App inklusive", "fremde Wallboxen und Wärmepumpen oft nur eingeschränkt", "Neuanlage mit Geräten eines Herstellers"],
-            ["Herstellerunabhängige HEMS-Box", "breite Gerätelisten, zentrale Steuerung, oft § 14a-fähig", "Zusatzkosten, teils Abo; Kompatibilität je Gerät prüfen", "gemischte Bestandsanlagen, mehrere Verbraucher"],
-            ["Open-Source- und Smart-Home-Lösungen", "flexibel, lokal betreibbar, geringe Lizenzkosten", "Einrichtung und Pflege erfordern Know-how, keine Herstellergarantie", "technisch versierte Nutzer"],
-            ["Überschussfunktion einzelner Geräte", "einfach, oft bereits vorhanden", "keine Koordination mehrerer Verbraucher", "PV + ein großer Verbraucher"],
-          ],
-          minBreite: 680,
-          fussnote: "Einordnung ohne Anspruch auf Vollständigkeit. Kompatibilität immer anhand der aktuellen Geräteliste des Anbieters prüfen.",
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Partner-Systeme, neutrale Auswahl",
-          text: "Ökovolt ist Partner von Sigenergy, Huawei (FusionSolar), Fronius, Solis und meteocontrol – deren Systeme bringen eigene Energiemanagement- und Monitoringfunktionen mit. Welche Lösung passt, hängt davon ab, welche Wallbox und Wärmepumpe Sie haben oder planen. Wir prüfen die Kompatibilität vor dem Angebot. Mehr zum vernetzten [Smart Energy Home](/produkte/smartenergyhome).",
-        },
-      ],
-    },
-    {
-      id: "standards",
-      titel: "Schnittstellen und Standards: SG Ready, EEBus, OCPP & Co.",
-      tocLabel: "Standards",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Ein HEMS ist nur so gut wie seine Verbindungen zu den Geräten.** Die wichtigsten Standards im Einfamilienhaus – Begriffe wie [OCPP](/wissen/lexikon#ocpp) oder [Steuerbox](/wissen/lexikon#steuerbox) erklärt auch unser Lexikon:",
-        },
-        {
-          typ: "tabelle",
-          caption: "Wichtige Schnittstellen für das Energiemanagement im Haus",
-          kopf: ["Standard", "Wofür", "Wie es funktioniert", "Einordnung 2026"],
-          zeilen: [
-            ["SG Ready", "Wärmepumpe", "zwei Schaltkontakte, vier Betriebszustände (Sperre, Normal, Verstärkt, Anlaufbefehl)", "weit verbreitet, aber grob; für neue BEG-Förderung allein nicht mehr ausreichend"],
-            ["EEBus", "Wärmepumpe, Wallbox, Steuerbox", "herstellerübergreifende digitale Kommunikation mit Leistungsvorgaben und Rückmeldungen", "wichtiger Standard für § 14a und künftige Förderanforderungen"],
-            ["Modbus TCP / SunSpec", "Wechselrichter, Speicher, Zähler", "Messwerte auslesen, Lade- und Einspeiseleistung vorgeben", "Standard im PV-Bereich, Registerbelegung je Hersteller prüfen"],
-            ["OCPP", "Wallbox", "offenes Protokoll zwischen Ladestation und Steuerung bzw. Backend", "verbreitet; nicht jede Wallbox erlaubt lokale Steuerung"],
-            ["ISO 15118", "E-Auto ↔ Wallbox", "digitale Kommunikation mit dem Fahrzeug, Grundlage für bidirektionales Laden", "wachsende Bedeutung"],
-            ["Herstellerprotokolle / Cloud-APIs", "alle Geräte", "Anbindung über Hersteller-Cloud oder lokale Schnittstellen", "funktioniert oft gut, macht aber abhängig vom Anbieter"],
+            ["Meldepflicht", "Ladeeinrichtungen, Wärmepumpen und Klimageräte über 3,68 kVA sind dem Netzbetreiber zu melden", "EMS-Konzept bei der Meldung beschreiben"],
+            ["Summenleistung ≥ 10 kVA", "Netzbetreiber kann den Anschluss bei mangelnder Netzkapazität vorübergehend zur Prüfung aussetzen", "Kein Aussetzen, wenn ein EMS sicherstellt, dass die vereinbarte Leistung nicht überschritten wird"],
+            ["Kommunikation & Steuerbarkeit", "offenes Protokoll, externe Begrenzung der Ladeleistung, Ladeprogramme mit Zeitsteuerung", "EMS übernimmt Steuerung und Priorisierung"],
+            ["Zufallsverzögerung", "zeitgesteuerter Ladestart mit zufälliger Verzögerung von 0 bis 300 Sekunden", "verhindert synchrone Lastsprünge"],
+            ["Ladeleistung > 250 kW", "Vereinbarung über Wirkleistungsvorgaben mit dem Netzbetreiber möglich; Anlage muss Sollwerte umsetzen können", "EMS setzt Vorgaben um, ggf. über Speicher oder Erzeugung"],
           ],
           minBreite: 720,
-          fussnote: "Stand September 2026. Welche Protokolle ein Gerät unterstützt, steht im Datenblatt oder in der Kompatibilitätsliste des HEMS-Anbieters.",
+          fussnote: "Zusammenfassung; maßgeblich ist der Originaltext der TOR (E-Control) und die Vorgaben des Netzbetreibers. Die TOR begründen laut eigener Anmerkung keine allgemeine Pflicht zur Datenübermittlung an den Netzbetreiber.",
         },
         {
           typ: "kasten",
           variant: "recht",
-          titel: "Neu seit 21. Juli 2026: digitale Schnittstelle für geförderte Wärmepumpen",
-          text: "Mit der überarbeiteten BEG-Richtlinie (Einzelmaßnahmen, KfW 458) müssen neu geförderte Wärmepumpen eine digitale Schnittstelle zur netzorientierten Steuerung und zur Anbindung an ein intelligentes Messsystem mit Steuerungseinrichtung haben. Eine reine SG-Ready-Relaisschnittstelle reicht dafür nicht mehr. Ab dem 1. Juli 2027 soll die Schnittstelle zudem dem europäischen Code of Conduct für Energy Smart Appliances entsprechen, etwa über EEBus. Details im Ratgeber [Wärmepumpe mit Photovoltaik](/ratgeber/waermepumpe-mit-photovoltaik).",
+          titel: "EMS und Parkregler sind nicht dasselbe",
+          text: "Der Parkregler (EZA-Regler) setzt die Vorgaben des Netzbetreibers für die Erzeugungsanlage um – Blindleistung, Wirkleistungsbegrenzung, Fernsteuerung – und ist bei größeren Anlagen Teil des Netzanschlusses. Das EMS optimiert den Betrieb hinter dem Zähler. Beide müssen zusammenarbeiten, der Parkregler hat Vorrang. Mehr unter [Parkregler](/technik/parkregler) und im Ratgeber [EZA-Regler und Parkregler](/ratgeber/eza-regler-parkregler).",
         },
       ],
     },
     {
-      id: "paragraf-14a",
-      titel: "§ 14a EnWG: Warum ein EMS bei mehreren Geräten Vorteile hat",
-      tocLabel: "§ 14a EnWG",
+      id: "schnittstellen",
+      titel: "Welche Schnittstellen sind wichtig?",
+      tocLabel: "Schnittstellen",
       bloecke: [
         {
           typ: "p",
-          text: `**Seit dem 1. Januar 2024 dürfen Netzbetreiber neue steuerbare Verbrauchseinrichtungen – Wärmepumpen, private Wallboxen, Klimaanlagen und Speicher mit mehr als ${kw(P14A.drosselungKw)} Anschlussleistung – bei drohender Netzüberlastung vorübergehend dimmen.** Abgeschaltet wird nicht: Jede Einrichtung behält mindestens ${kw(P14A.drosselungKw)}. Im Gegenzug sinken die Netzentgelte. Die Details erklärt der Ratgeber [§ 14a EnWG](/ratgeber/paragraf-14a-enwg).`,
+          text: "**Ein EMS ist nur so gut wie die Geräte, die es ansprechen kann – offene, dokumentierte Schnittstellen sind deshalb das wichtigste Auswahlkriterium.** Proprietäre Cloud-Lösungen eines einzelnen Herstellers funktionieren oft gut, binden aber an ein Ökosystem und fallen bei Internetausfall aus.",
         },
         {
-          typ: "liste",
-          punkte: [
-            `**Modul 1:** pauschale Reduzierung des Netzentgelts, je nach Netzgebiet rund ${P14A.ersparnisVon} bis ${P14A.ersparnisBis} € pro Jahr.`,
-            "**Modul 2:** reduzierter Arbeitspreis des Netzentgelts für separat gemessene Verbrauchseinrichtungen (eigener Zähler nötig).",
-            "**Modul 3:** zeitvariable Netzentgelte seit April 2025, nur in Kombination mit Modul 1.",
+          typ: "tabelle",
+          caption: "Gängige Schnittstellen und Protokolle im Energiemanagement",
+          kopf: ["Schnittstelle", "Einsatz", "Hinweis"],
+          zeilen: [
+            ["Modbus TCP / RTU", "Wechselrichter, Speicher, Zähler, Wärmepumpen", "weit verbreitet; Registerbelegung je Hersteller"],
+            ["SunSpec (Modbus-Profil)", "standardisierte Datenmodelle für Wechselrichter und Speicher", "erleichtert Herstellerwechsel"],
+            ["OCPP (1.6 / 2.0.1)", "Ladepunkte zu Backend bzw. Lastmanagement", "in den TOR als Beispiel für ein offenes Protokoll genannt"],
+            ["EEBUS", "Kommunikation zwischen Ladepunkten, Wärmepumpen und EMS", "ebenfalls in den TOR genannt"],
+            ["SG-Ready", "einfache Schaltsignale für Wärmepumpen (Betriebszustände)", "robust, aber nur grob steuerbar"],
+            ["OPC UA / MQTT", "Anbindung an Leittechnik, SCADA und Industrie-IT", "Standard in Produktion und Gebäudeleittechnik"],
+            ["KNX / BACnet", "Gebäudeautomation (Licht, Lüftung, Heizung)", "Integration über Gateways"],
+          ],
+          minBreite: 640,
+        },
+        {
+          typ: "p",
+          text: "Für größere Anlagen setzt Ökovolt eigene [SCADA-Systeme](/technik/scada) und [Fernwartung](/technik/fernwartung) ein, die mit Parkregler, Speicher und Ladeinfrastruktur zusammenarbeiten. Die Digitalisierung und IT-Security entwickeln wir gemeinsam mit der Solensa GmbH.",
+        },
+      ],
+    },
+    {
+      id: "beispiel",
+      titel: "Praxisbeispiel: Wie ein EMS im Betrieb entscheidet",
+      tocLabel: "Praxisbeispiel",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ein EMS arbeitet mit einer Prioritätenliste, die für jede Situation festlegt, wohin der Strom fließt.** Das folgende Beispiel zeigt einen Handwerksbetrieb mit 120 kWp PV, 100 kWh Speicher, sechs Ladepunkten für die Dienstflotte und einer Wärmepumpe.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Beispiel: Prioritäten eines EMS über den Tag (vereinfacht)",
+          kopf: ["Situation", "Entscheidung des EMS"],
+          zeilen: [
+            ["7 Uhr, Schichtbeginn, wenig PV", "Ladepunkte auf Mindestleistung, Speicher kappt die Anlaufspitze der Maschinen"],
+            ["11 Uhr, hoher Überschuss", "Dienstfahrzeuge mit Überschuss laden, Wärmepumpe lädt Pufferspeicher, Speicher lädt"],
+            ["13 Uhr, Speicher voll, weiter Überschuss", "Warmwasser und Kühlzelle auf Vorrat, Rest zum Marktpreis einspeisen"],
+            ["13 Uhr, negativer Börsenpreis", "Einspeisung reduzieren, zusätzliche Lasten zuschalten (bei passender Vermarktung)"],
+            ["17 Uhr, Fahrzeuge müssen voll sein", "Priorität auf Ladeziel, Netzbezug innerhalb des Leistungslimits"],
+            ["Nacht", "Speicher reserviert Energie für die Morgenspitze; bei Spotpreis-Tarif Laden in günstigen Stunden"],
+          ],
+          minBreite: 600,
+        },
+        {
+          typ: "p",
+          text: "Die Regeln wirken simpel, die Kunst liegt in Prognose und Parametrierung: Wie viel Speicher muss für die Morgenspitze reserviert bleiben? Welches Fahrzeug muss bis wann geladen sein? Wie viel Wärme verträgt der Puffer? Gute Systeme lernen aus Lastgang und Wetterprognose und lassen sich vom Betrieb verständlich einstellen. Wie Ladepunkte in der Flotte priorisiert werden, zeigt der Ratgeber [E-Flotte laden mit Photovoltaik](/ratgeber/e-flotte-laden-photovoltaik).",
+        },
+      ],
+    },
+    {
+      id: "einfuehrung",
+      titel: "Einführung in fünf Schritten – und was sie wirtschaftlich bringt",
+      tocLabel: "Einführung & Nutzen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ein EMS rechnet sich über drei Effekte: mehr Eigenverbrauch, niedrigere Lastspitzen und vermiedene Netzausbaukosten beim Anschluss neuer Ladepunkte oder Wärmepumpen.** Der dritte Effekt wird oft übersehen: Wenn der Netzbetreiber für zusätzliche Leistung ein Netzbereitstellungsentgelt oder einen Anschlussausbau verlangt, kann eine intelligente Begrenzung diese Kosten vermeiden oder verschieben.",
+        },
+        {
+          typ: "ablauf",
+          schritte: [
+            ["Ist-Analyse", "Lastgang, Anschlussleistung, vorhandene Zähler und steuerbare Geräte erfassen; Ziele und Prioritäten mit Geschäftsführung, Technik und Einkauf festlegen."],
+            ["Messkonzept", "Zähler am Netzanschlusspunkt und Unterzähler für große Verbraucher (Ladepunkte, Kälte, Wärmepumpe) definieren."],
+            ["Systemauswahl", "EMS mit offenen Schnittstellen wählen, TOR-Konformität und Netzbetreiber-Meldung klären, IT-Sicherheit planen."],
+            ["Inbetriebnahme", "Grenzwerte, Prioritäten und Reservekapazitäten parametrieren, Funktion unter realen Bedingungen testen."],
+            ["Betrieb & Optimierung", "Kennzahlen monatlich auswerten, Parameter anpassen, neue Verbraucher einbinden."],
           ],
         },
         {
           typ: "p",
-          text: "Werden mehrere Geräte **direkt** gesteuert, darf jedes einzeln auf 4,2 kW gedimmt werden. Werden sie **über ein Energiemanagementsystem** gesteuert, gibt der Netzbetreiber eine gemeinsame Mindestleistung für den Netzanschluss vor, die das EMS frei verteilen kann. Sie berechnet sich nach der Festlegung der Bundesnetzagentur so: 4,2 kW + (Anzahl der Geräte − 1) × Gleichzeitigkeitsfaktor × 4,2 kW.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Gemeinsame Mindestleistung bei Steuerung über ein EMS nach § 14a EnWG",
-          kopf: ["Steuerbare Geräte", "Gleichzeitigkeitsfaktor", "Mindestleistung gesamt"],
-          zeilen: GZF.map(({ n, f }) => [
-            typeof n === "number" ? `${n} Geräte` : `${n} Geräte`,
-            f.toLocaleString("de-DE", { minimumFractionDigits: 2 }),
-            typeof n === "number" ? kw(minLeistung(n, f)) : "4,2 kW + (n − 1) × 0,45 × 4,2 kW",
-          ]),
-          hervorheben: 2,
-          markierteZeile: 1,
-          fussnote: "Nach BNetzA-Festlegung BK6-22-300. Bei Wärmepumpen und Klimaanlagen über 11 kW gilt statt 4,2 kW ein Wert von 40 % der Anschlussleistung. Maßgeblich sind die Vorgaben Ihres Netzbetreibers.",
-        },
-        {
-          typ: "p",
-          text: "Ein Beispiel: Wärmepumpe, Wallbox und Speicher im selben Haus ergeben bei EMS-Steuerung zusammen mindestens 10,5 kW. Das EMS kann im Dimmfall entscheiden, ob die Wärmepumpe weiterläuft und das Auto langsamer lädt – statt jedes Gerät starr auf 4,2 kW zu begrenzen. Voraussetzung für die Steuerung ist in der Regel ein [intelligentes Messsystem](/ratgeber/smart-meter-pflicht) mit Steuerbox.",
+          text: "Wie hoch der Nutzen ausfällt, hängt stark vom Betrieb ab. Faustregel: Je mehr flexible Verbraucher (Ladepunkte, Kälte, Wärme) und je ausgeprägter die Lastspitzen, desto mehr bringt die Steuerung. Die Wertigkeit einer selbst genutzten Kilowattstunde zeigt der Ratgeber [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen), die Speicherseite [Gewerbespeicher: Kosten](/ratgeber/gewerbespeicher-kosten).",
         },
       ],
     },
     {
-      id: "tarife",
-      titel: "Energiemanagement und dynamische Stromtarife",
-      tocLabel: "Dynamische Tarife",
+      id: "it-sicherheit",
+      titel: "IT-Sicherheit: Worauf Betriebe achten müssen",
+      tocLabel: "IT-Sicherheit",
       bloecke: [
         {
           typ: "p",
-          text: "**Seit dem 1. Januar 2025 müssen alle Stromlieferanten ihren Kunden mit intelligentem Messsystem einen dynamischen Tarif anbieten (§ 41a EnWG).** Der Preis folgt dann stündlich oder viertelstündlich der Strombörse. Ein HEMS kann das nutzen: E-Auto und Wärmepumpe laufen bevorzugt in günstigen Stunden, und im Winter kann der Speicher nachts preiswerten Netzstrom aufnehmen.",
+          text: "**Ein EMS greift in die Energieversorgung ein – ein ungeschützter Fernzugriff ist deshalb ein Betriebsrisiko.** Mit der EU-NIS-2-Richtlinie steigen die Anforderungen an Cybersicherheit für viele Unternehmen, insbesondere im Energiesektor und in kritischen Lieferketten. Ob Ihr Betrieb direkt betroffen ist, klären Sie anhand der österreichischen Umsetzung – gute Praxis ist es in jedem Fall.",
         },
         {
-          typ: "p",
-          text: "Die HTW Berlin mahnt in der Stromspeicher-Inspektion 2026 zur Vorsicht beim Netzladen des Speichers: Bei einem Preisunterschied von 10 ct je kWh muss das System mindestens rund 71 % Wirkungsgrad für den Weg vom Netz über die Batterie ins Haus erreichen, sonst geht der Vorteil in Verlusten unter. Für E-Auto und Wärmepumpe gilt diese Einschränkung nicht, weil der Strom direkt genutzt wird.",
-        },
-        { typ: "tool", href: "/rechner/dynamischer-stromtarif", titel: "Lohnt sich ein dynamischer Tarif für Sie?", text: "Mit echten Börsenpreisen: Festpreis und dynamischer Tarif für Haushalt, E-Auto und Wärmepumpe im Vergleich.", label: "Zum Tarif-Rechner" },
-      ],
-    },
-    {
-      id: "kosten",
-      titel: "Was kostet ein Energiemanagementsystem – und lohnt es sich?",
-      tocLabel: "Kosten & Nutzen",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Die Verbraucherzentrale nennt für ein HEMS Kosten von einigen hundert bis über 1.000 Euro, gegebenenfalls zuzüglich laufender Gebühren für Cloud-Dienste.** Ist das Energiemanagement bereits im Wechselrichter oder Speicher enthalten, fallen oft nur Kosten für zusätzliche Zähler oder Lizenzen an. Hinzu kommt die Installation im Zählerschrank durch einen Elektrofachbetrieb.",
-        },
-        {
-          typ: "p",
-          text: "Der Nutzen hängt davon ab, wie viel flexibler Verbrauch vorhanden ist. In unserer Simulation im Ratgeber [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen) nutzt ein Haushalt mit E-Auto und Wärmepumpe durch koordinierte Steuerung einige hundert Kilowattstunden mehr Solarstrom selbst; zusammen mit einem Speicher sind es mehrere tausend. Hinzu kommen mögliche Ersparnisse durch dynamische Tarife und die Netzentgeltreduzierung nach § 14a.",
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Förderung prüfen",
-          text: "Digitale Systeme zur energetischen Betriebs- und Verbrauchsoptimierung können im Rahmen der Bundesförderung für effiziente Gebäude (BAFA, Einzelmaßnahmen Anlagentechnik) förderfähig sein. Endgeräte wie Tablets sind ausgeschlossen, und der Antrag muss vor Vertragsabschluss gestellt werden. Die aktuellen Bedingungen zeigt der [Förder-Check](/foerdercheck).",
+          typ: "checkliste",
+          punkte: [
+            "Eigenes Netzwerksegment (VLAN) für Energietechnik, keine offenen Ports ins Internet.",
+            "Fernzugriff nur über abgesicherte Verbindungen (VPN) mit persönlichen Zugängen und Protokollierung.",
+            "Standardpasswörter ändern, Rollen und Rechte vergeben, Zugänge beim Personalwechsel entziehen.",
+            "Updates von EMS, Wechselrichtern und Ladepunkten geplant einspielen und dokumentieren.",
+            "Lokale Rückfallebene: Bei Ausfall von Internet oder Cloud müssen Anlage und Leistungsbegrenzung sicher weiterlaufen.",
+            "Datenhoheit vertraglich regeln: Wem gehören die Mess- und Betriebsdaten, wo werden sie gespeichert?",
+          ],
         },
       ],
     },
     {
       id: "auswahl",
-      titel: "Checkliste: So wählen Sie das passende HEMS",
-      tocLabel: "Checkliste",
+      titel: "Checkliste: Das richtige EMS auswählen",
+      tocLabel: "Auswahl-Checkliste",
       bloecke: [
         {
           typ: "checkliste",
           punkte: [
-            "**Kompatibilität:** Stehen Wechselrichter, Speicher, Wallbox und Wärmepumpe auf der Geräteliste – mit welchen Funktionen?",
-            "**§ 14a-fähig:** Kann das System Steuersignale der Steuerbox umsetzen (Relais oder EEBus)?",
-            "**Lokale Steuerung:** Funktioniert die Regelung auch bei Internetausfall, oder hängt alles an der Cloud?",
-            "**Prognosen und Tarife:** Werden Wetterprognosen und dynamische Strompreise berücksichtigt?",
-            "**Datenschutz:** Wo werden Daten verarbeitet? Die Verbraucherzentrale empfiehlt bei Cloud-Diensten Server in Deutschland oder der EU.",
-            "**Offenheit:** Gibt es Schnittstellen oder Datenexport, falls später Geräte anderer Hersteller dazukommen?",
-            "**Laufende Kosten und Updates:** Gibt es Abogebühren? Wie lange liefert der Anbieter Updates?",
+            "Welche Ziele hat der Betrieb (Eigenverbrauch, Peak Shaving, Ladepunkte, Spotpreis, Notstrom) – und in welcher Priorität?",
+            "Welche Geräte müssen eingebunden werden – heute und in fünf Jahren (Speicher, weitere Ladepunkte, Wärmepumpe)?",
+            "Offene Schnittstellen (Modbus/SunSpec, OCPP, EEBUS, SG-Ready, OPC UA) statt reiner Herstellerbindung?",
+            "Messung am Netzanschlusspunkt in ausreichender Auflösung und Genauigkeit?",
+            "Funktioniert die Leistungsbegrenzung lokal auch ohne Internet?",
+            "Erfüllt das Konzept die TOR-Anforderungen und ist es in der Netzbetreiber-Meldung beschrieben?",
+            "Wer parametriert, wartet und passt an – und ist das im Wartungsvertrag geregelt?",
+            "Reporting für Energieaudit, ISO 50001 oder Nachhaltigkeitsbericht verfügbar?",
           ],
         },
         {
-          typ: "ablauf",
-          schritte: [
-            ["Bestand erfassen", "Welche Geräte sind vorhanden, welche geplant (E-Auto, Wärmepumpe, Speicher)? Welche Schnittstellen haben sie?"],
-            ["Ziele festlegen", "Mehr Eigenverbrauch, günstiger Netzstrom über dynamischen Tarif, § 14a-Rabatt oder alles zusammen?"],
-            ["System auswählen", "Hersteller-EMS oder herstellerunabhängige Lösung – anhand der Checkliste oben."],
-            ["Installation und Einrichtung", "Zähler, Kommunikation und Prioritäten vom Fachbetrieb einrichten lassen und nach einigen Wochen anhand der Monitoringdaten nachjustieren."],
-          ],
+          typ: "p",
+          text: "Speicher, Ladeinfrastruktur und EMS planen wir als Gesamtsystem – mehr auf den Seiten [Gewerbespeicher](/gewerbespeicher) und [Ladeinfrastruktur](/ladeinfrastruktur).",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Was macht ein Energiemanagementsystem bei Photovoltaik?", a: "Es misst Erzeugung, Verbrauch und Einspeisung und steuert flexible Verbraucher wie Speicher, Wallbox und Wärmepumpe so, dass möglichst viel Solarstrom im Haus genutzt wird. Moderne Systeme berücksichtigen dabei Wetterprognosen, dynamische Tarife und Steuersignale nach § 14a EnWG." },
-    { q: "Brauche ich ein Energiemanagementsystem?", a: "Bei PV mit Speicher reicht meist das integrierte Energiemanagement des Wechselrichters. Ein eigenes HEMS lohnt sich, wenn mehrere große Verbraucher wie E-Auto und Wärmepumpe koordiniert werden sollen oder ein dynamischer Tarif genutzt wird." },
-    { q: "Was kostet ein HEMS?", a: "Laut Verbraucherzentrale einige hundert bis über 1.000 Euro, eventuell zuzüglich Cloud-Gebühren. Ist die Funktion im Wechselrichter oder Speicher enthalten, sind die Zusatzkosten oft gering. Hinzu kommt die Installation durch einen Elektrofachbetrieb." },
-    { q: "Was ist der Unterschied zwischen SG Ready und EEBus?", a: "SG Ready schaltet eine Wärmepumpe über zwei Kontakte in vier grobe Betriebszustände. EEBus ist ein digitales Protokoll, das Leistungsvorgaben und Rückmeldungen herstellerübergreifend austauscht. Für neu geförderte Wärmepumpen reicht SG Ready allein seit dem 21. Juli 2026 nicht mehr aus." },
-    { q: "Ist ein Energiemanagementsystem für § 14a EnWG Pflicht?", a: `Nein. Der Netzbetreiber kann Geräte auch einzeln über die Steuerbox auf ${kw(P14A.drosselungKw)} dimmen. Ein EMS hat aber Vorteile: Bei mehreren Geräten gilt eine gemeinsame Mindestleistung, die das EMS flexibel verteilen kann.` },
-    { q: "Funktioniert ein HEMS mit Geräten verschiedener Hersteller?", a: "Das hängt vom System ab. Herstellerunabhängige HEMS unterstützen viele Marken über Standards wie EEBus, Modbus, SunSpec oder OCPP. Prüfen Sie vor dem Kauf die aktuelle Kompatibilitätsliste – und welche Funktionen je Gerät tatsächlich unterstützt werden." },
+    {
+      q: "Was macht ein Energiemanagementsystem?",
+      a: "Es misst Erzeugung, Verbrauch und Netzbezug in Echtzeit und steuert Speicher, Ladepunkte, Wärmepumpen und andere Verbraucher so, dass möglichst viel Solarstrom selbst genutzt wird und die Anschlussleistung nicht überschritten wird.",
+    },
+    {
+      q: "Brauche ich für Ladepunkte im Betrieb ein Lastmanagement?",
+      a: "Bei mehreren Ladepunkten praktisch immer. Die TOR verlangen für Ladeeinrichtungen über 3,68 kVA eine offene, steuerbare Schnittstelle. Ab 10 kVA Summenleistung kann der Netzbetreiber den Anschluss zur Prüfung aussetzen – außer ein EMS stellt sicher, dass die vereinbarte Leistung eingehalten wird.",
+    },
+    {
+      q: "Welche Schnittstellen sollte ein EMS unterstützen?",
+      a: "Mindestens Modbus TCP bzw. SunSpec für Wechselrichter und Speicher, OCPP oder EEBUS für Ladepunkte und SG-Ready oder EEBUS für Wärmepumpen. In Industriebetrieben kommt OPC UA für die Anbindung an Leittechnik hinzu.",
+    },
+    {
+      q: "Kann ein EMS den Leistungspreis senken?",
+      a: "Ja, wenn es Lastspitzen erkennt und über Speicher oder Lastabwurf begrenzt. PV allein senkt die Jahresspitze selten, weil sie oft an trüben Wintertagen oder zu Schichtbeginn auftritt.",
+    },
+    {
+      q: "Was ist der Unterschied zwischen EMS und ISO 50001?",
+      a: "Das EMS ist Technik, die Energieflüsse steuert. Die ISO 50001 beschreibt ein Managementsystem mit Zielen, Verantwortlichkeiten und kontinuierlicher Verbesserung. Das EMS liefert Daten und setzt Maßnahmen um, ersetzt das Managementsystem aber nicht.",
+    },
+    {
+      q: "Funktioniert ein EMS ohne Internet?",
+      a: "Gute Systeme ja: Messung, Leistungsbegrenzung und Grundregeln laufen lokal. Cloud-Funktionen wie Wetterprognose, Spotpreise und Fernzugriff fallen dann aus. Achten Sie bei der Auswahl auf diese Rückfallebene.",
+    },
+    {
+      q: "Kann ein EMS teuren Netzausbau vermeiden?",
+      a: "Oft ja. Wenn neue Ladepunkte oder Wärmepumpen die vereinbarte Anschlussleistung überschreiten würden, begrenzt ein EMS die Summenleistung dynamisch. Laut TOR entfällt dann ein Aussetzen des Anschlusses durch den Netzbetreiber, und zusätzliche Netzbereitstellungsentgelte lassen sich häufig vermeiden oder verschieben.",
+    },
+    {
+      q: "Wer stellt das EMS ein und wartet es?",
+      a: "Idealerweise der Errichter der Anlage, der PV, Speicher und Ladepunkte kennt. Parametrierung, Updates und Anpassungen bei neuen Verbrauchern sollten im Wartungsvertrag geregelt sein – siehe [Wartungsvertrag](/ratgeber/photovoltaik-wartungsvertrag).",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/eigenverbrauch-erhoehen", titel: "Eigenverbrauch erhöhen", text: "10 Maßnahmen mit simulierter Wirkung." },
-    { href: "/ratgeber/paragraf-14a-enwg", titel: "§ 14a EnWG erklärt", text: "Module, Rabatte und Dimmung im Detail." },
-    { href: "/produkte/smartenergyhome", titel: "Smart Energy Home", text: "PV, Speicher, Wallbox und Wärmepumpe vernetzt." },
-    { href: "/rechner/dynamischer-stromtarif", titel: "Dynamischer-Tarif-Rechner", text: "Mit echten Börsenpreisen rechnen." },
+    { href: "/technik/scada", titel: "SCADA-Systeme", text: "Leittechnik für größere Anlagen." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Speicher für Eigenverbrauch und Peak Shaving." },
+    { href: "/ratgeber/peak-shaving-leistungspreis", titel: "Peak Shaving", text: "Leistungspreis senken." },
+    { href: "/ratgeber/e-flotte-laden-photovoltaik", titel: "E-Flotte laden", text: "Lastmanagement für Ladepunkte." },
   ],
 
   quellen: [
-    { titel: "Verbraucherzentrale – Energiemanagementsystem für zu Hause", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/energiemanagementsystem-fuer-zu-hause-mehr-eigenen-strom-selber-nutzen-48095", stand: "09/2026" },
-    { titel: "Bundesnetzagentur – Integration steuerbarer Verbrauchseinrichtungen (§ 14a EnWG)", url: "https://www.bundesnetzagentur.de/DE/Vportal/Energie/SteuerbareVBE/artikel.html", stand: "09/2026" },
-    { titel: "Verbraucherzentrale Energieberatung – Steuerbare Verbrauchseinrichtung", url: "https://verbraucherzentrale-energieberatung.de/erneuerbare-energien/photovoltaik/steuerbare-verbrauchseinrichtung/", stand: "09/2026" },
-    { titel: "§ 41a EnWG – Dynamische Stromtarife", url: "https://www.gesetze-im-internet.de/enwg_2005/__41a.html", stand: "09/2026" },
-    { titel: "HTW Berlin – Stromspeicher-Inspektion 2026", url: "https://solar.htw-berlin.de/studien/stromspeicher-inspektion-2026/", stand: "09/2026" },
-    { titel: "BWP – SG Ready-Label und Schnittstellenbeschreibung", url: "https://www.waermepumpe.de/normen-technik/sg-ready/", stand: "09/2026" },
-    { titel: "ADAC – Neue Konditionen für die Wärmepumpen-Förderung seit 21. Juli 2026", url: "https://www.adac.de/rund-ums-haus/energie/versorgung/waermepumpe-foerderung/", stand: "09/2026" },
+    { titel: "E-Control – TOR Verteilernetzanschluss Niederspannung, Version 1.3.1", url: "https://www.e-control.at/documents/1785851/1811582/TOR_Verteilernetzanschluss_-_Niederspannung_V1.3.1.pdf/64c9e5f0-e38d-351a-b52e-a1b0e07077ae?t=1774007041985", stand: "03/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen Typ A, Version 1.4", url: "https://www.e-control.at/documents/1785851/1811582/TOR+Stromerzeugungsanlagen+Typ+A+Version+1.4+%287%29.pdf/093752f5-e220-0731-b8a8-bfa85ccb7287?t=1780897058735", stand: "06/2026" },
+    { titel: "E-Control – Übersicht TOR", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor", stand: "09/2026" },
+    { titel: "OeMAG – Marktpreise 2026", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
+    { titel: "Energy-Charts – Börsenstrompreise und Erzeugung Österreich", url: "https://www.energy-charts.info/?l=de&c=AT", stand: "09/2026" },
+    { titel: "OVE – Richtlinie R 37:2024 (Prüfanforderungen an Ladestationen hinsichtlich TOR)", url: "https://www.ove.at/ove-news/details/elektromobilitaet-aktualisierte-und-neue-ove-richtlinien/", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Welche Steuerung passt?", text: "Dynamischer Tarif, E-Auto und Wärmepumpe mit echten Preisen durchrechnen.", href: "/rechner/dynamischer-stromtarif", label: "Tarif-Rechner" },
+  seitenCta: { titel: "Energie im Betrieb steuern?", text: "EMS, Speicher und Ladepunkte als Gesamtsystem.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Alle Geräte, eine Steuerung.",
-    text: "Wir planen PV-Anlage, Speicher, Wallbox, Wärmepumpe und Energiemanagement so, dass sie zusammenarbeiten – kompatibel, § 14a-fähig und herstellerneutral beraten.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Smart Energy Home", href: "/produkte/smartenergyhome" },
+    title: "PV, Speicher und Ladepunkte, die zusammenarbeiten.",
+    text: "Ökovolt plant Energiemanagement mit offenen Schnittstellen, eigenem Parkregler und SCADA – für Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Technik ansehen", href: "/technik" },
   },
 };
 

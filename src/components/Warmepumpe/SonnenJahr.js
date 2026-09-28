@@ -2,11 +2,11 @@
  * „Heizen mit Sonne“ – Jahresverlauf: Solarertrag einer 10-kWp-Anlage und
  * Strombedarf einer Wärmepumpe je Monat. Zeigt ehrlich, wann PV und
  * Wärmepumpe zusammenpassen (Übergangszeit, Warmwasser) und wann nicht (Winter).
- * Typische Monatsverteilungen Süddeutschland, gerundet – Veranschaulichung.
+ * Typische Monatsverteilungen im österreichischen Alpenvorland, gerundet – Veranschaulichung.
  * Server-Komponente, reines SVG.
  */
 
-const MONATE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+const MONATE = ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
 // Anteil am Jahreswert in %
 const PV_VERTEILUNG = [3, 5, 8.5, 11.5, 13, 13.5, 13.5, 12, 9, 6, 3, 2];
 const WAERME_VERTEILUNG = [16, 14, 12, 8, 4.5, 2.5, 2.2, 2.2, 3.5, 7.5, 12, 15.6];
@@ -64,7 +64,7 @@ export default function SonnenJahr() {
         </div>
         <p className="text-[13.5px] leading-relaxed text-ink-600">
           Im Monatsmittel überschneiden sich Ertrag und Bedarf rechnerisch zu bis zu {Math.round(deckung * 100)} %. Weil die Wärmepumpe aber auch abends und nachts läuft, deckt
-          die Anlage im Tagesverlauf meist 20–35 % – mit Speicher und intelligenter Steuerung mehr. Beispiel: 18.000 kWh Wärme, JAZ 3,3, Süddeutschland.
+          die Anlage im Tagesverlauf meist 20–35 % – mit Speicher und intelligenter Steuerung mehr. Beispiel: 18.000 kWh Wärme, JAZ 3,3, Standort im Alpenvorland.
         </p>
       </figcaption>
     </figure>

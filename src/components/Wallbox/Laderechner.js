@@ -5,8 +5,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Regler from "./Regler";
 import { WALLBOX } from "@/data/wallbox";
-import { ANNAHMEN } from "@/data/solarrechner";
-import { VERGUETUNG } from "@/data/einspeiseverguetung";
 
 /**
  * Mini-Rechner: Jahresstrecke → kWh → Ladekosten im Vergleich
@@ -14,9 +12,10 @@ import { VERGUETUNG } from "@/data/einspeiseverguetung";
  * Alle Annahmen stehen sichtbar unter dem Rechner.
  */
 
-const NETZ_CT = Math.round(ANNAHMEN.strompreis * 1000) / 10;
-const SOLAR_CT = VERGUETUNG.saetze[0].teileinspeisung;
-const OEFFENTLICH_CT = 55; // Ad-hoc-Preis an öffentlichen AC-Ladesäulen, grobe Orientierung 2026
+// Preisannahmen Österreich (Richtwerte, Stand 09/2026) aus @/data/wallbox
+const NETZ_CT = WALLBOX.preiseAt.netzstromCt;
+const SOLAR_CT = WALLBOX.preiseAt.marktpreisCt; // entgangener Erlös aus der Einspeisung
+const OEFFENTLICH_CT = WALLBOX.preiseAt.oeffentlichCt;
 
 const eur = (n) => `${Math.round(n).toLocaleString("de-DE")} €`;
 
@@ -119,7 +118,7 @@ export default function Laderechner() {
 
         <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[12px] leading-snug text-ink-500">
-            Orientierung, kein Angebot: Netzstrom {NETZ_CT} ct, Solarstrom {SOLAR_CT.toLocaleString("de-DE")} ct (entgangene Einspeisevergütung), öffentlich {OEFFENTLICH_CT} ct je kWh · Stand 2026
+            Orientierung, kein Angebot: Netzstrom {NETZ_CT} ct, Solarstrom {SOLAR_CT.toLocaleString("de-DE")} ct (entgangener Marktpreis bei Einspeisung), öffentlich {OEFFENTLICH_CT} ct je kWh · Richtwerte Österreich, Stand 2026
           </p>
           <Link href="/rechner/wallbox" className="group inline-flex h-11 shrink-0 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
             Ausführlich rechnen

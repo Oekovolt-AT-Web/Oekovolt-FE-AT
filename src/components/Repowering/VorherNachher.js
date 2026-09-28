@@ -14,11 +14,12 @@ const JETZT = 2026;
 const BELEGUNG = 0.85; // genutzter Anteil der Dachfläche
 const NEU = { wirkungsgrad: 0.225, modulFlaeche: 1.95, jahr: JETZT }; // ≈ 440 Wp Glas-Glas-Modul
 const ALT_MODUL_FLAECHE = 1.25;
-const ERTRAG_JE_KWP = 1000; // kWh, Süddeutschland, gute Ausrichtung
+const ERTRAG_JE_KWP = 1050; // kWh je kWp und Jahr – Richtwert Österreich, gute Ausrichtung
+const BILD_FLAECHE = 100; // m² – die Illustration zeigt einen Dachausschnitt
 const DEGRADATION_ALT = 0.006; // pro Jahr, ältere Modulgenerationen
 const WR_ALT = 0.95; // relativer Wirkungsgrad alter Wechselrichter gegenüber neuen
 
-const zahl = (n, s = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: s, maximumFractionDigits: s });
+const zahl = (n, s = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: s, maximumFractionDigits: s });
 const wirkungsgradAlt = (jahr) => 0.105 + (jahr - 1998) * 0.0035;
 
 function Dach({ anzahl, reihen, neu }) {
@@ -89,8 +90,8 @@ function Dach({ anzahl, reihen, neu }) {
 export default function VorherNachher() {
   const id = useId();
   const [pos, setPos] = useState(50);
-  const [baujahr, setBaujahr] = useState(2004);
-  const [flaeche, setFlaeche] = useState(45);
+  const [baujahr, setBaujahr] = useState(2010);
+  const [flaeche, setFlaeche] = useState(1500);
 
   const r = useMemo(() => {
     const nutz = flaeche * BELEGUNG;
@@ -116,8 +117,10 @@ export default function VorherNachher() {
     };
   }, [baujahr, flaeche]);
 
-  const reihenAlt = flaeche > 55 ? 5 : 4;
-  const reihenNeu = flaeche > 55 ? 4 : 3;
+  const reihenAlt = 6;
+  const reihenNeu = 5;
+  const bildAlt = Math.floor((BILD_FLAECHE * BELEGUNG) / ALT_MODUL_FLAECHE);
+  const bildNeu = Math.floor((BILD_FLAECHE * BELEGUNG) / NEU.modulFlaeche);
 
   return (
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl ring-1 ring-ink-200/70">
@@ -131,10 +134,10 @@ export default function VorherNachher() {
         <div className="p-4 md:p-6">
           <div className="relative aspect-[4/3] select-none sm:aspect-[16/10] lg:aspect-[4/3] overflow-hidden rounded-3xl bg-ink-100 focus-within:ring-4 focus-within:ring-ov-500/40">
             <div className="absolute inset-0">
-              <Dach anzahl={r.neuAnzahl} reihen={reihenNeu} neu />
+              <Dach anzahl={bildNeu} reihen={reihenNeu} neu />
             </div>
             <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
-              <Dach anzahl={r.altAnzahl} reihen={reihenAlt} />
+              <Dach anzahl={bildAlt} reihen={reihenAlt} />
             </div>
 
             {/* Etiketten */}
@@ -178,8 +181,8 @@ export default function VorherNachher() {
 
         {/* Eingaben & Ergebnis */}
         <div className="flex flex-col gap-6 border-t border-ink-100 p-6 md:p-8 lg:border-l lg:border-t-0">
-          <Regler id={`${id}-jahr`} label="Baujahr Ihrer Anlage" wert={baujahr} anzeige={String(baujahr)} min={1998} max={2012} step={1} onChange={setBaujahr} />
-          <Regler id={`${id}-flaeche`} label="Belegte Dachfläche" wert={flaeche} anzeige={`${zahl(flaeche)} m²`} min={20} max={80} step={1} onChange={setFlaeche} />
+          <Regler id={`${id}-jahr`} label="Baujahr Ihrer Anlage" wert={baujahr} anzeige={String(baujahr)} min={2003} max={2016} step={1} onChange={setBaujahr} />
+          <Regler id={`${id}-flaeche`} label="Belegte Dachfläche" wert={flaeche} anzeige={`${zahl(flaeche)} m²`} min={100} max={10000} step={100} onChange={setFlaeche} />
 
           <div aria-live="polite" className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl bg-ink-50 p-4 ring-1 ring-ink-200/60">
@@ -214,7 +217,7 @@ export default function VorherNachher() {
         <Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
         <span>
           Vereinfachte Orientierung: Modulwirkungsgrad alt ca. {zahl(wirkungsgradAlt(baujahr) * 100, 1)} %, neu ca. {zahl(NEU.wirkungsgrad * 100, 1)} %; {zahl(BELEGUNG * 100)} % Flächenbelegung, {zahl(ERTRAG_JE_KWP)} kWh je kWp,
-          Alterung alt {zahl(DEGRADATION_ALT * 100, 1)} % pro Jahr, älterer Wechselrichter −5 %. Verschattung, Ausrichtung und Statik prüfen wir beim Anlagencheck vor Ort.
+          Alterung alt {zahl(DEGRADATION_ALT * 100, 1)} % pro Jahr, älterer Wechselrichter −5 %. Die Grafik zeigt einen Dachausschnitt von 100 m². Verschattung, Ausrichtung und Statik prüfen wir beim Anlagencheck vor Ort.
         </span>
       </p>
     </div>

@@ -3,17 +3,52 @@
 // Öffnungszeiten, Feiertage, Rückruf- und Termin-Regeln – EINE Quelle für
 // Öffnungsstatus, Rückruf-Widget, Terminbuchung (Browser) und API-Routen (Server).
 // Reine Funktionen ohne Browser- oder Node-Abhängigkeiten.
+//
+// Österreich: Firmensitz Ostermiething (Oberösterreich), Zeitzone Europe/Vienna.
+// Die Öffnungszeiten werden aus FIRMA.oeffnungszeiten (src/lib/site.js) abgeleitet –
+// dort ändern, nicht hier.
 
-export const ZEITZONE = "Europe/Berlin";
+import { FIRMA } from "@/lib/site";
+
+export const ZEITZONE = "Europe/Vienna";
 
 // Wochentag: 1 = Montag … 7 = Sonntag; Minuten ab Mitternacht
+const TAG_NR = { Mo: 1, Di: 2, Mi: 3, Do: 4, Fr: 5, Sa: 6, So: 7 };
+const TAG_LANG = ["", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+const minutenAus = (t) => {
+  const [h, m] = String(t).trim().split(":").map(Number);
+  return h * 60 + (m || 0);
+};
+const kurzeZeit = (min) => `${Math.floor(min / 60)}${min % 60 ? `:${String(min % 60).padStart(2, "0")}` : ""}`;
+
+/** "Mo – Do" -> [1,2,3,4]; "Fr" -> [5] */
+function tageAus(text) {
+  const teile = String(text).split(/[–-]/).map((x) => x.trim());
+  const von = TAG_NR[teile[0]];
+  const bis = TAG_NR[teile[1] || teile[0]];
+  const tage = [];
+  for (let t = von; t <= bis; t++) tage.push(t);
+  return tage;
+}
+
+const AUS_FIRMA = FIRMA.oeffnungszeiten.map((o) => {
+  const tage = tageAus(o.tage);
+  const [von, bis] = o.zeit.split(/[–-]/).map(minutenAus);
+  const kurz = tage.length > 1 ? `${o.tage.split(/[–-]/)[0].trim()}–${o.tage.split(/[–-]/)[1].trim()}` : o.tage.trim();
+  const label = tage.length > 1 ? `${TAG_LANG[tage[0]]} – ${TAG_LANG[tage[tage.length - 1]]}` : TAG_LANG[tage[0]];
+  return { tage, label, kurz, von, bis, text: `${o.zeit.replace(/\s*[–-]\s*/, " – ")} Uhr` };
+});
+
+const OFFEN_TAGE = new Set(AUS_FIRMA.flatMap((o) => o.tage));
+const ZU_TAGE = [1, 2, 3, 4, 5, 6, 7].filter((t) => !OFFEN_TAGE.has(t));
+
 export const OEFFNUNGSZEITEN = [
-  { tage: [1, 2, 3, 4], label: "Montag – Donnerstag", kurz: "Mo–Do", von: 8 * 60, bis: 16 * 60, text: "08:00 – 17:00 Uhr" },
-  { tage: [5], label: "Freitag", kurz: "Fr", von: 8 * 60, bis: 13 * 60, text: "08:00 – 13:00 Uhr" },
-  { tage: [6, 7], label: "Samstag & Sonntag", kurz: "Sa–So", von: null, bis: null, text: "geschlossen" },
+  ...AUS_FIRMA,
+  ...(ZU_TAGE.length ? [{ tage: ZU_TAGE, label: ZU_TAGE.length === 2 && ZU_TAGE[0] === 6 ? "Samstag & Sonntag" : ZU_TAGE.map((t) => TAG_LANG[t]).join(", "), kurz: ZU_TAGE.length === 2 && ZU_TAGE[0] === 6 ? "Sa–So" : ZU_TAGE.map((t) => TAG_LANG[t].slice(0, 2)).join(", "), von: null, bis: null, text: "geschlossen" }] : []),
 ];
 
-export const OEFFNUNGSZEITEN_KURZ = "Mo–Do 8–16 Uhr · Fr 8–13 Uhr";
+/** z. B. "Mo–Do 8–16 Uhr · Fr 8–12 Uhr" */
+export const OEFFNUNGSZEITEN_KURZ = AUS_FIRMA.map((o) => `${o.kurz} ${kurzeZeit(o.von)}–${kurzeZeit(o.bis)} Uhr`).join(" · ");
 
 export const TERMIN_ARTEN = [
   {
@@ -21,7 +56,7 @@ export const TERMIN_ARTEN = [
     titel: "Telefonische Beratung",
     kurz: "Telefon",
     dauer: 20,
-    text: "Erste Fragen klären, Dach und Verbrauch grob einschätzen – wir rufen Sie zum Termin an.",
+    text: "Erste Fragen klären, Dach- oder Freifläche, Verbrauch und Netzanschluss grob einschätzen – wir rufen Sie zum Termin an.",
     icon: "Phone",
   },
   {
@@ -29,7 +64,7 @@ export const TERMIN_ARTEN = [
     titel: "Video-Beratung",
     kurz: "Video",
     dauer: 30,
-    text: "Persönlich per Video mit geteiltem Bildschirm: Ihr Dach, Anlagengröße, Ertrag und Wirtschaftlichkeit.",
+    text: "Per Video mit geteiltem Bildschirm: Luftbild Ihrer Fläche, Lastgang, Anlagengröße, Ertrag und Wirtschaftlichkeit.",
     icon: "Video",
     empfohlen: true,
   },
@@ -38,13 +73,13 @@ export const TERMIN_ARTEN = [
     titel: "Vor-Ort-Termin",
     kurz: "Vor Ort",
     dauer: 60,
-    text: "Unser Fachberater kommt zu Ihnen: Dach, Zählerschrank und Aufstellort werden direkt geprüft.",
+    text: "Unser Projektleiter kommt zu Ihnen – in ganz Österreich: Dach, Statik, Trafo/Zählerplatz und Leitungswege werden direkt geprüft.",
     icon: "MapPin",
     mitAdresse: true,
   },
 ];
 
-export const THEMEN = ["Photovoltaik", "Stromspeicher", "Wärmepumpe", "Wallbox & E-Mobilität", "Gewerbe & Industrie", "Service & Wartung", "Sonstiges"];
+export const THEMEN = ["Gewerbe & Industrie", "Freifläche & Agri-PV", "Landwirtschaft", "Gemeinde & öffentliche Hand", "Speicher & Ladeinfrastruktur", "Service & Wartung", "Energiegemeinschaft", "Chalet & Privat", "Sonstiges"];
 
 // Buchungsregeln
 export const TERMIN_REGELN = {
@@ -66,7 +101,10 @@ export const WOCHENTAGE_KURZ = ["", "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 const zwei = (n) => String(n).padStart(2, "0");
 export const hhmm = (m) => `${zwei(Math.floor(m / 60))}:${zwei(m % 60)}`;
 
-/** Wanduhr in Berlin: { jahr, monat, tag, wochentag, minuten, ymd } */
+/**
+ * Wanduhr am Firmensitz (Europe/Vienna): { jahr, monat, tag, wochentag, minuten, ymd }.
+ * Der Name `berlin` bleibt aus Kompatibilitätsgründen (Importe in Formularen und API-Routen).
+ */
 export function berlin(d = new Date()) {
   const t = Object.fromEntries(
     new Intl.DateTimeFormat("en-GB", {
@@ -92,7 +130,7 @@ export function berlin(d = new Date()) {
   };
 }
 
-/** Berliner Wanduhrzeit (YYYY-MM-DD + Minuten) -> Date (UTC-korrekt, auch bei Zeitumstellung). */
+/** Wanduhrzeit am Firmensitz (YYYY-MM-DD + Minuten) -> Date (UTC-korrekt, auch bei Zeitumstellung). */
 export function berlinZuDate(ymd, minuten) {
   const [j, m, t] = ymd.split("-").map(Number);
   const utcGuess = Date.UTC(j, m - 1, t, Math.floor(minuten / 60), minuten % 60);
@@ -113,7 +151,7 @@ function wochentagVon(ymd) {
   return w === 0 ? 7 : w;
 }
 
-// ---------------------------------------------------------------- Feiertage (Bayern, Türkheim)
+// ---------------------------------------------------------------- Feiertage (Österreich, Oberösterreich)
 
 function ostersonntag(jahr) {
   // Gaußsche Osterformel (Anonymer Gregorianischer Algorithmus)
@@ -135,25 +173,30 @@ function ostersonntag(jahr) {
 }
 
 const feiertagCache = new Map();
-/** Gesetzliche Feiertage in Bayern inkl. Mariä Himmelfahrt (Türkheim, überwiegend katholisch). */
+/**
+ * Gesetzliche Feiertage in Österreich (Feiertagsruhegesetz / ARG) plus
+ * Heiliger Abend und Silvester (Betriebsruhe). Karfreitag ist seit 2019 kein
+ * allgemeiner Feiertag mehr; der Landesfeiertag hl. Florian (4. Mai, OÖ) ist
+ * kein arbeitsfreier Tag und daher nicht enthalten.
+ */
 export function feiertage(jahr) {
   if (!feiertagCache.has(jahr)) {
     const o = ostersonntag(jahr);
     const liste = {
       [`${jahr}-01-01`]: "Neujahr",
       [`${jahr}-01-06`]: "Heilige Drei Könige",
-      [ymdPlus(o, -2)]: "Karfreitag",
       [ymdPlus(o, 1)]: "Ostermontag",
-      [`${jahr}-05-01`]: "Tag der Arbeit",
+      [`${jahr}-05-01`]: "Staatsfeiertag",
       [ymdPlus(o, 39)]: "Christi Himmelfahrt",
       [ymdPlus(o, 50)]: "Pfingstmontag",
       [ymdPlus(o, 60)]: "Fronleichnam",
       [`${jahr}-08-15`]: "Mariä Himmelfahrt",
-      [`${jahr}-10-03`]: "Tag der Deutschen Einheit",
+      [`${jahr}-10-26`]: "Nationalfeiertag",
       [`${jahr}-11-01`]: "Allerheiligen",
-      [`${jahr}-12-24`]: "Heiligabend",
-      [`${jahr}-12-25`]: "1. Weihnachtstag",
-      [`${jahr}-12-26`]: "2. Weihnachtstag",
+      [`${jahr}-12-08`]: "Mariä Empfängnis",
+      [`${jahr}-12-24`]: "Heiliger Abend",
+      [`${jahr}-12-25`]: "Christtag",
+      [`${jahr}-12-26`]: "Stefanitag",
       [`${jahr}-12-31`]: "Silvester",
     };
     feiertagCache.set(jahr, liste);
@@ -256,16 +299,17 @@ export function slotsFuerArt(artId, belegt = [], jetzt = new Date()) {
 const GESPERRT_DE = [/^\+49(900|137|138|180|181|190|191|192|193|194|199|118|115|110|112|116)/, /^\+491(1[0-9])$/];
 
 /**
- * Normalisiert auf E.164 und erlaubt nur Rufnummern aus Deutschland, Österreich und der Schweiz.
- * Rückgabe: "+4982459678800" oder null.
+ * Normalisiert auf E.164 und erlaubt nur Rufnummern aus Österreich, Deutschland und der Schweiz.
+ * Nationale Nummern mit führender 0 werden als österreichisch gelesen (0662 … -> +43662 …).
+ * Rückgabe: "+43627871030" oder null.
  */
 export function telefonNormalisieren(eingabe) {
   let t = String(eingabe || "").replace(/\(0\)/g, "").replace(/[\s\-/().]/g, "");
   if (t.startsWith("00")) t = `+${t.slice(2)}`;
-  else if (t.startsWith("0")) t = `+49${t.slice(1)}`;
+  else if (t.startsWith("0")) t = `+43${t.slice(1)}`;
   if (!/^\+[1-9]\d{8,14}$/.test(t)) return null;
   if (!/^\+(49|43|41)/.test(t)) return null;
   if (GESPERRT_DE.some((r) => r.test(t))) return null;
-  if (/^\+43(900|930|931|939)/.test(t) || /^\+41(90[0-9])/.test(t)) return null;
+  if (/^\+43(8[12]\d|900|901|930|931|939)/.test(t) || /^\+41(90[0-9])/.test(t)) return null;
   return t;
 }

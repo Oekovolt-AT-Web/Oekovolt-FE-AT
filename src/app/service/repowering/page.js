@@ -1,188 +1,96 @@
-// service/repowering/page.js
+// service/repowering/page.js – Österreich: Repowering und Erweiterung von PV-Bestandsanlagen (Ziel: Repowering-Check)
+//
+// Statische AT-Inhalte statt der deutschen CMS-Texte (EEG, Ü20, Marktstammdatenregister).
 
-import React from "react";
-import Image from "next/image";
-import {
-  ArrowRight, BatteryCharging, Calculator, CalendarClock, Check, ClipboardCheck, Cpu, Gauge, Home, LayoutGrid, Minus, Plug, Recycle, Sun, Wrench,
-} from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { hreflangLanguages } from "@/lib/hreflang";
+import { BatteryCharging, CalendarClock, ClipboardCheck, Cpu, Gauge, LayoutGrid, LineChart, Recycle, ShieldCheck, SlidersHorizontal, Sun, TrendingDown, Wrench } from "lucide-react";
+
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
 import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
-import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import Fliesstext from "@/components/Reusable/Fliesstext";
-import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 import VorherNachher from "@/components/Repowering/VorherNachher";
+import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
+import Tabelle from "@/components/ServiceAT/Tabelle";
+import Hinweis from "@/components/ServiceAT/Hinweis";
+import Weiterlesen from "@/components/ServiceAT/Weiterlesen";
+import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
+import FaqSektion from "@/components/ServiceAT/FaqSektion";
+import Quellen from "@/components/ServiceAT/Quellen";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaik_repowering_service_page.api.get_photovoltaik_repowering_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/service/repowering";
+const PFAD = "/service/repowering";
+const TITEL = "Repowering: PV-Bestandsanlagen modernisieren | Ökovolt";
+const BESCHREIBUNG =
+  "Repowering in Österreich: Module und Wechselrichter tauschen, Anlage erweitern, Speicher nachrüsten – nach dem OeMAG-Tarif, mit EAG-Förderung für Erweiterungen.";
 
-async function fetchRepoweringData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
+export const metadata = serviceMetadata({ pfad: PFAD, titel: TITEL, beschreibung: BESCHREIBUNG });
 
-  try {
-    const headers = getApiHeaders();
+const OPTIONEN = [
+  ["Weiter einspeisen", "Nach Ende des Tarifvertrags zum OeMAG-Marktpreis oder über einen Stromhändler verkaufen", "Minimaler Aufwand; Erlös schwankt mit dem Marktpreis"],
+  ["Auf Überschusseinspeisung umstellen", "Volleinspeiser nutzen den Strom künftig selbst und speisen nur den Überschuss ein – Zähler- und Messkonzept mit dem Netzbetreiber umstellen", "Jede selbst genutzte kWh ersetzt teuren Netzbezug"],
+  ["Speicher nachrüsten", "Überschüsse in den Abend verschieben, Lastspitzen kappen, auf Wunsch Ersatzstrom", "EAG-Speicherförderung nur zusammen mit PV-Neuerrichtung oder -Erweiterung"],
+  ["Erweitern", "Freie Dach- oder Parkplatzflächen belegen, zusätzliche Leistung als Erweiterung", "Erweiterung nach § 56 EAG förderfähig"],
+  ["Repowering", "Module und Wechselrichter tauschen, Unterkonstruktion prüfen, Anlage auf Stand der Technik bringen", "Deutlich mehr Leistung auf derselben Fläche, neue Garantien"],
+  ["In eine Energiegemeinschaft", "Überschuss in einer Erneuerbare-Energie-Gemeinschaft an Nachbarn, Gemeinde oder KMU liefern", "Lokaler Absatz, reduzierte Netzentgelte für Teilnehmer"],
+];
 
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const TITLE = "Repowering Photovoltaik – alte PV-Anlage erneuern | Ökovolt";
-const DESCRIPTION = "Ü20- oder ältere PV-Anlage? Module und Wechselrichter tauschen, Anlage erweitern, Speicher nachrüsten – bis zu doppelte Leistung vom selben Dach. Jetzt prüfen!";
-
-export async function generateMetadata() {
-  const seoData = await fetchRepoweringData();
-  const defaultKeywords = ["Photovoltaik Repowering", "Ü20 PV-Anlage", "Solaranlage modernisieren", "Wechselrichter tauschen", "PV-Anlage erweitern"];
-  const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-
-  return {
-    title: TITLE,
-    description: DESCRIPTION,
-    keywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaik Repowering" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: ["https://www.oekovolt.com/og-image.jpg"],
-    },
-  };
-}
-
-const img = (p, fallback = "/Images/Dienstleistungen/Photovoltaik/house.png") => (p ? `/api/image?path=${p}` : fallback);
-
-const KARTEN_ICONS = [Wrench, LayoutGrid, Home, BatteryCharging];
-const KARTEN_FALLBACK = [
-  { title: "Defekte Komponenten ersetzen", description: "Beschädigte oder veraltete Anlagenteile tauschen – für wieder volle Erträge." },
-  { title: "PV-Anlage erweitern", description: "Mehr Module, mehr Strom und ein höherer Eigenversorgungsgrad." },
-  { title: "Umstellung auf Eigenverbrauch", description: "Solarstrom selbst nutzen statt komplett einzuspeisen." },
-  { title: "Stromspeicher nachrüsten", description: "Solarstrom auch abends und nachts nutzen." },
+const FOERDERUNG = [
+  ["Kategorie A", "bis 10 kWp", "150 €/kWp (fixer Fördersatz)"],
+  ["Kategorie B", "über 10 bis 20 kWp", "140 €/kWp (fixer Fördersatz)"],
+  ["Kategorie C", "über 20 bis 100 kWp", "bis 130 €/kWp (höchstzulässig, Reihung)"],
+  ["Kategorie D", "über 100 kWp bis 1.000 kWp je Anlage", "bis 120 €/kWp (höchstzulässig, Reihung)"],
+  ["Stromspeicher", "mindestens 0,5 kWh je kWp, höchstens 50 kWh", "150 €/kWh – nur mit PV; Speichererweiterungen nicht förderbar"],
 ];
 
 const FAQ = [
   {
-    q: "Wann lohnt sich ein Repowering meiner PV-Anlage?",
-    a: "Typische Anlässe sind das Ende der EEG-Vergütung nach 20 Jahren, ein defekter oder veralteter Wechselrichter, deutlich sinkende Erträge oder ein gestiegener Strombedarf durch Wärmepumpe oder E-Auto. Weil moderne Module auf gleicher Fläche etwa doppelt so viel Leistung bringen wie Module aus den frühen 2000ern, rechnet sich der Tausch häufig schnell – vor allem, wenn der Strom selbst genutzt wird.",
+    q: "Wann lohnt sich Repowering einer PV-Anlage in Österreich?",
+    a: "Typische Anlässe sind das Ende des OeMAG-Tarifvertrags, ein Wechselrichter am Ende seiner Lebensdauer, sinkende Erträge durch Defekte oder Degradation, eine anstehende Dachsanierung oder ein gestiegener Strombedarf durch E-Flotte, Wärmepumpe oder Produktion. Weil moderne Module auf gleicher Fläche deutlich mehr Leistung bringen als Module von vor zehn bis zwanzig Jahren, rechnet sich der Tausch oft – vor allem bei hohem Eigenverbrauch.",
   },
   {
-    q: "Was tun mit einer Ü20-Anlage nach Ende der EEG-Vergütung?",
-    a: "Sie haben drei Wege: Die Anlage weiter einspeisen lassen (dann gibt es statt der festen Vergütung nur noch den Marktwert abzüglich einer Vermarktungspauschale), auf Eigenverbrauch umstellen (mit Zweirichtungszähler und optional Speicher) oder die Anlage komplett erneuern. Eine neue Anlage erhält ab Inbetriebnahme wieder für 20 Jahre die dann gültige Einspeisevergütung – ab 1. August 2026 7,70 ct/kWh für Teileinspeisung bis 10 kWp.",
+    q: "Was passiert nach Ende des OeMAG-Tarifs?",
+    a: "Anlagen mit Tarifförderung nach dem Ökostromgesetz 2012 hatten einen Vertrag über 13 Jahre. Danach kann der Strom zum OeMAG-Marktpreis oder an einen Stromhändler verkauft werden. Wirtschaftlich attraktiver ist meist, den Strom selbst zu nutzen – Volleinspeiser müssen dafür das Messkonzept mit dem Netzbetreiber umstellen.",
   },
   {
-    q: "Verliere ich meine EEG-Vergütung, wenn ich Module tausche?",
-    a: "Werden Module wegen eines Defekts, einer Beschädigung oder eines Diebstahls ersetzt, bleibt der ursprüngliche Vergütungsanspruch nach § 38b EEG grundsätzlich bis zur bisher installierten Leistung erhalten. Zusätzliche Leistung wird wie eine neue Anlage behandelt und braucht ein passendes Messkonzept. Wir klären die Details für Ihre Anlage vor dem Umbau mit dem Netzbetreiber.",
+    q: "Wird die Erweiterung einer bestehenden Anlage gefördert?",
+    a: "Ja. Nach § 56 Erneuerbaren-Ausbau-Gesetz können Neuerrichtung und Erweiterung von PV-Anlagen bis 1.000 kWp je Anlage mit einem Investitionszuschuss gefördert werden. Gefördert wird die zusätzliche Engpassleistung; das Förderansuchen muss in einem OeMAG-Fördercall und vor Inbetriebnahme gestellt werden. Ein reiner Modultausch ohne Leistungszuwachs ist in der Regel keine Erweiterung – das prüfen wir im Einzelfall.",
   },
   {
     q: "Wie lange hält ein Wechselrichter?",
-    a: "Wechselrichter sind in der Regel das erste Bauteil, das getauscht werden muss – typisch nach 10 bis 15 Jahren. Neue Geräte arbeiten effizienter, bieten Monitoring per App und sind oft schon für einen Batteriespeicher vorbereitet (Hybridwechselrichter).",
+    a: "Wechselrichter sind meist das erste Bauteil, das getauscht werden muss – häufig nach zehn bis fünfzehn Jahren. Neue Geräte müssen die TOR Erzeuger erfüllen und sollten in der österreichischen Wechselrichterliste geführt sein. Sie bieten besseres Monitoring und sind oft für Speicher und Ersatzstrom vorbereitet.",
   },
   {
-    q: "Kann ich an eine alte Anlage einen Speicher nachrüsten?",
-    a: "Ja. Bleibt der alte Wechselrichter in Betrieb, wird der Speicher meist AC-seitig mit eigenem Batteriewechselrichter angeschlossen. Steht ohnehin ein Wechselrichtertausch an, ist ein Hybridwechselrichter mit DC-gekoppeltem Speicher oft die elegantere Lösung.",
+    q: "Was muss bei der Unterkonstruktion beachtet werden?",
+    a: "Neue Module sind größer und oft schwerer. Unterkonstruktion, Klemmbereiche und Dachstatik müssen für die Schnee- und Windlast am Standort nach ÖNORM B 1991-1-3 und B 1991-1-4 nachgewiesen sein. Bei älteren Hallendächern prüfen wir zusätzlich Dachhaut, Durchdringungen und Brandschutz nach OVE R 11-1.",
   },
   {
     q: "Was passiert mit den alten Modulen?",
-    a: "Photovoltaikmodule fallen unter das Elektro- und Elektronikgerätegesetz (ElektroG) und werden über die dafür vorgesehenen Rücknahmesysteme fachgerecht recycelt. Glas, Aluminium und Silizium lassen sich zu einem großen Teil wiederverwerten. Den Rückbau und die Entsorgung organisieren wir für Sie.",
+    a: "Photovoltaikmodule sind Elektroaltgeräte im Sinne der Elektroaltgeräteverordnung und werden über die dafür vorgesehenen Sammel- und Verwertungssysteme recycelt. Glas, Aluminium und Silizium lassen sich großteils wiederverwerten. Funktionsfähige Module können unter Umständen weiterverwendet werden. Rückbau und Entsorgung organisieren wir.",
+  },
+  {
+    q: "Muss die Anlage nach dem Repowering neu geprüft und gemeldet werden?",
+    a: "Ja. Ein Repowering ist eine wesentliche Änderung: Die Anlage wird neu geprüft (OVE E 8101, OVE EN 62446-1), das Anlagenbuch aktualisiert und die Änderung beim Netzbetreiber gemeldet. Bei laufenden Förder- oder Tarifverträgen informieren wir auch die OeMAG.",
   },
 ];
 
-export default async function RepoweringPage() {
-  const data = await fetchRepoweringData();
-
-  const webPageSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${PAGE_URL}/#webpage`,
-    url: PAGE_URL,
-    name: data?.photovoltaik_title || "Photovoltaik Repowering",
-    description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
-  };
-
-  const serviceSchema = {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    name: "Repowering und Erweiterung von Photovoltaikanlagen",
-    serviceType: "PV-Repowering",
-    description: "Modul- und Wechselrichtertausch, Erweiterung, Umstellung auf Eigenverbrauch und Speichernachrüstung für bestehende Photovoltaikanlagen.",
-    provider: { "@id": "https://www.oekovolt.com/#organization" },
-    areaServed: { "@type": "Country", name: "Deutschland" },
-    url: PAGE_URL,
-  };
-
-  const karten = (data?.cards?.length ? data.cards : KARTEN_FALLBACK).map((k, i) => ({
-    icon: KARTEN_ICONS[i % KARTEN_ICONS.length],
-    title: k.title,
-    // CMS-Texte teils in Du-Form – auf der Website einheitlich Sie-Form
-    text: k.description.replace("erreichst du", "erreichen Sie").replace("nutzt deinen", "nutzen Ihren"),
-  }));
-  const optionen = (data?.second_card_options || []).map((o) => ({ title: o.primary_paragraph, text: o.secondary_paragraph }));
-  const modulPunkte = (data?.fourth_card_options || []).map((o) => o.option);
-  const vorher = (data?.third_sec_2nd_card_first_table || []).map((o) => o.option);
-  const nachher = (data?.third_sec_2nd_card_second_table || []).map((o) => o.option);
-  const vorher2 = (data?.third_sec_3rd_card_first_options_table || []).map((o) => o.option);
-  const nachher2 = (data?.third_sec_3rd_card_second_options_table || []).map((o) => o.option);
-
+export default function RepoweringPage() {
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }} />
+      <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Repowering und Erweiterung von Photovoltaikanlagen", beschreibung: BESCHREIBUNG, serviceType: "PV-Repowering, Erweiterung und Speichernachrüstung" })} />
 
       <PageHero
         breadcrumbs={[{ name: "Service" }, { name: "Repowering" }]}
-        eyebrow={data?.photovoltaik_subtitle || "Repowering & Erweiterung"}
-        title={<>Alte PV-Anlage, <span className="ov-text-gradient">neue Leistung</span></>}
-        lead={data?.photovoltaik_description || "Durch den Austausch älterer Wechselrichter oder Module und die Integration eines Stromspeichers steigern Sie die Effizienz Ihrer bestehenden Solaranlage deutlich."}
-        image={{ src: img(data?.photovoltaik_image), alt: data?.photovoltaik_image_alt_text || "Techniker prüft Solarmodule einer bestehenden PV-Anlage" }}
-        points={["Ü20-Anlagen sinnvoll weiter nutzen", "Module & Wechselrichter tauschen", "Anlage erweitern", "Speicher nachrüsten"]}
+        eyebrow="Repowering · Erweiterung · Speicher"
+        title={<>Bestandsanlage, <span className="ov-text-gradient">neue Leistung</span></>}
+        lead="Viele PV-Anlagen in Österreich stammen aus der Zeit der OeMAG-Tarife. Heute bringen neue Module auf derselben Fläche deutlich mehr Leistung, Wechselrichter erreichen ihr Lebensende und Eigenverbrauch ist mehr wert als Einspeisung. Wir prüfen Ihre Anlage und rechnen Tausch, Erweiterung und Speicher ehrlich durch."
+        image={{ src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tauschen Solarmodule auf einem Gewerbedach" }}
+        points={["Nach Ende des OeMAG-Tarifs", "Module & Wechselrichter tauschen", "Erweiterung mit EAG-Förderung", "Speicher nachrüsten"]}
         actions={[
-          { label: "Repowering-Check anfragen", href: "/angebot" },
+          { label: "Repowering-Check anfragen", href: "#anfrage" },
           { label: "Leistung vergleichen", href: "#vergleich", icon: Gauge },
         ]}
         badge={
@@ -191,31 +99,38 @@ export default async function RepoweringPage() {
               <Sun aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
-                bis ×2 <span className="text-[14px] font-semibold text-ink-500">Leistung</span>
-              </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">vom selben Dach mit neuen Modulen</p>
+              <p className="font-display text-[20px] font-extrabold leading-none text-ink-900">mehr kWp</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">auf derselben Dachfläche mit aktuellen Modulen</p>
             </div>
           </div>
         }
       />
 
       <Section tone="white" space="lg">
-        <SplitMedia
-          eyebrow="Anlagen-Optimierung"
-          title={data?.second_card_title || "Photovoltaik-Optimierung mit Ökovolt"}
-          image={{ src: img(data?.second_card_image), alt: data?.second_card_alt_text || "" }}
-          points={optionen}
-        >
-          <Fliesstext text={data?.second_card_description} className="mt-5 text-[16.5px] leading-relaxed text-ink-600" />
-        </SplitMedia>
+        <SectionHeading
+          eyebrow="Anlässe"
+          title="Sechs Gründe, eine Bestandsanlage jetzt anzugehen"
+          lead="Repowering lohnt sich, wenn mehrere Anlässe zusammenkommen – etwa Tarifende, Wechselrichtertausch und gestiegener Strombedarf."
+          className="mb-12"
+        />
+        <FeatureGrid
+          cols={3}
+          items={[
+            { icon: CalendarClock, title: "Tarifende", text: "OeMAG-Tarifverträge nach dem Ökostromgesetz 2012 liefen 13 Jahre. Danach entscheidet der Eigenverbrauch über die Wirtschaftlichkeit." },
+            { icon: Cpu, title: "Wechselrichter am Lebensende", text: "Nach zehn bis fünfzehn Jahren steigen Ausfälle. Ein Tausch ist der ideale Moment, die ganze Anlage zu prüfen." },
+            { icon: TrendingDown, title: "Ertrag sinkt", text: "Degradation, PID, Hotspots oder ausgefallene Strings – Thermografie und Kennlinienmessung zeigen, was noch geht." },
+            { icon: LineChart, title: "Mehr Strombedarf", text: "E-Flotte, Wärmepumpe oder neue Maschinen: Mehr Leistung vom selben Dach senkt den Netzbezug." },
+            { icon: Wrench, title: "Dachsanierung", text: "Müssen die Module ohnehin herunter, ist der Umstieg auf neue Module oft kaum teurer als die Wiedermontage." },
+            { icon: SlidersHorizontal, title: "Netz & Regelung", text: "Neue Wechselrichter nach TOR Erzeuger, bei größeren Anlagen EZA-Regler – für stabile Einspeisung und weniger Abregelung." },
+          ]}
+        />
       </Section>
 
       <Section tone="sand" space="lg" id="vergleich" className="scroll-mt-24">
         <SectionHeading
           eyebrow="Vorher / Nachher"
           title={<>Was steckt noch in <span className="ov-text-gradient">Ihrem Dach</span>?</>}
-          lead="Moderne Module holen auf derselben Fläche ein Vielfaches aus der Sonne. Wählen Sie Baujahr und Fläche Ihrer Anlage und ziehen Sie den Regler über das Dach."
+          lead="Wählen Sie Baujahr und belegte Fläche Ihrer Anlage und ziehen Sie den Regler über das Dach. Die Rechnung ist eine vereinfachte Orientierung – den tatsächlichen Wert ermitteln wir beim Anlagencheck."
           align="center"
           className="mb-12"
         />
@@ -226,289 +141,130 @@ export default async function RepoweringPage() {
 
       <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow="Leistungen"
-          title={data?.photovoltaik_second_card_title || "Was Repowering bei Ökovolt umfasst"}
-          lead="Vom einzelnen Bauteil bis zur komplett neuen Anlage – wir empfehlen, was sich für Ihr Dach wirklich rechnet."
-          className="mb-12"
+          eyebrow="Nach dem OeMAG-Tarif"
+          title="Sechs Optionen für Ihre Bestandsanlage"
+          lead="Welche Option passt, hängt von Zustand, Verbrauch und Dach ab. Oft ist eine Kombination am wirtschaftlichsten – etwa Überschusseinspeisung mit Speicher und Erweiterung."
+          className="mb-10"
         />
-        <FeatureGrid items={karten} cols={4} />
+        <Tabelle kopf={["Option", "Was passiert", "Gut zu wissen"]} zeilen={OPTIONEN} kompakt />
       </Section>
 
-      {/* Ü20 */}
-      <Section tone="navy" space="lg" className="overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-24 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
+      <Section tone="green" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <div>
-            <SectionHeading dark eyebrow="Ü20-Anlagen" title={data?.third_sec_title || "Was tun mit Ü20-PV-Anlagen?"} />
-            <Reveal delay={80}>
-              <h3 className="mt-8 font-display text-[20px] font-bold text-white">{data?.third_sec_1st_card_first_title || "Photovoltaikanlagen nach 20 Jahren sinnvoll weiter nutzen"}</h3>
-              <Fliesstext text={data?.third_sec_1st_card_first_description} className="mt-3 text-[16px] leading-relaxed text-white/70" />
-              <h3 className="mt-7 font-display text-[20px] font-bold text-white">{data?.third_sec_1st_card_second_title || "Was bedeutet das für Betreiber?"}</h3>
-              <Fliesstext text={data?.third_sec_1st_card_second_description} className="mt-3 text-[16px] leading-relaxed text-white/70" />
-              {(data?.third_sec_1st_card_table_options || []).length > 0 && (
-                <ul className="mt-5 space-y-3">
-                  {data.third_sec_1st_card_table_options.map((o) => (
-                    <li key={o.option} className="flex gap-3 text-[15.5px] text-white/85">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500/20 text-ov-300">
-                        <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-                      </span>
-                      {o.option}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Reveal>
+            <SectionHeading
+              eyebrow="EAG-Förderung"
+              title="Investitionszuschuss für die Erweiterung"
+              lead="Nach § 56 Erneuerbaren-Ausbau-Gesetz können Neuerrichtung und Erweiterung von PV-Anlagen bis 1.000 kWp je Anlage gefördert werden. Die Förderung beträgt höchstens 30 % der förderfähigen Kosten."
+            />
+            <div className="mt-8 space-y-5">
+              <Hinweis ton="info" titel="Was als Erweiterung zählt">
+                <p>
+                  Gefördert wird die zusätzliche Engpassleistung. Ein reiner Modultausch ohne Leistungszuwachs ist in der Regel keine Erweiterung. Erhöht der Tausch die Leistung, kann der
+                  Zuwachs förderfähig sein – wir klären das vor dem Ansuchen mit den Unterlagen der EAG-Abwicklungsstelle.
+                </p>
+              </Hinweis>
+              <Hinweis ton="achtung" titel="Fristen beachten">
+                <p>
+                  Das Förderansuchen muss in einem der OeMAG-Fördercalls und vor Inbetriebnahme gestellt werden. Zusätzlich kann der Öko-Investitionsfreibetrag genutzt werden – befristet 22 %
+                  für Anschaffungen bis Ende 2026.
+                </p>
+              </Hinweis>
+            </div>
           </div>
-          <div className="flex flex-col gap-4">
-            <Reveal dir="right" className="mb-2">
-              <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-white/50">Ihre drei Optionen nach dem EEG-Ende</p>
-            </Reveal>
-            {[
-              { icon: Plug, titel: "Weiter einspeisen", text: "Die Anlage bleibt am Netz. Statt der festen Vergütung gibt es nur noch den Marktwert Solar abzüglich einer Vermarktungspauschale – meist nur wenige Cent je kWh.", tag: "Minimaler Aufwand" },
-              { icon: Home, titel: "Auf Eigenverbrauch umstellen", text: "Zweirichtungszähler statt Einspeisezähler: Jede selbst genutzte kWh ersetzt Netzstrom für über 30 Cent. Mit Speicher steigt der Anteil deutlich.", tag: "Oft sinnvoll" },
-              { icon: Recycle, titel: "Komplett erneuern", text: "Neue Module und Wechselrichter auf demselben Dach: rund doppelte Leistung, neue Herstellergarantien und für 20 Jahre die dann gültige Einspeisevergütung.", tag: "Maximaler Ertrag", hervor: true },
-            ].map((o, i) => (
-              <Reveal key={o.titel} dir="right" delay={i * 90}>
-                <div className={`rounded-3xl p-6 ring-1 ${o.hervor ? "bg-ov-500/15 ring-ov-400/40" : "bg-white/[0.04] ring-white/10"}`}>
-                  <div className="flex items-start justify-between gap-4">
-                    <span className={`flex h-11 w-11 items-center justify-center rounded-2xl ${o.hervor ? "bg-ov-500 text-white" : "bg-white/10 text-ov-300"}`}>
-                      <o.icon aria-hidden="true" className="h-5 w-5" />
-                    </span>
-                    <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider text-white/75">{o.tag}</span>
-                  </div>
-                  <h3 className="mt-4 font-display text-[19px] font-bold text-white">
-                    <span className="mr-2 text-ov-300">{i + 1}.</span>
-                    {o.titel}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-white/65">{o.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <Tabelle
+            caption="EAG-Investitionszuschuss Photovoltaik – Fördersätze 2026"
+            kopf={["Kategorie", "Engpassleistung", "Fördersatz"]}
+            zeilen={FOERDERUNG}
+            kompakt
+            quelle="Quelle: EAG-Abwicklungsstelle, Stand Fördercalls 2026. Abschläge bzw. Zuschläge je nach Standort (z. B. Freifläche, Agri-PV) nach § 56 EAG. Budgets je Call begrenzt."
+          />
         </div>
       </Section>
 
-      {/* Wechselrichter & Module */}
       <Section tone="white" space="lg">
         <SplitMedia
-          eyebrow="Wechselrichter"
-          title={data?.third_card_title || "Austausch des Wechselrichters"}
-          image={{ src: img(data?.third_card_image), alt: data?.third_card_alt_text || "" }}
+          eyebrow="Technik"
+          title="Worauf es beim Repowering technisch ankommt"
+          image={{ src: "/Images/Jobs/jobs3.jpg", alt: "Freiflächen-Photovoltaikanlage unter blauem Himmel" }}
+          text="Repowering ist mehr als ein Modultausch. Damit die erneuerte Anlage wieder zwanzig Jahre und länger zuverlässig läuft, prüfen wir das Gesamtsystem."
           points={[
-            "Höherer Wirkungsgrad der neuesten Gerätegeneration",
-            "Monitoring per App – Störungen fallen sofort auf",
-            "Als Hybridwechselrichter bereit für einen Speicher",
+            { title: "Module", text: "Aktuelle Glas-Glas- oder Glas-Folie-Module mit geprüfter Hagel- und Schneelast" },
+            { title: "Wechselrichter", text: "TOR-Erzeuger-konform, in der Wechselrichterliste geführt, speicher- und ersatzstromfähig" },
+            { title: "Unterkonstruktion & Statik", text: "Nachweis für Schnee- und Windlast nach ÖNORM B 1991-1-3/-4" },
+            { title: "Brandschutz & Kabel", text: "OVE R 11-1, Leitungsführung, Steckverbinder, Freischaltstelle" },
+            { title: "Regelung", text: "EZA-Regler bzw. Parkregler, Einspeiselimit und Blindleistung nach Vorgabe des Netzbetreibers" },
           ]}
-        >
-          <Fliesstext text={data?.third_card_description?.replace(/\bdir\b/g, "Ihnen").replace(/\bdeines\b/g, "Ihres").replace(/\bprofitierst du\b/g, "profitieren Sie")} className="mt-5 text-[16.5px] leading-relaxed text-ink-600" />
-        </SplitMedia>
-        <div className="mt-20 md:mt-28">
-          <SplitMedia
-            reverse
-            eyebrow="Module"
-            title={data?.fourth_card_title || "Photovoltaik-Module erneuern"}
-            image={{ src: img(data?.fourth_card_image), alt: data?.fourth_card_alt_text || "" }}
-            points={modulPunkte}
-          >
-            <Fliesstext text={data?.fourth_card_description?.replace(/Ihre Vorteile mit Ökovolt:\s*$/, "")} className="mt-5 text-[16.5px] leading-relaxed text-ink-600" />
-          </SplitMedia>
-        </div>
+        />
       </Section>
 
-      {/* Erweiterung */}
       <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Erweitern"
-          title={data?.second_section_title || "Solaranlage erweitern – mehr Sonnenenergie für Ihren Bedarf"}
-          className="mb-12"
-        />
-        <div className="grid gap-5 lg:grid-cols-2">
-          {[
-            {
-              titel: data?.second_sec_1st_card_title || "Ungenutzte Dachflächen belegen",
-              bild: data?.second_sec_1st_card_image,
-              alt: data?.second_sec_1st_card_alt_image,
-              text: data?.second_sec_1st_card_description,
-              link: { href: "/solarrechner", label: "Ertrag der Erweiterung berechnen" },
-            },
-            {
-              titel: data?.second_sec_2nd_card_title || "Mehr Autarkie mit einem Stromspeicher",
-              bild: data?.second_sec_2nd_card_image,
-              alt: data?.second_sec_2nd_card_alt_text,
-              text: data?.second_sec_2nd_card_description,
-              wichtig: data?.second_sec_2nd_card_important_description,
-              fett: data?.second_sec_2nd_card_bold_description,
-              link: { href: "/rechner/stromspeicher", label: "Speichergröße berechnen" },
-            },
-          ].map((k, i) => (
-            <Reveal key={k.titel} delay={i * 90} className="flex">
-              <article className="flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70">
-                <div className="relative aspect-[16/9] bg-ink-100">
-                  <Image src={img(k.bild)} alt={k.alt || ""} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
-                </div>
-                <div className="flex flex-1 flex-col p-6 md:p-8">
-                  <h3 className="ov-h3 text-ink-900">{k.titel}</h3>
-                  <Fliesstext text={k.text} className="mt-3 text-[15.5px] leading-relaxed text-ink-600" />
-                  {k.wichtig && <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">{k.wichtig}</p>}
-                  {k.fett && (
-                    <p className="mt-5 flex gap-3 rounded-2xl bg-ov-50 p-4 text-[15px] font-medium leading-relaxed text-ink-800 ring-1 ring-ov-200/70">
-                      <CalendarClock aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
-                      {k.fett}
-                    </p>
-                  )}
-                  <a href={k.link.href} className="mt-auto inline-flex items-center gap-2 pt-6 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-                    {k.link.label}
-                    <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                  </a>
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-      </Section>
-
-      {/* Praxisbeispiele */}
-      {(vorher.length > 0 || vorher2.length > 0) && (
-        <Section tone="white" space="lg">
-          <SectionHeading
-            eyebrow="Aus der Praxis"
-            title={data?.third_sec_2nd_card_title || "Beispiel: Repowering mit Ökovolt"}
-            lead={data?.third_sec_2nd_card_description}
-            className="mb-12"
-          />
-          {vorher.length > 0 && (
-            <Fallbeispiel
-              bildVorher={{ src: img(data?.third_sec_2nd_card_first_image), alt: data?.third_sec_2nd_card_first_alt_text }}
-              bildNachher={{ src: img(data?.third_sec_2nd_card_second_image), alt: data?.third_sec_2nd_card_second_alt_image }}
-              titelVorher={data?.third_sec_2nd_card_first_table_title || "Vor dem Repowering"}
-              titelNachher={data?.third_sec_2nd_card_second_table_title || "Nach dem Repowering"}
-              vorher={vorher}
-              nachher={nachher}
-              kennzahlen={[
-                { l: "Leistung", v: "6,5 → 15 kWp" },
-                { l: "Jahresertrag", v: "≈ 5.000 → 14.000 kWh" },
-                { l: "Speicher", v: "0 → 20 kWh" },
-              ]}
-            />
-          )}
-          {vorher2.length > 0 && (
-            <div className="mt-8">
-              <Fallbeispiel
-                bildVorher={{ src: img(data?.third_sec_3rd_card_first_image), alt: data?.third_sec_3rd_card_first_alt_text }}
-                bildNachher={{ src: img(data?.third_sec_3rd_card_second_card), alt: data?.third_sec_3rd_card_second_alt_text }}
-                titelVorher={data?.third_sec_3rd_card_first_title || "Ausgangszustand"}
-                titelNachher={data?.third_sec_3rd_card_second_title || "Nach der Modernisierung"}
-                vorher={vorher2}
-                nachher={nachher2}
-                kennzahlen={[
-                  { l: "Hauptdach", v: "5,44 → 24,44 kWp" },
-                  { l: "Speicher", v: "0 → 22 kWh" },
-                ]}
-              />
-            </div>
-          )}
-        </Section>
-      )}
-
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Ablauf"
-          title="So läuft Ihr Repowering ab"
-          lead="Erst messen, dann entscheiden: Grundlage jeder Empfehlung ist ein ehrlicher Blick auf Ihre Bestandsanlage."
-          align="center"
-          className="mb-14"
-        />
+        <SectionHeading eyebrow="Ablauf" title="So läuft Ihr Repowering ab" align="center" className="mb-14" />
         <Steps
           items={[
-            { icon: ClipboardCheck, title: "Anlagencheck", text: "Wir prüfen Ertragsdaten, Module, Wechselrichter, Dach, Unterkonstruktion und Zählerschrank vor Ort." },
-            { icon: Calculator, title: "Konzept & Rechnung", text: "Tausch, Erweiterung oder Neubau: Sie erhalten Varianten mit Wirtschaftlichkeitsrechnung und klarer Empfehlung." },
-            { icon: Wrench, title: "Umbau", text: "Unser Montageteam baut zurück, installiert neu und kümmert sich um die fachgerechte Entsorgung der Altmodule." },
-            { icon: Cpu, title: "Anmeldung & Betrieb", text: "Netzbetreiber, Marktstammdatenregister und Inbetriebnahme – danach überwachen Sie Ihre Erträge per App." },
+            { icon: ClipboardCheck, title: "Anlagencheck", text: "Ertragsdaten, Thermografie, Messungen, Dach, Unterkonstruktion und Verträge (OeMAG, Netzbetreiber)." },
+            { icon: LayoutGrid, title: "Varianten", text: "Tausch, Erweiterung, Speicher oder Kombination – mit Wirtschaftlichkeit, Förderung und Finanzierung." },
+            { icon: Recycle, title: "Umbau", text: "Rückbau, Montage, fachgerechte Verwertung der Altmodule, Prüfung und Anlagenbuch." },
+            { icon: ShieldCheck, title: "Meldung & Betrieb", text: "Netzbetreiber, OeMAG und Förderstelle, danach Monitoring und Wartung." },
           ]}
         />
       </Section>
 
-      <SolarrechnerTeaser
-        titel="Wie viel bringt Ihr Dach mit neuen Modulen?"
-        text="Anlagengröße, Verbrauch und Speicher eingeben – der Solarrechner zeigt Ertrag, Ersparnis und Amortisation der erneuerten Anlage."
+      <AnfrageSektion
+        titel="Repowering-Check anfragen"
+        lead="Senden Sie uns die Eckdaten Ihrer Bestandsanlage. Wir melden uns mit Rückfragen und einem Termin für den Anlagencheck."
+        schritte={["Sie senden Anlagendaten und Vertragsstatus.", "Anlagencheck vor Ort mit Messung und Thermografie.", "Varianten mit Wirtschaftlichkeit, Förderung und Angebot."]}
+        formular={{
+          betreff: "Repowering-Check",
+          thema: "Photovoltaik",
+          titel: "Anfrage Repowering-Check",
+          absenden: "Check anfragen",
+          felder: [
+            { name: "anlagengroesse", label: "Bestehende Leistung", typ: "zahl", einheit: "kWp", pflicht: true, placeholder: "z. B. 150" },
+            { name: "baujahr", label: "Baujahr / Inbetriebnahme", typ: "zahl", pflicht: true, placeholder: "z. B. 2012" },
+            { name: "wechselrichter", label: "Wechselrichter (Hersteller, Anzahl)", placeholder: "z. B. 6× SMA SMC 10000TL", breit: true },
+            { name: "vertrag", label: "Vermarktung heute", typ: "auswahl", optionen: ["OeMAG-Tarif läuft noch", "OeMAG-Tarif ausgelaufen / Marktpreis", "Stromhändler", "Überschusseinspeisung mit Eigenverbrauch", "Unbekannt"] },
+            { name: "ziel", label: "Ziel", typ: "auswahl", optionen: ["Mehr Ertrag auf gleicher Fläche", "Erweiterung", "Speicher nachrüsten", "Wechselrichter defekt", "Dachsanierung geplant", "Bitte beraten"] },
+          ],
+        }}
       />
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Repowering – kurz & ehrlich beantwortet"
-            lead="Ihre Anlage ist ein Sonderfall? Rufen Sie uns an – wir sehen sie uns gern an."
-          />
-          <Faq items={FAQ} />
-        </div>
+      <Section tone="white" space="md">
+        <Weiterlesen
+          items={[
+            { href: "/ratgeber/photovoltaik-nach-20-jahren", art: "Ratgeber", titel: "Photovoltaik nach Tarifende", text: "Weiterbetrieb, Marktpreis und Repowering." },
+            { href: "/ratgeber/oemag-marktpreis", art: "Ratgeber", titel: "OeMAG-Marktpreis", text: "Berechnung, Historie und Quartalswerte." },
+            { href: "/ratgeber/eag-investitionszuschuss", art: "Ratgeber", titel: "EAG-Investitionszuschuss", text: "Fördercalls, Kategorien und Fristen." },
+            { href: "/ratgeber/energiegemeinschaft-gewerbe", art: "Ratgeber", titel: "Energiegemeinschaft für Betriebe", text: "Überschuss lokal liefern." },
+            { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie", text: "Zustand der Bestandsanlage erfassen." },
+            { href: "/service/finanzierung", art: "Service", titel: "Finanzierung & Leasing", text: "Repowering ohne großen Mittelabfluss." },
+            { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)", text: "Netzkonform nach dem Umbau." },
+            { href: "/gewerbespeicher", art: "Lösung", titel: "Gewerbespeicher", text: "Überschuss verschieben, Spitzen kappen." },
+          ]}
+        />
       </Section>
 
-      <Querverweise pfad="/service/repowering" />
-      <CtaBand
-        title="Holen Sie aus Ihrem Dach wieder das Maximum heraus."
-        text="Wir prüfen Ihre Bestandsanlage, rechnen Tausch, Erweiterung und Neubau ehrlich durch und setzen die beste Variante aus einer Hand um."
-        primary={{ label: "Repowering-Check anfragen", href: "/angebot" }}
-        secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
+      <FaqSektion items={FAQ} titel="Repowering – kurz & ehrlich beantwortet" tone="sand" />
+
+      <Querverweise pfad={PFAD} />
+
+      <Quellen
+        items={[
+          { titel: "Erneuerbaren-Ausbau-Gesetz § 56 – Investitionszuschüsse Photovoltaik", href: "https://www.jusline.at/gesetz/eag/paragraf/56" },
+          { titel: "EAG-Abwicklungsstelle – Investitionszuschuss Photovoltaik & Speicher", href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/" },
+          { titel: "OeMAG – Marktpreis", href: "https://www.oem-ag.at/marktpreis" },
+          { titel: "Oesterreichs Energie – Wechselrichterliste TOR Erzeuger Typ A", href: "https://oesterreichsenergie.at/publikationen/ueberblick/detailseite/wechselrichterliste-tor-erzeuger-typ-a" },
+          { titel: "WKO – Investitionsfreibetrag", href: "https://www.wko.at/steuern/investitionsfreibetrag" },
+        ]}
       />
-    </div>
-  );
-}
 
-function Fallbeispiel({ bildVorher, bildNachher, titelVorher, titelNachher, vorher, nachher, kennzahlen = [] }) {
-  return (
-    <Reveal>
-      <div className="overflow-hidden rounded-[2rem] bg-sand-50 ring-1 ring-ink-200/70">
-        <div className="grid lg:grid-cols-2">
-          <Seite bild={bildVorher} titel={titelVorher} punkte={vorher} icon={Minus} ton="alt" />
-          <Seite bild={bildNachher} titel={titelNachher} punkte={nachher} icon={Check} ton="neu" />
-        </div>
-        {kennzahlen.length > 0 && (
-          <dl className="grid grid-cols-1 gap-px border-t border-ink-200/70 bg-ink-200/70 sm:grid-cols-3">
-            {kennzahlen.map((k) => (
-              <div key={k.l} className="bg-white px-6 py-5">
-                <dt className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">{k.l}</dt>
-                <dd className="ov-num mt-1 font-display text-[20px] font-extrabold tracking-tight text-ink-900">{k.v}</dd>
-              </div>
-            ))}
-          </dl>
-        )}
-      </div>
-    </Reveal>
-  );
-}
-
-function Seite({ bild, titel, punkte, icon: Icon, ton }) {
-  const neu = ton === "neu";
-  return (
-    <div className={`flex flex-col ${neu ? "border-t-4 border-white lg:border-l-4 lg:border-t-0" : ""}`}>
-      <div className="relative">
-        <div className="relative aspect-video overflow-hidden bg-ink-100">
-          <Image src={bild.src} alt={bild.alt || ""} fill sizes="(max-width: 1024px) 100vw, 45vw" className={`object-cover ${neu ? "" : "grayscale-35"}`} />
-          <span className={`absolute left-4 top-4 rounded-full px-3 py-1.5 text-[12px] font-semibold uppercase tracking-wider shadow ${neu ? "bg-ov-600 text-white" : "bg-white/95 text-ink-700"}`}>
-            {neu ? "Nachher" : "Vorher"}
-          </span>
-        </div>
-        {neu && (
-          <span aria-hidden="true" className="absolute left-1/2 top-0 z-10 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 rotate-90 items-center justify-center rounded-full bg-ov-500 text-white shadow-lg ring-4 ring-white lg:left-0 lg:top-1/2 lg:rotate-0">
-            <ArrowRight className="h-5 w-5" />
-          </span>
-        )}
-      </div>
-      <div className="p-6 md:p-8">
-        <h3 className="font-display text-[19px] font-bold text-ink-900">{titel.replace(/:\s*$/, "")}</h3>
-        <ul className="mt-4 space-y-3">
-          {punkte.map((p) => (
-            <li key={p} className="flex gap-3 text-[15px] leading-relaxed text-ink-700">
-              <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${neu ? "bg-ov-100 text-ov-700" : "bg-ink-200 text-ink-500"}`}>
-                <Icon aria-hidden="true" className="h-3 w-3" strokeWidth={3} />
-              </span>
-              {p}
-            </li>
-          ))}
-        </ul>
-      </div>
+      <CtaBand
+        eyebrow="Repowering"
+        title="Holen Sie aus Ihrem Dach wieder das Maximum heraus."
+        text="Wir prüfen Ihre Bestandsanlage, rechnen Tausch, Erweiterung und Speicher ehrlich durch – mit EAG-Förderung und Finanzierung – und setzen die beste Variante aus einer Hand um."
+        primary={{ label: "Repowering-Check anfragen", href: "#anfrage" }}
+        secondary={{ label: "Speicher nachrüsten", href: "/gewerbespeicher", icon: BatteryCharging }}
+      />
     </div>
   );
 }

@@ -8,12 +8,12 @@ import { LiveDot } from "@/components/ui/LiveTicker";
 import { dynamischBrutto, TARIF_ANNAHMEN } from "@/lib/energy";
 
 /**
- * Live-Börsenstrompreis (Day-Ahead DE-LU) für heute und – sobald veröffentlicht –
+ * Live-Börsenstrompreis (Day-Ahead, Gebotszone AT) für heute und – sobald veröffentlicht –
  * morgen, stündlich gemittelt. Hebt das günstigste 3-Stunden-Fenster hervor.
  * Server liefert einen Startwert (SEO, kein leerer Zustand), der Client aktualisiert.
  */
 
-const TZ = "Europe/Berlin";
+const TZ = "Europe/Vienna";
 const fmtTag = new Intl.DateTimeFormat("sv-SE", { timeZone: TZ });
 const fmtStunde = new Intl.DateTimeFormat("de-DE", { timeZone: TZ, hour: "2-digit", hourCycle: "h23" });
 const fmtDatum = new Intl.DateTimeFormat("de-DE", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
@@ -22,7 +22,7 @@ const FENSTER = 3;
 
 const ct = (n, s = 1) => n.toLocaleString("de-DE", { minimumFractionDigits: s, maximumFractionDigits: s });
 
-/** Punkte (15 min) -> Stundenwerte je Kalendertag (Berlin) */
+/** Punkte (15 min) -> Stundenwerte je Kalendertag (österreichische Zeit) */
 function stundenJeTag(punkte) {
   const tage = new Map();
   for (const p of punkte) {
@@ -151,7 +151,7 @@ export default function BoersenpreisChart({ initial }) {
       <div className="flex flex-col gap-5 border-b border-ink-100 p-6 md:p-8 xl:flex-row xl:items-center xl:justify-between">
         <div>
           <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
-            <LiveDot className="bg-ov-500" /> Live · Day-Ahead-Börse DE-LU
+            <LiveDot className="bg-ov-500" /> Live · Day-Ahead-Börse Österreich
           </p>
           <h3 className="ov-h3 mt-2 text-ink-900">
             Börsenstrompreis {aktiverKey ? <span className="text-ink-500">– {fmtDatum.format(new Date(stunden[0]?.t || Date.now()))}</span> : null}
@@ -331,8 +331,8 @@ export default function BoersenpreisChart({ initial }) {
 
       <div className="flex flex-col gap-4 border-t border-ink-100 px-6 py-5 md:px-8 lg:flex-row lg:items-center lg:justify-between">
         <p className="text-[12.5px] leading-relaxed text-ink-500">
-          Datenquelle: {quelleText}, Day-Ahead-Auktion Gebotszone DE-LU
-          {stand ? `, Stand ${fmtUhrzeit.format(new Date(stand))} Uhr` : ""}. Endpreis = Börsenpreis + ca. {ct(TARIF_ANNAHMEN.aufschlagCt)} ct Netzentgelte, Abgaben &amp; Marge + 19 % MwSt. – grobe Orientierung, je nach Netzgebiet und Anbieter verschieden.
+          Datenquelle: {quelleText}, Day-Ahead-Auktion Gebotszone AT
+          {stand ? `, Stand ${fmtUhrzeit.format(new Date(stand))} Uhr` : ""}. Endpreis = Börsenpreis + ca. {ct(TARIF_ANNAHMEN.aufschlagCt)} ct Netzentgelte, Abgaben &amp; Lieferantenaufschlag + {Math.round(TARIF_ANNAHMEN.mwst * 100)} % USt. – grobe Orientierung, je nach Netzgebiet und Anbieter verschieden.
         </p>
         <div className="flex shrink-0 flex-wrap gap-x-5 gap-y-2 text-[14px] font-semibold">
           <Link href="/energie-live" className="inline-flex items-center gap-1.5 text-ov-700 hover:text-ov-800">

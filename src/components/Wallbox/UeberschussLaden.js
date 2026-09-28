@@ -4,8 +4,6 @@ import { useMemo, useState } from "react";
 import { Sun, CloudSun, PlugZap, Car, Leaf } from "lucide-react";
 import Regler from "./Regler";
 import { WALLBOX } from "@/data/wallbox";
-import { ANNAHMEN } from "@/data/solarrechner";
-import { VERGUETUNG } from "@/data/einspeiseverguetung";
 
 /**
  * „Das Auto lädt mit der Sonne": Tagesverlauf in Viertelstunden.
@@ -24,8 +22,9 @@ const FARBEN = {
 const START = 5; // 05:00
 const SCHRITTE = 76; // bis 24:00
 const DT = 0.25; // Stunden je Schritt
-const NETZ_CT = Math.round(ANNAHMEN.strompreis * 1000) / 10;
-const SOLAR_CT = VERGUETUNG.saetze[0].teileinspeisung; // entgangene Einspeisevergütung
+// Preisannahmen Österreich (Richtwerte, Stand 09/2026) aus @/data/wallbox
+const NETZ_CT = WALLBOX.preiseAt.netzstromCt;
+const SOLAR_CT = WALLBOX.preiseAt.marktpreisCt; // entgangener Erlös aus der Einspeisung
 
 // Auf 2 Nachkommastellen runden: Math.exp liefert in Node und Browser
 // minimal unterschiedliche Ziffern – ungerundet gäbe es Hydration-Fehler.
@@ -249,8 +248,8 @@ export default function UeberschussLaden() {
 
       <p className="border-t border-ink-100 px-6 py-4 text-[12.5px] leading-relaxed text-ink-500 md:px-8">
         Vereinfachte Veranschaulichung: 10-kWp-Anlage, 11-kW-Wallbox, {WALLBOX.verbrauchProHundert} kWh/100 km. Beim Überschussladen ist das Auto ab 8 Uhr zu Hause
-        (z. B. Wochenende, Homeoffice); was bis 20 Uhr fehlt, lädt ab 22 Uhr aus dem Netz. Kosten: Netzstrom {fmt(NETZ_CT)} ct/kWh, Solarstrom mit der
-        entgangenen Einspeisevergütung von {fmt(SOLAR_CT, 1)} ct/kWh bewertet (Stand 2026, Orientierung).
+        (z. B. Wochenende, Homeoffice); was bis 20 Uhr fehlt, lädt ab 22 Uhr aus dem Netz. Kosten: Netzstrom {fmt(NETZ_CT)} ct/kWh, Solarstrom mit dem
+        entgangenen Marktpreis bei Einspeisung von {fmt(SOLAR_CT, 1)} ct/kWh bewertet (Richtwerte Österreich, Stand 2026).
       </p>
     </div>
   );

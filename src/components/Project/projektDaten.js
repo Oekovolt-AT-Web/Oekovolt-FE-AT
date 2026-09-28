@@ -71,9 +71,12 @@ export function ortVon(p) {
     .trim();
 }
 
-const OESTERREICH = ["salzburg", "vorarlberg", "innsbruck", "lustenau", "lochau", "wallgau-at"];
+// Orte, die das Backoffice ohne Landangabe liefert. Österreichische Orte werden
+// erkannt; für alle anderen bleibt das Land offen (null), statt es zu raten.
+// Liefert die API ein Feld "land", hat es Vorrang (normalisiereApiProjekt).
+const OESTERREICH = ["salzburg", "vorarlberg", "innsbruck", "lustenau", "lochau", "ostermiething", "wien", "linz", "graz", "klagenfurt", "bregenz", "eisenstadt", "st. pölten", "sankt pölten", "wels", "steyr", "braunau am inn", "ried im innkreis", "hallein"];
 export function landVon(ort = "") {
-  return OESTERREICH.includes(ort.toLowerCase()) ? "Österreich" : "Deutschland";
+  return OESTERREICH.includes(String(ort).toLowerCase()) ? "Österreich" : null;
 }
 
 export function bilderVon(p) {
@@ -127,6 +130,7 @@ export function normalisiereApiProjekt(p) {
     slug: projektSlug(p) || basis.slug,
     titel: p?.projekt_name || basis.titel,
     ort: p?.ort || basis.ort,
+    land: p?.land || landVon(p?.ort || basis.ort) || basis.land,
     jahr: p?.jahr || basis.jahr,
     segment: p?.objekt || basis.segment,
     dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
@@ -175,6 +179,10 @@ export function zaehle(projekte, feld) {
   return [...m.entries()].sort((a, b) => b[1] - a[1]);
 }
 
-/** Überschlägiger Jahresertrag – Orientierung Süddeutschland */
-export const ERTRAG_JE_KWP = 1000; // kWh je kWp und Jahr (Allgäu/Oberschwaben, gute Ausrichtung ~950–1.150)
-export const HAUSHALT_KWH = 4000; // Jahresverbrauch eines 3–4-Personen-Haushalts
+/**
+ * Überschlägiger Jahresertrag – Orientierung Österreich. PVGIS (EU JRC) liefert
+ * für Süd 35° in den Landeshauptstädten 1.112–1.352 kWh je kWp; bei gemischter
+ * Ausrichtung (Ost-West, Flachdach) liegt der Wert niedriger. Richtwert, kein Messwert.
+ */
+export const ERTRAG_JE_KWP = 1050; // kWh je kWp und Jahr
+export const HAUSHALT_KWH = 3500; // Jahresverbrauch eines Mehrpersonenhaushalts in Österreich (Richtwert)

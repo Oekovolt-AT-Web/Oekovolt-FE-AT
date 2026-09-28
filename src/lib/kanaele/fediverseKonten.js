@@ -8,14 +8,14 @@ export const FEDIVERSE_KONTEN = [
     name: "oekovolt",
     titel: "Ökovolt – News & Presse",
     kurz: "News & Presse",
-    text: "Pressemitteilungen, Projekte und Neuigkeiten aus dem Unternehmen – auch für Kommunen, Stadtwerke und Partner.",
+    text: "Pressemitteilungen, Projekte und Neuigkeiten von Ökovolt Österreich – auch für Gemeinden, Stadtwerke, Landesversorger und Partner.",
     profilPfad: "/presse",
   },
   {
     name: "ratgeber",
     titel: "Ökovolt Ratgeber",
     kurz: "Fachartikel",
-    text: "Neue Fachartikel zu Photovoltaik, Speicher, Wärmepumpe, Förderung und Recht.",
+    text: "Neue Fachartikel zu Photovoltaik für Gewerbe, Speicher, Förderung und Recht in Österreich.",
     profilPfad: "/ratgeber",
   },
 ];

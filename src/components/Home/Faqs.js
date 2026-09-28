@@ -1,42 +1,13 @@
 // components/FaqSection.jsx
-// FAQ-Akkordeon – Keywords: photovoltaikanlagen kosten (2.9K),
-// solaranlage mit speicher (22.2K), photovoltaik wartung (170)
+// FAQ-Akkordeon (derzeit nicht eingebunden)
 
 "use client";
 
 import { useState } from "react";
+import { FAQ_KATEGORIEN } from "@/data/faqs";
 
-const FAQ_ITEMS = [
-    {
-        question: "Was kostet eine Photovoltaikanlage mit Speicher?",
-        answer:
-            "Pauschal lässt sich das nicht beantworten – die Kosten hängen von der Anlagengröße, der Speicherkapazität, der Dachform und dem Montageaufwand ab. Deshalb kalkulieren wir jede Photovoltaikanlage mit Speicher individuell für Ihr Zuhause. Kontaktieren Sie uns einfach – wir erstellen Ihnen schnell eine genaue Einschätzung für Ihr Dach.",
-    },
-    {
-        question: "Lohnt sich eine Solaranlage mit Speicher?",
-        answer:
-            "Ja – in den meisten Fällen deutlich. Ohne Speicher nutzen Sie nur etwa 30 % Ihres Solarstroms selbst, mit Speicher bis zu 80 %. Bei steigenden Strompreisen amortisiert sich eine Solaranlage mit Speicher typischerweise innerhalb von 10 bis 15 Jahren – bei einer Lebensdauer von 25 Jahren und mehr.",
-    },
-    {
-        question: "Wie lange dauert die Installation?",
-        answer:
-            "Die Montage auf einem Einfamilienhaus dauert in der Regel 1 bis 3 Tage. Von der Auftragserteilung bis zur Inbetriebnahme – inklusive Netzanmeldung – vergehen je nach Region meist 6 bis 12 Wochen. Wir übernehmen den gesamten Prozess für Sie.",
-    },
-    {
-        question: "Übernimmt Ökovolt auch Wartung und Service?",
-        answer:
-            "Ja. Mit unserem Service für Photovoltaik Wartung und dem KI-Monitoring Ökosys überwachen wir Ihre Anlage permanent, erkennen Fehler automatisch und beheben sie schnell – damit Ihre Anlage dauerhaft Höchstleistung bringt.",
-    },
-    {
-        question: "Funktioniert der Speicher auch bei Stromausfall?",
-        answer:
-            "Mit unserer Notstrombox ja: Sie beziehen auch bei Netzstörungen Strom aus Ihrem Speicher und bleiben unabhängig versorgt. Eine Standard-Anlage ohne Notstromfunktion schaltet bei Netzausfall aus Sicherheitsgründen ab.",
-    },
-    {
-        question: "Kann ich die Solaranlage mit einer Wärmepumpe kombinieren?",
-        answer: "Ja – die Kombination aus Solaranlage und Wärmepumpe ist besonders effizient: Ihr eigener Solarstrom betreibt die Heizung, und Ihre Stromkosten sinken doppelt. Wir planen beide Systeme perfekt aufeinander abgestimmt. Mehr dazu auf unserer Wärmepumpen-Seite."
-    }
-];
+// Österreich: Inhalte aus der zentralen FAQ-Datenquelle (Gewerbe & Wirtschaftlichkeit)
+const FAQ_ITEMS = (FAQ_KATEGORIEN.find((k) => k.id === "gewerbe")?.items || []).slice(0, 6).map((it) => ({ question: it.q, answer: it.a }));
 
 const FaqItem = ({ item, isOpen, onToggle, panelId }) => {
     return (

@@ -1,9 +1,30 @@
-// produkte/smartmeter/page.js
+// src/app/produkte/smartmeter/page.js
+//
+// Smart Meter & Energiemanagement – Österreich (Stand 09/2026).
+//   - Rollout nach IME-VO faktisch abgeschlossen: ~97 % Ende 2025
+//     (Oesterreichs Energie, https://oesterreichsenergie.at/smart-meter/roll-out)
+//   - ElWG § 54: nur noch Opt-in (Viertelstundenwerte) oder Opt-out; kein
+//     Opt-out bei meldepflichtigen Anlagen, dynamischem Tarif,
+//     Energiegemeinschaft (https://netz-noe.at/energiezukunft/elwg-zu-smart-meter)
+//   - Netzbetreiber = Messstellenbetreiber; Kosten im regulierten Messentgelt
+// Keine Backoffice-Texte mehr (die API lieferte die deutsche Rechtslage).
 
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Activity, ArrowRight, BarChart3, CalendarClock, Gauge, Home, PlugZap, RefreshCw, ShieldCheck, Sun, TrendingDown, Zap } from "lucide-react";
+import {
+  Activity,
+  ArrowRight,
+  BarChart3,
+  Cpu,
+  Gauge,
+  Home,
+  LineChart,
+  MonitorDot,
+  Share2,
+  ShieldCheck,
+  SlidersHorizontal,
+  TrendingDown,
+  Zap,
+} from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -16,173 +37,134 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import Zaehlervergleich from "@/components/Smartmeter/Zaehlervergleich";
 import PflichtCheck from "@/components/Smartmeter/PflichtCheck";
 import LivePreis from "@/components/Smartmeter/LivePreis";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA } from "@/lib/site";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_meter_page.api.get_smart_meter_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/produkte/smartmeter";
+const PFAD = "/produkte/smartmeter";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-async function fetchSmartMeterData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: "GET",
-      headers: headers,
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const TITLE = "Smart Meter: Pflicht, Kosten & Einbau 2026 | Ökovolt";
+const TITLE = "Smart Meter & Energiemanagement Österreich | Ökovolt";
 const DESCRIPTION =
-  "Smart Meter einfach erklärt: Wer 2026 zum Einbau verpflichtet ist, was er kostet und wie Sie mit § 14a EnWG & dynamischem Tarif sparen. Jetzt Pflicht prüfen!";
+  "Smart Meter in Österreich: Viertelstundenwerte, Opt-out nach ElWG, Kundenportale der Netzbetreiber – und wie Betriebe mit Lastgang und EMS Kosten senken.";
 
-export async function generateMetadata() {
-  const seoData = await fetchSmartMeterData();
-  const defaultKeywords = ["Smart Meter", "Smart Meter Pflicht", "intelligentes Messsystem", "digitaler Stromzähler", "Smart Meter Kosten"];
-  const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const bild = "https://www.oekovolt.com/og-image.jpg";
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Smart Meter Österreich", "Smart Meter Opt-out", "Viertelstundenwerte", "ElWG Smart Meter", "Lastprofilzähler", "Energiemanagementsystem Gewerbe"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
     title: TITLE,
     description: DESCRIPTION,
-    keywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: "Ökovolt Smart Meter" }],
-    },
-    twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
-  };
-}
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Smart Meter im Zählerschrank" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-const img = (p, fallback = "/Images/Dienstleistungen/Smartphone/smart-guard-scaled.jpg") => (p ? `/api/image?path=${p}` : fallback);
-
-const FUNKTION_ICONS = [Activity, Sun, TrendingDown, RefreshCw];
-
-const FALLBACK_FUNKTIONEN = [
-  { primary_paragraph: "Energieflüsse in Echtzeit erfassen", description: "Produktion und Verbrauch werden alle 15 Minuten gemessen – per App oder Kundenportal jederzeit im Blick." },
-  { primary_paragraph: "Eigenverbrauch optimieren", description: "Die Datenbasis, um Solarstrom gezielt dann zu nutzen, wenn er verfügbar ist." },
-  { primary_paragraph: "Dynamische Stromtarife nutzen", description: "E-Auto oder Wärmepumpe laufen, wenn der Strompreis am niedrigsten ist." },
-  { primary_paragraph: "Automatische Datenübertragung", description: "Das Gateway überträgt die Daten verschlüsselt – Ablesetermine entfallen." },
+const NETZBETREIBER = [
+  "Netz Oberösterreich",
+  "Linz Netz",
+  "Salzburg Netz",
+  "Wiener Netze",
+  "Netz Niederösterreich",
+  "Energienetze Steiermark",
+  "Energie Graz Netz",
+  "KNG-Kärnten Netz",
+  "TINETZ",
+  "IKB",
+  "Vorarlberger Energienetze",
+  "Netz Burgenland",
 ];
 
-const KOSTEN = [
-  { fall: "Jahresverbrauch bis 6.000 kWh, PV bis 7 kW", zaehler: "Digitaler Zähler", preis: "20 €" },
-  { fall: "Smart Meter freiwillig (auf Wunsch)", zaehler: "Smart Meter", preis: "30 € + einmalig bis 100 €" },
-  { fall: "Verbrauch 6.001–10.000 kWh", zaehler: "Smart Meter", preis: "40 €" },
-  { fall: "Verbrauch 10.001–20.000 kWh, PV über 7 bis 15 kW oder § 14a-Gerät", zaehler: "Smart Meter", preis: "50 €" },
-  { fall: "Verbrauch 20.001–50.000 kWh oder PV über 15 bis 25 kW", zaehler: "Smart Meter", preis: "110 €" },
-  { fall: "Verbrauch 50.001–100.000 kWh oder PV über 25 bis 100 kW", zaehler: "Smart Meter", preis: "140 €" },
-  { fall: "Steuerungseinrichtung (z. B. PV über 7 kW, § 14a)", zaehler: "Steuerbox", preis: "bis 50 €" },
+const GEWERBE = [
+  { icon: LineChart, title: "Lastgang auswerten", text: "Die Viertelstundenwerte der letzten zwölf Monate sind die Grundlage für PV-Dimensionierung, Speicherauslegung und Tarifwahl." },
+  { icon: TrendingDown, title: "Leistungspreis senken", text: "Mit Lastprofilzähler zählt jede Spitze. Energiemanagement und Speicher kappen sie gezielt.", href: "/gewerbespeicher" },
+  { icon: Cpu, title: "Energiemanagement (EMS)", text: "Ein EMS steuert PV, Speicher, Ladeinfrastruktur und Wärmepumpe nach Erzeugung, Lastgang und Preis." },
+  { icon: SlidersHorizontal, title: "Einspeiselimit & Netzvorgaben", text: "Am Netzanschlusspunkt regelt unser Parkregler Wirk- und Blindleistung nach den Vorgaben des Netzbetreibers.", href: "/technik/parkregler" },
+  { icon: MonitorDot, title: "Monitoring & SCADA", text: "Standortübergreifende Überwachung von Erzeugung und Verbrauch – mit eigenen Fernwartungs- und SCADA-Systemen.", href: "/technik/scada" },
+  { icon: Share2, title: "Energiegemeinschaften", text: "Viertelstundenwerte sind Voraussetzung für die Teilnahme an EEG, BEG und GEA.", href: "/energiegemeinschaften" },
 ];
 
 const FAQ = [
   {
-    q: "Wer muss 2026 einen Smart Meter einbauen lassen?",
-    a: "Pflicht ist ein intelligentes Messsystem bei einem Jahresstromverbrauch über 6.000 kWh, bei PV-Anlagen mit mehr als 7 kW installierter Leistung und bei steuerbaren Verbrauchseinrichtungen nach § 14a EnWG wie Wärmepumpe oder Wallbox. Der Messstellenbetreiber baut schrittweise nach gesetzlichen Quoten ein – bis 2032 sollen 90 % der Pflichtfälle ausgestattet sein. Ablehnen können Sie den Einbau nicht.",
+    q: "Kann ich den Smart Meter in Österreich ablehnen?",
+    a: "Den Einbau des digitalen Zählers nicht, wohl aber die Viertelstundenmessung: Haushaltskunden können nach § 54 Abs. 2 ElWG der Speicherung und Übertragung von Tages- und Viertelstundenwerten widersprechen (Opt-out). Ausgeschlossen ist das unter anderem bei PV-Anlage, Wallbox, Wärmepumpe oder Speicher, bei dynamischem Tarif und bei Teilnahme an einer Energiegemeinschaft.",
   },
   {
-    q: "Was kostet ein Smart Meter?",
-    a: "Die Kosten sind gesetzlich gedeckelt (§ 30 MsbG). Haushalte zahlen je nach Verbrauch bzw. PV-Leistung höchstens 40 € (6.001–10.000 kWh) oder 50 € im Jahr (10.001–20.000 kWh, PV über 7 bis 15 kW, § 14a-Gerät). Eine zusätzlich nötige Steuerungseinrichtung kostet höchstens 50 € im Jahr. Wer freiwillig umrüstet, zahlt 30 € im Jahr und einmalig bis zu 100 €.",
+    q: "Wer baut den Smart Meter ein und was kostet er?",
+    a: "Den Zähler stellt und betreibt immer der zuständige Netzbetreiber. Einen vom Netzbetreiber getrennten Messstellenbetreiber gibt es in Österreich nicht. Die Kosten sind im regulierten Messentgelt enthalten, das auf der Netzrechnung ausgewiesen wird.",
   },
   {
-    q: "Was ist der Unterschied zwischen digitalem Zähler und Smart Meter?",
-    a: "Ein digitaler Zähler (moderne Messeinrichtung) zeigt Verbrauchswerte nur im Display an und sendet keine Daten. Erst mit einem Smart-Meter-Gateway wird daraus ein intelligentes Messsystem: Es misst viertelstündlich, überträgt die Daten verschlüsselt und ermöglicht dynamische Tarife sowie die Steuerung nach § 14a EnWG.",
+    q: "Wo sehe ich meine Viertelstundenwerte?",
+    a: "Im Kundenportal Ihres Netzbetreibers, meist ab dem Folgetag. Dort lassen sich die Werte auch als Datei herunterladen – genau diese Datei brauchen wir für eine fundierte PV- und Speicherplanung. Echtzeitwerte für das Energiemanagement liefert die Kundenschnittstelle des Zählers, die je nach Netzbetreiber freigeschaltet werden muss.",
   },
   {
-    q: "Kann ich einen Smart Meter freiwillig bekommen?",
-    a: "Ja. Seit 2025 haben alle Haushalte einen Anspruch auf den Einbau eines intelligenten Messsystems. Der grundzuständige Messstellenbetreiber muss innerhalb von vier Monaten nach Ihrem Wunsch einbauen. Das lohnt sich vor allem, wenn Sie einen dynamischen Stromtarif nutzen möchten.",
+    q: "Was ändert sich mit dem ElWG für den Smart Meter?",
+    a: "Seit Inkrafttreten des ElWG Ende 2025 gibt es nur noch zwei Einstellungen: Opt-in mit Viertelstundenwerten oder Opt-out mit reduzierter Auslesung. Die Netzbetreiber stellen Zähler schrittweise auf Viertelstundenwerte um (§ 54 Abs. 3 ElWG). Wer bereits ein Opt-out gewählt hat und keine meldepflichtigen Anlagen betreibt, behält es.",
   },
   {
     q: "Brauche ich für einen dynamischen Stromtarif einen Smart Meter?",
-    a: "Ja. Ein dynamischer Tarif rechnet jede Viertelstunde zum aktuellen Börsenpreis ab – dafür muss Ihr Verbrauch viertelstündlich gemessen und übertragen werden. Seit 2025 ist jeder Stromlieferant verpflichtet, einen solchen Tarif anzubieten.",
+    a: "Ja. Ein dynamischer Tarif rechnet nach dem Day-Ahead-Preis der Gebotszone Österreich ab – dafür muss Ihr Verbrauch in Viertelstundenwerten gemessen und übertragen werden. Ein Opt-out ist mit dynamischem Tarif nicht möglich.",
   },
   {
-    q: "Was hat der Smart Meter mit meiner PV-Anlage zu tun?",
-    a: "Seit dem Solarspitzengesetz (Februar 2025) dürfen neue PV-Anlagen ohne intelligentes Messsystem und Steuerungseinrichtung nur 60 % ihrer Leistung ins Netz einspeisen. Mit Smart Meter entfällt diese Begrenzung, und die Einspeisung lässt sich steuern. Ab 7 kW ist das Messsystem ohnehin Pflicht.",
+    q: "Welche Messung haben Gewerbebetriebe?",
+    a: "Betriebe mit mehr als 100.000 kWh Jahresverbrauch oder über 50 kW Anschlussleistung werden in der Regel mit Lastprofilzähler gemessen. Dann fallen neben dem Arbeitspreis leistungsabhängige Netzentgelte an – und jede Lastspitze zählt. Mit Energiemanagement, Speicher und PV lassen sich diese Kosten gezielt senken.",
   },
   {
     q: "Sind meine Daten beim Smart Meter sicher?",
-    a: "Das Smart-Meter-Gateway muss vom Bundesamt für Sicherheit in der Informationstechnik (BSI) zertifiziert sein. Die Daten werden verschlüsselt übertragen, und nur berechtigte Stellen wie Netzbetreiber und Stromlieferant erhalten die Werte, die sie für Abrechnung und Netzbetrieb brauchen.",
+    a: "Die Werte werden verschlüsselt an den Netzbetreiber übertragen und nur für Abrechnung, Netzbetrieb und die von Ihnen beauftragten Zwecke verwendet. Weitergaben, etwa an einen Energiedienstleister, erfolgen nur mit Ihrer Zustimmung. Den Umfang der Datenerfassung steuern Sie über Opt-in und Opt-out, soweit kein Ausschlussgrund vorliegt.",
   },
 ];
 
-export default async function SmartmeterPage() {
-  const data = await fetchSmartMeterData();
-
-  const webPageSchema = {
+export default function SmartmeterPage() {
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${PAGE_URL}/#webpage`,
-    url: PAGE_URL,
-    name: "Smart Meter: Pflicht, Kosten & Einbau | Ökovolt Österreich",
-    description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${PAGE_URL}/#webpage`,
+        url: PAGE_URL,
+        name: TITLE,
+        description: DESCRIPTION,
+        inLanguage: "de-AT",
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+        about: { "@id": `${PAGE_URL}/#service` },
+      },
+      {
+        "@type": "Service",
+        "@id": `${PAGE_URL}/#service`,
+        name: "Messkonzept und Energiemanagement",
+        serviceType: "Lastganganalyse, Messkonzept und Energiemanagementsysteme",
+        description: DESCRIPTION,
+        provider: { "@id": `${BASE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
+        url: PAGE_URL,
+      },
+    ],
   };
-
-  const funktionen = (data?.smart_meter_first_card_table?.length ? data.smart_meter_first_card_table : FALLBACK_FUNKTIONEN).map((f, i) => ({
-    icon: FUNKTION_ICONS[i % FUNKTION_ICONS.length],
-    title: f.primary_paragraph,
-    text: f.description,
-  }));
-  const wasIst = data?.smart_meter_second_card_description_table?.map((d) => d.description) || [
-    "Ein Smart Meter ist ein intelligentes Messsystem aus digitalem Stromzähler und Smart-Meter-Gateway. Es misst den Stromverbrauch alle 15 Minuten und überträgt die Daten verschlüsselt an Netzbetreiber und Energieversorger.",
-  ];
-  // Die Pflicht-Absätze kommen im Backoffice in umgekehrter Reihenfolge
-  const pflichtText = data?.smart_meter_third_card_description_table?.slice().reverse().map((d) => d.description) || [];
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
-        breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Smart Meter" }]}
-        eyebrow={data?.smart_meter_subtitle || "Intelligentes Messsystem"}
-        title={<>Smart Meter: Pflicht, Kosten & Nutzen <span className="ov-text-gradient">einfach erklärt</span></>}
-        lead={
-          data?.smart_meter_description?.trim() ||
-          "Ein Smart Meter ist ein digitaler Stromzähler mit Kommunikationsmodul, der Ihren Verbrauch alle 15 Minuten erfasst und die Daten automatisch überträgt."
+        breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Smart Meter & EMS" }]}
+        eyebrow="Smart Meter · Energiemanagement"
+        title={
+          <>
+            Smart Meter in Österreich – <span className="ov-text-gradient">und was Betriebe daraus machen</span>
+          </>
         }
-        image={{ src: img(data?.smart_meter_first_card_image), alt: data?.smart_meter_first_card_alt_image || "Elektrotechniker arbeitet am Zählerschrank" }}
-        points={["Pflicht-Check in 30 Sekunden", "Kosten gesetzlich gedeckelt", "Grundlage für dynamische Tarife", "Voraussetzung für § 14a EnWG"]}
+        lead="Der Smart Meter des Netzbetreibers misst Verbrauch und Einspeisung in Viertelstundenwerten. Für Haushalte ist er Grundlage für dynamische Tarife und Energiegemeinschaften, für Betriebe die Datenbasis für PV-Planung, Peak Shaving und Energiemanagement."
+        image={{ src: "/Images/Dienstleistungen/Smartphone/smart-guard-scaled.jpg", alt: "Elektrotechniker arbeitet am Zählerschrank" }}
+        points={["Opt-in oder Opt-out nach ElWG", "Viertelstundenwerte im Kundenportal", "Lastgang als Planungsgrundlage", "Energiemanagement für Gewerbe"]}
         actions={[
-          { label: "Beratung & Angebot anfragen", href: "/angebot" },
-          { label: "Pflicht prüfen", href: "#pflicht-check", icon: ShieldCheck },
+          { label: "Beratung anfragen", href: "/angebot" },
+          { label: "Smart-Meter-Check", href: "#pflicht-check", icon: ShieldCheck },
         ]}
         badge={
           <div className="flex items-center gap-4">
@@ -202,17 +184,24 @@ export default async function SmartmeterPage() {
       <Section tone="white" space="lg">
         <SplitMedia
           eyebrow="Einfach erklärt"
-          title={data?.smart_meter_second_card_title || "Was genau ist ein Smart Meter?"}
-          image={{ src: img(data?.smart_meter_second_card_image), alt: data?.smart_meter_second_card_alt_image || "Smart Meter im Zählerschrank" }}
-          text={wasIst}
+          title="Was ist ein Smart Meter in Österreich?"
+          image={{ src: "/Images/Ratgeber/energiemanagementsystem.jpg", alt: "Energiedaten auf einem Bildschirm" }}
+          text={[
+            "Ein Smart Meter ist ein digitaler Stromzähler mit Kommunikationsmodul, den der Netzbetreiber einbaut und betreibt. Grundlage des Rollouts war die Intelligente Messgeräte-Einführungsverordnung (IME-VO); Ende 2025 hatten laut Oesterreichs Energie rund 97 % der Zählpunkte ein digitales Messgerät.",
+            "Seit dem Elektrizitätswirtschaftsgesetz (ElWG) gibt es zwei Einstellungen: Opt-in mit Viertelstundenwerten oder Opt-out mit reduzierter Auslesung. Wer eine PV-Anlage, Wallbox, Wärmepumpe oder einen Speicher betreibt, misst immer in Viertelstundenwerten.",
+          ]}
         />
       </Section>
 
       <Section tone="sand" space="lg" id="zaehlerarten">
         <SectionHeading
-          eyebrow="Zählerarten im Vergleich"
-          title={<>Analog, digital oder <span className="ov-text-gradient">smart</span>?</>}
-          lead="Nicht jeder neue Zähler ist ein Smart Meter. Klicken Sie sich durch die drei Zählerarten, die heute in deutschen Kellern hängen."
+          eyebrow="Zähler und Einstellungen"
+          title={
+            <>
+              Analog, Opt-out oder <span className="ov-text-gradient">Viertelstunde</span>?
+            </>
+          }
+          lead="Nicht jeder digitale Zähler liefert dieselben Daten. Klicken Sie sich durch die drei Varianten, die heute in österreichischen Zählerschränken vorkommen."
           align="center"
           className="mb-12"
         />
@@ -225,17 +214,21 @@ export default async function SmartmeterPage() {
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <SectionHeading
-              eyebrow="Smart-Meter-Pflicht"
-              title={data?.smart_meter_third_card_title || "Wann wird ein Smart Meter zur Pflicht?"}
-              lead="Pflicht ist das intelligente Messsystem ab 6.000 kWh Jahresverbrauch, ab 7 kW PV-Leistung und für steuerbare Geräte nach § 14a EnWG."
+              eyebrow="Opt-out oder Viertelstunde?"
+              title="Welche Messung gilt für Sie?"
+              lead="Ein Opt-out nach § 54 Abs. 2 ElWG ist nur möglich, wenn keine meldepflichtige Anlage, kein dynamischer Tarif und keine Energiegemeinschaft vorliegt. Betriebe über 100.000 kWh werden in der Regel ohnehin mit Lastprofilzähler gemessen."
             />
-            {pflichtText.length > 0 && (
-              <Reveal delay={100} className="mt-8 space-y-4 border-l-2 border-ov-300 pl-6 text-[16px] leading-relaxed text-ink-600">
-                {pflichtText.map((t) => (
-                  <p key={t.slice(0, 40)} className="ov-measure">{t}</p>
+            <Reveal delay={100} className="mt-8 space-y-4 border-l-2 border-ov-300 pl-6 text-[16px] leading-relaxed text-ink-600">
+              <p className="ov-measure">Die Viertelstundenwerte stellen die Netzbetreiber in ihren Kundenportalen bereit, in der Regel ab dem Folgetag und als Download.</p>
+              <p className="ov-measure">Zuständig ist immer der Netzbetreiber Ihres Standorts, zum Beispiel:</p>
+              <ul className="flex flex-wrap gap-2">
+                {NETZBETREIBER.map((n) => (
+                  <li key={n} className="rounded-full bg-sand-50 px-3 py-1.5 text-[13.5px] font-medium text-ink-700 ring-1 ring-ink-200/70">
+                    {n}
+                  </li>
                 ))}
-              </Reveal>
-            )}
+              </ul>
+            </Reveal>
           </div>
           <Reveal delay={120} className="lg:sticky lg:top-28 lg:self-start">
             <PflichtCheck />
@@ -243,61 +236,56 @@ export default async function SmartmeterPage() {
         </div>
       </Section>
 
+      {/* Gewerbe */}
       <Section tone="navy" space="lg" className="overflow-hidden">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
         <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              dark
-              eyebrow="Im Smart Energy Home"
-              title={data?.smart_meter_first_card_title_table || "Funktionen eines Smart Meters"}
-              lead={data?.smart_meter_first_card_description}
-            />
-            {data?.smart_meter_image && (
-              <Reveal dir="left" className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[2rem] lg:block">
-                <Image src={img(data.smart_meter_image)} alt={data.smart_meter_alt_image || ""} fill sizes="40vw" className="object-cover" />
-              </Reveal>
-            )}
-          </div>
-          <FeatureGrid items={funktionen} cols={2} tone="dark" className="lg:self-center" />
+        <div className="relative">
+          <SectionHeading
+            dark
+            eyebrow="Für Betriebe"
+            title="Vom Lastgang zum Energiemanagement"
+            lead="Im Gewerbe ist der Zähler die wichtigste Datenquelle: Aus dem Lastgang ergeben sich PV-Größe, Speicherbedarf und Einsparpotenzial beim Leistungspreis. Ein Energiemanagementsystem setzt das im Betrieb um."
+            className="mb-12"
+          />
+          <FeatureGrid items={GEWERBE} cols={3} tone="dark" />
         </div>
       </Section>
 
       <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow="Sparen mit Smart Meter"
-          title="Zwei Hebel, die sich 2026 wirklich lohnen"
-          lead="Ein Smart Meter spart nicht von allein. Seinen Wert entfaltet er über reduzierte Netzentgelte und günstige Börsenstunden."
+          eyebrow="Nutzen für Haushalt und Betrieb"
+          title="Zwei Hebel, die Viertelstundenwerte erst möglich machen"
+          lead="Ein Smart Meter spart nicht von allein. Seinen Wert entfaltet er über Energiegemeinschaften und dynamische Tarife."
           className="mb-12"
         />
         <div className="grid gap-5 lg:grid-cols-2">
           <Reveal className="flex">
             <div className="flex w-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70 md:p-8">
               <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-600">
-                <PlugZap aria-hidden="true" className="h-4 w-4" />
-                § 14a EnWG
+                <Share2 aria-hidden="true" className="h-4 w-4" />
+                Energiegemeinschaften
               </p>
-              <h3 className="ov-h3 mt-3 text-ink-900">Weniger Netzentgelt für Wärmepumpe & Wallbox</h3>
+              <h3 className="ov-h3 mt-3 text-ink-900">Strom teilen in Gemeinde und Nachbarschaft</h3>
               <p className="mt-3 text-[15.5px] leading-relaxed text-ink-600">
-                Steuerbare Verbrauchseinrichtungen über 4,2 kW – Wärmepumpe, Wallbox, Klimagerät oder Batteriespeicher – darf der Netzbetreiber bei Engpässen kurzzeitig
-                auf 4,2 kW drosseln. Dafür sinken Ihre Netzentgelte dauerhaft. Voraussetzung: intelligentes Messsystem und Steuerbox.
+                In Erneuerbare-Energie-Gemeinschaften, Bürgerenergiegemeinschaften und gemeinschaftlichen Erzeugungsanlagen ordnet der Netzbetreiber den geteilten Strom
+                Viertelstunde für Viertelstunde zu. Ab 1. Oktober 2026 regelt das ElWG diese Modelle neu und ergänzt Peer-to-Peer-Verträge.
               </p>
               <ul className="mt-6 grid gap-3 sm:grid-cols-3">
                 {[
-                  { t: "Modul 1", w: "pauschal", d: "Rabatt aufs Netzentgelt, meist rund 110–190 € im Jahr" },
-                  { t: "Modul 2", w: "−60 %", d: "auf den Arbeitspreis mit separatem Zähler" },
-                  { t: "Modul 3", w: "zeitvariabel", d: "günstigere Netzentgelte zu Schwachlastzeiten (zu Modul 1)" },
+                  { t: "EEG", w: "lokal/regional", d: "reduzierte Netzentgelte im Nahbereich" },
+                  { t: "BEG", w: "österreichweit", d: "ohne Netzentgelt-Reduktion" },
+                  { t: "GEA", w: "im Gebäude", d: "ohne öffentliches Netz" },
                 ].map((m) => (
                   <li key={m.t} className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
                     <p className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">{m.t}</p>
-                    <p className="mt-1 font-display text-[19px] font-extrabold text-ink-900">{m.w}</p>
+                    <p className="mt-1 font-display text-[17px] font-extrabold text-ink-900">{m.w}</p>
                     <p className="mt-1 text-[13px] leading-snug text-ink-500">{m.d}</p>
                   </li>
                 ))}
               </ul>
-              <Link href="/produkte/wallbox" className="group mt-auto inline-flex h-11 items-center gap-2 pt-6 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-                Wallbox mit § 14a-Rabatt
+              <Link href="/energiegemeinschaften" className="group mt-auto inline-flex h-11 items-center gap-2 pt-6 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                Energiegemeinschaften im Detail
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -308,65 +296,12 @@ export default async function SmartmeterPage() {
         </div>
       </Section>
 
-      <Section tone="sand" space="lg" id="kosten">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Kosten 2026"
-              title={data?.smart_meter_fourth_card_title || "Was kostet ein Smart Meter?"}
-              lead={
-                data?.smart_meter_fourth_card_description ||
-                "Die Kosten für Einbau und Betrieb sind im Messstellenbetriebsgesetz über Preisobergrenzen geregelt."
-              }
-            />
-            <Reveal delay={80} className="mt-8 grid grid-cols-2 gap-3">
-              {[
-                { i: CalendarClock, w: "4 Monate", l: "Einbaufrist bei freiwilligem Wunsch" },
-                { i: BarChart3, w: "90 %", l: "Pflichtfälle bis 2032 ausgestattet" },
-              ].map((k) => (
-                <div key={k.l} className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                  <k.i aria-hidden="true" className="h-5 w-5 text-ov-600" />
-                  <p className="mt-2 font-display text-[22px] font-extrabold text-ink-900">{k.w}</p>
-                  <p className="text-[13px] leading-snug text-ink-500">{k.l}</p>
-                </div>
-              ))}
-            </Reveal>
-          </div>
-          <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Preisobergrenzen für Messstellen" className="overflow-x-auto rounded-3xl bg-white ring-1 ring-ink-200/70">
-              <table className="w-full text-left text-[14.5px] sm:min-w-[520px] sm:text-[15px]">
-                <caption className="sr-only">Preisobergrenzen für Messstellen nach § 30 MsbG, Anteil Anschlussnutzer, brutto pro Jahr, Stand 2026</caption>
-                <thead className="border-b border-ink-100 text-[13px] uppercase tracking-wider text-ink-500">
-                  <tr>
-                    <th scope="col" className="px-5 py-4 font-semibold">Ihr Fall</th>
-                    <th scope="col" className="hidden px-5 py-4 font-semibold sm:table-cell">Zähler</th>
-                    <th scope="col" className="whitespace-nowrap px-4 py-4 text-right font-semibold sm:px-5">max. / Jahr</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100">
-                  {KOSTEN.map((k) => (
-                    <tr key={k.fall} className="transition-colors hover:bg-ov-50/50">
-                      <th scope="row" className="px-4 py-4 font-medium text-ink-800 sm:px-5">{k.fall}<span className="mt-0.5 block text-[12.5px] font-normal text-ink-500 sm:hidden">{k.zaehler}</span></th>
-                      <td className="hidden whitespace-nowrap px-5 py-4 text-ink-500 sm:table-cell">{k.zaehler}</td>
-                      <td className="ov-num px-4 py-4 text-right font-display font-bold text-ink-900 sm:whitespace-nowrap sm:px-5">{k.preis}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-4 text-[13px] leading-relaxed text-ink-500">
-              Anteil des Anschlussnutzers laut § 30 MsbG, brutto, Stand September 2026. Weitere Anteile trägt der Netzbetreiber. Liegen mehrere Fälle vor, gilt die höhere Grenze.
-            </p>
-          </Reveal>
-        </div>
-      </Section>
-
-      <Section tone="white" space="lg">
+      <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading
             eyebrow="Häufige Fragen"
             title="Smart Meter – kurz & ehrlich beantwortet"
-            lead="Sie planen PV, Wärmepumpe oder Wallbox? Dann denken wir die Messtechnik von Anfang an mit."
+            lead="Sie planen PV, Speicher, Wärmepumpe oder Ladeinfrastruktur? Dann denken wir Messung und Energiemanagement von Anfang an mit."
           >
             <div className="mt-7 flex flex-col gap-2">
               <Link href="/produkte/smartenergyhome" className="group inline-flex h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
@@ -376,7 +311,12 @@ export default async function SmartmeterPage() {
               </Link>
               <Link href="/energie-live" className="group inline-flex h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
                 <Zap aria-hidden="true" className="h-4 w-4" />
-                Strompreis live verfolgen
+                Strommarkt Österreich live
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link href="/service/energieberatung" className="group inline-flex h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                <BarChart3 aria-hidden="true" className="h-4 w-4" />
+                Lastganganalyse & Energieberatung
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
@@ -385,12 +325,12 @@ export default async function SmartmeterPage() {
         </div>
       </Section>
 
-      <Querverweise pfad="/produkte/smartmeter" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
-        title="Smart Meter, PV & Steuerung – sauber geplant aus einer Hand."
-        text="Wir prüfen Ihren Zählerschrank, planen Messkonzept und Energiemanagement und stimmen alles mit Ihrem Netzbetreiber ab – vom Fachbetrieb aus Türkheim."
-        primary={{ label: "Beratung & Angebot anfragen", href: "/angebot" }}
-        secondary={{ label: "Dynamischen Tarif prüfen", href: "/service/stromtarif" }}
+        title="Messung, PV & Steuerung – sauber geplant aus einer Hand."
+        text={`${FIRMA.name} aus ${FIRMA.ort} wertet Ihren Lastgang aus, plant Energiemanagement und Regelung und stimmt alles mit Ihrem Netzbetreiber ab – in ganz Österreich.`}
+        primary={{ label: "Beratung anfragen", href: "/angebot" }}
+        secondary={{ label: "Dynamischen Tarif prüfen", href: "/service/stromtarif", icon: Activity }}
       />
     </div>
   );

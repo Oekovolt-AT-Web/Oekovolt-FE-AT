@@ -14,8 +14,12 @@ import { usePathname } from "next/navigation";
  * - Widerruf: Messung wird sofort gestoppt und die _ga-Cookies werden gelöscht.
  * - Seiten mit Einmal-Tokens (/scan, /fortsetzen) und die Info-Bildschirme (/tv) werden nie gemessen;
  *   von URL-Parametern werden nur utm_* übertragen.
+ *
+ * WICHTIG (Österreich): www.oekovolt.com braucht eine EIGENE GA4-Property. Bewusst KEIN
+ * Rückfall auf die Mess-ID der deutschen Website – sonst liefe die AT-Seite in die
+ * DE-Statistik. Ohne NEXT_PUBLIC_GA_ID wird nichts geladen und nichts gerendert.
  */
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-CQ40N7W7PG";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 const AUSGENOMMEN = /^\/(scan|fortsetzen|tv)(\/|$)/;
 
 export function statistikErlaubt() {
@@ -90,24 +94,28 @@ function seitenaufruf(pfad) {
 }
 
 export default function GoogleAnalytics() {
+  // Ohne eigene AT-Mess-ID ist die Komponente inaktiv (Hooks laufen trotzdem, Effekte brechen früh ab).
+  const aktiv = Boolean(GA_ID);
   const pfad = usePathname();
   const [erlaubt, setErlaubt] = useState(null); // null = noch nicht geprüft
 
   useEffect(() => {
+    if (!aktiv) return undefined;
     const pruefen = () => setErlaubt(statistikErlaubt());
     pruefen();
     window.addEventListener("ov-consent", pruefen);
     return () => window.removeEventListener("ov-consent", pruefen);
-  }, []);
+  }, [aktiv]);
 
   useEffect(() => {
+    if (!aktiv) return;
     if (erlaubt) laden();
     else if (erlaubt === false) stoppen(); // auch alte _ga-Cookies nach einem Widerruf entfernen
-  }, [erlaubt]);
+  }, [aktiv, erlaubt]);
 
   useEffect(() => {
-    if (erlaubt) seitenaufruf(pfad);
-  }, [erlaubt, pfad]);
+    if (aktiv && erlaubt) seitenaufruf(pfad);
+  }, [aktiv, erlaubt, pfad]);
 
   return null;
 }

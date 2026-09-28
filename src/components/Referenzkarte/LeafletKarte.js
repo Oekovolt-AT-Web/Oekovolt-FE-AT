@@ -18,6 +18,11 @@ function icon(aktiv, sitz) {
   });
 }
 
+const OESTERREICH = [
+  [46.37, 9.53],
+  [49.02, 17.16],
+];
+
 function Steuerung({ auswahl, standorte, markerRefs }) {
   const map = useMap();
   useEffect(() => {
@@ -33,7 +38,12 @@ function Steuerung({ auswahl, standorte, markerRefs }) {
 
 export default function LeafletKarte({ standorte, auswahl, onWahl, projekteJeOrt = {} }) {
   const markerRefs = useRef({});
-  const grenzen = useMemo(() => L.latLngBounds(standorte.filter((s) => s.lat < 49).map((s) => [s.lat, s.lng])).pad(0.08), [standorte]);
+  // Kartenausschnitt: alle Standorte; bei weniger als zwei Punkten ganz Österreich
+  const grenzen = useMemo(() => {
+    const punkte = standorte.filter((s) => s.lat < 49.1).map((s) => [s.lat, s.lng]);
+    return punkte.length > 1 ? L.latLngBounds(punkte).pad(0.08) : L.latLngBounds(OESTERREICH);
+  }, [standorte]);
+  const sitzLabel = standorte.find((s) => s.sitz)?.label || "Ostermiething";
 
   return (
     <MapContainer bounds={grenzen} scrollWheelZoom={false} className="h-full w-full" style={{ background: "#0b1b33" }}>
@@ -52,9 +62,9 @@ export default function LeafletKarte({ standorte, auswahl, onWahl, projekteJeOrt
           eventHandlers={{ click: () => onWahl(s.id) }}
         >
           <Popup>
-            <strong>{s.sitz ? "Ökovolt – Firmensitz Türkheim" : s.label}</strong>
+            <strong>{s.sitz ? `Ökovolt – Firmensitz ${s.label}` : s.label}</strong>
             <br />
-            {s.sitz ? "Planung, Montage & Service" : `${s.land} · ${s.km} km von Türkheim`}
+            {s.sitz ? "Planung, Montage & Service" : `${s.land} · ${s.km} km von ${sitzLabel}`}
             {s.projekte?.length > 0 ? (
               <ul style={{ margin: "8px 0 0", padding: 0, listStyle: "none" }}>
                 {s.projekte.map((p) => (

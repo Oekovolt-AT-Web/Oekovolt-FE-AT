@@ -1,5 +1,6 @@
 "use client";
 
+import { FIRMA } from "@/lib/site";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -157,7 +158,7 @@ export default function RueckrufWidget() {
                   <p ref={titel} id="ov-rueckruf-titel" tabIndex={-1} className="font-display text-[19px] font-extrabold leading-tight focus:outline-none">
                     Persönlich beraten lassen
                   </p>
-                  <p className="mt-1 text-[13.5px] text-white/65">Kostenlos und unverbindlich – vom Fachbetrieb aus Türkheim.</p>
+                  <p className="mt-1 text-[13.5px] text-white/65">Kostenlos und unverbindlich – aus Ostermiething für ganz Österreich.</p>
                 </div>
                 <button type="button" onClick={schliessen} aria-label="Schließen" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-white/20">
                   <X aria-hidden="true" className="h-4 w-4" />
@@ -214,9 +215,9 @@ export default function RueckrufWidget() {
                 </div>
               )}
 
-              <a href="tel:+498245967880" className="mt-5 flex items-center justify-center gap-2 border-t border-ink-100 pt-4 text-[14px] text-ink-600 hover:text-ov-700">
+              <a href={FIRMA.telefonHref} className="mt-5 flex items-center justify-center gap-2 border-t border-ink-100 pt-4 text-[14px] text-ink-600 hover:text-ov-700">
                 <Phone aria-hidden="true" className="h-4 w-4 text-ov-600" />
-                Lieber direkt anrufen: <span className="font-semibold text-ink-900">08245 96 788 0</span>
+                Lieber direkt anrufen: <span className="font-semibold text-ink-900">{FIRMA.telefon}</span>
               </a>
             </div>
           </div>

@@ -1,9 +1,35 @@
-// produkte/stromspeicher/page.js
+// src/app/produkte/stromspeicher/page.js
+//
+// Produktseite Stromspeicher – Österreich. Schwerpunkt Gewerbespeicher
+// (C&I, Container, Peak Shaving, Ersatzstrom), Heimspeicher nachgeordnet.
+//
+// Aus dem Backoffice kommt nur noch die Herstellerliste (Karten mit Link auf
+// /produkte/stromspeicher/[slug]). Alle Fließtexte sind statisch und auf die
+// österreichische Rechtslage geprüft (Stand 09/2026):
+//   - EAG-Investitionszuschuss Speicher: max. 50 kWh netto, nur gemeinsam mit
+//     dem PV-Antrag (OeMAG, https://www.oem-ag.at/foerderung)
+//   - Brandschutz: OVE-Richtlinie R 20, OIB-Richtlinie 2 (Batterieräume)
+//   - Smart Meter: Opt-out mit Speicher nicht möglich (§ 54 Abs. 2 ElWG)
 
-import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BatteryCharging, Calculator, Moon, Sun, TrendingDown, Zap, Shield } from "lucide-react";
+import {
+  ArrowRight,
+  BatteryCharging,
+  Calculator,
+  Container,
+  Flame,
+  Gauge,
+  Home,
+  LineChart,
+  Moon,
+  PlugZap,
+  Share2,
+  ShieldAlert,
+  Sun,
+  TrendingDown,
+  Warehouse,
+} from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,189 +39,179 @@ import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import Fliesstext from "@/components/Reusable/Fliesstext";
 import SpeicherTagesverlauf from "@/components/stromspeicher/SpeicherTagesverlauf";
 import { generateSlug } from "@/lib/slugify";
+import { istBelegterPartner } from "@/components/Produktdetail/HerstellerDetail";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/produkte/stromspeicher";
+const PFAD = "/produkte/stromspeicher";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-async function fetchStromspeicherData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
+const TITLE = "Stromspeicher für Gewerbe & Gebäude | Ökovolt";
+const DESCRIPTION =
+  "Gewerbe- und Heimspeicher in Österreich: Peak Shaving, Eigenverbrauch, Ersatzstrom und Brandschutz nach OVE R 20 – geplant nach Lastgang, fachgerecht errichtet.";
 
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Stromspeicher", "Gewerbespeicher", "Batteriespeicher Gewerbe", "Peak Shaving", "Stromspeicher Österreich", "Ersatzstrom"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
+
+/** Herstellerliste aus dem Backoffice – fällt der Abruf aus, entfällt nur dieser Abschnitt. */
+async function fetchSpeicherHersteller() {
+  if (!isApiConfigured()) return [];
   try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
+    const response = await fetch(DATA_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
     if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
+      console.error(`Stromspeicher-API: HTTP ${response.status}`);
+      return [];
     }
-
     const data = await response.json();
-    return data.message;
+    // Nur Marken mit belegter Zusammenarbeit in Österreich zeigen
+    return (data?.message?.strom_second_card_table || []).filter((i) => i?.title && istBelegterPartner(i.title));
   } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
+    console.error("Stromspeicher-API:", error);
+    return [];
   }
-}
-
-export async function generateMetadata() {
-  const seoData = await fetchStromspeicherData();
-
-  const defaultKeywords = ["Stromspeicher", "Batteriespeicher", "Solarstromspeicher", "Energiespeicher", "Photovoltaik Speicher"];
-
-  if (!seoData) {
-    // Fallback metadata if API fails
-    return {
-      title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
-      description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
-      keywords: defaultKeywords,
-      alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-      robots: { index: true, follow: true },
-      openGraph: {
-        type: "website",
-
-        url: PAGE_URL,
-        siteName: "Ökovolt Österreich",
-        title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
-        description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
-        images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: "Stromspeicher für Photovoltaik nachrüsten | Ökovolt",
-        description: "Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!",
-        images: ["https://www.oekovolt.com/og-image.jpg"]
-      },
-    };
-  }
-
-  const apiKeywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const title = "Stromspeicher für Photovoltaik nachrüsten | Ökovolt";
-  const description ="Batteriespeicher für Ihre Photovoltaikanlage: bis zu 80 % Eigenverbrauch, Notstromfunktion inklusive – Beratung, Installation & Nachrüstung vom Profi!";
-
-  return {
-    title,
-    description,
-    keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title,
-      description,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Stromspeicher" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["https://www.oekovolt.com/og-image.jpg"]
-    },
-  };
 }
 
 const img = (p, fallback = "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg") => (p ? `/api/image?path=${p}` : fallback);
 
-const VORTEIL_ICONS = [Shield, Sun, TrendingDown, Zap];
+const NUTZEN = [
+  { icon: TrendingDown, title: "Peak Shaving", text: "Der Speicher kappt Lastspitzen, etwa bei Schichtbeginn oder beim Anlauf großer Maschinen. Das senkt den leistungsabhängigen Teil des Netzentgelts." },
+  { icon: Sun, title: "Eigenverbrauch erhöhen", text: "Mittagsüberschüsse werden in die Abend- und Nachtstunden verschoben, statt sie zum Marktpreis einzuspeisen." },
+  { icon: ShieldAlert, title: "Ersatzstrom & Blackout-Vorsorge", text: "Mit netzbildendem Wechselrichter versorgt der Speicher bei Netzausfall kritische Verbraucher – von der Kühlung bis zur IT.", href: "/service/notstrom" },
+  { icon: PlugZap, title: "Netzanschluss entlasten", text: "Ladeinfrastruktur oder neue Maschinen trotz begrenzter Anschlussleistung betreiben – der Speicher puffert die Spitzen.", href: "/ladeinfrastruktur" },
+  { icon: LineChart, title: "Günstige Stunden nutzen", text: "Mit Spotpreis-Tarif lädt der Speicher bei niedrigen Day-Ahead-Preisen der Gebotszone Österreich und entlädt bei hohen.", href: "/energie-live" },
+  { icon: Share2, title: "Energiegemeinschaften", text: "In Erneuerbare-Energie-Gemeinschaften und GEA hält der Speicher mehr Strom im Nahbereich.", href: "/energiegemeinschaften" },
+];
+
+const KLASSEN = [
+  {
+    klasse: "Heimspeicher",
+    groesse: "ca. 5–30 kWh",
+    aufstellung: "Technikraum, Garage, Keller",
+    einsatz: "Premium-Wohnhaus, Chalet, Kleinbetrieb",
+  },
+  {
+    klasse: "Gewerbespeicher (C&I-Schrank)",
+    groesse: "ca. 50–500 kWh",
+    aufstellung: "Outdoor-Schrank oder eigener Aufstellraum",
+    einsatz: "Handwerk, Handel, Hotellerie, Landwirtschaft",
+  },
+  {
+    klasse: "Containerspeicher",
+    groesse: "ab ca. 1 MWh",
+    aufstellung: "Freiaufstellung mit Fundament, häufig mit Trafo",
+    einsatz: "Industrie, Freiflächenanlage, Ladeparks",
+  },
+];
 
 const FAQ = [
   {
-    q: "Lohnt sich ein Stromspeicher 2026 noch?",
-    a: "In den meisten Einfamilienhäusern ja. Eingespeister Solarstrom bringt nur noch rund 7–8 Cent je kWh, Netzstrom kostet dagegen über 30 Cent. Jede Kilowattstunde, die der Speicher abends statt des Netzes liefert, spart also die Differenz. Entscheidend ist die richtige Größe – ein überdimensionierter Speicher amortisiert sich deutlich langsamer.",
+    q: "Lohnt sich ein Gewerbespeicher?",
+    a: "Er lohnt sich vor allem dann, wenn er mehrere Aufgaben gleichzeitig erfüllt: Lastspitzen kappen, PV-Überschüsse verschieben und bei Bedarf Ersatzstrom liefern. Ein Speicher nur für den Eigenverbrauch rechnet sich im Gewerbe seltener, weil der Tagverbrauch den Solarstrom oft ohnehin aufnimmt. Wir bewerten das auf Basis Ihres Lastgangs in Viertelstundenwerten.",
   },
   {
-    q: "Wie groß sollte mein Stromspeicher sein?",
-    a: "Als Faustregel gilt etwa 1 kWh Speicherkapazität je 1.000 kWh Jahresverbrauch, begrenzt durch die Anlagengröße. Ein 4-Personen-Haushalt mit 4.500 kWh liegt damit meist bei 5–8 kWh. Mit Wärmepumpe oder E-Auto kann mehr sinnvoll sein. Unser Stromspeicher-Rechner zeigt Ihnen die passende Größe.",
+    q: "Wie funktioniert Peak Shaving mit einem Speicher?",
+    a: "Das Energiemanagement misst laufend den Bezug am Netzanschlusspunkt. Droht eine Viertelstunde über einen festgelegten Schwellwert zu steigen, entlädt der Speicher und hält den Bezug darunter. Weil der leistungsabhängige Teil des Netzentgelts an den höchsten Viertelstundenwerten hängt, sinkt so die Netzrechnung. Entscheidend ist, dass der Speicher vor der Spitze ausreichend geladen ist.",
   },
   {
-    q: "Kann ich einen Speicher an meine bestehende PV-Anlage nachrüsten?",
-    a: "Ja. Je nach Wechselrichter wird der Speicher DC-seitig (Hybridwechselrichter) oder AC-seitig mit eigenem Batteriewechselrichter eingebunden. Wir prüfen Ihre Bestandsanlage und empfehlen die wirtschaftlichste Variante.",
+    q: "Welche Brandschutzvorgaben gelten für Batteriespeicher?",
+    a: "Maßgeblich sind die OVE-Richtlinie R 20 für stationäre Energiespeichersysteme und die OIB-Richtlinie 2 in der jeweiligen Landesumsetzung, die Batterieräume als Räume mit erhöhter Brandgefahr behandelt. Je nach Größe sind ein eigener Aufstellraum oder eine Outdoor-Aufstellung mit Abständen nötig. Wir stimmen das Konzept mit Feuerwehr, Behörde und Versicherung ab und kennzeichnen die Anlage für Einsatzkräfte.",
   },
   {
-    q: "Wie lange hält ein Batteriespeicher?",
-    a: "Moderne Lithium-Eisenphosphat-Speicher (LFP) sind auf 6.000 und mehr Vollzyklen ausgelegt – bei rund 250 Zyklen pro Jahr entspricht das weit über 15 Jahren. Viele Hersteller geben 10 Jahre Garantie auf eine definierte Restkapazität.",
+    q: "Gibt es eine Förderung für Stromspeicher in Österreich?",
+    a: "Auf Bundesebene wird ein Speicher im Rahmen des EAG-Investitionszuschusses gefördert – bis maximal 50 kWh Nettokapazität und nur gemeinsam mit dem Förderantrag für die Photovoltaikanlage. Die Fördersätze werden je Fördercall festgelegt. Einzelne Bundesländer fördern zusätzlich. Wir prüfen das vor der Bestellung.",
   },
   {
-    q: "Habe ich mit Speicher auch bei Stromausfall Strom?",
-    a: "Nur, wenn das System notstrom- oder ersatzstromfähig ausgelegt ist. Viele Speicher bieten diese Funktion optional – etwa über eine Notstrombox, die bei Netzausfall ausgewählte Stromkreise oder das ganze Haus versorgt. Das planen wir auf Wunsch direkt mit ein.",
+    q: "Versorgt der Speicher den Betrieb bei einem Stromausfall?",
+    a: "Nur, wenn er dafür ausgelegt ist. Ersatzstrom braucht einen netzbildenden Wechselrichter, eine Netztrenneinrichtung und eine Aufteilung in versorgte und nicht versorgte Stromkreise. Wir planen das nach einer Liste der kritischen Verbraucher und der gewünschten Überbrückungszeit.",
+  },
+  {
+    q: "Kann ich einen Speicher an eine bestehende PV-Anlage nachrüsten?",
+    a: "Ja. Je nach Wechselrichter wird der Speicher DC-seitig über einen Hybrid-Wechselrichter oder AC-seitig mit eigenem Batterie-Wechselrichter eingebunden. Im Gewerbe ist die AC-Kopplung üblich, weil sie unabhängig von den bestehenden PV-Wechselrichtern funktioniert. Der Speicher ist dem Netzbetreiber zu melden.",
+  },
+  {
+    q: "Wie groß sollte ein Heimspeicher sein?",
+    a: "Als Faustregel gilt rund 1 kWh Speicherkapazität je 1.000 kWh Jahresverbrauch, begrenzt durch die Größe der PV-Anlage. Mit Wärmepumpe oder E-Auto kann mehr sinnvoll sein. Ein überdimensionierter Speicher wird im Winter selten voll und verlängert die Amortisation.",
   },
 ];
 
 export default async function StromspeicherPage() {
-  const data = await fetchStromspeicherData();
+  const produkte = await fetchSpeicherHersteller();
 
-  const webPageSchema = {
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${PAGE_URL}/#webpage`,
-    url: PAGE_URL,
-    name: data?.title || "Stromspeicher kaufen | Ökovolt Österreich",
-    description: data?.description || "Hochwertige Stromspeicher für Photovoltaikanlagen. Maximieren Sie Ihren Eigenverbrauch und werden Sie energieunabhängig mit unseren intelligenten Speicherlösungen.",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${PAGE_URL}/#webpage`,
+        url: PAGE_URL,
+        name: TITLE,
+        description: DESCRIPTION,
+        inLanguage: "de-AT",
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+        about: { "@id": `${PAGE_URL}/#service` },
+      },
+      {
+        "@type": "Service",
+        "@id": `${PAGE_URL}/#service`,
+        name: "Stromspeicher für Gewerbe und Gebäude",
+        serviceType: "Planung und Errichtung von Batteriespeichern",
+        description: DESCRIPTION,
+        provider: { "@id": `${BASE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
+        url: PAGE_URL,
+      },
+    ],
   };
-
-  const produkte = data?.strom_second_card_table || [];
-  const vorteile = (data?.storm_third_card_options || []).map((o, i) => ({
-    icon: VORTEIL_ICONS[i % VORTEIL_ICONS.length],
-    title: o.subtitle,
-    text: o.paragraph,
-  }));
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Stromspeicher" }]}
-        eyebrow={data?.strom_title || "Stromspeicher"}
-        title={data?.strom_subtitle || "Solarstrom speichern – und abends selbst nutzen"}
-        lead={data?.strom_description || "Mit einem Batteriespeicher nutzen Sie den Strom Ihrer Photovoltaikanlage auch dann, wenn die Sonne nicht scheint."}
-        image={{ src: img(data?.strom_banner_image), alt: data?.strom_banner_image_alt || "Stromspeicher im Hausanschlussraum" }}
-        points={["Eigenverbrauch deutlich steigern", "Nachrüstbar für Bestandsanlagen", "Optional mit Notstromfunktion", "Markenspeicher mit Herstellergarantie"]}
+        eyebrow="Stromspeicher · Gewerbe & Gebäude"
+        title={
+          <>
+            Stromspeicher, die <span className="ov-text-gradient">mehr als Eigenverbrauch</span> können
+          </>
+        }
+        lead="Ein Gewerbespeicher kappt Lastspitzen, verschiebt Solarstrom in die Abendstunden und hält bei Netzausfall den Betrieb am Laufen. Wir planen Heim-, Gewerbe- und Containerspeicher nach Ihrem Lastgang – mit Brandschutzkonzept und sauberer Einbindung in PV-Anlage und Energiemanagement."
+        image={{ src: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg", alt: "Batteriespeicher im Technikraum" }}
+        points={["Peak Shaving nach Lastgang", "Ersatzstrom & Blackout-Vorsorge", "Brandschutz nach OVE R 20", "Nachrüstbar für Bestandsanlagen"]}
         actions={[
-          { label: "Speicher-Angebot anfragen", href: "/angebot" },
+          { label: "Speicherprojekt anfragen", href: "/angebot" },
           { label: "Größe berechnen", href: "/rechner/stromspeicher", icon: Calculator },
         ]}
         badge={
           <div className="flex items-center gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <BatteryCharging aria-hidden="true" className="h-6 w-6" />
+              <Gauge aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
-                ~ 25 ct <span className="text-[14px] font-semibold text-ink-500">Vorteil</span>
-              </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">je selbst genutzter statt eingespeister kWh</p>
+              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">Viertelstunde für Viertelstunde</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">ausgelegt auf Ihren echten Lastgang</p>
             </div>
           </div>
         }
@@ -203,23 +219,134 @@ export default async function StromspeicherPage() {
 
       <FeaturedLogos />
 
-      {data?.strom_first_card_title && (
-        <Section tone="white" space="lg">
-          <SplitMedia
-            eyebrow="Warum ein Speicher"
-            title={data.strom_first_card_title}
-            image={{ src: img(data.strom_first_card_image), alt: data.strom_first_card_image_alt }}
-          >
-            <Fliesstext text={data.strom_first_card_description} className="mt-5 text-[16.5px] leading-relaxed text-ink-600" />
-          </SplitMedia>
-        </Section>
-      )}
-
-      <Section tone="sand" space="lg">
+      {/* Nutzen */}
+      <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow="So funktioniert es"
-          title={<>Tagsüber laden, <span className="ov-text-gradient">abends sparen</span></>}
-          lead="Mittags erzeugt Ihre Anlage mehr, als Sie verbrauchen – abends ist es umgekehrt. Der Speicher schließt genau diese Lücke. Schalten Sie um und sehen Sie den Unterschied."
+          eyebrow="Wofür ein Speicher"
+          title={
+            <>
+              Sechs Aufgaben, <span className="ov-text-gradient">ein Batteriesystem</span>
+            </>
+          }
+          lead="Ein Stromspeicher im Betrieb rechnet sich, wenn er mehrere Erlöse gleichzeitig erzielt. Welche davon bei Ihnen zählen, zeigt der Lastgang."
+          className="mb-12"
+        />
+        <FeatureGrid items={NUTZEN} cols={3} />
+      </Section>
+
+      {/* Speicherklassen */}
+      <Section tone="sand" space="lg" id="speicherklassen">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Heim, Gewerbe, Container"
+            title="Welche Speicherklasse passt?"
+            lead="Die Größe folgt der Aufgabe: Für Peak Shaving zählt die Entladeleistung in kW, für Lastverschiebung die Kapazität in kWh. Die Größenordnungen sind typische Werte, keine festen Grenzen."
+          />
+          <Reveal delay={100}>
+            <div tabIndex={0} role="region" aria-label="Speicherklassen im Vergleich" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+              <table className="w-full min-w-[620px] border-collapse text-left text-[15px]">
+                <caption className="sr-only">Speicherklassen für Heim, Gewerbe und Industrie</caption>
+                <thead>
+                  <tr className="bg-navy-950 text-white">
+                    <th scope="col" className="px-5 py-4 font-semibold">Klasse</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Typische Kapazität</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Aufstellung</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Einsatz</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ink-100 bg-white">
+                  {KLASSEN.map((k) => (
+                    <tr key={k.klasse}>
+                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{k.klasse}</th>
+                      <td className="ov-num whitespace-nowrap px-5 py-4 align-top text-ink-600">{k.groesse}</td>
+                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{k.aufstellung}</td>
+                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{k.einsatz}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              {[
+                { icon: Home, text: "Heimspeicher" },
+                { icon: Warehouse, text: "C&I-Schrank" },
+                { icon: Container, text: "Container" },
+              ].map(({ icon: Icon, text }) => (
+                <p key={text} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
+                  <Icon aria-hidden="true" className="h-5 w-5 text-ov-600" />
+                  {text}
+                </p>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* Peak Shaving */}
+      <Section tone="white" space="lg" id="peak-shaving">
+        <SplitMedia
+          eyebrow="Peak Shaving"
+          title="Lastspitzen kappen, Netzentgelt senken"
+          text={[
+            "Betriebe mit Leistungsmessung zahlen neben dem Arbeitspreis ein leistungsabhängiges Netzentgelt, das sich nach den höchsten Viertelstundenwerten im Abrechnungszeitraum richtet. Eine einzige Spitze kann so die Netzrechnung eines ganzen Jahres prägen.",
+            "Der Speicher erkennt drohende Spitzen und liefert in diesen Minuten zu. Wir ermitteln aus Ihrem Lastgang, welcher Schwellwert erreichbar ist und welche Entladeleistung dafür nötig ist – bevor Sie investieren.",
+          ]}
+          points={["Auswertung der Viertelstundenwerte aus dem Netzbetreiber-Portal", "Schwellwert und Entladeleistung nach Lastgang", "Kombination mit PV-Eigenverbrauch und Ersatzstrom"]}
+          action={{ label: "Gewerbespeicher im Detail", href: "/gewerbespeicher" }}
+          image={{ src: "/Images/Ratgeber/energiemanagementsystem.jpg", alt: "Energiemanagement mit Lastgangdarstellung" }}
+        />
+      </Section>
+
+      {/* Brandschutz & Förderung */}
+      <Section tone="sand" space="lg" id="brandschutz">
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Reveal>
+            <article className="flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-9">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                <Flame aria-hidden="true" className="h-6 w-6" />
+              </span>
+              <h2 className="ov-h3 mt-6 text-ink-900">Brandschutz und Aufstellung</h2>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                Für stationäre Batteriespeicher gilt die OVE-Richtlinie R 20; baurechtlich greift die OIB-Richtlinie 2 in der Umsetzung des jeweiligen Bundeslandes, die Batterieräume als Räume mit erhöhter Brandgefahr einordnet. Wir planen Aufstellort, Abstände, Lüftung und Kennzeichnung und stimmen das Konzept mit Feuerwehr, Behörde und Versicherung ab.
+              </p>
+              <ul className="mt-5 space-y-2 text-[15px] text-ink-700">
+                <li>• LFP-Zellchemie (Lithium-Eisenphosphat) als Standard</li>
+                <li>• Eigener Aufstellraum oder Outdoor-Schrank je nach Größe</li>
+                <li>• Kennzeichnung und Abschaltung für Einsatzkräfte</li>
+              </ul>
+            </article>
+          </Reveal>
+          <Reveal delay={100}>
+            <article className="flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-9">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                <BatteryCharging aria-hidden="true" className="h-6 w-6" />
+              </span>
+              <h2 className="ov-h3 mt-6 text-ink-900">Förderung für Speicher</h2>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                Der EAG-Investitionszuschuss fördert Speicher bis maximal 50 kWh Nettokapazität – und nur gemeinsam mit dem Antrag für die Photovoltaikanlage im OeMAG-Fördercall. Die Sätze werden je Call festgelegt. Mehrere Bundesländer haben eigene Programme. Das Förderansuchen muss vor der Bestellung gestellt werden.
+              </p>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                Wichtig für den Betrieb: Ein Speicher ist dem Netzbetreiber zu melden. Mit meldepflichtiger Anlage ist ein Smart-Meter-Opt-out nach § 54 ElWG nicht möglich – die Viertelstundenwerte stehen dann für Energiemanagement und Abrechnung zur Verfügung.
+              </p>
+              <Link href="/forderungen/bundesfoerderung" className="group mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                Bundesförderung im Detail
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </article>
+          </Reveal>
+        </div>
+      </Section>
+
+      {/* Heimspeicher */}
+      <Section tone="white" space="lg" id="heimspeicher">
+        <SectionHeading
+          eyebrow="Für Privat"
+          title={
+            <>
+              Heimspeicher: tagsüber laden, <span className="ov-text-gradient">abends nutzen</span>
+            </>
+          }
+          lead="Im Wohnhaus schließt der Speicher die Lücke zwischen Mittagsüberschuss und Abendverbrauch. Das Beispiel zeigt einen Frühlingstag mit 10-kWp-Anlage, 4.500 kWh Jahresverbrauch und 8-kWh-Speicher – vereinfacht zur Veranschaulichung."
           align="center"
           className="mb-12"
         />
@@ -229,27 +356,27 @@ export default async function StromspeicherPage() {
         <div className="mt-16">
           <Steps
             items={[
-              { icon: Sun, title: "Mittags: Überschuss", text: "Die Anlage deckt Ihren Verbrauch komplett. Was übrig bleibt, fließt zuerst in den Speicher statt für wenige Cent ins Netz." },
-              { icon: BatteryCharging, title: "Nachmittags: voll geladen", text: "Ist der Speicher voll, wird der restliche Überschuss eingespeist und nach EEG vergütet." },
-              { icon: Moon, title: "Abends: Ihr eigener Strom", text: "Kochen, Waschen, Licht: Der Speicher liefert Solarstrom bis in die Nacht – Netzstrom wird zur Ausnahme." },
+              { icon: Sun, title: "Mittags: Überschuss", text: "Die Anlage deckt den Verbrauch. Was übrig bleibt, fließt zuerst in den Speicher statt zum Marktpreis ins Netz." },
+              { icon: BatteryCharging, title: "Nachmittags: voll geladen", text: "Ist der Speicher voll, geht der restliche Überschuss an Ihren Stromabnehmer – Energielieferant oder OeMAG." },
+              { icon: Moon, title: "Abends: eigener Strom", text: "Kochen, Waschen, Licht: Der Speicher liefert Solarstrom bis in die Nacht, Netzbezug wird zur Ausnahme." },
             ]}
           />
         </div>
       </Section>
 
       {produkte.length > 0 && (
-        <Section tone="white" space="lg">
+        <Section tone="sand" space="lg">
           <SectionHeading
-            eyebrow="Unsere Speicher"
-            title="Speichersysteme, die wir empfehlen"
-            lead="Geprüfte Markenhersteller, sauber integriert in Wechselrichter, Wallbox und Energiemanagement."
+            eyebrow="Hersteller"
+            title="Speichersysteme, die wir verbauen"
+            lead="Markenhersteller mit Service in Österreich, sauber integriert in Wechselrichter, Ladeinfrastruktur und Energiemanagement."
             className="mb-12"
           />
           <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {produkte.map((item, i) => (
               <Reveal as="li" key={item.title} delay={i * 80} className="flex">
                 <Link
-                  href={`/produkte/stromspeicher/${generateSlug(item.title)}`}
+                  href={`${PFAD}/${generateSlug(item.title)}`}
                   className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-ink-100">
@@ -275,46 +402,29 @@ export default async function StromspeicherPage() {
         </Section>
       )}
 
-      {vorteile.length > 0 && (
-        <Section tone="navy" space="lg" className="overflow-hidden">
-          <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-          <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-          <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-            <div>
-              <SectionHeading dark eyebrow="Ihre Vorteile" title={data?.strom_third_card_title || "Was ein Speicher für Sie leistet"} />
-              {data?.strom_third_card_image && (
-                <Reveal dir="left" className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[2rem] lg:block">
-                  <Image src={img(data.strom_third_card_image)} alt={data.strom_third_card_image_alt || ""} fill sizes="40vw" className="object-cover" />
-                </Reveal>
-              )}
-            </div>
-            <FeatureGrid items={vorteile} cols={2} tone="dark" />
-          </div>
-        </Section>
-      )}
-
       <SolarrechnerTeaser
         href="/rechner/stromspeicher"
         cta="Zum Stromspeicher-Rechner"
-        titel="Welche Speichergröße passt zu Ihnen?"
-        text="Verbrauch, Anlagengröße und E-Auto oder Wärmepumpe eingeben – der Rechner zeigt Autarkie, Ersparnis und die wirtschaftlich sinnvolle Kapazität."
+        titel="Welche Speichergröße passt?"
+        text="Verbrauch, Anlagengröße und E-Auto oder Wärmepumpe eingeben – der Rechner zeigt eine erste Einschätzung zu Autarkie und sinnvoller Kapazität. Für Gewerbe rechnen wir mit Ihrem Lastgang."
       />
 
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading
             eyebrow="Häufige Fragen"
-            title="Stromspeicher – kurz & ehrlich beantwortet"
+            title="Stromspeicher – fachlich beantwortet"
             lead="Sie haben eine andere Frage? Rufen Sie uns an – wir beraten herstellerunabhängig."
           />
           <Faq items={FAQ} />
         </div>
       </Section>
 
-      <Querverweise pfad="/produkte/stromspeicher" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
-        title="Machen Sie Ihren Solarstrom rund um die Uhr nutzbar."
-        primary={{ label: "Speicher-Angebot anfragen", href: "/angebot" }}
+        title="Speicher, die sich über mehrere Aufgaben rechnen."
+        text={`Persönliche Beratung von ${FIRMA.name} aus ${FIRMA.ort} – für Betriebe, Gemeinden und Premium-Wohnhäuser in ganz Österreich, mit Lastganganalyse und festem Ansprechpartner.`}
+        primary={{ label: "Speicherprojekt anfragen", href: "/angebot" }}
         secondary={{ label: "Speichergröße berechnen", href: "/rechner/stromspeicher" }}
       />
     </div>

@@ -15,7 +15,8 @@ export const KATEGORIEN = [
   { id: "Unternehmensnews", plural: "Unternehmensnews", farbe: "ov" },
   { id: "Projekt", plural: "Projekte", farbe: "sun" },
   { id: "Produkt & Technik", plural: "Produkt & Technik", farbe: "ov" },
-  { id: "Kommunen & Stadtwerke", plural: "Kommunen & Stadtwerke", farbe: "navy" },
+  // id = Backoffice-Wert (unverändert), Anzeige österreichisch
+  { id: "Kommunen & Stadtwerke", plural: "Gemeinden & Stadtwerke", farbe: "navy" },
   { id: "Veranstaltung", plural: "Veranstaltungen", farbe: "sun" },
 ];
 
@@ -61,7 +62,7 @@ export function normalisiere(v) {
     bildAbsolut: dateiUrl(v.bild, true),
     bildAlt: v.bild_alt || v.titel,
     anhang: v.anhang ? { url: dateiUrl(v.anhang), name: v.anhang_name || "Pressemitteilung (PDF)" } : null,
-    ort: v.ort || "Türkheim",
+    ort: v.ort || "Ostermiething",
     hashtags: String(v.hashtags || "")
       .split(/[\s,]+/)
       .map((h) => h.replace(/^#/, "").trim())

@@ -1,312 +1,334 @@
-// Ratgeber: Eigenverbrauch erhöhen
-// Wirkungen der Maßnahmen aus dem gemeinsamen Energiemodell der Rechner
-// (src/lib/rechner/profile.js, stündliche Jahressimulation). Lastverschiebung wird
-// hier vereinfacht nachgebildet: Ein fester Anteil des Tagesverbrauchs eines Geräts
-// wandert in die Stunden mit dem größten Solarüberschuss (begrenzt durch die Geräteleistung).
+// Ratgeber: Eigenverbrauch erhöhen – Schwerpunkt Gewerbe, Landwirtschaft, Hotellerie, Gemeinden (Österreich)
+// Quellen: OeMAG-Marktpreise PV 2026 (monatlich, Sommer 6,146–6,772 ct/kWh), E-Control (Elektrizitätsabgabe 2026:
+// Haushalte 0,1 ct/kWh, Unternehmen 0,82 ct/kWh; Preiskomponenten), BMF-Erlass 24.10.2025 (Strompreis 2026 für
+// Sachbezug 32,806 ct/kWh brutto als Referenz Haushaltspreis), TOR Verteilernetzanschluss NS V1.3.1 (Meldung von
+// Wärmepumpen/Ladeeinrichtungen > 3,68 kVA), Energy-Charts (Börsenpreise AT).
+// Rechenbeispiel mit offengelegten Annahmen (Bezugspreis 20 ct/kWh netto als Beispielwert).
 
-import { jahresreihen, simuliere } from "@/lib/rechner/profile";
-import { SPEICHER, SOLAR, satzFuer, fmt, fmtEur } from "@/lib/rechner/annahmen";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-
-const KWP = 10;
-const HAUSHALT = 4500;
-const EAUTO_KWH = Math.round((15000 * SPEICHER.eAutoVerbrauch * SPEICHER.eAutoLadeanteilZuhause) / 100);
-const OPT = { wirkungsgrad: SPEICHER.wirkungsgradJeRichtung, nutzbarAnteil: SPEICHER.nutzbarAnteil };
-const SATZ = satzFuer(KWP, "teileinspeisung") / 100;
-const pct = (x) => `${Math.round(x * 100)} %`;
-const ctStr = (n) => String(Math.round(n * 1000) / 10).replace(".", ",");
-
-/** Anteil eines Verbrauchers je Tag in die Überschussstunden verschieben */
-function verschiebe(r, key, anteil, kapKw) {
-  const neu = { ...r, [key]: Float64Array.from(r[key]) };
-  delete neu._bilanz;
-  const tage = r.pv.length / 24;
-  for (let d = 0; d < tage; d++) {
-    const i0 = d * 24;
-    let flex = 0;
-    for (let h = 0; h < 24; h++) {
-      const v = neu[key][i0 + h] * anteil;
-      flex += v;
-      neu[key][i0 + h] -= v;
-    }
-    const ueber = [];
-    for (let h = 0; h < 24; h++) ueber.push([h, Math.max(0, r.pv[i0 + h] - (neu.haushalt[i0 + h] + neu.eauto[i0 + h] + neu.wp[i0 + h]))]);
-    ueber.sort((a, b) => b[1] - a[1]);
-    let rest = flex;
-    for (const [h, s] of ueber) {
-      if (rest <= 0 || s <= 0) break;
-      const x = Math.min(s, kapKw, rest);
-      neu[key][i0 + h] += x;
-      rest -= x;
-    }
-    if (rest > 0) {
-      let summe = 0;
-      for (let h = 0; h < 24; h++) summe += r[key][i0 + h];
-      for (let h = 0; h < 24; h++) neu[key][i0 + h] += summe > 0 ? (rest * r[key][i0 + h]) / summe : rest / 24;
-    }
-  }
-  return neu;
-}
-
-const sim = (r, kap = 0) => simuliere(r, kap, OPT);
-/** Vergleich vorher/nachher bei gleichem Verbrauch */
-function vergleich(vorher, nachher) {
-  const mehrKwh = vorher.netz - nachher.netz;
-  const ersparnis = mehrKwh * SOLAR.strompreis - (vorher.einspeisung - nachher.einspeisung) * SATZ;
-  return { vorher, nachher, mehrKwh, ersparnis };
-}
-
-// Haushalt ohne E-Auto und Wärmepumpe
-const R_H = jahresreihen({ kwp: KWP, haushaltKwh: HAUSHALT });
-const H_BASIS = sim(R_H);
-const M_GERAETE = vergleich(H_BASIS, sim(verschiebe(R_H, "haushalt", 0.15, 2)));
-const M_SPEICHER = vergleich(H_BASIS, sim(R_H, 6));
-const M_BEIDES = vergleich(H_BASIS, sim(verschiebe(R_H, "haushalt", 0.15, 2), 6));
-// mit E-Auto
-const R_E = jahresreihen({ kwp: KWP, haushaltKwh: HAUSHALT, eAutoKwh: EAUTO_KWH });
-const M_EAUTO = vergleich(sim(R_E), sim(verschiebe(R_E, "eauto", 0.6, 11)));
-// mit Wärmepumpe
-const R_W = jahresreihen({ kwp: KWP, haushaltKwh: HAUSHALT, wpKwh: SPEICHER.wpStromKwh });
-const M_WP = vergleich(sim(R_W), sim(verschiebe(R_W, "wp", 0.3, 2.5)));
-// alles zusammen: E-Auto + Wärmepumpe, Energiemanagement, Speicher
-const R_A = jahresreihen({ kwp: KWP, haushaltKwh: HAUSHALT, eAutoKwh: EAUTO_KWH, wpKwh: SPEICHER.wpStromKwh });
-const R_A_EMS = verschiebe(verschiebe(verschiebe(R_A, "haushalt", 0.15, 2), "eauto", 0.6, 11), "wp", 0.3, 2.5);
-const A_BASIS = sim(R_A);
-const M_EMS = vergleich(A_BASIS, sim(R_A_EMS));
-const M_EMS_SP = vergleich(A_BASIS, sim(R_A_EMS, 8));
-
-const zeile = (massnahme, lage, m, invest) => [
-  `${massnahme} (${lage})`,
-  `${pct(m.vorher.eigenverbrauchsquote)} → ${pct(m.nachher.eigenverbrauchsquote)}`,
-  `+${fmt(Math.round(m.mehrKwh / 10) * 10)} kWh`,
-  fmtEur(Math.round(m.ersparnis / 5) * 5),
-  invest,
-];
-const WERT_KWH = SOLAR.strompreis - VERGUETUNG.saetze[0].teileinspeisung / 100;
+const KWP = 150;
+const ERTRAG = KWP * 1050; // kWh/Jahr, Annahme
+const BEZUG = 0.2; // €/kWh netto, Annahme
+const MARKT = 0.068; // €/kWh, gerundeter OeMAG-Sommermarktpreis PV 2026
+const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
+const kwh = (n) => Math.round(n).toLocaleString("de-DE") + " kWh";
+const wert = (q) => ERTRAG * q * BEZUG + ERTRAG * (1 - q) * MARKT;
+const zeile = (q) => [`${Math.round(q * 100)} %`, kwh(ERTRAG * q), kwh(ERTRAG * (1 - q)), eur(wert(q)), eur(wert(q) - wert(0.3))];
 
 const artikel = {
   slug: "eigenverbrauch-erhoehen",
-  title: "Eigenverbrauch erhöhen: 10 Maßnahmen für mehr Solarstrom im Haus",
-  seoTitle: "Eigenverbrauch erhöhen: 10 Maßnahmen für PV | Ökovolt",
+  title: "Eigenverbrauch erhöhen: So nutzen Betriebe mehr eigenen Solarstrom",
+  seoTitle: "Eigenverbrauch erhöhen: PV im Betrieb nutzen | Ökovolt",
   kurzTitel: "Eigenverbrauch erhöhen",
   description:
-    "Eigenverbrauch erhöhen bei Photovoltaik: 10 Maßnahmen mit berechneter Wirkung – von Lastverschiebung über Speicher bis Energiemanagement. Was sich lohnt.",
+    "Eigenverbrauch erhöhen im Betrieb: Lastgang, Lastverschiebung, Kälte, Wärme, E-Flotte, Speicher und Energiegemeinschaft – mit Rechenbeispiel Österreich 2026.",
   excerpt:
-    "Jede selbst genutzte Kilowattstunde ist gut viermal so viel wert wie eine eingespeiste. Zehn Maßnahmen im Vergleich – mit simulierter Wirkung, Kosten und den Fehlern, die Eigenverbrauch teuer machen.",
-  hauptKeyword: "eigenverbrauch erhöhen photovoltaik",
+    "Solarstrom selbst zu nutzen ist in Österreich 2026 ein Vielfaches wert wie ihn einzuspeisen. Welche Hebel Gewerbe, Landwirtschaft, Hotels und Gemeinden haben – vom Lastgang über Kälte und Wärme bis zu Speicher und Energiegemeinschaft.",
+  hauptKeyword: "eigenverbrauch erhöhen",
   keywords: [
-    "Eigenverbrauch erhöhen Photovoltaik",
-    "PV-Eigenverbrauch optimieren",
-    "Eigenverbrauch erhöhen ohne Speicher",
-    "Eigenverbrauchsquote erhöhen",
-    "Solarstrom selbst nutzen",
-    "Lastverschiebung Photovoltaik",
-    "Überschuss Photovoltaik nutzen",
+    "Eigenverbrauch erhöhen",
+    "Eigenverbrauch Photovoltaik Gewerbe",
+    "Eigenverbrauchsquote Betrieb",
+    "Lastverschiebung PV",
+    "Photovoltaik Landwirtschaft Eigenverbrauch",
+    "PV Überschuss nutzen Österreich",
+    "Autarkiegrad Unternehmen",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Speicher & Eigenverbrauch",
   bild: "/Images/Ratgeber/eigenverbrauch-erhoehen.jpg",
-  bildAlt: "Einfamilienhaus mit Photovoltaik, Huawei-Stromspeicher an der Hauswand und E-Auto an der Wallbox",
-  badge: { wert: `${ctStr(WERT_KWH)} ct`, text: "mehr wert ist jede selbst genutzte statt eingespeiste kWh" },
+  bildAlt: "Energiefluss-Anzeige einer PV-Anlage mit Speicher in einer App",
+  badge: { wert: "≈ 3×", text: "so viel ist eine selbst genutzte kWh wert wie der Sommer-Marktpreis 2026 (Beispiel)" },
 
   kurzFazit: [
-    `**Jede Kilowattstunde, die Sie selbst nutzen statt einzuspeisen, bringt rund ${ctStr(WERT_KWH)} ct** – die Differenz aus ${ctStr(SOLAR.strompreis)} ct Netzstrom und ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct Einspeisevergütung.`,
-    `Ohne Maßnahmen nutzt ein Haushalt mit ${fmt(HAUSHALT)} kWh und 10 kWp in unserer Simulation nur **${pct(H_BASIS.eigenverbrauchsquote)} des Solarstroms** selbst. Ein 6-kWh-Speicher hebt das auf ${pct(M_SPEICHER.nachher.eigenverbrauchsquote)}.`,
-    `**Kostenlos wirkt Lastverschiebung:** Wasch-, Spülmaschine und Trockner mittags laufen zu lassen, bringt im Beispiel rund ${fmtEur(Math.round(M_GERAETE.ersparnis / 5) * 5)} pro Jahr.`,
-    `**Am meisten bringt die Kombination:** Mit E-Auto, Wärmepumpe, Energiemanagement und 8-kWh-Speicher nutzt der Beispielhaushalt rund ${fmt(Math.round(M_EMS_SP.mehrKwh / 100) * 100)} kWh mehr Solarstrom selbst – etwa ${fmtEur(Math.round(M_EMS_SP.ersparnis / 5) * 5)} im Jahr.`,
+    "**Eigenverbrauch ist 2026 der wichtigste Hebel der PV-Wirtschaftlichkeit:** Eine selbst genutzte Kilowattstunde ersetzt Energiepreis, Netzentgelte und Abgaben, während eingespeister Strom im Sommer 2026 nur rund 6,1 bis 6,8 ct/kWh OeMAG-Marktpreis brachte.",
+    `**Rechenbeispiel ${KWP} kWp:** Steigt der Eigenverbrauch von 30 auf 60 %, wächst der jährliche Wert des Solarstroms in unserem Beispiel um rund ${eur(wert(0.6) - wert(0.3))} (Annahme: 20 ct/kWh Bezugspreis netto).`,
+    "**Die günstigsten Hebel sind organisatorisch:** Prozesse, Kühlung, Warmwasser und Ladevorgänge in die Mittagsstunden verlegen. Erst danach folgen Speicher, Wärmepumpen und Energiemanagement.",
+    "**Grundlage ist der Lastgang in Viertelstundenwerten** – ohne ihn wird die PV-Anlage zu groß oder zu klein geplant und Hebel werden falsch bewertet.",
   ],
 
   abschnitte: [
     {
-      id: "antwort",
-      titel: "Wie erhöhe ich den Eigenverbrauch meiner PV-Anlage?",
-      tocLabel: "Die kurze Antwort",
+      id: "begriffe",
+      titel: "Eigenverbrauchsquote und Autarkiegrad: Was ist der Unterschied?",
+      tocLabel: "Begriffe",
       bloecke: [
         {
           typ: "p",
-          text: "**Den Eigenverbrauch erhöhen Sie, indem Sie Strom dann verbrauchen, wenn die Sonne scheint – oder Solarstrom für später speichern.** Die wirksamsten Hebel sind: Haushaltsgeräte in die Mittagsstunden verschieben, einen passend dimensionierten Stromspeicher nutzen, das E-Auto mit Solarüberschuss laden, die Wärmepumpe tagsüber Warmwasser bereiten lassen und alles über ein Energiemanagementsystem koordinieren.",
-        },
-        {
-          typ: "p",
-          text: `Warum sich das lohnt, zeigt eine einfache Rechnung: Netzstrom kostet im Mittel rund ${ctStr(SOLAR.strompreis)} ct je kWh, für eingespeisten Strom erhalten neue Anlagen bis 10 kWp ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct ([Einspeisevergütung 2026](/ratgeber/einspeiseverguetung-2026)). Seit dem Solarspitzengesetz entfällt die Vergütung für neue Anlagen zudem in Stunden mit negativen Börsenstrompreisen, und ohne intelligentes Messsystem ist die Einspeisung bei Neuanlagen unter 25 kW auf 60 % der Leistung begrenzt. Selbst genutzter Strom ist davon nicht betroffen.`,
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Eigenverbrauchsquote oder Autarkiegrad?",
-          text: "Die **[Eigenverbrauchsquote](/wissen/lexikon#eigenverbrauchsquote)** gibt an, welcher Anteil des erzeugten Solarstroms im Haus genutzt wird. Der **[Autarkiegrad](/wissen/lexikon#autarkiegrad)** sagt, welcher Anteil des Verbrauchs aus der eigenen Anlage stammt. Eine kleine Anlage hat eine hohe Quote, deckt aber wenig vom Verbrauch. Ziel ist deshalb nicht die höchste Quote, sondern möglichst viele selbst genutzte Kilowattstunden.",
-        },
-      ],
-    },
-    {
-      id: "wirkung",
-      titel: "Was die Maßnahmen bringen: Simulation für typische Haushalte",
-      tocLabel: "Wirkung im Vergleich",
-      bloecke: [
-        {
-          typ: "p",
-          text: `Die folgenden Werte stammen aus der stündlichen Jahressimulation, die auch unseren Rechnern zugrunde liegt: 10 kWp Süddach, ${fmt(HAUSHALT)} kWh Haushaltsstrom, E-Auto mit ${fmt(EAUTO_KWH)} kWh Heimladung, Wärmepumpe mit ${fmt(SPEICHER.wpStromKwh)} kWh. Für die Lastverschiebung haben wir angenommen, dass sich 15 % des Haushaltsstroms, 60 % des Ladestroms und 30 % des Wärmepumpenstroms in sonnige Stunden legen lassen.`,
+          text: "**Die Eigenverbrauchsquote sagt, welcher Anteil des erzeugten Solarstroms im Betrieb selbst genutzt wird; der Autarkiegrad sagt, welcher Anteil des Strombedarfs aus der eigenen Anlage stammt.** Beide Kennzahlen hängen zusammen, verfolgen aber unterschiedliche Ziele: Eine kleine Anlage erreicht leicht 90 % Eigenverbrauch, deckt aber nur einen Bruchteil des Bedarfs; eine große Anlage deckt mehr Bedarf, speist aber auch mehr ein.",
         },
         {
           typ: "tabelle",
-          caption: "Wirkung einzelner Maßnahmen auf Eigenverbrauch und Stromkosten (Simulation, Stand September 2026)",
-          kopf: ["Maßnahme (Haushalt)", "Eigenverbrauchsquote", "mehr selbst genutzt", "Ersparnis/Jahr", "Investition"],
+          caption: "Eigenverbrauchsquote und Autarkiegrad am Beispiel eines Betriebs mit 200.000 kWh Jahresverbrauch",
+          kopf: ["Anlage", "Erzeugung", "davon selbst genutzt", "Eigenverbrauchsquote", "Autarkiegrad"],
           zeilen: [
-            zeile("Geräte mittags laufen lassen", "Haushalt", M_GERAETE, "0 €"),
-            zeile("Stromspeicher 6 kWh", "Haushalt", M_SPEICHER, fmtEur(6 * SPEICHER.preisProKwh)),
-            zeile("Geräte verschieben + Speicher", "Haushalt", M_BEIDES, fmtEur(6 * SPEICHER.preisProKwh)),
-            zeile("E-Auto mit Überschuss laden", "mit E-Auto", M_EAUTO, "Wallbox mit PV-Modus"),
-            zeile("Wärmepumpe tagsüber per SG Ready/EMS", "mit Wärmepumpe", M_WP, "meist gering"),
-            zeile("Energiemanagement für alles", "mit E-Auto und WP", M_EMS, "oft über 1.000 €"),
-            zeile("Energiemanagement + Speicher 8 kWh", "mit E-Auto und WP", M_EMS_SP, `ab ${fmtEur(8 * SPEICHER.preisProKwh)} plus EMS`),
+            ["80 kWp", "84.000 kWh", "71.000 kWh", "85 %", "36 %"],
+            ["150 kWp", "157.500 kWh", "102.000 kWh", "65 %", "51 %"],
+            ["250 kWp", "262.500 kWh", "121.000 kWh", "46 %", "61 %"],
           ],
-          hervorheben: 3,
           minBreite: 640,
-          fussnote: `Ersparnis = vermiedener Netzbezug × ${ctStr(SOLAR.strompreis)} ct abzüglich entgangener Einspeisevergütung (${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct). Speicherpreis gemeinsam mit der PV-Anlage installiert (${fmtEur(SPEICHER.preisProKwh)}/kWh). Vereinfachtes Modell ohne Ost-West-Dach und ohne Heizstab – Orientierungswerte, keine Angebote.`,
+          fussnote: "Illustratives Beispiel für einen Betrieb mit Tagschicht an fünf Tagen; tatsächliche Werte ergeben sich nur aus einer Simulation mit dem eigenen Lastgang.",
         },
         {
           typ: "p",
-          text: `Drei Erkenntnisse aus der Tabelle: Erstens bringt Lastverschiebung ohne jede Investition spürbar Geld. Zweitens bleibt der **Speicher der stärkste Einzelhebel** für den reinen Haushaltsstrom – er kostet aber auch am meisten. Drittens wirken Maßnahmen zusammen: Mit E-Auto, Wärmepumpe, Energiemanagement und Speicher werden im Beispiel rund ${fmt(Math.round(M_EMS_SP.mehrKwh / 100) * 100)} kWh mehr Solarstrom im Haus genutzt als ohne Steuerung.`,
-        },
-        { typ: "tool", href: "/rechner/stromspeicher", titel: "Ihren Eigenverbrauch berechnen", text: "Verbrauch, Anlagengröße, E-Auto und Wärmepumpe eingeben – der Rechner zeigt Eigenverbrauch und Autarkie mit und ohne Speicher.", label: "Zum Stromspeicher-Rechner" },
-      ],
-    },
-    {
-      id: "massnahmen",
-      titel: "10 Maßnahmen, um mehr Solarstrom selbst zu nutzen",
-      tocLabel: "10 Maßnahmen",
-      bloecke: [
-        { typ: "h3", text: "1. Große Haushaltsgeräte in die Mittagszeit legen" },
-        {
-          typ: "p",
-          text: "Waschmaschine, Geschirrspüler und Trockner verbrauchen je Durchlauf 0,5 bis 2,5 kWh. Starten Sie sie zwischen etwa 10 und 16 Uhr – per Startzeitvorwahl, App oder einfach vor dem Verlassen des Hauses. Das kostet nichts und ist die erste Maßnahme, die jeder umsetzen sollte. Tipp: Laufen die Geräte nacheinander statt gleichzeitig, übersteigt ihr Verbrauch seltener die aktuelle PV-Leistung.",
-        },
-        { typ: "h3", text: "2. Einen passend dimensionierten Stromspeicher nutzen" },
-        {
-          typ: "p",
-          text: "Ein Speicher verschiebt Mittagsstrom in den Abend. Wichtig ist die richtige Größe: Ab etwa 1 bis 1,5 kWh nutzbarer Kapazität je 1.000 kWh Verbrauch steigt der Nutzen nur noch langsam. Die Details stehen im Ratgeber [Stromspeicher-Größe berechnen](/ratgeber/stromspeicher-groesse).",
-        },
-        { typ: "h3", text: "3. Das E-Auto mit Solarüberschuss laden" },
-        {
-          typ: "p",
-          text: "Ein E-Auto kann in wenigen Stunden mehr Solarstrom aufnehmen als jedes andere Gerät im Haus. Eine Wallbox mit Überschussladen passt die Ladeleistung laufend an den Überschuss an und schaltet bei Bedarf zwischen ein- und dreiphasigem Laden um. Das funktioniert nur, wenn das Auto tagsüber zu Hause steht – etwa am Wochenende, im Homeoffice oder bei einem Zweitwagen. Mehr dazu im Ratgeber [PV-Überschussladen](/ratgeber/pv-ueberschussladen).",
-        },
-        { typ: "h3", text: "4. Die Wärmepumpe mittags arbeiten lassen" },
-        {
-          typ: "p",
-          text: "Über SG Ready oder eine digitale Schnittstelle kann die Wärmepumpe bei Überschuss den Warmwasserspeicher höher aufheizen oder das Haus leicht vorheizen. Die Wärme wird gespeichert und später genutzt. Wie viel Solarstrom eine Wärmepumpe realistisch nutzt, zeigt der Ratgeber [Wärmepumpe mit Photovoltaik](/ratgeber/waermepumpe-mit-photovoltaik).",
-        },
-        { typ: "h3", text: "5. Warmwasser mit Solarüberschuss bereiten" },
-        {
-          typ: "p",
-          text: "Ohne Wärmepumpe kann ein regelbarer Heizstab im Warmwasserspeicher Überschüsse aufnehmen. Er arbeitet allerdings mit einem Wirkungsgrad von etwa 1 – eine Kilowattstunde Strom wird zu einer Kilowattstunde Wärme. Er lohnt sich daher vor allem, wenn sonst viel eingespeist würde. Alternativen und Rechnung im Ratgeber [Heizstab und Photovoltaik](/ratgeber/heizstab-photovoltaik).",
-        },
-        { typ: "h3", text: "6. Ein Energiemanagementsystem einsetzen" },
-        {
-          typ: "p",
-          text: "Sobald mehr als ein großer Verbraucher im Haus ist, lohnt sich eine zentrale Steuerung. Ein [Energiemanagementsystem](/ratgeber/energiemanagementsystem) verteilt den Überschuss nach Prioritäten auf Speicher, Wallbox und Wärmepumpe, berücksichtigt Wetterprognosen und kann auch dynamische Stromtarife einbeziehen.",
-        },
-        { typ: "h3", text: "7. Grundlast senken" },
-        {
-          typ: "p",
-          text: "Standby-Geräte, alte Umwälzpumpen oder Kühlgeräte laufen rund um die Uhr – auch nachts, wenn keine Sonne scheint. 50 Watt Dauerlast ergeben rund 440 kWh im Jahr. Weniger Grundlast erhöht zwar nicht den Eigenverbrauch, senkt aber den Netzbezug und damit die Stromrechnung. Außerdem reicht der Speicher länger.",
-        },
-        { typ: "h3", text: "8. Anlage auf den Verbrauch ausrichten" },
-        {
-          typ: "p",
-          text: "Bei der Planung lässt sich der Eigenverbrauch schon beeinflussen: Eine [Ost-West-Ausrichtung](/wissen/lexikon#ost-west-ausrichtung) verteilt die Erzeugung über den Tag und liefert morgens und abends mehr Strom. Wer eine Wärmepumpe oder ein E-Auto plant, sollte die Anlagengröße darauf abstimmen. Faustregeln für die Größe finden Sie im Ratgeber [PV-Anlagengröße berechnen](/ratgeber/pv-anlage-groesse-berechnen).",
-        },
-        { typ: "h3", text: "9. Geräte mit Zeitsteuerung oder smarter Steckdose ausstatten" },
-        {
-          typ: "p",
-          text: "Poolpumpe, Luftentfeuchter, Akkus von Gartengeräten und E-Bikes lassen sich über Zeitschaltuhren oder schaltbare Steckdosen in die Mittagsstunden legen. Viele Wechselrichter-Apps können solche Steckdosen bei Überschuss direkt schalten.",
-        },
-        { typ: "h3", text: "10. Dynamischen Stromtarif ergänzend nutzen" },
-        {
-          typ: "p",
-          text: "Ein dynamischer Tarif erhöht den Eigenverbrauch nicht, senkt aber die Kosten des verbleibenden Netzstroms – vor allem im Winter, wenn die PV-Anlage wenig liefert. Voraussetzung ist ein intelligentes Messsystem. Für wen sich das rechnet, zeigt der Ratgeber [Dynamischer Stromtarif](/ratgeber/dynamischer-stromtarif-lohnt-sich).",
+          text: "Die Begriffe [Eigenverbrauchsquote](/wissen/lexikon#eigenverbrauchsquote) und [Autarkiegrad](/wissen/lexikon#autarkiegrad) sind im Lexikon erklärt. Für Unternehmen ist die Eigenverbrauchsquote meist die wirtschaftlich entscheidende Größe, für Gemeinden und Betriebe mit Versorgungssicherheits-Zielen oft zusätzlich der Autarkiegrad.",
         },
       ],
     },
     {
-      id: "fehler",
-      titel: "Typische Fehler: Wann mehr Eigenverbrauch Geld kostet",
-      tocLabel: "Typische Fehler",
+      id: "wert",
+      titel: "Warum Eigenverbrauch in Österreich so viel wert ist",
+      tocLabel: "Wert einer kWh",
       bloecke: [
         {
-          typ: "checkliste",
-          punkte: [
-            `**Verbrauch künstlich erzeugen:** Ein Gerät, das nur läuft, „weil die Sonne scheint“, spart nichts. Jede Kilowattstunde, die sonst nicht verbraucht würde, kostet Sie ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct entgangene Vergütung.`,
-            "**Den Speicher zu groß kaufen,** um die Quote zu steigern: Die letzten Prozentpunkte kosten überproportional viel.",
-            "**Heizstab vor Wärmepumpe:** Wo eine Wärmepumpe vorhanden ist, erzeugt sie aus derselben Kilowattstunde drei- bis viermal so viel Wärme.",
-            "**Das E-Auto aus dem Heimspeicher laden:** Das verschiebt Solarstrom von einer Batterie in die andere – mit Verlusten.",
-            "**Die Eigenverbrauchsquote als Ziel sehen:** Entscheidend sind eingesparte Euro, nicht Prozentwerte.",
+          typ: "p",
+          text: "**Eine selbst genutzte Kilowattstunde spart den gesamten Bezugspreis – Energie, Netznutzungs- und Netzverlustentgelt, Elektrizitätsabgabe und Erneuerbaren-Förderkosten –, eine eingespeiste bringt nur den Marktwert der Energie.** Diese Lücke ist der Grund, warum Anlagen heute auf Eigenverbrauch ausgelegt werden.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Bestandteile des Strombezugs, die Eigenverbrauch einspart, Stand September 2026",
+          kopf: ["Bestandteil", "Spart Eigenverbrauch?", "Hinweis"],
+          zeilen: [
+            ["Energiepreis des Lieferanten", "ja", "je nach Vertrag fix, indexiert oder Spotpreis"],
+            ["Netznutzungsentgelt (Arbeit)", "ja", "je nach Netzebene und Netzgebiet"],
+            ["Netzverlustentgelt", "ja", "arbeitsabhängig"],
+            ["Leistungsentgelt (bei Lastprofilmessung)", "nur wenn die Spitze sinkt", "PV allein senkt die Jahresspitze selten – Speicher/Lastmanagement nötig"],
+            ["Elektrizitätsabgabe", "ja", "2026: 0,82 ct/kWh für Unternehmen, 0,1 ct/kWh für Haushalte"],
+            ["Erneuerbaren-Förderbeitrag", "ja (arbeitsabhängiger Teil)", "Pauschale je Zählpunkt bleibt"],
+            ["Umsatzsteuer", "nur für nicht vorsteuerabzugsberechtigte Kunden relevant", "Unternehmen rechnen netto"],
           ],
+          minBreite: 640,
+          fussnote: "Quelle Elektrizitätsabgabe: E-Control. Höhe der Netzentgelte je Netzgebiet laut Systemnutzungsentgelte-Verordnung; Energiepreise vertragsabhängig.",
         },
         {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Steuerlich unkompliziert",
-          text: "Für Anlagen bis 30 kWp auf Wohngebäuden sind Einnahmen und Entnahmen nach § 3 Nr. 72 EStG von der Einkommensteuer befreit. Selbst genutzter Strom muss daher nicht versteuert werden. Details im Ratgeber [Photovoltaik und Steuern](/ratgeber/photovoltaik-steuern).",
+          typ: "p",
+          text: "Zum Vergleich: Der OeMAG-Marktpreis für Photovoltaik lag 2026 zwischen 5,72 ct/kWh im März und 8,997 ct/kWh im August, in den ertragsstarken Monaten April bis Juli bei 6,1 bis 6,8 ct/kWh. Als Referenz für Haushaltsstrom hat das Finanzministerium für 2026 einen Durchschnittspreis von 32,806 ct/kWh brutto festgelegt. Details zum Marktpreis erklärt der Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis); die Mittagsspitzen mit negativen Börsenpreisen beschreibt [Negative Strompreise](/ratgeber/negative-strompreise).",
         },
       ],
     },
     {
-      id: "vorgehen",
-      titel: "In vier Schritten zu mehr Eigenverbrauch",
-      tocLabel: "Vorgehen",
+      id: "lastgang",
+      titel: "Erster Schritt: den Lastgang verstehen",
+      tocLabel: "Lastgang",
       bloecke: [
+        {
+          typ: "p",
+          text: "**Wer den Eigenverbrauch erhöhen will, braucht den Lastgang – den Stromverbrauch im Viertelstundenraster über mindestens ein Jahr.** Großkunden mit Lastprofilzähler erhalten diese Daten vom Netzbetreiber; bei Smart Metern lassen sich Viertelstundenwerte über das Kundenportal des Netzbetreibers abrufen, sofern die Übermittlung aktiviert ist. Mehr dazu im Ratgeber [Smart Meter](/ratgeber/smart-meter-pflicht).",
+        },
         {
           typ: "ablauf",
           schritte: [
-            ["Verbrauch sichtbar machen", "Die Wechselrichter-App oder das Monitoring zeigt, wann Sie Strom beziehen und wann Sie einspeisen. Darauf bauen alle weiteren Schritte auf."],
-            ["Kostenlose Maßnahmen umsetzen", "Geräte in die Mittagszeit legen, Zeitvorwahl nutzen, Grundlast prüfen."],
-            ["Große Verbraucher einbinden", "Wallbox mit Überschussladen, Wärmepumpe mit SG Ready oder digitaler Schnittstelle, gegebenenfalls Heizstab."],
-            ["Speicher und Energiemanagement ergänzen", "Wenn abends viel Strom gebraucht wird oder mehrere Verbraucher zu koordinieren sind – mit dem [Stromspeicher-Rechner](/rechner/stromspeicher) die passende Größe prüfen."],
+            ["Daten beschaffen", "12 Monate Viertelstundenwerte aus dem Netzbetreiber-Portal oder vom Lieferanten; ergänzend Betriebszeiten, Schichtpläne, Betriebsferien."],
+            ["Grundlast bestimmen", "Welche Leistung fließt werktags mittags mindestens? Diese Last deckt die PV fast vollständig."],
+            ["Flexible Verbraucher identifizieren", "Kühlung, Druckluft, Warmwasser, Ladepunkte, Pumpen, Trocknung – was lässt sich zeitlich verschieben?"],
+            ["Erzeugung überlagern", "PV-Simulation je Viertelstunde gegen den Lastgang legen – daraus ergeben sich Eigenverbrauchsquote, Autarkiegrad und Überschüsse."],
+            ["Maßnahmen bewerten", "Hebel nach Kosten und Wirkung reihen: erst organisatorisch, dann technisch."],
           ],
         },
         {
           typ: "kasten",
           variant: "tipp",
-          titel: "Aus einer Hand geplant",
-          text: "Ökovolt plant PV-Anlage, Speicher, Wallbox und Energiemanagement aufeinander abgestimmt – als Partner von Sigenergy, Huawei, Fronius, Solis, meteocontrol und BYD, aber mit herstellerneutraler Beratung. Mehr zum [Smart Energy Home](/produkte/smartenergyhome).",
+          titel: "Wochenende und Betriebsurlaub zählen mit",
+          text: "Ein Betrieb mit Fünftagewoche verliert an Wochenenden rund zwei Siebtel der möglichen Eigennutzung – im Sommer mit Betriebsurlaub noch mehr. Genau hier helfen Speicher, Energiegemeinschaften oder ein zweiter Verbraucher (z. B. Kühlhaus, Ladepark), der auch am Wochenende Strom braucht.",
+        },
+      ],
+    },
+    {
+      id: "hebel",
+      titel: "Die wichtigsten Hebel für mehr Eigenverbrauch im Betrieb",
+      tocLabel: "Hebel im Betrieb",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die wirksamsten Hebel sind jene, die ohnehin vorhandene Verbraucher in die Sonnenstunden verlegen – sie kosten wenig und wirken sofort.** Technische Maßnahmen wie Speicher und Wärmepumpen folgen, wenn der Lastgang das hergibt.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Hebel für mehr Eigenverbrauch – Aufwand und typische Wirkung",
+          kopf: ["Hebel", "Beispiel", "Aufwand", "Wirkung"],
+          zeilen: [
+            ["Prozesse verschieben", "energieintensive Arbeitsschritte, Reinigung, Trocknung auf 10–15 Uhr legen", "gering (Organisation)", "hoch bei flexibler Produktion"],
+            ["Kälte als Speicher", "Kühl- und Tiefkühlzellen mittags tiefer kühlen, abends ausfahren", "gering bis mittel (Regelung)", "hoch in Handel, Gastronomie, Landwirtschaft"],
+            ["Warmwasser & Wärme", "Boiler, Pufferspeicher, Wärmepumpe tagsüber laden", "mittel", "mittel bis hoch, v. a. Hotel und Landwirtschaft"],
+            ["Druckluft", "Speicherbehälter, Kompressorlauf mittags, Leckagen beheben", "gering bis mittel", "mittel"],
+            ["E-Flotte & Ladepunkte", "Dienst- und Poolfahrzeuge tagsüber mit Überschuss laden", "mittel", "hoch bei Fahrzeugen, die tagsüber stehen"],
+            ["Batteriespeicher", "Mittagsstrom für Abend und Nacht, zusätzlich Peak Shaving", "hoch", "mittel bis hoch, abhängig vom Lastgang"],
+            ["Energiegemeinschaft", "Überschuss an Nachbarbetriebe, Gemeinde, Mitarbeitende", "mittel (Organisation)", "hoch für Wochenend- und Sommerüberschüsse"],
+          ],
+          minBreite: 720,
+        },
+        {
+          typ: "p",
+          text: "Wie Ladepunkte gesteuert werden, erklärt der Ratgeber [E-Flotte laden mit Photovoltaik](/ratgeber/e-flotte-laden-photovoltaik); die Kombination mit Heizung und Warmwasser beschreibt [Wärmepumpe mit Photovoltaik](/ratgeber/waermepumpe-mit-photovoltaik). Wann ein Speicher sich rechnet, zeigt [Gewerbespeicher: Kosten](/ratgeber/gewerbespeicher-kosten).",
+        },
+      ],
+    },
+    {
+      id: "beispiel",
+      titel: `Rechenbeispiel: ${KWP} kWp im Gewerbebetrieb`,
+      tocLabel: "Rechenbeispiel",
+      bloecke: [
+        {
+          typ: "p",
+          text: `**Wie stark jeder Prozentpunkt Eigenverbrauch zählt, zeigt eine ${KWP}-kWp-Dachanlage mit rund ${kwh(ERTRAG)} Jahresertrag.** Die selbst genutzte Energie wird mit 20 ct/kWh netto bewertet, der Überschuss mit 6,8 ct/kWh (gerundeter OeMAG-Sommermarktpreis 2026).`,
+        },
+        {
+          typ: "tabelle",
+          caption: `Jährlicher Wert des Solarstroms einer ${KWP}-kWp-Anlage nach Eigenverbrauchsquote (Beispielrechnung, Stand September 2026)`,
+          kopf: ["Eigenverbrauch", "selbst genutzt", "eingespeist", "Wert pro Jahr", "Mehrwert ggü. 30 %"],
+          zeilen: [zeile(0.3), zeile(0.45), zeile(0.6), zeile(0.75)],
+          hervorheben: 3,
+          markierteZeile: 2,
+          minBreite: 680,
+          fussnote: "Annahmen: 1.050 kWh/kWp, Bezugspreis 20 ct/kWh netto (Energie, Netz, Abgaben – bitte eigenen Wert einsetzen), Einspeisung 6,8 ct/kWh. Ohne Investitionskosten der Maßnahmen, ohne Leistungspreiseffekte.",
+        },
+        {
+          typ: "p",
+          text: "Jeder zusätzliche Eigenverbrauchs-Prozentpunkt ist in diesem Beispiel rund 200 € im Jahr wert. Damit lässt sich rasch abschätzen, was eine Maßnahme kosten darf: Eine Regelung für die Kühlzellen, die den Eigenverbrauch um fünf Prozentpunkte hebt, bringt etwa 1.000 € pro Jahr. Die Grundlagen der Wirtschaftlichkeit erklärt der Ratgeber [Photovoltaik im Gewerbe](/ratgeber/photovoltaik-gewerbe).",
+        },
+      ],
+    },
+    {
+      id: "branchen",
+      titel: "Branchenbeispiele aus Österreich",
+      tocLabel: "Branchenbeispiele",
+      bloecke: [
+        {
+          typ: "karten",
+          cols: 2,
+          items: [
+            { titel: "Milchviehbetrieb", text: "Melken und Milchkühlung morgens und abends, dazu Warmwasser, Lüftung und Futtermischung. Hebel: Milchkühlung mit Eisspeicher oder Vorkühlung tagsüber, Warmwasser mittags, Hoflader und Elektrofahrzeuge laden. Mehr unter [Landwirtschaft](/landwirtschaft)." },
+            { titel: "Hotel und Gastronomie", text: "Hoher Warmwasser-, Küchen- und Kühlbedarf, Wellness, Wäscherei. Hebel: Warmwasser und Pool mittags aufheizen, Wäscherei in die Mittagszeit legen, Gäste-Ladepunkte mit Überschuss. Siehe [Photovoltaik für Hotels](/ratgeber/photovoltaik-hotel)." },
+            { titel: "Lebensmittelhandel", text: "Kühlung läuft rund um die Uhr, Beleuchtung während der Öffnungszeiten. Hebel: Kälte als Speicher nutzen, Kundenparkplatz mit Ladepunkten, Energiemanagement für Kühlmöbel." },
+            { titel: "Gemeinde", text: "Amtsgebäude, Schule, Bauhof und Kläranlage mit unterschiedlichen Lastprofilen. Hebel: Pumpen und Belüftung der Kläranlage tagsüber, Energiegemeinschaft zwischen Gebäuden. Siehe [Photovoltaik für Gemeinden](/ratgeber/photovoltaik-gemeinde)." },
+          ],
+        },
+      ],
+    },
+    {
+      id: "energiegemeinschaft",
+      titel: "Wenn der Überschuss bleibt: Energiegemeinschaft statt Einspeisung",
+      tocLabel: "Energiegemeinschaft",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Was im eigenen Betrieb nicht verbraucht werden kann, lässt sich über eine Energiegemeinschaft an Nachbarn, Gemeinde oder Mitarbeitende weitergeben – meist zu einem besseren Preis als der Marktpreis.** In lokalen und regionalen Erneuerbare-Energie-Gemeinschaften reduzieren sich zudem für die Abnehmer bestimmte Netzentgelte. Das ist besonders für Betriebe mit Wochenend- und Sommerüberschüssen interessant.",
+        },
+        {
+          typ: "p",
+          text: "Welche Formen es gibt und wie Unternehmen teilnehmen, erklären die Ratgeber [Energiegemeinschaft für Unternehmen](/ratgeber/energiegemeinschaft-gewerbe) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden) sowie die Seite [Energiegemeinschaften](/energiegemeinschaften).",
+        },
+      ],
+    },
+    {
+      id: "fehler",
+      titel: "Typische Fehler beim Erhöhen des Eigenverbrauchs",
+      tocLabel: "Typische Fehler",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Der häufigste Fehler ist, Eigenverbrauch zu erhöhen, ohne die Leistungsspitze im Blick zu behalten.** Wer viele Verbraucher gleichzeitig in die Mittagsstunden legt, erzeugt an bewölkten Tagen neue Lastspitzen – und zahlt bei Lastprofilmessung mit einem höheren Leistungsentgelt. Eine Steuerung muss deshalb immer beide Ziele verfolgen: Überschuss nutzen und die Bezugsspitze begrenzen.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Speicher ohne Lastganganalyse gekauft:** zu groß, weil nach Jahresverbrauch statt nach Tagesüberschuss dimensioniert – die Kapazität wird im Winter kaum genutzt.",
+            "**Steuerung nach Zeitplan statt nach Erzeugung:** Ein Timer für 11 bis 14 Uhr ignoriert Wolken und Jahreszeit; besser ist eine Regelung auf den Messwert am Netzanschlusspunkt.",
+            "**Wärmepumpe mit Heizstab-Automatik:** Ein Heizstab, der Überschuss in Wärme verwandelt, nutzt die Kilowattstunde nur einfach, die Wärmepumpe drei- bis viermal – Reihenfolge der Verbraucher richtig festlegen.",
+            "**Ladepunkte ohne Lastmanagement:** Mehrere E-Autos, die gleichzeitig nach Schichtbeginn anstecken, treiben die Spitze. Dynamisches Lastmanagement ist Pflicht – siehe [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis).",
+            "**Wirkung nicht gemessen:** Ohne Vorher-nachher-Vergleich im Monitoring bleibt offen, ob eine Maßnahme gewirkt hat. Kennzahlen monatlich auswerten.",
+          ],
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Dynamische Tarife als Ergänzung",
+          text: "Wer nach Ausschöpfen der PV-Hebel noch flexible Lasten hat, kann sie mit einem Spotpreis-Tarif zusätzlich in günstige Stunden verschieben – auch nachts und im Winter. Wann das passt, erklärt der Ratgeber [Dynamischer Stromtarif](/ratgeber/dynamischer-stromtarif-lohnt-sich).",
+        },
+      ],
+    },
+    {
+      id: "checkliste",
+      titel: "Checkliste: Eigenverbrauch im Betrieb steigern",
+      tocLabel: "Checkliste",
+      bloecke: [
+        {
+          typ: "checkliste",
+          punkte: [
+            "Lastgang (Viertelstundenwerte, 12 Monate) beim Netzbetreiber anfordern oder im Portal freischalten.",
+            "Grundlast, Mittagslast und Wochenendlast bestimmen; Betriebsurlaub berücksichtigen.",
+            "Flexible Verbraucher mit Leistung und Verschiebepotenzial auflisten (Kälte, Wärme, Druckluft, Ladepunkte).",
+            "Organisatorische Maßnahmen zuerst umsetzen und im Monitoring messen.",
+            "Energiemanagement für automatische Steuerung prüfen – siehe [Energiemanagementsystem](/ratgeber/energiemanagementsystem).",
+            "Speicher nur mit Lastgang-Simulation dimensionieren, Peak-Shaving-Nutzen getrennt bewerten.",
+            "Neue Wärmepumpen und Ladeeinrichtungen über 3,68 kVA beim Netzbetreiber melden (TOR Verteilernetzanschluss).",
+            "Für verbleibende Überschüsse Energiegemeinschaft oder Stromhändler prüfen.",
+          ],
+        },
+        {
+          typ: "p",
+          text: "Ökovolt plant PV-Anlagen für Betriebe auf Basis des Lastgangs und stimmt Speicher, Ladeinfrastruktur und Energiemanagement darauf ab. Für eine erste Einschätzung nutzen Sie die [Anfrage für Ihre Gewerbeanlage](/angebot) oder den [Speicherrechner](/rechner/stromspeicher).",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Wie hoch ist der Eigenverbrauch ohne Speicher?", a: `Ohne Speicher nutzen Einfamilienhäuser typischerweise 20 bis 40 % des Solarstroms selbst, abhängig von Anlagengröße und Verbrauch. In unserem Beispiel mit 10 kWp und ${fmt(HAUSHALT)} kWh sind es ${pct(H_BASIS.eigenverbrauchsquote)}.` },
-    { q: "Wie kann ich den Eigenverbrauch ohne Speicher erhöhen?", a: "Legen Sie Waschmaschine, Geschirrspüler und Trockner in die Mittagszeit, laden Sie das E-Auto mit Überschuss, lassen Sie die Wärmepumpe tagsüber Warmwasser bereiten und nutzen Sie Zeitschaltuhren oder smarte Steckdosen. Ein Energiemanagementsystem automatisiert das." },
-    { q: "Was ist eine gute Eigenverbrauchsquote?", a: "Ohne Speicher sind 25 bis 40 % gut, mit Speicher 50 bis 70 %. Eine sehr hohe Quote kann aber auch bedeuten, dass die Anlage zu klein ist. Wichtiger ist, wie viele Kilowattstunden Sie insgesamt selbst nutzen." },
-    { q: "Lohnt sich ein Heizstab für den Eigenverbrauch?", a: "Er lohnt sich vor allem, wenn viel Überschuss eingespeist würde und keine Wärmepumpe vorhanden ist. Weil er Strom nur eins zu eins in Wärme umwandelt, ist eine Wärmepumpe bei gleicher Strommenge deutlich effizienter." },
-    { q: "Wie viel spart mehr Eigenverbrauch?", a: `Jede zusätzlich selbst genutzte Kilowattstunde spart rund ${ctStr(WERT_KWH)} ct gegenüber der Einspeisung. 500 kWh mehr Eigenverbrauch entsprechen damit etwa ${fmtEur(500 * WERT_KWH)} im Jahr.` },
-    { q: "Muss ich selbst verbrauchten Solarstrom versteuern?", a: "Bei Anlagen bis 30 kWp auf Wohngebäuden nicht: Nach § 3 Nr. 72 EStG sind Einnahmen und Entnahmen steuerfrei. Umsatzsteuerlich gilt für Kauf und Installation der Nullsteuersatz." },
+    {
+      q: "Wie kann ein Betrieb seinen PV-Eigenverbrauch erhöhen?",
+      a: "Zuerst organisatorisch: Prozesse, Kühlung, Warmwasser und Ladevorgänge in die Mittagsstunden verlegen. Danach technisch mit Energiemanagement, Wärmepumpen, Ladepunkten und – wenn der Lastgang es hergibt – einem Speicher. Überschüsse lassen sich über eine Energiegemeinschaft verwerten.",
+    },
+    {
+      q: "Was ist eine gute Eigenverbrauchsquote?",
+      a: "Das hängt von Anlagengröße und Lastgang ab. Kleine Anlagen erreichen leicht sehr hohe Quoten, decken aber wenig Bedarf. Wichtiger als ein Zielwert ist die Wirtschaftlichkeit: Die Anlage sollte so groß sein, dass der Mix aus Eigenverbrauch und Überschussverwertung die beste Rendite bringt.",
+    },
+    {
+      q: "Wie viel ist eine selbst genutzte Kilowattstunde wert?",
+      a: "Sie spart den gesamten arbeitsabhängigen Bezugspreis aus Energie, Netzentgelten und Abgaben – für Betriebe typischerweise ein Vielfaches des Marktpreises. Zum Vergleich: Der OeMAG-Marktpreis für PV lag im Sommer 2026 bei rund 6,1 bis 6,8 ct/kWh.",
+    },
+    {
+      q: "Lohnt sich ein Speicher, um den Eigenverbrauch zu erhöhen?",
+      a: "Oft erst dann, wenn er zusätzlich Lastspitzen kappt oder Notstrom liefert. Ob sich ein Speicher rechnet, zeigt nur eine Simulation mit Ihrem Lastgang. Details im Ratgeber [Gewerbespeicher: Kosten](/ratgeber/gewerbespeicher-kosten).",
+    },
+    {
+      q: "Woher bekomme ich meinen Lastgang?",
+      a: "Vom Netzbetreiber: Großkunden mit Lastprofilzähler erhalten die Viertelstundenwerte auf Anfrage, bei Smart Metern lassen sie sich im Kundenportal abrufen, wenn die Übermittlung von Viertelstundenwerten aktiviert ist.",
+    },
+    {
+      q: "Was mache ich mit Überschüssen am Wochenende?",
+      a: "Speichern, verkaufen oder teilen: Ein Speicher verschiebt einen Teil in die Woche, eine Energiegemeinschaft gibt den Strom an Nachbarn, Gemeinde oder Mitarbeitende weiter, der Rest geht zum Marktpreis ins Netz.",
+    },
+    {
+      q: "Muss ich neue Verbraucher wie Wärmepumpen oder Wallboxen melden?",
+      a: "Ja, Wärmepumpen, Klimageräte und Ladeeinrichtungen mit einer Bemessungsleistung über 3,68 kVA sind laut TOR Verteilernetzanschluss dem Netzbetreiber zu melden. Ab einer Summe von 10 kVA kann der Netzbetreiber den Anschluss zur weiteren Prüfung aussetzen – ein Energiemanagement, das die vereinbarte Leistung einhält, vermeidet das.",
+    },
+    {
+      q: "Lohnt sich eine größere PV-Anlage, wenn der Eigenverbrauch sinkt?",
+      a: "Oft ja, solange jede zusätzliche Kilowattstunde mehr einbringt als sie kostet. Weil der Überschuss nur zum Marktpreis vergütet wird, sollte die Größe aber mit einer Lastgang-Simulation und realistischen Einspeiseerlösen bestimmt werden.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/energiemanagementsystem", titel: "Energiemanagementsystem", text: "Funktionen, Standards und § 14a EnWG." },
-    { href: "/ratgeber/stromspeicher-groesse", titel: "Stromspeicher-Größe berechnen", text: "Faustregeln und Simulationstabelle." },
-    { href: "/ratgeber/pv-ueberschussladen", titel: "PV-Überschussladen", text: "E-Auto mit Solarstrom laden." },
-    { href: "/rechner/stromspeicher", titel: "Stromspeicher-Rechner", text: "Eigenverbrauch und Autarkie berechnen." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Eigenverbrauch und Peak Shaving mit Speicher." },
+    { href: "/ratgeber/energiemanagementsystem", titel: "Energiemanagementsystem", text: "Verbraucher automatisch steuern." },
+    { href: "/ratgeber/energiegemeinschaft-gewerbe", titel: "Energiegemeinschaft für Unternehmen", text: "Überschüsse vor Ort teilen." },
+    { href: "/ratgeber/peak-shaving-leistungspreis", titel: "Peak Shaving", text: "Leistungspreis senken." },
   ],
 
   quellen: [
-    { titel: "HTW Berlin – Unabhängigkeitsrechner", url: "https://solar.htw-berlin.de/rechner/unabhaengigkeitsrechner/", stand: "09/2026" },
-    { titel: "Verbraucherzentrale – Energiemanagementsystem für zu Hause", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/energiemanagementsystem-fuer-zu-hause-mehr-eigenen-strom-selber-nutzen-48095", stand: "09/2026" },
-    { titel: "Bundesverband Solarwirtschaft – FAQ Solarspitzengesetz", url: "https://www.solarwirtschaft.de/unsere-themen/photovoltaik/standpunkte/faq-solarspitzengesetz/", stand: "09/2026" },
-    { titel: "Bundesnetzagentur – EEG-Förderung und Vergütungssätze", url: VERGUETUNG.quelle.url, stand: "09/2026" },
-    { titel: "§ 3 Nr. 72 EStG – Steuerbefreiung für Photovoltaikanlagen", url: "https://www.gesetze-im-internet.de/estg/__3.html", stand: "09/2026" },
-    { titel: "BDEW – Strompreisanalyse", url: "https://www.bdew.de/service/daten-und-grafiken/bdew-strompreisanalyse/", stand: "09/2026" },
+    { titel: "OeMAG – Marktpreise 2026 (monatlich)", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
+    { titel: "E-Control – Steuern und Abgaben auf Strom (Elektrizitätsabgabe 2026)", url: "https://www.e-control.at/industrie/strom/strompreis/steuern", stand: "09/2026" },
+    { titel: "EY Österreich – BMF: Strompreis 2026 für das Laden emissionsfreier Kfz (32,806 ct/kWh)", url: "https://www.ey.com/de_at/technical/steuernachrichten/bmf-strompreis-2026-laden", stand: "10/2025" },
+    { titel: "E-Control – TOR Verteilernetzanschluss Niederspannung, Version 1.3.1", url: "https://www.e-control.at/documents/1785851/1811582/TOR_Verteilernetzanschluss_-_Niederspannung_V1.3.1.pdf/64c9e5f0-e38d-351a-b52e-a1b0e07077ae?t=1774007041985", stand: "03/2026" },
+    { titel: "Energy-Charts – Stromerzeugung und Börsenstrompreise Österreich", url: "https://www.energy-charts.info/?l=de&c=AT", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Wie viel nutzen Sie selbst?", text: "Eigenverbrauch und Autarkie mit Ihren Werten berechnen.", href: "/rechner/stromspeicher", label: "Jetzt berechnen" },
+  seitenCta: { titel: "Mehr Solarstrom selbst nutzen?", text: "Anlage und Speicher passend zum Lastgang planen.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Mehr Solarstrom im eigenen Haus.",
-    text: "Wir stimmen PV-Anlage, Speicher, Wallbox und Wärmepumpe so aufeinander ab, dass möglichst viel Solarstrom dort ankommt, wo er am meisten spart.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/rechner/stromspeicher" },
+    title: "Solarstrom dort nutzen, wo er am meisten wert ist – im eigenen Betrieb.",
+    text: "Ökovolt plant PV, Speicher, Ladepunkte und Energiemanagement auf Basis Ihres Lastgangs – für Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Gewerbespeicher", href: "/gewerbespeicher" },
   },
 };
 

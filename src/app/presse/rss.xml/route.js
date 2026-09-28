@@ -8,7 +8,7 @@ export async function GET() {
   return new Response(
     rss({
       titel: "Ökovolt – Presse & Neuigkeiten",
-      beschreibung: "Pressemitteilungen, Unternehmensnews und Projekte der ÖKOVOLT GmbH Solartechnik.",
+      beschreibung: "Pressemitteilungen, Unternehmensnews und Projekte der Ökovolt Solartechnik GmbH (Österreich).",
       pfad: "/presse/rss.xml",
       eintraege,
     }),

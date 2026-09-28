@@ -1,171 +1,271 @@
-// photovoltaikanlage/page.js
-import React from "react";
-import Image from "next/image";
+// src/app/produkte/photovoltaikanlage/page.js
+//
+// Produktseite Photovoltaikanlage – Österreich, Schwerpunkt Gewerbe, Industrie,
+// Landwirtschaft und öffentliche Hand. Privat (Premium-Wohnhaus, Chalet) ist
+// als eigener Abschnitt nachgeordnet.
+//
+// Bewusst ohne Backoffice-Texte: Die bisherige API lieferte Inhalte der
+// deutschen Seite (Allgäu, EEG, 0 % USt). Alle Aussagen hier sind statisch und
+// auf die österreichische Rechtslage geprüft (Stand 09/2026, Quellen in den
+// Kommentaren). Keine Ökovolt-Preise: Die Kostentabelle zeigt Branchen-
+// Richtwerte aus @/data/solarrechner (Marktstatistik BMIMI, IEA PVPS).
+
 import Link from "next/link";
 import {
   ArrowRight,
-  BadgePercent,
-  Calculator,
+  BadgeEuro,
+  CalendarCheck2,
+  Car,
   Check,
   ClipboardCheck,
-  Coins,
-  Compass,
+  CloudHail,
+  Cpu,
+  FileCheck2,
   Gauge,
-  HandCoins,
-  Landmark,
-  MapPin,
+  LayoutGrid,
+  LineChart,
+  Mountain,
+  Receipt,
   ShieldCheck,
-  Sparkles,
-  UserRound,
-  Wrench,
+  SlidersHorizontal,
+  Snowflake,
+  Sun,
+  Sunrise,
+  Tractor,
+  Warehouse,
+  Wind,
+  Zap,
 } from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 import AnlagenExplorer from "@/components/photovoltaikanlage/AnlagenExplorer";
-import KostenAufschluesselung from "@/components/photovoltaikanlage/KostenAufschluesselung";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
+import FeatureGrid from "@/components/ui/FeatureGrid";
+import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
-import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
+import { ANNAHMEN, PREISQUELLEN, preisProKwpNetto } from "@/data/solarrechner";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.photovoltaikanlage_page.api.get_photovoltaik_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/produkte/photovoltaikanlage";
+const PFAD = "/produkte/photovoltaikanlage";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-async function fetchPhotovoltaikData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: "GET",
-      headers: headers,
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const TITLE = "Photovoltaikanlage kaufen – Komplettpaket 2026 | Ökovolt";
+const TITLE = "Photovoltaikanlage für Gewerbe & Industrie | Ökovolt";
 const DESCRIPTION =
-  "Photovoltaikanlage vom Fachbetrieb aus dem Allgäu: Planung, Montage & Anmeldung aus einer Hand. Richtpreise 2026 je kWp ansehen und Angebot anfordern.";
-const DEFAULT_KEYWORDS = ["Photovoltaikanlage", "Solaranlage", "Photovoltaik", "PV-Anlage kaufen", "Photovoltaikanlage Kosten"];
+  "PV-Anlagen für Gewerbe, Industrie und Landwirtschaft in Österreich: Module, Unterkonstruktion, Wechselrichter, Parkregler und Netzanschluss nach TOR.";
 
-export async function generateMetadata() {
-  const seoData = await fetchPhotovoltaikData();
-  const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : DEFAULT_KEYWORDS;
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Photovoltaikanlage Gewerbe", "PV-Anlage Industrie", "Photovoltaik Österreich", "Hallendach Photovoltaik", "Freiflächenanlage", "Glas-Glas-Module"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
     title: TITLE,
     description: DESCRIPTION,
-    keywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      locale: "de_AT",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Photovoltaikanlagen" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: ["https://www.oekovolt.com/og-image.jpg"],
-    },
-  };
-}
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Photovoltaikanlage auf einem Gewerbedach" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-const img = (p, fallback = "/Images/Jobs/jobs3.jpg") => (p ? `/api/image?path=${p}` : fallback);
-const eur = (n) => `${(Math.round(n / 10) * 10).toLocaleString("de-DE")} €`;
-const t = (s) => (s || "").replace(/\s*[–-]\s*$/, "").trim();
+/* ------------------------------------------------------------------ */
+/* Inhalte                                                             */
+/* ------------------------------------------------------------------ */
 
-const PREIS_GROESSEN = [5, 8, 10, 15, 20, 30];
-const KOMPLETT_ICONS = [Sparkles, HandCoins, ShieldCheck, Compass, Wrench];
+const MODULE = [
+  {
+    technik: "Glas-Glas-Module",
+    kern: "Rückseite aus Glas statt Folie; mechanisch steif, diffusionsdicht, weniger anfällig für Mikrorisse und Feuchte.",
+    einsatz: "Standard für Gewerbe, Landwirtschaft (Ammoniak im Stallbereich), alpine Lagen und lange Laufzeiten.",
+  },
+  {
+    technik: "Bifaziale Module",
+    kern: "Nutzen zusätzlich das von hinten einfallende Licht. Der Mehrertrag hängt von Albedo, Aufständerungshöhe und Reihenabstand ab.",
+    einsatz: "Freifläche, Agri-PV, aufgeständerte Flachdächer mit hellem Untergrund, Schneeflächen im Winter.",
+  },
+  {
+    technik: "TOPCon (n-Typ)",
+    kern: "Aktuelle Massentechnologie mit höherem Wirkungsgrad und besserem Temperaturverhalten als ältere PERC-Zellen.",
+    einsatz: "Breiter Standard für Dach- und Freiflächenanlagen mit gutem Preis-Leistungs-Verhältnis.",
+  },
+  {
+    technik: "Heterojunction (HJT)",
+    kern: "Sehr niedriger Temperaturkoeffizient und hohe Bifazialität; spielt die Stärken bei Hitze und auf reflektierenden Flächen aus.",
+    einsatz: "Heiße Dachflächen, bifaziale Freiflächen, Projekte mit hoher Ertragsanforderung je m².",
+  },
+  {
+    technik: "Back-Contact (BC)",
+    kern: "Kontakte auf der Rückseite, Vorderseite ohne Busbars; höchster Flächenwirkungsgrad, ruhiges Erscheinungsbild.",
+    einsatz: "Begrenzte Dachfläche, repräsentative Gebäude, Hotels und Chalets.",
+  },
+];
+
+const UNTERKONSTRUKTIONEN = [
+  {
+    icon: Warehouse,
+    title: "Hallendach mit Ballast",
+    text: "Aufgeständerte Systeme auf Foliendächern und Bitumen – ohne Durchdringung der Dachhaut. Entscheidend ist die Tragwerksreserve: Ballast, Schnee und Wind werden statisch nachgewiesen.",
+  },
+  {
+    icon: LayoutGrid,
+    title: "Trapezblech & Sandwichpaneel",
+    text: "Kurzschienen oder Klemmsysteme direkt auf dem Blechprofil, leicht und schnell montiert. Wir prüfen Blechstärke, Befestigung und Dachzustand, bevor wir 25 Jahre darauf bauen.",
+  },
+  {
+    icon: Sunrise,
+    title: "Ost-West-Aufständerung",
+    text: "Flache Neigung, dichte Belegung, breitere Erzeugungskurve von morgens bis abends. Passt zu Betrieben mit durchgehendem Tagverbrauch und senkt die Mittagsspitze.",
+  },
+  {
+    icon: Sun,
+    title: "Freifläche mit Rammprofil",
+    text: "Gerammte Stahlprofile ohne Betonfundament, rückbaubar. Voraussetzung sind Widmung bzw. Zonierung nach dem Raumordnungsrecht des Bundeslandes und ein Baugrundgutachten.",
+    href: "/freiflaechen-photovoltaik",
+  },
+  {
+    icon: Car,
+    title: "PV-Carport",
+    text: "Überdachte Stellplätze für Mitarbeitende, Kundschaft und Flotte – Erzeugung und Ladeinfrastruktur an einem Ort. Statik, Baubewilligung und Brandschutz planen wir mit.",
+    href: "/ladeinfrastruktur",
+  },
+  {
+    icon: Mountain,
+    title: "Schrägdach, Indach & alpin",
+    text: "Für Hotels, Chalets und Bauernhöfe in Schneelagen: verstärkte Schienen, zusätzliche Dachhaken, Schneefang und Module mit geprüfter Schneelast.",
+    href: "/chalets",
+  },
+];
+
+const WECHSELRICHTER = [
+  {
+    topologie: "String-Wechselrichter (dezentral)",
+    staerke: "Mehrere MPP-Tracker, gute Anpassung an Ost-West- und Teilverschattung, einfacher Tausch einzelner Geräte.",
+    typisch: "Dächer von ca. 30 kWp bis in den MW-Bereich",
+  },
+  {
+    topologie: "Zentralwechselrichter",
+    staerke: "Wenige große Einheiten, niedrige spezifische Kosten, meist mit eigener Trafostation.",
+    typisch: "Große Freiflächenanlagen",
+  },
+  {
+    topologie: "Hybrid-Wechselrichter",
+    staerke: "Speicher DC-seitig integriert, Ersatzstrom möglich, ein Gerät für PV und Batterie.",
+    typisch: "Kleingewerbe, Landwirtschaft, Premium-Wohnhaus",
+  },
+  {
+    topologie: "Batterie-Wechselrichter (AC-gekoppelt)",
+    staerke: "Speicher unabhängig vom PV-Wechselrichter nachrüstbar; typisch für Gewerbespeicher und Peak Shaving.",
+    typisch: "Bestandsanlagen, C&I-Speicher",
+  },
+];
+
+const eur = (n) => `${(Math.round(n / 1000) * 1000).toLocaleString("de-DE")} €`;
+const KOSTEN_GROESSEN = [30, 100, 250, 500, 1000];
 
 const PAKET = [
-  "Vor-Ort-Termin und ehrliche Bedarfsanalyse",
-  "Belegungsplan, Ertragsprognose und Wirtschaftlichkeit",
-  "Markenmodule, Wechselrichter und Montagesystem",
-  "Montage auf dem Dach inklusive Gerüst",
-  "Elektroinstallation und Prüfung des Zählerschranks",
-  "Netzanmeldung und Marktstammdatenregister",
-  "Inbetriebnahme mit Einweisung und App-Monitoring",
-  "Beratung zu Förderung und Finanzierung",
+  "Lastganganalyse aus Viertelstundenwerten des Netzbetreibers",
+  "Dachbegehung, Statik-Vorprüfung und Belegungsplan",
+  "Ertragsprognose und Wirtschaftlichkeitsrechnung",
+  "Netzzugangsantrag und Abstimmung mit dem Netzbetreiber",
+  "Module, Unterkonstruktion, Wechselrichter und Verkabelung",
+  "Montage inklusive Absturzsicherung und Brandschutzkonzept",
+  "Fertigstellungsmeldung durch unseren Elektrotechniker",
+  "Parkregler, Monitoring und Anlagendokumentation",
+  "Unterstützung beim Förderansuchen (EAG, Land)",
+  "Wartungsvertrag und Fernüberwachung auf Wunsch",
+];
+
+const ABLAUF = [
+  { icon: LineChart, title: "Lastgang & Ziel", text: "Wir werten Ihren Lastgang aus und klären das Ziel: maximaler Eigenverbrauch, Volleinspeisung, Peak Shaving oder Nachhaltigkeitsbericht." },
+  { icon: ClipboardCheck, title: "Planung & Statik", text: "Belegungsplan, Tragwerksprüfung, Schnee- und Windlast, Brandschutz nach OVE R 11-1 und Stringplanung." },
+  { icon: FileCheck2, title: "Netz & Förderung", text: "Netzzugangsantrag beim Netzbetreiber, Klärung der Anschlussleistung und – falls gewünscht – Förderansuchen im OeMAG-Fördercall." },
+  { icon: Zap, title: "Montage & Inbetriebnahme", text: "Montage, Prüfung nach ÖVE/ÖNORM E 8101 und EN 62446, Fertigstellungsmeldung, Inbetriebnahme mit Parkregler und Monitoring." },
+];
+
+const RAHMEN = [
+  {
+    icon: BadgeEuro,
+    wert: "EAG",
+    titel: "Investitionszuschuss",
+    text: "Bundesförderung nach § 56 EAG über OeMAG-Fördercalls in den Kategorien A bis D (bis 1.000 kWp). Beantragung vor Bestellung – die Sätze ändern sich je Call.",
+    href: "/forderungen/bundesfoerderung",
+  },
+  {
+    icon: Receipt,
+    wert: "20 %",
+    titel: "Umsatzsteuer",
+    text: "Der befristete Nullsteuersatz für kleine PV-Anlagen endete mit 31. März 2025. Für vorsteuerabzugsberechtigte Betriebe ist die Umsatzsteuer kein Kostenfaktor.",
+    href: "/forderungen/steuerlich",
+  },
+  {
+    icon: ShieldCheck,
+    wert: "0 €",
+    titel: "Elektrizitätsabgabe",
+    text: "Selbst erzeugter und selbst verbrauchter PV-Strom ist von der Elektrizitätsabgabe befreit – ein Vorteil jeder Kilowattstunde Eigenverbrauch.",
+    href: "/forderungen/steuerlich",
+  },
+  {
+    icon: Gauge,
+    wert: "Markt",
+    titel: "Überschuss verkaufen",
+    text: "Einspeisung an einen Stromhändler, an die OeMAG zum Marktpreis oder per PPA. Eine gesetzlich garantierte, fixe Einspeisevergütung über 20 Jahre gibt es in Österreich nicht.",
+    href: "/service/direktvermarktung",
+  },
 ];
 
 const FAQ = [
   {
-    q: "Was kostet eine Photovoltaikanlage 2026?",
-    a: `Eine schlüsselfertige Anlage kostet je nach Größe rund ${preisProKwp(30).toLocaleString("de-DE")} bis ${preisProKwp(5).toLocaleString("de-DE")} € je kWp. Eine typische 10-kWp-Anlage liegt bei etwa ${eur(10 * preisProKwp(10))} inklusive Montage, Wechselrichter und Anmeldung, ein 8-kWh-Speicher kommt mit rund ${eur(8 * ANNAHMEN.speicherPreisProKwh)} dazu. Auf Wohngebäuden fällt keine Umsatzsteuer an – die Werte sind Endpreise. Den genauen Preis nennen wir nach dem Vor-Ort-Termin.`,
+    q: "Was kostet eine Photovoltaikanlage für einen Betrieb?",
+    a: `Als Branchen-Richtwert kostet eine schlüsselfertige Dachanlage mit 100 kWp rund ${Math.round(preisProKwpNetto(100) / 10) * 10} € je kWp netto, mit 500 kWp rund ${Math.round(preisProKwpNetto(500) / 10) * 10} € je kWp (Marktstatistik und IEA PVPS Austria, fortgeschrieben). Der Preis je kWp sinkt mit der Größe; Statik, Kran, Trafo- oder Zählerumbau und Brandschutz können ihn erhöhen. Ein belastbares Angebot erstellen wir nach Lastganganalyse und Dachbegehung.`,
   },
   {
-    q: "Welche Anlagengröße passt zu meinem Haus?",
-    a: "Als Faustregel gilt rund 1 kWp je 1.000 kWh Jahresverbrauch – mit Wärmepumpe oder E-Auto darf es deutlich mehr sein. Je kWp brauchen Sie etwa 5 m² Dachfläche. Weil kleine Anlagen je kWp teurer sind, lohnt es sich meist, das Dach sinnvoll auszunutzen, statt knapp zu planen.",
+    q: "Welche Module verbauen Sie auf Gewerbedächern?",
+    a: "Überwiegend Glas-Glas-Module in TOPCon-, HJT- oder Back-Contact-Technologie. Glas-Glas ist mechanisch steifer und unempfindlicher gegen Feuchte, Ammoniak und Mikrorisse – wichtig bei Laufzeiten von 25 Jahren und mehr. Auf Freiflächen und aufgeständerten Dächern setzen wir bifaziale Module ein, wenn der Untergrund genug Licht zurückwirft.",
   },
   {
-    q: "Lohnt sich eine PV-Anlage 2026 noch?",
-    a: `Ja, wenn sie zum Verbrauch passt. Jede selbst genutzte Kilowattstunde ersetzt Netzstrom für über 30 Cent, eingespeister Strom bringt dagegen ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct (bis 10 kWp, Stand ${VERGUETUNG.gueltigAbLabel}). Deshalb entscheidet der Eigenverbrauch über die Wirtschaftlichkeit. Typisch sind Amortisationszeiten von 12 bis 18 Jahren bei einer Lebensdauer von 25 Jahren und mehr.`,
+    q: "Trägt unser Hallendach eine Photovoltaikanlage?",
+    a: "Das klärt die Statik-Vorprüfung. Eine aufgeständerte Anlage mit Ballast bringt je nach System rund 15 bis 30 kg je m² zusätzlich auf das Dach, eine Montage direkt auf Trapezblech deutlich weniger. Maßgeblich sind die Tragwerksreserve, die Schneelast nach ÖNORM B 1991-1-3 und die Windlast nach ÖNORM B 1991-1-4. Bei knapper Reserve planen wir leichtere Systeme oder eine Ost-West-Belegung.",
   },
   {
-    q: "Wie lange dauert es von der Anfrage bis zur fertigen Anlage?",
-    a: "Im Durchschnitt 6 bis 12 Wochen, je nach Projektgröße, Region und Netzbetreiber. Die Montage selbst ist bei einem Einfamilienhaus meist in ein bis zwei Tagen erledigt. Wir begleiten Sie vom Erstgespräch bis zur Inbetriebnahme.",
+    q: "Wie berücksichtigen Sie Schnee und Hagel?",
+    a: "Wir ermitteln Schneelastzone und Seehöhe des Standorts über eHORA und legen Unterkonstruktion und Klemmbereiche danach aus. In schneereichen Lagen verwenden wir Module mit höherer geprüfter Last und Glas-Glas-Aufbau. Für Hagel achten wir auf die Hagelwiderstandsklasse der Module und beraten zur Versicherung. Den ersten Überblick liefert der Standort-Check.",
   },
   {
-    q: "Brauche ich einen Stromspeicher?",
-    a: "Nicht zwingend, aber in den meisten Einfamilienhäusern hebt ein Speicher den Eigenverbrauch deutlich – von typischerweise rund 30 % auf 60 % und mehr. Wichtig ist die passende Größe: rund 1 kWh je 1.000 kWh Jahresverbrauch. Ein Speicher lässt sich auch später nachrüsten.",
+    q: "Wann braucht eine Anlage einen Parkregler?",
+    a: "Sobald der Netzbetreiber Vorgaben zu Wirkleistungsbegrenzung, Blindleistung oder Fernsteuerung am Netzanschlusspunkt macht – spätestens bei Anlagen vom Typ B nach TOR Stromerzeugungsanlagen ab 250 kW, häufig auch darunter. Der Parkregler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam. Wir setzen dafür unseren eigenen EZA-Regler ein.",
   },
   {
-    q: "Welche Förderung und steuerlichen Vorteile gibt es?",
-    a: "Auf Kauf und Installation von Anlagen auf Wohngebäuden fallen 0 % Umsatzsteuer an, Einnahmen aus Anlagen bis 30 kWp sind einkommensteuerfrei. Dazu kommt die feste Einspeisevergütung für 20 Jahre. Regionale Zuschüsse und zinsgünstige Kredite (z. B. KfW 270) sind je nach Bundesland möglich – wir prüfen das für Sie.",
+    q: "Wie läuft der Netzanschluss in Österreich ab?",
+    a: "Zuerst stellen wir den Netzzugangsantrag beim zuständigen Netzbetreiber, der die Anschlussleistung prüft und einen Netzzugangsvertrag anbietet. Nach der Montage übermittelt unser Elektrotechniker die Fertigstellungsmeldung, und Sie geben den Stromabnehmer für den Überschuss bekannt – einen Stromhändler oder die OeMAG. Danach wird der Zählpunkt für die Einspeisung aktiviert.",
   },
   {
-    q: "Kann ich meine Solaranlage auch ohne Eigenkapital finanzieren?",
-    a: "Ja. Wir arbeiten mit Finanzierungspartnern zusammen, die zinsgünstige Darlehen anbieten – auf Wunsch auch ohne Anzahlung. Häufig liegt die monatliche Rate in der Größenordnung der eingesparten Stromkosten.",
+    q: "Welche Förderung gibt es für Photovoltaik im Betrieb?",
+    a: "Auf Bundesebene den EAG-Investitionszuschuss, der in Fördercalls der OeMAG vergeben wird, dazu steuerliche Instrumente wie Investitionsfreibetrag und Abschreibung. Einige Bundesländer fördern zusätzlich. Weil sich Sätze und Termine je Call ändern, prüfen wir die Förderfähigkeit vor der Bestellung – das Förderansuchen muss vorher gestellt werden.",
   },
   {
-    q: "Kann ich mit einer Solaranlage komplett unabhängig vom Stromnetz werden?",
-    a: "Eine vollständige Autarkie ist technisch möglich, aber selten wirtschaftlich – im Winter liefert keine Dachanlage genug. Realistisch sind mit Speicher und intelligenter Steuerung rund 60 bis 80 % Autarkie. Die übrigen Kilowattstunden kommen günstiger aus dem Netz.",
+    q: "Wie lange dauert ein Gewerbeprojekt?",
+    a: "Das hängt vor allem vom Netzbetreiber und von der Anlagengröße ab. Bei Dachanlagen bis rund 250 kWp sind drei bis sechs Monate von der Lastganganalyse bis zur Inbetriebnahme üblich, die Montage selbst dauert meist wenige Tage bis Wochen. Bei Anlagen mit Trafostation oder Mittelspannungsanschluss bestimmen Netzprüfung und Lieferzeiten den Zeitplan.",
+  },
+  {
+    q: "Bauen Sie auch Anlagen für Privathäuser?",
+    a: "Ja, vor allem für Premium-Wohnhäuser und Chalets, bei denen Planung, Optik und Schneelast besondere Sorgfalt verlangen. Speicher, Wallbox, Wärmepumpe und Energiemanagement planen wir dann als ein System.",
   },
 ];
 
-export default async function PhotovoltaikanlagePage() {
-  const data = await fetchPhotovoltaikData();
+/* ------------------------------------------------------------------ */
 
+export default function PhotovoltaikanlagePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -176,54 +276,30 @@ export default async function PhotovoltaikanlagePage() {
         name: TITLE,
         description: DESCRIPTION,
         inLanguage: "de-AT",
-        isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+        isPartOf: { "@id": `${BASE_URL}/#website` },
         about: { "@id": `${PAGE_URL}/#service` },
-        datePublished: "2020-01-01",
-        dateModified: new Date().toISOString().split("T")[0],
       },
       {
         "@type": "Service",
         "@id": `${PAGE_URL}/#service`,
-        name: "Photovoltaikanlage als Komplettpaket",
-        serviceType: "Planung, Montage und Inbetriebnahme von Photovoltaikanlagen",
-        description: "Beratung, Planung, Montage, Netzanmeldung und Inbetriebnahme von Photovoltaikanlagen mit Stromspeicher, Wallbox und Wärmepumpe.",
-        provider: { "@id": "https://www.oekovolt.com/#organization" },
-        areaServed: { "@type": "Country", name: "Deutschland" },
+        name: "Photovoltaikanlagen für Gewerbe, Industrie und Landwirtschaft",
+        serviceType: "Planung, Errichtung und Netzanschluss von Photovoltaikanlagen",
+        description: DESCRIPTION,
+        provider: { "@id": `${BASE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
+        audience: { "@type": "BusinessAudience", audienceType: "Gewerbe, Industrie, Landwirtschaft, öffentliche Hand" },
         url: PAGE_URL,
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          name: "Bausteine einer Photovoltaikanlage",
+          itemListElement: ["Solarmodule", "Unterkonstruktion", "Wechselrichter", "Parkregler", "Netzanschluss", "Monitoring"].map((n) => ({
+            "@type": "Offer",
+            itemOffered: { "@type": "Service", name: n },
+          })),
+        },
       },
     ],
   };
-
-  // API-Kennzahlen (nur, wenn im Backoffice gepflegt)
-  const stats = [
-    [data?.first_statistic_value, data?.first_value_suffix, data?.first_statistic_title],
-    [data?.second_statistic_value, data?.second_value_suffix, data?.second_statistic_title],
-    [data?.third_statistic_value, data?.third_value_suffix, data?.third_statistic_title],
-  ]
-    .filter(([v, , l]) => v && l)
-    // Große kWp-Werte als MWp darstellen, damit die Kennzahl nicht umbricht
-    .map(([value, suffix, label]) =>
-      suffix === "kWp" && value >= 10000
-        ? { value: Math.round(value / 1000), suffix: " MWp", label }
-        : { value, suffix: suffix === "kWp" ? " kWp" : suffix || "", label }
-    );
-
-  const points = (data?.photovoltaik_options || [])
-    .map((o) => t(o.first_header_options))
-    .filter(Boolean);
-
-  const introBilder = (data?.photovoltaik_first_images_card || []).slice(0, 4);
-  const schritte = [
-    { icon: UserRound, title: data?.photovoltaik_title_third_card_first || "Individuelle Beratung", text: data?.photovoltaik_description_third_card_alt_first || "Unsere Fachberater nehmen sich Zeit für Ihre Fragen – am Telefon oder bei Ihnen vor Ort.", image: data?.photovoltaik_image_third_card_first, alt: data?.photovoltaik_image_third_card_alt_first },
-    { icon: Compass, title: data?.photovoltaik_third_second_card_second || "Passgenaue Planung", text: data?.photovoltaik_description_third_card_alt_second || "Wir planen Ihre Anlage exakt nach Dach, Verbrauch und Zukunftsplänen.", image: data?.photovoltaik_image_third_card_second, alt: data?.photovoltaik_image_third_card_alt_second },
-    { icon: Wrench, title: data?.photovoltaik_third_second_card_third || "Fachgerechte Installation", text: data?.photovoltaik_description_third_card_alt_third || "Unser Montageteam setzt die Anlage sorgfältig um – schlüsselfertig und angemeldet.", image: data?.photovoltaik_image_third_card_third, alt: data?.photovoltaik_image_third_card_alt_third },
-  ];
-  const komplett = (data?.photovoltaik_fifth_table || []).map((it, i) => ({
-    icon: KOMPLETT_ICONS[i % KOMPLETT_ICONS.length],
-    title: t(it.title),
-    text: it.description,
-  }));
-  const projektBilder = (data?.photovoltaik_sixth_table_images || []).slice(0, 4);
 
   return (
     <div>
@@ -231,37 +307,27 @@ export default async function PhotovoltaikanlagePage() {
 
       <PageHero
         breadcrumbs={[{ name: "Produkte" }, { name: "Photovoltaikanlage" }]}
-        eyebrow="Photovoltaikanlage · Komplettpaket"
+        eyebrow="Photovoltaikanlage · Gewerbe & Industrie"
         title={
-          data?.photovoltaik_title ? (
-            data.photovoltaik_title
-          ) : (
-            <>
-              Photovoltaikanlage vom <span className="ov-text-gradient">regionalen Spezialisten</span>
-            </>
-          )
+          <>
+            Photovoltaikanlagen für <span className="ov-text-gradient">Betriebe in ganz Österreich</span>
+          </>
         }
-        lead={
-          (data?.photovoltaik_description ? `${data.photovoltaik_description}. ` : "") +
-          "Wir planen Ihre Anlage passend zu Dach, Verbrauch und Zukunftsplänen – und kümmern uns um Montage, Anmeldung und Inbetriebnahme."
-        }
-        image={{ src: img(data?.photovoltaik_banner_image), alt: data?.photovoltaik_alt_banner_image || "Photovoltaikanlage auf einem Einfamilienhaus" }}
-        points={points.length ? points : ["Regional verwurzelt im Allgäu", "Über 15 Jahre Erfahrung", "Planung, Montage & Anmeldung", "Markenkomponenten"]}
+        lead="Eine Photovoltaikanlage für Gewerbe und Industrie ist ein Kraftwerk am eigenen Standort: geplant nach Ihrem Lastgang, statisch nachgewiesen für österreichische Schnee- und Windlasten und nach TOR Stromerzeugungsanlagen an das Netz angeschlossen. Wir liefern Planung, Errichtung und Netzanschluss aus einer Hand."
+        image={{ src: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg", alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
+        points={["Seit 2012 in Österreich", "Hallendach, Freifläche, Carport", "Eigener Parkregler (EZA-Regler)", "Alle neun Bundesländer"]}
         actions={[
-          { label: "Kostenloses Angebot anfordern", href: "/angebot" },
-          { label: "Ertrag berechnen", href: "/solarrechner", icon: Calculator },
+          { label: "Projekt anfragen", href: "/angebot" },
+          { label: "Beratungstermin buchen", href: "/termin", icon: CalendarCheck2 },
         ]}
-        stats={stats}
         badge={
           <div className="flex items-center gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <BadgePercent aria-hidden="true" className="h-6 w-6" />
+              <SlidersHorizontal aria-hidden="true" className="h-6 w-6" />
             </span>
             <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
-                0 % <span className="text-[14px] font-semibold text-ink-500">Umsatzsteuer</span>
-              </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">auf Anlage & Speicher für Wohngebäude</p>
+              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">TOR-konform</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Netzanschluss mit eigenem Parkregler</p>
             </div>
           </div>
         }
@@ -269,105 +335,149 @@ export default async function PhotovoltaikanlagePage() {
 
       <FeaturedLogos />
 
-      {/* Einführung */}
-      <Section tone="white" space="lg">
+      {/* Module */}
+      <Section tone="white" space="lg" id="module">
+        <SectionHeading
+          eyebrow="Solarmodule"
+          title={
+            <>
+              Welche Module passen auf <span className="ov-text-gradient">Gewerbedächer?</span>
+            </>
+          }
+          lead="Für Gewerbe, Landwirtschaft und alpine Standorte sind Glas-Glas-Module mit n-Typ-Zellen heute der Standard. Welche Zelltechnologie am besten passt, entscheiden Dachfläche, Temperatur, Aufständerung und Ertragsziel."
+          className="mb-12"
+        />
+        <Reveal>
+          <div tabIndex={0} role="region" aria-label="Modultechnologien im Vergleich" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+            <table className="w-full min-w-[720px] border-collapse text-left text-[15px]">
+              <caption className="sr-only">Modultechnologien für Photovoltaikanlagen im Vergleich</caption>
+              <thead>
+                <tr className="bg-navy-950 text-white">
+                  <th scope="col" className="px-5 py-4 font-semibold">Technologie</th>
+                  <th scope="col" className="px-5 py-4 font-semibold">Was sie auszeichnet</th>
+                  <th scope="col" className="px-5 py-4 font-semibold">Typischer Einsatz</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100 bg-white">
+                {MODULE.map((m) => (
+                  <tr key={m.technik}>
+                    <th scope="row" className="whitespace-nowrap px-5 py-4 align-top font-semibold text-ink-900">{m.technik}</th>
+                    <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{m.kern}</td>
+                    <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{m.einsatz}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-3 text-[13px] text-ink-500">
+            Datenblattwerte wie Wirkungsgrad, Temperaturkoeffizient und geprüfte Last vergleichen wir im Angebot je Modul.{" "}
+            <Link href="/produkte/hersteller" className="font-semibold text-ov-700 hover:text-ov-800">
+              Unsere Hersteller im Überblick
+            </Link>
+          </p>
+        </Reveal>
+      </Section>
+
+      {/* Unterkonstruktion */}
+      <Section tone="sand" space="lg" id="unterkonstruktion">
+        <SectionHeading
+          eyebrow="Unterkonstruktion"
+          title="Das richtige Montagesystem für jede Fläche"
+          lead="Die Unterkonstruktion entscheidet über Statik, Dichtheit und Lebensdauer der Anlage. Wir wählen das System nach Dachaufbau, Tragwerksreserve und Standortlasten – nicht nach Lagerbestand."
+          className="mb-12"
+        />
+        <FeatureGrid items={UNTERKONSTRUKTIONEN} cols={3} />
+      </Section>
+
+      {/* Schnee, Wind, Hagel */}
+      <Section tone="white" space="lg" id="schneelast">
         <SplitMedia
-          eyebrow={data?.photovoltaik_first_title || "Zuverlässigkeit und Qualität"}
-          title={data?.photovoltaik_first_subtitle || "Ihr Zuhause ist individuell – genauso wie Ihre Photovoltaikanlage"}
-          text={
-            data?.photovoltaik_first_description ||
-            "Ob Doppelhaushälfte, modernes Einfamilienhaus oder Altbau: Sie erhalten keine Standardlösung, sondern eine Anlage, die zu Ihrem Dach, Ihrem Energiebedarf und Ihren Zukunftsplänen passt."
-          }
-          points={(data?.photovoltaik_fourth_table || []).map((o) => o.options).filter(Boolean)}
-          action={{ label: "Beratungstermin anfragen", href: "/angebot" }}
-          image={introBilder.length < 3 ? { src: img(introBilder[0]?.image), alt: introBilder[0]?.alt_image || "Photovoltaikanlage" } : undefined}
-          aside={introBilder.length >= 3 ? <BildCollage bilder={introBilder} /> : undefined}
+          eyebrow="Schneelast, Wind & Hagel"
+          title="Ausgelegt für österreichische Standorte"
+          text={[
+            "Die Schneelast in Österreich reicht vom Flachland bis in hochalpine Lagen über ein Vielfaches – maßgeblich sind Schneelastzone und Seehöhe nach ÖNORM B 1991-1-3. Wind wird nach ÖNORM B 1991-1-4 angesetzt, bei Gebäudekanten und Randbereichen mit erhöhten Sogkräften.",
+            "Wir ermitteln diese Werte für jede Adresse über die Naturgefahrenplattform eHORA und legen Unterkonstruktion, Klemmbereiche und Modulwahl darauf aus. Für Hagel berücksichtigen wir die Hagelwiderstandsklasse der Module.",
+          ]}
+          points={["Schneelastzone und Seehöhe je Adresse", "Wind- und Sogkräfte an Dachrand und Ecken", "Module mit geprüfter Last und Hagelwiderstand", "Schneefang und Abrutschschutz bei Schrägdächern"]}
+          action={{ label: "Standort-Check starten", href: "/standort-check" }}
+          image={{ src: "/Images/Ratgeber/photovoltaik-im-winter.jpg", alt: "Photovoltaikanlage auf einem verschneiten Dach" }}
         />
-      </Section>
-
-      {/* Anlagen-Explorer */}
-      <Section tone="sand" space="lg" id="bausteine">
-        <SectionHeading
-          eyebrow={data?.photovoltaik_title_seventh_card_first || "Ihre Bausteine"}
-          title={
-            <>
-              Was gehört zu einer <span className="ov-text-gradient">Photovoltaikanlage?</span>
-            </>
-          }
-          lead="Eine PV-Anlage besteht aus Solarmodulen, Unterkonstruktion und Wechselrichter. Stromspeicher, Wallbox, Wärmepumpe und Energiemanagement machen daraus ein System, das Ihren Solarstrom optimal nutzt. Entdecken Sie jeden Baustein."
-          align="center"
-          className="mb-12"
-        />
-        <Reveal dir="scale">
-          <AnlagenExplorer />
-        </Reveal>
-      </Section>
-
-      {/* Kosten */}
-      <Section tone="white" space="lg" id="kosten">
-        <SectionHeading
-          eyebrow="Kosten 2026"
-          title={
-            <>
-              Was kostet eine Photovoltaikanlage – <span className="ov-text-gradient">transparent</span> aufgeschlüsselt
-            </>
-          }
-          lead={`Eine schlüsselfertige 10-kWp-Anlage kostet 2026 rund ${eur(10 * preisProKwp(10))}. Der Preis je kWp sinkt mit der Größe, weil Gerüst, Planung und Anmeldung unabhängig von der Leistung anfallen. Stellen Sie Ihre Größe ein und sehen Sie, wofür Ihr Geld verwendet wird.`}
-          className="mb-12"
-        />
-        <Reveal dir="scale">
-          <KostenAufschluesselung />
-        </Reveal>
-
-        <div className="mt-16 grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-          <Reveal>
-            <h3 className="ov-h3 text-ink-900">Richtpreise nach Anlagengröße</h3>
-            <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-              Die Tabelle zeigt Endpreise für eine schlüsselfertige Anlage ohne Speicher – inklusive Module, Wechselrichter, Unterkonstruktion, Montage und Netzanmeldung. Ein Speicher kostet zusätzlich rund{" "}
-              {ANNAHMEN.speicherPreisProKwh.toLocaleString("de-DE")} € je kWh Kapazität.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {[
-                "0 % Umsatzsteuer auf Anlagen für Wohngebäude",
-                "Einnahmen bis 30 kWp einkommensteuerfrei",
-                `Laufende Kosten ca. ${ANNAHMEN.betriebskostenProKwp} € je kWp pro Jahr`,
-              ].map((p) => (
-                <li key={p} className="flex gap-3 text-[15.5px] text-ink-700">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-100 text-ov-700">
-                    <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
+        <div className="mt-12 grid gap-4 sm:grid-cols-3">
+          {[
+            { icon: Snowflake, titel: "Schnee", text: "ÖNORM B 1991-1-3, Zone und Seehöhe aus eHORA" },
+            { icon: Wind, titel: "Wind", text: "ÖNORM B 1991-1-4, Rand- und Eckbereiche" },
+            { icon: CloudHail, titel: "Hagel", text: "Hagelwiderstandsklasse der Module, Versicherung" },
+          ].map((k, i) => {
+            const Icon = k.icon;
+            return (
+              <Reveal key={k.titel} delay={i * 80}>
+                <div className="flex h-full items-start gap-4 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                    <Icon aria-hidden="true" className="h-5 w-5" />
                   </span>
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+                  <div>
+                    <h3 className="font-display text-[17px] font-bold text-ink-900">{k.titel}</h3>
+                    <p className="mt-1 text-[14.5px] leading-relaxed text-ink-600">{k.text}</p>
+                  </div>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* Wechselrichter & Netzanschluss */}
+      <Section tone="sand" space="lg" id="wechselrichter">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrow="Wechselrichter & Netzanschluss"
+              title="Die richtige Topologie – und ein Regler, der mit dem Netz spricht"
+              lead="Die Wechselrichter-Topologie folgt der Dachgeometrie, der Anlagengröße und dem Speicherkonzept. Am Netzanschlusspunkt gelten die TOR Stromerzeugungsanlagen: Anlagen ab 0,8 kW sind Typ A, ab 250 kW Typ B – mit Anforderungen an Blindleistung, Wirkleistungsbegrenzung und Fernsteuerbarkeit."
+            />
+            <Reveal delay={100} className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+              <div className="flex items-start gap-4">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
+                  <Cpu aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <div>
+                  <h3 className="font-display text-[17px] font-bold text-ink-900">Parkregler aus eigener Entwicklung</h3>
+                  <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">
+                    Unser EZA-Regler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam: Einspeiselimit, Blindleistung nach Q(U) oder cos φ, Fernsteuerbefehle des Netzbetreibers.
+                  </p>
+                  <Link href="/technik/parkregler" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                    Parkregler im Detail
+                    <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+          </div>
           <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Richtpreise für Photovoltaikanlagen" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[520px] border-collapse text-left text-[15px]">
-                <caption className="sr-only">Richtpreise für Photovoltaikanlagen nach Anlagengröße, Stand 2026</caption>
+            <div tabIndex={0} role="region" aria-label="Wechselrichter-Topologien" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
+                <caption className="sr-only">Wechselrichter-Topologien für Photovoltaikanlagen</caption>
                 <thead>
                   <tr className="bg-navy-950 text-white">
-                    <th scope="col" className="px-5 py-4 font-semibold">Anlagengröße</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Preis je kWp</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Gesamtpreis</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Dachfläche</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Topologie</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Stärke</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Typisch für</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-ink-100 bg-white">
-                  {PREIS_GROESSEN.map((g) => (
-                    <tr key={g} className={g === 10 ? "bg-ov-50/60" : undefined}>
-                      <th scope="row" className="whitespace-nowrap px-5 py-3.5 font-semibold text-ink-900">
-                        {g} kWp{g === 10 && <span className="ml-2 rounded-full bg-ov-600 px-2 py-0.5 text-[11px] font-semibold text-white">typisch</span>}
-                      </th>
-                      <td className="ov-num px-5 py-3.5 text-ink-600">{eur(preisProKwp(g))}</td>
-                      <td className="ov-num px-5 py-3.5 font-semibold text-ov-700">{eur(g * preisProKwp(g))}</td>
-                      <td className="ov-num px-5 py-3.5 text-ink-600">ca. {g * ANNAHMEN.qmProKwp} m²</td>
+                  {WECHSELRICHTER.map((w) => (
+                    <tr key={w.topologie}>
+                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{w.topologie}</th>
+                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{w.staerke}</td>
+                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{w.typisch}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="mt-3 text-[13px] text-ink-500">Richtwerte Stand 2026, Schrägdach mit normaler Zugänglichkeit. Orientierung, kein Angebot.</p>
+            <p className="mt-3 text-[13px] text-ink-500">
+              Typ A: ≥ 0,8 kW bis &lt; 250 kW · Typ B: ≥ 250 kW bis &lt; 35 MW (TOR Stromerzeugungsanlagen, E-Control).
+            </p>
           </Reveal>
         </div>
       </Section>
@@ -381,168 +491,171 @@ export default async function PhotovoltaikanlagePage() {
             <SectionHeading
               dark
               eyebrow="Komplettpaket"
-              title={data?.photovoltaik_subtitle_fifth_card_first || "Ihre Photovoltaikanlage als Komplettpaket aus einer Hand"}
-              lead="Ein Ansprechpartner, ein Angebot, ein Team für alles. Das ist im Komplettpaket enthalten:"
+              title="Von der Lastganganalyse bis zur Fertigstellungsmeldung"
+              lead="Ein Ansprechpartner, ein Angebot, ein Team – mit eigenem Elektrotechnik-Gewerbe. Das ist im Komplettpaket enthalten:"
             />
-            <Reveal delay={100}>
-              <ul className="mt-8 grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
-                {PAKET.map((p) => (
-                  <li key={p} className="flex gap-3 text-[15.5px] leading-snug text-white/85">
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500/20 text-ov-300">
-                      <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-                    </span>
-                    {p}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-10">
-                <Button href="/angebot" size="lg" pfeil>
-                  Komplettangebot anfordern
-                </Button>
-              </div>
-            </Reveal>
+            <div className="mt-10">
+              <Button href="/angebot" size="lg" pfeil>
+                Komplettangebot anfordern
+              </Button>
+            </div>
           </div>
-          <ul className="grid gap-4 self-center">
-            {(komplett.length
-              ? komplett.slice(0, 4)
-              : [
-                  { icon: Sparkles, title: "Alles aus einer Hand", text: "Beratung, Planung, Montage und Anmeldung – ohne Schnittstellen zwischen verschiedenen Firmen." },
-                  { icon: ShieldCheck, title: "Markenkomponenten", text: "Module, Wechselrichter und Speicher namhafter Hersteller." },
-                  { icon: Compass, title: "Individuelle Planung", text: "Jede Anlage wird auf Dach, Strombedarf und Technik abgestimmt." },
-                  { icon: HandCoins, title: "Förderung & Finanzierung", text: "Wir prüfen Förderprogramme und bieten auf Wunsch eine passende Finanzierung." },
-                ]
-            ).map((k, i) => {
-              const Icon = k.icon;
-              return (
-                <Reveal as="li" key={k.title} delay={i * 80}>
-                  <div className="group ov-card-hover flex gap-5 rounded-3xl bg-white/[0.04] p-6 ring-1 ring-white/10 hover:bg-white/[0.07] md:p-7">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-ov-300 transition-colors group-hover:bg-ov-500 group-hover:text-white">
-                      <Icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
-                    </span>
-                    <div>
-                      <h3 className="font-display text-[18px] font-bold leading-snug text-white md:text-[19px]">{k.title}</h3>
-                      <p className="mt-2 text-[15px] leading-relaxed text-white/65">{k.text}</p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </ul>
+          <Reveal delay={100}>
+            <ul className="grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
+              {PAKET.map((p) => (
+                <li key={p} className="flex gap-3 text-[15.5px] leading-snug text-white/85">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500/20 text-ov-300">
+                    <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </Section>
 
       {/* Ablauf */}
       <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow={data?.photovoltaik_third_second_card || "Von der Idee zur fertigen Anlage"}
-          title={data?.photovoltaik_subtitle_third_card || "In drei Etappen zu Ihrer Photovoltaikanlage"}
-          lead="Im Durchschnitt vergehen 6 bis 12 Wochen von der Anfrage bis zur Inbetriebnahme – die Montage selbst dauert meist nur ein bis zwei Tage."
+          eyebrow="Projektablauf"
+          title="In vier Etappen zur Anlage am Netz"
+          lead="Bei Dachanlagen bis rund 250 kWp vergehen meist drei bis sechs Monate von der Lastganganalyse bis zur Inbetriebnahme. Den Takt geben Netzbetreiber, Förderfristen und Lieferzeiten vor – nicht die Montage."
           align="center"
           className="mb-14"
         />
-        <ol className="grid gap-6 md:grid-cols-3">
-          {schritte.map((s, i) => {
-            const Icon = s.icon;
-            return (
-              <Reveal as="li" key={s.title} delay={i * 100} className="flex">
-                <article className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70">
-                  <div className="relative aspect-[16/11] overflow-hidden bg-ink-100">
-                    <Image src={img(s.image)} alt={s.alt || s.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950/50 via-transparent to-transparent" />
-                    <span className="absolute bottom-4 left-5 font-display text-[44px] font-extrabold leading-none text-white/95">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-6 md:p-7">
-                    <div className="flex items-start gap-3">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-50 text-ov-600">
-                        <Icon aria-hidden="true" className="h-5 w-5" />
-                      </span>
-                      <h3 className="ov-h3 pt-1 text-ink-900">{s.title}</h3>
-                    </div>
-                    <p className="mt-4 whitespace-pre-line text-[15.5px] leading-relaxed text-ink-600">{s.text}</p>
-                  </div>
-                </article>
-              </Reveal>
-            );
-          })}
-        </ol>
-      </Section>
-
-      {/* Rahmenbedingungen 2026 */}
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Rahmenbedingungen 2026"
-          title="Steuern, Vergütung und Regeln – das gilt für neue Anlagen"
-          lead="Die wichtigsten Eckdaten, die Ihre Wirtschaftlichkeit beeinflussen. Wir berücksichtigen sie in jeder Planung."
-          className="mb-12"
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { icon: BadgePercent, wert: "0 %", titel: "Umsatzsteuer", text: "Nullsteuersatz nach § 12 Abs. 3 UStG für Anlagen und Speicher auf Wohngebäuden." },
-            { icon: Landmark, wert: "30 kWp", titel: "Einkommensteuerfrei", text: "Einnahmen aus Anlagen bis 30 kWp sind nach § 3 Nr. 72 EStG steuerfrei." },
-            { icon: Coins, wert: `${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct`, titel: "Einspeisevergütung", text: `Je kWh bis 10 kWp, ${ct(VERGUETUNG.saetze[1].teileinspeisung)} ct für den Anteil darüber – fest für ${VERGUETUNG.garantieJahre} Jahre. Stand ${VERGUETUNG.gueltigAbLabel}.` },
-            { icon: Gauge, wert: "60 %", titel: "Solarspitzengesetz", text: "Neue Anlagen ohne Smart Meter speisen maximal 60 % ihrer Leistung ein; bei negativen Börsenpreisen gibt es keine Vergütung." },
-          ].map((k, i) => {
-            const Icon = k.icon;
-            return (
-              <Reveal key={k.titel} delay={i * 80}>
-                <div className="ov-card-hover flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
-                      <Icon aria-hidden="true" className="h-5 w-5" />
-                    </span>
-                  </div>
-                  <p className="ov-num mt-6 font-display text-[36px] font-extrabold leading-none tracking-tight text-ink-900">{k.wert}</p>
-                  <h3 className="mt-3 font-display text-[17px] font-bold text-ink-900">{k.titel}</h3>
-                  <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{k.text}</p>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-        <Reveal className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-[14px] text-ink-500">Keine Steuer- oder Rechtsberatung. Details klären wir im Beratungsgespräch.</p>
-          <Link href="/forderungen/steuerlich" className="group inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-            Steuerliche Förderung im Detail
+        <Steps items={ABLAUF} />
+        <Reveal className="mt-12 text-center">
+          <Link href="/dienstleistungen/photovoltaik" className="group inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+            Planung, Montage und Netzanschluss im Detail
             <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </Reveal>
       </Section>
 
-      {/* Regional & Kundenprojekt */}
-      <Section tone="white" space="lg">
-        <SplitMedia
-          eyebrow="Aus dem Allgäu für Deutschland"
-          title={data?.photovoltaik_title_fourth_card_first || "Ihr Photovoltaik-Spezialist aus dem Allgäu"}
-          text={[
-            data?.photovoltaik_subtitle_fourth_card_first ? `${data.photovoltaik_subtitle_fourth_card_first}.` : "Individuelle Beratung durch erfahrene Solarprofis.",
-            "Von unserem Standort in Türkheim aus planen und montieren wir Anlagen in der Region und darüber hinaus – mit festem Ansprechpartner auch nach der Inbetriebnahme.",
-          ]}
-          image={{ src: img(data?.photovoltaik_image_fourth_card), alt: data?.photovoltaik_image_fourth_card_alt || "Ökovolt Fachkraft prüft ein Solarmodul" }}
-          reverse
-        >
-          <p className="mt-6 flex items-center gap-2 text-[15px] font-medium text-ink-700">
-            <MapPin aria-hidden="true" className="h-4 w-4 text-ov-600" />
-            Türkheim · Allgäu · Bayern
-          </p>
-        </SplitMedia>
+      {/* Kosten */}
+      <Section tone="sand" space="lg" id="kosten">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Kosten"
+            title="Was kostet eine Gewerbeanlage je kWp?"
+            lead="Der Preis je kWp sinkt mit der Anlagengröße, weil Planung, Netzanschluss und Baustelleneinrichtung nur einmal anfallen. Die Tabelle zeigt Branchen-Richtwerte für schlüsselfertige Dachanlagen in Österreich – netto, ohne Speicher."
+          />
+          <Reveal delay={100}>
+            <div tabIndex={0} role="region" aria-label="Richtwerte Kosten Gewerbeanlagen" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
+                <caption className="sr-only">Richtwerte für Photovoltaik-Gewerbeanlagen nach Anlagengröße, netto, Stand 2026</caption>
+                <thead>
+                  <tr className="bg-navy-950 text-white">
+                    <th scope="col" className="px-5 py-4 font-semibold">Anlagengröße</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">€ je kWp netto</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Gesamt netto</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Ertrag / Jahr</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ink-100 bg-white">
+                  {KOSTEN_GROESSEN.map((g) => (
+                    <tr key={g}>
+                      <th scope="row" className="whitespace-nowrap px-5 py-3.5 font-semibold text-ink-900">{g.toLocaleString("de-DE")} kWp</th>
+                      <td className="ov-num px-5 py-3.5 text-ink-600">ca. {(Math.round(preisProKwpNetto(g) / 10) * 10).toLocaleString("de-DE")} €</td>
+                      <td className="ov-num px-5 py-3.5 font-semibold text-ov-700">ca. {eur(g * preisProKwpNetto(g))}</td>
+                      <td className="ov-num px-5 py-3.5 text-ink-600">ca. {(Math.round((g * ANNAHMEN.ertragProKwpSued) / 1000) * 1000).toLocaleString("de-DE")} kWh</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-[13px] leading-relaxed text-ink-500">
+              Richtwerte, keine Angebotspreise. Quellen: {PREISQUELLEN.slice(0, 2).map((q) => q.name).join("; ")} – fortgeschrieben auf 2026. Ertrag mit {ANNAHMEN.ertragProKwpSued.toLocaleString("de-DE")} kWh je kWp (PVGIS, vorsichtig gerundet); Ost-West-Belegung liefert je kWp weniger.
+            </p>
+          </Reveal>
+        </div>
+      </Section>
 
-        {data?.photovoltaik_title_sixth_card_first && (
-          <div className="mt-24 md:mt-32">
-            <SplitMedia
-              eyebrow={data.photovoltaik_title_sixth_card_first}
-              title={data.photovoltaik_subtitle_sixth_card_first}
-              text={data.photovoltaik_description_sixth_card_alt_second}
-              action={{ label: "Referenzprojekte ansehen", href: "/referenzen/projekte", variant: "navy" }}
-              image={projektBilder.length < 3 ? { src: img(projektBilder[0]?.image), alt: projektBilder[0]?.alt_image || "Kundenprojekt" } : undefined}
-              aside={projektBilder.length >= 3 ? <BildCollage bilder={projektBilder} gespiegelt /> : undefined}
-            />
-          </div>
-        )}
+      {/* Rahmenbedingungen Österreich */}
+      <Section tone="white" space="lg">
+        <SectionHeading
+          eyebrow="Rahmenbedingungen 2026"
+          title="Förderung, Steuern und Einspeisung in Österreich"
+          lead="Die Wirtschaftlichkeit einer Gewerbeanlage hängt vor allem am Eigenverbrauch: Jede selbst genutzte Kilowattstunde spart Energiepreis, Netzentgelte und Abgaben. Diese Rahmenbedingungen berücksichtigen wir in jeder Rechnung."
+          className="mb-12"
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {RAHMEN.map((k, i) => {
+            const Icon = k.icon;
+            return (
+              <Reveal key={k.titel} delay={i * 80}>
+                <div className="ov-card-hover flex h-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                    <Icon aria-hidden="true" className="h-5 w-5" />
+                  </span>
+                  <p className="ov-num mt-6 font-display text-[32px] font-extrabold leading-none tracking-tight text-ink-900">{k.wert}</p>
+                  <h3 className="mt-3 font-display text-[17px] font-bold text-ink-900">{k.titel}</h3>
+                  <p className="mt-2 flex-1 text-[14.5px] leading-relaxed text-ink-600">{k.text}</p>
+                  <Link href={k.href} className="group mt-4 inline-flex min-h-11 items-center gap-1.5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+                    Mehr zu {k.titel}
+                    <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </Reveal>
+            );
+          })}
+        </div>
+        <p className="mt-8 text-[14px] text-ink-500">Stand September 2026. Keine Steuer- oder Rechtsberatung – die steuerliche Gestaltung klären Sie mit Ihrer Steuerberatung.</p>
+      </Section>
+
+      {/* Zielgruppen */}
+      <Section tone="sand" space="lg">
+        <SectionHeading
+          eyebrow="Für wen wir bauen"
+          title="Gewerbe, Landwirtschaft und öffentliche Hand zuerst"
+          className="mb-12"
+        />
+        <FeatureGrid
+          cols={4}
+          items={[
+            { icon: Warehouse, title: "Gewerbe & Industrie", text: "Hallen, Produktion, Logistik, Kühlhäuser – geplant nach Lastgang.", href: "/gewerbe" },
+            { icon: Tractor, title: "Landwirtschaft", text: "Stall, Maschinenhalle, Agri-PV und Freifläche.", href: "/landwirtschaft" },
+            { icon: Sun, title: "Hotellerie & Tourismus", text: "Hotels, Bergbahnen, Thermen mit hohem Tagverbrauch.", href: "/hotellerie-tourismus" },
+            { icon: ShieldCheck, title: "Gemeinden & Länder", text: "Schulen, Bauhöfe, Kläranlagen und Energiegemeinschaften.", href: "/kommunen" },
+          ]}
+        />
+      </Section>
+
+      {/* Privat */}
+      <Section tone="white" space="lg" id="privat">
+        <SplitMedia
+          eyebrow="Für Privat"
+          title="Premium-Wohnhaus und Chalet"
+          text={[
+            "Auch für private Bauherren planen wir Photovoltaikanlagen – bevorzugt dort, wo Optik, Schneelast und Systemintegration besondere Sorgfalt verlangen: Premium-Wohnhäuser, Chalets und Landsitze.",
+            "Speicher, Wallbox, Wärmepumpe und Energiemanagement werden dabei als ein System geplant. Den Aufbau zeigt der Anlagen-Explorer unten.",
+          ]}
+          action={{ label: "Luxus-Chalets & Alpin", href: "/chalets", variant: "navy" }}
+          image={{ src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Photovoltaikanlage auf einem Gebäude am Seeufer in Fuschl am See, Luftaufnahme" }}
+          reverse
+        />
+        <div className="mt-20">
+          <SectionHeading
+            eyebrow="Systembausteine"
+            title={
+              <>
+                Was gehört zu einer <span className="ov-text-gradient">Photovoltaikanlage?</span>
+              </>
+            }
+            lead="Solarmodule, Unterkonstruktion und Wechselrichter bilden die Anlage. Stromspeicher, Wallbox, Wärmepumpe und Energiemanagement machen daraus ein System, das den Solarstrom möglichst selbst nutzt."
+            align="center"
+            className="mb-12"
+          />
+          <Reveal dir="scale">
+            <AnlagenExplorer />
+          </Reveal>
+        </div>
       </Section>
 
       <SolarrechnerTeaser
-        titel="Was bringt Ihnen Ihre Anlage konkret?"
-        text="Größe, Verbrauch und Dach eingeben – Sie sehen sofort Jahresertrag, Ersparnis, Autarkie und Amortisation."
+        titel="Was bringt die Anlage an Ihrem Standort?"
+        text="Anlagengröße, Verbrauch und Dach eingeben – Sie sehen eine erste Einschätzung zu Ertrag, Eigenverbrauch und Amortisation."
       />
 
       <Section tone="sand" space="lg">
@@ -550,7 +663,7 @@ export default async function PhotovoltaikanlagePage() {
           <div>
             <SectionHeading
               eyebrow="Häufige Fragen"
-              title="Photovoltaikanlage – ehrlich beantwortet"
+              title="Photovoltaikanlage – fachlich beantwortet"
               lead="Ihre Frage ist nicht dabei? Rufen Sie uns an – wir beraten persönlich und herstellerunabhängig."
             />
             <Reveal delay={100} className="mt-8 flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
@@ -558,11 +671,11 @@ export default async function PhotovoltaikanlagePage() {
                 <ClipboardCheck aria-hidden="true" className="h-6 w-6" />
               </span>
               <div>
-                <p className="font-display text-[16px] font-bold text-ink-900">In 2 Minuten zum Angebot</p>
-                <Link href="/angebot" className="group mt-0.5 inline-flex items-center gap-1.5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
-                  Angebot konfigurieren
+                <p className="font-display text-[16px] font-bold text-ink-900">Direkt zum Projektgespräch</p>
+                <a href={FIRMA.telefonHref} className="group mt-0.5 inline-flex items-center gap-1.5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+                  {FIRMA.telefon}
                   <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Link>
+                </a>
               </div>
             </Reveal>
           </div>
@@ -570,32 +683,13 @@ export default async function PhotovoltaikanlagePage() {
         </div>
       </Section>
 
-      <Querverweise pfad="/produkte/photovoltaikanlage" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
-        title="Ihr Dach kann mehr. Wir zeigen Ihnen, wie viel."
-        primary={{ label: "Kostenloses Angebot anfordern", href: "/angebot" }}
+        title="Ihre Dachfläche ist ein Kraftwerk. Wir rechnen es durch."
+        text={`Persönliche Beratung von ${FIRMA.name} aus ${FIRMA.ort} für Betriebe in ganz Österreich – mit Lastganganalyse, ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner bis zur Inbetriebnahme.`}
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
       />
-    </div>
-  );
-}
-
-/** Bildcollage aus 3–4 Backoffice-Bildern (großes Bild + zwei kleine). */
-function BildCollage({ bilder, gespiegelt = false }) {
-  const [gross, ...rest] = bilder;
-  return (
-    <div className="relative">
-      <div aria-hidden="true" className={`absolute -inset-3 rounded-[2.25rem] bg-ov-100/60 md:-inset-4 ${gespiegelt ? "rotate-2" : "-rotate-2"}`} />
-      <div className="relative grid grid-cols-5 grid-rows-2 gap-3 md:gap-4">
-        <div className="relative col-span-3 row-span-2 min-h-[320px] overflow-hidden rounded-[2rem] bg-ink-100 shadow-xl md:min-h-[440px]">
-          <Image src={img(gross.image)} alt={gross.alt_image || ""} fill sizes="(max-width: 1024px) 60vw, 30vw" className="object-cover" />
-        </div>
-        {rest.slice(0, 2).map((b, i) => (
-          <div key={i} className="relative col-span-2 overflow-hidden rounded-3xl bg-ink-100 shadow-lg">
-            <Image src={img(b.image)} alt={b.alt_image || ""} fill sizes="(max-width: 1024px) 40vw, 20vw" className="object-cover" />
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

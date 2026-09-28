@@ -2,13 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import useFokusFalle from "@/components/ui/useFokusFalle";
+import { FIRMA } from "@/lib/site";
+
+// Österreich (www.oekovolt.com): Die Kontaktadresse hat sich NICHT geändert – der Hinweis stammt
+// von der deutschen Website und ist hier deaktiviert. Nur bei einer echten Adressänderung auf true
+// setzen, NEW_EMAIL/OLD_EMAIL pflegen und SEEN_KEY hochzählen.
+const AKTIV = false;
 
 // Bump the version suffix to show the notice again to everyone who already
 // dismissed it (e.g. if the wording or the addresses change).
 const SEEN_KEY = "oekovolt_email_change_notice_v1";
 
-const OLD_EMAIL = "office@oekovolt.com";
-const NEW_EMAIL = "office@oekovolt.com";
+const OLD_EMAIL = FIRMA.email;
+const NEW_EMAIL = FIRMA.email;
 
 // Static colors on purpose — this notice must look identical no matter what
 // theme or CSS variables the surrounding page happens to be running.
@@ -50,13 +56,14 @@ export default function EmailChangeNotice() {
     // Staggered after CookieConsent (800ms) and OfferModal (1400ms) so the
     // three don't animate in on top of each other.
     useEffect(() => {
-        if (wasDismissed()) return;
+        if (!AKTIV || wasDismissed()) return;
         const timer = setTimeout(() => setMounted(true), 2000);
         return () => clearTimeout(timer);
     }, []);
 
     // Lets any page reopen the notice on demand, bypassing the dismissed check.
     useEffect(() => {
+        if (!AKTIV) return;
         const reopen = () => setMounted(true);
         window.addEventListener("emailChangeNoticeOpen", reopen);
         return () => window.removeEventListener("emailChangeNoticeOpen", reopen);
@@ -276,7 +283,7 @@ export default function EmailChangeNotice() {
 
                     <div className="ovn-body">
                         <p id="email-change-desc" className="ovn-text">
-                            Bitte beachten Sie: Sämtliche E-Mail-Adressen der Ökovolt Österreich wurden von .com auf <strong className="ovn-new">.de</strong> umgestellt. Bitte aktualisieren Sie Ihre gespeicherten Kontakte entsprechend.
+                            Bitte beachten Sie: Unsere E-Mail-Adresse lautet <strong className="ovn-new">{NEW_EMAIL}</strong>{OLD_EMAIL !== NEW_EMAIL ? ` (bisher ${OLD_EMAIL})` : ""}. Bitte aktualisieren Sie Ihre gespeicherten Kontakte entsprechend.
                         </p>
 
                         <a className="ovn-cta" href={`mailto:${NEW_EMAIL}`} onClick={close}>

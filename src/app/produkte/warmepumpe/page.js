@@ -1,29 +1,37 @@
-// produkte/warmepumpe/page.js
+// src/app/produkte/warmepumpe/page.js
+//
+// Produktseite Wärmepumpe – Österreich. Schwerpunkt Gewerbe (Hallen,
+// Prozesswärme, Hotellerie), Wohngebäude nachgeordnet.
+//
+// Förderstand 28.09.2026 (bewusst ohne Beträge, Details auf den Förderseiten):
+//   - Bund „Raus aus Öl und Gas“ / Kesseltausch (Umweltförderung, KPC): Budget
+//     2026 im Juli 2026 ausgeschöpft; registrierte Projekte bleiben gültig; für
+//     2027/2028 ist ein geringeres Budget angekündigt.
+//     Quelle: https://www.erneuerbare-energie.at/presseaussendungen/2026/7/9/heizungstausch-frdertopf-schon-im-juli-leer-noch-immer-kein-verlsslicher-ausstieg-aus-l-und-gas
+//   - Betriebe: Umweltförderung im Inland (UFI) über die KPC
+//   - Smart Meter: Opt-out mit meldepflichtiger Wärmepumpe nicht möglich (§ 54 ElWG)
+// Keine Backoffice-Texte mehr (die API lieferte die deutsche Förderlage).
 
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
-  BadgeCheck,
+  BadgeEuro,
+  Building2,
   Calculator,
   ClipboardList,
+  Factory,
   FileCheck2,
-  Leaf,
-  MapPin,
-  Settings2,
+  Hotel,
+  Landmark,
+  Recycle,
   Snowflake,
   Sparkles,
-  Sun,
   ThermometerSun,
-  TrendingDown,
-  Users,
+  Warehouse,
   Wrench,
-  Zap,
 } from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
-import { generateSlug } from "@/lib/slugify";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -34,130 +42,109 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
-import Fliesstext from "@/components/Reusable/Fliesstext";
 import Querverweise from "@/components/Reusable/Querverweise";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Heizkostenvergleich from "@/components/Warmepumpe/Heizkostenvergleich";
 import SonnenJahr from "@/components/Warmepumpe/SonnenJahr";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.waermepumpe_page.api.get_waermepumpe_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/produkte/warmepumpe";
+const PFAD = "/produkte/warmepumpe";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-async function fetchWaermepumpeData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: "GET",
-      headers: headers,
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const TITLE = "Wärmepumpe mit Photovoltaik – Kosten & Förderung | Ökovolt";
+const TITLE = "Wärmepumpe für Gewerbe, Hotel & Gebäude | Ökovolt";
 const DESCRIPTION =
-  "Wärmepumpe mit Solaranlage kombinieren: Heizkosten senken und bis zu 70 % KfW-Zuschuss nutzen. Planung, Installation & Förderservice vom Fachbetrieb.";
-const DEFAULT_KEYWORDS = ["Wärmepumpe", "Wärmepumpe mit Photovoltaik", "Wärmepumpe Förderung", "Heizkosten senken", "Luft-Wasser-Wärmepumpe"];
+  "Wärmepumpen in Österreich für Hallen, Prozesswärme, Hotels und Wohngebäude – kombiniert mit Photovoltaik, mit Heizlastberechnung und aktuellem Förderstand.";
 
-export async function generateMetadata() {
-  const seoData = await fetchWaermepumpeData();
-  const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : DEFAULT_KEYWORDS;
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Wärmepumpe Gewerbe", "Wärmepumpe Hotel", "Hallenheizung Wärmepumpe", "Prozesswärme Wärmepumpe", "Wärmepumpe Photovoltaik", "Raus aus Öl und Gas"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
     title: TITLE,
     description: DESCRIPTION,
-    keywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Wärmepumpe" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: ["https://www.oekovolt.com/og-image.jpg"],
-    },
-  };
-}
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Wärmepumpe mit Photovoltaik" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-const img = (p, fallback = "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg") => (p ? `/api/image?path=${p}` : fallback);
-const VORTEIL_ICONS = [Wrench, TrendingDown, Leaf, Snowflake];
-const PARTNER_ICONS = [Zap, BadgeCheck, Sun, Users, MapPin, Settings2];
+const GEWERBE = [
+  { icon: Warehouse, title: "Hallenheizung", text: "Luft-Wasser- oder Sole-Wasser-Wärmepumpen mit Industrieflächenheizung oder Deckenstrahlplatten – niedrige Vorlauftemperaturen, hohe Effizienz." },
+  { icon: Factory, title: "Prozesswärme", text: "Reinigung, Trocknung, Lebensmittel: Hochtemperatur-Wärmepumpen liefern Niedertemperatur-Prozesswärme, häufig aus vorhandener Abwärme." },
+  { icon: Hotel, title: "Hotellerie & Tourismus", text: "Warmwasser, Wellness, Pools und Kühlung – mit hohem Tagverbrauch passt die Wärmepumpe ideal zur PV-Anlage am Dach.", href: "/hotellerie-tourismus" },
+  { icon: Recycle, title: "Abwärmenutzung", text: "Kälteanlagen, Druckluft und Serverräume geben Wärme ab, die eine Wärmepumpe auf Heiz- oder Prozesstemperatur hebt." },
+  { icon: Snowflake, title: "Heizen und Kühlen", text: "Reversible Systeme kühlen Büros und Verkaufsflächen im Sommer – genau dann, wenn die PV-Anlage am meisten liefert." },
+  { icon: Building2, title: "Gemeinden & Wohnbau", text: "Schulen, Kindergärten, Bauhöfe und gemeinnütziger Wohnbau – oft kombiniert mit Photovoltaik und Energiegemeinschaft.", href: "/kommunen" },
+];
 
-// KfW-Heizungsförderung (BEG EM, Programm 458) – Stand 2026, Orientierung
+const TEMPERATUREN = [
+  { anwendung: "Flächenheizung (Fußboden, Industrieboden)", temp: "ca. 30–40 °C", hinweis: "Beste Effizienz, Standard im Neubau und in Hallen" },
+  { anwendung: "Heizkörper im Bestand", temp: "ca. 50–60 °C", hinweis: "Mit Heizlastberechnung und ggf. Tausch einzelner Heizkörper" },
+  { anwendung: "Deckenstrahlplatten Halle", temp: "ca. 40–60 °C", hinweis: "Abhängig von Hallenhöhe und Auslegung" },
+  { anwendung: "Warmwasser Hotel, Pflege, Sport", temp: "≥ 60 °C", hinweis: "Legionellenschutz nach ÖNORM B 5019 beachten" },
+  { anwendung: "Niedertemperatur-Prozesswärme", temp: "bis ca. 90 °C", hinweis: "Hochtemperatur-Wärmepumpe, idealerweise mit Abwärme als Quelle" },
+];
+
 const FOERDERUNG = [
-  // Richtlinie seit 21.07.2026 (Quelle: ADAC, Stand 09/2026). Effizienzbonus entfallen.
-  { label: "Grundförderung", prozent: 30, text: "für alle Antragsteller (laut Planung ab 2027 nur noch 15 %)", farbe: "bg-ov-600" },
-  { label: "Klimageschwindigkeitsbonus", prozent: 16, text: "Tausch alter Öl-, Gas-, Kohle- oder Nachtspeicherheizung im selbst genutzten Eigentum; sinkt halbjährlich um 4 Punkte", farbe: "bg-ov-400" },
-  { label: "Einkommensbonus", prozent: 40, text: "40 % bis 30.000 €, 30 % bis 40.000 €, 10 % bis 50.000 € zu versteuerndes Haushaltseinkommen (Selbstnutzer)", farbe: "bg-navy-500" },
+  {
+    icon: Landmark,
+    titel: "Bund: Raus aus Öl und Gas",
+    text: "Die Bundesförderung für den Tausch fossiler Heizungen war 2026 bereits im Juli ausgeschöpft. Bereits registrierte Projekte bleiben gültig; für 2027 ist ein neues, geringeres Budget angekündigt.",
+    href: "/forderungen/bundesfoerderung",
+    link: "Bundesförderung aktuell",
+  },
+  {
+    icon: BadgeEuro,
+    titel: "Neun Bundesländer",
+    text: "Die Länder fördern Heizungstausch und Wärmepumpen mit eigenen Programmen, teils über die Wohnbauförderung. Konditionen und Fristen unterscheiden sich stark.",
+    href: "/forderungen/landesforderungen",
+    link: "Landesförderungen",
+  },
+  {
+    icon: Factory,
+    titel: "Betriebe: Umweltförderung",
+    text: "Unternehmen können Wärmepumpen und Abwärmenutzung über die betriebliche Umweltförderung im Inland (UFI) der KPC einreichen – vor der Bestellung.",
+    href: "/forderungen/bundesfoerderung",
+    link: "Förderung für Betriebe",
+  },
 ];
 
 const FAQ = [
   {
-    q: "Lohnt sich eine Wärmepumpe auch im Altbau?",
-    a: "Oft ja. Entscheidend ist nicht das Baujahr, sondern die nötige Vorlauftemperatur. Kommt das Haus an kalten Tagen mit rund 55 °C aus, arbeitet eine moderne Luft-Wasser-Wärmepumpe meist wirtschaftlich – häufig reicht der Tausch einzelner Heizkörper. Wir prüfen das mit einer Heizlastberechnung vor Ort, statt zu schätzen.",
+    q: "Eignet sich eine Wärmepumpe für die Beheizung einer Halle?",
+    a: "Ja, wenn das Wärmeabgabesystem zur Wärmepumpe passt. Mit Industrieflächenheizung oder Deckenstrahlplatten reichen niedrige Vorlauftemperaturen, und die Wärmepumpe arbeitet effizient. Entscheidend sind Heizlast, Hallenhöhe, Torbereiche und Nutzungszeiten. Wir berechnen die Heizlast und prüfen, ob eine Kombination mit bestehender Heizung sinnvoll ist.",
   },
   {
-    q: "Was kostet eine Wärmepumpe 2026?",
-    a: "Eine Luft-Wasser-Wärmepumpe für ein Einfamilienhaus kostet inklusive Installation als Orientierung meist rund 25.000 bis 40.000 € vor Förderung, Erdwärmepumpen wegen der Bohrung deutlich mehr. Mit dem KfW-Zuschuss von in der Regel bis zu 70 % der förderfähigen Kosten sinkt der Eigenanteil erheblich. Den genauen Preis nennen wir nach dem Vor-Ort-Termin.",
+    q: "Kann eine Wärmepumpe Prozesswärme liefern?",
+    a: "Für Niedertemperatur-Prozesse bis rund 90 °C ja – etwa für Reinigung, Trocknung oder Lebensmittelverarbeitung. Am wirtschaftlichsten ist das, wenn eine Abwärmequelle wie eine Kälteanlage oder Druckluft zur Verfügung steht. Für höhere Temperaturen gibt es Industrie-Wärmepumpen, die wir projektbezogen mit Fachplanern bewerten.",
   },
   {
-    q: "Welche Förderung gibt es 2026 für Wärmepumpen?",
-    a: "Die KfW fördert den Heizungstausch (Programm 458) seit dem 21. Juli 2026 mit 30 % Grundförderung, 16 % Klimageschwindigkeitsbonus beim Tausch einer alten fossilen Heizung und einem einkommensabhängigen Bonus von 40, 30 oder 10 %. Zusammen sind in der Regel maximal 70 % möglich, bei zu versteuerndem Haushaltseinkommen bis 30.000 € bis 80 % – bezogen auf höchstens 28.000 € förderfähige Kosten für die erste Wohneinheit, also bis zu 22.400 €. Der frühere Effizienzbonus ist entfallen. Wichtig: Der Antrag muss vor Vorhabenbeginn gestellt werden; der Vertrag mit dem Fachbetrieb enthält dafür eine aufschiebende Bedingung. Konditionen ändern sich – wir prüfen den aktuellen Stand für Sie.",
+    q: "Welche Förderung gibt es aktuell für Wärmepumpen in Österreich?",
+    a: "Die Bundesförderung „Raus aus Öl und Gas“ war 2026 bereits im Juli ausgeschöpft; bereits registrierte Projekte bleiben gültig, für 2027 ist ein neues, geringeres Budget angekündigt. Unabhängig davon fördern die Bundesländer mit eigenen Programmen, und Betriebe können die Umweltförderung im Inland der KPC nutzen. Den aktuellen Stand prüfen wir vor jedem Angebot.",
   },
   {
-    q: "Wie viel Solarstrom kann meine Wärmepumpe nutzen?",
-    a: "Realistisch sind rund 20 bis 35 % des Wärmepumpenstroms aus der eigenen PV-Anlage. Im Sommer, in der Übergangszeit und bei der Warmwasserbereitung passt das sehr gut, im Winter liefert das Dach wenig. Mit Speicher, SG-Ready-Steuerung und einem Pufferspeicher lässt sich der Anteil steigern.",
+    q: "Wie viel Solarstrom kann die Wärmepumpe nutzen?",
+    a: "In Wohngebäuden sind rund 20 bis 35 % des Wärmepumpenstroms aus der eigenen PV-Anlage realistisch, weil im Winter wenig Solarstrom anfällt. In Hotels und Betrieben mit hohem Warmwasser- oder Kühlbedarf im Sommer liegt der Anteil oft deutlich höher. Mit Pufferspeicher, SG-Ready-Steuerung und Energiemanagement lässt er sich weiter steigern.",
   },
   {
-    q: "Brauche ich einen speziellen Stromtarif für die Wärmepumpe?",
-    a: "Nicht zwingend, aber es lohnt sich meist. Als steuerbare Verbrauchseinrichtung nach § 14a EnWG erhalten Sie reduzierte Netzentgelte – pauschal oder über einen separat gemessenen, günstigeren Wärmepumpenstrom. Im Gegenzug darf der Netzbetreiber die Leistung in seltenen Engpässen vorübergehend drosseln, eine Mindestleistung bleibt immer garantiert.",
+    q: "Muss die Wärmepumpe beim Netzbetreiber gemeldet werden?",
+    a: "Ja. Wärmepumpen sind dem Netzbetreiber zu melden; bei größeren Leistungen prüft er den Anschluss. Die Meldung übernimmt unser Elektrotechniker. Mit einer meldepflichtigen Anlage ist ein Smart-Meter-Opt-out nach § 54 ElWG nicht möglich – die Viertelstundenwerte stehen dafür für Energiemanagement und dynamische Tarife zur Verfügung.",
   },
   {
     q: "Wie laut ist eine Luft-Wärmepumpe?",
-    a: "Moderne Außengeräte sind im Normalbetrieb leise, vergleichbar mit einem Kühlschrank in einigen Metern Abstand. Entscheidend sind Aufstellort und Abstand zum Nachbarn: Wir planen die Position so, dass die Grenzwerte der TA Lärm eingehalten werden, und achten auf schallreflektierende Wände.",
+    a: "Moderne Außengeräte sind im Normalbetrieb leise. Entscheidend sind Aufstellort, Abstand zur Nachbarschaft und schallreflektierende Wände. Wir planen die Position nach den Vorgaben der jeweiligen Bauordnung und orientieren uns bei der Beurteilung an der ÖAL-Richtlinie Nr. 3 für Schallimmissionen im Nachbarschaftsbereich.",
   },
   {
-    q: "Kann eine Wärmepumpe im Sommer auch kühlen?",
-    a: "Viele Luft-Wasser-Wärmepumpen sind reversibel und können über die Fußbodenheizung oder Gebläsekonvektoren leicht kühlen. Mit Solarstrom vom Dach ist das besonders günstig, weil der Kühlbedarf genau dann entsteht, wenn die Anlage am meisten liefert.",
+    q: "Lohnt sich eine Wärmepumpe im Altbau?",
+    a: "Oft ja. Entscheidend ist nicht das Baujahr, sondern die nötige Vorlauftemperatur. Kommt das Gebäude an kalten Tagen mit rund 55 °C aus, arbeitet eine moderne Luft-Wasser-Wärmepumpe meist wirtschaftlich – häufig reicht der Tausch einzelner Heizkörper. Wir prüfen das mit einer Heizlastberechnung vor Ort.",
   },
 ];
 
-export default async function WarmepumpePage() {
-  const data = await fetchWaermepumpeData();
-
+export default function WarmepumpePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -168,36 +155,21 @@ export default async function WarmepumpePage() {
         name: TITLE,
         description: DESCRIPTION,
         inLanguage: "de-AT",
-        isPartOf: { "@id": "https://www.oekovolt.com/#website" },
+        isPartOf: { "@id": `${BASE_URL}/#website` },
         about: { "@id": `${PAGE_URL}/#service` },
-        datePublished: "2020-01-01",
-        dateModified: new Date().toISOString().split("T")[0],
       },
       {
         "@type": "Service",
         "@id": `${PAGE_URL}/#service`,
-        name: "Wärmepumpe mit Photovoltaik",
-        serviceType: "Planung, Installation und Förderservice für Wärmepumpen",
-        description: "Beratung, Heizlastberechnung, Installation und Inbetriebnahme von Wärmepumpen inklusive Einbindung in die Photovoltaikanlage und Unterstützung beim KfW-Förderantrag.",
-        provider: { "@id": "https://www.oekovolt.com/#organization" },
-        areaServed: { "@type": "Country", name: "Deutschland" },
+        name: "Wärmepumpen für Gewerbe, Hotellerie und Gebäude",
+        serviceType: "Planung, Installation und Einbindung von Wärmepumpen in Photovoltaikanlagen",
+        description: DESCRIPTION,
+        provider: { "@id": `${BASE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
         url: PAGE_URL,
       },
     ],
   };
-
-  const vorteile = (data?.warmepumpe_first_table || []).map((o, i) => ({
-    icon: VORTEIL_ICONS[i % VORTEIL_ICONS.length],
-    title: o.title,
-    text: o.description,
-  }));
-  const marken = (data?.warmepumpe_third_card_options_table || []).filter((m) => m.title && m.status !== "Passiv");
-  const finanzOptionen = data?.warmepumpe_fourth_card_options_table || [];
-  const partnerPunkte = (data?.waermepumpe_fifth_card_options_table || []).map((o, i) => ({
-    icon: PARTNER_ICONS[i % PARTNER_ICONS.length],
-    title: (o.primary_text || "").trim(),
-    text: o.secondary_text,
-  }));
 
   return (
     <div>
@@ -209,56 +181,66 @@ export default async function WarmepumpePage() {
         eyebrow="Wärmepumpe + Photovoltaik"
         title={
           <>
-            Heizen mit <span className="ov-text-gradient">eigenem Sonnenstrom</span>
+            Wärme für Betrieb und Gebäude – <span className="ov-text-gradient">mit eigenem Sonnenstrom</span>
           </>
         }
-        lead={
-          data?.warmepumpe_subtitle
-            ? `${data.warmepumpe_subtitle}. Wir planen, installieren und binden Ihre Wärmepumpe in die PV-Anlage ein – inklusive Förderservice.`
-            : "Mit einer Wärmepumpe machen Sie sich unabhängig von Öl und Gas – mit Ihrer PV-Anlage heizen Sie zu einem guten Teil mit eigenem Strom. Planung, Installation und Förderservice aus einer Hand."
-        }
-        image={{ src: img(data?.warmepumpe_banner_image), alt: data?.warmepumpe_alt_text_image_banner || "Luft-Wärmepumpe vor einem Einfamilienhaus" }}
-        points={["Bis zu 70 % KfW-Zuschuss", "Heizlastberechnung vor Ort", "Einbindung in Ihre PV-Anlage", "Markengeräte"]}
+        lead="Eine Wärmepumpe macht aus einer Kilowattstunde Strom drei bis vier Kilowattstunden Wärme. Kombiniert mit Photovoltaik heizen, kühlen und erzeugen Betriebe, Hotels und Gebäude ihr Warmwasser zu einem guten Teil mit Strom vom eigenen Dach. Wir planen und binden die Wärmepumpe in PV-Anlage und Energiemanagement ein."
+        image={{ src: "/Images/Ratgeber/waermepumpe-mit-photovoltaik.jpg", alt: "Wärmepumpe und Photovoltaikanlage an einem Gebäude" }}
+        points={["Hallen, Prozesswärme, Hotellerie", "Heizlastberechnung statt Schätzung", "Einbindung in PV & Energiemanagement", "Förderstand geprüft"]}
         actions={[
-          { label: "Wärmepumpen-Angebot anfragen", href: "/angebot" },
+          { label: "Projekt anfragen", href: "/angebot" },
           { label: "Ersparnis berechnen", href: "/rechner/waermepumpe", icon: Calculator },
         ]}
       />
 
-      {/* Einführung */}
-      <Section tone="white" space="lg">
-        <SplitMedia
-          eyebrow="So funktioniert es"
-          title={data?.warmepumpe_second_card_title || "Wärmepumpe – komfortabel und effizient heizen"}
-          image={{ src: img(data?.warmepumpe_second_card_image), alt: data?.warmepumpe_second_card_image_alt_text || "Wärmepumpe und Photovoltaik am Einfamilienhaus" }}
-          points={(data?.warmepumpe_second_card_options_table || []).map((o) => o.options).filter(Boolean)}
-        >
-          <Fliesstext
-            text={
-              data?.warmepumpe_second_card_description ||
-              "Wärmepumpen gewinnen Wärme aus Luft, Erdreich oder Grundwasser und heben sie mit Strom auf Heiztemperatur. Aus einer Kilowattstunde Strom werden so drei bis vier Kilowattstunden Wärme."
-            }
-            className="mt-5 text-[16.5px] leading-relaxed text-ink-600"
-          />
-        </SplitMedia>
-      </Section>
-
-      {/* Heizkostenvergleich */}
-      <Section tone="sand" space="lg" id="heizkosten">
+      {/* Gewerbe */}
+      <Section tone="white" space="lg" id="gewerbe">
         <SectionHeading
-          eyebrow="Heizkostenvergleich 2026"
+          eyebrow="Für Betriebe"
           title={
             <>
-              Öl, Gas oder Wärmepumpe – <span className="ov-text-gradient">was kostet Heizen?</span>
+              Wärmepumpen im Gewerbe: <span className="ov-text-gradient">Halle, Prozess, Hotel</span>
             </>
           }
-          lead="Eine Wärmepumpe mit Jahresarbeitszahl 3,3 braucht für 18.000 kWh Wärme rund 5.500 kWh Strom. Kommt ein Teil davon vom eigenen Dach, sinken die Energiekosten weiter. Passen Sie die Werte an Ihr Haus an – alle Annahmen sind offen gelegt."
-          align="center"
+          lead="Im Gewerbe rechnet sich die Wärmepumpe besonders dort, wo Wärme oder Kälte tagsüber gebraucht wird und eine PV-Anlage am Dach sitzt. Entscheidend ist das Temperaturniveau – je niedriger, desto effizienter."
           className="mb-12"
         />
-        <Reveal dir="scale">
-          <Heizkostenvergleich />
-        </Reveal>
+        <FeatureGrid items={GEWERBE} cols={3} />
+      </Section>
+
+      {/* Temperaturniveaus */}
+      <Section tone="sand" space="lg">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Temperaturniveau"
+            title="Welche Temperatur braucht Ihre Anwendung?"
+            lead="Die Jahresarbeitszahl sinkt, je höher die Vorlauftemperatur ist. Deshalb beginnt jede Planung mit der Frage, welche Temperatur wirklich gebraucht wird – und ob sich das Wärmeabgabesystem anpassen lässt."
+          />
+          <Reveal delay={100}>
+            <div tabIndex={0} role="region" aria-label="Temperaturniveaus nach Anwendung" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
+              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
+                <caption className="sr-only">Typische Vorlauftemperaturen nach Anwendung</caption>
+                <thead>
+                  <tr className="bg-navy-950 text-white">
+                    <th scope="col" className="px-5 py-4 font-semibold">Anwendung</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Vorlauf</th>
+                    <th scope="col" className="px-5 py-4 font-semibold">Hinweis</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ink-100 bg-white">
+                  {TEMPERATUREN.map((t) => (
+                    <tr key={t.anwendung}>
+                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{t.anwendung}</th>
+                      <td className="ov-num whitespace-nowrap px-5 py-4 align-top text-ink-700">{t.temp}</td>
+                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{t.hinweis}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-[13px] text-ink-500">Typische Richtwerte; die Auslegung erfolgt nach Heizlastberechnung und Herstellerdaten.</p>
+          </Reveal>
+        </div>
       </Section>
 
       {/* Heizen mit Sonne */}
@@ -267,231 +249,104 @@ export default async function WarmepumpePage() {
           eyebrow="Heizen mit Sonne"
           title="Was Photovoltaik für die Wärmepumpe wirklich leistet"
           text={[
-            "Photovoltaik und Wärmepumpe sind ein starkes Team – aber nicht, weil das Dach im Winter die Heizung allein betreibt. Der Vorteil entsteht über das ganze Jahr: Warmwasser im Sommer, Heizen in Frühjahr und Herbst, günstige Kühlung an heißen Tagen.",
-            "Mit intelligenter Steuerung heizt die Wärmepumpe bevorzugt dann vor, wenn die Sonne scheint, und nutzt das Haus als Wärmespeicher.",
+            "Photovoltaik und Wärmepumpe sind ein starkes Team – aber nicht, weil das Dach im Winter die Heizung allein betreibt. Der Vorteil entsteht über das ganze Jahr: Warmwasser und Kühlung im Sommer, Heizen in Frühjahr und Herbst.",
+            "Mit intelligenter Steuerung heizt die Wärmepumpe bevorzugt dann vor, wenn die Sonne scheint, und nutzt Pufferspeicher und Gebäudemasse als Wärmespeicher.",
           ]}
           points={[
             { title: "SG-Ready-Steuerung", text: "Die Wärmepumpe läuft bei Solarüberschuss bevorzugt." },
             { title: "Warmwasser mit Sonne", text: "Im Sommer oft fast vollständig solar." },
-            { title: "§ 14a EnWG", text: "Reduzierte Netzentgelte für den Netzstrom." },
+            { title: "Viertelstundenwerte", text: "Smart Meter und Energiemanagement steuern nach Erzeugung und Tarif." },
           ]}
           aside={<SonnenJahr />}
           reverse
         />
       </Section>
 
-      {/* Vorteile */}
-      {vorteile.length > 0 && (
-        <Section tone="navy" space="lg" className="overflow-hidden">
-          <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-          <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-          <div className="relative">
-            <SectionHeading
-              dark
-              eyebrow="Ihre Vorteile"
-              title={data?.warmepumpe_second_card_options_title?.replace(/:\s*$/, "") || "Warum sich eine Wärmepumpe lohnt"}
-              lead="Unabhängig von Öl- und Gaspreisen, klimafreundlich und mit eigener Energie vom Dach – das ganze Jahr über."
-              className="mb-12"
-            />
-            <FeatureGrid items={vorteile} cols={4} tone="dark" />
-          </div>
-        </Section>
-      )}
-
-      {/* Förderung & Finanzierung */}
-      <Section tone="white" space="lg" id="foerderung">
+      {/* Heizkostenvergleich */}
+      <Section tone="sand" space="lg" id="heizkosten">
         <SectionHeading
-          eyebrow="Förderung & Finanzierung"
+          eyebrow="Heizkostenvergleich"
           title={
             <>
-              Bis zu <span className="ov-text-gradient">70 % Zuschuss</span> für Ihre neue Heizung
+              Öl, Gas oder Wärmepumpe – <span className="ov-text-gradient">was kostet Heizen?</span>
             </>
           }
-          lead="Die KfW fördert den Umstieg auf eine Wärmepumpe in der Regel mit bis zu 70 % der förderfähigen Kosten (bei niedrigem Einkommen bis 80 %) – maximal 28.000 € förderfähig für die erste Wohneinheit. Die Boni lassen sich kombinieren."
+          lead="Eine Wärmepumpe mit Jahresarbeitszahl 3,3 braucht für 18.000 kWh Wärme rund 5.500 kWh Strom. Kommt ein Teil davon vom eigenen Dach, sinken die Energiekosten weiter. Passen Sie die Werte an Ihr Gebäude an – alle Annahmen sind offengelegt."
+          align="center"
           className="mb-12"
         />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
-          <Reveal dir="left">
-            <div className="h-full rounded-[2rem] bg-sand-50 p-6 ring-1 ring-ink-200/70 md:p-9">
-              <div className="flex items-baseline justify-between gap-4">
-                <h3 className="ov-h3 text-ink-900">Förderbausteine KfW 458</h3>
-                <p className="text-[12.5px] text-ink-500">Stand seit 21.07.2026</p>
-              </div>
-              <div className="mt-6 flex h-4 w-full overflow-hidden rounded-full bg-ink-200" role="img" aria-label="Förderbausteine: 30 Prozent Grundförderung, 16 Prozent Klimageschwindigkeitsbonus, bis 40 Prozent Einkommensbonus, gedeckelt auf 70 Prozent, bei niedrigem Einkommen 80 Prozent">
-                {FOERDERUNG.map((f) => (
-                  <div key={f.label} className={`${f.farbe} h-full border-r-2 border-sand-50 last:border-r-0`} style={{ width: `${f.prozent}%` }} />
-                ))}
-              </div>
-              <div className="relative mt-1 h-5 text-[11.5px] text-ink-500" aria-hidden="true">
-                <span className="absolute -translate-x-1/2" style={{ left: "70%" }}>▲ 70 %</span>
-                <span className="absolute -translate-x-1/2" style={{ left: "80%" }}>▲ 80 %*</span>
-              </div>
-              <ul className="mt-4 divide-y divide-ink-200/70">
-                {FOERDERUNG.map((f) => (
-                  <li key={f.label} className="flex items-start gap-4 py-4">
-                    <span aria-hidden="true" className={`mt-1.5 h-3 w-3 shrink-0 rounded-[4px] ${f.farbe}`} />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-display text-[16px] font-bold text-ink-900">{f.label}</p>
-                      <p className="mt-0.5 text-[14px] leading-relaxed text-ink-600">{f.text}</p>
-                    </div>
-                    <p className="ov-num font-display text-[22px] font-extrabold text-ink-900">{f.prozent} %</p>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-4 grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                  <p className="text-[12.5px] text-ink-500">Förderfähige Kosten</p>
-                  <p className="ov-num mt-1 font-display text-[20px] font-extrabold text-ink-900">bis 28.000 €</p>
-                </div>
-                <div className="rounded-2xl bg-ov-600 p-4 text-white">
-                  <p className="text-[12.5px] text-white">Maximaler Zuschuss</p>
-                  <p className="ov-num mt-1 font-display text-[20px] font-extrabold">22.400 €*</p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-2xl bg-white p-5 ring-1 ring-ink-200/70">
-                <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-700">Rechenbeispiel</p>
-                <p className="mt-1.5 text-[14px] leading-relaxed text-ink-600">Alte Ölheizung wird ersetzt, Kosten 32.000 €, Grundförderung + Klimageschwindigkeitsbonus:</p>
-                <dl className="mt-3 divide-y divide-ink-100 text-[14.5px]">
-                  {[
-                    ["Förderfähige Kosten (gedeckelt)", "28.000 €"],
-                    ["Zuschuss 46 %", "− 12.880 €"],
-                    ["Ihr Eigenanteil", "19.120 €"],
-                  ].map(([a, b], i) => (
-                    <div key={a} className="flex items-baseline justify-between gap-4 py-2">
-                      <dt className={i === 2 ? "font-semibold text-ink-900" : "text-ink-600"}>{a}</dt>
-                      <dd className={`ov-num ${i === 1 ? "font-semibold text-ov-700" : i === 2 ? "font-display text-[18px] font-extrabold text-ink-900" : "font-semibold text-ink-900"}`}>{b}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-              <p className="mt-5 flex gap-2 text-[13px] leading-relaxed text-ink-500">
-                <FileCheck2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
-                * 80 % bzw. 22.400 € nur mit 40 % Einkommensbonus. Antrag vor Vorhabenbeginn stellen – der Vertrag mit uns enthält dafür eine aufschiebende Bedingung. Förderbedingungen können sich ändern; wir prüfen den aktuellen Stand.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal dir="right" delay={100}>
-            <div className="flex h-full flex-col overflow-hidden rounded-[2rem] bg-navy-950 text-white">
-              {data?.warmepumpe_fourth_card_image && (
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  <Image src={img(data.warmepumpe_fourth_card_image)} alt={data.warmepumpe_fourth_card_image_alt || ""} fill sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
-                  <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/10 to-transparent" />
-                </div>
-              )}
-              <div className="flex flex-1 flex-col p-6 md:p-9">
-                <h3 className="ov-h3 text-white">{data?.warmepumpe_fourth_card_title || "Wärmepumpe clever finanzieren"}</h3>
-                <p className="mt-3 text-[15.5px] leading-relaxed text-white/70">
-                  {data?.warmepumpe_fourth_card_first_description ||
-                    "Trotz Förderung bleibt oft eine Finanzierungslücke. Mit unserem Finanzierungsservice verteilen Sie den offenen Betrag planbar auf monatliche Raten."}
-                </p>
-                {finanzOptionen.length > 0 && (
-                  <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                    {finanzOptionen.map((o) => (
-                      <li key={o.primary_text} className="rounded-2xl bg-white/[0.05] p-4 ring-1 ring-white/10">
-                        <p className="font-display text-[15.5px] font-bold text-white">{(o.primary_text || "").trim()}</p>
-                        <p className="mt-1 text-[13.5px] leading-relaxed text-white/60">{o.secondary_text}</p>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {data?.warmepumpe_fourth_card_second_description && (
-                  <p className="mt-5 text-[12.5px] leading-relaxed text-white/45">Beispiel: {data.warmepumpe_fourth_card_second_description}</p>
-                )}
-                <div className="mt-auto pt-7">
-                  <Button href="/service/finanzierung" variant="white" pfeil>
-                    Finanzierung ansehen
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        </div>
+        <Reveal dir="scale">
+          <Heizkostenvergleich />
+        </Reveal>
       </Section>
 
-      {/* Marken */}
-      {marken.length > 0 && (
-        <Section tone="sand" space="lg">
-          <SectionHeading
-            eyebrow="Unsere Partner"
-            title={data?.warmepumpe_third_card_title || "Starke Marken, mit denen wir arbeiten"}
-            lead="Geprüfte Hersteller, deren Technik wir kennen – sauber integriert in Photovoltaik, Speicher und Energiemanagement."
-            className="mb-12"
-          />
-          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {marken.map((m, i) => (
-              <Reveal as="li" key={m.title} delay={i * 80} className="flex">
-                <Link
-                  href={`/produkte/warmepumpe/${generateSlug(m.title)}`}
-                  className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-ink-100">
-                    <Image src={img(m.banner_image)} alt={m.alt_banner_image || m.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                    {m.logo_image && (
-                      <span className="absolute left-4 top-4 flex h-11 items-center rounded-full bg-white/95 px-3 shadow-md backdrop-blur">
-                        <Image src={img(m.logo_image)} alt={m.alt_logo_image || ""} width={80} height={28} className="h-6 w-auto object-contain" />
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-1 flex-col p-6">
-                    <h3 className="ov-h3 text-ink-900 transition-colors group-hover:text-ov-700">{m.title}</h3>
-                    <p className="mt-3 line-clamp-4 text-[14.5px] leading-relaxed text-ink-600">{m.main_description}</p>
-                    <span className="mt-auto inline-flex items-center gap-2 pt-5 text-[15px] font-semibold text-ov-700">
-                      Details ansehen
-                      <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </div>
-                </Link>
+      {/* Förderung */}
+      <Section tone="white" space="lg" id="foerderung">
+        <SectionHeading
+          eyebrow="Förderung in Österreich"
+          title="Förderstand 2026 – ehrlich eingeordnet"
+          lead="Die Förderlandschaft für Wärmepumpen hat sich 2026 stark verändert. Beträge nennen wir hier bewusst nicht, weil sie sich laufend ändern – wir prüfen den aktuellen Stand vor jedem Angebot."
+          className="mb-12"
+        />
+        <div className="grid gap-5 md:grid-cols-3">
+          {FOERDERUNG.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <Reveal key={f.titel} delay={i * 80}>
+                <article className="flex h-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                    <Icon aria-hidden="true" className="h-6 w-6" />
+                  </span>
+                  <h3 className="mt-6 font-display text-[18px] font-bold text-ink-900">{f.titel}</h3>
+                  <p className="mt-2 flex-1 text-[15px] leading-relaxed text-ink-600">{f.text}</p>
+                  <Link href={f.href} className="group mt-4 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                    {f.link}
+                    <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </article>
               </Reveal>
-            ))}
-          </ul>
-        </Section>
-      )}
+            );
+          })}
+        </div>
+        <Reveal className="mt-8 flex flex-col gap-4 rounded-3xl bg-navy-950 p-7 text-white md:flex-row md:items-center md:justify-between md:p-9">
+          <div>
+            <p className="font-display text-[19px] font-bold">Finanzierung und Leasing</p>
+            <p className="mt-1 text-[15px] text-white/70">Für Betriebe organisieren wir auf Wunsch Leasing oder vermitteln Finanzierungspartner.</p>
+          </div>
+          <Button href="/service/finanzierung" variant="white" pfeil>
+            Finanzierung ansehen
+          </Button>
+        </Reveal>
+        <p className="mt-5 flex gap-2 text-[13px] leading-relaxed text-ink-500">
+          <FileCheck2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+          Stand September 2026. Förderansuchen bzw. Registrierung müssen in der Regel vor der Bestellung erfolgen. Keine Rechts- oder Förderberatung im Einzelfall.
+        </p>
+      </Section>
 
       {/* Ablauf */}
-      <Section tone="white" space="lg">
+      <Section tone="sand" space="lg">
         <SectionHeading
           eyebrow="Ablauf"
           title="In vier Schritten zur Wärmepumpe"
-          lead="Von der Heizlastberechnung bis zur Inbetriebnahme – mit einem Ansprechpartner und dem Förderantrag im Blick."
+          lead="Von der Heizlastberechnung bis zur Inbetriebnahme – mit einem Ansprechpartner und der Förderung im Blick."
           align="center"
           className="mb-14"
         />
         <Steps
           items={[
-            { icon: ClipboardList, title: "Beratung & Heizlast", text: "Vor-Ort-Termin, Heizlastberechnung und Prüfung von Heizkörpern, Aufstellort und Stromanschluss." },
-            { icon: FileCheck2, title: "Angebot & Förderantrag", text: "Verbindliches Angebot mit aufschiebender Bedingung – so stellen Sie den KfW-Antrag rechtzeitig vor Beginn." },
-            { icon: Wrench, title: "Installation", text: "Montage von Außen- und Inneneinheit, Speicher und hydraulischer Abgleich durch unser Fachteam." },
-            { icon: ThermometerSun, title: "Inbetriebnahme & PV", text: "Einregulierung, Einbindung in PV-Anlage und Energiemanagement, Einweisung und Anmeldung nach § 14a." },
+            { icon: ClipboardList, title: "Bestand & Heizlast", text: "Begehung, Heizlastberechnung, Temperaturniveaus, Abwärmequellen und Prüfung des Stromanschlusses." },
+            { icon: FileCheck2, title: "Konzept & Förderung", text: "Systemwahl, Wirtschaftlichkeit mit PV-Anteil und Prüfung von Bundes-, Landes- und Betriebsförderung vor der Bestellung." },
+            { icon: Wrench, title: "Installation", text: "Montage durch befugte Fachbetriebe für Heizungs- und Elektrotechnik, hydraulischer Abgleich und Meldung beim Netzbetreiber." },
+            { icon: ThermometerSun, title: "Inbetriebnahme & PV", text: "Einregulierung, Einbindung in PV-Anlage und Energiemanagement, Einweisung und Monitoring." },
           ]}
         />
       </Section>
 
-      {/* Warum Ökovolt */}
-      {partnerPunkte.length > 0 && (
-        <Section tone="green" space="lg">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-            <div>
-              <SectionHeading
-                eyebrow="Ihr Partner"
-                title={data?.waermepumpe_fifth_card_title || "Warum Ökovolt Ihr Partner für die Wärmepumpen-Umstellung ist"}
-              />
-              {data?.waermepumpe_fifth_card_image && (
-                <Reveal dir="left" className="relative mt-10 aspect-[4/3] overflow-hidden rounded-[2rem] shadow-xl">
-                  <Image src={img(data.waermepumpe_fifth_card_image)} alt={data.waermepumpe_fifth_card_image_alt || ""} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-cover" />
-                </Reveal>
-              )}
-            </div>
-            <FeatureGrid items={partnerPunkte} cols={2} />
-          </div>
-        </Section>
-      )}
-
       <SolarrechnerTeaser
         href="/rechner/waermepumpe"
         cta="Zum Wärmepumpen-Rechner"
-        titel="Was spart eine Wärmepumpe in Ihrem Haus?"
-        text="Wärmebedarf, Heizsystem und PV-Anlage eingeben – der Rechner zeigt Heizkosten, Förderung und Amortisation im Vergleich zu Ihrer bisherigen Heizung."
+        titel="Was spart eine Wärmepumpe in Ihrem Gebäude?"
+        text="Wärmebedarf, Heizsystem und PV-Anlage eingeben – der Rechner zeigt eine erste Einschätzung der Heizkosten im Vergleich zur bisherigen Heizung."
       />
 
       <Section tone="white" space="lg">
@@ -499,7 +354,7 @@ export default async function WarmepumpePage() {
           <div>
             <SectionHeading
               eyebrow="Häufige Fragen"
-              title="Wärmepumpe – kurz & ehrlich beantwortet"
+              title="Wärmepumpe – fachlich beantwortet"
               lead="Sie haben eine andere Frage? Rufen Sie uns an – wir beraten persönlich und herstellerunabhängig."
             />
             <Reveal delay={100} className="mt-8 flex items-center gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/70">
@@ -519,11 +374,11 @@ export default async function WarmepumpePage() {
         </div>
       </Section>
 
-      <Querverweise pfad="/produkte/warmepumpe" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
-        title="Heizen Sie künftig mit Ihrer eigenen Sonne."
-        text="Persönliche Beratung vom Fachbetrieb aus Türkheim – mit Heizlastberechnung, ehrlicher Wirtschaftlichkeitsrechnung und Unterstützung beim Förderantrag."
-        primary={{ label: "Wärmepumpen-Angebot anfragen", href: "/angebot" }}
+        title="Heizen und kühlen Sie künftig mit Ihrer eigenen Sonne."
+        text={`Persönliche Beratung von ${FIRMA.name} aus ${FIRMA.ort} – mit Heizlastberechnung, ehrlicher Wirtschaftlichkeitsrechnung und aktuellem Förderstand, für Betriebe und Gebäude in ganz Österreich.`}
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Ersparnis berechnen", href: "/rechner/waermepumpe" }}
       />
     </div>

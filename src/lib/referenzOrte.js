@@ -10,11 +10,11 @@ import { bekannteKoordinaten, entfernungKm, ortPasst } from "@/components/Refere
 
 const DREISSIG_TAGE = 30 * 24 * 3600;
 
-/** Ort bei OpenStreetMap suchen – bevorzugt in der Region um Türkheim (Süddeutschland, Österreich, Schweiz). */
+/** Ort bei OpenStreetMap suchen – bevorzugt in Österreich (Suchfenster Österreich, Treffer auch in DE/CH möglich). */
 async function ortSuchen(ort) {
   const url =
-    "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de,at,ch" +
-    `&viewbox=8.5,49.8,13.8,46.8&bounded=0&q=${encodeURIComponent(ort)}`;
+    "https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=at,de,ch" +
+    `&viewbox=9.5,49.05,17.2,46.35&bounded=0&q=${encodeURIComponent(ort)}`;
   try {
     const res = await fetch(url, {
       headers: { "User-Agent": "oekovolt.com Referenzkarte (office@oekovolt.com)", "Accept-Language": "de" },

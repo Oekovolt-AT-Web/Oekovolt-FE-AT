@@ -3,6 +3,7 @@
 
 import path from "node:path";
 import { Document, Font, G, Image, Line, Page, Rect, StyleSheet, Svg, Text, View } from "@react-pdf/renderer";
+import { FIRMA, BASE_URL } from "../site.js";
 
 const FONTS = path.join(process.cwd(), "src/lib/analyse/fonts");
 Font.register({
@@ -203,7 +204,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
           </View>
           <View style={{ marginTop: 18, borderLeftWidth: 3, borderLeftColor: C.sonne, paddingLeft: 10 }}>
             <Text style={[s.text, { fontSize: 8.5 }]}>
-              Unverbindliche Ersteinschätzung auf Basis Ihrer Angaben und typischer Werte für Süddeutschland – kein Angebot. Ein verbindliches Angebot erstellen wir nach Prüfung von
+              Unverbindliche Ersteinschätzung auf Basis Ihrer Angaben und typischer Werte für Österreich – kein Angebot. Ein verbindliches Angebot erstellen wir nach Prüfung von
               Dach, Statik, Verschattung und Zählerschrank.
             </Text>
           </View>
@@ -268,10 +269,10 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
             <Text style={s.h3}>Investition (Richtwerte)</Text>
             <Zeile label={`Photovoltaikanlage ${e.kwp.toLocaleString("de-DE")} kWp`} wert={eur(r.anlagenpreis)} />
             {r.speicherpreis > 0 && <Zeile label={`Speicher ${e.speicherKwh.toLocaleString("de-DE")} kWh`} wert={eur(r.speicherpreis)} />}
-            <Zeile label="Gesamt (0 % USt. für Privathaushalte)" wert={eur(r.investition)} />
+            <Zeile label="Gesamt (inkl. 20 % USt.)" wert={eur(r.investition)} />
             <Text style={[s.h3, { marginTop: 14 }]}>Jahr 1</Text>
             <Zeile label="Ersparnis Strombezug" wert={eur(r.ersparnis)} />
-            <Zeile label="Einspeisevergütung" wert={eur(r.einspeiseErloes)} />
+            <Zeile label="Einspeiseerlös" wert={eur(r.einspeiseErloes)} />
             <Zeile label="Betriebskosten" wert={`– ${eur(r.betriebskosten)}`} />
             <Zeile label="Nutzen gesamt" wert={eur(r.nutzenProJahr)} />
           </View>
@@ -324,7 +325,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
           { t: "Beratung", x: "Wir besprechen Ihre Ziele, den Verbrauch und die Optionen – telefonisch, per Video oder vor Ort." },
           { t: "Dach-Check & Planung", x: "Dachfläche, Statik, Verschattung und Zählerschrank werden geprüft; daraus entsteht die exakte Auslegung." },
           { t: "Verbindliches Angebot", x: "Sie erhalten ein transparentes Angebot mit Wirtschaftlichkeitsrechnung und Komponenten namhafter Hersteller." },
-          { t: "Montage & Anmeldung", x: "Installation, Inbetriebnahme sowie Anmeldung bei Netzbetreiber und Marktstammdatenregister aus einer Hand." },
+          { t: "Montage & Anmeldung", x: "Netzzugangsantrag, Installation, Fertigstellungsmeldung an den Netzbetreiber und Abnahmevertrag für den Überschuss aus einer Hand." },
         ].map((k, i) => (
           <View key={k.t} style={{ flexDirection: "row", marginBottom: 12 }}>
             <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: C.gruen, alignItems: "center", justifyContent: "center", marginRight: 10 }}>
@@ -340,7 +341,7 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
         <View style={{ flexDirection: "row", backgroundColor: C.navy, borderRadius: 12, padding: 18, marginTop: 10, alignItems: "center" }}>
           <View style={{ flex: 1, paddingRight: 14 }}>
             <Text style={{ fontFamily: "Manrope", fontWeight: 800, fontSize: 16, color: "#ffffff" }}>Kostenlosen Beratungstermin buchen</Text>
-            <Text style={{ color: "#b9c2d0", marginTop: 6, lineHeight: 1.45 }}>QR-Code scannen oder www.oekovolt.com/termin – telefonisch unter {"08245\u00a096\u00a0788\u00a00"} oder per E-Mail an office@oekovolt.com.</Text>
+            <Text style={{ color: "#b9c2d0", marginTop: 6, lineHeight: 1.45 }}>QR-Code scannen oder {BASE_URL.replace("https://", "")}/termin – telefonisch unter {FIRMA.telefon.replace(/ /g, "\u00a0")} oder per E-Mail an {FIRMA.email}.</Text>
             <Text style={{ color: C.gruenHell, marginTop: 8, fontWeight: 600 }}>Bitte Referenz {referenz} angeben.</Text>
           </View>
           {qrPng && (
@@ -353,19 +354,21 @@ export default function AnalysePdf({ daten, kontakt, referenz, datum, logoPfad, 
 
         <Text style={[s.h3, { marginTop: 22 }]}>Annahmen dieser Berechnung</Text>
         <Text style={[s.text, { fontSize: 8.3 }]}>
-          Spezifischer Ertrag {annahmen.ertragProKwpSued.toLocaleString("de-DE")} kWh/kWp bei Südausrichtung (Süddeutschland), korrigiert um Ausrichtung und Neigung; Strompreis{" "}
-          {Math.round(annahmen.strompreis * 100)} ct/kWh mit {Math.round(e.preissteigerung * 100)} % jährlicher Steigerung; Einspeisevergütung nach EEG ({r.satzCt.toLocaleString("de-DE")} ct/kWh
-          Teileinspeisung, {annahmen.garantieJahre} Jahre fest); Moduldegradation {(annahmen.degradation * 100).toLocaleString("de-DE")} % pro Jahr; Betriebskosten{" "}
+          Spezifischer Ertrag {annahmen.ertragProKwpSued.toLocaleString("de-DE")} kWh/kWp bei Südausrichtung (PVGIS-Mittel der österreichischen Landeshauptstädte, vorsichtig gerundet), korrigiert um Ausrichtung und Neigung; vermeidbarer Strompreis{" "}
+          {Math.round(annahmen.strompreis * 100)} ct/kWh mit {Math.round(e.preissteigerung * 100)} % jährlicher Steigerung; Einspeiseerlös {r.satzCt.toLocaleString("de-DE")} ct/kWh
+          (vorsichtiger Rechensatz auf Basis OeMAG-Marktpreis und Einspeisetarifen, in Österreich nicht garantiert, über {annahmen.garantieJahre} Jahre konstant angesetzt); Moduldegradation {(annahmen.degradation * 100).toLocaleString("de-DE")} % pro Jahr; Betriebskosten{" "}
           {annahmen.betriebskostenProKwp.toLocaleString("de-DE")} €/kWp pro Jahr; Speicher {annahmen.speicherPreisProKwh.toLocaleString("de-DE")} €/kWh. Eigenverbrauch und Autarkie sind
           Näherungswerte aus Erfahrungskurven; die tatsächlichen Werte hängen von Lastprofil, Verschattung, Wetter und Anlagentechnik ab.
         </Text>
         <Text style={[s.text, { fontSize: 8.3, marginTop: 8 }]}>
-          Diese Analyse ist eine unverbindliche Ersteinschätzung und stellt weder ein Angebot noch eine Steuer-, Rechts- oder Finanzberatung dar. Preise sind Richtwerte inklusive
-          Montage (0 % Umsatzsteuer nach § 12 Abs. 3 UStG für Anlagen auf oder nahe Wohngebäuden).
+          Diese Analyse ist eine unverbindliche Ersteinschätzung und stellt weder ein Angebot noch eine Steuer-, Rechts- oder Finanzberatung dar. Preise sind Richtwerte laut
+          österreichischer Marktstatistik inklusive Montage und 20 % Umsatzsteuer, ohne Förderungen (z. B. EAG-Investitionszuschuss).
         </Text>
         <View style={{ marginTop: 22, borderTopWidth: 0.6, borderTopColor: C.linie, paddingTop: 10 }}>
-          <Text style={{ fontWeight: 700 }}>ÖKOVOLT GmbH Solartechnik</Text>
-          <Text style={s.text}>Schlingener Straße 1a · 86842 Türkheim · 08245 96 788 0 · office@oekovolt.com · www.oekovolt.com</Text>
+          <Text style={{ fontWeight: 700 }}>{FIRMA.name}</Text>
+          <Text style={s.text}>
+            {FIRMA.strasse} · {FIRMA.plz} {FIRMA.ort} · {FIRMA.telefon} · {FIRMA.email} · {BASE_URL.replace("https://", "")} · {FIRMA.firmenbuch} · UID {FIRMA.uid}
+          </Text>
         </View>
         <Fuss referenz={referenz} />
       </Page>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CalendarCheck, Clock, FileText, Mail, MapPin, Navigation, Phone } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarCheck, Car, Clock, FileText, Mail, MapPin, Navigation, Phone, TrainFront } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -10,18 +10,22 @@ import Reveal from "@/components/ui/Reveal";
 import Map from "@/components/Kontakt/map";
 import KontaktFormular from "@/components/Kontakt/KontaktFormular";
 import OeffnungsStatus, { OeffnungszeitenListe } from "@/components/Kontakt/OeffnungsStatus";
+import { OEFFNUNGSZEITEN_KURZ } from "@/data/erreichbarkeit";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
 
-const PAGE_URL = "https://www.oekovolt.com/kontakt";
-const TITEL = "Kontakt & Beratung Photovoltaik Türkheim | Ökovolt";
+const PAGE_URL = `${BASE_URL}/kontakt`;
+const TITEL = "Kontakt: Photovoltaik in ganz Österreich | Ökovolt";
 const BESCHREIBUNG =
-  "Ökovolt in Türkheim: Beratung zu Photovoltaik, Speicher & Wärmepumpe. Rufen Sie an (08245 96 788 0), schreiben Sie uns oder vereinbaren Sie einen Vor-Ort-Termin.";
+  "Ökovolt Solartechnik GmbH in Ostermiething (OÖ): Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich. Telefon, E-Mail, Anfahrt.";
+const ADRESSE_EINZEILIG = `${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}`;
+const ROUTE_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${ADRESSE_EINZEILIG}, ${FIRMA.land}`)}`;
 
 export const metadata = {
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
   title: TITEL,
   description: BESCHREIBUNG,
-  keywords: ["Kontakt Ökovolt", "Photovoltaik Beratung Türkheim", "Solarteur Allgäu", "Photovoltaik Anfrage", "Ökovolt Österreich"],
+  keywords: ["Kontakt Ökovolt", "Photovoltaik Ostermiething", "Photovoltaik Oberösterreich", "PV-Errichter Salzburg", "Photovoltaik Gewerbe Österreich", "Ökovolt Österreich"],
   robots: { index: true, follow: true },
   openGraph: {
     type: "website",
@@ -30,82 +34,95 @@ export const metadata = {
     siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Österreich" }],
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Österreich" }],
   },
   twitter: {
     card: "summary_large_image",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: ["https://www.oekovolt.com/og-image.jpg"],
+    images: [`${BASE_URL}/og-image.jpg`],
   },
 };
+
+// Öffnungszeiten für Schema.org aus FIRMA ableiten ("Mo – Do" -> Monday … Thursday)
+const TAGE_EN = { Mo: "Monday", Di: "Tuesday", Mi: "Wednesday", Do: "Thursday", Fr: "Friday", Sa: "Saturday", So: "Sunday" };
+const TAGE_REIHE = Object.keys(TAGE_EN);
+const oeffnungSchema = FIRMA.oeffnungszeiten.map((o) => {
+  const [von, bis] = o.tage.split(/[–-]/).map((x) => x.trim());
+  const tage = TAGE_REIHE.slice(TAGE_REIHE.indexOf(von), TAGE_REIHE.indexOf(bis || von) + 1).map((t) => TAGE_EN[t]);
+  const [opens, closes] = o.zeit.split(/[–-]/).map((x) => x.trim());
+  return { "@type": "OpeningHoursSpecification", dayOfWeek: tage, opens, closes };
+});
+
+const BUNDESLAENDER = ["Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"];
+
+const FAQ = [
+  {
+    q: "Wie schnell bekomme ich eine Antwort?",
+    a: `Anfragen über das Formular oder per E-Mail bearbeiten wir während unserer Öffnungszeiten (${OEFFNUNGSZEITEN_KURZ}) der Reihe nach. Am schnellsten erreichen Sie uns telefonisch unter ${FIRMA.telefon}.`,
+  },
+  {
+    q: "In welchen Regionen baut Ökovolt Photovoltaikanlagen?",
+    a: `In ganz Österreich – in allen neun Bundesländern. Unser Firmensitz liegt in ${FIRMA.ort} im Innviertel (${FIRMA.bundesland}), direkt an der Grenze zu Salzburg. Für Gewerbe-, Freiflächen- und Gemeindeprojekte planen, bauen und betreuen wir Anlagen von Vorarlberg bis ins Burgenland.`,
+  },
+  {
+    q: "Ist die Erstberatung kostenlos?",
+    a: "Ja. Das Erstgespräch und eine erste Einschätzung zu Anlagengröße, Netzanschluss und Förderung kosten Sie nichts. Weitergehende Leistungen wie ein Energieaudit oder eine Ausführungsplanung vereinbaren wir – falls gewünscht – vorab gesondert mit Ihnen.",
+  },
+  {
+    q: "Welche Unterlagen sollte ein Betrieb für das erste Gespräch bereithalten?",
+    a: "Hilfreich sind die letzte Strom- und Netzrechnung (Jahresverbrauch, Netzebene, Leistungspreis), falls vorhanden der Lastgang in 15-Minuten-Werten – den stellt Ihr Netzbetreiber für Zählpunkte mit Lastprofilzähler bzw. Smart Meter bereit –, Dachpläne oder Fotos sowie Angaben zu Trafo bzw. Zählerplatz und geplanten Erweiterungen wie Ladepunkten.",
+  },
+  {
+    q: "Kommen Sie für einen Vor-Ort-Termin zu uns?",
+    a: "Ja. Nach einem ersten Gespräch sehen wir uns Dach oder Freifläche, Statik, Trafo bzw. Zählerplatz und Leitungswege direkt vor Ort an. Weiter entfernte Termine bündeln wir mit anderen Terminen in der Region.",
+  },
+  {
+    q: "Kann ich Sie als Bestandskunde für Service oder Wartung kontaktieren?",
+    a: "Selbstverständlich. Wählen Sie im Formular das Thema „Service & Wartung“ oder rufen Sie uns an – idealerweise mit Anlagenstandort, Anlagengröße und einer kurzen Fehlerbeschreibung. Auch Anlagen, die nicht von uns errichtet wurden, übernehmen wir nach einer Bestandsprüfung in die Wartung.",
+  },
+];
 
 const contactSchema = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   "@id": `${PAGE_URL}/#webpage`,
   url: PAGE_URL,
-  name: "Kontakt | Ökovolt Österreich",
+  name: TITEL,
   description: BESCHREIBUNG,
-  isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-  about: { "@id": "https://www.oekovolt.com/#organization" },
+  inLanguage: "de-AT",
+  isPartOf: { "@id": `${BASE_URL}/#website` },
+  about: { "@id": `${BASE_URL}/#organization` },
   mainEntity: {
     "@type": ["LocalBusiness", "Electrician"],
-    "@id": "https://www.oekovolt.com/#organization",
-    name: "ÖKOVOLT GmbH Solartechnik",
-    telephone: "+49 8245 96 788 0",
-    email: "office@oekovolt.com",
+    "@id": `${BASE_URL}/#organization`,
+    name: FIRMA.name,
+    url: BASE_URL,
+    telephone: FIRMA.telefon,
+    email: FIRMA.email,
+    image: `${BASE_URL}/og-image.jpg`,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Schlingener Straße 1a",
-      postalCode: "86842",
-      addressLocality: "Türkheim",
-      addressRegion: "Bayern",
-      addressCountry: "DE",
+      streetAddress: FIRMA.strasse,
+      postalCode: FIRMA.plz,
+      addressLocality: FIRMA.ort,
+      addressRegion: FIRMA.bundesland,
+      addressCountry: "AT",
     },
-    openingHoursSpecification: [
-      { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "08:00", closes: "16:00" },
-      { "@type": "OpeningHoursSpecification", dayOfWeek: "Friday", opens: "08:00", closes: "13:00" },
-    ],
+    geo: { "@type": "GeoCoordinates", latitude: FIRMA.geo.lat, longitude: FIRMA.geo.lng },
+    hasMap: ROUTE_URL,
+    openingHoursSpecification: oeffnungSchema,
+    areaServed: { "@type": "Country", name: "Österreich" },
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+49 8245 96 788 0",
-      email: "office@oekovolt.com",
+      telephone: FIRMA.telefon,
+      email: FIRMA.email,
       contactType: "customer service",
-      areaServed: "DE",
+      areaServed: "AT",
       availableLanguage: ["German"],
     },
   },
 };
-
-const ROUTE_URL = "https://www.google.com/maps/dir/?api=1&destination=Schlingener+Str.+1a,+86842+T%C3%BCrkheim,+Germany";
-
-const FAQ = [
-  {
-    q: "Wie schnell bekomme ich eine Antwort?",
-    a: "Anfragen über das Formular oder per E-Mail bearbeiten wir während unserer Öffnungszeiten (Mo–Do 8–16 Uhr, Fr 8–13 Uhr) so schnell wie möglich. Am schnellsten erreichen Sie uns telefonisch unter 08245 96 788 0.",
-  },
-  {
-    q: "Ist die Beratung kostenlos?",
-    a: "Ja. Das Erstgespräch und ein unverbindliches Angebot für Ihre Photovoltaikanlage, Ihren Stromspeicher oder Ihre Wärmepumpe kosten Sie nichts.",
-  },
-  {
-    q: "Welche Unterlagen sollte ich für die Beratung bereithalten?",
-    a: "Hilfreich sind Ihr Jahresstromverbrauch (Stromrechnung), Fotos von Dach und Zählerschrank sowie – falls vorhanden – Pläne des Hauses. Planen Sie ein E-Auto oder eine Wärmepumpe, sagen Sie uns das gleich mit; das beeinflusst Anlagen- und Speichergröße.",
-  },
-  {
-    q: "Kommen Sie für einen Vor-Ort-Termin zu mir?",
-    a: "Ja. Nach einem ersten Gespräch schauen wir uns auf Wunsch Dach, Statik, Zählerschrank und Leitungswege direkt bei Ihnen an. So wird das Angebot belastbar und es gibt bei der Montage keine Überraschungen.",
-  },
-  {
-    q: "Ich möchte direkt ein Angebot – wie geht das am schnellsten?",
-    a: "Nutzen Sie unsere Online-Angebotsanfrage. In rund zwei Minuten beantworten Sie ein paar Fragen zu Dach und Verbrauch, und wir melden uns mit einem passenden Vorschlag.",
-  },
-  {
-    q: "Kann ich Sie auch als Bestandskunde für Service oder Wartung kontaktieren?",
-    a: "Selbstverständlich. Wählen Sie im Formular das Thema „Service & Wartung“ oder rufen Sie uns an – idealerweise mit Angaben zu Ihrer Anlage und einer kurzen Fehlerbeschreibung.",
-  },
-];
 
 export default function KontaktPage() {
   return (
@@ -114,22 +131,22 @@ export default function KontaktPage() {
 
       <PageHero
         breadcrumbs={[{ name: "Kontakt" }]}
-        eyebrow="Kontakt · Türkheim im Allgäu"
+        eyebrow={`Kontakt · ${FIRMA.ort}, ${FIRMA.bundesland}`}
         title={
           <>
             Sprechen Sie mit uns – <span className="ov-text-gradient">persönlich</span> und direkt.
           </>
         }
-        lead="Ob erste Idee oder konkretes Projekt: Unser Team aus Türkheim berät Sie ehrlich zu Photovoltaik, Stromspeicher, Wallbox und Wärmepumpe – am Telefon, per E-Mail oder bei Ihnen vor Ort."
-        image={{ src: "/Images/Kontakt/download.jpg", alt: "Photovoltaikmodule auf einem Dach – montiert von Ökovolt" }}
-        points={["Fachbetrieb mit über 15 Jahren Erfahrung", "Planung, Montage & Anmeldung aus einer Hand", "Kostenlose, unverbindliche Beratung", "Fester Ansprechpartner"]}
+        lead={`Ob erste Idee oder ausschreibungsreifes Projekt: Unser Team aus ${FIRMA.ort} berät Betriebe, landwirtschaftliche Betriebe, Gemeinden und Eigentümer anspruchsvoller Objekte in ganz Österreich – zu Photovoltaik, Speicher, Ladeinfrastruktur und Service.`}
+        image={{ src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Photovoltaikanlage auf einer Freizeit- und Badeanlage am Fuschlsee im Bundesland Salzburg, Luftaufnahme" }}
+        points={["Seit 2012 in Österreich", "Planung, Bau & Betrieb aus einer Hand", "Kostenloses Erstgespräch", "Einzugsgebiet: alle neun Bundesländer"]}
         actions={[
           { label: "Nachricht schreiben", href: "#formular" },
-          { label: "08245 96 788 0", href: "tel:+498245967880", icon: Phone },
+          { label: FIRMA.telefon, href: FIRMA.telefonHref, icon: Phone },
         ]}
         badge={
           <div>
-            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Telefon · 08245 96 788 0</p>
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">Telefon · {FIRMA.telefon}</p>
             <OeffnungsStatus gross className="mt-3" />
           </div>
         }
@@ -140,23 +157,20 @@ export default function KontaktPage() {
         <SectionHeading
           eyebrow="Ihr Weg zu uns"
           title="Drei Wege, ein Ansprechpartner"
-          lead="Wählen Sie, was für Sie am bequemsten ist. Hinter jedem Weg sitzt dasselbe Team – kein Callcenter."
+          lead="Wählen Sie, was für Sie am bequemsten ist. Hinter jedem Weg sitzt dasselbe Team aus Ostermiething – kein Callcenter."
           align="center"
           className="mb-12 md:mb-16"
         />
         <ul className="grid gap-5 lg:grid-cols-3">
           <Reveal as="li" delay={0} className="flex">
-            <a
-              href="tel:+498245967880"
-              className="group ov-card-hover relative flex w-full flex-col overflow-hidden rounded-3xl bg-navy-950 p-7 text-white md:p-9"
-            >
+            <a href={FIRMA.telefonHref} className="group ov-card-hover relative flex w-full flex-col overflow-hidden rounded-3xl bg-navy-950 p-7 text-white md:p-9">
               <div aria-hidden="true" className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-ov-500/30 blur-[80px]" />
               <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-ov-500 text-white transition-transform duration-300 group-hover:scale-110">
                 <Phone aria-hidden="true" className="h-6 w-6" />
               </span>
               <h3 className="relative mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-white/60">Anrufen</h3>
-              <p className="relative mt-2 font-display text-[clamp(1.7rem,1.3rem+1.2vw,2.25rem)] font-extrabold leading-tight tracking-tight">08245 96 788 0</p>
-              <p className="relative mb-8 mt-3 text-[15.5px] leading-relaxed text-white/70">Der schnellste Weg: Fragen klären wir oft direkt am Telefon.</p>
+              <p className="relative mt-2 font-display text-[clamp(1.7rem,1.3rem+1.2vw,2.25rem)] font-extrabold leading-tight tracking-tight">{FIRMA.telefon}</p>
+              <p className="relative mb-8 mt-3 text-[15.5px] leading-relaxed text-white/70">Der schnellste Weg: Viele Fragen zu Fläche, Netzanschluss und Förderung klären wir direkt am Telefon.</p>
               <div className="relative mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6">
                 <OeffnungsStatus dark gross />
                 <ArrowUpRight aria-hidden="true" className="h-5 w-5 text-white/50 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
@@ -165,16 +179,13 @@ export default function KontaktPage() {
           </Reveal>
 
           <Reveal as="li" delay={90} className="flex">
-            <a
-              href="mailto:office@oekovolt.com"
-              className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70 hover:ring-ov-200 md:p-9"
-            >
+            <a href={`mailto:${FIRMA.email}`} className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70 hover:ring-ov-200 md:p-9">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ink-200 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
                 <Mail aria-hidden="true" className="h-6 w-6" />
               </span>
               <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">E-Mail schreiben</h3>
-              <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">office@oekovolt.com</p>
-              <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">Ideal für Unterlagen, Fotos vom Dach oder Ihre Stromrechnung.</p>
+              <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">{FIRMA.email}</p>
+              <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">Ideal für Lastgang, Netzrechnung, Dachpläne oder Ausschreibungsunterlagen.</p>
               <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-200/70 pt-6 text-[14px] font-semibold text-ov-700">
                 E-Mail-Programm öffnen
                 <ArrowUpRight aria-hidden="true" className="h-5 w-5 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -183,20 +194,17 @@ export default function KontaktPage() {
           </Reveal>
 
           <Reveal as="li" delay={180} className="flex">
-            <Link
-              href="#formular"
-              className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-ov-50 p-7 ring-1 ring-ov-200/70 hover:ring-ov-300 md:p-9"
-            >
+            <Link href="/termin" className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-ov-50 p-7 ring-1 ring-ov-200/70 hover:ring-ov-300 md:p-9">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ov-200 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
                 <CalendarCheck aria-hidden="true" className="h-6 w-6" />
               </span>
-              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">Vor-Ort-Termin</h3>
-              <p className="mt-2 font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">Wir kommen zu Ihnen</p>
+              <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">Termin buchen</h3>
+              <p className="mt-2 font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">Telefon, Video oder vor Ort</p>
               <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">
-                Dach, Zählerschrank und Verbrauch gemeinsam ansehen – für ein Angebot ohne Überraschungen.
+                Freie Zeiten direkt online wählen – für den Vor-Ort-Termin kommen wir in ganz Österreich zu Ihnen.
               </p>
               <div className="mt-auto flex items-center justify-between gap-3 border-t border-ov-200/70 pt-6 text-[14px] font-semibold text-ov-700">
-                Termin anfragen
+                Zur Terminbuchung
                 <ArrowRight aria-hidden="true" className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
@@ -214,7 +222,7 @@ export default function KontaktPage() {
             </p>
             <h2 className="ov-h2 mt-4 text-ink-900">Schreiben Sie uns</h2>
             <p className="mt-4 max-w-xl text-[16.5px] leading-relaxed text-ink-600">
-              Je genauer Sie Ihr Vorhaben beschreiben, desto gezielter können wir antworten. Pflichtfelder sind mit <span className="text-ov-600">*</span> markiert.
+              Je genauer Sie Ihr Vorhaben beschreiben – Fläche, Jahresverbrauch, Netzebene, Zeitplan –, desto gezielter können wir antworten. Pflichtfelder sind mit <span className="text-ov-600">*</span> markiert.
             </p>
             <div className="mt-10">
               <KontaktFormular />
@@ -227,14 +235,10 @@ export default function KontaktPage() {
               <FileText aria-hidden="true" className="relative h-7 w-7 text-ov-300" />
               <h3 className="relative mt-5 font-display text-[22px] font-extrabold leading-tight">Sie möchten gleich ein Angebot?</h3>
               <p className="relative mt-3 text-[15px] leading-relaxed text-white/70">
-                Mit der Angebotsanfrage erfassen Sie Dach, Verbrauch und Wünsche in rund zwei Minuten – so können wir Ihnen direkt einen passenden
-                Vorschlag machen.
+                Im Angebots-Konfigurator erfassen Sie Objekt, Fläche, Verbrauch, Lastgang und Netzebene in rund zwei Minuten – so können wir direkt eine fundierte Ersteinschätzung erstellen.
               </p>
-              <Link
-                href="/angebot"
-                className="group relative mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white hover:bg-ov-700"
-              >
-                Zur Angebotsanfrage
+              <Link href="/angebot" className="group relative mt-6 inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white hover:bg-ov-700">
+                Zum Angebots-Konfigurator
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Reveal>
@@ -246,6 +250,7 @@ export default function KontaktPage() {
               </h3>
               <OeffnungsStatus className="mt-3" />
               <OeffnungszeitenListe className="mt-4" />
+              <p className="mt-3 text-[13px] leading-relaxed text-ink-500">An gesetzlichen Feiertagen in Österreich sowie am 24. und 31. Dezember geschlossen.</p>
             </Reveal>
 
             <Reveal delay={200} className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
@@ -254,11 +259,13 @@ export default function KontaktPage() {
                 Adresse
               </h3>
               <address className="mt-3 text-[15.5px] not-italic leading-relaxed text-ink-600">
-                <strong className="font-semibold text-ink-900">ÖKOVOLT GmbH Solartechnik</strong>
+                <strong className="font-semibold text-ink-900">{FIRMA.name}</strong>
                 <br />
-                Schlingener Straße 1a
+                {FIRMA.strasse}
                 <br />
-                86842 Türkheim
+                {FIRMA.plz} {FIRMA.ort}
+                <br />
+                {FIRMA.land}
               </address>
               <a href="#anfahrt" className="mt-4 inline-flex min-h-11 items-center gap-2 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
                 Anfahrt ansehen
@@ -277,37 +284,43 @@ export default function KontaktPage() {
               eyebrow="Anfahrt"
               title={
                 <>
-                  Besuchen Sie uns in <span className="ov-text-gradient">Türkheim</span>
+                  Besuchen Sie uns in <span className="ov-text-gradient">{FIRMA.ort}</span>
                 </>
               }
-              lead="Unser Firmensitz liegt im Unterallgäu, zwischen Mindelheim und Buchloe – nur wenige Minuten von der A96 entfernt."
+              lead={`${FIRMA.ort} liegt im Innviertel (${FIRMA.bundesland}) an der Salzach, gut 30 Kilometer nördlich der Stadt Salzburg und direkt an der Grenze zu Bayern.`}
             />
+            <ul className="mt-8 space-y-4 text-[15.5px] leading-relaxed text-ink-600">
+              <li className="flex gap-3">
+                <Car aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
+                <span>
+                  <strong className="text-ink-900">Mit dem Auto aus Salzburg:</strong> A1 Westautobahn bis Salzburg-Nord, weiter über die B156 Lamprechtshausener Straße Richtung Lamprechtshausen und über die L205/L501 nach Ostermiething. Aus Braunau über die L501 Weilhart Landesstraße.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <TrainFront aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
+                <span>
+                  <strong className="text-ink-900">Mit der Bahn:</strong> Salzburger Lokalbahn (S-Bahn Salzburg) bis Bürmoos, dort weiter mit der S11 bis zur Endstation Ostermiething.
+                </span>
+              </li>
+            </ul>
             <Reveal className="mt-8 flex items-center gap-5 rounded-3xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
               <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl bg-ink-100 sm:h-28 sm:w-40">
-                <Image src="/Images/Kontakt/download-1.jpg" alt="Firmensitz von Ökovolt in Türkheim (Bayern)" fill sizes="160px" className="object-cover" />
+                <Image src="/Images/AT/unternehmen/salzach-ostermiething-tauernradweg.jpg" alt="Tauernradweg an der Salzach bei Ostermiething im Innviertel" fill sizes="160px" className="object-cover" />
               </div>
               <div className="min-w-0">
-                <p className="font-display text-[17px] font-bold text-ink-900">Ökovolt Zentrale</p>
-                <p className="mt-1 text-[14.5px] leading-snug text-ink-600">Schlingener Straße 1a, 86842 Türkheim</p>
-                <p className="mt-1 text-[13px] text-ink-500">Mo–Do 8–16 · Fr 8–13 Uhr</p>
+                <p className="font-display text-[17px] font-bold text-ink-900">{FIRMA.name}</p>
+                <p className="mt-1 text-[14.5px] leading-snug text-ink-600">{ADRESSE_EINZEILIG}</p>
+                <p className="mt-1 text-[13px] text-ink-500">{OEFFNUNGSZEITEN_KURZ}</p>
               </div>
             </Reveal>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={ROUTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-navy-700 px-6 text-[15px] font-semibold text-white hover:bg-navy-800"
-              >
+              <a href={ROUTE_URL} target="_blank" rel="noopener noreferrer" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-navy-700 px-6 text-[15px] font-semibold text-white hover:bg-navy-800">
                 <Navigation aria-hidden="true" className="h-4 w-4" />
                 Route planen
               </a>
-              <a
-                href="tel:+498245967880"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 hover:bg-ink-50"
-              >
+              <a href={FIRMA.telefonHref} className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 hover:bg-ink-50">
                 <Phone aria-hidden="true" className="h-4 w-4" />
-                Termin telefonisch vereinbaren
+                Besuch telefonisch vereinbaren
               </a>
             </div>
           </div>
@@ -317,23 +330,45 @@ export default function KontaktPage() {
         </div>
       </Section>
 
-      {/* FAQ */}
-      <Section tone="sand" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+      {/* Einzugsgebiet */}
+      <Section tone="sand" space="md">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
           <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Vor dem ersten Gespräch"
-            lead="Was Sie zur Kontaktaufnahme, Beratung und zum Vor-Ort-Termin wissen sollten."
+            eyebrow="Einzugsgebiet"
+            title="Aus Ostermiething für ganz Österreich"
+            lead="Wir planen, errichten und betreuen Photovoltaikanlagen in allen neun Bundesländern – mit denselben Prozessen, eigener Regelungs- und Fernwartungstechnik und einem festen Projektleiter."
           />
+          <ul className="flex flex-wrap gap-2.5">
+            {BUNDESLAENDER.map((b) => (
+              <li key={b} className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
+                <MapPin aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                {b}
+              </li>
+            ))}
+            <li>
+              <Link href="/photovoltaik" className="inline-flex h-11 items-center gap-2 rounded-full bg-ink-900 px-5 text-[14.5px] font-semibold text-white hover:bg-ink-800">
+                Bundesländer & Städte
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </Section>
+
+      {/* FAQ */}
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Vor dem ersten Gespräch" lead="Was Sie zur Kontaktaufnahme, Beratung und zum Vor-Ort-Termin wissen sollten." />
           <Faq items={FAQ} />
         </div>
       </Section>
 
       <CtaBand
         eyebrow="Kostenlos & unverbindlich"
-        title="Lieber gleich konkret? Ihr Angebot in zwei Minuten."
+        title="Lieber gleich konkret? Ihre Ersteinschätzung in zwei Minuten."
+        text="Objekt, Fläche, Verbrauch und Netzanschluss angeben – wir melden uns mit einer fundierten Ersteinschätzung und einem festen Ansprechpartner für Ihr Projekt."
         primary={{ label: "Angebot anfragen", href: "/angebot" }}
-        secondary={{ label: "Solarertrag berechnen", href: "/solarrechner" }}
+        secondary={{ label: "Standort prüfen", href: "/standort-check" }}
       />
     </div>
   );

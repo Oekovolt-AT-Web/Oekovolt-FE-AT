@@ -12,7 +12,7 @@ import { angebotUrl } from "@/lib/rechner/angebot";
 const SEGMENTE = {
   kraftstoff: { farbe: "#97a0b0", label: "Kraftstoff" },
   zuhause: { farbe: "#4a7cbd", label: "Netzstrom zu Hause" },
-  solar: { farbe: "#669933", label: "Solarstrom (entgangene Vergütung)" },
+  solar: { farbe: "#669933", label: "Solarstrom (entgangener Einspeiseerlös)" },
   oeffentlich: { farbe: "#b2cbe9", label: "Öffentlich laden" },
 };
 
@@ -282,7 +282,7 @@ function KostenChart({ r, fahrzeug }) {
         {Object.entries(SEGMENTE).map(([k, s]) => (
           <li key={k} className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-[3px]" style={{ background: s.farbe }} aria-hidden="true" />
-            {k === "solar" ? `Solarstrom (${fmt(r.satzCt, 1)} ct entgangene Vergütung)` : s.label}
+            {k === "solar" ? `Solarstrom (${fmt(r.satzCt, 1)} ct entgangener Einspeiseerlös)` : s.label}
           </li>
         ))}
       </ul>

@@ -1,38 +1,35 @@
-import AGComponent from "@/components/Agb/agb";
+import AGComponent, { AGB_STAND } from "@/components/Agb/agb";
 import LegalShell from "@/components/Reusable/LegalShell";
-import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
+
+const PAGE_URL = `${BASE_URL}/agb`;
+const TITEL = "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt";
+const BESCHREIBUNG =
+  "AGB der Ökovolt Solartechnik GmbH für Lieferung, Montage und Wartung von PV-Anlagen, Speichern und Ladeinfrastruktur – für Unternehmen und Verbraucher.";
 
 export const metadata = {
-  title: "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt",
-  alternates: { canonical: "https://www.oekovolt.com/agb", languages: hreflangLanguages("https://www.oekovolt.com/agb") },
-  description:
-    "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
-  keywords: [
-    "AGB",
-    "ÖKOVOLT GmbH",
-    "Solarenergie Lösungen",
-    "Photovoltaikanlagen",
-    "Installationsdienstleistungen",
-  ],
+  title: TITEL,
+  description: BESCHREIBUNG,
+  alternates: { canonical: PAGE_URL },
+  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
-    url: "https://www.oekovolt.com/agb",
-    title: "Allgemeine Geschäftsbedingungen (AGB) | Ökovolt",
-    description: "Die Allgemeinen Geschäftsbedingungen der Ökovolt GmbH Solartechnik – transparent und verständlich. Informieren Sie sich über unsere Vertragsbedingungen.",
-    images: [
-      {
-        url: "https://www.oekovolt.com/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Ökovolt Österreich",
-      },
-    ],
+    locale: LOCALE,
+    url: PAGE_URL,
+    siteName: SITE_NAME,
+    title: TITEL,
+    description: BESCHREIBUNG,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: SITE_NAME }],
   },
 };
 
 export default function AgbPage() {
   return (
-    <LegalShell titel="Allgemeine Geschäftsbedingungen" pfad="/agb" lead="Die Vertragsbedingungen der ÖKOVOLT GmbH Solartechnik.">
+    <LegalShell
+      titel="Allgemeine Geschäftsbedingungen"
+      pfad="/agb"
+      lead={`Vertragsbedingungen der ${FIRMA.name} für Photovoltaik, Speicher, Ladeinfrastruktur, Wartung und Service. Stand: ${AGB_STAND}.`}
+    >
       <AGComponent />
     </LegalShell>
   );

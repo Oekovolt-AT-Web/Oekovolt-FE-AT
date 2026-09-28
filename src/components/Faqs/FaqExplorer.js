@@ -5,6 +5,8 @@ import Link from "next/link";
 import { BookOpen, Calculator, Mail, Phone, Search, X } from "lucide-react";
 
 import Faq from "@/components/ui/Faq";
+import { OEFFNUNGSZEITEN_KURZ } from "@/data/erreichbarkeit";
+import { FIRMA } from "@/lib/site";
 
 const norm = (s) =>
   String(s)
@@ -63,7 +65,7 @@ export default function FaqExplorer({ gruppen }) {
               type="search"
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
-              placeholder="Frage suchen, z. B. Speicher"
+              placeholder="Frage suchen, z. B. Förderung, Netzebene, EEG"
               autoComplete="off"
               className="h-14 w-full rounded-full bg-white pl-14 pr-14 text-[16px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-500 focus:outline-none focus:ring-2 focus:ring-ov-500 lg:bg-ink-50 [&::-webkit-search-cancel-button]:hidden"
             />
@@ -127,8 +129,8 @@ export default function FaqExplorer({ gruppen }) {
               <Link href="/wissen/lexikon" className="inline-flex h-11 items-center rounded-full bg-ink-900 px-5 text-[14px] font-semibold text-white hover:bg-ink-800">
                 Zum Lexikon
               </Link>
-              <a href="tel:+498245967880" className="inline-flex h-11 items-center rounded-full px-5 text-[14px] font-semibold text-ink-800 ring-1 ring-ink-200 hover:bg-ink-50">
-                08245 96 788 0
+              <a href={FIRMA.telefonHref} className="inline-flex h-11 items-center rounded-full px-5 text-[14px] font-semibold text-ink-800 ring-1 ring-ink-200 hover:bg-ink-50">
+                {FIRMA.telefon}
               </a>
             </div>
           </div>
@@ -153,23 +155,23 @@ export default function FaqExplorer({ gruppen }) {
           <div className="ov-noise relative overflow-hidden rounded-3xl bg-navy-950 p-7 text-white">
             <div aria-hidden="true" className="absolute -right-14 -top-14 h-44 w-44 rounded-full bg-ov-500/35 blur-3xl" />
             <p className="relative font-display text-[20px] font-extrabold leading-snug">Ihre Frage ist nicht dabei?</p>
-            <p className="relative mt-2 text-[14.5px] leading-relaxed text-white/65">Wir beraten herstellerunabhängig – persönlich, telefonisch oder per E-Mail.</p>
-            <a href="tel:+498245967880" className="group relative mt-6 flex items-center gap-3">
+            <p className="relative mt-2 text-[14.5px] leading-relaxed text-white/65">Unser Team in Ostermiething berät herstellerunabhängig – persönlich, telefonisch oder per E-Mail.</p>
+            <a href={FIRMA.telefonHref} className="group relative mt-6 flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
                 <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
               </span>
-              <span className="font-display text-[20px] font-extrabold tracking-tight">08245 96 788 0</span>
+              <span className="font-display text-[20px] font-extrabold tracking-tight">{FIRMA.telefon}</span>
             </a>
-            <p className="relative mt-2 text-[13px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
-            <a href="mailto:office@oekovolt.com" className="relative mt-5 flex items-center gap-2.5 border-t border-white/10 pt-5 text-[14.5px] text-white/80 hover:text-white">
+            <p className="relative mt-2 text-[13px] text-white/55">{OEFFNUNGSZEITEN_KURZ}</p>
+            <a href={`mailto:${FIRMA.email}`} className="relative mt-5 flex items-center gap-2.5 border-t border-white/10 pt-5 text-[14.5px] text-white/80 hover:text-white">
               <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" />
-              office@oekovolt.com
+              {FIRMA.email}
             </a>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             {[
               { href: "/wissen/lexikon", icon: BookOpen, t: "Photovoltaik-Lexikon", s: "Fachbegriffe von A bis Z" },
-              { href: "/solarrechner", icon: Calculator, t: "Solarrechner", s: "Ertrag & Amortisation berechnen" },
+              { href: "/foerdercheck", icon: Calculator, t: "Förder-Check", s: "EAG, IFB & Länder in 30 Sekunden" },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="group ov-card-hover flex items-center gap-4 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70 hover:ring-ov-200">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ov-50 text-ov-600 transition-colors group-hover:bg-ov-500 group-hover:text-white">

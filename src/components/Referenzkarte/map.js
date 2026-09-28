@@ -135,8 +135,8 @@ const Map = ({ data }) => {
         <div className="w-full h-[300px] md:h-[500px] z-10 ">
           {cookieAccepted ? (
             <MapContainer
-              center={[47.9875742, 10.788535174270507]}
-              zoom={8}
+              center={[47.6, 13.35]}
+              zoom={7}
               style={{ height: "100%", width: "100%", zIndex: 10 }}
             >
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

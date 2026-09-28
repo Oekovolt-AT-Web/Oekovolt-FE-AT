@@ -11,8 +11,8 @@ import Teilen from "@/components/ui/Teilen";
 import { artikelPfad } from "@/lib/ratgeber";
 import { ArtikelMeta, Autorenbox, WeitereArtikel } from "./Bausteine";
 import KiZusammenfassen from "./KiZusammenfassen";
+import { BASE_URL } from "@/lib/site";
 
-const BASE_URL = "https://www.oekovolt.com";
 const TEILEN_NETZE = ["whatsapp", "linkedin", "facebook", "xing", "x", "telegram"];
 
 /**

@@ -1,150 +1,148 @@
 // uber-uns/team/page.js
+//
+// Team der Ökovolt Solartechnik GmbH (Ostermiething). Personen nur, soweit sie
+// in @/data/unternehmen belegt sind. Gepflegte Teamprofile aus dem Backoffice
+// (doctype "Team", Route /api/team) werden angezeigt, sobald
+// fetchTeamMitglieder() sie liefert – bis dahin greifen die Texte unten.
 
 import {
-  Briefcase, Calculator, ClipboardList, GraduationCap, HandHeart, HardHat, Headset, Leaf, Mail, MessagesSquare, Phone, PlugZap,
-  ShieldCheck, Sparkles, TrendingUp, Users, Wrench,
+  Briefcase, Building2, Calculator, ClipboardList, GraduationCap, HandHeart, HardHat, Headset, Leaf, Mail, MessagesSquare, MonitorDot, Phone, PlugZap,
+  ShieldCheck, Sparkles, TrendingUp, Users,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
 import FeatureGrid from "@/components/ui/FeatureGrid";
+import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
-import Fliesstext from "@/components/Reusable/Fliesstext";
 import TeamKarte, { normalisiereMitglied } from "@/components/Team/TeamKarte";
-import Firmengeschichte from "@/components/Team/Firmengeschichte";
-import { GENERATIONEN, PROFIL } from "@/data/unternehmen";
-import { bildUrl } from "@/components/Project/projektDaten";
+import { Generationen, Haltung } from "@/components/Team/Firmengeschichte";
+import { GENERATIONEN, STAND } from "@/data/unternehmen";
+import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
 
-const PAGE_URL = "https://www.oekovolt.com/uber-uns/team";
+const PAGE_URL = `${BASE_URL}/uber-uns/team`;
+const TITEL = "Team – Menschen hinter Ökovolt Österreich | Ökovolt";
+const BESCHREIBUNG =
+  "Das Team der Ökovolt Solartechnik GmbH in Ostermiething: Gründer, zweite Generation und die Fachleute für Projektleitung, Elektrotechnik, Netzanschluss und Service.";
 
-async function fetchTeamData() {
-  // Statisch aus dem Repo - die Website liest nichts mehr aus dem
-  // Backoffice, dort werden nur noch Formulare gespeichert.
-  return null;
-}
-
-// Teammitglieder serverseitig laden (vorher nur clientseitig über /api/team)
+// Teamprofile aus dem Backoffice (doctype "Team"). Derzeit statisch leer –
+// die Website liest nichts aus dem Backoffice, dort werden nur Formulare
+// gespeichert. Die API-Route /api/team bleibt für eine spätere Anbindung.
 async function fetchTeamMitglieder() {
-  // Statisch aus dem Repo - die Website liest nichts mehr aus dem
-  // Backoffice, dort werden nur noch Formulare gespeichert.
   return [];
 }
 
-export async function generateMetadata() {
-  const seoData = await fetchTeamData();
+export const metadata = {
+  title: TITEL,
+  description: BESCHREIBUNG,
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: SITE_NAME,
+    title: TITEL,
+    description: BESCHREIBUNG,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Ökovolt Team Österreich" }],
+  },
+  twitter: { card: "summary_large_image", title: TITEL, description: BESCHREIBUNG, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-  const defaultKeywords = ["Ökovolt Team", "Photovoltaik Experten", "Solar Fachleute", "Energieberater Team", "PV-Installateure"];
-
-  const apiKeywords = seoData?.keywords ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])] : defaultKeywords;
-  const title = "Unser Team – die Photovoltaik-Experten | Ökovolt";
-  const description = "Lernen Sie das Ökovolt-Team kennen: erfahrene Photovoltaik-Experten aus Türkheim – von der Planung bis zur Montage Ihrer Solaranlage mit Leidenschaft dabei.";
-
-  return {
-    title,
-    description,
-    keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title,
-      description,
-      images: [{ url: "https://www.oekovolt.com/og-image.jpg", width: 1200, height: 630, alt: "Ökovolt Team" }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["https://www.oekovolt.com/og-image.jpg"]
-    },
-  };
-}
-
-// Werte – abgeleitet aus den Texten der Team-Seite im Backoffice
 const WERTE = [
-  { icon: ShieldCheck, title: "Qualität", text: "Saubere, wirtschaftliche und langlebige Solaranlagen – geplant mit moderner Technik und ausgeführt mit Sorgfalt." },
-  { icon: MessagesSquare, title: "Persönliche Beratung", text: "Ein fester Ansprechpartner von der ersten Frage bis zur Inbetriebnahme – verständlich, ehrlich und erreichbar." },
-  { icon: HandHeart, title: "Alles aus einer Hand", text: "Planung, Montage, Anmeldung und Service: Bei uns ziehen Technik, Vertrieb und Kundenservice an einem Strang." },
-  { icon: Leaf, title: "Nachhaltigkeit", text: "Jede Anlage ist ein Beitrag zur Energiewende – ökologisch sinnvoll und wirtschaftlich überzeugend." },
+  { icon: ShieldCheck, title: "Qualität", text: "Anlagen, die über Jahrzehnte laufen – geplant nach ÖVE/ÖNORM und TOR Erzeuger, ausgeführt mit Sorgfalt und sauber dokumentiert." },
+  { icon: MessagesSquare, title: "Klare Ansprechpartner", text: "Eine Projektleitung vom Erstgespräch bis zur Inbetriebnahme – erreichbar für Geschäftsführung, Technik und Einkauf." },
+  { icon: HandHeart, title: "Alles aus einer Hand", text: "Planung, Montage, Netzanschluss, Parkregler, Fernwartung und Service – ohne Schnittstellen, die niemandem gehören." },
+  { icon: Leaf, title: "Nachhaltigkeit", text: "Jede Anlage ist ein Beitrag zur Energiewende – ökologisch sinnvoll und wirtschaftlich nachvollziehbar gerechnet." },
 ];
 
-// Rollen im Team – laut Team-Seite im Backoffice
 const ROLLEN = [
-  { icon: Headset, title: "Kundenberatung & Vertrieb", text: "Hört zu, klärt Ihre Ziele und erstellt ein Angebot, das zu Dach, Verbrauch und Budget passt." },
-  { icon: ClipboardList, title: "Projektleitung", text: "Koordiniert Termine, Material und Gewerke – und hält Sie während des Projekts auf dem Laufenden." },
-  { icon: Calculator, title: "Planung & Ingenieure", text: "Modulbelegung, Statik, Wechselrichter und Speicher – digital geplant und wirtschaftlich durchgerechnet." },
-  { icon: HardHat, title: "Solartechnik & Montage", text: "Montiert Unterkonstruktion und Module fachgerecht auf Ziegel-, Flach- und Blechdächern." },
-  { icon: PlugZap, title: "Elektrofachkräfte", text: "Anschluss von Wechselrichter, Speicher und Wallbox sowie die Inbetriebnahme Ihrer Anlage." },
-  { icon: Briefcase, title: "Kaufmännisches Team", text: "Kümmert sich um Unterlagen, Anmeldung beim Netzbetreiber und im Marktstammdatenregister." },
+  { icon: Headset, title: "Vertrieb & Beratung", text: "Klärt Ziele, Lastgang und Flächen und erstellt ein Angebot, das zu Betrieb, Netzanschluss und Budget passt." },
+  { icon: ClipboardList, title: "Projektleitung", text: "Koordiniert Termine, Material, Gewerke und Partnerbetriebe – und hält Sie während des Projekts auf dem Laufenden." },
+  { icon: Calculator, title: "Planung & Engineering", text: "Modulbelegung, Statik und Schneelast, Wechselrichter, Speicher und Kabelnetz – digital geplant und wirtschaftlich durchgerechnet." },
+  { icon: PlugZap, title: "Netzanschluss & Elektrotechnik", text: "Netzzugangsantrag, Anforderungen nach TOR Erzeuger, AC-Installation, Prüfung und Inbetriebnahme mit dem Netzbetreiber." },
+  { icon: MonitorDot, title: "Leittechnik & Fernwartung", text: "Eigene Parkregler, Fernwartung und SCADA: Die Anlage bleibt steuerbar, überwacht und dokumentiert." },
+  { icon: HardHat, title: "Montage & Service", text: "Montage auf Hallen-, Flach- und Steildächern sowie auf Freiflächen, danach Wartung, Prüfung und Thermografie." },
 ];
 
-const KARRIERE_ICONS = [GraduationCap, Users, TrendingUp, Sparkles];
+const KARRIERE = [
+  { icon: GraduationCap, title: "Lehre & Weiterbildung", text: "Lehrberuf Elektrotechnik, Herstellerschulungen und Weiterbildung für Fachkräfte." },
+  { icon: Users, title: "Kleine Teams", text: "Kurze Wege zwischen Planung, Montage und Leittechnik." },
+  { icon: TrendingUp, title: "Wachstumsbranche", text: "Photovoltaik, Speicher und Netzintegration – mit wachsender Nachfrage." },
+  { icon: Sparkles, title: "Eigene Technik", text: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung." },
+];
+
+const FAQ = [
+  {
+    q: "Wer leitet die Ökovolt Solartechnik GmbH?",
+    a: `Geschäftsführer ist ${FIRMA.geschaeftsfuehrer}, der die Gruppe 2010 gemeinsam mit Susanne Messmer gegründet hat. Er hält 51 % der österreichischen Gesellschaft, die Salzburg AG 49 %.`,
+  },
+  {
+    q: "Wo sitzt das Team?",
+    a: `Am Firmensitz ${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort} im Innviertel. Montage- und Serviceteams sind in ganz Österreich im Einsatz.`,
+  },
+  {
+    q: "Arbeitet Ökovolt mit Partnerbetrieben?",
+    a: "Ja. Für die Montage arbeiten wir zusätzlich mit geprüften Elektrotechnik-Betrieben zusammen. Die Verantwortung für Planung, Qualität und Inbetriebnahme bleibt bei uns. Betriebe können sich über das Elektro-Partnerprogramm registrieren.",
+  },
+  {
+    q: "Wie kann ich mich bewerben?",
+    a: "Über die offenen Stellen unter Jobs & Karriere oder initiativ per E-Mail an office@oekovolt.com – ein Lebenslauf als PDF reicht für den ersten Schritt.",
+  },
+];
 
 export default async function TeamPage() {
-  const [data, mitgliederRoh] = await Promise.all([fetchTeamData(), fetchTeamMitglieder()]);
+  const mitgliederRoh = await fetchTeamMitglieder();
   const mitglieder = mitgliederRoh.map(normalisiereMitglied).filter((m) => m.name);
 
-  const webPageSchema = {
+  const personen = mitglieder.length > 0
+    ? mitglieder.map((m) => ({ name: m.name, jobTitle: m.rolle }))
+    : GENERATIONEN.flatMap((g) => g.personen.map((pp) => ({ name: pp.name, jobTitle: pp.rolle })));
+
+  const schema = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "@id": `${PAGE_URL}/#webpage`,
     url: PAGE_URL,
-    name: data?.title || "Unser Team | Ökovolt Österreich",
-    description: data?.description?.trim() || "Lernen Sie unser Expertenteam kennen. Erfahrene Spezialisten für Photovoltaik, die Ihnen maßgeschneiderte Lösungen für nachhaltige Energie bieten.",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
-    // Personen fuer die Suchmaschine: bevorzugt gepflegte Teamprofile, sonst
-    // die Geschaeftsfuehrung aus @/data/unternehmen. Die Gruender werden
-    // zusaetzlich als `founder` ausgezeichnet - das verbindet Person und
-    // Organisation als Entitaeten (E-E-A-T).
+    name: TITEL,
+    description: BESCHREIBUNG,
+    inLanguage: "de-AT",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${BASE_URL}/#organization` },
+    dateModified: STAND,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: (mitglieder.length > 0
-        ? mitglieder.map((m) => ({ name: m.name, jobTitle: m.rolle }))
-        : GENERATIONEN.flatMap((g) => g.personen.map((pp) => ({ name: pp.name, jobTitle: pp.rolle })))
-      ).map((pp, i) => ({
+      itemListElement: personen.map((pp, i) => ({
         "@type": "ListItem",
         position: i + 1,
         item: {
           "@type": "Person",
           name: pp.name,
           ...(pp.jobTitle && { jobTitle: pp.jobTitle }),
-          worksFor: { "@id": "https://www.oekovolt.com/#organization" },
+          worksFor: { "@id": `${BASE_URL}/#organization` },
         },
       })),
     },
   };
 
-  const introText = (data?.first_card_table || []).map((o) => o.option).join("\n\n").replace(" ,.um", ", um").replace(",.um", ", um");
-
-  const karriere = (data?.second_card_table || []).map((o, i) => ({
-    icon: KARRIERE_ICONS[i % KARRIERE_ICONS.length],
-    title: o.primary_paragraph,
-    text: o.secondary_paragraph,
-  }));
-
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        breadcrumbs={[{ name: "Über uns", href: "/uber-uns/team" }, { name: "Team" }]}
-        eyebrow={data?.title || "Der Photovoltaik-Komplettanbieter"}
-        title={<>Das Team hinter <span className="ov-text-gradient">Ihrer Solaranlage</span></>}
-        lead={data?.description?.trim() || "Ein starkes Team sorgt für die erfolgreiche Umsetzung Ihres Projekts – mit Erfahrung, Leidenschaft und Know-how."}
-        image={{ src: bildUrl(data?.image, "/Images/Team/solar-power-6860359_1280.jpg"), alt: data?.alt_image || "Photovoltaik-Team montiert Solarmodule auf einem Dach" }}
-        points={["Fachbetrieb aus Türkheim", "Über 15 Jahre Erfahrung", "Planung, Montage & Anmeldung", "Fester Ansprechpartner"]}
+        breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Team" }]}
+        eyebrow="Ökovolt Solartechnik GmbH · Ostermiething"
+        title={<>Das Team hinter <span className="ov-text-gradient">Ihrer PV-Anlage</span></>}
+        lead="Gründer, die seit 2012 eigene Solarparks betreiben, eine zweite Generation für Digitalisierung und Vertrieb – und Fachleute für Projektleitung, Elektrotechnik, Netzanschluss, Leittechnik und Service."
+        image={{ src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Projektbesprechung zu einer Photovoltaikanlage" }}
+        points={["Firmensitz Ostermiething", "Seit 2012 in Österreich", "Projektleitung bis Inbetriebnahme", "Eigene Leittechnik & Service"]}
         actions={[
-          { label: "Beratung anfragen", href: "/angebot" },
+          { label: "Projekt besprechen", href: "/termin" },
           { label: "Offene Stellen", href: "/uber-uns/jobs", icon: Briefcase },
         ]}
         badge={
@@ -156,7 +154,7 @@ export default async function TeamPage() {
               <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
                 15+ <span className="text-[14px] font-semibold text-ink-500">Jahre</span>
               </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Photovoltaik-Erfahrung aus dem Allgäu</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Photovoltaik-Erfahrung in der Gruppe</p>
             </div>
           </div>
         }
@@ -167,7 +165,7 @@ export default async function TeamPage() {
         <SectionHeading
           eyebrow="Wofür wir stehen"
           title={<>Vier Werte, <span className="ov-text-gradient">ein Anspruch</span></>}
-          lead="Hinter jeder erfolgreichen Photovoltaikanlage steht ein engagiertes Team. Diese Grundsätze prägen, wie wir mit Ihnen und miteinander arbeiten."
+          lead="Diese Grundsätze prägen, wie wir mit Kundinnen und Kunden, Partnerbetrieben und miteinander arbeiten."
           align="center"
           className="mb-12"
         />
@@ -177,15 +175,18 @@ export default async function TeamPage() {
       {/* Wer wir sind */}
       <Section tone="sand" space="lg">
         <SplitMedia
-          eyebrow={data?.first_card_title || "Unser Team"}
-          title={data?.first_card_subtitle || "Gemeinsam für eine nachhaltige Zukunft"}
-          image={{ src: bildUrl(data?.second_card_image, "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg"), alt: data?.second_card_alt_text || "Projektbesprechung im Ökovolt-Team" }}
-        >
-          <Fliesstext text={introText} className="mt-5 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
-        </SplitMedia>
+          eyebrow="Unser Team"
+          title="Errichter, die selbst betreiben"
+          text={[
+            "Unser Team plant und baut Photovoltaikanlagen für Betriebe, Landwirtschaft, Gemeinden und Landesversorger in ganz Österreich. Was uns dabei leitet, ist die Perspektive des Betreibers: Die Gründer betreiben seit 2012 eigene Solarparks und wissen, was eine Anlage nach zehn Jahren braucht.",
+            "Deshalb gehören Netzanschluss, Parkregler, Fernwartung und Service bei uns von Anfang an zum Projekt – nicht erst, wenn etwas nicht funktioniert.",
+          ]}
+          image={{ src: "/Images/Team/solar-power-6860359_1280.jpg", alt: "Photovoltaikmodule auf einem Dach in der Montage" }}
+          action={{ label: "Mehr über das Unternehmen", href: "/uber-uns" }}
+        />
       </Section>
 
-      {/* Team / Rollen */}
+      {/* Personen & Rollen */}
       <Section tone="white" space="lg" id="team">
         {mitglieder.length > 0 ? (
           <>
@@ -206,23 +207,25 @@ export default async function TeamPage() {
               <SectionHeading
                 eyebrow="Wer an Ihrer Anlage arbeitet"
                 title="Ein interdisziplinäres Team – ein Ziel"
-                lead="Von Solaranlagen-Technikern über Ingenieure, Elektriker und Projektleiter bis zu kaufmännischen Fachkräften: Jeder bringt seine Stärken in Ihr Projekt ein."
+                lead="Von der Lastganganalyse bis zur Leitwarte: Jede Rolle bringt ihre Stärke in Ihr Projekt ein."
               />
               <Reveal className="mt-8 rounded-3xl bg-navy-950 p-6 text-white md:p-7">
                 <p className="text-[13px] font-medium text-white/60">Ihr direkter Draht ins Team</p>
-                <a href="tel:+498245967880" className="group mt-2 flex items-center gap-3">
+                <a href={FIRMA.telefonHref} className="group mt-2 flex items-center gap-3">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
                     <Phone aria-hidden="true" className="h-5 w-5" />
                   </span>
-                  <span className="font-display text-[22px] font-extrabold tracking-tight">08245 96 788 0</span>
+                  <span className="font-display text-[22px] font-extrabold tracking-tight">{FIRMA.telefon}</span>
                 </a>
-                <a href="mailto:office@oekovolt.com" className="mt-3 flex items-center gap-3 text-[15px] text-white/80 hover:text-white">
+                <a href={`mailto:${FIRMA.email}`} className="mt-3 flex items-center gap-3 text-[15px] text-white/80 hover:text-white">
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10">
                     <Mail aria-hidden="true" className="h-5 w-5" />
                   </span>
-                  office@oekovolt.com
+                  {FIRMA.email}
                 </a>
-                <p className="mt-4 border-t border-white/10 pt-4 text-[13.5px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
+                <p className="mt-4 border-t border-white/10 pt-4 text-[13.5px] text-white/55">
+                  {FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit} Uhr`).join(" · ")}
+                </p>
               </Reveal>
             </div>
             <ol className="grid gap-4 sm:grid-cols-2">
@@ -243,47 +246,30 @@ export default async function TeamPage() {
         </div>
       </Section>
 
-      {/* Firmengeschichte: Zeitleiste, Generationen, Gruppe, Registerdaten */}
-      <Section tone="navy" space="lg" className="overflow-hidden" id="geschichte">
+      {/* Gründer & zweite Generation */}
+      <Section tone="navy" space="lg" className="overflow-hidden" id="menschen">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
         <div aria-hidden="true" className="absolute -right-40 top-40 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
         <SectionHeading
           dark
-          eyebrow="Unsere Geschichte"
-          title={<>Solarpioniere aus dem <span className="ov-text-gradient-light">Allgäu</span>. Seit 2010.</>}
-          lead={PROFIL.lead}
+          eyebrow="Die Menschen dahinter"
+          title={<>Gründer und <span className="ov-text-gradient-light">zweite Generation</span></>}
+          lead="Seit 2010 stehen dieselben zwei Gründer hinter der Gruppe. Seit 2025 bringt die zweite Generation Digitalisierung und Vertriebsstärke ein."
           align="center"
           className="mb-4"
         />
-        <Firmengeschichte />
-        <div className="mt-14 flex justify-center">
-          <Button href="/referenzen/projekte" variant="outlineLight" pfeil>
-            Alle Referenzprojekte ansehen
+        <div className="relative">
+          <Generationen className="mt-14 md:mt-20" />
+          <Haltung />
+        </div>
+        <div className="relative mt-14 flex flex-wrap justify-center gap-3">
+          <Button href="/uber-uns#geschichte" variant="outlineLight" pfeil>
+            Unternehmensgeschichte & Gesellschafter
+          </Button>
+          <Button href="/referenzen/projekte" variant="outlineLight" icon={Building2}>
+            Referenzprojekte
           </Button>
         </div>
-      </Section>
-
-      {/* Arbeitsweise */}
-      <Section tone="white" space="lg">
-        <SplitMedia
-          reverse
-          eyebrow="So arbeiten wir"
-          title={data?.third_card_title || "Gemeinsam die Zukunft gestalten"}
-          text={data?.third_card_card_description?.trim() || "Wir begleiten unsere Kunden ganzheitlich: von der ersten Beratung über die technische Planung bis hin zur Umsetzung und langfristigen Betreuung."}
-          points={(data?.third_card_options_table || []).map((o) => o.option.replace(/\.$/, ""))}
-          image={{ src: bildUrl(data?.third_card_image, "/Images/Referenzen/referenzkarte3.jpg"), alt: data?.third_card_alt_text || "Ökovolt-Team installiert Solarmodule auf einem Dach" }}
-        >
-          {data?.third_card_description && (
-            <details className="group mt-6">
-              <summary className="inline-flex cursor-pointer list-none items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800 [&::-webkit-details-marker]:hidden">
-                <Wrench aria-hidden="true" className="h-4 w-4" />
-                <span className="group-open:hidden">Mehr über unser Selbstverständnis</span>
-                <span className="hidden group-open:inline">Weniger anzeigen</span>
-              </summary>
-              <Fliesstext text={data.third_card_description} className="mt-4 space-y-4 text-[16px] leading-relaxed text-ink-600" />
-            </details>
-          )}
-        </SplitMedia>
       </Section>
 
       {/* Karriere-Teaser */}
@@ -293,19 +279,26 @@ export default async function TeamPage() {
           <div>
             <SectionHeading
               eyebrow="Karriere bei Ökovolt"
-              title={data?.second_card_title || "Ein starkes Team mit einer gemeinsamen Vision"}
-              lead={data?.second_card_description?.trim()}
+              title="Mitbauen an der Energiewende in Österreich"
+              lead="Wir suchen Fachleute für Projektleitung, Elektrotechnik, Netzanschluss, Leittechnik, Service und Vertrieb – und bilden Lehrlinge in Elektrotechnik aus."
             />
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button href="/uber-uns/jobs" size="lg" pfeil>
                 Offene Stellen ansehen
               </Button>
-              <Button href="mailto:office@oekovolt.com?subject=Initiativbewerbung" size="lg" variant="secondary" icon={Mail}>
+              <Button href={`mailto:${FIRMA.email}?subject=Initiativbewerbung`} size="lg" variant="secondary" icon={Mail}>
                 Initiativ bewerben
               </Button>
             </div>
           </div>
-          {karriere.length > 0 && <FeatureGrid items={karriere} cols={2} />}
+          <FeatureGrid items={KARRIERE} cols={2} />
+        </div>
+      </Section>
+
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Das Team von Ökovolt" />
+          <Faq items={FAQ} />
         </div>
       </Section>
 
@@ -313,9 +306,9 @@ export default async function TeamPage() {
       <CtaBand
         eyebrow="Lernen Sie uns kennen"
         title="Persönlich beraten – vom Team, das Ihre Anlage baut."
-        text="Erzählen Sie uns von Ihrem Vorhaben. Wir prüfen Dach und Verbrauch und erstellen Ihnen ein ehrliches Angebot – mit festem Ansprechpartner aus Türkheim."
-        primary={{ label: "Kostenlose Beratung anfragen", href: "/angebot" }}
-        secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
+        text="Erzählen Sie uns von Ihrem Vorhaben. Wir prüfen Flächen, Lastgang und Netzanschluss und melden uns mit einer ehrlichen Ersteinschätzung – mit fester Projektleitung aus Ostermiething."
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
+        secondary={{ label: "Termin buchen", href: "/termin" }}
       />
     </div>
   );

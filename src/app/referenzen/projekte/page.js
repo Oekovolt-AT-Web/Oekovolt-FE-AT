@@ -1,5 +1,6 @@
 // referenzen/projekte/page.js
 
+import Link from "next/link";
 import {
   ClipboardCheck,
   Compass,
@@ -24,7 +25,6 @@ import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProjektPortfolio from "@/components/Project/ProjektPortfolio";
 import ReferenzStatistik from "@/components/Project/ReferenzStatistik";
 import {
-  bildUrl,
   fmtKwp,
   kennzahlen,
   normalisiereApiProjekt,
@@ -34,40 +34,19 @@ import {
   getApiHeaders,
   isApiConfigured,
 } from "@/lib/apiBaseUrl";
-import { generateSlug } from "@/lib/slugify";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA } from "@/lib/site";
 import Querverweise from "@/components/Reusable/Querverweise";
 
-// Seitentexte aus dem Backoffice (primary_page), Projekte aus der neuen API (oekovolt_app)
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.primary_page.doctype.referenzen_page.api.get_referenzen`;
+// Projekte aus der API (oekovolt_app). Seitentexte sind statisch: Die frühere
+// Backoffice-Seite (primary_page) lieferte Texte der deutschen Website.
 const PROJECTS_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
-const PAGE_URL = "https://www.oekovolt.com/referenzen/projekte";
+const PFAD = "/referenzen/projekte";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-async function fetchProjekteData() {
-  if (!isApiConfigured()) return null;
-
-  try {
-    const response = await fetch(DATA_URL, {
-      method: "GET",
-      headers: getApiHeaders(),
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      console.error(
-        `Referenzen API returned ${response.status}:`,
-        await response.text(),
-      );
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Error fetching Referenzen page:", error);
-    return null;
-  }
-}
+const TITLE = "Photovoltaik-Projekte in Österreich | Ökovolt";
+const DESCRIPTION =
+  "Referenzen von Ökovolt: Photovoltaikanlagen für Gewerbe, Landwirtschaft, Gemeinden und Privat in Österreich – mit Leistung, Dachart und Ort je Projekt.";
 
 async function fetchProjectsList() {
   if (!isApiConfigured()) return [];
@@ -101,116 +80,69 @@ async function fetchProjectsList() {
   }
 }
 
-export async function generateMetadata() {
-  const seoData = await fetchProjekteData();
-
-  const defaultKeywords = [
-    "Photovoltaik Referenzen",
-    "Solarprojekte",
-    "PV-Anlagen Beispiele",
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: [
+    "Photovoltaik Referenzen Österreich",
+    "PV-Anlage Gewerbe Referenz",
+    "Photovoltaik Projekte",
     "Ökovolt Projekte",
-    "Energielösungen Referenzen",
-  ];
-
-  if (!seoData) {
-    // Fallback metadata if API fails
-    return {
-      title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt",
-      description:
-        "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-      keywords: defaultKeywords,
-      alternates: {
-        canonical: PAGE_URL,
-        languages: hreflangLanguages(PAGE_URL),
+    "Solaranlage Landwirtschaft",
+  ],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [
+      {
+        url: `${BASE_URL}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "Ökovolt Referenzprojekte",
       },
-      robots: { index: true, follow: true },
-      openGraph: {
-        type: "website",
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [`${BASE_URL}/og-image.jpg`],
+  },
+};
 
-        url: PAGE_URL,
-        siteName: "Ökovolt Österreich",
-        title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
-        description:
-          "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-        images: [
-          {
-            url: "https://www.oekovolt.com/og-image.jpg",
-            width: 1200,
-            height: 630,
-            alt: "Ökovolt Referenzprojekte",
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt ",
-        description:
-          "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!",
-        images: ["https://www.oekovolt.com/og-image.jpg"],
-      },
-    };
-  }
-
-  const apiKeywords = seoData?.keywords
-    ? [...new Set([...seoData.keywords.split(/,\s*/), ...defaultKeywords])]
-    : defaultKeywords;
-  const title = "Photovoltaik-Referenzen aus Bayern & Allgäu | Ökovolt";
-  const description =
-    "Echte Ökovolt-Projekte aus ganz Deutschland: Photovoltaikanlagen auf Einfamilienhäusern und Eigenheimen – sehen Sie selbst, was wir umsetzen. Jetzt ansehen!";
-
-  return {
-    title,
-    description,
-    keywords: apiKeywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title,
-      description,
-      images: [
-        {
-          url: "https://www.oekovolt.com/og-image.jpg",
-          width: 1200,
-          height: 630,
-          alt: "Ökovolt Referenzprojekte",
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ["https://www.oekovolt.com/og-image.jpg"],
-    },
-  };
-}
-
-const VORTEIL_ICONS = [PiggyBank, Leaf, ShieldCheck, LineChart];
+const VORTEILE = [
+  { icon: PiggyBank, title: "Energiekosten senken", text: "Jede selbst genutzte Kilowattstunde spart Energiepreis, Netzentgelte und Abgaben." },
+  { icon: Leaf, title: "Nachhaltigkeit belegen", text: "Erzeugung vor Ort verbessert die CO₂-Bilanz – belastbar für Nachhaltigkeitsberichte." },
+  { icon: ShieldCheck, title: "Versorgung absichern", text: "Mit Speicher und Ersatzstrom bleibt der Betrieb auch bei Netzausfall handlungsfähig." },
+  { icon: LineChart, title: "Planbare Kosten", text: "Solarstrom vom eigenen Dach macht einen Teil der Energiekosten über Jahrzehnte kalkulierbar." },
+];
 
 const ABLAUF = [
   {
     icon: Compass,
     title: "Analyse",
-    text: "Dach, Verschattung, Stromverbrauch und Ihre Pläne – die Grundlage jeder guten Anlage.",
+    text: "Lastgang, Dach, Tragwerk und Verschattung – die Grundlage jeder guten Anlage.",
   },
   {
     icon: ClipboardCheck,
     title: "Planung",
-    text: "Modulbelegung, Wechselrichter, Speicher und eine ehrliche Wirtschaftlichkeitsrechnung.",
+    text: "Belegungsplan, Statik, Wechselrichter-Topologie und eine ehrliche Wirtschaftlichkeitsrechnung.",
   },
   {
     icon: HardHat,
     title: "Montage",
-    text: "Fachgerechte Installation durch unser Montageteam – sauber und sicher.",
+    text: "Montage und Elektroinstallation nach ÖVE/ÖNORM E 8101 – sauber und sicher.",
   },
   {
     icon: Zap,
     title: "Inbetriebnahme",
-    text: "Anschluss, Anmeldung beim Netzbetreiber und im Marktstammdatenregister.",
+    text: "Netzzugangsantrag, Fertigstellungsmeldung, Parkregler und Monitoring.",
   },
 ];
 
@@ -218,15 +150,15 @@ function faqFuer(k) {
   const spanne =
     k.kleinste && k.groesste
       ? `von ${fmtKwp(k.kleinste.kwp)} kWp bis ${fmtKwp(k.groesste.kwp)} kWp`
-      : "vom Einfamilienhaus bis zum Gewerbedach";
+      : "vom Wohnhaus bis zum Gewerbedach";
   return [
     {
       q: "Welche Anlagengrößen setzt Ökovolt um?",
-      a: `Die hier gezeigten Referenzen reichen ${spanne}. Typische Einfamilienhäuser liegen bei etwa 7 bis 16 kWp, Gewerbe- und Landwirtschaftsdächer oft deutlich darüber. Die richtige Größe ergibt sich aus Dachfläche, Stromverbrauch und Ihren Plänen – etwa E-Auto oder Wärmepumpe.`,
+      a: `Die hier gezeigten Referenzen reichen ${spanne}. Gewerbe-, Industrie- und Landwirtschaftsdächer liegen meist deutlich über Wohnhäusern. Die richtige Größe ergibt sich aus Lastgang, Dachfläche, Tragwerk und Netzanschluss – nicht aus der maximal möglichen Belegung.`,
     },
     {
       q: "Was bedeutet die Angabe kWp?",
-      a: "Kilowatt-Peak (kWp) ist die Nennleistung der Module unter genormten Testbedingungen. Sie macht Anlagen vergleichbar. Als Orientierung erzeugt 1 kWp in Süddeutschland je nach Ausrichtung und Neigung rund 950 bis 1.150 kWh Strom pro Jahr.",
+      a: "Kilowatt-Peak (kWp) ist die Nennleistung der Module unter genormten Testbedingungen. Sie macht Anlagen vergleichbar. Als Orientierung erzeugt 1 kWp in Österreich nach Süden mit 35° Neigung laut PVGIS rund 1.100 bis 1.350 kWh Strom pro Jahr, je nach Standort.",
     },
     {
       q: "Eignet sich auch mein Dach – Flachdach, Ziegel oder Trapezblech?",
@@ -234,24 +166,21 @@ function faqFuer(k) {
     },
     {
       q: "Plant Ökovolt auch Gewerbe- und Landwirtschaftsanlagen?",
-      a: "Ja. Neben Einfamilienhäusern zeigen die Referenzen Hallen, Betriebsgebäude und landwirtschaftliche Dächer. Bei größeren Anlagen gewinnen Eigenverbrauchsprofil, Netzanschluss und die Anmeldung beim Netzbetreiber an Bedeutung – das übernehmen wir aus einer Hand.",
+      a: "Ja, das ist unser Schwerpunkt: Hallen, Betriebsgebäude, landwirtschaftliche Dächer und Anlagen für Gemeinden. Bei größeren Anlagen gewinnen Lastgang, Netzanschluss nach TOR und Parkregler an Bedeutung – das übernehmen wir aus einer Hand.",
     },
     {
       q: "Wie läuft ein Projekt von der Anfrage bis zur Inbetriebnahme ab?",
-      a: "Nach Ihrer Anfrage analysieren wir Dach und Verbrauch, erstellen eine Planung mit Wirtschaftlichkeitsrechnung und ein Angebot. Nach Auftrag folgen Montage, elektrischer Anschluss sowie Anmeldung im Marktstammdatenregister und beim Netzbetreiber. Die Montage selbst dauert beim Einfamilienhaus meist nur wenige Tage.",
+      a: "Nach Ihrer Anfrage analysieren wir Lastgang und Dach, erstellen Planung, Statik-Vorprüfung, Wirtschaftlichkeitsrechnung und Angebot. Nach Auftrag folgen Netzzugangsantrag, Montage, Fertigstellungsmeldung durch unseren Elektrotechniker und Inbetriebnahme. Bei Dachanlagen bis rund 250 kWp dauert das meist drei bis sechs Monate.",
     },
     {
       q: "Kann ich mir Anlagen in meiner Nähe ansehen?",
-      a: "Auf unserer Referenzkarte sehen Sie, wo wir bereits Anlagen realisiert haben. Viele Projekte liegen im Allgäu, in Schwaben und in Oberbayern rund um unseren Firmensitz in Türkheim. Sprechen Sie uns gern auf vergleichbare Projekte in Ihrer Umgebung an.",
+      a: `Auf unserer Referenzkarte sehen Sie, wo wir bereits Anlagen realisiert haben. Von unserem Firmensitz in ${FIRMA.ort} aus bauen wir in allen neun Bundesländern. Sprechen Sie uns gern auf vergleichbare Projekte in Ihrer Umgebung an.`,
     },
   ];
 }
 
 export default async function ProjektePage() {
-  const [data, projectsList] = await Promise.all([
-    fetchProjekteData(),
-    fetchProjectsList(),
-  ]);
+  const projectsList = await fetchProjectsList();
 
   const projekte = projectsList.map(normalisiereApiProjekt).filter((p) => p.slug);
 
@@ -262,13 +191,11 @@ export default async function ProjektePage() {
     "@type": "CollectionPage",
     "@id": `${PAGE_URL}/#collectionpage`,
     url: PAGE_URL,
-    name: data?.title || "Referenzprojekte – Ökovolt Österreich",
-    description:
-      data?.description ||
-      "Unsere erfolgreichen Photovoltaik-Projekte für Gewerbe, Industrie und Privathaushalte.",
-
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
+    name: TITLE,
+    description: DESCRIPTION,
+    inLanguage: "de-AT",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${BASE_URL}/#organization` },
     ...(projekte.length > 0 && {
       mainEntity: {
         "@type": "ItemList",
@@ -283,11 +210,7 @@ export default async function ProjektePage() {
     }),
   };
 
-  const vorteile = (data?.third_card_table || []).map((v, i) => ({
-    icon: VORTEIL_ICONS[i % VORTEIL_ICONS.length],
-    title: v.primary_paragraph,
-    text: v.secondary_paragraph,
-  }));
+  const vorteile = VORTEILE;
 
   const heroStats = projekte.length
     ? [
@@ -314,17 +237,14 @@ export default async function ProjektePage() {
           { name: "Referenzen", href: "/referenzen/projekte" },
           { name: "Projekte" },
         ]}
-        eyebrow={data?.title || "Referenzen"}
+        eyebrow="Referenzen Österreich"
         title={
           <>
-            Photovoltaik-Projekte, die{" "}
+            Photovoltaik-Projekte in Österreich, die{" "}
             <span className="ov-text-gradient-light">heute Strom liefern</span>
           </>
         }
-        lead={
-          data?.description?.trim() ||
-          "Erfolgreiche Photovoltaik-Projekte – maßgeschneidert für Privathaushalte, Gewerbe und Landwirtschaft."
-        }
+        lead="Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und Gemeinden – und ausgewählte Premium-Wohnhäuser. Jede Referenz mit Leistung, Dachart und Ort."
         image={
           k.groesste?.bilder?.length
             ? {
@@ -332,11 +252,8 @@ export default async function ProjektePage() {
                 alt: `Photovoltaikanlage ${k.groesste.titel} mit ${k.groesste.leistungText}`,
               }
             : {
-                src: bildUrl(
-                  data?.image,
-                  "/Images/Referenzen/projekteBanner.jpg",
-                ),
-                alt: data?.alt_image || "Photovoltaikanlage von Ökovolt",
+                src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
+                alt: "Luftaufnahme eines Gebäudes am Seeufer mit Photovoltaik auf mehreren Dachflächen",
               }
         }
         actions={[
@@ -363,22 +280,27 @@ export default async function ProjektePage() {
             }
             lead="Filtern Sie nach Objektart, Leistung, Dach oder Ort und finden Sie Anlagen, die Ihrem Vorhaben ähneln."
           />
-          {data?.first_card_table?.[0]?.option && (
-            <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">
-              {data.first_card_table[0].option}
-            </p>
-          )}
+          <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">
+            Gezeigt werden Anlagen, die wir geplant und errichtet haben. Kundennamen nennen wir nur mit Zustimmung.
+          </p>
         </div>
         {projekte.length > 0 ? (
           <ProjektPortfolio projekte={projekte} />
         ) : (
           <div className="rounded-3xl bg-white p-10 text-center ring-1 ring-ink-200">
             <p className="font-display text-[20px] font-bold text-ink-900">
-              Die Projektübersicht wird gerade aktualisiert.
+              Wir ergänzen die Projektübersicht laufend.
             </p>
             <p className="mt-2 text-ink-600">
-              Rufen Sie uns an – wir nennen Ihnen gern Referenzen in Ihrer Nähe:
-              08245 96 788 0.
+              Rufen Sie uns an – wir nennen Ihnen gern vergleichbare Referenzen in Ihrer Nähe:{" "}
+              <a href={FIRMA.telefonHref} className="font-semibold text-ov-700 hover:text-ov-800">
+                {FIRMA.telefon}
+              </a>
+              . Oder lesen Sie, wie wir{" "}
+              <Link href="/gewerbe" className="font-semibold text-ov-700 hover:text-ov-800">
+                Photovoltaik für Gewerbe &amp; Industrie
+              </Link>{" "}
+              planen.
             </p>
           </div>
         )}
@@ -399,22 +321,17 @@ export default async function ProjektePage() {
       {/* Technik */}
       <Section tone="white" space="lg">
         <SplitMedia
-          eyebrow={data?.second_card_title || "Intelligente Energielösungen"}
-          title={data?.second_card_subtitle || "Technik, die mitdenkt"}
-          text={
-            data?.second_card_description ||
-            "Moderne Systeme steuern Energieflüsse intelligent, erhöhen den Eigenverbrauch und binden Speicher, Wallbox und Wärmepumpe ein."
-          }
-          points={(data?.second_card_table || []).map((o) =>
-            o.option.replace("Öekovolt", "Ökovolt").replace(/\.$/, ""),
-          )}
+          eyebrow="Technik, die mitdenkt"
+          title="Eigene Regelungs- und Leittechnik in jedem Projekt"
+          text="Parkregler, Fernwartung und SCADA entwickeln wir selbst. So regeln wir Einspeiselimit und Blindleistung nach den Vorgaben des Netzbetreibers und überwachen jede Anlage über ihre gesamte Laufzeit."
+          points={[
+            "Parkregler (EZA-Regler) für den TOR-konformen Netzanschluss",
+            "Fernwartung und Monitoring über die gesamte Laufzeit",
+            "Einbindung von Speicher, Ladeinfrastruktur und Wärmepumpe",
+          ]}
           image={{
-            src: bildUrl(
-              data?.second_card_second_image,
-              "/Images/Referenzen/Projekte-2.jpg",
-            ),
-            alt:
-              data?.second_card_second_alt_text || "Solarmodule auf einem Dach",
+            src: "/Images/Referenzen/Projekte-2.jpg",
+            alt: "Solarmodule auf einem Dach",
           }}
           action={{
             label: "Photovoltaik-Leistungen ansehen",
@@ -429,11 +346,8 @@ export default async function ProjektePage() {
         <Section tone="sand" space="lg">
           <SectionHeading
             eyebrow="Warum Photovoltaik"
-            title={
-              data?.third_card_title ||
-              "Vorteile einer nachhaltigen Energieversorgung"
-            }
-            lead={data?.third_card_description?.trim()}
+            title="Vorteile einer eigenen Energieversorgung"
+            lead="Was unsere Kunden aus Gewerbe, Landwirtschaft und öffentlicher Hand mit ihrer Anlage erreichen wollen."
             align="center"
             className="mb-12"
           />
@@ -447,12 +361,10 @@ export default async function ProjektePage() {
           <div>
             <SectionHeading
               eyebrow="So entsteht jede Referenz"
-              title={
-                data?.fifth_card_title || "Ganzheitliche Planung und Umsetzung"
-              }
+              title="Ganzheitliche Planung und Umsetzung"
             />
             <Fliesstext
-              text={data?.fifth_card_description}
+              text="Jede Referenz durchläuft denselben Ablauf – von der Lastganganalyse bis zur Fertigstellungsmeldung. Ein Ansprechpartner begleitet das Projekt, unser eigenes Elektrotechnik-Team errichtet und prüft die Anlage."
               className="mt-5 space-y-4 text-[16.5px] leading-relaxed text-ink-600"
             />
           </div>
@@ -493,7 +405,7 @@ export default async function ProjektePage() {
         href="/solarrechner"
         cta="Ertrag berechnen"
         titel="Wie viel kWp passen auf Ihr Dach?"
-        text="Dachfläche, Ausrichtung und Verbrauch eingeben – der Solarrechner zeigt Anlagengröße, Jahresertrag, Ersparnis und Amortisation."
+        text="Dachfläche, Ausrichtung und Verbrauch eingeben – der Solarrechner zeigt eine erste Einschätzung zu Anlagengröße, Jahresertrag und Amortisation."
       />
 
       <Section tone="white" space="lg">
@@ -501,18 +413,18 @@ export default async function ProjektePage() {
           <SectionHeading
             eyebrow="Häufige Fragen"
             title="Referenzen & Anlagenplanung"
-            lead="Ihre Frage ist nicht dabei? Rufen Sie uns an – Mo–Do 8–16 Uhr, Fr 8–13 Uhr."
+            lead={`Ihre Frage ist nicht dabei? Rufen Sie uns an: ${FIRMA.telefon} (${FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit}`).join(", ")}).`}
           />
           <Faq items={faqFuer(k)} />
         </div>
       </Section>
 
-      <Querverweise pfad="/referenzen/projekte" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
         eyebrow="Ihr Projekt als nächste Referenz"
-        title="Eine Anlage wie diese – für Ihr Dach?"
-        text="Wir planen Ihre Photovoltaikanlage so sorgfältig wie jede Referenz auf dieser Seite: mit Vor-Ort-Analyse, ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner aus Türkheim."
-        primary={{ label: "Kostenloses Angebot anfragen", href: "/angebot" }}
+        title="Eine Anlage wie diese – für Ihren Standort?"
+        text={`Wir planen Ihre Photovoltaikanlage so sorgfältig wie jede Referenz auf dieser Seite: mit Lastganganalyse, ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner von ${FIRMA.name} aus ${FIRMA.ort}.`}
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
       />
     </div>

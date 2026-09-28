@@ -4,18 +4,22 @@ const farbe = (key) => QUELLEN.find((q) => q.key === key)?.farbe;
 
 // Schematische Angebotskurve: Breite = verfügbare Leistung, Höhe = Grenzkosten.
 // Bewusst ohne Zahlen – es geht um das Prinzip, nicht um exakte Werte.
+// Österreich ist Teil des europäisch gekoppelten Day-Ahead-Markts: Welche Anlage
+// den Preis setzt, entscheidet sich im Verbund – oft sind es Kohle- oder
+// Gaskraftwerke in Nachbarländern. Speicherkraftwerke bieten nach ihrem
+// Opportunitätswert (erwarteter späterer Preis) an, nicht nach Brennstoffkosten.
 const BLOECKE = [
-  { name: "Wind & Solar", breite: 38, hoehe: 3, farbe: farbe("windOnshore") },
-  { name: "Wasser & Biomasse", breite: 10, hoehe: 20, farbe: farbe("biomasse") },
-  { name: "Braunkohle", breite: 13, hoehe: 40, farbe: farbe("braunkohle") },
-  { name: "Steinkohle", breite: 10, hoehe: 56, farbe: farbe("steinkohle") },
-  { name: "Erdgas", breite: 20, hoehe: 78, farbe: farbe("gas") },
+  { name: "Solar, Wind & Laufwasser", breite: 38, hoehe: 3, farbe: farbe("windOnshore") },
+  { name: "Biomasse", breite: 8, hoehe: 22, farbe: farbe("biomasse") },
+  { name: "Kohle (Verbund)", breite: 12, hoehe: 44, farbe: "#6b5a4a" },
+  { name: "Speicherkraft", breite: 12, hoehe: 60, farbe: farbe("speicherwasser") },
+  { name: "Erdgas", breite: 21, hoehe: 80, farbe: farbe("gas") },
   { name: "Öl & Reserve", breite: 9, hoehe: 100, farbe: "#97a0b0" },
 ];
 
 const NACHFRAGE = [
-  { nr: 1, pos: 30, titel: "Sonniger, windiger Mittag", text: "Wind und Solar decken fast alles – der Preis bleibt niedrig, bei Überschuss sogar negativ." },
-  { nr: 2, pos: 84, titel: "Windstiller Winterabend", text: "Gaskraftwerke werden gebraucht – ihr teurer Strom setzt den Preis für alle." },
+  { nr: 1, pos: 30, titel: "Sonniger Mittag im Frühjahr", text: "Solar, Wind und Laufwasser decken fast alles – der Preis bleibt niedrig, bei Überschuss sogar negativ." },
+  { nr: 2, pos: 84, titel: "Windstiller Winterabend", text: "Gaskraftwerke im In- und Ausland werden gebraucht – ihr teurer Strom setzt den Preis für alle." },
 ];
 
 /** Merit-Order als responsive HTML-Grafik (keine skalierte Schrift, lesbar auf dem Smartphone). */

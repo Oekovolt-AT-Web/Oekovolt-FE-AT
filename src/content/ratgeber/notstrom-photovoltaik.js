@@ -1,267 +1,311 @@
-// Ratgeber: Notstrom mit Photovoltaik
-// Monatswerte (PV-Ertrag, Heizstrom) aus dem gemeinsamen Energiemodell der Rechner
-// (src/lib/rechner/profile.js), Wärmepumpenstrom aus src/lib/rechner/annahmen.js.
-
-import { PV_MONAT, HEIZ_MONAT, TAGE_MONAT } from "@/lib/rechner/profile";
-import { SPEICHER, ALLGEMEIN, fmt } from "@/lib/rechner/annahmen";
-
-const KWP = 10;
-const pvTag = (m) => (KWP * ALLGEMEIN.ertragProKwp * PV_MONAT[m]) / TAGE_MONAT[m];
-const wpTag = (m) => (SPEICHER.wpStromKwh * (0.82 * HEIZ_MONAT[m] + 0.18 / 12)) / TAGE_MONAT[m];
-const PV_JAN = pvTag(0);
-const PV_JUN = pvTag(5);
-const PV_APR = pvTag(3);
-const WP_JAN = wpTag(0);
-const SPEICHER_KWH = 8;
-const NUTZBAR = SPEICHER_KWH * SPEICHER.nutzbarAnteil;
+// Ratgeber: Notstrom und Ersatzstrom mit Photovoltaik (Österreich, Gewerbe/Landwirtschaft/Gemeinden)
+// Quellen: TOR Stromerzeugungsanlagen Typ A V1.4 (gültig ab 01.06.2026) – Notstromsysteme < 5 min/Monat
+// Netzparallelbetrieb, not-/ersatzstromfähige Umrichter ≤ 30 kVA mit Netztrennzeit ≤ 20 ms (FRT-Ausnahme),
+// verriegelte Umschalteinrichtung für Ersatzstromversorgungsanlagen ohne Netzparallelbetrieb, Verweis auf
+// OVE E 8101-5-551, OVE E 8101-7-717 und OVE-Richtlinie R 20; asynchrones Wiederzuschalten verhindern;
+// vierpolige Abschaltung kann gefordert werden. TOR Verteilernetzanschluss NS V1.3.1 (Speicher).
+// GfKV-Leitfaden (Blackout-Dauer in Österreich 10–48 h). Keine Preisangaben.
 
 const artikel = {
   slug: "notstrom-photovoltaik",
-  title: "Notstrom mit Photovoltaik: Ersatzstrom, Inselbetrieb & Kosten",
-  seoTitle: "Notstrom Photovoltaik: Ersatzstrom & Kosten 2026 | Ökovolt",
+  title: "Notstrom mit Photovoltaik: Ersatzstrom und Inselbetrieb für Betriebe",
+  seoTitle: "Notstrom mit Photovoltaik: Ersatzstrom & TOR | Ökovolt",
   kurzTitel: "Notstrom mit Photovoltaik",
   description:
-    "Notstrom mit Photovoltaik: Warum PV-Anlagen bei Stromausfall abschalten, wie Notstrom, Ersatzstrom und Inselbetrieb funktionieren, was sie kosten und leisten.",
+    "Notstrom mit PV in Österreich: Unterschied Notstrom, Ersatzstrom, Inselbetrieb, Anforderungen der TOR, Umschaltung, Speicher, Aggregat und Dimensionierung.",
   excerpt:
-    "Bei einem Stromausfall schaltet eine normale PV-Anlage ab – auch bei strahlender Sonne. Welche Lösung wirklich weiterversorgt, wie lange der Speicher reicht und worauf Sie bei Planung und Kosten achten sollten.",
+    "Eine normale PV-Anlage schaltet bei Netzausfall ab. Wie Betriebe, Landwirte und Gemeinden mit Speicher, Umschalteinrichtung und Aggregat eine Ersatzstromversorgung aufbauen – und was die TOR dazu verlangen.",
   hauptKeyword: "notstrom photovoltaik",
   keywords: [
     "Notstrom Photovoltaik",
     "Ersatzstrom PV-Anlage",
-    "PV-Anlage bei Stromausfall",
-    "Notstromfähiger Speicher",
-    "Inselbetrieb Photovoltaik",
-    "Notstrom Wechselrichter",
-    "Ersatzstrom Kosten",
+    "Inselbetrieb Photovoltaik Österreich",
+    "Notstromversorgung Gewerbe",
+    "PV Speicher Notstrom Landwirtschaft",
+    "TOR Ersatzstromanlage",
+    "Notstromaggregat Photovoltaik kombinieren",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Speicher & Eigenverbrauch",
   bild: "/Images/Ratgeber/notstrom-photovoltaik.jpg",
-  bildAlt: "Einfamilienhaus mit Photovoltaikanlage und Sigenergy-Stromspeicher SigenStor bei Gewitter in der Nacht",
-  badge: { wert: "11,7 Min.", text: "durchschnittliche Stromausfalldauer je Kunde 2024 (BNetzA)" },
+  bildAlt: "Stromspeicher mit Umschalteinrichtung für die Ersatzstromversorgung an einer Hauswand",
+  badge: { wert: "≤ 20 ms", text: "Netztrennzeit ersatzstromfähiger Umrichter bis 30 kVA laut TOR Typ A" },
 
   kurzFazit: [
-    "**Eine normale PV-Anlage liefert bei Stromausfall keinen Strom.** Der Wechselrichter muss sich aus Sicherheitsgründen vom Netz trennen – auch bei Sonnenschein.",
-    "**Notstrom** versorgt einzelne Steckdosen oder Stromkreise, **Ersatzstrom** das Hausnetz über eine Umschalteinrichtung, die es vom öffentlichen Netz trennt. Echter **Inselbetrieb** ohne Netzanschluss ist für Einfamilienhäuser fast nie sinnvoll.",
-    `Ein ${SPEICHER_KWH}-kWh-Speicher reicht für die Grundversorgung (Kühlschrank, Heizungspumpe, Licht, Router) oft ein bis zwei Tage. Eine Wärmepumpe braucht im Januar allein rund ${fmt(WP_JAN)} kWh am Tag.`,
-    "Stromausfälle sind in Deutschland selten und kurz – 2024 im Schnitt 11,7 Minuten je Kunde. Notstrom ist daher eine **Versicherung für seltene, dann aber lange Ausfälle**, keine Renditefrage.",
+    "**Eine netzgekoppelte PV-Anlage liefert bei Stromausfall keinen Strom – sie muss sich aus Sicherheitsgründen vom Netz trennen.** Notstrom gibt es erst mit ersatzstromfähigem Wechselrichter, Speicher und einer Umschalteinrichtung, die die Anlage allpolig vom öffentlichen Netz trennt.",
+    "**Die TOR Stromerzeugungsanlagen (Typ A, Version 1.4, gültig ab 1. Juni 2026) regeln die Netzseite:** Ersatzstromanlagen ohne Netzparallelbetrieb brauchen eine verriegelte Umschaltung, inselbetriebsfähige Anlagen dürfen nach Netzwiederkehr nicht asynchron zuschalten, der Netzbetreiber kann eine vierpolige Trennung verlangen.",
+    "**Die Anlage im Gebäude richtet sich nach OVE E 8101** (u. a. Teil 5-551 Stromerzeugungseinrichtungen) und der OVE-Richtlinie R 20 – geplant und errichtet von einem befugten Elektrotechniker.",
+    "**Für Betriebe ist die Kombination aus PV, Speicher und Aggregat am robustesten:** Der Speicher überbrückt Sekunden bis Stunden, die PV verlängert tagsüber, das Aggregat sichert Nächte und den Winter. Für einen Blackout rechnet die Gesellschaft für Krisenvorsorge in Österreich mit 10 bis 48 Stunden Stromausfall.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Funktioniert eine PV-Anlage bei Stromausfall?",
-      tocLabel: "Die kurze Antwort",
+      titel: "Liefert eine PV-Anlage bei Stromausfall Strom?",
+      tocLabel: "Kurze Antwort",
       bloecke: [
         {
           typ: "p",
-          text: "**Nein – eine netzgekoppelte PV-Anlage ohne Notstromfunktion schaltet bei einem Stromausfall innerhalb von Sekunden ab.** Das schreibt die Anwendungsregel [VDE-AR-N 4105](/wissen/lexikon#vde-ar-n-4105) vor: Der Wechselrichter überwacht das Netz und trennt sich, sobald Spannung oder Frequenz wegfallen. So wird verhindert, dass Solarstrom in eine vermeintlich spannungsfreie Leitung zurückfließt, an der Netzmonteure arbeiten.",
-        },
-        {
-          typ: "p",
-          text: "Damit Ihr Haus trotzdem Strom bekommt, braucht es drei Dinge: einen **Wechselrichter, der selbst ein Netz aufbauen kann** (netzbildend), meist einen **Batteriespeicher** als stabile Energiequelle und eine **Umschalteinrichtung**, die das Haus allpolig vom öffentlichen Netz trennt. Wie viel davon Sie brauchen, hängt davon ab, ob einzelne Geräte oder das ganze Haus weiterlaufen sollen.",
+          text: "**Nein – eine normale, netzgekoppelte PV-Anlage schaltet sich bei Netzausfall innerhalb von Sekundenbruchteilen ab, auch wenn die Sonne scheint.** Dafür sorgt der Netz- und Anlagenschutz (NA-Schutz) im Wechselrichter. Er verhindert, dass die Anlage ein vermeintlich spannungsfreies Netz wieder unter Spannung setzt und dort Monteure gefährdet. Damit die Anlage weiterliefert, braucht es eine Ersatzstromversorgung: ein System, das den eigenen Betrieb vom öffentlichen Netz trennt und als kleines Inselnetz weiterversorgt.",
         },
         {
           typ: "kasten",
           variant: "wichtig",
-          titel: "Nicht jeder „notstromfähige“ Speicher versorgt das ganze Haus",
-          text: "Die Begriffe werden im Markt uneinheitlich verwendet. Fragen Sie konkret nach: Welche Stromkreise werden versorgt? Wie viel Leistung je Phase? Schaltet das System automatisch um, und wie lange dauert das? Lädt die PV-Anlage den Speicher während des Ausfalls nach?",
+          titel: "Nie ohne Umschalteinrichtung",
+          text: "Ein Aggregat oder Speicher, der ohne normgerechte Trennung ins Hausnetz einspeist, kann das öffentliche Netz rückwärts unter Spannung setzen. Das ist lebensgefährlich für Netzmonteure und unzulässig. Ersatzstromanlagen ohne Netzparallelbetrieb brauchen laut TOR eine verriegelte Umschalteinrichtung (Umschaltung mit Unterbrechung).",
         },
       ],
     },
     {
-      id: "varianten",
-      titel: "Notstrom, Ersatzstrom, Inselbetrieb: die Unterschiede",
-      tocLabel: "Die drei Varianten",
+      id: "begriffe",
+      titel: "Notstrom, Ersatzstrom, Inselbetrieb: Was ist der Unterschied?",
+      tocLabel: "Begriffe",
       bloecke: [
         {
           typ: "p",
-          text: "**Notstrom meint meist eine separate Steckdose, Ersatzstrom die Versorgung des Hausnetzes, Inselbetrieb eine Anlage ganz ohne Netzanschluss.** Eine Norm, die diese Begriffe für Heimspeicher einheitlich festlegt, gibt es nicht – die folgende Einteilung entspricht dem üblichen Sprachgebrauch. Mehr dazu im Lexikon unter [Notstrom](/wissen/lexikon#notstrom), [Ersatzstrom](/wissen/lexikon#ersatzstrom) und [Inselanlage](/wissen/lexikon#inselanlage).",
+          text: "**Die Begriffe werden oft vermischt, beschreiben aber unterschiedliche Qualitäten der Versorgung.** Für die Planung ist entscheidend, wie schnell umgeschaltet wird, welche Verbraucher versorgt werden und ob die PV-Anlage im Inselbetrieb weiter nachladen kann.",
         },
         {
           typ: "tabelle",
-          caption: "Notstrom-Varianten für PV-Anlagen im Vergleich (Stand September 2026)",
-          kopf: ["", "Notstrom-Steckdose", "Ersatzstrom (Hausnetz)", "Inselanlage"],
+          caption: "Begriffe der Not- und Ersatzstromversorgung",
+          kopf: ["Begriff", "Bedeutung", "Umschaltzeit", "Typische Anwendung"],
           zeilen: [
-            ["Was läuft weiter?", "einzelne Geräte an einer Steckdose oder einem Stromkreis", "ausgewählte Stromkreise oder das ganze Haus", "alles – es gibt kein Netz"],
-            ["Umschaltung", "meist manuell (Stecker umstecken)", "automatisch oder per Handschalter", "entfällt"],
-            ["Unterbrechung", "Sekunden bis Minuten", "je nach System von Millisekunden bis rund 90 Sekunden", "keine"],
-            ["Phasen / Leistung", "meist 1-phasig, oft 2–3 kW", "1- oder 3-phasig, oft 3–10 kW", "nach Auslegung"],
-            ["Speicher nötig?", "je nach System nein (nur bei Sonne) oder ja", "ja", "ja, groß dimensioniert"],
-            ["PV lädt nach?", "systemabhängig", "bei geeigneten Systemen ja", "ja"],
-            ["Mehrkosten (Orientierung)", "wenige hundert Euro", "rund 1.000 bis 3.500 €", "vielfach höher, plus Generator"],
-            ["Sinnvoll für", "Grundversorgung: Kühlschrank, Router, Heizungspumpe", "Komfort und längere Ausfälle", "Gebäude ohne Netzanschluss"],
+            ["Notstromsteckdose", "einzelne Steckdose am Wechselrichter, versorgt nur dort angesteckte Geräte", "manuell, Sekunden bis Minuten", "Kühlschrank, Router, Ladegeräte"],
+            ["Ersatzstrom (Backup)", "definierte Stromkreise oder das ganze Gebäude werden automatisch vom Netz getrennt und aus Speicher/PV versorgt", "je nach System wenige Millisekunden bis Sekunden", "Büro, Stall, Kühlung, Heizung"],
+            ["USV", "unterbrechungsfreie Stromversorgung, meist Batterie direkt vor dem Verbraucher", "unterbrechungsfrei", "Server, Steuerungen, Medizintechnik"],
+            ["Inselbetrieb", "Betrieb eines eigenen Netzes ohne öffentliches Netz, PV lädt den Speicher weiter nach", "–", "Blackout-Vorsorge, Almhütten, abgelegene Objekte"],
+            ["Schwarzstartfähigkeit", "System kann aus dem stromlosen Zustand ohne Netz hochfahren", "–", "Voraussetzung für echten Blackout-Betrieb"],
           ],
-          hervorheben: 2,
           minBreite: 720,
-          fussnote: "Mehrkosten gegenüber einer Anlage ohne Notstromfunktion, abhängig von Hersteller, Zählerschrank und Anzahl der versorgten Stromkreise. Orientierungswerte aus Marktübersichten, keine Angebote.",
         },
-        { typ: "h3", text: "Notstrom-Steckdose: einfach und günstig" },
         {
           typ: "p",
-          text: "Viele Hybridwechselrichter haben einen eigenen Notstromausgang. Fällt das Netz aus, liefert er an einer fest installierten Steckdose Strom – aus dem Speicher oder, bei manchen Systemen, direkt von den Modulen. Ein Beispiel ist der „PV Point“ von Fronius: bis zu 3 kW einphasig, auch ohne Batterie, allerdings nur, solange die Sonne scheint. Für Kühlschrank, Router und Handyladegerät reicht das; für die Heizung nur, wenn deren Stromversorgung an diese Steckdose angeschlossen werden kann.",
+          text: "Die Begriffe [Ersatzstrom](/wissen/lexikon#ersatzstrom), [Inselbetrieb](/wissen/lexikon#inselbetrieb) und [Notstrom](/wissen/lexikon#notstrom) sind im Lexikon ausführlich erklärt. Für einen Betrieb ist meist eine Ersatzstromversorgung mit Inselbetrieb und Schwarzstartfähigkeit das Ziel – eine Notstromsteckdose ist für Unternehmen selten ausreichend.",
         },
-        { typ: "h3", text: "Ersatzstrom: Das Hausnetz läuft weiter" },
+      ],
+    },
+    {
+      id: "tor",
+      titel: "Was verlangen Netzbetreiber und TOR?",
+      tocLabel: "TOR & Netzbetreiber",
+      bloecke: [
         {
           typ: "p",
-          text: "Beim Ersatzstrom trennt eine Umschalteinrichtung im Zählerschrank das Haus vom Netz, und der Wechselrichter versorgt anschließend das Hausnetz oder einen abgesicherten Teil davon. Je nach Hersteller geschieht das automatisch oder per Handschalter; die Unterbrechung reicht von wenigen Millisekunden bis zu rund 90 Sekunden. Kommt das Netz zurück, synchronisiert sich das System und schaltet zurück.",
+          text: "**Die Anforderungen an Stromerzeugungsanlagen und Speicher am Netz stehen in den Technischen und organisatorischen Regeln (TOR) der E-Control; für Anlagen unter 250 kW gilt der Teil „TOR Stromerzeugungsanlagen Typ A“ in Version 1.4, gültig ab 1. Juni 2026.** Er enthält mehrere Punkte, die Notstrom- und Ersatzstromanlagen direkt betreffen.",
         },
-        { typ: "h3", text: "Inselanlage: nur ohne Netzanschluss sinnvoll" },
+        {
+          typ: "tabelle",
+          caption: "Notstrom-relevante Regelungen der TOR Stromerzeugungsanlagen Typ A (Version 1.4)",
+          kopf: ["Regelung", "Inhalt", "Bedeutung für die Praxis"],
+          zeilen: [
+            ["Notstromsysteme", "Anlagen, die als Notstromsysteme installiert sind und weniger als 5 Minuten je Monat netzparallel laufen, sind – bis auf Schutzeinrichtungen und Netzentkupplungsschutz – vom Großteil der TOR ausgenommen", "klassisches Notstromaggregat mit kurzen Probeläufen"],
+            ["Kommerzieller Einsatz", "Nutzt ein Notstromsystem über die Grundfunktion hinaus kommerziell (z. B. Lastspitzenkappung), legt der Netzbetreiber die Anforderungen fest", "Aggregat für Peak Shaving vorher abstimmen"],
+            ["Ersatzstromfähige Umrichter", "bis 30 kVA mit Netztrennzeit ≤ 20 ms von der vollständigen FRT-Fähigkeit ausgenommen, müssen sich bis zur Trennung aber an der Netzstützung beteiligen", "typische Speicher-/Hybridsysteme im Gewerbe"],
+            ["Verriegelte Umschaltung", "Ersatzstromanlagen ohne Netzparallelbetrieb sind mit verriegelter Umschalteinrichtung (Umschaltung mit Unterbrechung) auszurüsten", "Aggregat-Einspeisung nur über Umschalter"],
+            ["Wiederzuschaltung", "Bei inselbetriebsfähigen Anlagen inkl. Speicher ist ein asynchrones Wiederzuschalten nach Netzwiederkehr zu verhindern", "Synchronisations- bzw. Verriegelungslogik"],
+            ["Entkupplungsstelle", "Bei inselbetriebsfähigen Anlagen im Niederspannungsnetz kann der Netzbetreiber eine vierpolige Abschaltung fordern (Trennung und Erdung des PEN-Leiters beachten)", "Erdungskonzept im Inselbetrieb planen"],
+          ],
+          minBreite: 740,
+          fussnote: "Zusammenfassung ausgewählter Punkte, Quelle: E-Control, TOR Stromerzeugungsanlagen Typ A V1.4. Für Anlagen ab 250 kW gelten die TOR-Teile Typ B bis D. Maßgeblich sind der Originaltext und die Vorgaben des jeweiligen Netzbetreibers.",
+        },
         {
           typ: "p",
-          text: "Eine Inselanlage muss auch im Dezember über Tage ohne Sonne auskommen. Das erfordert einen sehr großen Speicher, eine überdimensionierte PV-Anlage und meist einen Generator. Für Häuser mit Netzanschluss bietet Ersatzstrom praktisch denselben Schutz zu einem Bruchteil der Kosten.",
+          text: "Die TOR verweisen für Stromerzeugungsanlagen, die eine umschaltbare Alternative zur öffentlichen Versorgung darstellen, auf die OVE E 8101 (u. a. Teil 5-551) und die OVE-Richtlinie R 20. Die Versorgungsqualität im Inselbetrieb liegt ausdrücklich in der Verantwortung des Anlagenbetreibers. Speicher werden zusätzlich wie Stromerzeugungsanlagen angemeldet – den Ablauf beschreiben die Ratgeber [PV-Anlage anmelden](/ratgeber/photovoltaik-anmelden) und [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss).",
         },
       ],
     },
     {
       id: "technik",
-      titel: "Was technisch dazugehört",
-      tocLabel: "Technik & Normen",
+      titel: "Wie ist eine Ersatzstromversorgung mit PV aufgebaut?",
+      tocLabel: "Aufbau & Technik",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Eine Ersatzstromversorgung mit PV besteht aus vier Kernkomponenten: ersatzstromfähigem Wechselrichter oder Batteriewechselrichter, Speicher, automatischer Netztrennung und einem Konzept für kritische Verbraucher.** Für längere Ausfälle kommt ein Aggregat hinzu. Wichtig ist, dass der Wechselrichter im Inselbetrieb ein stabiles Netz bildet und die PV-Anlage über Frequenz- oder Kommunikationssteuerung drosseln kann, wenn der Speicher voll ist.",
+        },
+        {
+          typ: "karten",
+          cols: 2,
+          items: [
+            { titel: "DC-gekoppelter Hybridwechselrichter", text: "PV und Speicher an einem Gerät, integrierte Ersatzstromfunktion. Einfach und effizient, typisch bis in den unteren zweistelligen kW-Bereich. Mehr zum [Hybridwechselrichter](/wissen/lexikon#hybridwechselrichter)." },
+            { titel: "AC-gekoppeltes System", text: "Bestehende PV-Wechselrichter bleiben, ein Batteriewechselrichter bildet das Inselnetz und regelt die PV über die Netzfrequenz ab. Gut für Nachrüstung und größere Gewerbeanlagen." },
+            { titel: "Gewerbespeicher mit Netzumschaltung", text: "Speichersysteme ab rund 50 kWh mit eigenem Trennschalter vor der Hauptverteilung. Versorgen ganze Betriebsteile und übernehmen im Alltag Peak Shaving." },
+            { titel: "Aggregat + PV + Speicher", text: "Aggregat bildet bei Bedarf das Netz oder lädt den Speicher; PV reduziert Treibstoffverbrauch. Braucht abgestimmte Regelung, damit PV das Aggregat nicht rückspeist." },
+          ],
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Warum PV allein im Inselbetrieb nicht funktioniert",
+          text: "PV-Wechselrichter folgen der Netzspannung – sie bilden selbst kein Netz. Im Inselbetrieb braucht es daher einen netzbildenden Speicherwechselrichter oder ein Aggregat. Erst dann kann die PV mitlaufen, und nur so viel einspeisen, wie Verbraucher und Speicher aufnehmen. Ohne Regelung schaltet das System bei Überschuss ab.",
+        },
+      ],
+    },
+    {
+      id: "dimensionierung",
+      titel: "Wie groß muss die Notstromversorgung für einen Betrieb sein?",
+      tocLabel: "Dimensionierung",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Dimensioniert wird nicht nach Gesamtverbrauch, sondern nach kritischen Lasten: Welche Verbraucher müssen wie lange laufen, damit Menschen, Tiere, Waren und Daten geschützt sind?** Leistung (kW) bestimmt Wechselrichter und Aggregat, Energie (kWh) den Speicher. Anlaufströme von Motoren, Pumpen und Kompressoren sind oft das Nadelöhr.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Kritische Lasten nach Branche (Beispiele zur Orientierung)",
+          kopf: ["Branche", "Kritische Verbraucher", "Worauf achten"],
+          zeilen: [
+            ["Landwirtschaft (Milchvieh)", "Melkanlage, Milchkühlung, Tränke, Stalllüftung, Futtermischung", "Melkzeiten fix, Kühlung innerhalb weniger Stunden nötig, hohe Anlaufströme"],
+            ["Schweine-/Geflügelhaltung", "Lüftung, Heizung, Fütterung, Alarmanlage", "Lüftungsausfall ist in Minuten kritisch – Aggregat meist unverzichtbar"],
+            ["Lebensmittelhandel, Gastronomie", "Kühl- und Tiefkühlzellen, Kassen, Beleuchtung", "Kühlkette dokumentieren, Türöffnungen minimieren"],
+            ["Hotellerie", "Heizung/Warmwasser, Aufzüge, Notbeleuchtung, Küche, IT", "Gästesicherheit, Kommunikation, Wasserversorgung"],
+            ["Gewerbe/Industrie", "Steuerungen, IT, Server, Brandmeldeanlage, geordnetes Herunterfahren", "Prozesse sicher beenden statt weiterproduzieren"],
+            ["Gemeinde", "Amtsgebäude als Anlaufstelle, Wasserversorgung, Abwasserpumpen, Feuerwehrhaus", "Teil des Blackout-Konzepts der Gemeinde"],
+          ],
+          minBreite: 700,
+        },
+        {
+          typ: "ablauf",
+          schritte: [
+            ["Lastliste erstellen", "Alle kritischen Verbraucher mit Nennleistung, Anlaufstrom und benötigter Laufzeit erfassen – Lastgangdaten helfen."],
+            ["Prioritäten setzen", "Stufe 1 (sofort, unterbrechungsfrei), Stufe 2 (nach Minuten), Stufe 3 (verzichtbar). Stromkreise entsprechend trennen."],
+            ["Leistung auslegen", "Wechselrichter- bzw. Aggregatleistung inkl. Reserve für Anlaufströme; Schieflast bei einphasigen Verbrauchern beachten."],
+            ["Energie auslegen", "Speicher für die Überbrückung bis Aggregatstart bzw. über die Nacht; im Winter mit wenig PV-Nachladung rechnen."],
+            ["Betrieb organisieren", "Probeläufe, Treibstoffvorrat, Zuständigkeiten, Unterweisung – und regelmäßig testen."],
+          ],
+        },
+        {
+          typ: "p",
+          text: "Die Größe des Speichers bestimmt auch den Alltagsnutzen: Ein Gewerbespeicher, der im Normalbetrieb Lastspitzen kappt und Eigenverbrauch erhöht, rechnet sich besser als eine reine Notstrombatterie. Hintergründe liefern die Ratgeber [Gewerbespeicher: Kosten](/ratgeber/gewerbespeicher-kosten) und [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis) sowie die Seite [Gewerbespeicher](/gewerbespeicher).",
+        },
+      ],
+    },
+    {
+      id: "winter",
+      titel: "Reicht PV im Winter für den Notbetrieb?",
+      tocLabel: "Winter & Grenzen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Im Winter reicht PV allein selten – im Dezember und Jänner erzeugt eine Anlage in Österreich nur einen kleinen Bruchteil ihres Jahresertrags, und Schnee kann die Module tagelang bedecken.** Wer auch im Winter mehrere Tage überbrücken muss, braucht ein Aggregat oder ein striktes Lastmanagement mit wenigen, priorisierten Verbrauchern.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Sommer:** PV kann Speicher tagsüber vollständig nachladen – mehrtägiger Inselbetrieb ist mit angepasster Last realistisch.",
+            "**Übergangszeit:** PV deckt einen Teil, das Aggregat läuft kürzer und spart Treibstoff.",
+            "**Winter:** Speicher überbrückt Stunden, das Aggregat trägt die Hauptlast; schneebedeckte Module liefern nichts.",
+            "**Heizung:** Wärmepumpen haben hohe Leistung und Anlaufströme – im Notbetrieb gezielt einplanen oder auf Frostschutz beschränken, siehe [Wärmepumpe mit Photovoltaik](/ratgeber/waermepumpe-mit-photovoltaik).",
+          ],
+        },
+      ],
+    },
+    {
+      id: "kosten",
+      titel: "Was kostet eine Ersatzstromversorgung – und wann rechnet sie sich?",
+      tocLabel: "Kosten & Nutzen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die Kosten einer Ersatzstromversorgung werden vor allem von der geforderten Leistung, der Überbrückungsdauer und dem Umbauaufwand in der Verteilung bestimmt – nicht vom PV-Generator.** Eine Notstromfunktion für ausgewählte Stromkreise ist mit einem ohnehin geplanten Speicher vergleichsweise günstig; die Versorgung eines ganzen Betriebs mit großen Motoren erfordert dagegen leistungsstarke Wechselrichter, Umschalttechnik auf Hauptverteilerebene und meist ein Aggregat.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Doppelnutzen einplanen:** Ein Speicher, der im Alltag Eigenverbrauch erhöht und Lastspitzen senkt, finanziert die Notstromfunktion teilweise mit.",
+            "**Schaden gegenrechnen:** Verdorbene Ware, Tierverluste, Produktionsausfall und Datenverlust bei einem mehrstündigen Ausfall sind der Maßstab – nicht der Strompreis.",
+            "**Umbau der Verteilung** (Trennung kritischer Stromkreise, Umschalter, Erdungskonzept) ist oft der größte Einzelposten und sollte früh bewertet werden.",
+            "**Förderungen** gibt es in Österreich vor allem für Speicher in Verbindung mit PV; reine Notstromaggregate werden selten gefördert. Aktuelle Programme zeigt der [Förder-Check](/foerdercheck).",
+          ],
+        },
+      ],
+    },
+    {
+      id: "checkliste",
+      titel: "Checkliste: Notstrom mit PV planen",
+      tocLabel: "Checkliste",
       bloecke: [
         {
           typ: "checkliste",
           punkte: [
-            "**Netzbildender Wechselrichter oder Batteriewechselrichter:** Er muss Spannung und Frequenz selbst vorgeben können. Ein reiner PV-Wechselrichter kann das nicht.",
-            "**Allpolige Netztrennung:** Die Umschalteinrichtung trennt Außenleiter und Neutralleiter vom öffentlichen Netz, damit keine Rückspeisung möglich ist.",
-            "**Schutzkonzept im Inselbetrieb:** Nach der Trennung muss das Hausnetz ein eigenes, funktionierendes Erdungs- und Schutzkonzept haben – sonst lösen Fehlerstrom-Schutzschalter im Fehlerfall nicht zuverlässig aus.",
-            "**Leistung je Phase:** Viele Systeme liefern im Ersatzstrombetrieb weniger Leistung als im Normalbetrieb und begrenzen die Schieflast zwischen den Phasen. Dreiphasige Verbraucher brauchen ein dreiphasiges Ersatzstromsystem.",
-            "**Nachladen durch PV:** Bei DC-gekoppelten Hybridsystemen lädt die Anlage den Speicher im Ausfall meist direkt nach. Bei AC-gekoppelten Systemen muss der PV-Wechselrichter über eine Leistungsregelung eingebunden sein.",
-            "**Schwarzstartfähigkeit:** Ist der Speicher leer und die Sonne geht auf, sollte das System selbstständig wieder anlaufen können. Nicht alle können das.",
-          ],
-        },
-        {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Nur vom Elektrofachbetrieb",
-          text: "Umschalteinrichtungen greifen in den Zählerschrank ein. Planung und Installation gehören in die Hand eines eingetragenen Elektrofachbetriebs, der die VDE-AR-N 4105 und die Technischen Anschlussbedingungen (TAB) Ihres Netzbetreibers kennt. Ob und in welcher Form die Ersatzstromversorgung dem Netzbetreiber gemeldet werden muss, regeln die TAB des jeweiligen Netzgebiets. Improvisierte Lösungen – etwa ein Wechselrichter, der per Stecker ins Hausnetz „einspeist“ – sind lebensgefährlich.",
-        },
-      ],
-    },
-    {
-      id: "reichweite",
-      titel: "Wie lange reicht der Speicher bei Stromausfall?",
-      tocLabel: "Reichweite des Speichers",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Mit ${SPEICHER_KWH} kWh Speicher lassen sich die wichtigsten Geräte ohne Sonne typischerweise ein bis zwei Tage betreiben – ein ganzes Haus mit Wärmepumpe im Winter dagegen nur Stunden.** Von ${SPEICHER_KWH} kWh Nennkapazität sind rund ${fmt(NUTZBAR, 1)} kWh nutzbar. Wie weit das reicht, zeigt der Tagesbedarf typischer Verbraucher:`,
-        },
-        {
-          typ: "tabelle",
-          caption: "Tagesbedarf wichtiger Verbraucher im Stromausfall (Richtwerte)",
-          kopf: ["Verbraucher", "Leistung", "Energie pro Tag", "Hinweis"],
-          zeilen: [
-            ["Kühl-Gefrier-Kombination", "50–150 W (taktend)", "0,5–1 kWh", "Türen geschlossen halten"],
-            ["Gas- oder Ölheizung (Pumpe, Regelung, Brenner)", "50–150 W", "1–3 kWh im Winter", "muss am Ersatzstromkreis hängen"],
-            ["Router, Telefon, Laptop, Handys", "20–80 W", "0,3–1 kWh", "Kommunikation sichern"],
-            ["LED-Beleuchtung", "30–100 W", "0,2–0,5 kWh", "nur benötigte Räume"],
-            ["Kochen (Herd, Wasserkocher)", "1.500–3.000 W", "1–2 kWh", "kurz, aber hohe Leistung"],
-            ["Wärmepumpe (Beispiel Januar)", "1.500–4.000 W", `rund ${fmt(WP_JAN)} kWh`, "Anlaufstrom und Phasen beachten"],
-            ["Brunnen- oder Hebeanlage", "500–1.500 W", "je nach Nutzung", "bei Starkregen wichtig"],
-          ],
-          hervorheben: 2,
-          minBreite: 660,
-          fussnote: `Richtwerte, Gerätedaten prüfen. Wärmepumpe: ${fmt(SPEICHER.wpStromKwh)} kWh Jahresstrom, Monatsverteilung nach Heizgradtagen wie in unseren Rechnern.`,
-        },
-        {
-          typ: "kennzahl",
-          wert: "3–5 kWh",
-          titel: "Grundversorgung pro Tag",
-          text: `Kühlschrank, Heizungssteuerung, Licht, Kommunikation und etwas Kochen. Ein ${SPEICHER_KWH}-kWh-Speicher (rund ${fmt(NUTZBAR, 1)} kWh nutzbar) überbrückt damit ohne Sonne etwa ein bis zwei Tage.`,
-        },
-        { typ: "h3", text: "Die PV-Anlage verlängert die Reichweite – im Sommer deutlich mehr als im Winter" },
-        {
-          typ: "p",
-          text: `Lädt die Anlage im Ausfall nach, ändert sich das Bild. Eine 10-kWp-Anlage in Süddeutschland erzeugt nach unserem Energiemodell im Januar im Mittel rund ${fmt(PV_JAN)} kWh am Tag, im April etwa ${fmt(PV_APR)} kWh und im Juni rund ${fmt(PV_JUN)} kWh. Im Sommer kann ein Haus mit Ersatzstrom damit tagelang nahezu normal weiterlaufen. Im Winter reicht es für die Grundversorgung – an trüben Tagen oft nicht einmal dafür. Welche Erträge realistisch sind, lesen Sie im Ratgeber [Photovoltaik im Winter](/ratgeber/photovoltaik-im-winter).`,
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Reserve im Speicher einstellen",
-          text: "Die meisten Systeme erlauben eine Notstromreserve, etwa 20 bis 30 % der Kapazität, die im Alltag nicht entladen wird. Das kostet etwas Eigenverbrauch, stellt aber sicher, dass bei einem nächtlichen Ausfall Strom da ist. Wie sich die Reserve auf die sinnvolle Speichergröße auswirkt, erklärt der Ratgeber [Stromspeicher-Größe](/ratgeber/stromspeicher-groesse).",
-        },
-        { typ: "tool", href: "/rechner/stromspeicher", titel: "Speichergröße mit Reserve durchrechnen", text: "Verbrauch, Anlage, Wärmepumpe und E-Auto eingeben – der Rechner zeigt Autarkie und wirtschaftliche Speichergröße.", label: "Zum Stromspeicher-Rechner" },
-      ],
-    },
-    {
-      id: "lohnt",
-      titel: "Lohnt sich Notstrom? Eine ehrliche Einordnung",
-      tocLabel: "Lohnt sich das?",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Wirtschaftlich rechnet sich eine Notstromfunktion nicht – sie ist eine Absicherung.** Die Bundesnetzagentur weist für 2024 eine durchschnittliche Unterbrechungsdauer von 11,7 Minuten je Letztverbraucher aus (erfasst werden Unterbrechungen über drei Minuten); das deutsche Netz gehört zu den zuverlässigsten in Europa. Der Durchschnitt verdeckt aber seltene lange Ereignisse: Nach dem Brandanschlag auf das Berliner Stromnetz im Januar 2026 waren rund 45.000 Haushalte und über 2.200 Betriebe mehrere Tage ohne Strom – bei Winterwetter und mit ausgefallenen Heizungen.",
-        },
-        {
-          typ: "karten",
-          items: [
-            { titel: "Eher sinnvoll", text: "Häuser mit Wärmepumpe oder Brunnen, Hebeanlage im Keller, medizinischen Geräten, Homeoffice oder Tierhaltung; Lagen mit Freileitungen und häufigeren Störungen; Menschen, denen Versorgungssicherheit wichtig ist." },
-            { titel: "Eher verzichtbar", text: "Wohnungen und Häuser in städtischen Kabelnetzen, wenn Kühlschrank und Heizung einige Stunden Ausfall verkraften – hier genügt oft eine einfache Notstrom-Steckdose oder eine mobile Powerstation." },
-          ],
-        },
-        {
-          typ: "p",
-          text: "Günstig ist es vor allem, **Notstrom gleich bei der Planung mitzudenken**. Ein späteres Nachrüsten kann einen anderen Wechselrichter, Arbeiten am [Zählerschrank](/wissen/lexikon#zaehlerschrank) und neue Stromkreise erfordern. Wer ohnehin einen [Stromspeicher](/produkte/stromspeicher) plant, sollte ein ersatzstromfähiges System wählen, auch wenn die Umschalteinrichtung erst später dazukommt. Was der Speicher selbst kostet, zeigt der Ratgeber [Stromspeicher Kosten](/ratgeber/stromspeicher-kosten).",
-        },
-      ],
-    },
-    {
-      id: "planung",
-      titel: "So planen Sie Ihre Notstromversorgung",
-      tocLabel: "Planung",
-      bloecke: [
-        {
-          typ: "ablauf",
-          schritte: [
-            ["Ziel festlegen", "Welche Geräte müssen im Ausfall laufen – nur Kühlschrank und Router, die Heizung oder das ganze Haus?"],
-            ["Leistung und Energie abschätzen", "Gleichzeitige Leistung (kW) und Tagesbedarf (kWh) der wichtigen Verbraucher zusammenstellen. Anlaufströme von Pumpen und Wärmepumpen berücksichtigen."],
-            ["Stromkreise trennen", "Wichtige Verbraucher auf einen eigenen, abgesicherten Ersatzstromkreis legen. Das hält den Speicher länger voll."],
-            ["System auswählen", "Ersatzstromleistung je Phase, Umschaltzeit, Nachladen durch PV und Schwarzstart vergleichen."],
-            ["Installieren und testen", "Umschalteinrichtung vom Fachbetrieb einbauen lassen und den Ernstfall einmal gemeinsam durchspielen."],
+            "Ziel definieren: Notstromsteckdose, Ersatzstrom für Teilbereiche oder ganzer Betrieb, Überbrückungsdauer.",
+            "Kritische Lasten mit Leistung, Anlaufstrom und Laufzeit erfassen; Stromkreise für den Ersatzstrombetrieb trennen.",
+            "Ersatzstromfähigen, netzbildenden Wechselrichter bzw. Speicher wählen; Schwarzstartfähigkeit prüfen.",
+            "Automatische Netztrennung und Verriegelung nach TOR und OVE E 8101, Erdungskonzept für den Inselbetrieb.",
+            "Aggregat-Anschluss mit verriegeltem Umschalter vorsehen, Einspeisung der PV ins Aggregat verhindern.",
+            "Anmeldung von Speicher und geänderter Anlage beim Netzbetreiber; Versicherung informieren.",
+            "Brandschutz für Speicher und Treibstofflager (Aufstellraum, Abstände, Belüftung).",
+            "Regelmäßige Tests unter Last, Unterweisung der Mitarbeitenden, Dokumentation im Anlagenbuch.",
           ],
         },
         {
           typ: "kasten",
           variant: "tipp",
-          titel: "Herstellerneutral beraten",
-          text: "Ökovolt ist Partner von Sigenergy, Fronius, Huawei, Solis, meteocontrol und BYD. Die Notstromkonzepte der Hersteller unterscheiden sich deutlich in Umschaltzeit, Leistung und Phasenzahl. Wir wählen die Lösung nach Ihrem Bedarf aus – vom Notstromausgang bis zur automatischen Ersatzstromversorgung des ganzen Hauses. Mehr zur [Photovoltaikanlage aus einer Hand](/produkte/photovoltaikanlage).",
+          titel: "Einmal im Jahr den Ernstfall proben",
+          text: "Ein Notstromsystem, das nie getestet wurde, ist eine Annahme, keine Vorsorge. Planen Sie mindestens jährlich einen Umschalttest unter realer Last – idealerweise gemeinsam mit der Blackout-Übung Ihres Betriebs oder Ihrer Gemeinde. Wie ein vollständiges Krisenkonzept aussieht, zeigt der Ratgeber [Blackout-Vorsorge für Unternehmen](/ratgeber/blackout-vorsorge-unternehmen).",
+        },
+        {
+          typ: "p",
+          text: "Ökovolt plant und errichtet [Notstrom- und Ersatzstromlösungen](/service/notstrom) mit PV und Speicher für Gewerbe, Landwirtschaft und Gemeinden in ganz Österreich – von der Lastanalyse über die Abstimmung mit dem Netzbetreiber bis zur Inbetriebnahme mit Prüfbefund.",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Hat meine PV-Anlage bei Stromausfall Strom?", a: "Nur, wenn sie ausdrücklich eine Notstrom- oder Ersatzstromfunktion hat. Normale netzgekoppelte Wechselrichter schalten bei Netzausfall nach VDE-AR-N 4105 ab, auch bei Sonnenschein." },
-    { q: "Was ist der Unterschied zwischen Notstrom und Ersatzstrom?", a: "Notstrom versorgt meist einzelne Geräte über eine separate Steckdose, oft mit manueller Umschaltung. Ersatzstrom versorgt das Hausnetz oder ausgewählte Stromkreise über eine Umschalteinrichtung, die das Haus allpolig vom öffentlichen Netz trennt – häufig automatisch." },
-    { q: "Was kostet Notstrom für die PV-Anlage?", a: "Eine Notstrom-Steckdose kostet meist nur wenige hundert Euro zusätzlich. Eine Ersatzstromversorgung mit Umschalteinrichtung liegt als Orientierung bei rund 1.000 bis 3.500 € Mehrkosten, abhängig von System, Zählerschrank und Anzahl der versorgten Stromkreise." },
-    { q: "Funktioniert Notstrom ohne Batteriespeicher?", a: "Eingeschränkt: Einige Wechselrichter liefern über einen Notstromausgang auch ohne Batterie Strom, aber nur solange die Sonne scheint und mit schwankender Leistung. Für eine verlässliche Versorgung, auch nachts, ist ein Speicher nötig." },
-    { q: "Kann die Wärmepumpe mit Notstrom laufen?", a: `Grundsätzlich ja, wenn das Ersatzstromsystem dreiphasig ist und genügend Leistung für den Anlauf liefert. Der Energiebedarf ist im Winter aber hoch – im Beispiel rund ${fmt(WP_JAN)} kWh pro Tag im Januar. Ein Heimspeicher überbrückt damit eher Stunden als Tage.` },
-    { q: "Wie lange hält ein Stromspeicher bei Stromausfall?", a: `Das hängt vom Verbrauch ab. Für eine Grundversorgung mit 3 bis 5 kWh pro Tag reicht ein ${SPEICHER_KWH}-kWh-Speicher ohne Sonne etwa ein bis zwei Tage. Lädt die PV-Anlage nach, verlängert sich die Zeit – im Sommer deutlich.` },
-    { q: "Kann man Notstrom nachrüsten?", a: "Oft ja, aber nicht immer günstig. Ist der vorhandene Wechselrichter nicht netzbildend, muss er ergänzt oder getauscht werden. Zusätzlich sind Arbeiten am Zählerschrank nötig. Bei Neuanlagen lohnt es sich, ein ersatzstromfähiges System gleich mitzuplanen." },
+    {
+      q: "Funktioniert meine PV-Anlage bei Stromausfall?",
+      a: "Nicht ohne Zusatztechnik. Netzgekoppelte Wechselrichter schalten bei Netzausfall aus Sicherheitsgründen ab. Erst ein ersatzstromfähiger Wechselrichter mit Speicher und automatischer Netztrennung ermöglicht die Weiterversorgung.",
+    },
+    {
+      q: "Was ist der Unterschied zwischen Notstrom und Ersatzstrom?",
+      a: "Umgangssprachlich wird beides gleich verwendet. Fachlich meint Notstrom oft eine einfache Notstromsteckdose, Ersatzstrom die automatische Versorgung ganzer Stromkreise oder Gebäude über eine Netztrennung. Für Betriebe ist Ersatzstrom mit Inselbetrieb die sinnvolle Lösung.",
+    },
+    {
+      q: "Muss ich eine Ersatzstromanlage beim Netzbetreiber melden?",
+      a: "Speicher und Änderungen an der Erzeugungsanlage sind anzumelden. Die TOR Stromerzeugungsanlagen regeln, welche Anforderungen gelten – etwa verriegelte Umschaltung oder die Verhinderung asynchroner Wiederzuschaltung. Die Anmeldung übernimmt der Elektrotechniker.",
+    },
+    {
+      q: "Wie lange reicht ein Speicher bei Stromausfall?",
+      a: "Das hängt von Kapazität, Last und Jahreszeit ab. Im Sommer kann die PV den Speicher tagsüber nachladen, im Winter kaum. Für mehrtägige Ausfälle braucht ein Betrieb meist zusätzlich ein Aggregat.",
+    },
+    {
+      q: "Kann ich ein Notstromaggregat mit der PV-Anlage kombinieren?",
+      a: "Ja, wenn die Regelung abgestimmt ist. Das Aggregat bildet das Netz oder lädt den Speicher, die PV spart Treibstoff. Eine Rückspeisung der PV in das Aggregat muss verhindert werden, und der Anschluss erfolgt über eine verriegelte Umschalteinrichtung.",
+    },
+    {
+      q: "Ist eine Notstromversorgung für landwirtschaftliche Betriebe sinnvoll?",
+      a: "Für Tierhaltung ist sie oft unverzichtbar: Lüftung, Melk- und Kühltechnik dürfen nicht lange ausfallen. PV mit Speicher überbrückt kurze Ausfälle und reduziert den Treibstoffbedarf, ein Aggregat sichert längere Ausfälle ab.",
+    },
+    {
+      q: "Darf ich im Inselbetrieb Strom ins Netz einspeisen?",
+      a: "Nein. Während eines Netzausfalls muss die Anlage allpolig vom öffentlichen Netz getrennt sein. Nach Netzwiederkehr darf sie nur synchron und nach den Zuschaltbedingungen der TOR wieder parallel gehen.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/stromspeicher-groesse", titel: "Stromspeicher-Größe berechnen", text: "Faustregeln, Simulation und Notstromreserve." },
-    { href: "/produkte/stromspeicher", titel: "Stromspeicher von Ökovolt", text: "Speicher mit Ersatzstromfunktion planen lassen." },
-    { href: "/ratgeber/energiemanagementsystem", titel: "Energiemanagementsystem", text: "Wie ein HEMS Speicher, Wärmepumpe und Wallbox steuert." },
+    { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Ersatzstrom mit PV, Speicher und Aggregat." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Speicher für Eigenverbrauch, Peak Shaving und Ersatzstrom." },
+    { href: "/ratgeber/blackout-vorsorge-unternehmen", titel: "Blackout-Vorsorge", text: "Krisenplan für Betriebe und Gemeinden." },
+    { href: "/ratgeber/gewerbespeicher-kosten", titel: "Gewerbespeicher Kosten", text: "Was ein Speicher im Betrieb kostet." },
   ],
 
   quellen: [
-    { titel: "Bundesnetzagentur – Versorgungsunterbrechungen Strom 2024 (Pressemitteilung vom 09.10.2025)", url: "https://www.bundesnetzagentur.de/1075952", stand: "09/2026" },
-    { titel: "Fronius – Notstromfunktion: PV Point und Full Backup", url: "https://www.fronius.com/de-de/germany/solarenergie/installateure-partner/produkte-loesungen/features/notstromfunktion", stand: "09/2026" },
-    { titel: "Verbraucherzentrale – Lohnen sich Batteriespeicher für Photovoltaikanlagen?", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/lohnen-sich-batteriespeicher-fuer-photovoltaikanlagen-24589", stand: "09/2026" },
-    { titel: "HTW Berlin – Empfehlungen zur Auslegung von Solarstromspeichern (Ersatzstrom und Kapazitätsreserve)", url: "https://solar.htw-berlin.de/publikationen/auslegung-von-solarstromspeichern/", stand: "09/2026" },
-    { titel: "VDE Verlag – VDE-AR-N 4105: Erzeugungsanlagen am Niederspannungsnetz", url: "https://www.vde-verlag.de/p/normen/vde-ar-n-4105-vde-ar-n-4105-anwendungsregel-2018-11/0100492-DE-PR", stand: "09/2026" },
-    { titel: "Wikipedia – Brandanschlag auf das Berliner Stromnetz 2026", url: "https://de.wikipedia.org/wiki/Brandanschlag_auf_das_Berliner_Stromnetz_2026", stand: "09/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen Typ A, Version 1.4 (gültig ab 01.06.2026)", url: "https://www.e-control.at/documents/1785851/1811582/TOR+Stromerzeugungsanlagen+Typ+A+Version+1.4+%287%29.pdf/093752f5-e220-0731-b8a8-bfa85ccb7287?t=1780897058735", stand: "06/2026" },
+    { titel: "E-Control – TOR Verteilernetzanschluss Niederspannung, Version 1.3.1", url: "https://www.e-control.at/documents/1785851/1811582/TOR_Verteilernetzanschluss_-_Niederspannung_V1.3.1.pdf/64c9e5f0-e38d-351a-b52e-a1b0e07077ae?t=1774007041985", stand: "03/2026" },
+    { titel: "E-Control – Übersicht TOR (Technische und organisatorische Regeln)", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor", stand: "09/2026" },
+    { titel: "OVE – OVE E 8101:2025, Errichtungsbestimmungen für Niederspannungsanlagen", url: "https://www.ove.at/ove-standardization/normen-produkte/ove-e-8101/", stand: "09/2026" },
+    { titel: "OVE – Richtlinien (u. a. R 20, Prüfanforderungen an Erzeugungseinheiten)", url: "https://www.ove.at/ove-standardization/normen-produkte/richtlinien/", stand: "09/2026" },
+    { titel: "Gesellschaft für Krisenvorsorge – Leitfaden für die Blackout-Vorsorge in Unternehmen und Organisationen", url: "https://gfkv.org/wp-content/uploads/2024/03/GfKV-Leitfaden-fuer-die-Blackout-Vorsorge-in-Unternehmen-und-Organisationen.pdf", stand: "03/2024" },
   ],
 
-  seitenCta: { titel: "Speicher mit Ersatzstrom?", text: "Größe, Reserve und Wirtschaftlichkeit berechnen.", href: "/rechner/stromspeicher", label: "Speicher berechnen" },
+  seitenCta: { titel: "Ersatzstrom planen?", text: "Lastanalyse, Speicher und Umschaltung aus einer Hand.", href: "/service/notstrom", label: "Notstrom anfragen" },
   cta: {
-    title: "Versorgt, wenn das Netz ausfällt.",
-    text: "Wir planen Ihre Notstrom- oder Ersatzstromlösung passend zu Haus, Heizung und Speicher – und installieren die Umschalteinrichtung normgerecht.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Kontakt aufnehmen", href: "/kontakt" },
+    title: "Strom, wenn das Netz ausfällt – mit PV, Speicher und Konzept.",
+    text: "Ökovolt aus Ostermiething (OÖ) plant Ersatzstromlösungen für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich – abgestimmt mit Ihrem Netzbetreiber.",
+    primary: { label: "Notstrom anfragen", href: "/service/notstrom" },
+    secondary: { label: "Gewerbespeicher", href: "/gewerbespeicher" },
   },
 };
 

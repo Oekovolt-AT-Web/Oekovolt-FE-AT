@@ -5,8 +5,9 @@ import Link from "next/link";
 import { ArrowRight, Clock, Euro, Mail, MapPin, Phone, Search, Sparkles } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { bewerbungsLink, fmtDatum } from "./jobDaten";
+import { FIRMA } from "@/lib/site";
 
-const TAETIGKEITEN = ["Projektplanung", "Montage", "Elektrotechnik", "Technische Entwicklung", "Vertrieb & Beratung", "Kaufmännisches"];
+const TAETIGKEITEN = ["Projektleitung", "Elektroplanung", "Netzanschluss & Parkregler", "SCADA & Leitwarte", "Montage & Service", "Vertrieb & Energieberatung", "Lehre Elektrotechnik"];
 
 /**
  * Stellenliste mit Filtern (Ort, Anstellungsart, Suche).
@@ -44,7 +45,7 @@ export default function JobsListe({ jobs = [] }) {
                 type="search"
                 value={suche}
                 onChange={(e) => setSuche(e.target.value)}
-                placeholder="Stelle oder Fähigkeit suchen, z. B. AutoCAD"
+                placeholder="Stelle oder Fähigkeit suchen, z. B. TOR Erzeuger"
                 className="h-11 w-full rounded-full bg-ink-50 pl-11 pr-4 text-[15px] ring-1 ring-inset ring-ink-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
               />
             </label>
@@ -167,9 +168,9 @@ function KeineStellen({ kompakt = false }) {
               <Mail aria-hidden="true" className="h-5 w-5" />
               Jetzt initiativ bewerben
             </a>
-            <a href="tel:+498245967880" className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-white px-8 text-[16px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50">
+            <a href={FIRMA.telefonHref} className="inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-white px-8 text-[16px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50">
               <Phone aria-hidden="true" className="h-5 w-5 text-ov-600" />
-              08245 96 788 0
+              {FIRMA.telefon}
             </a>
           </div>
         </div>
@@ -183,7 +184,7 @@ function KeineStellen({ kompakt = false }) {
             ))}
           </ul>
           <p className="mt-5 border-t border-ink-200 pt-5 text-[14.5px] leading-relaxed text-ink-600">
-            Bewerbung an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">office@oekovolt.com</a> – mit oder ohne Photovoltaik-Erfahrung.
+            Bewerbung an <a href={bewerbungsLink()} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4">{FIRMA.email}</a> – mit oder ohne Photovoltaik-Erfahrung.
           </p>
         </div>
       </div>

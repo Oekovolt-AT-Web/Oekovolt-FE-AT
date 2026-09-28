@@ -23,8 +23,9 @@ import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProduktGalerie from "@/components/Produktdetail/ProduktGalerie";
 import { generateSlug } from "@/lib/slugify";
+import { BASE_URL, FIRMA } from "@/lib/site";
 
-const BASE = "https://www.oekovolt.com";
+const BASE = BASE_URL;
 const img = (p) => (p ? `/api/image?path=${p}` : null);
 
 /** Einstellungen je Produktbereich */
@@ -34,16 +35,25 @@ export const KONTEXTE = {
     pfad: "/produkte/stromspeicher",
     rechner: { href: "/rechner/stromspeicher", label: "Speichergröße berechnen", titel: "Welche Speichergröße passt zu Ihnen?", text: "Verbrauch, Anlagengröße und E-Auto oder Wärmepumpe eingeben – der Rechner zeigt Autarkie, Ersparnis und die sinnvolle Kapazität." },
     fallbackBild: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg",
-    vorteil: { icon: Plug, title: "Auch zum Nachrüsten", text: "Wir prüfen Ihre Bestandsanlage und binden den Speicher DC- oder AC-seitig passend ein." },
+    vorteil: { icon: Plug, title: "Auch zum Nachrüsten", text: "Wir prüfen Ihre Bestandsanlage und binden den Speicher DC- oder AC-seitig ein – im Gewerbe auch für Peak Shaving." },
   },
   warmepumpe: {
     label: "Wärmepumpe",
     pfad: "/produkte/warmepumpe",
     rechner: { href: "/rechner/waermepumpe", label: "Ersparnis berechnen", titel: "Was spart eine Wärmepumpe in Ihrem Haus?", text: "Wärmebedarf, Heizsystem und PV-Anlage eingeben – der Rechner zeigt Heizkosten, Förderung und Amortisation." },
     fallbackBild: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg",
-    vorteil: { icon: FileCheck2, title: "Förderantrag im Blick", text: "Angebot mit aufschiebender Bedingung, damit Sie den KfW-Zuschuss rechtzeitig beantragen können." },
+    vorteil: { icon: FileCheck2, title: "Förderung im Blick", text: "Wir prüfen Bundes- und Landesförderungen vor der Bestellung, damit Registrierung und Förderansuchen rechtzeitig gestellt sind." },
   },
 };
+
+/**
+ * Hersteller, mit denen die österreichische Gesellschaft eine belegte
+ * Zusammenarbeit hat (Stand 09/2026). Detailseiten anderer Marken aus dem
+ * Backoffice der deutschen Seite werden auf noindex gesetzt und in
+ * Übersichten nicht verlinkt.
+ */
+export const BELEGTE_PARTNER = ["Fronius", "Huawei", "Solis", "BYD", "Sigenergy", "meteocontrol"];
+export const istBelegterPartner = (titel = "") => BELEGTE_PARTNER.some((p) => String(titel).toLowerCase().includes(p.toLowerCase()));
 
 /** Aktive Produkte aus den festen Feldern first…fifth des Herstellers */
 export function produkteAus(hersteller) {
@@ -81,7 +91,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
   const beschreibung = hersteller?.main_description || item.main_description || "";
   const banner = img(hersteller?.banner_image || item.banner_image) || k.fallbackBild;
   const logo = img(hersteller?.logo_image || item.logo_image);
-  const verwandte = alleItems.filter((i) => i.title && generateSlug(i.title) !== slug && i.status !== "Passiv").slice(0, 4);
+  const verwandte = alleItems.filter((i) => i.title && generateSlug(i.title) !== slug && i.status !== "Passiv" && istBelegterPartner(i.title)).slice(0, 4);
   const email = mailAdresse(hersteller?.email);
 
   const jsonLd = {
@@ -140,7 +150,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
         <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
       </a>,
     ],
-    ["Planung & Einbau", "Ökovolt Fachbetrieb, Türkheim"],
+    ["Planung & Einbau", `${FIRMA.name}, ${FIRMA.ort}`],
   ].filter(Boolean);
 
   const ueberText = [hersteller?.company_description, hersteller?.details_description].filter(Boolean).join("\n\n");
@@ -176,7 +186,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
             )}
             <div>
               <p className="font-display text-[16px] font-extrabold leading-tight text-ink-900">Planung & Einbau</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">durch unser Fachteam aus Türkheim</p>
+              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">durch unser Fachteam aus {FIRMA.ort}, ganz Österreich</p>
             </div>
           </div>
         }
@@ -191,7 +201,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
                 Produkte von <span className="ov-text-gradient">{titel}</span>
               </>
             }
-            lead={`${produkte.length === 1 ? "Diese Produktlinie" : `Diese ${produkte.length} Produktlinien`} von ${titel} planen und installieren wir. Welche Lösung zu Ihrem Haus passt, klären wir in der Beratung.`}
+            lead={`${produkte.length === 1 ? "Diese Produktlinie" : `Diese ${produkte.length} Produktlinien`} von ${titel} planen und installieren wir. Welche Lösung zu Ihrem Betrieb oder Gebäude passt, klären wir in der Beratung.`}
             className="mb-12"
           />
           <Reveal dir="scale">
@@ -271,9 +281,9 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
             cols={4}
             tone="dark"
             items={[
-              { icon: UserRound, title: "Ehrliche Beratung", text: "Wir empfehlen, was zu Ihrem Haus und Verbrauch passt – nicht das teuerste Modell." },
-              { icon: Wrench, title: "Fachgerechte Installation", text: "Montage und Elektroinstallation durch unser eingespieltes Fachteam." },
-              { icon: ClipboardCheck, title: "Anmeldung inklusive", text: "Netzbetreiber, Marktstammdatenregister und Inbetriebnahmeprotokoll erledigen wir." },
+              { icon: UserRound, title: "Herstellerunabhängige Beratung", text: "Wir empfehlen, was zu Lastgang, Gebäude und Ziel passt – nicht das teuerste Modell." },
+              { icon: Wrench, title: "Fachgerechte Installation", text: "Montage und Elektroinstallation durch unser eigenes Elektrotechnik-Team nach ÖVE/ÖNORM E 8101." },
+              { icon: ClipboardCheck, title: "Meldung inklusive", text: "Meldung an den Netzbetreiber, Fertigstellungsmeldung und Prüfprotokoll erledigen wir." },
               k.vorteil,
             ]}
           />
@@ -320,6 +330,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
 
       <CtaBand
         title={`Ihr ${k.label === "Wärmepumpe" ? "Heizsystem" : "Speichersystem"} mit ${titel} – sauber geplant, fachgerecht installiert.`}
+        text={`Persönliche Beratung von ${FIRMA.name} aus ${FIRMA.ort} – für Betriebe, Gemeinden und Premium-Wohnhäuser in ganz Österreich, mit festem Ansprechpartner bis zur Inbetriebnahme.`}
         primary={{ label: "Angebot anfragen", href: "/angebot" }}
         secondary={{ label: k.rechner.label, href: k.rechner.href }}
       />

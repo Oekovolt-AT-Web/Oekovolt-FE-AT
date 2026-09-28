@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AlertCircle, ArrowRight, CheckCircle2, Clock, ExternalLink, FileText, Gauge, Home, Loader2, Lock, Smartphone, Zap } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { ereignis } from "@/lib/statistik";
+import { KONTAKT } from "@/data/navigation";
 
 const KACHELN = [
   { feld: "zaehler", label: "Stromzähler", icon: Gauge, pflicht: true },
@@ -61,7 +62,7 @@ export default function Fortsetzen({ token, info }) {
           ? "Dieser Link ist nicht mehr gültig. Bitte starten Sie im Solarrechner neu."
           : e.message === "zu_viele"
             ? "Zu viele Versuche – bitte in einigen Minuten erneut."
-            : "Das hat nicht geklappt. Bitte erneut versuchen oder rufen Sie uns an: 08245 96 788 0."
+            : `Das hat nicht geklappt. Bitte erneut versuchen oder rufen Sie uns an: ${KONTAKT.telefon}.`
       );
     } finally {
       setLaeuft(false);

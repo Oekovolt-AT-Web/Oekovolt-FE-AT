@@ -15,7 +15,7 @@ const ASSISTENTEN = [
 
 export default function KiZusammenfassen({ url, titel, art = "Ratgeber-Artikel", className }) {
   const prompt = encodeURIComponent(
-    `Fasse den ${art} „${titel}" von Ökovolt (Fachbetrieb für Photovoltaik) verständlich zusammen: die wichtigsten Punkte, Zahlen und konkrete Tipps. Artikel: ${url}`
+    `Fasse den ${art} „${titel}" von Ökovolt Österreich (Photovoltaik-Fachbetrieb aus Ostermiething) verständlich zusammen: die wichtigsten Punkte, Zahlen und konkrete Tipps. Artikel: ${url}`
   );
 
   return (

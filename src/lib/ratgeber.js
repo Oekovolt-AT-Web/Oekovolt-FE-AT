@@ -7,8 +7,9 @@
 // WICHTIG: Nur Artikel eintragen, die es auch wirklich gibt
 // (src/app/ratgeber/<slug>/page.js), sonst landen 404er in der Sitemap.
 //
-// Ratgeber-Inhalte sind deutschlandspezifisch und existieren NICHT auf
-// oekovolt.com -> sie bekommen bewusst kein hreflang (siehe @/lib/hreflang).
+// Ratgeber-Inhalte sind österreichspezifisch (Rechtslage, Förderung, Steuern AT)
+// und haben kein inhaltsgleiches Gegenstück auf oekovolt.de -> sie bekommen
+// bewusst kein hreflang, nur ein Canonical auf oekovolt.com (siehe @/lib/hreflang).
 
 import { INHALTE } from "@/content/ratgeber";
 
@@ -17,84 +18,85 @@ export const RATGEBER_BASE = "/ratgeber";
 // Feste Themenbereiche – für Filter auf der Übersicht und thematische Cluster.
 export const KATEGORIEN = [
   "Kosten & Wirtschaftlichkeit",
+  "Förderung, Steuern & Recht",
+  "Netz, Energiegemeinschaften & Markt",
   "Technik & Planung",
   "Speicher & Eigenverbrauch",
-  "Wärmepumpe & E-Mobilität",
-  "Förderung, Steuern & Recht",
+  "E-Mobilität & Sektorkopplung",
 ];
 
 // Handgebaute Artikel mit eigener Seite unter src/app/ratgeber/<slug>/page.js
 const STATISCHE_ARTIKEL = [
   {
     slug: "wallbox-installation",
-    title: "Wallbox Installation: Kosten, Voraussetzungen & Ablauf",
+    title: "Wallbox Installation in Österreich: Kosten, Anmeldung, Ablauf",
     kurzTitel: "Wallbox Installation",
     description:
-      "Wallbox installieren lassen: Kosten ab 1.000 €, 11 oder 22 kW, technische Voraussetzungen, Meldepflicht und Förderung 2026 – vom Elektrofachbetrieb erklärt.",
+      "Wallbox installieren lassen in Österreich: 11 oder 22 kW, Voraussetzungen, Meldung beim Netzbetreiber, Lastmanagement und Förderung – für Betrieb und Eigenheim.",
     excerpt:
-      "Eine 11-kW-Wallbox kostet mit Installation 1.000–2.700 €. Warum die Montage meist mehr ausmacht als das Gerät, wann 22 kW sinnvoll sind und was Sie melden müssen.",
+      "Was eine Wallbox mit Installation kostet, wann 22 kW sinnvoll sind, was Sie dem Netzbetreiber melden müssen und wie Lastmanagement und PV-Überschussladen zusammenspielen.",
     veroeffentlicht: "2026-09-12",
-    aktualisiert: "2026-09-13",
+    aktualisiert: "2026-09-28",
     lesezeit: 10,
-    kategorie: "Wärmepumpe & E-Mobilität",
+    kategorie: "E-Mobilität & Sektorkopplung",
     bild: "/Images/Dienstleistungen/Smartphone/wallbox-scaled.jpg",
     bildAlt: "Wallbox an der Außenwand eines modernen Einfamilienhauses",
     keywords: [
       "Wallbox Installation",
       "Wallbox Installation Kosten",
-      "Wallbox installieren lassen",
+      "Wallbox installieren lassen Österreich",
       "Wallbox Voraussetzungen",
-      "Wallbox anmelden",
+      "Wallbox Netzbetreiber melden",
       "11 kW oder 22 kW Wallbox",
     ],
   },
   {
     slug: "solaranlage-kosten",
-    title: "Was kostet eine Solaranlage 2026?",
-    kurzTitel: "Solaranlage Kosten",
+    title: "Photovoltaik Kosten Österreich 2026: Preise je kWp",
+    kurzTitel: "Photovoltaik Kosten",
     description:
-      "Was eine PV-Anlage 2026 kostet: Preise nach Anlagengröße, was im Komplettpreis steckt, Speicherkosten und laufende Ausgaben – transparent erklärt.",
+      "Photovoltaik Kosten in Österreich 2026: €/kWp von 10 kWp bis Megawatt, Speicher, Netzanschluss, laufende Kosten und Förderung – für Betriebe und Private.",
     excerpt:
-      "Rund 980 bis 1.450 Euro je kWp – aber woraus setzt sich der Preis zusammen, und was kommt an laufenden Kosten dazu? Mit Preistabelle nach Anlagengröße.",
+      "Von rund 1.300 €/kWp netto beim Einfamilienhaus bis 500–650 €/kWp bei Megawatt-Freiflächen: Was eine PV-Anlage in Österreich 2026 kostet, was im Preis steckt und was laufend dazukommt.",
     veroeffentlicht: "2026-09-12",
-    aktualisiert: "2026-09-13",
-    lesezeit: 9,
+    aktualisiert: "2026-09-28",
+    lesezeit: 12,
     kategorie: "Kosten & Wirtschaftlichkeit",
     bild: "/Images/Dienstleistungen/Service/solar-panel-7518786_1280.jpg",
     bildAlt: "Monteur befestigt ein Solarmodul an der Unterkonstruktion",
     keywords: [
-      "Solaranlage Kosten",
-      "Photovoltaik Kosten",
-      "PV-Anlage Preis",
-      "Solaranlage mit Speicher Kosten",
-      "Photovoltaik Komplettpaket Preis",
-      "Kosten pro kWp",
+      "Photovoltaik Kosten Österreich",
+      "PV-Anlage Kosten pro kWp",
+      "Photovoltaik Gewerbe Kosten",
+      "PV-Anlage 100 kWp Kosten",
+      "Photovoltaik mit Speicher Kosten",
+      "Photovoltaik laufende Kosten",
     ],
   },
   {
     slug: "einspeiseverguetung-2026",
-    title: "Einspeisevergütung 2026: aktuelle Sätze in ct/kWh",
+    title: "Einspeisetarif Österreich 2026: OeMAG, Versorger & Direktvermarktung",
     // Kurzform fuer Karten und Breadcrumbs
-    kurzTitel: "Einspeisevergütung 2026",
+    kurzTitel: "Einspeisetarif 2026",
     description:
-      "Einspeisevergütung 2026: 7,70 ct/kWh bis 10 kWp. Alle Sätze für Teil- und Volleinspeisung, Solarspitzengesetz und was die EEG-Novelle 2027 plant.",
+      "Einspeisetarif Österreich 2026: OeMAG-Marktpreis je Monat und Quartal, Tarife der Energieversorger, Überschusseinspeisung, Direktvermarktung und PPA im Gewerbe.",
     excerpt:
-      "Seit dem 1. August 2026 gelten neue Sätze. Was Sie pro eingespeister Kilowattstunde bekommen, wie lange die Vergütung garantiert ist und warum 2027 alles anders werden könnte.",
-    veroeffentlicht: "2026-09-11",
-    aktualisiert: "2026-09-13",
-    lesezeit: 9,
-    kategorie: "Förderung, Steuern & Recht",
+      "Was bringt eingespeister Solarstrom 2026 in Österreich? OeMAG-Marktpreis mit allen Monats- und Quartalswerten, Modelle der Energieversorger und was für Gewerbeanlagen gilt.",
+    veroeffentlicht: "2026-09-28",
+    aktualisiert: "2026-09-28",
+    lesezeit: 12,
+    kategorie: "Netz, Energiegemeinschaften & Markt",
     // Bild aus /public
     bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
     bildAlt: "Photovoltaikanlage auf mehreren Dachflächen – Luftaufnahme",
     keywords: [
-      "Einspeisevergütung 2026",
-      "Einspeisevergütung",
-      "EEG Vergütung 2026",
-      "Einspeisevergütung Photovoltaik",
-      "Volleinspeisung",
+      "Einspeisetarif Österreich 2026",
+      "OeMAG Marktpreis 2026",
+      "Einspeisevergütung Österreich",
       "Überschusseinspeisung",
-      "ct pro kWh Einspeisung",
+      "Einspeisetarif Photovoltaik",
+      "Direktvermarktung Photovoltaik Österreich",
+      "Marktpreis § 41 ÖSG",
     ],
   },
 ];
@@ -149,9 +151,9 @@ export function artikelPfad(slug) {
   return `${RATGEBER_BASE}/${slug}`;
 }
 
-/** Deutsches Datum: "2026-09-11" -> "11. September 2026" */
+/** Österreichisches Datum: "2026-01-11" -> "11. Jänner 2026" */
 export function datumLang(iso) {
-  return new Date(iso).toLocaleDateString("de-DE", {
+  return new Date(iso).toLocaleDateString("de-AT", {
     day: "numeric",
     month: "long",
     year: "numeric",

@@ -1,310 +1,349 @@
-// Ratgeber: Bidirektionales Laden (V2H/V2G) – Stand September 2026
-// Strompreis und Vergütung aus @/data/solarrechner und @/data/einspeiseverguetung,
-// Förderprogramm und § 14a-Werte aus @/data/wallbox.
+// Ratgeber: Bidirektionales Laden (V2H, V2B, V2G) – Stand September 2026, Österreich
+// Quellen: TOR Verteilernetzanschluss NS V1.3.1 (Einspeisemodus von Ladeeinrichtungen unterliegt den TOR
+// Stromerzeugungsanlagen; Typeneinteilung nach vereinbarter Einspeisekapazität; Entkupplungsschutz bei V2G),
+// TOR Stromerzeugungsanlagen Typ A V1.4 (Konformität, ersatzstromfähige Umrichter), OVE R 37 (Prüfanforderungen
+// Ladestationen), OeMAG-FAQ (Rückeinspeisung von Speichern derzeit nicht vorgesehen), OeMAG-Marktpreise 2026,
+// BMF-Strompreis 2026, ISO 15118-20. Rechenbeispiel mit offengelegten Annahmen.
 
-import { ANNAHMEN } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { WALLBOX } from "@/data/wallbox";
-
+const HH = 0.32806; // €/kWh brutto, BMF-Referenz Haushalt 2026
+const MARKT = 0.068; // €/kWh, gerundeter OeMAG-Sommermarktpreis PV 2026
+const TAGE = 200;
+const KWH_TAG = 10;
+const WIRKUNGSGRAD = 0.85; // Annahme Lade-/Entladeverluste gesamt
 const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
-const eur10 = (n) => (Math.round(n / 10) * 10).toLocaleString("de-DE") + " €";
-const komma = (n, s = 1) => n.toFixed(s).replace(".", ",");
-
-const STROM = ANNAHMEN.strompreis * 100;
-const EINSP = VERGUETUNG.saetze[0].teileinspeisung;
-
-// Modellrechnung V2H: Solarstrom tagsüber ins Auto, abends ins Haus
-const KWH_ABEND = 5; // kWh je Abend/Nacht aus dem Auto
-const TAGE = 200; // Tage im Jahr mit Auto zu Hause und ausreichend Solarüberschuss
-const RUNDLAUF = 0.85; // Wirkungsgrad Laden + Entladen
-const V2H_KWH = KWH_ABEND * TAGE;
-const V2H_VORTEIL = (V2H_KWH * STROM - (V2H_KWH / RUNDLAUF) * EINSP) / 100;
-
-// Nutzbarer Akkuinhalt im schonenden Fenster
-const AKKU = 77;
-const FENSTER = AKKU * 0.6; // 20–80 %
-
-const BIDI_FOERDERUNG = WALLBOX.mfhProgramm.saetze.find((s) => /bidirektional/i.test(s.was));
+const v2hWert = TAGE * KWH_TAG * (HH * WIRKUNGSGRAD - MARKT);
 
 const artikel = {
   slug: "bidirektionales-laden",
-  title: "Bidirektionales Laden 2026: Was V2H und V2G heute können",
-  seoTitle: "Bidirektionales Laden 2026: V2H, V2G & Recht | Ökovolt",
+  title: "Bidirektionales Laden: V2H, V2B und V2G in Österreich 2026",
+  seoTitle: "Bidirektionales Laden 2026: V2H, V2B, V2G | Ökovolt",
   kurzTitel: "Bidirektionales Laden",
   description:
-    "Bidirektionales Laden 2026: Was V2H und V2G in Deutschland heute können, welche Autos und Wallboxen es gibt, was rechtlich gilt und für wen es sich lohnt.",
+    "Bidirektionales Laden 2026: Stand von V2H, V2B und V2G in Österreich, TOR-Regeln für Rückspeisung, Normen, Fahrzeuge, Garantie und Nutzen für Betriebe.",
   excerpt:
-    "Das E-Auto als Hausspeicher: Welche Fahrzeuge und Wallboxen 2026 wirklich bidirektional laden, was die neuen Regeln zu Netzentgelten und MiSpeL bedeuten und wie viel sich damit sparen lässt.",
+    "Das E-Auto als Speicher für Haus, Betrieb und Netz: Was bidirektionales Laden 2026 in Österreich technisch und rechtlich kann, welche Regeln der Netzbetreiber setzt und wann es sich für Flotten lohnen wird.",
   hauptKeyword: "bidirektionales laden",
   keywords: [
-    "Bidirektionales Laden",
-    "Vehicle-to-Home",
-    "Vehicle-to-Grid Deutschland",
-    "V2H Wallbox",
-    "Bidirektionales Laden Autos 2026",
+    "bidirektionales Laden",
+    "Vehicle to Home Österreich",
+    "Vehicle to Grid",
+    "V2B Flotte",
+    "bidirektionale Wallbox",
+    "ISO 15118-20",
     "E-Auto als Stromspeicher",
-    "Bidirektionales Laden PV-Anlage",
-    "MiSpeL bidirektionales Laden",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
-  kategorie: "Wärmepumpe & E-Mobilität",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
+  kategorie: "E-Mobilität & Sektorkopplung",
   bild: "/Images/Ratgeber/bidirektionales-laden.jpg",
-  bildAlt: "Einfamilienhaus mit Photovoltaikanlage und Sigenergy-Energiespeicher am Abend, davor ein Elektroauto",
-  badge: { wert: `${Math.round(FENSTER)} kWh`, text: `nutzbar aus einem ${AKKU}-kWh-Akku im Fenster 20–80 % – ein Vielfaches eines Hausspeichers` },
+  bildAlt: "Heimspeichersystem mit DC-Lademodul für ein Elektroauto",
+  badge: { wert: "TOR", text: "Im Einspeisemodus gilt die Ladeeinrichtung als Stromerzeugungsanlage" },
 
   kurzFazit: [
-    "**Bidirektionales Laden heißt: Das E-Auto kann Strom nicht nur laden, sondern auch wieder abgeben – an Geräte (V2L), ans eigene Haus (V2H) oder ins Stromnetz (V2G).**",
-    "**Stand September 2026 ist V2H in Deutschland mit ausgewählten Fahrzeugen nutzbar**, etwa mit VW-Konzernmodellen und passender DC-Wallbox. Das erste kommerzielle V2G-Angebot für Privatkunden starteten BMW und E.ON im Februar 2026.",
-    "Rechtlich wurde 2025 die doppelte Belastung mit Netzentgelten für zurückgespeisten Strom beseitigt. Die Bundesnetzagentur will die Detailregeln für den gemischten Betrieb (MiSpeL) am 1. Oktober 2026 festlegen.",
-    `Mit PV-Anlage kann ein Auto abends Solarstrom ins Haus zurückgeben. In unserer Modellrechnung spart das rund **${eur10(V2H_VORTEIL)} im Jahr** – bei derzeit noch deutlich teureren Wallboxen.`,
-    "Für die meisten Haushalte gilt 2026: Beim Kauf von Auto und Wallbox auf Bidi-Fähigkeit achten, aber nicht allein deswegen investieren.",
+    "**Bidirektionales Laden macht die Fahrzeugbatterie zum Speicher: fürs Haus (V2H), für den Betrieb (V2B) oder fürs Netz (V2G).** 2026 ist V2H mit ausgewählten Fahrzeugen und DC-Wallboxen verfügbar, V2B im Pilotstadium, V2G am Strommarkt noch die Ausnahme.",
+    "**In Österreich gilt eine rückspeisefähige Ladeeinrichtung im Einspeisemodus als Stromerzeugungsanlage:** Die TOR Verteilernetzanschluss verweisen auf die TOR Stromerzeugungsanlagen; bei V2G ist ein Entkupplungsschutz vorzusehen. Die Anmeldung erfolgt wie bei einem Speicher.",
+    `**Der Nutzen ist real, aber begrenzt:** Verschiebt ein Haushalt an ${TAGE} Tagen je ${KWH_TAG} kWh Solarstrom über das Auto in den Abend, bringt das in unserem Beispiel rund ${eur(v2hWert)} im Jahr – vor Kosten der teureren Wallbox.`,
+    "**Für Betriebe liegt das Potenzial bei Flotten, die planbar stehen:** Fahrzeugbatterien könnten Lastspitzen kappen und Solarstrom verschieben. Voraussetzung sind kompatible Fahrzeuge, Herstellerfreigaben für die Garantie und ein Energiemanagement.",
   ],
 
   abschnitte: [
     {
-      id: "antwort",
+      id: "begriffe",
       titel: "Was ist bidirektionales Laden?",
-      tocLabel: "Die kurze Antwort",
+      tocLabel: "Begriffe",
       bloecke: [
         {
           typ: "p",
-          text: "**Beim bidirektionalen Laden fließt Strom in beide Richtungen: vom Netz oder der PV-Anlage ins Auto und bei Bedarf wieder aus dem Auto heraus.** Damit wird die Fahrzeugbatterie zum großen, mobilen Stromspeicher. Ein typischer E-Auto-Akku fasst 60 bis 80 kWh und damit ein Vielfaches eines Hausspeichers mit 8 bis 10 kWh.",
+          text: "**Bidirektional heißt: Strom fließt nicht nur ins Auto, sondern auch wieder heraus – ins Gebäude, in den Betrieb oder ins öffentliche Netz.** Die Fahrzeugbatterie ist mit oft 50 bis 100 kWh um ein Vielfaches größer als ein typischer Hausspeicher und steht bei vielen Fahrzeugen den Großteil des Tages ungenutzt. Die Begriffe [bidirektionales Laden](/wissen/lexikon#bidirektionales-laden) und [V2G](/wissen/lexikon#v2g) sind im Lexikon erklärt.",
         },
         {
           typ: "tabelle",
-          caption: "Die drei Formen des bidirektionalen Ladens",
-          kopf: ["Abkürzung", "Bedeutung", "Wohin fließt der Strom?", "Stand in Deutschland 2026"],
+          caption: "Formen des bidirektionalen Ladens",
+          kopf: ["Begriff", "Wohin fließt der Strom?", "Nutzen", "Stand 2026"],
           zeilen: [
-            ["V2L", "Vehicle-to-Load", "Über eine Steckdose am Auto an einzelne Geräte", "Bei vielen Modellen serienmäßig"],
-            ["V2H", "Vehicle-to-Home", "Ins eigene Hausnetz, gesteuert vom Energiemanagement", "Mit ausgewählten Autos und passender Wallbox nutzbar"],
-            ["V2G", "Vehicle-to-Grid", "Ins öffentliche Netz, vermarktet über einen Stromanbieter", "Erste Angebote seit 2026, Regeln werden 2026/2027 konkretisiert"],
+            ["V2L (Vehicle to Load)", "direkt an Geräte über Steckdose am Auto", "Werkzeug, Camping, Notstrom für Einzelgeräte", "bei vielen Modellen serienmäßig"],
+            ["V2H (Vehicle to Home)", "ins Hausnetz hinter dem Zähler", "Eigenverbrauch erhöhen, Notstrom", "mit ausgewählten Fahrzeugen und DC-Wallboxen verfügbar"],
+            ["V2B (Vehicle to Building)", "ins Betriebsnetz", "Peak Shaving, Eigenverbrauch, Ersatzstrom", "Pilotprojekte, erste Produkte"],
+            ["V2G (Vehicle to Grid)", "ins öffentliche Netz / an den Strommarkt", "Flexibilität, Regelenergie, Handel", "Einzelfälle, regulatorisch und technisch anspruchsvoll"],
           ],
-          hervorheben: 3,
-          markierteZeile: 1,
-          minBreite: 640,
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "V2L ist kein V2H",
-          text: "Eine Schuko-Steckdose im Kofferraum kann einen Wasserkocher oder eine Kühlbox versorgen, aber nicht das Hausnetz. Für V2H braucht es eine Ladestation, die mit dem Auto kommuniziert, die Netzanschlussregeln erfüllt und vom Energiemanagement gesteuert wird. Erklärt auch im [Lexikon: Bidirektionales Laden](/wissen/lexikon#bidirektionales-laden).",
+          minBreite: 680,
         },
       ],
     },
     {
-      id: "stand-2026",
-      titel: "Welche Autos und Wallboxen können 2026 bidirektional laden?",
-      tocLabel: "Autos & Wallboxen 2026",
+      id: "technik",
+      titel: "Wie funktioniert bidirektionales Laden technisch?",
+      tocLabel: "Technik & Normen",
       bloecke: [
         {
           typ: "p",
-          text: "**Funktionierendes V2H und V2G gibt es 2026 nur als abgestimmtes Paket aus Fahrzeug, Softwarestand, Wallbox und teils Stromtarif.** Viele Autos sind technisch vorbereitet, aber noch nicht vom Hersteller freigegeben. Die Übersicht zeigt belegte Beispiele, keine vollständige Liste:",
+          text: "**Für bidirektionales Laden müssen Fahrzeug, Ladeeinrichtung und Kommunikation zusammenpassen – und der Wechselrichter, der Gleich- in Wechselstrom umwandelt, muss die Netzanschlussregeln erfüllen.** Bei DC-bidirektionalen Wallboxen sitzt dieser Wechselrichter in der Wallbox, bei AC-bidirektionalen Lösungen im Fahrzeug.",
         },
-        {
-          typ: "tabelle",
-          caption: "Beispiele für bidirektionale Lösungen in Deutschland, Stand September 2026",
-          kopf: ["Hersteller / Angebot", "Art", "Voraussetzungen laut Anbieter", "Status"],
-          zeilen: [
-            ["VW ID.-Modelle, Cupra Born/Tavascan, Škoda Enyaq/Elroq", "V2H (DC)", "Akku ab 77 kWh bzw. 85 kWh, Software ab 3.5, DC-Wallbox und Hausspeicher von E3/DC", "Nutzbar"],
-            ["Ford Explorer, Capri", "V2H (DC)", "Kompatible DC-Wallbox", "Laut ADAC seit 2025 nutzbar"],
-            ["BMW iX3 (Neue Klasse) mit E.ON", "V2G (AC)", "BMW Wallbox Professional (11 kW), Tarif mit V2G-Vertrag, Smart Meter; mit PV derzeit nur bei Volleinspeisung", "Seit Februar 2026 bestellbar"],
-            ["Mercedes-Benz MB.CHARGE Home", "V2G / V2H", "Elektrischer GLC als erstes Modell, Wallbox und Tarif über Partner", "Start 2026, schrittweise"],
-            ["Renault 5 mit Mobilize", "V2G (AC)", "Bidirektionale AC-Ladestation und Energievertrag", "In Frankreich gestartet, Deutschland angekündigt"],
-          ],
-          minBreite: 720,
-          fussnote: "Quellen: ADAC, Herstellerangaben (BMW Group, Mercedes-Benz, Volkswagen). Freigaben hängen von Modelljahr und Softwarestand ab – vor dem Kauf beim Hersteller prüfen.",
-        },
-        { typ: "h3", text: "AC oder DC: Wo sitzt der Wechselrichter?" },
         {
           typ: "karten",
           cols: 2,
           items: [
-            { titel: "DC-bidirektional", text: "Der Wechselrichter steckt in der Wallbox. Das Auto gibt Gleichstrom ab – wie beim Schnellladen. Vorteil: funktioniert mit vielen Fahrzeugen, sobald der Hersteller es freigibt. Nachteil: teure Ladestation. Einige Systeme koppeln das Auto direkt an den DC-Bus von PV und Speicher." },
-            { titel: "AC-bidirektional", text: "Der Wechselrichter sitzt im Auto (Bordlader). Die Wallbox ist einfacher und günstiger, das Fahrzeug muss aber als Erzeugungsanlage die Netzanschlussregeln ([VDE-AR-N 4105](/wissen/lexikon#vde-ar-n-4105)) erfüllen. Die Kommunikation läuft über ISO 15118-20." },
+            { titel: "DC-bidirektional", text: "Die Wallbox wandelt Strom in beide Richtungen und ist als Erzeugungsanlage zertifizierbar. Heute der übliche Weg für V2H und V2B – teurer als AC-Wallboxen." },
+            { titel: "AC-bidirektional", text: "Der Onboard-Lader des Fahrzeugs speist zurück. Günstigere Wallbox, aber das Fahrzeug selbst muss die Netzanforderungen erfüllen – das ist regulatorisch noch nicht breit gelöst." },
+            { titel: "Kommunikation", text: "ISO 15118-20 regelt die bidirektionale Kommunikation für CCS-Fahrzeuge; CHAdeMO unterstützt V2H seit Längerem. Die Ladeeinrichtung braucht zudem eine offene Schnittstelle zum Energiemanagement." },
+            { titel: "Energiemanagement", text: "Entscheidet, wann geladen und entladen wird – unter Beachtung von Mindestladestand, Abfahrtszeit und Leistungsgrenzen." },
           ],
         },
         {
           typ: "kasten",
-          variant: "tipp",
-          titel: "Systemlösungen mit Speicher",
-          text: "Einige Heimspeicher-Systeme bieten ein bidirektionales DC-Lademodul als Erweiterung an – etwa Sigenergy mit bis zu 25 kW Lade- und Entladeleistung (laut Hersteller V2H- und V2G-fähig, Nutzung abhängig von der Freigabe des Fahrzeugherstellers). Ökovolt ist Partner von Sigenergy, Fronius, Huawei, Solis und meteocontrol und berät dabei herstellerneutral: Entscheidend ist, ob Ihr Auto die jeweilige Ladestation offiziell unterstützt.",
+          variant: "wichtig",
+          titel: "Fahrzeug- und Garantiefreigabe prüfen",
+          text: "Nicht jedes Fahrzeug erlaubt das Entladen über den Ladeanschluss, und manche Hersteller begrenzen die zulässige Energiemenge für bidirektionale Nutzung in den Garantiebedingungen. Klären Sie vor dem Kauf, ob Fahrzeug, Wallbox und Nutzung vom Fahrzeughersteller freigegeben sind.",
         },
       ],
     },
     {
       id: "recht",
-      titel: "Rechtslage 2026: Netzentgelte, MiSpeL und § 14a",
-      tocLabel: "Rechtslage",
+      titel: "Was gilt in Österreich rechtlich und beim Netzbetreiber?",
+      tocLabel: "TOR & Netzbetreiber",
       bloecke: [
         {
           typ: "p",
-          text: "**Die größten rechtlichen Hürden wurden 2025 und 2026 abgebaut: Zurückgespeister Strom aus dem Auto wird inzwischen wie Speicherstrom behandelt, und die Bundesnetzagentur regelt, wie Solar- und Netzstrom im gemischten Betrieb abgegrenzt werden.**",
+          text: "**Laut TOR Verteilernetzanschluss (Niederspannung, Version 1.3.1) gelten für einspeisefähige Ladeeinrichtungen im Einspeisemodus – also „vehicle to grid“ bzw. „vehicle to home“ – die Anforderungen der TOR Stromerzeugungsanlagen.** Für die Typeneinteilung zählt die vereinbarte maximale Einspeisekapazität am Netzanschlusspunkt. Im Lademodus gelten weiter die Regeln für Ladeeinrichtungen.",
         },
         {
           typ: "tabelle",
-          caption: "Rechtliche Eckpunkte für bidirektionales Laden, Stand September 2026",
-          kopf: ["Thema", "Was gilt", "Bedeutung für Sie"],
+          caption: "Regeln für bidirektionale Ladeeinrichtungen in Österreich, Stand September 2026",
+          kopf: ["Thema", "Regel", "Praxis"],
           zeilen: [
-            ["Netzentgelte (§ 118 Abs. 6 EnWG)", "Seit der EnWG-Novelle (Bundestag 13.11.2025, Bundesrat 21.11.2025) sind bidirektional genutzte Ladepunkte in die Netzentgeltbefreiung für Speicher einbezogen", "Keine doppelten Netzentgelte mehr für Strom, der aus dem Netz geladen und wieder eingespeist wird"],
-            ["MiSpeL (Bundesnetzagentur)", "Festlegung zur Marktintegration von Speichern und Ladepunkten; Veröffentlichung für den 1. Oktober 2026 geplant, mit Abgrenzungs- und Pauschaloption (PV bis 30 kWp)", "Regelt, welcher eingespeiste Strom als Solarstrom vergütet wird und welcher als zwischengespeicherter Netzstrom gilt"],
-            ["Messung", "V2G-Angebote setzen ein [intelligentes Messsystem](/wissen/lexikon#smart-meter-gateway) voraus", "Smart Meter frühzeitig beim Messstellenbetreiber anfragen"],
-            ["§ 14a EnWG", "Ladepunkte über 4,2 kW sind steuerbare Verbrauchseinrichtungen", `Netzentgelt-Rabatt (pauschal rund ${WALLBOX.paragraf14a.ersparnisVon}–${WALLBOX.paragraf14a.ersparnisBis} € pro Jahr), dafür Dimmung des Netzbezugs im Ausnahmefall`],
-            ["Netzanschluss", "Rückspeisende Ladepunkte gelten als Erzeugungsanlage", "Anmeldung beim Netzbetreiber, Nachweise nach VDE-AR-N 4105; je nach Betriebsweise Registrierung im Marktstammdatenregister"],
+            ["Einstufung", "Einspeisemodus nach TOR Stromerzeugungsanlagen (bei < 250 kW Typ A)", "Anmeldung wie Erzeugungsanlage/Speicher über den Elektrotechniker"],
+            ["Netzschutz", "Entkupplungsschutz ist vorzusehen, wenn über die Ladeeinrichtung Energie ins Netz eingespeist wird", "zertifizierte Geräte mit Ländereinstellung Österreich"],
+            ["Blindleistung & Netzstützung", "im Entlademodus nach TOR Stromerzeugungsanlagen", "Parametrierung laut Netzbetreiber"],
+            ["Konformität", "Prüfberichte akkreditierter Prüfstellen; für Ladestationen OVE-Richtlinie R 37", "Nachweise bei der Meldung vorlegen"],
+            ["Einspeisevergütung", "OeMAG: Rückeinspeisung aus Energiespeichern derzeit nicht vorgesehen", "V2H hinter dem Zähler statt Einspeisung ins Netz"],
           ],
-          minBreite: 720,
-          fussnote: "Keine Rechtsberatung. Details der MiSpeL-Festlegung und die Umsetzung durch Netzbetreiber können sich bis zur Veröffentlichung noch ändern.",
+          minBreite: 680,
+          fussnote: "Quellen: E-Control (TOR), OVE, OeMAG. Wie Netzentgelte und Abgaben bei der Rückspeisung aus Fahrzeugbatterien künftig behandelt werden, hängt vom neuen Elektrizitätsrecht ab – aktuellen Stand prüfen.",
         },
         {
-          typ: "kasten",
-          variant: "recht",
-          titel: "V2H ohne Einspeisung ist am einfachsten",
-          text: "Solange das Auto nur das eigene Haus versorgt und kein Strom ins Netz fließt, stellen sich viele Abgrenzungsfragen nicht. Für V2G mit PV-Anlage ist dagegen entscheidend, wie Solarstrom und zwischengespeicherter Netzstrom gemessen werden – genau das regelt MiSpeL. Zusammenhänge mit dem [§ 14a EnWG](/ratgeber/paragraf-14a-enwg) und dem [Smart-Meter-Rollout](/ratgeber/smart-meter-pflicht) lesen Sie in unseren Ratgebern.",
+          typ: "p",
+          text: "Die Grundlagen der Netzanschlussregeln beschreibt der Ratgeber [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss); was das neue Elektrizitätswirtschaftsgesetz für Speicher und Prosumer ändert, erklärt [ElWG – das neue Elektrizitätswirtschaftsgesetz](/ratgeber/elwg-elektrizitaetswirtschaftsgesetz).",
         },
       ],
     },
     {
       id: "nutzen",
-      titel: "Was bringt bidirektionales Laden mit PV-Anlage?",
-      tocLabel: "Nutzen & Rechnung",
+      titel: "Was bringt bidirektionales Laden wirtschaftlich?",
+      tocLabel: "Wirtschaftlichkeit",
       bloecke: [
         {
           typ: "p",
-          text: `**Mit V2H lädt das Auto tagsüber Solarüberschuss und gibt ihn abends und nachts an das Haus ab – der Effekt entspricht einem sehr großen Stromspeicher, allerdings nur, wenn das Auto zu Hause steht.** Aus einem ${AKKU}-kWh-Akku lassen sich im schonenden Bereich zwischen 20 und 80 % rund ${Math.round(FENSTER)} kWh nutzen. Ein Einfamilienhaus braucht abends und nachts meist nur 4 bis 8 kWh.`,
+          text: "**Der wirtschaftliche Nutzen entsteht dadurch, dass günstiger Solarstrom vom Tag in den teuren Abend verschoben wird – ähnlich wie bei einem stationären Speicher, aber ohne dessen Anschaffungskosten.** Dem stehen die Mehrkosten einer bidirektionalen Wallbox, Umwandlungsverluste und mögliche Garantiebeschränkungen gegenüber.",
         },
         {
           typ: "tabelle",
-          caption: "Modellrechnung V2H mit PV-Anlage (ohne Kosten der Ladestation)",
-          kopf: ["Annahme / Ergebnis", "Wert"],
+          caption: "Beispielrechnung V2H: Solarstrom über das Auto in den Abend verschieben",
+          kopf: ["Größe", "Annahme", "Ergebnis"],
           zeilen: [
-            ["Strom aus dem Auto ins Haus pro Abend", `${KWH_ABEND} kWh`],
-            ["Tage mit Auto zu Hause und genug Solarüberschuss", `${TAGE}`],
-            ["Ins Haus abgegebener Solarstrom pro Jahr", `${V2H_KWH.toLocaleString("de-DE")} kWh`],
-            ["Wirkungsgrad Laden und Entladen", `${Math.round(RUNDLAUF * 100)} %`],
-            ["Ersparter Netzstrom", `${eur10((V2H_KWH * STROM) / 100)} (${komma(STROM)} ct/kWh)`],
-            ["Entgangene Einspeisevergütung", `${eur10(((V2H_KWH / RUNDLAUF) * EINSP) / 100)} (${ct(EINSP)} ct/kWh)`],
-            ["**Vorteil pro Jahr**", `**${eur10(V2H_VORTEIL)}**`],
+            ["verschobene Energie", `${KWH_TAG} kWh an ${TAGE} Tagen`, `${(TAGE * KWH_TAG).toLocaleString("de-DE")} kWh pro Jahr`],
+            ["Wert je kWh im Haus", "32,806 ct/kWh (BMF-Referenz 2026) × 85 % Wirkungsgrad", `${(HH * WIRKUNGSGRAD * 100).toFixed(1).replace(".", ",")} ct/kWh`],
+            ["entgangene Einspeisung", "6,8 ct/kWh (OeMAG-Sommermarktpreis 2026, gerundet)", "6,8 ct/kWh"],
+            ["Vorteil pro Jahr", "vor Mehrkosten der Wallbox", eur(v2hWert)],
           ],
-          hervorheben: 1,
-          minBreite: 460,
-          fussnote: "Vereinfachte Modellrechnung; ohne zusätzlichen Batterieverschleiß, ohne Erlöse aus V2G oder dynamischen Tarifen. Hat das Haus bereits einen Stromspeicher, fällt der zusätzliche Nutzen kleiner aus.",
+          hervorheben: 2,
+          minBreite: 600,
+          fussnote: "Annahmen: Privathaushalt mit PV-Überschuss, Auto abends zu Hause, 85 % Gesamtwirkungsgrad für Laden und Entladen. Ohne Batterieverschleiß und Wallbox-Mehrkosten.",
         },
         {
           typ: "p",
-          text: "Beim V2G-Angebot von BMW und E.ON zahlt der Anbieter für die Bereitschaft einen Bonus von bis zu 720 € im Jahr (0,24 € je angeschlossener Stunde, maximal 60 € pro Monat) und vergütet tatsächlich zurückgespeiste Kilowattstunden mit 40 ct. Solche Angebote setzen voraus, dass der Anbieter über Lade- und Entladezeiten mitentscheidet.",
-        },
-        {
-          typ: "p",
-          text: `Wer die Speicherfrage zuerst klären möchte: Ein stationärer Speicher arbeitet jeden Tag, auch wenn das Auto unterwegs ist. Welche Größe sich rechnet, zeigt der Ratgeber [Stromspeicher Kosten](/ratgeber/stromspeicher-kosten). Für V2G sind zudem [dynamische Stromtarife](/wissen/lexikon#dynamischer-stromtarif) ein wichtiger Baustein.`,
-        },
-        { typ: "tool", href: "/rechner/stromspeicher", titel: "Brauchen Sie überhaupt einen zusätzlichen Speicher?", text: "Autarkie und Wirtschaftlichkeit verschiedener Speichergrößen – mit E-Auto und Wärmepumpe.", label: "Zum Stromspeicher-Rechner" },
-      ],
-    },
-    {
-      id: "akku",
-      titel: "Schadet bidirektionales Laden dem Akku?",
-      tocLabel: "Akku & Garantie",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Zusätzliche Zyklen belasten den Akku, im moderaten Ladefenster und mit geringer Leistung ist der Effekt nach Herstellerangaben aber begrenzt.** Wichtiger als die Chemie ist die Frage, was die Garantie abdeckt.",
-        },
-        {
-          typ: "liste",
-          punkte: [
-            "**Volkswagen:** Für V2H mit ID.-Modellen werden rund 4.000 Betriebsstunden bzw. 10.000 kWh Rückspeisung genannt, ohne dass Ansprüche aus der Batteriegarantie berührt werden.",
-            "**Ladefenster:** Viele Systeme nutzen nur den Bereich zwischen etwa 20 und 80 % – das schont die Zellen und lässt Reichweite für spontane Fahrten.",
-            "**Mindestladestand einstellen:** Legen Sie fest, wie weit das Haus den Akku entladen darf, damit das Auto morgens fahrbereit ist.",
-            "**Garantiebedingungen schriftlich prüfen:** Hersteller regeln Grenzen unterschiedlich. Ohne Freigabe kann eine Rückspeisung Garantieansprüche gefährden.",
-          ],
-        },
-        {
-          typ: "kasten",
-          variant: "info",
-          titel: "Notstrom über das Auto?",
-          text: "V2H kann bei einem Stromausfall das Haus versorgen – aber nur, wenn Wallbox und Hausinstallation dafür ausgelegt sind (Netztrennung, Ersatzstromumschaltung). Das ist nicht automatisch der Fall. Unterschiede zwischen Notstrom und Ersatzstrom erklärt der Ratgeber [Notstrom mit Photovoltaik](/ratgeber/notstrom-photovoltaik).",
+          text: "Für Betriebe kann der Nutzen größer sein, wenn Fahrzeugbatterien Lastspitzen senken: Wer den Leistungspreis zahlt, spart mit jedem Kilowatt weniger Spitze. Das setzt aber voraus, dass die Fahrzeuge zu den Spitzenzeiten angesteckt sind und genügend Ladung übrig haben. Für viele Betriebe ist deshalb heute ein stationärer [Gewerbespeicher](/gewerbespeicher) die verlässlichere Lösung – die Flotte kann ihn künftig ergänzen. Mehr im Ratgeber [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis).",
         },
       ],
     },
     {
-      id: "kosten",
-      titel: "Was kostet eine bidirektionale Wallbox?",
-      tocLabel: "Kosten & Förderung",
+      id: "flotte",
+      titel: "V2B: Die Firmenflotte als Speicher",
+      tocLabel: "V2B im Betrieb",
       bloecke: [
         {
           typ: "p",
-          text: `**Bidirektionale Ladestationen sind 2026 deutlich teurer als normale Wallboxen – der ADAC nennt etwa das Drei- bis Vierfache.** Eine konventionelle 11-kW-Wallbox kostet mit Installation typischerweise ${WALLBOX.gesamtVon.toLocaleString("de-DE")} bis ${WALLBOX.gesamtBis.toLocaleString("de-DE")} €. DC-Lösungen mit integriertem Wechselrichter liegen darüber, AC-Systeme mit Wechselrichter im Fahrzeug darunter. Manche Anbieter rabattieren die Wallbox im Paket mit einem V2G-Tarif.`,
-        },
-        {
-          typ: "p",
-          text: BIDI_FOERDERUNG
-            ? `Im Bundesprogramm „Laden im Mehrparteienhaus“ werden Ladepunkte mit bidirektionaler Funktion mit bis zu ${BIDI_FOERDERUNG.bis.toLocaleString("de-DE")} € gefördert (Antragszeitraum ${WALLBOX.mfhProgramm.von} bis ${WALLBOX.mfhProgramm.bis}). Für Einfamilienhäuser gibt es 2026 kein bundesweites Wallbox-Programm; Landes- und Kommunalförderungen prüft der [Förder-Check](/foerdercheck).`
-            : "Für Einfamilienhäuser gibt es 2026 kein bundesweites Wallbox-Programm; Landes- und Kommunalförderungen prüft der [Förder-Check](/foerdercheck).",
-        },
-      ],
-    },
-    {
-      id: "empfehlung",
-      titel: "Lohnt sich bidirektionales Laden schon? Unsere Einschätzung",
-      tocLabel: "Einschätzung & Checkliste",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Für Pioniere mit passendem Auto kann V2H 2026 bereits sinnvoll sein, für die meisten Haushalte ist es eine Option für die nächste Anschaffung.** Die Technik funktioniert, die Rechtslage wird klarer, das Angebot an freigegebenen Fahrzeugen und Wallboxen wächst. Wer jetzt eine PV-Anlage oder Wallbox plant, sollte die Tür offenhalten:",
+          text: "**Eine Flotte mit planbaren Standzeiten ist ein großer, verteilter Speicher: Zehn Fahrzeuge mit je 20 kWh freigegebener Reserve entsprechen 200 kWh Speicherkapazität.** Die Herausforderung liegt in der Organisation: Jedes Fahrzeug muss zur Abfahrt ausreichend geladen sein, und die Entladung darf die Batteriegarantie nicht gefährden.",
         },
         {
           typ: "checkliste",
           punkte: [
-            "**Beim Autokauf** nach offizieller V2H-/V2G-Freigabe für Deutschland fragen – nicht nur nach „vorbereitet“.",
-            "**Leitungen und Zählerschrank** so planen, dass eine spätere bidirektionale Ladestation ohne großen Umbau möglich ist.",
-            "**Energiemanagement** wählen, das Wallbox, Speicher und PV herstellerübergreifend steuern kann (z. B. über EEBus oder ISO 15118).",
-            "**Smart Meter** beantragen – ohne intelligentes Messsystem sind V2G und dynamische Tarife nicht möglich.",
-            "**Garantie und Tarifbedingungen** schriftlich prüfen, bevor das Auto ins Netz zurückspeist.",
-            "**Wirtschaftlich rechnen:** Mehrkosten der Ladestation mit dem realistischen jährlichen Vorteil vergleichen.",
+            "Fahrprofile auswerten: Welche Fahrzeuge stehen wann zuverlässig am Betrieb?",
+            "Mindestladestand und Abfahrtszeiten je Fahrzeug festlegen.",
+            "Fahrzeug- und Garantiefreigaben für bidirektionale Nutzung prüfen.",
+            "DC-bidirektionale Ladepunkte mit TOR-konformer Zertifizierung wählen.",
+            "Energiemanagement mit Prioritäten für Ladung, Entladung, Peak Shaving und PV-Überschuss einplanen.",
+            "Anmeldung beim Netzbetreiber als Erzeugungsanlage bzw. Speicher.",
+            "Mit einem stationären Speicher vergleichen: Was ist verlässlicher, was günstiger?",
           ],
         },
         {
           typ: "p",
-          text: "Solange V2H nicht infrage kommt, ist [PV-Überschussladen](/ratgeber/pv-ueberschussladen) der einfachste Weg, Solarstrom ins Auto zu bringen – mit jeder regelbaren [Wallbox](/produkte/wallbox).",
+          text: "Wie eine Flotte heute mit Solarstrom geladen und steuerlich richtig behandelt wird, beschreibt der Ratgeber [E-Flotte laden mit Photovoltaik](/ratgeber/e-flotte-laden-photovoltaik). Die Einbindung in Ladeparks übernimmt Ökovolt über den Bereich [Ladeinfrastruktur](/ladeinfrastruktur).",
+        },
+      ],
+    },
+    {
+      id: "notstrom",
+      titel: "Notstrom aus dem E-Auto",
+      tocLabel: "Notstrom",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Mit V2H und einer Netztrennung kann das E-Auto bei Stromausfall das Haus oder einzelne Stromkreise versorgen – eine volle Batterie reicht für einen sparsamen Haushalt mehrere Tage.** Dafür muss die Anlage wie jede Ersatzstromversorgung automatisch und allpolig vom Netz trennen und darf nach Netzwiederkehr nicht asynchron zuschalten. Wie das normgerecht umgesetzt wird, erklärt der Ratgeber [Notstrom mit Photovoltaik](/ratgeber/notstrom-photovoltaik).",
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "V2L als einfache Lösung",
+          text: "Viele E-Autos bieten eine Steckdose (V2L), an die sich einzelne Geräte anschließen lassen – etwa Kühlschrank, Router oder Werkzeug. Das ersetzt keine Ersatzstromanlage, hilft aber bei kurzen Ausfällen. Ins Hausnetz einspeisen darf man darüber nicht.",
+        },
+      ],
+    },
+    {
+      id: "vergleich",
+      titel: "Fahrzeugbatterie oder stationärer Speicher?",
+      tocLabel: "Auto vs. Speicher",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ein stationärer Speicher ist immer da, wenn er gebraucht wird – die Fahrzeugbatterie nur, wenn das Auto angesteckt ist und genug Ladung übrig hat.** Dafür ist die Fahrzeugbatterie ohnehin bezahlt und deutlich größer. Welche Lösung besser passt, hängt vom Nutzungsprofil ab.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Fahrzeugbatterie (V2H/V2B) und stationärer Speicher im Vergleich",
+          kopf: ["Kriterium", "Fahrzeugbatterie (bidirektional)", "Stationärer Speicher"],
+          zeilen: [
+            ["Verfügbarkeit", "nur bei angestecktem Fahrzeug", "ständig"],
+            ["Kapazität", "groß (oft 50–100 kWh), davon nur ein Teil freigegeben", "nach Bedarf dimensioniert"],
+            ["Zusatzkosten", "bidirektionale Wallbox, kompatibles Fahrzeug", "Speicher und Wechselrichter"],
+            ["Garantie", "Fahrzeughersteller-Bedingungen beachten", "Speicherhersteller-Garantie"],
+            ["Peak Shaving im Betrieb", "nur bei planbaren Standzeiten verlässlich", "verlässlich planbar"],
+            ["Notstrom", "möglich, wenn Auto zu Hause", "möglich, jederzeit"],
+            ["Regelwerk", "Einspeisemodus nach TOR Stromerzeugungsanlagen", "Speicher nach TOR Stromerzeugungsanlagen"],
+          ],
+          minBreite: 640,
+        },
+        {
+          typ: "p",
+          text: "In der Praxis ergänzen sich beide: Ein kleiner stationärer Speicher deckt die Grundlast am Abend und die Morgenspitze, das Auto übernimmt an Tagen, an denen es zu Hause oder am Betrieb steht, zusätzliche Mengen. Kosten und Dimensionierung stationärer Speicher behandeln die Ratgeber [Stromspeicher: Kosten](/ratgeber/stromspeicher-kosten) und [Gewerbespeicher: Kosten](/ratgeber/gewerbespeicher-kosten).",
+        },
+      ],
+    },
+    {
+      id: "zielgruppen",
+      titel: "Für wen lohnt sich bidirektionales Laden zuerst?",
+      tocLabel: "Zielgruppen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Am ehesten lohnt sich bidirektionales Laden dort, wo Fahrzeuge verlässlich zu bekannten Zeiten stehen und teurer Abend- oder Spitzenstrom ersetzt werden kann.** Vier Konstellationen stechen heraus:",
+        },
+        {
+          typ: "karten",
+          cols: 2,
+          items: [
+            { titel: "Premium-Privat & Chalets", text: "Große PV-Anlage, Fahrzeug oft zu Hause, Wunsch nach Notstrom – V2H ist hier schon heute umsetzbar. Mehr unter [Chalets](/chalets)." },
+            { titel: "Kleine Betriebe mit Poolfahrzeugen", text: "Fahrzeuge stehen nachmittags und abends am Betrieb und können Abendlasten übernehmen." },
+            { titel: "Gemeinden", text: "Gemeindefahrzeuge und Carsharing an Gemeindegebäuden – Kombination mit Energiegemeinschaft und Blackout-Vorsorge denkbar." },
+            { titel: "Hotels & Tourismus", text: "Shuttle- und Servicefahrzeuge mit planbaren Einsatzzeiten als Ergänzung zum stationären Speicher." },
+          ],
+        },
+      ],
+    },
+    {
+      id: "vorbereiten",
+      titel: "Heute schon vorbereiten: Ladeinfrastruktur für morgen",
+      tocLabel: "Vorbereiten",
+      bloecke: [
+        {
+          typ: "ablauf",
+          schritte: [
+            ["Anschlussleistung und Leerrohre planen", "Leitungsquerschnitte und Leerrohre so dimensionieren, dass DC-bidirektionale Ladepunkte nachrüstbar sind."],
+            ["Offene Schnittstellen wählen", "Ladepunkte und Energiemanagement mit OCPP bzw. EEBUS, idealerweise mit Unterstützung für ISO 15118."],
+            ["Netzanschlusspunkt vorbereiten", "Messkonzept und Platz für Netz- und Anlagenschutz vorsehen, falls später eingespeist werden soll."],
+            ["Fahrzeugbeschaffung abstimmen", "Bei neuen Fahrzeugen auf bidirektionale Fähigkeit und Herstellerfreigabe achten."],
+          ],
+        },
+      ],
+    },
+    {
+      id: "ausblick",
+      titel: "Ausblick: Wann wird bidirektionales Laden Standard?",
+      tocLabel: "Ausblick",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Bidirektionales Laden wird in den nächsten Jahren schrittweise alltagstauglich – getrieben von Fahrzeugen mit ISO-15118-20-Unterstützung, günstigeren Wallboxen und neuen Regeln für Speicher und Flexibilität im Elektrizitätsrecht.** Für Investitionen heute gilt: Ladeinfrastruktur mit Leerrohren, ausreichender Anschlussleistung und offenen Schnittstellen planen, damit bidirektionale Ladepunkte später ohne großen Umbau nachgerüstet werden können.",
+        },
+        {
+          typ: "liste",
+          punkte: [
+            "**Kurzfristig:** V2H mit ausgewählten Fahrzeugen, Notstrom, Eigenverbrauch – für Premium-Privat und kleine Betriebe.",
+            "**Mittelfristig:** V2B für Flotten mit Peak Shaving, sobald mehr Fahrzeuge und Garantiefreigaben verfügbar sind.",
+            "**Langfristig:** V2G mit Vermarktung von Flexibilität und Regelenergie – mehr dazu im Ratgeber [Regelenergie und Flexibilität](/ratgeber/regelenergie-flexibilitaet).",
+          ],
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Welche Autos können 2026 bidirektional laden?", a: "V2H ist in Deutschland unter anderem mit VW-Konzernmodellen (ID.-Familie, Cupra, Škoda mit großem Akku und aktueller Software) und Ford Explorer/Capri nutzbar. BMW bietet mit dem iX3 seit Februar 2026 V2G an, Mercedes startet 2026 mit dem elektrischen GLC. Viele weitere Modelle sind vorbereitet, aber noch nicht freigegeben." },
-    { q: "Was ist der Unterschied zwischen V2H und V2G?", a: "Bei V2H (Vehicle-to-Home) versorgt das Auto nur das eigene Haus. Bei V2G (Vehicle-to-Grid) speist es Strom ins öffentliche Netz ein, meist gesteuert von einem Stromanbieter, der dafür vergütet." },
-    { q: "Ist bidirektionales Laden in Deutschland erlaubt?", a: "Ja. Seit der EnWG-Novelle Ende 2025 wird zurückgespeister Strom aus dem Auto bei den Netzentgelten wie Speicherstrom behandelt. Die Bundesnetzagentur konkretisiert mit der MiSpeL-Festlegung (geplant ab 1. Oktober 2026) die Abgrenzung im gemischten Betrieb mit PV-Anlagen." },
-    { q: "Brauche ich für bidirektionales Laden eine spezielle Wallbox?", a: "Ja. Nötig ist eine bidirektionale Ladestation, die vom Autohersteller für das Modell freigegeben ist – entweder eine DC-Wallbox mit eigenem Wechselrichter oder eine AC-Wallbox für Fahrzeuge mit bidirektionalem Bordlader." },
-    { q: "Kann ich mein Haus bei Stromausfall mit dem E-Auto versorgen?", a: "Nur, wenn die Ladestation und die Hausinstallation ersatzstromfähig ausgelegt sind. Eine normale V2H-Installation schaltet bei Netzausfall aus Sicherheitsgründen ab." },
-    { q: "Lohnt sich bidirektionales Laden mit einer PV-Anlage?", a: `In unserer Modellrechnung spart V2H mit PV rund ${eur10(V2H_VORTEIL)} pro Jahr. Ob sich das rechnet, hängt vor allem vom Aufpreis der Ladestation, der Standzeit des Autos zu Hause und davon ab, ob bereits ein Hausspeicher vorhanden ist.` },
-    { q: "Verliere ich durch V2H die Batteriegarantie?", a: "Nicht zwingend. Für VW-Modelle werden etwa rund 4.000 Stunden oder 10.000 kWh Rückspeisung ohne Einfluss auf die Garantie genannt. Die Regeln unterscheiden sich je Hersteller und sollten vorab geprüft werden." },
+    {
+      q: "Welche E-Autos können bidirektional laden?",
+      a: "2026 eine wachsende Zahl von Modellen, teils nur über CHAdeMO oder mit bestimmten DC-Wallboxen und oft mit Einschränkungen in den Garantiebedingungen. Prüfen Sie vor dem Kauf die Freigabe des Fahrzeugherstellers für V2H oder V2B.",
+    },
+    {
+      q: "Darf ich in Österreich mit dem E-Auto ins Netz einspeisen?",
+      a: "Nur mit einer Ladeeinrichtung, die als Stromerzeugungsanlage die TOR erfüllt, und nach Anmeldung beim Netzbetreiber. Laut TOR Verteilernetzanschluss gelten im Einspeisemodus die TOR Stromerzeugungsanlagen, bei V2G ist ein Entkupplungsschutz vorzusehen.",
+    },
+    {
+      q: "Bekomme ich für Strom aus dem Auto eine Einspeisevergütung?",
+      a: "Die OeMAG sieht eine Rückeinspeisung aus Energiespeichern derzeit nicht vor. Wirtschaftlich sinnvoll ist heute vor allem V2H: den Strom im eigenen Gebäude verbrauchen statt einspeisen.",
+    },
+    {
+      q: "Schadet bidirektionales Laden der Autobatterie?",
+      a: "Jeder zusätzliche Zyklus trägt zur Alterung bei, moderne Batterien sind aber auf viele Zyklen ausgelegt. Relevanter sind die Garantiebedingungen: Manche Hersteller begrenzen die für bidirektionale Nutzung zulässige Energiemenge.",
+    },
+    {
+      q: "Kann das E-Auto bei Stromausfall mein Haus versorgen?",
+      a: "Ja, mit V2H-fähigem Fahrzeug, bidirektionaler Wallbox und einer normgerechten Netztrennung. Eine volle Batterie reicht für einen sparsamen Haushalt mehrere Tage. Ohne Netztrennung ist das unzulässig und gefährlich.",
+    },
+    {
+      q: "Lohnt sich V2B für meine Firmenflotte schon?",
+      a: "Für viele Betriebe ist es 2026 noch ein Pilotthema. Wer heute Ladeinfrastruktur plant, sollte sie für bidirektionale Ladepunkte vorbereiten. Für verlässliches Peak Shaving ist ein stationärer Speicher derzeit meist die bessere Wahl.",
+    },
+    {
+      q: "Was kostet eine bidirektionale Wallbox?",
+      a: "DC-bidirektionale Wallboxen sind deutlich teurer als gewöhnliche AC-Wallboxen, weil sie einen eigenen Wechselrichter enthalten. Die Preise sinken, variieren aber stark nach Leistung und Hersteller – holen Sie Angebote inklusive Installation, Netz- und Anlagenschutz und Anmeldung ein.",
+    },
+    {
+      q: "Brauche ich für V2H einen eigenen Zähler?",
+      a: "Nicht zwingend, aber die Anlage muss beim Netzbetreiber gemeldet und das Messkonzept abgestimmt sein. Wird nur hinter dem Zähler im eigenen Gebäude verbraucht, genügt meist der bestehende Zweirichtungszähler; für eine spätere Vermarktung von Flexibilität können zusätzliche Messungen nötig werden.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/pv-ueberschussladen", titel: "PV-Überschussladen", text: "E-Auto mit Solarstrom laden – heute mit jeder regelbaren Wallbox." },
-    { href: "/ratgeber/wallbox-installation", titel: "Wallbox-Installation", text: "Kosten, Anmeldung und Förderung." },
-    { href: "/ratgeber/energiemanagementsystem", titel: "Energiemanagementsystem", text: "PV, Speicher, Auto und Wärmepumpe steuern." },
-    { href: "/produkte/stromspeicher", titel: "Stromspeicher", text: "Speicherlösungen, die täglich arbeiten." },
+    { href: "/ratgeber/e-flotte-laden-photovoltaik", titel: "E-Flotte laden", text: "Flotte, Sachbezug und Lastmanagement." },
+    { href: "/ratgeber/notstrom-photovoltaik", titel: "Notstrom mit PV", text: "Ersatzstrom und Inselbetrieb." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Die stationäre Alternative für Peak Shaving." },
+    { href: "/ladeinfrastruktur", titel: "Ladeinfrastruktur", text: "Zukunftssichere Ladeparks." },
   ],
 
   quellen: [
-    { titel: "ADAC – Bidirektionales Laden: E-Auto wird zum Stromspeicher", url: "https://www.adac.de/rund-ums-fahrzeug/elektromobilitaet/laden/bidirektionales-laden/", stand: "07/2025" },
-    { titel: "BMW Group – Erstes V2G-Ladeangebot Deutschlands mit E.ON", url: "https://www.press.bmwgroup.com/deutschland/article/detail/T0455460DE/erstes-bidirektionales-vehicle-to-grid-v2g-ladeangebot-deutschlands-von-bmw-group-und-e-on:-wallbox-und-stromtarif-ab-sofort-bestellbar?language=de", stand: "02/2026" },
-    { titel: "Bundesnetzagentur – Festlegung zur Marktintegration von Speichern und Ladepunkten (MiSpeL)", url: "https://www.bundesnetzagentur.de/DE/Fachthemen/ElektrizitaetundGas/ErneuerbareEnergien/EEG_Aufsicht/MiSpeL/artikel.html", stand: "09/2026" },
-    { titel: "§ 118 EnWG – Übergangsregelungen (Netzentgeltbefreiung für Speicher)", url: "https://www.gesetze-im-internet.de/enwg_2005/__118.html", stand: "09/2026" },
-    { titel: "Volkswagen – Bidirektionales Laden mit dem ID.", url: "https://www.volkswagen.de/de/elektromobilitaet/laden/laden-zuhause/bidirektionales-laden.html", stand: "09/2026" },
-    { titel: "Mercedes-Benz – MB.CHARGE Home", url: "https://home-intelligent.mercedes-benz.com/", stand: "09/2026" },
-    { titel: "Sigenergy – Bidirektionales DC-Lademodul", url: "https://www.sigenergy.com/de/products/dc-charger", stand: "09/2026" },
-    { titel: "electrive – AgNes und MiSpeL: Neue Regeln für bidirektionales Laden", url: "https://www.electrive.net/2026/08/06/agnes-und-mispel-neue-regeln-fuer-ladeparks-und-bidirektionales-laden/", stand: "08/2026" },
+    { titel: "E-Control – TOR Verteilernetzanschluss Niederspannung, Version 1.3.1 (Ladeeinrichtungen, Einspeisemodus)", url: "https://www.e-control.at/documents/1785851/1811582/TOR_Verteilernetzanschluss_-_Niederspannung_V1.3.1.pdf/64c9e5f0-e38d-351a-b52e-a1b0e07077ae?t=1774007041985", stand: "03/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen Typ A, Version 1.4", url: "https://www.e-control.at/documents/1785851/1811582/TOR+Stromerzeugungsanlagen+Typ+A+Version+1.4+%287%29.pdf/093752f5-e220-0731-b8a8-bfa85ccb7287?t=1780897058735", stand: "06/2026" },
+    { titel: "OVE – Elektromobilität: aktualisierte und neue OVE-Richtlinien (R 37)", url: "https://www.ove.at/ove-news/details/elektromobilitaet-aktualisierte-und-neue-ove-richtlinien/", stand: "09/2026" },
+    { titel: "OeMAG – FAQ (Einspeisung mit Energiespeicher)", url: "https://www.oem-ag.at/service/faqs", stand: "09/2026" },
+    { titel: "OeMAG – Marktpreise 2026", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
+    { titel: "EY Österreich – BMF: Strompreis 2026 (32,806 ct/kWh)", url: "https://www.ey.com/de_at/technical/steuernachrichten/bmf-strompreis-2026-laden", stand: "10/2025" },
   ],
 
-  seitenCta: { titel: "Speicher oder Auto als Speicher?", text: "Autarkie und Wirtschaftlichkeit mit Ihren Werten.", href: "/rechner/stromspeicher", label: "Zum Speicher-Rechner" },
+  seitenCta: { titel: "Ladeinfrastruktur zukunftssicher?", text: "Vorbereitet für bidirektionale Ladepunkte.", href: "/ladeinfrastruktur", label: "Ladeinfrastruktur planen" },
   cta: {
-    title: "Heute planen, morgen bidirektional laden.",
-    text: "Wir legen PV-Anlage, Wallbox, Zählerschrank und Energiemanagement so aus, dass Überschussladen sofort funktioniert und V2H später möglich bleibt.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Wallbox-Lösungen ansehen", href: "/produkte/wallbox" },
+    title: "Heute laden, morgen speichern – Ladeinfrastruktur mit Weitblick.",
+    text: "Ökovolt plant PV, Speicher und Ladepunkte mit offenen Schnittstellen, damit bidirektionales Laden später ohne Umbau möglich ist – in ganz Österreich.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Wallbox", href: "/produkte/wallbox" },
   },
 };
 

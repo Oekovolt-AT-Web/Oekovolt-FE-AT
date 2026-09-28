@@ -1,304 +1,306 @@
-// Ratgeber: Photovoltaik-Ertrag pro kWp – Regionen, Monate, Ausrichtung & Neigung
-// Ertragsdaten: eigene Abfragen im EU-Tool PVGIS 5.3 (JRC), Datenbank PVGIS-SARAH3,
-// Zeitraum 2005–2023, 1 kWp, 14 % Systemverluste, Neigung 35°, Süd, abgerufen 09/2026.
-// Planungswerte des Solarrechners (ANNAHMEN) sind bewusst vorsichtiger und werden importiert.
+// Ratgeber: Photovoltaik-Ertrag pro kWp in Österreich – alle Landeshauptstädte
+// Ertragsdaten: eigene API-Abfragen EU JRC PVGIS 5.3 (re.jrc.ec.europa.eu/api/v5_3/PVcalc),
+// Strahlungsdatenbank PVGIS-SARAH3, Zeitraum 2005–2023, 1 kWp kristallin, 14 % Systemverluste,
+// Horizont aus Geländemodell, Koordinaten der Ortszentren, abgerufen am 28.09.2026.
 
-import { ANNAHMEN, AUSRICHTUNGEN, NEIGUNGEN } from "@/data/solarrechner";
-
-const n0 = (v) => Math.round(v).toLocaleString("de-DE");
-const r10 = (v) => n0(Math.round(v / 10) * 10);
-const pct = (v) => `${Math.round(v * 100)} %`;
-const faktor = (liste, id) => liste.find((x) => x.id === id)?.faktor ?? 1;
-
-// PVGIS 5.3: spezifischer Jahresertrag (kWh/kWp, Süd 35°) und horizontale Globalstrahlung (kWh/m²·a)
+// [Stadt, Bundesland, Seehöhe, opt. Neigung, E opt, H(i) opt, Süd 30°, Süd 10°, Ost 10°, West 10°, Süd 90°, Jahresschwankung SD]
 const STAEDTE = [
-  ["Kiel", "Schleswig-Holstein", 956, 1039],
-  ["Hamburg", "Hamburg", 955, 1047],
-  ["Bremen", "Bremen", 963, 1058],
-  ["Rostock", "Mecklenburg-Vorpommern", 997, 1078],
-  ["Hannover", "Niedersachsen", 977, 1076],
-  ["Berlin", "Berlin/Brandenburg", 1022, 1115],
-  ["Münster", "NRW (Münsterland)", 989, 1090],
-  ["Köln", "NRW (Rheinland)", 1003, 1106],
-  ["Kassel", "Hessen (Nord)", 982, 1089],
-  ["Leipzig", "Sachsen", 1041, 1142],
-  ["Erfurt", "Thüringen", 1013, 1116],
-  ["Frankfurt am Main", "Hessen (Süd)", 1043, 1167],
-  ["Saarbrücken", "Saarland", 1046, 1176],
-  ["Nürnberg", "Bayern (Franken)", 1032, 1158],
-  ["Stuttgart", "Baden-Württemberg", 1090, 1208],
-  ["Freiburg", "Baden-Württemberg (Süd)", 1077, 1190],
-  ["München", "Bayern (Oberbayern)", 1097, 1211],
-  ["Türkheim (Unterallgäu)", "Bayern (Schwaben)", 1107, 1230],
+  ["Wien", "W", 186, 38, 1176, 1476, 1166, 1069, 975, 975, 822, 46],
+  ["St. Pölten", "NÖ", 275, 38, 1142, 1439, 1133, 1039, 945, 953, 799, 44],
+  ["Linz", "OÖ", 270, 38, 1143, 1443, 1134, 1040, 946, 955, 801, 42],
+  ["Salzburg", "S", 432, 37, 1074, 1369, 1066, 987, 896, 914, 743, 54],
+  ["Innsbruck", "T", 580, 42, 1369, 1695, 1347, 1209, 1088, 1079, 1006, 51],
+  ["Bregenz", "V", 407, 39, 1140, 1437, 1128, 1030, 927, 943, 802, 57],
+  ["Klagenfurt", "K", 450, 39, 1252, 1576, 1240, 1133, 1027, 1035, 885, 57],
+  ["Graz", "St", 365, 40, 1226, 1547, 1211, 1098, 998, 991, 881, 63],
+  ["Eisenstadt", "B", 179, 38, 1200, 1508, 1190, 1090, 993, 995, 837, 45],
 ];
 
-// PVGIS 5.3, Monatsertrag in kWh je kWp (Süd 35°)
-const MONATE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-const KIEL = [25, 41, 81, 118, 129, 127, 122, 111, 91, 62, 30, 19];
-const KASSEL = [31, 50, 89, 115, 121, 122, 121, 112, 95, 65, 35, 26];
-const TUERKHEIM = [44, 67, 100, 119, 121, 127, 130, 122, 104, 80, 50, 43];
-const summe = (a) => a.reduce((x, y) => x + y, 0);
-const winterAnteil = (a) => (a[10] + a[11] + a[0] + a[1]) / summe(a);
-const sommerAnteil = (a) => summe(a.slice(3, 9)) / summe(a);
+const f0 = (x) => Math.round(x).toLocaleString("de-AT");
+const p1 = (x) => String(Math.round(x * 1000) / 10).replace(".", ",") + " %";
 
-// PVGIS 5.3, Standort Kassel: relativer Jahresertrag zum Optimum (38° Süd = 100 %)
-const AUSRICHTUNG_TAB = [
-  ["0° (flach)", 85, 85, 85, 85, 85, 85],
-  ["10°", 85, 90, 92, 90, 84, 77],
-  ["20°", 83, 93, 97, 93, 83, 68],
-  ["30°", 82, 94, 99, 94, 81, 59],
-  ["40°", 79, 94, 100, 94, 78, 50],
-  ["50°", 75, 92, 99, 92, 75, 41],
-  ["60°", 71, 88, 95, 88, 70, 34],
-  ["90° (Fassade)", 51, 67, 71, 66, 50, 20],
-];
+const LINZ = STAEDTE[2];
+const OW_LINZ = (LINZ[8] + LINZ[9]) / 2;
 
 const artikel = {
   slug: "photovoltaik-ertrag-pro-kwp",
-  title: "Photovoltaik-Ertrag pro kWp: Werte nach Region, Monat und Dach",
-  seoTitle: "Photovoltaik Ertrag pro kWp 2026: Tabellen | Ökovolt",
+  title: "Photovoltaik-Ertrag pro kWp in Österreich: Werte aller Landeshauptstädte",
+  seoTitle: "PV-Ertrag pro kWp Österreich: PVGIS-Werte | Ökovolt",
   kurzTitel: "Ertrag pro kWp",
   description:
-    "Photovoltaik-Ertrag pro kWp in Deutschland: 950 bis 1.100 kWh je kWp nach Region, Monatsverteilung und Ertragstabelle für Ausrichtung und Neigung – mit Rechenbeispielen.",
+    "Photovoltaik-Ertrag pro kWp in Österreich: PVGIS-Werte für alle neun Landeshauptstädte, Süd, Ost-West und Fassade, Einflussfaktoren und Beispiel Gewerbedach.",
   excerpt:
-    "Wie viel Strom erzeugt ein Kilowatt-Peak in Kiel, Kassel oder im Allgäu? Ertragswerte für 18 Standorte, die Verteilung über die Monate und eine Tabelle für jede Dachausrichtung.",
+    "Zwischen 1.070 und 1.370 kWh pro kWp und Jahr – je nach Landeshauptstadt, Ausrichtung und Neigung. Echte PVGIS-Werte für Wien bis Bregenz, dazu Ost-West, Flachdach und Fassade im Vergleich.",
   hauptKeyword: "photovoltaik ertrag pro kwp",
   keywords: [
     "Photovoltaik Ertrag pro kWp",
-    "kWh pro kWp Deutschland",
-    "PV Ertrag pro Jahr",
-    "Photovoltaik Ertrag pro Monat",
-    "Spezifischer Ertrag Photovoltaik",
-    "PV Ertrag Ausrichtung Neigung Tabelle",
-    "Ertrag 10 kWp Anlage",
+    "PV Ertrag Österreich",
+    "spezifischer Ertrag Photovoltaik",
+    "kWh pro kWp Wien Linz Graz",
+    "PVGIS Österreich",
+    "Ertrag Ost-West Photovoltaik",
+    "Solarertrag Bundesland",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
   bild: "/Images/Kontakt/faqs.jpg",
   bildAlt: "Solarmodule vor blauem Himmel mit Wolken",
-  badge: { wert: "950–1.100", text: "kWh je kWp pro Jahr auf einem Süddach in Deutschland (PVGIS)" },
+  badge: { wert: "1.143", text: "kWh/kWp in Linz, optimal nach Süden (PVGIS)" },
 
   kurzFazit: [
-    "**Ein Kilowatt-Peak (kWp) erzeugt in Deutschland auf einem gut ausgerichteten Dach rund 950 bis 1.100 kWh Strom im Jahr** – im Norden eher 950, im Süden bis 1.100 kWh.",
-    `**Eine 10-kWp-Anlage liefert damit etwa 9.500 bis 11.000 kWh pro Jahr.** Unser Solarrechner plant vorsichtiger mit ${n0(ANNAHMEN.ertragProKwpSued)} kWh je kWp für ein Süddach.`,
-    `**Ost- und Westdächer erreichen rund 80 bis 85 %** des Süd-Optimums, Norddächer mit 30° Neigung knapp 60 %. Die Neigung zwischen 20° und 50° ist fast egal.`,
-    `**Rund 70 % des Jahresertrags entstehen von April bis September,** November bis Februar bringen zusammen nur etwa 15 %.`,
-    "Einzelne Jahre schwanken wetterbedingt um etwa **±5 %** um den langjährigen Mittelwert.",
+    "**Eine optimal nach Süden geneigte PV-Anlage erzeugt in Österreichs Landeshauptstädten zwischen 1.074 kWh/kWp (Salzburg) und 1.369 kWh/kWp (Innsbruck) pro Jahr** – laut EU-Tool PVGIS 5.3 bei 14 % Systemverlusten.",
+    "Wien, Linz, St. Pölten und Bregenz liegen mit rund 1.140 bis 1.180 kWh/kWp im Mittelfeld; der Süden (Graz 1.226, Klagenfurt 1.252) und Eisenstadt (1.200) liefern 5 bis 10 % mehr.",
+    "**Ost-West mit 10° Neigung** bringt rund **83 % des Ertrags einer 30°-Südanlage** je kWp, eine flache Südaufständerung mit 10° rund 91 %. Auf Flachdächern passt bei Ost-West aber deutlich mehr Leistung aufs Dach.",
+    "Die Jahreswerte schwanken um rund **4 bis 5 %** (Standardabweichung). Für Finanzierung und Wirtschaftlichkeit sollte man deshalb mit dem langjährigen Mittel und einem Sicherheitsabschlag rechnen.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Wie viel Ertrag bringt ein kWp in Deutschland?",
-      tocLabel: "Kurzantwort",
+      titel: "Wie viel Ertrag bringt 1 kWp in Österreich?",
+      tocLabel: "Ertrag je kWp",
       bloecke: [
         {
           typ: "p",
-          text: "**Ein nach Süden ausgerichtetes, etwa 35° geneigtes und unverschattetes Hausdach erzeugt in Deutschland im langjährigen Mittel zwischen rund 950 kWh (Küste) und 1.100 kWh (Voralpenland) pro installiertem Kilowatt-Peak.** Das zeigen unsere Berechnungen mit dem EU-Werkzeug PVGIS für 18 Standorte. Diese Kennzahl heißt [spezifischer Ertrag](/wissen/lexikon#spezifischer-ertrag) oder Volllaststunden und ist die wichtigste Größe, um den Stromertrag einer Anlage abzuschätzen.",
+          text: "**Ein Kilowatt-Peak Photovoltaikleistung erzeugt in Österreich bei optimaler Südausrichtung rund 1.070 bis 1.370 kWh Strom pro Jahr.** Dieser Wert heißt [spezifischer Ertrag](/wissen/lexikon#spezifischer-ertrag) und ist die wichtigste Kennzahl für die Wirtschaftlichkeit: Er gibt an, wie viele Kilowattstunden jedes installierte kWp liefert – unabhängig von der Anlagengröße. Eine 100-kWp-Anlage in Linz kommt damit auf rund 114.000 kWh, in Graz auf rund 123.000 kWh.",
         },
         {
           typ: "p",
-          text: "Die Rechnung ist einfach: **Jahresertrag = Anlagenleistung in kWp × spezifischer Ertrag.** Eine 8-kWp-Anlage in Kassel mit rund 980 kWh je kWp erzeugt also etwa 7.850 kWh im Jahr. Über alle Dachanlagen in Deutschland – also auch schlecht ausgerichtete und verschattete – liegt der Durchschnitt niedriger: Laut Fraunhofer ISE kamen PV-Dachanlagen im Trendszenario der Übertragungsnetzbetreiber auf 922 Volllaststunden.",
-        },
-        {
-          typ: "kennzahl",
-          wert: `${n0(ANNAHMEN.ertragProKwpSued)} kWh/kWp`,
-          titel: "Planungswert unseres Solarrechners (Süddach)",
-          text: "Bewusst etwas unter den Simulationswerten für Süddeutschland: Verschmutzung, Schnee, kleine Verschattungen und Ausfallzeiten kosten in der Praxis einige Prozent. Für Norddeutschland sind rund 900 kWh je kWp eine vorsichtige Annahme.",
+          text: "Die folgenden Werte haben wir direkt über die Schnittstelle von PVGIS abgefragt, dem Photovoltaik-Informationssystem der Gemeinsamen Forschungsstelle der EU-Kommission. PVGIS kombiniert Satellitendaten der Jahre 2005 bis 2023 mit einem Geländemodell, das den Horizont – also Berge – berücksichtigt. Als [Systemverluste](/wissen/lexikon#performance-ratio) sind die PVGIS-Standardwerte von 14 % für Kabel, Wechselrichter, Verschmutzung und Alterung angesetzt.",
         },
       ],
     },
     {
-      id: "regionen",
-      titel: "Ertrag pro kWp nach Region: Tabelle für 18 Standorte",
-      tocLabel: "Nach Region",
+      id: "landeshauptstaedte",
+      titel: "PVGIS-Werte für alle neun Landeshauptstädte",
+      tocLabel: "Tabelle Landeshauptstädte",
       bloecke: [
         {
           typ: "p",
-          text: "**Je weiter südlich und je höher gelegen der Standort, desto höher ist der Ertrag.** Die [Globalstrahlung](/wissen/lexikon#globalstrahlung) – also die Sonnenenergie, die jährlich auf eine waagerechte Fläche trifft – liegt in Deutschland zwischen gut 1.000 und über 1.200 kWh je Quadratmeter. Der Unterschied zwischen Kiel und dem Allgäu beträgt beim Ertrag rund 15 %.",
+          text: "**Innsbruck führt die Tabelle an, Salzburg bildet das Schlusslicht – der Unterschied beträgt 27 %.** Innsbruck profitiert von vielen Sonnenstunden, Föhnlagen und einem sonnigen Winter; Salzburg liegt am Alpennordrand im Stau feuchter Luftmassen. Die optimale Neigung liegt überall zwischen 37° und 42°, der Mehrertrag gegenüber 30° ist mit etwa 1 % aber gering.",
         },
         {
           typ: "tabelle",
-          caption: "Spezifischer Jahresertrag nach Standort, Süddach 35°, langjähriges Mittel 2005–2023",
-          kopf: ["Standort", "Region", "Globalstrahlung (kWh/m²)", "Ertrag (kWh/kWp)", "10 kWp (kWh/Jahr)"],
-          zeilen: STAEDTE.map(([stadt, region, ertrag, ghi]) => [stadt, region, r10(ghi), r10(ertrag), `ca. ${n0(Math.round(ertrag / 10) * 100)}`]),
-          hervorheben: 3,
-          minBreite: 680,
-          fussnote: "Quelle: eigene Berechnung mit PVGIS 5.3 (Joint Research Centre der EU-Kommission), Strahlungsdatenbank SARAH-3, 14 % Systemverluste, Montage mit geringer Hinterlüftung, Horizontverschattung durch Gelände berücksichtigt. Gerundete Simulationswerte, keine Ertragsgarantie.",
+          caption: "Spezifischer Jahresertrag in kWh/kWp je Landeshauptstadt und Ausrichtung (PVGIS 5.3, Mittel 2005–2023)",
+          kopf: ["Stadt", "Seehöhe", "optimal (Neigung)", "Süd 30°", "Süd 10°", "Ost-West 10°", "Südfassade 90°", "Einstrahlung opt. (kWh/m²)"],
+          zeilen: STAEDTE.map((s) => [
+            `${s[0]} (${s[1]})`,
+            `${f0(s[2])} m`,
+            `${f0(s[4])} (${s[3]}°)`,
+            f0(s[6]),
+            f0(s[7]),
+            f0((s[8] + s[9]) / 2),
+            f0(s[10]),
+            f0(s[5]),
+          ]),
+          hervorheben: 2,
+          markierteZeile: 2,
+          minBreite: 780,
+          fussnote: "Quelle: EU JRC, PVGIS 5.3 (PVGIS-SARAH3), eigene API-Abfragen vom 28.09.2026 für die Koordinaten der Ortszentren. 1 kWp kristalline Module, 14 % Systemverluste, freistehend montiert, Geländehorizont berücksichtigt. Ost-West = Mittel aus je 10° Ost und 10° West. Satellitendaten in Gebirgstälern (z. B. Innsbruck) haben eine höhere Unsicherheit.",
         },
         {
           typ: "kasten",
           variant: "info",
-          titel: "Warum nicht jedes sonnige Jahr gleich ist",
-          text: "Laut PVGIS schwankt der Jahresertrag an einem Standort von Jahr zu Jahr mit einer Standardabweichung von etwa 4 bis 6 %. Ein Jahr mit 7 % weniger als im Mittel ist also kein Hinweis auf einen Defekt. Die Unterschiede zwischen den Regionen übertragen sich laut Fraunhofer ISE außerdem nicht 1:1 auf den Ertrag, weil Modultemperatur, Verschmutzung und Schneeauflage mitspielen.",
-        },
-      ],
-    },
-    {
-      id: "monate",
-      titel: "Wie verteilt sich der Ertrag über das Jahr?",
-      tocLabel: "Nach Monat",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Von April bis September erzeugt eine Anlage in Deutschland rund ${pct(sommerAnteil(KASSEL))} ihres Jahresertrags, von November bis Februar nur etwa ${pct(winterAnteil(KASSEL))}.** Im Juni liefert ein kWp in Kassel rund ${KASSEL[5]} kWh, im Dezember nur ${KASSEL[11]} kWh – knapp ein Fünftel. Im Süden fällt der Winter etwas ertragreicher aus, weil die Sonne höher steht: In Türkheim bringt der Dezember mit ${TUERKHEIM[11]} kWh je kWp mehr als doppelt so viel wie in Kiel (${KIEL[11]} kWh).`,
-        },
-        {
-          typ: "tabelle",
-          caption: "Monatsertrag einer 10-kWp-Anlage (Süd, 35°) in kWh – Nord, Mitte und Süd im Vergleich",
-          kopf: ["Monat", "Kiel", "Kassel", "Türkheim (Allgäu)", "Anteil am Jahr (Kassel)"],
-          zeilen: [
-            ...MONATE.map((m, i) => [m, n0(KIEL[i] * 10), n0(KASSEL[i] * 10), n0(TUERKHEIM[i] * 10), `${(Math.round((KASSEL[i] / summe(KASSEL)) * 1000) / 10).toLocaleString("de-DE")} %`]),
-            ["**Jahr**", `**${n0(summe(KIEL) * 10)}**`, `**${n0(summe(KASSEL) * 10)}**`, `**${n0(summe(TUERKHEIM) * 10)}**`, "**100 %**"],
-          ],
-          hervorheben: 2,
-          markierteZeile: 5,
-          minBreite: 600,
-          fussnote: "Quelle: eigene Berechnung mit PVGIS 5.3, Mittelwerte 2005–2023. Summen können durch Rundung der Monatswerte leicht abweichen.",
+          titel: "Was die Einstrahlung verrät",
+          text: "Die letzte Spalte zeigt die Sonnenenergie, die jährlich auf einen Quadratmeter optimal geneigte Fläche trifft. Das Verhältnis von Ertrag zu Einstrahlung liegt überall bei rund 0,79 bis 0,81 – das ist die Performance Ratio der Modellanlage. Moderne, gut geplante Gewerbeanlagen erreichen im Betrieb oft 0,80 bis 0,85; liegt Ihre Anlage deutlich darunter, lohnt ein Blick auf Verschattung, Verschmutzung und Wechselrichter.",
         },
         {
           typ: "p",
-          text: "Für die Planung heißt das: Im Sommer entsteht fast immer ein Überschuss, im Winter reicht auch eine große Anlage nicht für den kompletten Bedarf. Wer eine [Wärmepumpe](/ratgeber/waermepumpe-mit-photovoltaik) betreibt, sollte das berücksichtigen – ihr Strombedarf ist im Winter am höchsten. Mehr zu den dunklen Monaten lesen Sie im Ratgeber [Photovoltaik im Winter](/ratgeber/photovoltaik-im-winter).",
+          text: "Für die Wirtschaftlichkeitsrechnung eines Betriebs sind die Unterschiede zwischen den Bundesländern spürbar, aber nicht entscheidend: Ein Unterschied von 10 % im Ertrag wiegt weniger schwer als die Frage, wie viel Strom der Betrieb selbst nutzt. Wie der Ertrag in Amortisation übersetzt wird, zeigt der Ratgeber [Amortisation](/ratgeber/photovoltaik-amortisation).",
         },
       ],
     },
     {
       id: "ausrichtung",
-      titel: "Ertrag nach Ausrichtung und Dachneigung",
+      titel: "Ausrichtung und Neigung: Wie viel kostet Ost-West?",
       tocLabel: "Ausrichtung & Neigung",
       bloecke: [
         {
           typ: "p",
-          text: "**Das Ertragsmaximum liegt in Deutschland bei Süd-Ausrichtung und etwa 35 bis 40° Neigung – es ist aber so flach, dass Abweichungen von 20 bis 30° kaum ins Gewicht fallen.** Ein Südost- oder Südwestdach erreicht über 90 %, ein Ost- oder Westdach mit üblicher Neigung rund 80 %. Die Tabelle zeigt den relativen Jahresertrag für einen Standort in der Mitte Deutschlands.",
+          text: `**Je kWp liefert Ost-West weniger als Süd – in Linz ${f0(OW_LINZ)} statt ${f0(LINZ[6])} kWh bei 30°-Süd, also ${p1(OW_LINZ / LINZ[6])}.** Auf dem Flachdach ist das aber nur die halbe Wahrheit: Ost-West-Systeme stehen Rücken an Rücken ohne Reihenabstand und bringen dadurch auf derselben Dachfläche oft 30 bis 60 % mehr Modulleistung unter. Der Ertrag pro Quadratmeter Dach ist dann höher, der Ertrag pro kWp niedriger.`,
         },
         {
           typ: "tabelle",
-          caption: "Relativer Jahresertrag nach Dachneigung und Ausrichtung (Optimum = 100 %), Standort Kassel",
-          kopf: ["Neigung", "Ost", "Südost", "Süd", "Südwest", "West", "Nord"],
-          zeilen: AUSRICHTUNG_TAB.map(([neigung, ...werte]) => [neigung, ...werte.map((w) => `${w} %`)]),
-          hervorheben: 3,
-          markierteZeile: 3,
-          minBreite: 560,
-          fussnote: "Quelle: eigene Berechnung mit PVGIS 5.3, unverschattet. Optimum am Standort: 38° Süd mit rund 980 kWh/kWp. Weiter nördlich verschiebt sich das Optimum leicht zu steileren, weiter südlich zu flacheren Winkeln.",
+          caption: `Relativer Ertrag nach Ausrichtung und Neigung am Beispiel Linz (PVGIS 5.3), Süd 30° = 100 %`,
+          kopf: ["Ausrichtung / Neigung", "kWh/kWp", "relativ zu Süd 30°", "Typische Anwendung"],
+          zeilen: [
+            [`Süd, optimal (${LINZ[3]}°)`, f0(LINZ[4]), p1(LINZ[4] / LINZ[6]), "Freifläche, Steildach"],
+            ["Süd 30°", f0(LINZ[6]), "100 %", "Satteldach, Scheune"],
+            ["Süd 10°", f0(LINZ[7]), p1(LINZ[7] / LINZ[6]), "Flachdach, flache Aufständerung"],
+            ["West 10°", f0(LINZ[9]), p1(LINZ[9] / LINZ[6]), "Ost-West-Flachdach (West-Teil)"],
+            ["Ost 10°", f0(LINZ[8]), p1(LINZ[8] / LINZ[6]), "Ost-West-Flachdach (Ost-Teil)"],
+            ["Süd 90° (Fassade)", f0(LINZ[10]), p1(LINZ[10] / LINZ[6]), "Fassade, Brüstung, Lärmschutzwand"],
+          ],
+          hervorheben: 2,
+          fussnote: "Quelle: EU JRC, PVGIS 5.3, Linz Zentrum, eigene Abfrage 28.09.2026. Die Relationen sind in allen Landeshauptstädten ähnlich (Ost-West 10° zwischen 80 und 86 % von Süd 30°).",
         },
         {
           typ: "p",
-          text: `Die Werte decken sich mit den Faktoren unseres [Solarrechners](/solarrechner): Er rechnet für Ost/West mit ${pct(faktor(AUSRICHTUNGEN, "ost-west"))}, für Südost/Südwest mit ${pct(faktor(AUSRICHTUNGEN, "suedost"))} und für Nord mit ${pct(faktor(AUSRICHTUNGEN, "nord"))} des Süd-Ertrags, bei flachen Dächern mit einem Abschlag auf ${pct(faktor(NEIGUNGEN, "flach"))} und bei sehr steilen Dächern auf ${pct(faktor(NEIGUNGEN, "steil"))}.`,
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Weniger Ertrag heißt nicht weniger wirtschaftlich",
-          text: "Ost-West-Anlagen erzeugen morgens und abends mehr Strom – genau dann, wenn viele Haushalte ihn brauchen. Ihre Mittagsspitze ist niedriger, sodass die 60-%-Einspeisegrenze kaum Ertrag kostet. Wann sich das rechnet, zeigt der Ratgeber [Photovoltaik Ost-West](/ratgeber/photovoltaik-ost-west).",
+          text: "Welche Variante für ein Hallendach wirtschaftlicher ist, hängt von Statik, Lastgang und Netzanschluss ab. Ost-West verteilt die Erzeugung auf Vormittag und Nachmittag, senkt die Mittagsspitze und passt oft besser zum Verbrauch eines Betriebs. Die Details erklärt der Ratgeber [Photovoltaik Ost-West](/ratgeber/photovoltaik-ost-west); Aufständerung, Ballast und Reihenabstände behandelt [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach).",
         },
       ],
     },
     {
       id: "einflussfaktoren",
-      titel: "Was den Ertrag in der Praxis mindert",
+      titel: "Was den realen Ertrag bestimmt",
       tocLabel: "Einflussfaktoren",
       bloecke: [
         {
           typ: "p",
-          text: "**Neben Standort und Ausrichtung bestimmen Verschattung, Temperatur, Technik und Betrieb, wie viel von der Sonnenenergie tatsächlich als Strom ankommt.** Zusammengefasst werden diese Verluste in der [Performance Ratio](/wissen/lexikon#performance-ratio): Neue Anlagen erreichen laut Fraunhofer ISE im Jahresmittel 80 bis 90 %.",
+          text: "**PVGIS liefert einen soliden Planungswert – der reale Ertrag einer Anlage weicht davon um einige Prozent nach oben oder unten ab.** Die wichtigsten Stellschrauben kennen Sie vor der Investition und können sie beeinflussen.",
         },
         {
           typ: "tabelle",
-          caption: "Typische Einflussfaktoren auf den Jahresertrag",
-          kopf: ["Faktor", "Typische Wirkung", "Was Sie tun können"],
+          caption: "Einflussfaktoren auf den spezifischen Ertrag",
+          kopf: ["Faktor", "Typische Wirkung", "Hinweis"],
           zeilen: [
-            ["[Verschattung](/ratgeber/photovoltaik-verschattung) durch Bäume, Gauben, Kamine", "wenige bis über 20 %", "Module aussparen, Strings trennen, Optimierer an betroffenen Modulen"],
-            ["Modultemperatur", "ca. 0,25–0,35 % Leistung je °C über 25 °C", "Hinterlüftung, Module mit niedrigem Temperaturkoeffizienten"],
-            ["Verschmutzung, Schnee", "meist gering, bei flacher Neigung mehr", "Neigung über 15°, bei Bedarf Reinigung"],
-            ["Wechselrichter & Kabel", "ca. 2–4 %", "effizienter Wechselrichter, kurze Leitungen"],
-            ["Degradation der Module", "ca. 0,15–0,5 % pro Jahr", "Qualitätsmodule, Monitoring"],
-            ["60-%-Einspeisegrenze", "je nach Ausrichtung und Eigenverbrauch ca. 1–9 %", "Eigenverbrauch mittags, Speicher, Smart Meter"],
-            ["Ausfälle", "eine Woche Stillstand im Sommer kostet rund 3 % des Jahresertrags", "Monitoring mit Benachrichtigung"],
+            ["Verschattung (Kamine, Lichtkuppeln, Nachbargebäude, Berge)", "wenige bis über 20 %", "mit 3D-Planung und passender Stringaufteilung minimieren – siehe [Verschattung](/ratgeber/photovoltaik-verschattung)"],
+            ["Modultemperatur", "im Sommer −5 bis −13 % Leistung", "hinterlüftete Montage, Module mit kleinem Temperaturkoeffizienten"],
+            ["Verschmutzung (Staub, Pollen, Stallabluft)", "1–5 %, bei Landwirtschaft mehr", "flache Neigungen verschmutzen stärker; Reinigung nach Bedarf"],
+            ["Schnee", "im Winter zeitweise 100 %", "PVGIS enthält keine Schneeverluste – siehe [Photovoltaik im Winter](/ratgeber/photovoltaik-im-winter)"],
+            ["Degradation", "ca. 0,3–0,5 % pro Jahr", "Leistungsgarantie des Herstellers prüfen"],
+            ["Wechselrichter-Begrenzung (Clipping)", "bei hoher DC/AC-Überbelegung 0–3 %", "bewusst eingeplant oft wirtschaftlich"],
+            ["Einspeisebegrenzung des Netzbetreibers", "standortabhängig", "bei begrenzter Netzkapazität Eigenverbrauch oder Speicher mitplanen"],
+            ["Bifaziale Module auf hellem Untergrund", "Mehrertrag einige Prozent", "Freifläche, helle Dachbahnen, Schnee"],
           ],
           minBreite: 680,
-          fussnote: "Orientierungswerte. Degradation laut Fraunhofer ISE bei qualitätsgesicherten Anlagen im Mittel rund 0,15 % pro Jahr; unser Solarrechner rechnet vorsichtig mit 0,5 %. Abregelungsverluste nach HTW Berlin (Volleinspeisung ohne Speicher).",
+          fussnote: "Richtwerte aus Planungspraxis und Literatur; im Einzelfall durch Simulation zu bestimmen.",
         },
         {
           typ: "p",
-          text: "Die Modultechnik selbst spielt eine kleinere Rolle als oft angenommen: Ein hoher Wirkungsgrad bringt vor allem mehr Leistung auf dieselbe Fläche. Unterschiede im Ertrag je kWp entstehen durch Temperatur- und Schwachlichtverhalten und liegen meist bei wenigen Prozent – mehr dazu im [Solarmodule-Vergleich](/ratgeber/solarmodule-vergleich).",
+          text: "Die Degradation hängt von der Modultechnologie ab. Moderne [TOPCon-](/wissen/lexikon#topcon) und Heterojunction-Module altern laut Herstellergarantien langsamer als ältere PERC-Module; bifaziale Glas-Glas-Module nutzen zusätzlich Licht von der Rückseite. Einen Überblick gibt der Ratgeber [Solarmodule im Vergleich](/ratgeber/solarmodule-vergleich).",
         },
       ],
     },
     {
       id: "beispiel",
-      titel: "Rechenbeispiel: Welchen Ertrag bringt meine Anlage?",
+      titel: "Rechenbeispiel: 500 kWp auf einem Hallendach in Oberösterreich",
       tocLabel: "Rechenbeispiel",
       bloecke: [
         {
           typ: "p",
-          text: "**So schätzen Sie den Ertrag Ihres Dachs in drei Schritten ab.** Beispiel: ein Einfamilienhaus bei Nürnberg mit Satteldach, eine Seite nach Südwest, 30° Neigung, Platz für 9 kWp.",
+          text: `**Auf einer 6.000 m² großen Halle bei Linz lassen sich je nach System rund 450 bis 700 kWp installieren – und der Jahresertrag unterscheidet sich weniger, als der spezifische Ertrag vermuten lässt.** Annahme: 470-Wp-Module mit rund 2,0 m² Fläche, nutzbare Dachfläche nach Abzug von Randabständen, Lichtkuppeln und Wartungswegen 4.500 m².`,
         },
         {
-          typ: "ablauf",
-          schritte: [
-            ["Regionalwert wählen", "Aus der Standorttabelle: Nürnberg rund 1.030 kWh je kWp für ein optimales Süddach."],
-            ["Dachfaktor ansetzen", "Südwest bei 30° Neigung: rund 94 % laut Ausrichtungstabelle – ergibt etwa 970 kWh je kWp."],
-            ["Abschläge prüfen", "Keine nennenswerte Verschattung, gut hinterlüftet: kein zusätzlicher Abschlag. Bei einem Baum im Westen wären 3–5 % realistisch."],
-            ["Hochrechnen", "9 kWp × 970 kWh/kWp ≈ 8.700 kWh im Jahr. Vorsichtig geplant (Solarrechner-Ansatz): 9 kWp × 1.000 × 95 % ≈ 8.550 kWh."],
+          typ: "tabelle",
+          caption: "Modellrechnung: Hallendach bei Linz, 4.500 m² nutzbare Fläche, Stand 09/2026",
+          kopf: ["System", "Belegung (Richtwert)", "installierbare Leistung", "kWh/kWp (PVGIS)", "Jahresertrag"],
+          zeilen: [
+            ["Süd 10°, mit Reihenabstand", "ca. 50 % der Fläche", "ca. 530 kWp", f0(LINZ[7]), `ca. ${f0(530 * LINZ[7] / 1000)} MWh`],
+            ["Ost-West 10°, ohne Reihenabstand", "ca. 75 % der Fläche", "ca. 790 kWp", f0(OW_LINZ), `ca. ${f0(790 * OW_LINZ / 1000)} MWh`],
           ],
+          fussnote: "Belegungsgrade sind Richtwerte und hängen stark von Dachform, Statik, Brandschutzabständen und Windzonen ab. Ertrag ohne Verschattung und Schneeverluste. Die installierbare Leistung wird in der Praxis oft durch Statik oder Netzanschluss begrenzt, nicht durch die Fläche.",
         },
         {
           typ: "p",
-          text: "Mit dem Ertrag allein ist die Wirtschaftlichkeit noch nicht beantwortet – entscheidend ist, wie viel davon Sie selbst verbrauchen. Welche Anlagengröße zu Ihrem Verbrauch passt, erklärt der Ratgeber [PV-Anlage: Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen); die finanzielle Seite beleuchtet [Lohnt sich Photovoltaik?](/ratgeber/photovoltaik-lohnt-sich).",
+          text: "Das Ost-West-System liefert trotz niedrigerem spezifischem Ertrag rund 35 % mehr Strom, braucht aber mehr Modulfläche, mehr Wechselrichterleistung und einen stärkeren Netzanschluss. Ob sich das rechnet, entscheidet der Lastgang: Wie viel davon kann der Betrieb selbst nutzen, wie viel wird zum Marktpreis eingespeist? Die Methode dazu erklärt der Ratgeber [PV-Anlage Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen); für die Vermarktung des Überschusses siehe [Reststromvermarktung](/ratgeber/reststromvermarktung).",
         },
-        { typ: "tool", href: "/solarrechner", titel: "Ertrag und Ersparnis für Ihr Dach", text: "Anlagengröße, Ausrichtung, Neigung und Verbrauch eingeben – mit Autarkie und 20-Jahres-Cashflow.", label: "Zum Solarrechner" },
+        {
+          typ: "tool",
+          href: "/standort-check",
+          titel: "Ertrag, Schneelast und Hagel für Ihre Adresse",
+          text: "Der Standort-Check verbindet den PVGIS-Ertrag mit Schneelast, Wind und Hagelgefährdung aus eHORA – als Grundlage für Planung und Angebot.",
+          label: "Standort prüfen",
+        },
       ],
     },
     {
       id: "pruefen",
-      titel: "Liefert meine Anlage genug? So prüfen Sie den Ertrag",
+      titel: "So prüfen Sie den Ertrag Ihrer bestehenden Anlage",
       tocLabel: "Ertrag prüfen",
       bloecke: [
         {
-          typ: "checkliste",
-          punkte: [
-            "**Jahresertrag ablesen** (Wechselrichter-Portal oder Einspeise- plus Eigenverbrauchszähler) und durch die Modulleistung in kWp teilen.",
-            "**Mit dem Erwartungswert vergleichen:** Regionalwert × Dachfaktor aus den Tabellen oben – oder eine eigene PVGIS-Berechnung.",
-            "**Wetter berücksichtigen:** Abweichungen bis etwa ±7 % in einem einzelnen Jahr sind normal.",
-            "**Monate vergleichen:** Liegt nur ein Monat stark darunter, deutet das auf einen Ausfall hin; liegen alle Monate darunter, eher auf Verschattung, Verschmutzung oder einen defekten String.",
-            "**Liegt der Ertrag dauerhaft über 15 % unter der Erwartung,** sollte ein Fachbetrieb Strings, Wechselrichter und Module prüfen – etwa mit Kennlinienmessung oder Thermografie.",
+          typ: "p",
+          text: "**Ob eine Anlage „gut“ läuft, zeigt nicht der absolute Jahresertrag, sondern das Verhältnis zur tatsächlichen Einstrahlung – die Performance Ratio (PR).** Sie berechnet sich als Jahresertrag geteilt durch das Produkt aus installierter Leistung und Einstrahlung auf die Modulebene (in kWh/m², bezogen auf 1 kW/m²). Ein schwaches Sonnenjahr senkt den Ertrag, aber nicht die PR – ein technisches Problem dagegen schon.",
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "Beispiel: 200-kWp-Anlage in Graz",
+          text: "Die Anlage liefert 232.000 kWh im Jahr, also 1.160 kWh/kWp. Auf die geneigte Modulfläche trafen laut Messung 1.550 kWh/m². PR = 1.160 / 1.550 = 0,75. Das liegt unter den 0,80, die PVGIS für die Modellanlage ansetzt – Anlass, Verschattung, Verschmutzung, Stringausfälle und Wechselrichter-Logs zu prüfen. Eine [Drohnen-Thermografie](/service/drohneninspektion) findet defekte Module und Hotspots oft in wenigen Stunden.",
+        },
+        {
+          typ: "p",
+          text: "Für die Einstrahlung vor Ort eignen sich ein Referenzsensor an der Anlage oder Satellitendaten für den jeweiligen Monat. Wer keinen Sensor hat, vergleicht mit baugleichen Anlagen in der Nähe oder mit den PVGIS-Monatswerten – grobe Abweichungen von mehr als 10 % über mehrere Monate sind ein klares Signal für eine technische Prüfung, etwa im Rahmen des [E-Checks](/service/e-check).",
+        },
+      ],
+    },
+    {
+      id: "prognose",
+      titel: "Vom Planungswert zur Ertragsprognose für Bank und Investor",
+      tocLabel: "Ertragsprognose",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Für Finanzierungen reicht ein Durchschnittswert nicht – Banken und Investoren fragen nach Wahrscheinlichkeiten.** Üblich sind P50- und P90-Werte: P50 ist der Ertrag, der im langjährigen Mittel erreicht wird, P90 jener Wert, der mit 90 % Wahrscheinlichkeit mindestens erreicht wird. Grundlage sind die Schwankungen der Einstrahlung von Jahr zu Jahr – in den PVGIS-Daten für Österreichs Landeshauptstädte rund 42 bis 63 kWh/kWp (Standardabweichung) – sowie die Unsicherheiten von Datenbasis und Simulation.",
+        },
+        {
+          typ: "ablauf",
+          schritte: [
+            ["Standortdaten erheben", "Koordinaten, Dachflächen, Neigung, Horizont und Verschattungsobjekte aufnehmen."],
+            ["Simulation erstellen", "Ertrag mit Modul- und Wechselrichterdaten simulieren, inklusive Verschattung, Temperatur und Verkabelung."],
+            ["Mehrere Datenquellen vergleichen", "PVGIS, Meteonorm oder Solargis gegenüberstellen; bei großen Projekten Messdaten naher Anlagen einbeziehen."],
+            ["P50/P90 ableiten", "Unsicherheiten zusammenführen und den Ertrag mit Sicherheitsabschlag ausweisen."],
+            ["Im Betrieb überprüfen", "Ertrag monatlich mit Einstrahlung vergleichen, Abweichungen per Monitoring früh erkennen."],
           ],
+        },
+        {
+          typ: "p",
+          text: "Im Betrieb überwachen wir Gewerbe- und Freiflächenanlagen mit eigener [Fernwartung](/technik/fernwartung) und [SCADA-Leitwarte](/technik/scada) – dort fällt auf, wenn der spezifische Ertrag hinter der Prognose zurückbleibt.",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Wie viel kWh erzeugt 1 kWp im Jahr?", a: "In Deutschland auf einem gut ausgerichteten Dach etwa 950 bis 1.100 kWh. Im Norden sind es eher 950, in Süddeutschland bis 1.100 kWh. Ost-West-Dächer erreichen rund 80 bis 85 % davon." },
-    { q: "Wie viel Strom erzeugt eine 10-kWp-Anlage pro Jahr?", a: "Bei Süd-Ausrichtung je nach Region etwa 9.500 bis 11.000 kWh, bei Ost-West rund 7.700 bis 9.300 kWh. Unser [Solarrechner](/solarrechner) rechnet vorsichtig mit 1.000 kWh je kWp für ein Süddach." },
-    { q: "Wie viel Ertrag bringt eine PV-Anlage im Winter?", a: "Von November bis Februar entstehen zusammen nur rund 15 % des Jahresertrags. Im Dezember liefert ein kWp in der Mitte Deutschlands etwa 25 bis 30 kWh, im Juni rund 120 kWh." },
-    { q: "Welche Dachneigung ist optimal für Photovoltaik?", a: "In Deutschland etwa 35 bis 40° bei Süd-Ausrichtung. Das Optimum ist flach: Zwischen 20 und 50° verliert ein Süddach höchstens rund 3 %." },
-    { q: "Lohnt sich Photovoltaik auf einem Norddach?", a: "Bei flacher Neigung oft ja: Ein 10° geneigtes Norddach erreicht rund 77 % des Optimums, bei 30° sind es knapp 60 %. Ob sich das rechnet, hängt vor allem vom Eigenverbrauch ab." },
-    { q: "Wie hoch ist die Performance Ratio einer guten PV-Anlage?", a: "Neue Anlagen erreichen laut Fraunhofer ISE im Jahresmittel eine Performance Ratio von 80 bis 90 %. Sie beschreibt, welcher Anteil der theoretisch möglichen Energie tatsächlich als Wechselstrom ankommt." },
-    { q: "Warum weicht mein Ertrag von der Prognose ab?", a: "Häufige Gründe sind Wetterschwankungen (±5 % sind normal), Verschattung, Verschmutzung, Abregelung durch die Einspeisegrenze oder ein Ausfall. Ein Monatsvergleich im Monitoring zeigt meist schnell die Ursache." },
+    {
+      q: "Wie viel kWh bringt 1 kWp in Österreich?",
+      a: "Bei optimaler Südausrichtung laut PVGIS zwischen 1.074 kWh (Salzburg) und 1.369 kWh (Innsbruck) pro Jahr. Wien, Linz und St. Pölten liegen bei rund 1.140 bis 1.180 kWh, Graz und Klagenfurt bei 1.226 bzw. 1.252 kWh.",
+    },
+    {
+      q: "Welcher Ertrag ist bei Ost-West realistisch?",
+      a: "Mit 10° Neigung rund 900 bis 1.080 kWh/kWp, also etwa 83 % einer 30°-Südanlage. Auf Flachdächern gleicht die dichtere Belegung das oft aus – pro Quadratmeter Dach wird mehr Strom erzeugt.",
+    },
+    {
+      q: "Wie genau ist PVGIS?",
+      a: "PVGIS basiert auf Satellitendaten und ist für die Vorplanung gut geeignet. In Gebirgstälern und bei starker Nebelbildung ist die Unsicherheit höher. Für größere Projekte empfehlen sich eine detaillierte Simulation und der Vergleich mehrerer Datenquellen.",
+    },
+    {
+      q: "Welcher Ertrag ist für eine Gewerbeanlage gut?",
+      a: "Eine gut geplante Anlage sollte die PVGIS-Werte für ihre Ausrichtung im langjährigen Mittel erreichen. Liegt die Performance Ratio dauerhaft unter etwa 0,75, deutet das auf Verschattung, Verschmutzung, defekte Strings oder Wechselrichterprobleme hin.",
+    },
+    {
+      q: "Wie stark schwankt der Ertrag von Jahr zu Jahr?",
+      a: "Die Standardabweichung der Jahreserträge liegt in den PVGIS-Daten bei rund 4 bis 5 %. Einzelne Jahre können stärker abweichen – für Finanzierungen wird deshalb mit P90-Werten gerechnet.",
+    },
+    {
+      q: "Liefert eine Fassadenanlage genug Ertrag?",
+      a: "Eine Südfassade liefert übers Jahr rund 70 % einer optimal geneigten Anlage, in den Wintermonaten aber praktisch gleich viel. Für Gebäude mit hohem Winterverbrauch ist sie deshalb interessant – siehe Ratgeber Fassade und BIPV.",
+    },
   ],
 
   passend: [
-    { href: "/ratgeber/pv-anlage-groesse-berechnen", titel: "PV-Anlage: Größe berechnen", text: "Wie viel kWp Sie für Ihren Verbrauch brauchen." },
-    { href: "/ratgeber/photovoltaik-ost-west", titel: "Photovoltaik Ost-West", text: "Weniger Ertrag, mehr Eigenverbrauch – wann es sich lohnt." },
-    { href: "/solarrechner", titel: "Solarrechner", text: "Ertrag und Wirtschaftlichkeit für Ihr Dach berechnen." },
-    { href: "/energie-live", titel: "Energie live", text: "Aktuelle Solar- und Winderzeugung in Deutschland." },
+    { href: "/standort-check", titel: "Standort-Check", text: "Ertrag, Schneelast, Wind und Hagel für Ihre Adresse." },
+    { href: "/ratgeber/photovoltaik-ost-west", titel: "Photovoltaik Ost-West", text: "Ertrag, Lastgang und Flachdach." },
+    { href: "/gewerbe", titel: "PV für Gewerbe & Industrie", text: "Planung nach Lastgang, Hallen- und Flachdächer." },
+    { href: "/ratgeber/photovoltaik-im-winter", titel: "Photovoltaik im Winter", text: "Monatswerte, Schnee und Kälte." },
   ],
 
   quellen: [
-    { titel: "European Commission JRC – PVGIS 5.3 (Photovoltaic Geographical Information System)", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
-    { titel: "Fraunhofer ISE – Aktuelle Fakten zur Photovoltaik in Deutschland (Fassung 20.08.2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/aktuelle-fakten-zur-photovoltaik-in-deutschland.html", stand: "08/2026" },
-    { titel: "Deutscher Wetterdienst – Solarenergie und Globalstrahlung", url: "https://www.dwd.de/DE/leistungen/solarenergie/solarenergie.html", stand: "09/2026" },
-    { titel: "Verbraucherzentrale Hamburg – Solarspitzen: Abregelungsverluste nach HTW Berlin", url: "https://www.vzhh.de/themen/bauen-immobilien-energie/erneuerbare-energien/solarspitzen-foerdergelder-neue-regeln-fuer-photovoltaikanlagen", stand: "09/2025" },
+    { titel: "EU JRC – PVGIS 5.3 Photovoltaic Geographical Information System", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
+    { titel: "EU JRC – PVGIS API (PVcalc), Dokumentation", url: "https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/getting-started-pvgis/api-non-interactive-service_en", stand: "09/2026" },
+    { titel: "Fraunhofer ISE – Photovoltaics Report (Juli 2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/photovoltaics-report.html", stand: "09/2026" },
+    { titel: "GeoSphere Austria – Klimadaten und Globalstrahlung", url: "https://www.geosphere.at/", stand: "09/2026" },
+    { titel: "HORA – Naturgefahren und Normwerte je Standort", url: "https://hora.gv.at/", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Wie viel bringt Ihr Dach?", text: "Ertrag, Autarkie und Amortisation mit Ihren Werten.", href: "/solarrechner", label: "Zum Solarrechner" },
+  seitenCta: { titel: "Ertrag für Ihre Adresse?", text: "PVGIS-Ertrag plus Schneelast und Hagel in einer Abfrage.", href: "/standort-check", label: "Standort prüfen" },
   cta: {
-    title: "Wir berechnen den Ertrag für Ihr Dach – mit Verschattung.",
-    text: "Tabellen geben eine gute Orientierung. Bäume, Gauben und Nachbargebäude erfasst erst die Planung vor Ort – daraus entsteht eine belastbare Ertragsprognose.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/solarrechner" },
+    title: "Ertragsprognose, auf die Sie bauen können.",
+    text: "Wir simulieren den Ertrag Ihres Dachs oder Ihrer Fläche mit Verschattung, Ausrichtung und Lastgang – und überwachen ihn später im Betrieb.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Standort-Check", href: "/standort-check" },
   },
 };
 

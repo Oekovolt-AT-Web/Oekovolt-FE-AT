@@ -1,10 +1,30 @@
-// produkte/smartenergyhome/page.js
+// src/app/produkte/smartenergyhome/page.js
+//
+// Smart Energy Home – Österreich. Zielgruppe: Premium-Wohnhaus, Chalet,
+// Landsitz; mit Hinweis auf Energiemanagement für Betriebe.
+// Keine Backoffice-Texte mehr (die API lieferte Inhalte der deutschen Seite
+// inkl. § 14a EnWG). Smart-Meter-Aussagen nach ElWG § 54 (Stand 09/2026).
 
-import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, BatteryCharging, Calculator, Car, Check, Cpu, Gauge, Layers, Network, PlugZap, Sun, Thermometer, TrendingDown, Zap,
+  ArrowRight,
+  BatteryCharging,
+  Calculator,
+  Car,
+  Check,
+  Cpu,
+  Gauge,
+  Layers,
+  Mountain,
+  Network,
+  PlugZap,
+  Share2,
+  ShieldAlert,
+  Sun,
+  Thermometer,
+  TrendingDown,
+  Warehouse,
+  Zap,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -15,91 +35,43 @@ import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 import Energiefluss from "@/components/smartenergyhome/Energiefluss";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { hreflangLanguages } from "@/lib/hreflang";
+import { BASE_URL, FIRMA } from "@/lib/site";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.smart_energy_home_page.api.get_smart_energy_page_with_keywords`;
-const PAGE_URL = "https://www.oekovolt.com/produkte/smartenergyhome";
-
-async function fetchSmartEnergyData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
-
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: "GET",
-      headers: headers,
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data.message;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
+const PFAD = "/produkte/smartenergyhome";
+const PAGE_URL = `${BASE_URL}${PFAD}`;
 
 const TITLE = "Smart Energy Home: Energiemanagement mit PV | Ökovolt";
 const DESCRIPTION =
-  "Photovoltaik, Speicher, Wallbox und Wärmepumpe intelligent vernetzt: So nutzt Ihr Energiemanagementsystem jede Kilowattstunde optimal. Jetzt beraten lassen!";
+  "Photovoltaik, Speicher, Wallbox, Wärmepumpe und Notstrom als ein System: Energiemanagement für Wohnhaus und Chalet in Österreich, herstellerübergreifend.";
 
-export async function generateMetadata() {
-  const seoData = await fetchSmartEnergyData();
-  const defaultKeywords = ["Smart Energy Home", "Energiemanagementsystem", "Energiemanagement Photovoltaik", "HEMS", "Eigenverbrauch optimieren"];
-  const keywords = seoData?.keywords ? seoData.keywords.split(/,\s*/) : defaultKeywords;
-  const bild = "https://www.oekovolt.com/og-image.jpg";
-
-  return {
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["Smart Energy Home", "Energiemanagementsystem", "HEMS Österreich", "Photovoltaik Chalet", "Notstrom Photovoltaik", "Eigenverbrauch optimieren"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "de_AT",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
     title: TITLE,
     description: DESCRIPTION,
-    keywords,
-    alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "website",
-      url: PAGE_URL,
-      siteName: "Ökovolt Österreich",
-      title: TITLE,
-      description: DESCRIPTION,
-      images: [{ url: bild, width: 1200, height: 630, alt: "Ökovolt Smart Energy Home" }],
-    },
-    twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [bild] },
-  };
-}
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Smart Energy Home mit Photovoltaik" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-const img = (p, fallback = "/Images/Dienstleistungen/Smartphone/smart-home-3920905_1280.jpg") => (p ? `/api/image?path=${p}` : fallback);
-
-/** Absätze aus dem Backoffice zusammenführen und doppelte Sätze/Zeilen entfernen. */
-function absaetze(liste) {
-  const gesehen = new Set();
-  return (liste || [])
-    .flatMap((d) => String(d.description || "").split(/\n+/))
-    .map((t) => t.trim())
-    .filter((t) => t && !gesehen.has(t.slice(0, 80)) && gesehen.add(t.slice(0, 80)));
-}
+const KAUFPUNKTE = [
+  "Alle Komponenten arbeiten mit einem gemeinsamen Energiemanagement – heute und bei späteren Erweiterungen.",
+  "Offene Schnittstellen wie Modbus, EEBus oder SG Ready statt geschlossener Insellösungen.",
+  "Zählerschrank und Leitungswege sind für Speicher, Wallbox und Wärmepumpe vorbereitet.",
+  "Ersatzstrom ist von Anfang an mitgedacht, wenn Blackout-Vorsorge ein Thema ist.",
+];
 
 const FAQ = [
   {
@@ -108,69 +80,68 @@ const FAQ = [
   },
   {
     q: "Was bringt ein Energiemanagementsystem konkret?",
-    a: "Ohne Steuerung laufen E-Auto und Wärmepumpe dann, wenn sie eingeschaltet werden – oft abends mit Netzstrom. Ein EMS verschiebt diese großen Verbraucher gezielt in die Sonnenstunden oder in günstige Börsenstunden. So steigen Eigenverbrauch und Autarkie deutlich, ohne dass Sie etwas tun müssen.",
-  },
-  {
-    q: "Kann ich ein Energiemanagement in eine bestehende PV-Anlage nachrüsten?",
-    a: "Ja, in den meisten Fällen. Entscheidend ist, dass Wechselrichter, Speicher, Wallbox und Wärmepumpe über offene Schnittstellen (z. B. Modbus, EEBus oder SG Ready) kommunizieren können. Wir prüfen Ihre vorhandenen Komponenten und empfehlen, was sich einbinden lässt.",
+    a: "Ohne Steuerung laufen E-Auto und Wärmepumpe dann, wenn sie eingeschaltet werden – oft abends mit Netzstrom. Ein EMS verschiebt diese großen Verbraucher gezielt in die Sonnenstunden oder in günstige Viertelstunden eines Spotpreis-Tarifs. So steigen Eigenverbrauch und Autarkie deutlich, ohne dass Sie etwas tun müssen.",
   },
   {
     q: "Brauche ich für ein Smart Energy Home einen Smart Meter?",
-    a: "Für die Regelung im Haus misst ein Energiezähler am Netzanschlusspunkt, wie viel Strom gerade fließt. Für dynamische Stromtarife und die Netzentgelt-Vorteile nach § 14a EnWG ist zusätzlich ein intelligentes Messsystem des Messstellenbetreibers nötig. Ab 7 kW PV-Leistung ist es ohnehin Pflicht.",
+    a: "Den Smart Meter stellt ohnehin Ihr Netzbetreiber. Mit PV-Anlage, Wallbox, Wärmepumpe oder Speicher misst er in Viertelstundenwerten, ein Opt-out ist dann nach § 54 ElWG nicht möglich. Für die Regelung im Haus misst zusätzlich ein Energiezähler am Hausanschluss in Echtzeit – oder das EMS liest die Kundenschnittstelle des Smart Meters aus.",
   },
   {
-    q: "Worauf sollte ich beim Kauf achten?",
-    a: "Achten Sie weniger auf einzelne Datenblätter als auf die Kompatibilität: Alle Komponenten sollten mit einem gemeinsamen Energiemanagement zusammenarbeiten – heute und bei späteren Erweiterungen wie E-Auto oder Wärmepumpe. Wer von Anfang an das Gesamtkonzept plant, vermeidet teure Insellösungen.",
+    q: "Versorgt das System mein Haus bei einem Blackout?",
+    a: "Nur, wenn es dafür ausgelegt ist. Ersatzstrom braucht einen netzbildenden Wechselrichter mit Speicher und eine automatische Netztrennung. Wir planen, welche Stromkreise – etwa Heizung, Kühlung, Licht und Kommunikation – bei einem Netzausfall weiterlaufen sollen.",
+  },
+  {
+    q: "Kann ich ein Energiemanagement in eine bestehende PV-Anlage nachrüsten?",
+    a: "Ja, in den meisten Fällen. Entscheidend ist, dass Wechselrichter, Speicher, Wallbox und Wärmepumpe über offene Schnittstellen kommunizieren können. Wir prüfen Ihre vorhandenen Komponenten und empfehlen, was sich einbinden lässt.",
   },
   {
     q: "Muss ich alles auf einmal kaufen?",
-    a: "Nein. Viele Kunden starten mit der PV-Anlage und ergänzen Speicher, Wallbox oder Wärmepumpe später. Wichtig ist nur, dass die erste Planung Platz, Zählerschrank und Schnittstellen für die nächsten Schritte mitdenkt.",
+    a: "Nein. Viele starten mit der PV-Anlage und ergänzen Speicher, Wallbox oder Wärmepumpe später. Wichtig ist nur, dass die erste Planung Platz, Zählerschrank und Schnittstellen für die nächsten Schritte mitdenkt.",
   },
 ];
 
-export default async function SmartEnergyPage() {
-  const data = await fetchSmartEnergyData();
-
-  const webPageSchema = {
+export default function SmartEnergyPage() {
+  const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${PAGE_URL}/#webpage`,
-    url: PAGE_URL,
-    name: data?.title || "Smart Energy Home – Energiemanagementsystem für Photovoltaik | Ökovolt",
-    description: DESCRIPTION,
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: new Date().toISOString().split("T")[0],
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${PAGE_URL}/#webpage`,
+        url: PAGE_URL,
+        name: TITLE,
+        description: DESCRIPTION,
+        inLanguage: "de-AT",
+        isPartOf: { "@id": `${BASE_URL}/#website` },
+        about: { "@id": `${PAGE_URL}/#service` },
+      },
+      {
+        "@type": "Service",
+        "@id": `${PAGE_URL}/#service`,
+        name: "Smart Energy Home – Energiemanagement mit Photovoltaik",
+        serviceType: "Planung und Einbindung von Energiemanagementsystemen",
+        description: DESCRIPTION,
+        provider: { "@id": `${BASE_URL}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
+        url: PAGE_URL,
+      },
+    ],
   };
-
-  const einstieg = absaetze(data?.first_card_text);
-  const konzept = absaetze(data?.second_card_text);
-  const kaufpunkte = (data?.third_card_text || []).map((d) => d.description).filter(Boolean);
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Smart Energy Home" }]}
         eyebrow="Smart Energy Home"
         title={
-          data?.title ? (
-            data.title
-          ) : (
-            <>
-              Ein Zuhause, das seine Energie <span className="ov-text-gradient">selbst managt</span>
-            </>
-          )
+          <>
+            Ein Gebäude, das seine Energie <span className="ov-text-gradient">selbst managt</span>
+          </>
         }
-        lead={
-          data?.subtitle
-            ? `${data.subtitle}. Photovoltaik, Speicher, Wallbox und Wärmepumpe arbeiten als ein System – gesteuert von einem Energiemanager, der jede Kilowattstunde dorthin schickt, wo sie am meisten bringt.`
-            : "Photovoltaik, Speicher, Wallbox und Wärmepumpe arbeiten als ein System – gesteuert von einem Energiemanager, der jede Kilowattstunde dorthin schickt, wo sie am meisten bringt."
-        }
-        image={{ src: img(data?.banner_image), alt: data?.banner_alt_text || "Smart Energy Home mit Photovoltaik" }}
-        points={["Mehr Eigenverbrauch, weniger Netzstrom", "Nachrüstbar in Bestandsanlagen", "Bereit für dynamische Tarife", "Herstellerübergreifend geplant"]}
+        lead="Photovoltaik, Speicher, Wallbox und Wärmepumpe arbeiten als ein System – gesteuert von einem Energiemanager, der jede Kilowattstunde dorthin schickt, wo sie am meisten bringt. Auf Wunsch mit Ersatzstrom für den Fall eines Blackouts."
+        image={{ src: "/Images/Dienstleistungen/Smartphone/smart-home-3920905_1280.jpg", alt: "Smart Energy Home mit Photovoltaik" }}
+        points={["Mehr Eigenverbrauch, weniger Netzstrom", "Ersatzstrom & Blackout-Vorsorge", "Bereit für Spotpreis-Tarife", "Herstellerübergreifend geplant"]}
         actions={[
           { label: "Smart Energy Home planen", href: "/angebot" },
           { label: "Autarkie berechnen", href: "/solarrechner", icon: Calculator },
@@ -196,7 +167,11 @@ export default async function SmartEnergyPage() {
           <SectionHeading
             dark
             eyebrow="So denkt Ihr Energiemanager"
-            title={<>Jede Kilowattstunde <span className="ov-text-gradient-light">am richtigen Ort</span></>}
+            title={
+              <>
+                Jede Kilowattstunde <span className="ov-text-gradient-light">am richtigen Ort</span>
+              </>
+            }
             lead="Mittags Sonne im Überfluss, abends Bedarf, nachts günstiger Börsenstrom: Schalten Sie durch den Tag und sehen Sie, wie das System den Strom verteilt."
             align="center"
             className="mb-12"
@@ -208,138 +183,81 @@ export default async function SmartEnergyPage() {
       </Section>
 
       <Section tone="white" space="lg">
-        <SplitMedia
-          eyebrow="Der Einstieg"
-          title={data?.first_title || "Energiemanagement für Ihr Zuhause leicht gemacht"}
-          image={{ src: img(data?.first_card_image), alt: data?.first_image_alt_txt || "Planung eines Smart Energy Home" }}
-        >
-          {einstieg.length > 0 ? (
-            <div className="mt-5 space-y-4 text-[16.5px] leading-relaxed text-ink-600">
-              {einstieg.map((t) => (
-                <p key={t.slice(0, 40)} className="ov-measure">{t}</p>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-5 text-[16.5px] leading-relaxed text-ink-600">
-              Der Weg zum Smart Energy Home beginnt meist mit einer Photovoltaikanlage, einer Wärmepumpe oder einem E-Auto – und lässt sich Schritt für Schritt erweitern.
-            </p>
-          )}
-          {data?.first_card_image_description && (
-            <p className="mt-6 flex gap-3 rounded-2xl bg-ov-50 p-4 text-[15px] font-medium text-ink-700">
-              <Sun aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
-              {data.first_card_image_description}
-            </p>
-          )}
-        </SplitMedia>
-      </Section>
-
-      <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div>
-            <SectionHeading eyebrow={data?.second_title || "Das Konzept"} title={data?.second_subtitle || "Komfort, Effizienz und erneuerbare Energie verbunden"} />
-            {konzept.length > 0 && (
-              <Reveal delay={80} className="mt-6 space-y-4 text-[16px] leading-relaxed text-ink-600">
-                {konzept.map((t) => (
-                  <p key={t.slice(0, 40)} className="ov-measure">{t}</p>
-                ))}
-              </Reveal>
-            )}
-          </div>
-          <div>
-            <FeatureGrid
-              cols={2}
-              items={[
-                { icon: Sun, title: "Photovoltaik", text: "Die Quelle: Solarstrom vom eigenen Dach, der zuerst im Haus bleiben soll.", href: "/produkte/photovoltaikanlage" },
-                { icon: BatteryCharging, title: "Stromspeicher", text: "Verschiebt Mittagssonne in den Abend – der größte Hebel für Autarkie.", href: "/produkte/stromspeicher" },
-                { icon: Car, title: "Wallbox", text: "Lädt das E-Auto bevorzugt mit Solarüberschuss statt mit Netzstrom.", href: "/produkte/wallbox" },
-                { icon: Thermometer, title: "Wärmepumpe", text: "Heizt und erwärmt Wasser vor, wenn Sonnenstrom übrig ist.", href: "/produkte/warmepumpe" },
-                { icon: Gauge, title: "Smart Meter", text: "Misst viertelstündlich und macht dynamische Tarife und § 14a nutzbar.", href: "/produkte/smartmeter" },
-                { icon: Zap, title: "Dynamischer Tarif", text: "Den Rest aus dem Netz dann beziehen, wenn die Börse günstig ist.", href: "/service/stromtarif" },
-              ]}
-            />
-          </div>
-        </div>
-      </Section>
-
-      <Section tone="white" space="lg">
-        <SplitMedia
-          reverse
-          eyebrow="Einfach erklärt"
-          title={data?.third_title || "Energiemanagementsystem für Photovoltaik einfach erklärt"}
-          image={{ src: img(data?.third_card_image), alt: data?.third_image_alt_txt || "Vernetzte Energiekomponenten im Eigenheim" }}
-        >
-          <Fliesstext
-            text={
-              data?.third_card_image_description ||
-              "Ein Smart Energy Home entsteht durch die intelligente Vernetzung von Photovoltaikanlage, Wärmepumpe, E-Auto und Stromspeicher."
-            }
-            className="mt-5 text-[16.5px] leading-relaxed text-ink-600"
-          />
-          <ul className="mt-7 grid gap-3 sm:grid-cols-3">
-            {[
-              { i: TrendingDown, t: "Geringere Energiekosten" },
-              { i: Layers, t: "Weniger CO₂" },
-              { i: Network, t: "Mehr Unabhängigkeit" },
-            ].map((k) => (
-              <li key={k.t} className="flex items-center gap-2.5 rounded-2xl bg-sand-50 px-4 py-3 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
-                <k.i aria-hidden="true" className="h-5 w-5 shrink-0 text-ov-600" />
-                {k.t}
-              </li>
-            ))}
-          </ul>
-        </SplitMedia>
-
-        <div className="mt-24">
           <SectionHeading
-            eyebrow="Schritt für Schritt"
-            title="Ihr Weg zum Smart Energy Home"
-            lead="Nicht alles muss auf einmal passieren. Entscheidend ist, dass jeder Schritt zum nächsten passt."
-            align="center"
-            className="mb-14"
+            eyebrow="Die Bausteine"
+            title="Komfort, Effizienz und erneuerbare Energie verbunden"
+            lead="Ein Smart Energy Home ist kein Produkt, sondern ein abgestimmtes System. Jeder Baustein bringt mehr, wenn er mit den anderen spricht."
           />
-          <Steps
+          <FeatureGrid
+            cols={2}
             items={[
-              { icon: Sun, title: "PV-Anlage", text: "Das Fundament: richtig dimensioniert, mit Wechselrichter und Zählerschrank, die spätere Erweiterungen mitmachen." },
-              { icon: BatteryCharging, title: "Speicher", text: "Hebt den Eigenverbrauch deutlich und macht Solarstrom auch abends und nachts nutzbar." },
-              { icon: PlugZap, title: "Wallbox & Wärmepumpe", text: "Die großen Verbraucher kommen dazu – und laufen gezielt dann, wenn Sonne da ist." },
-              { icon: Cpu, title: "Energiemanagement", text: "Ein EMS verbindet alles, nutzt Wetterprognose und Börsenpreis und steuert automatisch." },
+              { icon: Sun, title: "Photovoltaik", text: "Die Quelle: Solarstrom vom eigenen Dach, der zuerst im Gebäude bleiben soll.", href: "/produkte/photovoltaikanlage" },
+              { icon: BatteryCharging, title: "Stromspeicher", text: "Verschiebt Mittagssonne in den Abend – der größte Hebel für Autarkie.", href: "/produkte/stromspeicher" },
+              { icon: Car, title: "Wallbox", text: "Lädt das E-Auto bevorzugt mit Solarüberschuss statt mit Netzstrom.", href: "/produkte/wallbox" },
+              { icon: Thermometer, title: "Wärmepumpe", text: "Heizt und erwärmt Wasser vor, wenn Sonnenstrom übrig ist.", href: "/produkte/warmepumpe" },
+              { icon: Gauge, title: "Smart Meter", text: "Viertelstundenwerte des Netzbetreibers als Grundlage für Tarif und Energiegemeinschaft.", href: "/produkte/smartmeter" },
+              { icon: ShieldAlert, title: "Ersatzstrom", text: "Wichtige Stromkreise laufen bei einem Netzausfall weiter.", href: "/service/notstrom" },
             ]}
           />
         </div>
       </Section>
 
       <Section tone="sand" space="lg">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal dir="left" className="relative">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-ink-100 shadow-xl">
-              <Image
-                src={img(data?.fourth_card_image)}
-                alt={data?.fourth_image_alt_txt || "Montage einer Photovoltaikanlage"}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-              {data?.fourth_card_image_description && (
-                <div className="absolute inset-x-4 bottom-4 rounded-2xl bg-white/95 p-4 text-[14px] leading-snug text-ink-700 shadow-lg backdrop-blur md:inset-x-6 md:bottom-6">
-                  {data.fourth_card_image_description}
-                </div>
-              )}
-            </div>
-          </Reveal>
+        <SplitMedia
+          reverse
+          eyebrow="Premium & alpin"
+          title="Für Premium-Wohnhaus, Chalet und Landsitz"
+          text={[
+            "Gerade in alpinen Lagen spielt ein Smart Energy Home seine Stärken aus: hohe Schneelasten erfordern eine durchdachte Anlage, lange Heizperioden machen die Wärmepumpe zum größten Verbraucher, und abgelegene Standorte profitieren von Ersatzstrom.",
+            "Wir planen Photovoltaik, Speicher und Steuerung als Gesamtkonzept – mit Fernüberwachung und Wartung, damit das System auch bei Abwesenheit zuverlässig läuft.",
+          ]}
+          action={{ label: "Luxus-Chalets & Alpin", href: "/chalets", variant: "navy" }}
+          image={{ src: "/Images/Ratgeber/photovoltaik-im-winter.jpg", alt: "Photovoltaikanlage auf einem verschneiten Dach" }}
+        >
+          <ul className="mt-7 grid gap-3 sm:grid-cols-3">
+            {[
+              { i: TrendingDown, t: "Geringere Energiekosten" },
+              { i: Layers, t: "Weniger CO₂" },
+              { i: Network, t: "Mehr Unabhängigkeit" },
+            ].map((k) => (
+              <li key={k.t} className="flex items-center gap-2.5 rounded-2xl bg-white px-4 py-3 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
+                <k.i aria-hidden="true" className="h-5 w-5 shrink-0 text-ov-600" />
+                {k.t}
+              </li>
+            ))}
+          </ul>
+        </SplitMedia>
+      </Section>
+
+      <Section tone="white" space="lg">
+        <SectionHeading
+          eyebrow="Schritt für Schritt"
+          title="Ihr Weg zum Smart Energy Home"
+          lead="Nicht alles muss auf einmal passieren. Entscheidend ist, dass jeder Schritt zum nächsten passt."
+          align="center"
+          className="mb-14"
+        />
+        <Steps
+          items={[
+            { icon: Sun, title: "PV-Anlage", text: "Das Fundament: richtig dimensioniert, mit Wechselrichter und Zählerschrank, die spätere Erweiterungen mitmachen." },
+            { icon: BatteryCharging, title: "Speicher", text: "Hebt den Eigenverbrauch deutlich und macht Solarstrom auch abends und bei Netzausfall nutzbar." },
+            { icon: PlugZap, title: "Wallbox & Wärmepumpe", text: "Die großen Verbraucher kommen dazu – und laufen gezielt dann, wenn Sonne da ist." },
+            { icon: Cpu, title: "Energiemanagement", text: "Ein EMS verbindet alles, nutzt Wetterprognose und Börsenpreis und steuert automatisch." },
+          ]}
+        />
+      </Section>
+
+      <Section tone="sand" space="lg">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <SectionHeading
               eyebrow="Kaufberatung"
-              title={data?.fourth_title || "Worauf Sie beim Kauf achten sollten"}
-              lead={
-                data?.fourth_card_description ||
-                "Achten Sie nicht nur auf den Preis, sondern vor allem auf die Kompatibilität der Systeme – heute und in Zukunft."
-              }
+              title="Worauf Sie achten sollten"
+              lead="Achten Sie weniger auf einzelne Datenblätter als auf die Kompatibilität der Systeme – heute und in Zukunft."
             />
             <ul className="mt-8 space-y-3">
-              {(kaufpunkte.length
-                ? kaufpunkte
-                : ["Nur mit intelligenter Vernetzung holen Sie das Maximum aus Ihrem Solarstrom heraus.", "Nur wenn alle Systeme reibungslos kommunizieren, senken Sie dauerhaft Ihre Energieausgaben."]
-              ).map((p, i) => (
+              {KAUFPUNKTE.map((p, i) => (
                 <Reveal as="li" key={p} delay={i * 70} className="flex gap-3 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500 text-white">
                     <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
@@ -353,14 +271,49 @@ export default async function SmartEnergyPage() {
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
+          <div className="grid gap-4 self-start">
+            <Reveal>
+              <article className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
+                <Share2 aria-hidden="true" className="h-6 w-6 text-ov-600" />
+                <h3 className="mt-4 font-display text-[18px] font-bold text-ink-900">Überschuss in die Energiegemeinschaft</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
+                  Was das Gebäude nicht selbst braucht, kann über eine Erneuerbare-Energie-Gemeinschaft in der Nachbarschaft genutzt werden – statt nur zum Marktpreis eingespeist.
+                </p>
+                <Link href="/energiegemeinschaften" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                  Energiegemeinschaften
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </article>
+            </Reveal>
+            <Reveal delay={80}>
+              <article className="rounded-3xl bg-navy-950 p-7 text-white">
+                <Warehouse aria-hidden="true" className="h-6 w-6 text-ov-300" />
+                <h3 className="mt-4 font-display text-[18px] font-bold">Energiemanagement für Betriebe</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-white/70">
+                  Im Gewerbe steuert das EMS zusätzlich Lastspitzen, Ladeinfrastruktur und Einspeiselimits – mit Lastgang, Gewerbespeicher und unserem Parkregler.
+                </p>
+                <Link href="/produkte/smartmeter" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-white hover:text-ov-300">
+                  Smart Meter & EMS für Betriebe
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </article>
+            </Reveal>
+            <Reveal delay={160}>
+              <p className="flex items-center gap-2 text-[14px] text-ink-500">
+                <Mountain aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                <Zap aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                Planung und Errichtung in allen neun Bundesländern.
+              </p>
+            </Reveal>
+          </div>
         </div>
       </Section>
 
       <SolarrechnerTeaser
         href="/solarrechner"
         cta="Zum Solarrechner"
-        titel="Wie unabhängig kann Ihr Zuhause werden?"
-        text="Anlagengröße, Verbrauch, Speicher und E-Auto eingeben – der Solarrechner zeigt Autarkie, Ersparnis und Amortisation für Ihr Dach."
+        titel="Wie unabhängig kann Ihr Gebäude werden?"
+        text="Anlagengröße, Verbrauch, Speicher und E-Auto eingeben – der Solarrechner zeigt eine erste Einschätzung zu Autarkie und Ersparnis."
       />
 
       <Section tone="white" space="lg">
@@ -374,10 +327,10 @@ export default async function SmartEnergyPage() {
         </div>
       </Section>
 
-      <Querverweise pfad="/produkte/smartenergyhome" />
+      <Querverweise pfad={PFAD} />
       <CtaBand
-        title="Lassen Sie Ihr Zuhause mitdenken."
-        text="Wir planen PV, Speicher, Wallbox, Wärmepumpe und Energiemanagement als ein System – mit ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner vom Fachbetrieb aus Türkheim."
+        title="Lassen Sie Ihr Gebäude mitdenken."
+        text={`${FIRMA.name} aus ${FIRMA.ort} plant PV, Speicher, Wallbox, Wärmepumpe, Ersatzstrom und Energiemanagement als ein System – mit festem Ansprechpartner in ganz Österreich.`}
         primary={{ label: "Smart Energy Home planen", href: "/angebot" }}
         secondary={{ label: "Autarkie berechnen", href: "/solarrechner" }}
       />

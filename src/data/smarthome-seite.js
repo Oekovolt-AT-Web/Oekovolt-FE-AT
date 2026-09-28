@@ -1,54 +1,51 @@
 // src/data/smarthome-seite.js
 //
-// Zusatzinhalte für /dienstleistungen/smarthome.
-//
-// Die Seite bestand bisher nur aus Backoffice-Tabs und vier Vorteilskacheln –
-// rund 3.200 Pixel ohne Antworten auf die Fragen, die vor einem Speicher- oder
-// Wallbox-Kauf tatsächlich gestellt werden. Alle Aussagen unten sind
-// allgemeingültige Rahmenbedingungen (MsbG, UStG, EnWG) oder decken sich mit
-// den Annahmen des Solarrechners (src/data/solarrechner.js), damit Seite und
-// Rechner nichts Widersprüchliches sagen.
+// Zusatzinhalte für /dienstleistungen/smarthome – Österreich, Stand 09/2026.
+// Rechtliche Aussagen: Smart Meter nach ElWG § 54 (Opt-in/Opt-out, kein
+// Opt-out bei meldepflichtigen Anlagen), Meldung von Wallbox, Wärmepumpe und
+// Speicher beim Netzbetreiber, EAG-Investitionszuschuss für Speicher
+// (max. 50 kWh, nur gemeinsam mit PV-Antrag).
 
-/** Weiterführende Links je Backoffice-Tab (Schlüssel = Tab-Titel). */
+/** Weiterführende Links je Baustein (Schlüssel = Tab-Titel). */
 export const SMARTHOME_TAB_LINKS = {
   Batteriesysteme: { href: "/produkte/stromspeicher", label: "Stromspeicher im Detail" },
   Ladestationen: { href: "/produkte/wallbox", label: "Wallbox im Detail" },
-  Notstrombox: { href: "/produkte/smartenergyhome", label: "Zum Smart Energy Home" },
-  Smartmeter: { href: "/produkte/smartmeter", label: "Smartmeter im Detail" },
+  Notstrombox: { href: "/service/notstrom", label: "Notstrom & Blackout-Vorsorge" },
+  Smartmeter: { href: "/produkte/smartmeter", label: "Smart Meter im Detail" },
 };
 
-/** Typische Autarkiewerte – identisch mit den Annahmen im Solarrechner. */
+/** Typische Autarkiewerte – Orientierung, abhängig von Verbrauch und Anlagengröße. */
 export const AUTARKIE = { ohneSpeicher: 30, mitSpeicher: 80 };
 
 export const SMARTHOME_FAQ = [
   {
-    frage: "Kann ich einen Stromspeicher an meiner bestehenden PV-Anlage nachrüsten?",
+    frage: "Was ist ein Energiemanagementsystem (EMS) im Smarthome?",
     antwort:
-      "Ja, in den allermeisten Fällen. Je nach vorhandenem Wechselrichter wird der Speicher entweder direkt über einen Hybrid-Wechselrichter angebunden oder AC-seitig mit eigenem Batterie-Wechselrichter ergänzt. Wir prüfen Ihre Anlage vor Ort und sagen Ihnen, welche Variante technisch und wirtschaftlich passt.",
+      "Ein Energiemanagementsystem ist die Steuerzentrale zwischen Photovoltaik, Stromspeicher, Wallbox, Wärmepumpe und Stromnetz. Es misst laufend, wie viel Strom erzeugt und verbraucht wird, und entscheidet automatisch, welches Gerät wann Energie bekommt – mit dem Ziel, möglichst viel eigenen Solarstrom zu nutzen.",
   },
   {
-    frage: "Wie groß sollte mein Stromspeicher sein?",
+    frage: "Brauche ich dafür einen Smart Meter?",
     antwort:
-      "Als Faustregel gilt rund 1 kWh Speicherkapazität je 1.000 kWh Jahresverbrauch – ein Haushalt mit 5.000 kWh liegt also bei etwa 5 kWh. Größer ist nicht automatisch besser: Ein überdimensionierter Speicher wird im Winterhalbjahr selten voll und verlängert die Amortisation. Mit E-Auto oder Wärmepumpe verschiebt sich die Rechnung, deshalb planen wir die Größe immer anhand Ihres tatsächlichen Verbrauchs.",
+      "Den Smart Meter stellt in Österreich immer der Netzbetreiber. Mit PV-Anlage, Wallbox, Wärmepumpe oder Speicher misst er in Viertelstundenwerten; ein Opt-out ist dann nach § 54 ElWG nicht möglich. Für die Regelung im Haus nutzt das Energiemanagement zusätzlich einen Energiezähler am Hausanschluss oder die Kundenschnittstelle des Smart Meters.",
   },
   {
-    frage: "Was ist der Unterschied zwischen Notstrom und Ersatzstrom?",
+    frage: "Müssen Wallbox, Wärmepumpe und Speicher gemeldet werden?",
     antwort:
-      "Eine Notstromlösung versorgt bei einem Netzausfall einzelne Steckdosen oder Stromkreise – etwa Kühlschrank, Heizungssteuerung und Router. Eine Ersatzstromlösung versorgt das gesamte Hausnetz, oft auch dreiphasig. Welche Variante möglich ist, hängt vom Wechselrichter und Speicher ab; beides lässt sich bei der Planung berücksichtigen.",
+      "Ja. Diese Anlagen sind dem Netzbetreiber zu melden; bei größeren Leistungen prüft er den Anschluss. Die Meldung übernimmt unser Elektrotechniker im Rahmen der Installation.",
   },
   {
-    frage: "Kann meine Wallbox das E-Auto nur mit Solarstrom laden?",
+    frage: "Habe ich mit Speicher bei einem Stromausfall automatisch Strom?",
     antwort:
-      "Ja, mit sogenanntem PV-Überschussladen. Die Wallbox passt die Ladeleistung laufend an den Strom an, den Ihre Anlage gerade übrig hat. Voraussetzung ist, dass Wallbox und Wechselrichter bzw. Energiemanager miteinander kommunizieren. Weil ein E-Auto einphasig mindestens etwa 1,4 kW und dreiphasig etwa 4,1 kW benötigt, ist eine Wallbox mit automatischer Phasenumschaltung besonders effizient.",
-  },
-  {
-    frage: "Brauche ich ein intelligentes Messsystem (Smartmeter)?",
-    antwort:
-      "Verpflichtend ist es nach dem Messstellenbetriebsgesetz unter anderem bei einem Jahresverbrauch über 6.000 kWh, bei PV-Anlagen mit mehr als 7 kW Leistung und bei steuerbaren Verbrauchern wie Wallbox oder Wärmepumpe nach § 14a EnWG. Den Einbau übernimmt Ihr Messstellenbetreiber, die jährlichen Kosten sind gesetzlich gedeckelt. Auch ohne Pflicht lohnt es sich, wenn Sie einen dynamischen Stromtarif nutzen möchten.",
+      "Nur, wenn das System dafür ausgelegt ist. Ein normaler Speicher schaltet sich bei Netzausfall aus Sicherheitsgründen ab. Mit einer Notstrom- oder Ersatzstromlösung trennt sich das Haus vom Netz, und ausgewählte Stromkreise werden aus dem Speicher weiterversorgt.",
   },
   {
     frage: "Gibt es eine Förderung für Stromspeicher?",
     antwort:
-      "Einen bundesweiten Zuschuss gibt es derzeit nicht. Speicher, die zusammen mit einer PV-Anlage auf oder an einem Wohngebäude installiert werden, sind aber von der Mehrwertsteuer befreit (0 % Umsatzsteuer). Zusätzlich finanziert der KfW-Kredit 270 auch Speicher, und einzelne Bundesländer und Kommunen haben eigene Programme.",
+      "Auf Bundesebene im Rahmen des EAG-Investitionszuschusses – bis maximal 50 kWh Nettokapazität und nur gemeinsam mit dem Förderantrag für die Photovoltaikanlage. Einzelne Bundesländer fördern zusätzlich. Die Sätze ändern sich je Fördercall; wir prüfen den aktuellen Stand im Angebot.",
+  },
+  {
+    frage: "Lohnt sich ein dynamischer Stromtarif mit Energiemanagement?",
+    antwort:
+      "Vor allem dann, wenn Sie große, zeitlich flexible Verbraucher haben – ein E-Auto oder eine Wärmepumpe. Das Energiemanagement lässt diese gezielt in Viertelstunden mit niedrigem Day-Ahead-Preis der Gebotszone Österreich laufen. Ob es sich rechnet, hängt vom Verbrauchsprofil ab.",
   },
 ];

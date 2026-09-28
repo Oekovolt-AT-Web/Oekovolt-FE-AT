@@ -10,13 +10,20 @@
 //
 // Kalibriert gegen die Größenordnungen des Unabhängigkeitsrechners der
 // HTW Berlin (Autarkie ohne/mit Speicher für Einfamilienhäuser).
+// Seit 09/2026 (AT) zusätzlich Lastprofile für Gewerbe (Betriebstage,
+// Schichten) und Landwirtschaft – genutzt vom Solarrechner für die
+// Zielgruppen Gewerbe/Landwirtschaft (stündliche Simulation statt Faustformel).
 // Alles bewusst ohne React/Next-Abhängigkeiten, damit es per Node prüfbar ist.
 
-export const MONATE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-export const MONATE_LANG = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+// Österreichisches Deutsch: „Jänner“
+export const MONATE = ["Jän", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+export const MONATE_LANG = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 export const TAGE_MONAT = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-// Monatsanteile des PV-Jahresertrags (Süddeutschland, Summe 1)
+// Monatsanteile des PV-Jahresertrags (Summe 1). Passt für das österreichische
+// Alpenvorland und die Beckenlagen (Linz, Salzburg, Wien, Graz): PVGIS-Monatswerte
+// für Süd/35° liegen dort im Dezember/Jänner bei rund 2,5–4 % und im Juni/Juli bei
+// 12–13,5 % des Jahresertrags. Inneralpine Hochlagen haben etwas höhere Winteranteile.
 export const PV_MONAT = [0.03, 0.05, 0.085, 0.115, 0.13, 0.13, 0.135, 0.115, 0.085, 0.06, 0.035, 0.025];
 
 // Monatsanteile Haushaltsstrom (Standardlastprofil-Charakter, Summe 1)
@@ -26,6 +33,7 @@ export const HAUSHALT_MONAT = [0.096, 0.088, 0.089, 0.081, 0.078, 0.073, 0.074, 
 export const HEIZ_MONAT = [0.175, 0.15, 0.13, 0.085, 0.04, 0.01, 0.005, 0.005, 0.03, 0.075, 0.13, 0.165];
 
 // Sonnenauf-/-untergang in lokaler Uhrzeit (inkl. Sommerzeit), ca. 48° N
+// (Linz/Salzburg; Wien geht rund 10 Minuten früher auf und unter)
 const SONNE = [
   [8.0, 16.7], [7.4, 17.5], [6.6, 18.3], [6.6, 20.1], [5.7, 20.9], [5.3, 21.4],
   [5.5, 21.3], [6.2, 20.6], [7.0, 19.5], [7.8, 18.4], [7.4, 16.8], [8.0, 16.4],
@@ -47,6 +55,78 @@ export const EAUTO_MONAT = norm([1.12, 1.12, 1, 1, 1, 0.9, 0.9, 0.9, 1, 1, 1.12,
 export const PROFIL_HAUSHALT = norm(H_HAUSHALT);
 export const PROFIL_WP = norm(H_WP);
 export const PROFIL_EAUTO = norm(H_EAUTO);
+
+// ---------------------------------------------------------------------------
+// Betriebe (Gewerbe / Landwirtschaft)
+// ---------------------------------------------------------------------------
+// ANNAHMEN (Richtwerte, keine Messdaten – ein echter Lastgang ersetzt sie):
+// - Betriebszeiten je Schichtmodell: 1 Schicht 07–16 Uhr, 2 Schichten 06–22 Uhr,
+//   3 Schichten rund um die Uhr; je eine Stunde An-/Abfahrrampe.
+// - Außerhalb der Betriebszeit und an betriebsfreien Tagen läuft eine Grundlast
+//   (IT, Kühlung, Druckluft, Beleuchtung, Standby) von 25 % der Betriebslast.
+// - Wochentage nach Kalender 2026 (1. Jänner 2026 = Donnerstag); gesetzliche
+//   Feiertage sind nicht gesondert berücksichtigt (rund ±4 % Unschärfe bei 5-Tage-Betrieb).
+// - Monatsverteilung Gewerbe leicht wintergewichtet (Licht, Hallenheizung/Lüftung).
+// - Landwirtschaft: Milchvieh-/Mischbetrieb – Melken und Milchkühlung morgens und
+//   abends, Fütterung/Werkstatt tagsüber, sieben Tage; im Sommer mehr Verbrauch
+//   durch Heubelüftung, Kühlung und Bewässerung.
+export const BETRIEB_GRUNDLAST = 0.25;
+export const SCHICHT_ZEITEN = { 1: [7, 16], 2: [6, 22], 3: [0, 24] };
+const ERSTER_WOCHENTAG_2026 = 3; // Mo = 0 … So = 6; 1.1.2026 = Donnerstag
+export const GEWERBE_MONAT = norm([1.07, 1.04, 1.02, 0.98, 0.96, 0.95, 0.95, 0.93, 0.98, 1.01, 1.05, 1.06]);
+export const LANDWIRTSCHAFT_MONAT = norm([0.95, 0.9, 0.92, 0.95, 1.08, 1.15, 1.16, 1.1, 1.0, 0.95, 0.92, 0.95]);
+const H_LANDWIRTSCHAFT = [0.5, 0.45, 0.45, 0.45, 0.55, 1.3, 1.6, 1.4, 0.9, 0.85, 0.85, 0.9, 0.9, 0.85, 0.85, 0.9, 1.3, 1.6, 1.4, 0.9, 0.7, 0.6, 0.55, 0.5];
+
+/** Relative Stundengewichte eines Betriebstags bzw. betriebsfreien Tags (24 Werte, nicht normiert). */
+export function betriebsTagesform({ typ = "gewerbe", schichten = 1, arbeitstag = true } = {}) {
+  if (typ === "landwirtschaft") return H_LANDWIRTSCHAFT.slice();
+  const g = BETRIEB_GRUNDLAST;
+  if (!arbeitstag) return new Array(24).fill(g);
+  const [von, bis] = SCHICHT_ZEITEN[schichten] || SCHICHT_ZEITEN[1];
+  return Array.from({ length: 24 }, (_, h) => {
+    if (h >= von && h < bis) return 1;
+    // Rampe: je eine Stunde vor Beginn und nach Ende halbe Last
+    if (h === von - 1 || h === bis) return (1 + g) / 2;
+    return g;
+  });
+}
+
+// Tag-zu-Tag-Schwankung im Betrieb (Auftragslage, Wetter) – deutlich kleiner als im Haushalt
+const BETRIEBSTAG = (() => {
+  const r = zufall(1848);
+  return TAGE_MONAT.map((tage) => Array.from({ length: tage }, () => 0.9 + 0.2 * r()));
+})();
+
+/**
+ * Stündliche Last eines Betriebs über ein Jahr (8.760 Werte, Summe = kwh).
+ * @param {object} p { kwh, typ: "gewerbe"|"landwirtschaft", betriebstage: 5|6|7, schichten: 1|2|3 }
+ */
+export function betriebsLast({ kwh = 0, typ = "gewerbe", betriebstage = 5, schichten = 1 } = {}) {
+  const n = 8760;
+  const last = new Float64Array(n);
+  if (!(kwh > 0)) return last;
+  const monat = typ === "landwirtschaft" ? LANDWIRTSCHAFT_MONAT : GEWERBE_MONAT;
+  const tage = typ === "landwirtschaft" ? 7 : Math.min(7, Math.max(5, betriebstage));
+  const formAn = betriebsTagesform({ typ, schichten, arbeitstag: true });
+  const formAus = betriebsTagesform({ typ, schichten, arbeitstag: false });
+  // Erst ungewichtet je Monat aufbauen, dann Monatssumme auf den Monatsanteil normieren
+  let i = 0;
+  let tagImJahr = 0;
+  for (let m = 0; m < 12; m++) {
+    const start = i;
+    for (let d = 0; d < TAGE_MONAT[m]; d++, tagImJahr++) {
+      const wochentag = (ERSTER_WOCHENTAG_2026 + tagImJahr) % 7;
+      const form = wochentag < tage ? formAn : formAus;
+      const f = BETRIEBSTAG[m][d];
+      for (let h = 0; h < 24; h++, i++) last[i] = form[h] * f;
+    }
+    let s = 0;
+    for (let j = start; j < i; j++) s += last[j];
+    const ziel = kwh * monat[m];
+    for (let j = start; j < i; j++) last[j] *= s > 0 ? ziel / s : 0;
+  }
+  return last;
+}
 
 /** PV-Tagesform eines Monats (24 Werte, Summe 1) */
 export function pvTagesform(monat) {
@@ -124,8 +204,9 @@ const EV_TAG = (() => {
  * @param {number} p.eAutoKwh       Ladestrom E-Auto pro Jahr (0 = keins)
  * @param {number} p.wpKwh          Strom Wärmepumpe pro Jahr (0 = keine)
  * @param {number} p.wpWarmwasser   Anteil Warmwasser am WP-Strom (ganzjährig gleich)
+ * @param {object} [p.betrieb]      optional Betriebslast { kwh, typ, betriebstage, schichten } (siehe betriebsLast)
  */
-export function jahresreihen({ kwp, ertragProKwp = 1000, haushaltKwh = 0, eAutoKwh = 0, wpKwh = 0, wpWarmwasser = 0.18 }) {
+export function jahresreihen({ kwp, ertragProKwp = 1000, haushaltKwh = 0, eAutoKwh = 0, wpKwh = 0, wpWarmwasser = 0.18, betrieb = null }) {
   const n = 8760;
   const pv = new Float64Array(n);
   const haushalt = new Float64Array(n);
@@ -161,7 +242,9 @@ export function jahresreihen({ kwp, ertragProKwp = 1000, haushaltKwh = 0, eAutoK
     const s = wp.reduce((a, b) => a + b, 0);
     for (let j = 0; j < n; j++) wp[j] *= wpKwh / s;
   }
-  return { pv, haushalt, eauto, wp, monat, wechselhaft };
+  const betriebReihe = betrieb && betrieb.kwh > 0 ? betriebsLast(betrieb) : null;
+  // Betriebe: Last schwankt innerhalb der Stunde weniger stark als im Haushalt
+  return { pv, haushalt, eauto, wp, monat, wechselhaft, betrieb: betriebReihe, teil: betriebReihe ? TEIL_BETRIEB : null };
 }
 
 // Innerhalb einer Stunde schwankt die Last stark (Wasserkocher, Herd, Waschmaschine).
@@ -170,6 +253,11 @@ const TEIL = [
   { anteil: 0.6, faktor: 0.4 },
   { anteil: 0.28, faktor: 1.0 },
   { anteil: 0.12, faktor: (1 - 0.6 * 0.4 - 0.28) / 0.12 },
+];
+// Betriebe: viele parallele Verbraucher glätten die Last – zwei Teilzustände ±15 %.
+const TEIL_BETRIEB = [
+  { anteil: 0.5, faktor: 0.85 },
+  { anteil: 0.5, faktor: 1.15 },
 ];
 // Wechselhafte Tage: Wolkenzüge lassen die PV-Leistung innerhalb der Stunde springen.
 const PV_TEIL_WECHSELHAFT = [
@@ -183,18 +271,19 @@ const STANDBY_KWH = 0.012;
 /** Stundenbilanz ohne Speicher – unabhängig von der Speichergröße, daher einmal je Eingabe. */
 function bilanz(reihen) {
   if (reihen._bilanz) return reihen._bilanz;
-  const { pv, haushalt, eauto, wp, wechselhaft } = reihen;
+  const { pv, haushalt, eauto, wp, wechselhaft, betrieb } = reihen;
+  const teile = reihen.teil || TEIL;
   const n = pv.length;
   const last = new Float64Array(n);
   const direkt = new Float64Array(n);
   const ueberschuss = new Float64Array(n);
   const bedarf = new Float64Array(n);
   for (let i = 0; i < n; i++) {
-    const l0 = haushalt[i] + eauto[i] + wp[i];
+    const l0 = haushalt[i] + eauto[i] + wp[i] + (betrieb ? betrieb[i] : 0);
     const p = pv[i];
     const pvTeile = wechselhaft[i] ? PV_TEIL_WECHSELHAFT : PV_TEIL_KLAR;
     let d = 0, u = 0, b = 0;
-    for (const t of TEIL) {
+    for (const t of teile) {
       const l = l0 * t.faktor;
       for (const q of pvTeile) {
         const pp = p * q.faktor;

@@ -3,83 +3,106 @@
 import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, Check, House, Tractor } from "lucide-react";
+import { ArrowRight, Check, House, Landmark, Tractor, Warehouse } from "lucide-react";
 import Fliesstext from "@/components/Reusable/Fliesstext";
 
 /**
- * Zielgruppen-Umschalter (Privathaushalte, Mehrfamilienhäuser, Landwirtschaft).
- * Texte und Bilder aus dem Backoffice (first_card_table), ergänzt um kurze,
- * fachlich belastbare Eckpunkte je Zielgruppe. WAI-ARIA-Tabmuster mit
- * Pfeiltasten. Ohne API-Daten greifen statische Inhalte.
+ * Zielgruppen-Umschalter Österreich: Gewerbe & Industrie, Landwirtschaft,
+ * Gemeinden, Privat (nachgeordnet). Statische Inhalte – die früheren
+ * Backoffice-Texte stammten von der deutschen Seite. WAI-ARIA-Tabmuster mit
+ * Pfeiltasten.
  */
 
 const ERGAENZUNG = {
-  privathaushalte: {
-    icon: House,
-    kurz: "Einfamilienhaus",
-    mobil: "Privat",
+  gewerbe: {
+    icon: Warehouse,
+    kurz: "Hallen, Produktion, Handel",
+    mobil: "Gewerbe",
     punkte: [
-      "Speicher, Wallbox und Wärmepumpe von Anfang an mitdenken",
-      "0 % Umsatzsteuer auf Anlage und Montage (§ 12 Abs. 3 UStG)",
-      "Montage meist in 1–2 Tagen",
+      "Planung nach Lastgang in Viertelstundenwerten",
+      "Hallendach mit Ballast, Trapezblech oder Ost-West",
+      "Netzanschluss nach TOR mit eigenem Parkregler",
     ],
-    link: { href: "/produkte/stromspeicher", label: "Mit Stromspeicher kombinieren" },
-  },
-  mehrfamilienhäuser: {
-    icon: Building2,
-    kurz: "Vermieter & WEG",
-    mobil: "Mehrfamilien",
-    punkte: [
-      "Mieterstrom oder gemeinschaftliche Gebäudeversorgung möglich",
-      "Basis für Ladeinfrastruktur an den Stellplätzen",
-      "Steigert die Attraktivität und den Wert der Immobilie",
-    ],
-    link: { href: "/produkte/mieterstrom", label: "Mehr zu Mieterstrom" },
+    link: { href: "/gewerbe", label: "Photovoltaik für Gewerbe & Industrie" },
   },
   landwirtschaft: {
     icon: Tractor,
-    kurz: "Höfe & Hallen",
+    kurz: "Stall, Scheune, Freifläche",
+    mobil: "Landwirtschaft",
     punkte: [
-      "Große Hallendächer, hoher Tagesverbrauch für Kühlung, Lüftung, Technik",
-      "Ab 100 kWp ist Direktvermarktung vorgeschrieben – wir planen sie mit",
-      "Referenz: Landwirtschaftsbetrieb in Betzigau",
+      "Glas-Glas-Module für Stallbereiche mit Ammoniak",
+      "Große Dachflächen, hoher Tagverbrauch für Kühlung und Lüftung",
+      "Agri-PV und Freifläche nach Widmung des Bundeslandes",
     ],
-    link: { href: "/service/direktvermarktung", label: "Direktvermarktung erklärt" },
+    link: { href: "/landwirtschaft", label: "Photovoltaik in der Landwirtschaft" },
+  },
+  gemeinden: {
+    icon: Landmark,
+    kurz: "Schulen, Bauhöfe, Kläranlagen",
+    mobil: "Gemeinden",
+    punkte: [
+      "Anlagen für kommunale Gebäude und Infrastruktur",
+      "Energiegemeinschaften mit Bürgerinnen und Bürgern",
+      "Unterlagen für Vergabe und Gemeinderatsbeschluss",
+    ],
+    link: { href: "/kommunen", label: "Photovoltaik für Gemeinden & Länder" },
+  },
+  privat: {
+    icon: House,
+    kurz: "Premium-Wohnhaus & Chalet",
+    mobil: "Privat",
+    punkte: [
+      "Speicher, Wallbox und Wärmepumpe von Anfang an mitdenken",
+      "Schneelast und Optik bei alpinen Objekten",
+      "Ersatzstrom für die Blackout-Vorsorge",
+    ],
+    link: { href: "/chalets", label: "Luxus-Chalets & Alpin" },
   },
 };
 
-const FALLBACK = [
+const GRUPPEN = [
   {
-    title: "Privathaushalte",
-    card_title: "Warum eine PV-Anlage für Ihr Zuhause?",
-    card_image: null,
-    bild: "/Images/Dienstleistungen/Photovoltaik/house.png",
-    card_alt_text: "Dach mit Photovoltaik-Modulen",
+    key: "gewerbe",
+    title: "Gewerbe & Industrie",
+    card_title: "Solarstrom dort, wo er tagsüber gebraucht wird",
+    bild: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg",
+    card_alt_text: "Gewerbegebäude mit Photovoltaikanlagen auf den Flachdächern",
     card_description:
-      "Mit einer eigenen Photovoltaikanlage erzeugen Sie Strom direkt auf Ihrem Dach, senken Ihre Stromkosten dauerhaft und machen sich unabhängiger von steigenden Strompreisen.",
+      "Betriebe verbrauchen Strom vor allem tagsüber – genau dann, wenn die Anlage erzeugt. Jede selbst genutzte Kilowattstunde spart Energiepreis, Netzentgelte und Abgaben. Wir planen die Anlage nach Ihrem Lastgang, nicht nach der maximalen Dachfläche.",
   },
   {
-    title: "Mehrfamilienhäuser",
-    card_title: "Maßgeschneiderte Photovoltaik für Ihr Gebäude",
-    bild: "/Images/Dienstleistungen/Photovoltaik/Bild1.png",
-    card_alt_text: "Gebäude mit Photovoltaik-Modulen",
-    card_description:
-      "Als Eigentümer eines Mehrfamilienhauses profitieren Sie von reduzierten Energiekosten, eigener Stromproduktion und der Basis für E-Mobilität – und steigern den Wert Ihrer Immobilie.",
-  },
-  {
+    key: "landwirtschaft",
     title: "Landwirtschaft",
-    card_title: "Die Kraft der Sonne nutzen",
-    bild: "/Images/Dienstleistungen/Photovoltaik/download-2.jpg",
-    card_alt_text: "Photovoltaik auf landwirtschaftlichem Gebäude",
+    card_title: "Dachflächen und Felder, die mitverdienen",
+    bild: "/Images/Dienstleistungen/Photovoltaik/house.png",
+    card_alt_text: "Holzscheune mit Photovoltaikmodulen auf dem Dach",
     card_description:
-      "Solarstrom für Hallen, Maschinen und Kühlung senkt die laufenden Betriebskosten und macht Ihren Hof unabhängiger.",
+      "Ställe, Scheunen und Maschinenhallen bieten große Dachflächen, Kühlung und Lüftung einen hohen Tagverbrauch. Überschüsse verkaufen Sie an einen Stromhändler oder teilen sie in einer Energiegemeinschaft.",
+  },
+  {
+    key: "gemeinden",
+    title: "Gemeinden",
+    card_title: "Öffentliche Gebäude als Kraftwerke",
+    bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
+    card_alt_text: "Luftaufnahme eines Gebäudes am Seeufer mit Photovoltaik auf mehreren Dachflächen",
+    card_description:
+      "Schulen, Bauhöfe, Freizeitanlagen und Kläranlagen haben große Dächer und einen gut planbaren Verbrauch. Mit einer Energiegemeinschaft profitieren auch Bürgerinnen und Bürger vom Gemeindestrom.",
+  },
+  {
+    key: "privat",
+    title: "Privat",
+    card_title: "Premium-Wohnhaus und Chalet",
+    bild: "/Images/Ratgeber/photovoltaik-im-winter.jpg",
+    card_alt_text: "Photovoltaikanlage auf einem verschneiten Dach",
+    card_description:
+      "Für private Bauherren planen wir Anlagen dort, wo Optik, Schneelast und Systemintegration besondere Sorgfalt verlangen – mit Speicher, Wärmepumpe, Wallbox und Energiemanagement als ein System.",
   },
 ];
 
-const schluessel = (t) => (t?.title || "").toLowerCase().replace(/\s+/g, "");
+const schluessel = (t) => t?.key || "";
 
-export default function ZielgruppenWahl({ gruppen }) {
-  const tabs = gruppen?.length ? gruppen : FALLBACK;
+export default function ZielgruppenWahl() {
+  const tabs = GRUPPEN;
   const [aktiv, setAktiv] = useState(0);
   const basis = useId();
   const refs = useRef([]);
@@ -98,14 +121,14 @@ export default function ZielgruppenWahl({ gruppen }) {
 
   const tab = tabs[aktiv] ?? tabs[0];
   const extra = ERGAENZUNG[schluessel(tab)];
-  const bild = tab.card_image ? `/api/image?path=${tab.card_image}` : tab.bild || "/Images/Dienstleistungen/Photovoltaik/house.png";
+  const bild = tab.bild;
 
   return (
     <div>
       <div
         role="tablist"
         aria-label="Zielgruppen"
-        className="mx-auto grid max-w-3xl grid-cols-3 gap-1.5 rounded-[1.4rem] bg-white p-1.5 shadow-sm ring-1 ring-ink-200/70"
+        className="mx-auto grid max-w-5xl grid-cols-2 gap-1.5 lg:grid-cols-4 rounded-[1.4rem] bg-white p-1.5 shadow-sm ring-1 ring-ink-200/70"
       >
         {tabs.map((t, i) => {
           const ist = i === aktiv;

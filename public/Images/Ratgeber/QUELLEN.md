@@ -1,6 +1,5 @@
 # Bildquellen Ratgeber
 
-- balkonkraftwerk.jpg – Yuma Solar (Yuma Balkonkraftwerk), Unsplash, https://unsplash.com/photos/kS2rEtx-JoU, Unsplash License
 - photovoltaik-im-winter.jpg – LEDC, Unsplash, https://unsplash.com/photos/XlQetkv28uQ, Unsplash License
 - solarcarport.jpg – Kindel Media, Pexels, https://www.pexels.com/photo/construction-industry-technology-architecture-9800008/, Pexels-Lizenz
 - photovoltaik-verschattung.jpg – Huawei (Produktfoto SUN2000-450W-P2 Smart PV Optimizer), https://solar.huawei.com/en/products/sun2000-450w-p2-600w-p/ (Bild: https://solar.huawei.com/admin/asset/v1/pro/view/a560c040b34c42898f57c341ddf81a54.jpg), Partnerfreigabe Ökovolt
@@ -13,5 +12,4 @@
 - waermepumpe-mit-photovoltaik.jpg – alpha innotec, Pexels, https://www.pexels.com/photo/plants-near-air-conditioner-and-building-wall-20046693/, Pexels License
 - waermepumpe-kosten.jpg – alpha innotec, Pexels, https://www.pexels.com/photo/modern-heat-pump-in-residential-setting-38067300/, Pexels License
 - pv-ueberschussladen.jpg – Fronius (Wattpilot Flex), https://www.fronius.com/de-de/germany/solarenergie/eigenheim/produkte-und-loesungen/e-mobilitaet/wattpilot-flex-e-auto-ladestation (Bild: https://www.fronius.com/-/media/f10972116aee49938325710f21e1fcc6.webp, in JPG umgewandelt), Partnerfreigabe Ökovolt
-- heizstab-photovoltaik.jpg – Fronius (Ohmpilot), https://www.fronius.com/de-de/germany/solarenergie/eigenheim/produkte-und-loesungen/waerme-mit-pv/ohmpilot-zur-warmwasseraufbereitung-mit-pv (Bild: https://www.fronius.com/-/media/0b2b5c374f2c4e2ea42e4843be65dd29.webp, in JPG umgewandelt), Partnerfreigabe Ökovolt
 - bidirektionales-laden.jpg – Sigenergy (SigenStor mit EV-DC-Lademodul), https://www.sigenergy.com/de/products/dc-charger (Bild: https://wwwstatic.sigenergy.com/static/images/solution01/video/video101-poster.webp, auf 1600 px verkleinert, JPG), Partnerfreigabe Ökovolt

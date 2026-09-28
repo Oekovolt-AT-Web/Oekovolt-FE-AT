@@ -19,8 +19,8 @@ export default function HomeLive({ initial }) {
   const heute = useMemo(() => {
     const punkte = d?.preis?.punkte || [];
     if (!punkte.length) return [];
-    const tag = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" }).format(new Date());
-    const fmt = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Berlin" });
+    const tag = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Vienna" }).format(new Date());
+    const fmt = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Vienna" });
     return punkte.filter((p) => fmt.format(new Date(p.t)) === tag);
   }, [d]);
 
@@ -64,7 +64,7 @@ export default function HomeLive({ initial }) {
               {aktiv ? fmtCt(aktiv.eurMwh) : "–"} <span className="text-[18px] font-bold text-white/50">ct/kWh</span>
             </p>
             <p className="mt-2 text-[13.5px] text-white/55">
-              {hover != null && aktiv ? `um ${fmtUhr(aktiv.t)} Uhr` : "jetzt · Day-Ahead DE-LU, netto"}
+              {hover != null && aktiv ? `um ${fmtUhr(aktiv.t)} Uhr` : "jetzt · Day-Ahead Gebotszone AT, netto"}
             </p>
           </div>
           {d.preis.heute && hover == null && (

@@ -1,22 +1,27 @@
 // src/lib/rechner/dynamischerTarif.js
 //
-// Dynamischer-Stromtarif-Rechner: Tageskosten Festpreis vs. dynamischer Tarif
-// auf Basis der echten Day-Ahead-Preise (Energy-Charts / Fraunhofer ISE).
-// Die Endkundenpreis-Annahmen (Aufschlag, MwSt., Festpreis) werden als
-// Parameter übergeben – Quelle ist TARIF_ANNAHMEN in src/lib/energy.js.
+// Dynamischer-Stromtarif-Rechner: Tageskosten Festpreis vs. Spotpreis-Tarif
+// auf Basis der echten Day-Ahead-Preise der Gebotszone Österreich (AT)
+// (Energy-Charts / Fraunhofer ISE, bzn=AT; Abruf in src/lib/energy.js). Die
+// Endkundenpreis-Annahmen (Aufschlag, USt., Festpreis) werden als Parameter
+// übergeben – Quelle ist TARIF_ANNAHMEN in src/lib/energy.js.
 
 import { HAUSHALT_MONAT, HEIZ_MONAT, TAGE_MONAT, PROFIL_HAUSHALT, PROFIL_WP, PROFIL_EAUTO } from "./profile.js";
 
-const TZ = "Europe/Berlin";
+// Österreich: Europe/Vienna (gleiche UTC-Offsets wie Berlin, aber fachlich korrekt benannt)
+const TZ = "Europe/Vienna";
 const datumFmt = new Intl.DateTimeFormat("sv-SE", { timeZone: TZ });
 const stundeFmt = new Intl.DateTimeFormat("de-DE", { timeZone: TZ, hour: "numeric", hourCycle: "h23" });
 
-/** YYYY-MM-DD in Berliner Zeit */
-export const berlinTag = (t) => datumFmt.format(new Date(t));
-/** Stunde 0–23 in Berliner Zeit */
-export const berlinStunde = (t) => Number(stundeFmt.formatToParts(new Date(t)).find((p) => p.type === "hour")?.value || 0) % 24;
+/** YYYY-MM-DD in Wiener Zeit */
+export const wienTag = (t) => datumFmt.format(new Date(t));
+/** Stunde 0–23 in Wiener Zeit */
+export const wienStunde = (t) => Number(stundeFmt.formatToParts(new Date(t)).find((p) => p.type === "hour")?.value || 0) % 24;
+// Alte Namen (DE-Fassung) – kompatibel gehalten
+export const berlinTag = wienTag;
+export const berlinStunde = wienStunde;
 
-/** Endkundenpreis dynamisch brutto in ct/kWh */
+/** Endkundenpreis Spotpreis-Tarif brutto in ct/kWh */
 export const bruttoCt = (eurMwh, a) => (eurMwh / 10 + a.aufschlagCt) * (1 + a.mwst);
 
 /** Vorkonfigurierte Verbrauchsprofile */
@@ -42,9 +47,9 @@ export const TARIF_PARAMETER = {
 export function tagesSlots(punkte = [], tag, aufloesungMin = 15, annahmen) {
   const dauerH = aufloesungMin / 60;
   return punkte
-    .filter((p) => berlinTag(p.t) === tag)
+    .filter((p) => wienTag(p.t) === tag)
     .sort((a, b) => a.t - b.t)
-    .map((p) => ({ t: p.t, eurMwh: p.eurMwh, dauerH, stunde: berlinStunde(p.t), ct: bruttoCt(p.eurMwh, annahmen) }));
+    .map((p) => ({ t: p.t, eurMwh: p.eurMwh, dauerH, stunde: wienStunde(p.t), ct: bruttoCt(p.eurMwh, annahmen) }));
 }
 
 /** Lastgang je Slot für ein Profil (kWh je Slot, getrennt nach Verbraucher) */

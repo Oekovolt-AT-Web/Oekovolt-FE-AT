@@ -2,7 +2,15 @@ User-agent: Googlebot
 User-agent: Bingbot
 User-agent: Slurp
 User-agent: DuckDuckBot
+User-agent: YandexBot
+User-agent: Qwantbot
+User-agent: SeznamBot
+User-agent: Yeti
+User-agent: MojeekBot
+User-agent: Ecosia
 User-agent: SistrixBot
+User-agent: AhrefsBot
+User-agent: SemrushBot
 Allow: /api/image
 Allow: /
 Disallow: /api/

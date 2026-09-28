@@ -1,59 +1,28 @@
-// src/app/api/forderungen/route.js
+// src/app/api/forderungen/landesforderungen/route.js
+//
+// Liefert die Landesförderungen der neun österreichischen Bundesländer als JSON
+// – aus den statischen Daten in @/data/bundeslaender (kein Backend-Aufruf).
+
 import { NextResponse } from "next/server";
-import { getApiHeaders, isApiConfigured, API_BASE_URL } from "@/lib/apiBaseUrl";
+import { alleBundeslaender, STAND } from "@/data/bundeslaender";
 
-const API_URL = `${API_BASE_URL}oekovoltdeutchland.forderungen_pages.doctype.forderungen_lande.api.get_all_forderung_lande_pages`;
+export const dynamic = "force-static";
 
-export async function GET() {
-  // Check if API is configured
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
-    return NextResponse.json(
-      { error: "API not configured" },
-      { status: 500 }
-    );
-  }
+export function GET() {
+  const laender = alleBundeslaender().map((l) => ({
+    key: l.key,
+    name: l.name,
+    slug: l.slug,
+    pfad: `/forderungen/landesforderungen/${l.slug}`,
+    foerderart: l.foerderart,
+    kurz: l.kurz,
+    stand: l.stand,
+    programme: l.programme.map(({ name, traeger, zielgruppen, themen, hoehe, status, url, pruefen }) => ({ name, traeger, zielgruppen, themen, hoehe, status, url, pruefen: Boolean(pruefen) })),
+    netzbetreiber: l.netzbetreiber,
+  }));
 
-  try {
-    const headers = getApiHeaders();
-
-    const res = await fetch(API_URL, {
-      method: "GET",
-      headers: headers,
-      next: { revalidate: 60 },
-    });
-
-    if (!res.ok) {
-      let errorText = "";
-      try {
-        const errorData = await res.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await res.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${res.status}: ${errorText}`);
-      
-      return NextResponse.json(
-        { error: "Failed to fetch data" },
-        { status: res.status }
-      );
-    }
-
-    const data = await res.json();
-    
-    // Add cache headers to the response
-    return NextResponse.json(data, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
-      },
-    });
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { stand: STAND, laender },
+    { headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400" } }
+  );
 }

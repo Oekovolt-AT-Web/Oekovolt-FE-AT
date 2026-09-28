@@ -1,305 +1,283 @@
-// Ratgeber: Amortisation Photovoltaik
-// Alle Beispielrechnungen laufen über den Rechenkern des Solarrechners.
-
-import { ANNAHMEN } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { berechne } from "@/lib/solarrechner";
-
-const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
-const kwh = (n) => Math.round(n).toLocaleString("de-DE") + " kWh";
-const pct = (x, st = 0) => (x * 100).toFixed(st).replace(".", ",") + " %";
-const j = (r) => (r.amortisationJahre ? r.amortisationJahre.toFixed(1).replace(".", ",") + " Jahre" : "über 20 Jahre");
-const jD = (r) => j(r).replace(/Jahre$/, "Jahren");
-const statisch = (r) => (r.investition / r.nutzenProJahr).toFixed(1).replace(".", ",");
-const ctStr = (eurProKwh) => String(Math.round(eurProKwh * 1000) / 10).replace(".", ",");
-
-/** Interner Zinsfuß (IRR) über die 20-jährige Cashflow-Reihe des Solarrechners, per Bisektion. */
-function irr(r) {
-  const cf = r.cashflow.map((c) => c.netto);
-  let lo = -0.5;
-  let hi = 0.5;
-  for (let i = 0; i < 100; i++) {
-    const m = (lo + hi) / 2;
-    const npv = cf.reduce((s, c, t) => s + c / Math.pow(1 + m, t), 0);
-    if (npv > 0) lo = m;
-    else hi = m;
-  }
-  return (lo + hi) / 2;
-}
-
-const B = { kwp: 10, ausrichtung: "sued", neigung: "mittel", verbrauch: 4500, speicherKwh: 0 };
-const BASIS = berechne(B);
-const SP = berechne({ ...B, speicherKwh: 8 });
-const OW = berechne({ ...B, ausrichtung: "ost-west" });
-const NORD = berechne({ ...B, ausrichtung: "nord" });
-const ST0 = berechne({ ...B, preissteigerung: 0 });
-const ST4 = berechne({ ...B, preissteigerung: 0.04 });
-const V3 = berechne({ ...B, verbrauch: 3000 });
-const V6 = berechne({ ...B, verbrauch: 6000 });
-const WP = berechne({ ...B, kwp: 14, verbrauch: 8000 });
-const K5 = berechne({ ...B, kwp: 5, verbrauch: 3000 });
-
-const satz = BASIS.satzCt;
+// Ratgeber: Amortisation & Rendite einer PV-Anlage berechnen (Gruppe R1)
+// Alle Zahlen mit dem gemeinsamen R1-Rechenkern (pvcalc.mjs) ermittelt und gerundet als Text eingetragen.
+// Referenzfall wie in photovoltaik-gewerbe: 100 kWp, 750 €/kWp netto, 60 % Eigenverbrauch, 18 ct/kWh,
+// 1.000 kWh/kWp, 0,4 % Degradation, +2 %/a Strompreis, 6 ct/kWh Überschuss, 15 €/kWp Betriebskosten +2 %/a,
+// 25 Jahre, Kalkulationszins 5 %.
 
 const artikel = {
   slug: "photovoltaik-amortisation",
-  title: "Amortisation Photovoltaik: Formel, Beispiele und echte Rendite",
-  seoTitle: "Amortisation Photovoltaik: Formel & Beispiele | Ökovolt",
-  kurzTitel: "Amortisation Photovoltaik",
+  title: "Amortisation und Rendite einer PV-Anlage berechnen: Methoden 2026",
+  seoTitle: "PV-Amortisation & Rendite berechnen 2026 | Ökovolt",
+  kurzTitel: "Amortisation & Rendite",
   description:
-    "Amortisation Photovoltaik 2026: Nach wie vielen Jahren sich eine PV-Anlage bezahlt macht – mit Formel, Rechenbeispielen, Einflussfaktoren und Rendite (IRR).",
+    "Amortisation einer PV-Anlage berechnen: statisch und dynamisch, IRR, Kapitalwert, Stromgestehungskosten, Sensitivitäten, Steuereffekt und typische Rechenfehler.",
   excerpt:
-    "Wann hat sich die Solaranlage bezahlt gemacht? Schritt-für-Schritt-Rechnung mit echten Zahlen, zehn Szenarien im Vergleich und die Rendite verständlich erklärt.",
-  hauptKeyword: "amortisation photovoltaik",
+    "Wie Sie Amortisation, internen Zinsfuß, Kapitalwert und Stromgestehungskosten einer PV-Anlage korrekt berechnen – mit Referenzfall 100 kWp, Sensitivitätstabelle, Steuer- und Speichereffekt und den häufigsten Fehlern in Angeboten.",
+  hauptKeyword: "amortisation pv-anlage berechnen",
   keywords: [
-    "Amortisation Photovoltaik",
-    "PV-Anlage Amortisation berechnen",
-    "Wann amortisiert sich eine PV-Anlage",
-    "Amortisationszeit Solaranlage",
-    "Photovoltaik Rendite",
-    "PV-Anlage Amortisation mit Speicher",
-    "Amortisation Photovoltaik Formel",
+    "Amortisation PV-Anlage berechnen",
+    "Photovoltaik Rendite berechnen",
+    "PV-Anlage IRR",
+    "Stromgestehungskosten Photovoltaik",
+    "Kapitalwert Photovoltaik",
+    "Amortisation Photovoltaik Gewerbe",
+    "Amortisation PV mit Speicher",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Kosten & Wirtschaftlichkeit",
-  bild: "/Images/Dienstleistungen/Photovoltaik/download-2.jpg",
-  bildAlt: "Reihenhäuser mit Photovoltaikmodulen auf den Dächern",
-  badge: { wert: j(BASIS).replace(" Jahre", " J."), text: "Amortisation 10 kWp, Süddach, ohne Speicher" },
+  bild: "/Images/Referenzen/Projekte-2.jpg",
+  bildAlt: "Nahaufnahme eines Photovoltaik-Modulfelds im Gegenlicht",
+  badge: { wert: "7,4 ct", text: "Stromgestehungskosten je kWh, 100-kWp-Dachanlage" },
 
   kurzFazit: [
-    `**Eine PV-Anlage im Einfamilienhaus amortisiert sich 2026 typischerweise nach 10 bis 15 Jahren.** Unsere 10-kWp-Beispielanlage auf einem Süddach braucht rund ${j(BASIS)}.`,
-    "**Faustformel:** Amortisationszeit = Investition ÷ jährlicher Vorteil. Der Vorteil ist Stromersparnis plus Einspeiseerlös minus Betriebskosten.",
-    `Die Anlage läuft 25 bis 30 Jahre. Über die 20-jährige EEG-Laufzeit erreicht das Beispiel eine **Rendite (interner Zinsfuß) von rund ${pct(irr(BASIS), 1)} pro Jahr** – ohne die Jahre danach.`,
-    "Den größten Einfluss haben **Eigenverbrauch, Anschaffungspreis und Strompreisentwicklung** – nicht die Einspeisevergütung.",
+    "**Die statische Amortisation berechnen Sie als Investition ÷ jährlicher Vorteil; genauer ist die dynamische Rechnung Jahr für Jahr mit Degradation, Preisentwicklung und steigenden Betriebskosten.**",
+    "Referenzfall 100 kWp, 75.000 € netto, 60 % Eigenverbrauch, 18 ct/kWh: **statisch 6,4 Jahre, dynamisch 6,2 Jahre**, interner Zinsfuß ≈ 16 %, Kapitalwert (5 %) ≈ 110.000 €, Stromgestehungskosten ≈ 7,4 ct/kWh.",
+    "Am stärksten wirken **Eigenverbrauch, vermeidbarer Strompreis und Investition**: 40 statt 60 % Eigenverbrauch verlängern die Amortisation auf 7,9 Jahre, eine ungünstige Kombination mehrerer Annahmen auf 11,4 Jahre.",
+    "Nach 23 % KöSt sinkt der interne Zinsfuß auf 13,5 %, mit **Investitionsfreibetrag 22 %** auf 14,1 %. Ein Speicher, der nur den Eigenverbrauch erhöht, verlängert die Amortisation auf rund 10 Jahre.",
   ],
 
   abschnitte: [
     {
       id: "antwort",
-      titel: "Nach wie vielen Jahren amortisiert sich eine PV-Anlage?",
+      titel: "Wie berechnet man die Amortisation einer PV-Anlage?",
       tocLabel: "Die kurze Antwort",
       bloecke: [
         {
           typ: "p",
-          text: `**Eine gut geplante Photovoltaikanlage auf einem Einfamilienhaus hat sich 2026 meist nach 10 bis 15 Jahren bezahlt gemacht.** In unserem Rechenbeispiel – 10 kWp, Süddach, ${kwh(4500)} Jahresverbrauch, ohne Speicher – sind es ${j(BASIS)}. Weil moderne Module 25 Jahre und länger Strom liefern, bleiben danach viele Jahre, in denen die Anlage praktisch nur noch Gewinn abwirft.`,
-        },
-        {
-          typ: "p",
-          text: `Die [Amortisationszeit](/wissen/lexikon#amortisation) ist die Zahl der Jahre, bis die Summe aller Ersparnisse und Erlöse die Anschaffungskosten erreicht. Sie ist eine anschauliche Kennzahl für das Risiko: Je kürzer, desto schneller ist das eingesetzte Geld zurück. Über die tatsächliche Wirtschaftlichkeit sagt sie allein aber wenig – dafür braucht es die Rendite. Beides erklären wir unten.`,
-        },
-        {
-          typ: "kennzahl",
-          wert: `${ctStr(ANNAHMEN.strompreis)} ct`,
-          titel: "spart jede selbst verbrauchte Kilowattstunde",
-          text: `Für eingespeisten Strom erhalten neue Anlagen bis 10 kWp nur ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct (ab ${VERGUETUNG.gueltigAbLabel}). Deshalb bestimmt der Eigenverbrauch die Amortisation stärker als jeder andere Faktor.`,
-        },
-      ],
-    },
-    {
-      id: "formel",
-      titel: "Die Formel: Amortisation selbst berechnen",
-      tocLabel: "Formel & Rechenweg",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Die einfache (statische) Amortisation berechnen Sie, indem Sie die Investition durch den jährlichen Vorteil teilen.** Der jährliche Vorteil setzt sich aus drei Teilen zusammen:",
-        },
-        {
-          typ: "liste",
-          nummeriert: true,
-          punkte: [
-            "**Stromersparnis** = selbst verbrauchter Solarstrom (kWh) × Ihr Strompreis (€/kWh)",
-            "**Einspeiseerlös** = eingespeister Strom (kWh) × Einspeisevergütung (€/kWh)",
-            "**Betriebskosten** = Versicherung, Zählermiete, Wartung und Rücklage für den Wechselrichter",
-          ],
+          text: "**Die Amortisation einer PV-Anlage ist erreicht, wenn die kumulierten jährlichen Vorteile – Stromersparnis plus Überschusserlös minus Betriebskosten – die Investition decken.** Die einfache Formel teilt die Investition durch den Vorteil des ersten Jahres. Für Investitionsentscheidungen im Betrieb reicht das nicht: Dort zählen zusätzlich Rendite, Kapitalwert und Stromgestehungskosten.",
         },
         {
           typ: "kasten",
           variant: "info",
-          titel: "Formel",
-          text: "**Amortisationszeit (Jahre) = Investition ÷ (Stromersparnis + Einspeiseerlös − Betriebskosten)**",
-        },
-        { typ: "h3", text: "Rechenbeispiel Schritt für Schritt" },
-        {
-          typ: "tabelle",
-          caption: "Statische Amortisation einer 10-kWp-Anlage (Süd, 4.500 kWh Verbrauch, ohne Speicher)",
-          kopf: ["Schritt", "Rechnung", "Ergebnis"],
-          zeilen: [
-            ["Investition", `10 kWp schlüsselfertig, 0 % USt`, eur(BASIS.investition)],
-            ["Jahresertrag", `10 kWp × ${ANNAHMEN.ertragProKwpSued.toLocaleString("de-DE")} kWh/kWp`, kwh(BASIS.jahresertrag)],
-            ["Eigenverbrauch", `${pct(BASIS.autarkie)} von ${kwh(4500)} Verbrauch`, kwh(BASIS.eigenverbrauch)],
-            ["Stromersparnis", `${kwh(BASIS.eigenverbrauch)} × ${ctStr(ANNAHMEN.strompreis)} ct`, eur(BASIS.ersparnis)],
-            ["Einspeiseerlös", `${kwh(BASIS.eingespeist)} × ${ct(satz)} ct`, eur(BASIS.einspeiseErloes)],
-            ["Betriebskosten", `10 kWp × ${ANNAHMEN.betriebskostenProKwp} €`, `− ${eur(BASIS.betriebskosten)}`],
-            ["Jährlicher Vorteil", "Summe", eur(BASIS.nutzenProJahr)],
-            ["Amortisation (statisch)", `${eur(BASIS.investition)} ÷ ${eur(BASIS.nutzenProJahr)}`, `${statisch(BASIS)} Jahre`],
-          ],
-          markierteZeile: 7,
-          hervorheben: 2,
-          minBreite: 560,
-          fussnote: "Richtwerte aus dem Solarrechner, Stand September 2026. Keine Angebote; tatsächliche Preise und Erträge hängen von Dach, Region und Verbrauch ab.",
+          titel: "Die fünf Kennzahlen auf einen Blick",
+          text: "**Statische Amortisation** = Investition ÷ Vorteil Jahr 1. **Dynamische Amortisation** = Jahr, in dem der kumulierte Cashflow null erreicht. **Interner Zinsfuß (IRR)** = Zinssatz, bei dem der Barwert aller Cashflows null ist. **Kapitalwert (NPV)** = Summe aller abgezinsten Cashflows minus Investition. **Stromgestehungskosten (LCOE)** = (Investition + Barwert der Betriebskosten) ÷ Barwert der Erzeugung.",
         },
         {
           typ: "p",
-          text: `Die statische Rechnung ist ein guter Überschlag, vernachlässigt aber zwei gegenläufige Effekte: Die Module verlieren jedes Jahr etwas Leistung ([Degradation](/wissen/lexikon#degradation), rund ${pct(ANNAHMEN.degradationProJahr, 1)} pro Jahr), und der ersetzte Netzstrom wird voraussichtlich teurer. Unser [Solarrechner](/solarrechner) rechnet deshalb Jahr für Jahr (dynamisch) und kommt im Beispiel auf ${j(BASIS)}. Gerechnet ist mit ${Math.round(ANNAHMEN.strompreisSteigerung * 100)} % Strompreissteigerung pro Jahr – bei konstantem Strompreis wären es ${j(ST0)}.`,
+          text: "Ob sich Photovoltaik für Ihren Betriebstyp grundsätzlich lohnt, beantwortet [Lohnt sich Photovoltaik 2026?](/ratgeber/photovoltaik-lohnt-sich). Hier geht es um die Methode: welche Kennzahl was aussagt, welche Annahme wie stark wirkt und wo Angebote häufig schönrechnen.",
         },
       ],
     },
     {
-      id: "szenarien",
-      titel: "Amortisation im Vergleich: zehn typische Fälle",
-      tocLabel: "Szenarien",
+      id: "statisch-dynamisch",
+      titel: "Statische und dynamische Amortisation im Vergleich",
+      tocLabel: "Statisch vs. dynamisch",
       bloecke: [
         {
           typ: "p",
-          text: "**Ob sich eine Anlage nach 11 oder nach 20 Jahren bezahlt macht, entscheiden vor allem Dachausrichtung, Verbrauch und Speicher.** Die Tabelle zeigt, wie stark einzelne Stellschrauben wirken – jeweils ausgehend vom Basisfall.",
+          text: "**Die statische Amortisation unterstellt, dass jedes Jahr gleich ist; die dynamische rechnet Jahr für Jahr mit sinkendem Modulertrag, steigenden Strompreisen und steigenden Betriebskosten.** Im Referenzfall liegen beide nah beieinander, weil sich Degradation und Preissteigerung teilweise aufheben.",
         },
         {
           typ: "tabelle",
-          caption: "Dynamische Amortisation und Rendite (IRR über 20 Jahre) in zehn Szenarien, Stand September 2026",
-          kopf: ["Szenario", "Investition", "Vorteil Jahr 1", "Amortisation", "Rendite (IRR)"],
+          caption: "Referenzfall 100 kWp: Rechenweg der statischen Amortisation, Stand September 2026",
+          kopf: ["Schritt", "Rechnung", "Ergebnis"],
           zeilen: [
-            ["Basis: 10 kWp Süd, 4.500 kWh", eur(BASIS.investition), eur(BASIS.nutzenProJahr), j(BASIS), pct(irr(BASIS), 1)],
-            ["+ 8-kWh-Speicher", eur(SP.investition), eur(SP.nutzenProJahr), j(SP), pct(irr(SP), 1)],
-            ["Ost/West statt Süd", eur(OW.investition), eur(OW.nutzenProJahr), j(OW), pct(irr(OW), 1)],
-            ["Norddach", eur(NORD.investition), eur(NORD.nutzenProJahr), j(NORD), pct(irr(NORD), 1)],
-            ["Verbrauch nur 3.000 kWh", eur(V3.investition), eur(V3.nutzenProJahr), j(V3), pct(irr(V3), 1)],
-            ["Verbrauch 6.000 kWh", eur(V6.investition), eur(V6.nutzenProJahr), j(V6), pct(irr(V6), 1)],
-            ["14 kWp mit Wärmepumpe, 8.000 kWh", eur(WP.investition), eur(WP.nutzenProJahr), j(WP), pct(irr(WP), 1)],
-            ["5 kWp, 3.000 kWh", eur(K5.investition), eur(K5.nutzenProJahr), j(K5), pct(irr(K5), 1)],
-            ["Strompreis bleibt konstant", eur(ST0.investition), eur(ST0.nutzenProJahr), j(ST0), pct(irr(ST0), 1)],
-            ["Strompreis +4 % pro Jahr", eur(ST4.investition), eur(ST4.nutzenProJahr), j(ST4), pct(irr(ST4), 1)],
+            ["Investition", "100 kWp × 750 €/kWp netto", "75.000 €"],
+            ["Jahresertrag", "100 kWp × 1.000 kWh/kWp", "100.000 kWh"],
+            ["Stromersparnis", "60.000 kWh Eigenverbrauch × 18 ct", "10.800 €"],
+            ["Überschusserlös", "40.000 kWh × 6 ct", "2.400 €"],
+            ["Betriebskosten", "100 kWp × 15 €", "− 1.500 €"],
+            ["Vorteil Jahr 1", "Summe", "11.700 €"],
+            ["Statische Amortisation", "75.000 € ÷ 11.700 €", "6,4 Jahre"],
+            ["Dynamische Amortisation", "Jahr für Jahr, siehe Fußnote", "6,2 Jahre"],
           ],
-          markierteZeile: 0,
-          hervorheben: 3,
-          minBreite: 680,
-          fussnote: `Rechenkern des Solarrechners: ${ctStr(ANNAHMEN.strompreis)} ct Strompreis, Basis ${Math.round(ANNAHMEN.strompreisSteigerung * 100)} % Strompreissteigerung pro Jahr, ${pct(ANNAHMEN.degradationProJahr, 1)} Degradation, Betriebskosten ${ANNAHMEN.betriebskostenProKwp} €/kWp mit ${Math.round(ANNAHMEN.betriebskostenSteigerung * 100)} % Kostensteigerung, EEG-Vergütung nach Anlagengröße. IRR ohne Restwert nach Jahr 20 – die tatsächliche Rendite liegt bei längerer Nutzung höher.`,
+          markierteZeile: 7,
+          hervorheben: 2,
+          minBreite: 560,
+          fussnote: "Beispielrechnung, kein Angebot. 750 €/kWp = Richtwert 2026 für 100 kWp auf Basis der BMWET-Marktstatistik; 1.000 kWh/kWp = österreichisches Mittel (Ost-West-Flachdach eher 900–950). Dynamisch: 0,4 % Degradation/Jahr, vermeidbarer Strompreis +2 %/Jahr, Überschusserlös konstant, Betriebskosten (Wartung, Versicherung, Monitoring, Rücklage Wechselrichtertausch) +2 %/Jahr.",
         },
         {
-          typ: "karten",
-          cols: 3,
-          items: [
-            { titel: "Eigenverbrauch schlägt Größe", text: `Bei nur 3.000 kWh Verbrauch dauert es mit derselben Anlage ${j(V3)}, bei 6.000 kWh nur ${j(V6)}. Wärmepumpe oder E-Auto machen die Anlage schneller rentabel.` },
-            { titel: "Speicher: mehr Autarkie", text: `Im Solarrechner verkürzt der 8-kWh-Speicher die Amortisation auf ${j(SP)}. Das hängt aber stark von Speicherpreis und Lastprofil ab – mehr im Ratgeber [Stromspeicher Kosten](/ratgeber/stromspeicher-kosten).` },
-            { titel: "Strompreis als Joker", text: `Bleibt der Strompreis konstant, verlängert sich die Amortisation auf ${j(ST0)}; steigt er um 4 % im Jahr, sinkt sie auf ${j(ST4)}. Das Risiko liegt also eher auf der Chancenseite.` },
-          ],
-        },
-        {
-          typ: "tool",
-          href: "/solarrechner",
-          titel: "Ihre persönliche Amortisation berechnen",
-          text: "Anlagengröße, Dach, Verbrauch, Speicher und Strompreisentwicklung eingeben – mit 20-Jahres-Cashflow und Amortisationsjahr.",
-          label: "Zum Solarrechner",
+          typ: "p",
+          text: "Bleibt der Strompreis dagegen 25 Jahre konstant, dreht sich das Verhältnis: Die dynamische Amortisation steigt auf 6,5 Jahre und liegt damit über der statischen. Welcher spezifische Ertrag an Ihrem Standort realistisch ist, zeigt [Ertrag pro kWp in Österreich](/ratgeber/photovoltaik-ertrag-pro-kwp).",
         },
       ],
     },
     {
       id: "rendite",
-      titel: "Amortisation oder Rendite: Was sagt mehr aus?",
-      tocLabel: "Rendite & IRR",
+      titel: "IRR, Kapitalwert und Stromgestehungskosten: die aussagekräftigeren Kennzahlen",
+      tocLabel: "IRR, Kapitalwert, LCOE",
       bloecke: [
         {
           typ: "p",
-          text: "**Die Amortisationszeit sagt, wann das Geld zurück ist – die Rendite sagt, wie gut es sich verzinst hat.** Zwei Anlagen können sich nach 12 Jahren amortisieren, aber sehr unterschiedliche Renditen bringen, je nachdem, wie lange sie danach noch laufen und wie hoch die Überschüsse ausfallen.",
+          text: "**Die Amortisationszeit misst nur, wann das Geld zurück ist; Rendite und Kapitalwert messen, wie viel die Anlage über ihre gesamte Laufzeit verdient.** Zwei Anlagen mit 7 Jahren Amortisation können sehr unterschiedlich rentabel sein, je nachdem, wie hoch die Überschüsse danach ausfallen.",
         },
-        { typ: "h3", text: "Einfache Rendite" },
-        {
-          typ: "p",
-          text: `Die einfache Rendite teilt den durchschnittlichen jährlichen Überschuss durch die Investition. Im Basisfall bleiben nach 20 Jahren ${eur(BASIS.ertrag20Jahre)} Überschuss; verteilt auf 20 Jahre sind das ${pct(BASIS.renditeProJahr, 1)} pro Jahr bezogen auf die Investition. Diese Kennzahl ist leicht zu verstehen, berücksichtigt aber nicht, dass Geld früher mehr wert ist als später.`,
-        },
-        { typ: "h3", text: "Interner Zinsfuß (IRR) – die ehrlichere Kennzahl" },
-        {
-          typ: "p",
-          text: `Der interne Zinsfuß beantwortet die Frage: **Zu welchem Zinssatz müssten Sie Ihr Geld anlegen, um am Ende genauso dazustehen wie mit der PV-Anlage?** Im Basisfall sind das rund ${pct(irr(BASIS), 1)} pro Jahr – gerechnet nur über 20 Jahre und ohne Restwert. Mit Speicher sind es im Solarrechner ${pct(irr(SP), 1)}. Die Werte sind mit der Verzinsung einer Geldanlage vergleichbar, allerdings mit einem wichtigen Unterschied: Die Erträge sind an den Betrieb der Anlage und die künftige Strompreisentwicklung gebunden.`,
-        },
-        {
-          typ: "kasten",
-          variant: "tipp",
-          titel: "Die Jahre nach der Amortisation zählen doppelt",
-          text: `Nach 20 Jahren endet die [EEG-Vergütung](/ratgeber/einspeiseverguetung-2026), nicht die Anlage. Wer den Solarstrom weiter selbst nutzt, spart in den Jahren 21 bis 30 weiter – bei heutigem Verbrauch mehrere hundert Euro jährlich. Was dann gilt, erklärt [Photovoltaik nach 20 Jahren](/ratgeber/photovoltaik-nach-20-jahren).`,
-        },
-      ],
-    },
-    {
-      id: "faktoren",
-      titel: "Die sieben Faktoren, die die Amortisation bestimmen",
-      tocLabel: "Einflussfaktoren",
-      bloecke: [
         {
           typ: "tabelle",
-          caption: "Einflussfaktoren auf die Amortisationszeit",
-          kopf: ["Faktor", "Wirkung", "Was Sie tun können"],
+          caption: "Kennzahlen des Referenzfalls 100 kWp bei unterschiedlichen Kalkulationszinsen",
+          kopf: ["Kennzahl", "Beantwortet die Frage", "3 %", "5 %", "7 %"],
           zeilen: [
-            ["Eigenverbrauchsanteil", "sehr hoch", "Verbraucher in die Mittagszeit legen, Wärmepumpe/E-Auto mit PV koppeln, ggf. Speicher"],
-            ["Anschaffungspreis je kWp", "sehr hoch", "Mehrere Angebote vergleichen, Fixkosten durch passende Anlagengröße verteilen"],
-            ["Strompreis", "hoch", "Je höher Ihr Tarif, desto mehr spart jede selbst genutzte kWh"],
-            ["Ausrichtung & Verschattung", "hoch", "Süd/Südwest ideal, Ost/West gut für Eigenverbrauch; Verschattung vermeiden"],
-            ["Einspeisevergütung", "mittel", "Überschuss wird nur mit wenigen Cent vergütet – nicht auf Einspeisung optimieren"],
-            ["Betriebskosten", "mittel", "Versicherung und Wartung vergleichen, Monitoring nutzen"],
-            ["Finanzierung", "mittel", "Zinsen verlängern die Amortisation; Eigenkapital oder günstiger Kredit verkürzen sie"],
+            ["Interner Zinsfuß (IRR), 25 Jahre", "Wie verzinst sich das eingesetzte Kapital?", "16,3 %", "16,3 %", "16,3 %"],
+            ["Kapitalwert (NPV)", "Wie viel Mehrwert entsteht über dem Kalkulationszins?", "156.000 €", "110.000 €", "76.000 €"],
+            ["Stromgestehungskosten (LCOE)", "Was kostet eine kWh vom eigenen Dach?", "6,4 ct", "7,4 ct", "8,5 ct"],
           ],
-          minBreite: 620,
+          hervorheben: 3,
+          minBreite: 640,
+          fussnote: "Annahmen wie im Referenzfall. Der IRR ist unabhängig vom Kalkulationszins; Kapitalwert und Stromgestehungskosten hängen davon ab. Über 20 statt 25 Jahre gerechnet sinkt der IRR auf 15,7 %, der Kapitalwert (5 %) auf 85.000 €. Zum Vergleich: 500 kWp für 600 €/kWp und 12 €/kWp Betriebskosten kommen auf 5,9 ct/kWh.",
         },
         {
           typ: "p",
-          text: `Wie stark die Ausrichtung wirkt, zeigt der Vergleich: Ein Norddach liefert im Rechner nur rund 60 % des Süd-Ertrags und kommt innerhalb von 20 Jahren nicht auf null. Ost/West-Dächer erzeugen weniger, verteilen den Strom aber besser über den Tag – Details im Ratgeber [Photovoltaik Ost-West](/ratgeber/photovoltaik-ost-west). Und wer verschattete Flächen belegt, verliert überproportional: [Photovoltaik und Verschattung](/ratgeber/photovoltaik-verschattung).`,
+          text: "Als **Kalkulationszins** setzen Unternehmen ihre Kapitalkosten an – den gewichteten Zins aus Fremd- und Eigenkapital. Ist der IRR deutlich höher, lohnt sich die Investition auch bei Kreditfinanzierung. Die **Stromgestehungskosten** sind der direkteste Vergleich zum Einkauf: Solange sie unter dem vermeidbaren Strompreis liegen, verdient jede selbst genutzte Kilowattstunde. Liegen sie über dem Marktpreis für Überschuss (derzeit 6 bis 9 ct), verliert jede nur eingespeiste Kilowattstunde leicht – ein starkes Argument, Anlagen am Eigenverbrauch auszurichten. Finanzierungswege zeigt die Seite [Finanzierung](/service/finanzierung).",
         },
       ],
     },
     {
-      id: "steuern-finanzierung",
-      titel: "Steuern, Förderung und Kredit: Was die Rechnung verändert",
-      tocLabel: "Steuern & Finanzierung",
+      id: "sensitivitaet",
+      titel: "Sensitivitätsanalyse: Welche Annahme wie stark wirkt",
+      tocLabel: "Sensitivitäten",
       bloecke: [
         {
           typ: "p",
-          text: "**Für private Anlagen auf Wohngebäuden verbessern zwei Steuerregeln die Amortisation direkt:** Seit 2023 fällt beim Kauf keine Umsatzsteuer an (§ 12 Abs. 3 UStG), und Einnahmen aus Anlagen bis 30 kWp je Wohn- oder Gewerbeeinheit sind nach § 3 Nr. 72 EStG einkommensteuerfrei. Die Einspeisevergütung fließt also ungeschmälert in die Rechnung. Details finden Sie unter [steuerliche Vorteile](/forderungen/steuerlich).",
+          text: "**Eigenverbrauch, vermeidbarer Strompreis und Investition verschieben die Amortisation am stärksten; Marktpreis und Kalkulationszins wirken deutlich schwächer.** Die Tabelle verändert jeweils eine Annahme des Referenzfalls, die letzte Zeile kombiniert mehrere ungünstige.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Sensitivitäten für den Referenzfall 100 kWp, vor Steuern, Stand September 2026",
+          kopf: ["Annahme", "Variante", "Amortisation", "IRR", "Kapitalwert (5 %)"],
+          zeilen: [
+            ["Referenzfall", "750 €/kWp, 60 %, 18 ct, +2 %, 6 ct", "6,2 Jahre", "16,3 %", "110.000 €"],
+            ["Investition", "650 €/kWp", "5,4 Jahre", "18,8 %", "120.000 €"],
+            ["Investition", "850 €/kWp", "7,0 Jahre", "14,3 %", "100.000 €"],
+            ["Eigenverbrauch", "40 %", "7,9 Jahre", "12,4 %", "67.000 €"],
+            ["Eigenverbrauch", "80 %", "5,2 Jahre", "19,9 %", "153.000 €"],
+            ["Vermeidbarer Strompreis", "15 ct/kWh", "7,3 Jahre", "13,6 %", "80.000 €"],
+            ["Vermeidbarer Strompreis", "21 ct/kWh", "5,4 Jahre", "18,9 %", "139.000 €"],
+            ["Strompreisentwicklung", "0 % pro Jahr", "6,5 Jahre", "14,4 %", "78.000 €"],
+            ["Strompreisentwicklung", "+4 % pro Jahr", "5,9 Jahre", "18,2 %", "151.000 €"],
+            ["Marktpreis Überschuss", "4 ct/kWh", "6,6 Jahre", "15,2 %", "99.000 €"],
+            ["Marktpreis Überschuss", "8 ct/kWh", "5,8 Jahre", "17,3 %", "121.000 €"],
+            ["Spezifischer Ertrag", "900 kWh/kWp", "7,0 Jahre", "14,3 %", "89.000 €"],
+            ["Spezifischer Ertrag", "1.100 kWh/kWp", "5,6 Jahre", "18,2 %", "131.000 €"],
+            ["Betriebskosten", "25 €/kWp", "6,8 Jahre", "14,7 %", "93.000 €"],
+            ["Ungünstige Kombination", "40 %, 15 ct, 0 %, 4 ct", "11,4 Jahre", "6,8 %", "13.000 €"],
+          ],
+          markierteZeile: 0,
+          hervorheben: 2,
+          minBreite: 680,
+          fussnote: "Alle Werte mit demselben Rechenkern, dynamische Amortisation über 25 Jahre, vor Steuern, ohne Zuschuss. Kalkulationszins 3 % bzw. 7 % ändert nur den Kapitalwert (156.000 € bzw. 76.000 €), nicht Amortisation und IRR.",
         },
         {
           typ: "p",
-          text: "Bei einer **Kreditfinanzierung** verlängern die Zinsen die Amortisationszeit. Umgekehrt kann eine Finanzierung sinnvoll sein, wenn die jährliche Ersparnis die Rate weitgehend deckt. Der [KfW-Kredit 270](/ratgeber/kfw-kredit-270) finanziert PV-Anlage und Speicher; die Konditionen ändern sich regelmäßig. Ob sich Kauf, Kredit oder Miete für Sie mehr rechnen, zeigt der Vergleich [Photovoltaik mieten oder kaufen](/ratgeber/photovoltaik-mieten-oder-kaufen).",
-        },
-        {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Gewerbliche Anlagen rechnen anders",
-          text: "Größere Anlagen oder Anlagen von Unternehmen können abgeschrieben werden (AfA, ggf. Investitionsabzugsbetrag). Das verändert die Nach-Steuer-Rendite erheblich. Mehr dazu im Ratgeber [Photovoltaik für Gewerbe](/ratgeber/photovoltaik-gewerbe).",
+          text: "Die ungünstige Kombination zeigt, warum ein belastbarer Lastgang wichtiger ist als jede Förderung: Wer 60 % Eigenverbrauch annimmt, aber nur 40 % erreicht, und gleichzeitig mit zu hohem Strompreis rechnet, verdoppelt die Amortisationszeit fast. Wie Sie den Eigenverbrauch nachträglich anheben, beschreibt [Eigenverbrauch erhöhen](/ratgeber/eigenverbrauch-erhoehen); wie sich der Überschusserlös zusammensetzt, [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis).",
         },
       ],
     },
     {
-      id: "fehler",
-      titel: "Typische Rechenfehler bei der Amortisation",
+      id: "steuereffekt",
+      titel: "Steuereffekt: Investitionsfreibetrag und AfA richtig einrechnen",
+      tocLabel: "Steuereffekt",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Nach Steuern ist die Rendite niedriger als vor Steuern, weil die Stromersparnis den Gewinn erhöht; AfA und [Investitionsfreibetrag](/wissen/lexikon#ifb) mindern diese Belastung.** Der Cashflow nach Steuern ergibt sich aus dem Vorteil vor Steuern minus Steuersatz × (Vorteil − AfA − IFB). Der IFB wirkt einmalig im Jahr der Anschaffung, kürzt die AfA-Basis aber nicht.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Referenzfall 100 kWp nach 23 % KöSt, Stand September 2026",
+          kopf: ["Variante", "Amortisation", "IRR", "Kapitalwert (5 %)"],
+          zeilen: [
+            ["Vor Steuern", "6,2 Jahre", "16,3 %", "110.000 €"],
+            ["Nach KöSt, ohne IFB", "7,3 Jahre", "13,5 %", "78.000 €"],
+            ["Nach KöSt, IFB 15 % (ab 2027)", "7,1 Jahre", "13,9 %", "80.500 €"],
+            ["Nach KöSt, IFB 22 % (bis 31.12.2026)", "7,0 Jahre", "14,1 %", "81.700 €"],
+            ["Nach KöSt, IFB 22 %, EAG-Zuschuss 13.000 €", "5,9 Jahre", "17,0 %", "92.200 €"],
+          ],
+          markierteZeile: 3,
+          hervorheben: 2,
+          minBreite: 560,
+          fussnote: "Lineare AfA über 20 Jahre, 23 % KöSt, Verlustverrechnung mit dem übrigen Betriebsgewinn unterstellt. Der Zuschuss (Kategorie C, Höchstsatz 130 €/kWp) mindert die Anschaffungskosten und damit AfA- und IFB-Basis. Bei Einzelunternehmen gilt der progressive ESt-Tarif bis 55 % – der Steuereffekt ist dann individuell. Keine Steuerberatung.",
+        },
+        {
+          typ: "kasten",
+          variant: "wichtig",
+          titel: "Vorsicht bei der statischen Amortisation nach Steuern",
+          text: "Setzt man den IFB-Effekt in den Vorteil des ersten Jahres, ergibt die statische Formel 75.000 € ÷ 13.667 € = 5,5 Jahre – ein geschönter Wert, weil der Einmaleffekt auf alle Jahre hochgerechnet wird. Richtig ist die dynamische Rechnung mit 7,0 Jahren. Eine degressive AfA (bis 30 %, im ersten Jahr 22.500 € statt 3.750 €) verschiebt Steuern nach vorne und verbessert die Liquidität, ändert die Summe der Abschreibungen aber nicht.",
+        },
+        {
+          typ: "p",
+          text: "Die Regeln im Detail erklären [Investitionsfreibetrag für PV-Anlagen](/ratgeber/investitionsfreibetrag-photovoltaik) und [Photovoltaik und Steuern](/ratgeber/photovoltaik-steuern); die Wirkung auf 100 und 500 kWp zeigt [Photovoltaik für Unternehmen](/ratgeber/photovoltaik-gewerbe).",
+        },
+      ],
+    },
+    {
+      id: "speicher",
+      titel: "Speicher-Effekt: Wann ein Batteriespeicher die Amortisation verkürzt",
+      tocLabel: "Speicher-Effekt",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Ein Gewerbespeicher verkürzt die Amortisation nur dann, wenn er neben dem höheren Eigenverbrauch einen zweiten Nutzen bringt – meist die Senkung des Leistungspreises.** Erhöht er nur den Eigenverbrauch, verteuert er jede zusätzlich selbst genutzte Kilowattstunde erheblich.",
+        },
+        {
+          typ: "tabelle",
+          caption: "100 kWp mit und ohne 100-kWh-Speicher, vor Steuern, Stand September 2026",
+          kopf: ["Variante", "Investition", "Eigenverbrauch", "Amortisation", "IRR"],
+          zeilen: [
+            ["Nur PV (Referenzfall)", "75.000 €", "60 %", "6,2 Jahre", "16,3 %"],
+            ["PV + Speicher", "135.000 €", "75 %", "10,2 Jahre", "9,1 %"],
+            ["PV + Speicher, 7.500 € Speicherzuschuss", "127.500 €", "75 %", "9,6 Jahre", "9,8 %"],
+            ["PV + Speicher, 2.000 €/Jahr Leistungspreis-Einsparung", "135.000 €", "75 %", "8,8 Jahre", "11,0 %"],
+          ],
+          hervorheben: 3,
+          minBreite: 640,
+          fussnote: "Speicher 100 kWh nutzbar zu 600 €/kWh netto (Richtwert gewerblich 450–750 €/kWh; BMWET-Speicherstatistik 2024: Ø 706 €/kWh für Heimspeicher). Betriebskosten gesamt 25 €/kWp. Zuschuss 150 €/kWh für max. 50 kWh. Leistungspreis-Einsparung als Annahme, steigt mit 2 %/Jahr. Die Rechnung unterstellt 25 Jahre ohne Speichertausch – je nach Zyklen realistisch sind eher 15 bis 20 Jahre, das Ergebnis ist also optimistisch.",
+        },
+        {
+          typ: "p",
+          text: "Wie viel Leistungspreis Sie tatsächlich sparen, ergibt sich aus Ihrer Netzrechnung und dem Lastgang – siehe [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis). Aktuelle Preise und Größen vergleicht [Gewerbespeicher Kosten](/ratgeber/gewerbespeicher-kosten); Lösungen finden Sie unter [Gewerbespeicher](/gewerbespeicher). Für kleinere Anlagen hilft der [Stromspeicher-Rechner](/rechner/stromspeicher).",
+        },
+      ],
+    },
+    {
+      id: "rechenfehler",
+      titel: "Typische Rechenfehler in PV-Angeboten",
       tocLabel: "Rechenfehler",
       bloecke: [
         {
+          typ: "p",
+          text: "**Die meisten geschönten Wirtschaftlichkeitsrechnungen setzen einen zu hohen Strompreis oder Eigenverbrauch an – beides lässt sich mit Netzrechnung und Lastgang leicht prüfen.**",
+        },
+        {
           typ: "checkliste",
           punkte: [
-            "**Eigenverbrauch zu hoch angesetzt:** Ohne Speicher nutzen Haushalte meist nur 25 bis 35 % ihres Verbrauchs aus der Anlage. Angebote mit 60 % ohne Speicher sind unrealistisch.",
-            "**Betriebskosten vergessen:** Versicherung, Zählermiete und der Wechselrichtertausch nach 12 bis 15 Jahren kosten Geld. Wir rechnen mit rund 25 € je kWp und Jahr.",
-            "**Strompreissteigerung zu optimistisch:** Mit 5 % oder mehr pro Jahr lässt sich jede Anlage schönrechnen. Vorsichtiger sind 0 bis 2 %.",
-            "**Degradation ignoriert:** Module verlieren jährlich etwas Leistung – über 20 Jahre summiert sich das auf mehrere Prozent.",
-            "**Einspeisevergütung falsch gerechnet:** Die Sätze gelten gestaffelt nach Anlagenteil und sind für 20 Jahre fest. Neue Anlagen erhalten bei negativen Börsenpreisen keine Vergütung – siehe [Solarspitzengesetz](/ratgeber/solarspitzengesetz).",
-            "**Nur Amortisation betrachtet:** Eine Anlage, die 30 Jahre läuft, ist auch mit 14 Jahren Amortisationszeit eine gute Investition.",
+            "**Durchschnittspreis statt vermeidbarer Preis:** Eurostat-Werte oder die Gesamtrechnung geteilt durch kWh enthalten Leistungs-, Grund- und Messentgelte, die PV nicht ersetzt.",
+            "**Eigenverbrauch ohne Lastgang:** 70 % oder mehr ohne Simulation gegen Viertelstundenwerte sind eine Behauptung, keine Rechnung.",
+            "**Zu hohe Strompreissteigerung:** Mit 4 bis 5 % pro Jahr über 25 Jahre wird jede Anlage rentabel. Vorsichtig sind 0 bis 2 %.",
+            "**Marktpreis aus dem besten Monat:** Der OeMAG-Marktpreis schwankte 2026 zwischen 5,7 und 9,0 ct/kWh – rechnen Sie mit einem vorsichtigen Jahresmittel.",
+            "**Keine Degradation, keine Betriebskosten:** Wartung, Versicherung, Monitoring und Wechselrichtertausch fehlen oft ganz.",
+            "**Zuschuss fix eingerechnet:** Der EAG-Zuschuss ist 2026 ein Wettrennen um Sekunden; er darf nur als Variante erscheinen und mindert AfA- und IFB-Basis.",
+            "**ElWG ignoriert:** Neue Anlagen können auf 70 % Einspeiseleistung begrenzt werden; ab 2027 fällt ein Einspeisebeitrag von 0,05 ct/kWh an – mehr unter [ElWG für PV-Betreiber](/ratgeber/elwg-elektrizitaetswirtschaftsgesetz).",
+            "**Netto und brutto vermischt:** Gemeinden ohne Vorsteuerabzug und Private müssen Investition und Strompreis brutto ansetzen.",
           ],
+        },
+        {
+          typ: "p",
+          text: "Eine vollständige Checkliste für den Angebotsvergleich finden Sie unter [PV-Angebote vergleichen](/ratgeber/photovoltaik-angebot-vergleichen).",
         },
       ],
     },
     {
-      id: "vorgehen",
-      titel: "So berechnen Sie Ihre eigene Amortisationszeit",
+      id: "anleitung",
+      titel: "Schritt für Schritt: So rechnen Sie Ihre eigene Anlage",
       tocLabel: "Anleitung",
       bloecke: [
         {
           typ: "ablauf",
           schritte: [
-            ["Verbrauch und Strompreis notieren", "Jahresverbrauch und Arbeitspreis stehen auf der letzten Stromrechnung. Geplante Wärmepumpe oder E-Auto dazurechnen."],
-            ["Ertrag abschätzen", "In Süddeutschland rund 1.000 kWh je kWp bei Südausrichtung, im Norden eher 900. Mehr dazu im Ratgeber [Ertrag pro kWp](/ratgeber/photovoltaik-ertrag-pro-kwp)."],
-            ["Eigenverbrauch realistisch ansetzen", "Ohne Speicher ca. 30 % Autarkie, mit passendem Speicher 60 bis 75 % – der [Stromspeicher-Rechner](/rechner/stromspeicher) simuliert es stündlich."],
-            ["Jährlichen Vorteil berechnen", "Stromersparnis + Einspeiseerlös − Betriebskosten."],
-            ["Investition teilen", "Angebotspreis ÷ jährlicher Vorteil = statische Amortisation. Für die dynamische Rechnung den [Solarrechner](/solarrechner) nutzen."],
+            ["Vermeidbaren Strompreis ermitteln", "Aus der Netz- und Energierechnung nur die arbeitsabhängigen Teile netto zusammenzählen: Energiepreis, Netz-Arbeitspreis, Netzverlustentgelt, Elektrizitätsabgabe."],
+            ["Ertrag ansetzen", "Anlagengröße × spezifischer Ertrag, in Österreich meist 900 bis 1.200 kWh/kWp je nach Lage und Ausrichtung."],
+            ["Eigenverbrauch simulieren", "Erzeugung gegen zwölf Monate Viertelstundenwerte legen; ohne Lastgang lieber vorsichtig schätzen."],
+            ["Jährlichen Vorteil berechnen", "Eigenverbrauch × vermeidbarer Preis + Überschuss × Marktpreis − Betriebskosten."],
+            ["Dynamisch rechnen", "Jahr für Jahr mit Degradation, Preis- und Kostenentwicklung über 25 Jahre; daraus Amortisation, IRR und Kapitalwert."],
+            ["Varianten und Steuer ergänzen", "Sensitivitäten für Eigenverbrauch, Strompreis und Investition rechnen, dann IFB, AfA und gegebenenfalls Zuschuss mit der Steuerberatung einbauen."],
           ],
+        },
+        {
+          typ: "tool",
+          href: "/rechner",
+          titel: "Erste Orientierung mit unseren Rechnern",
+          text: "Ertrag, Eigenverbrauch und Speichergröße überschlagen – für Betriebe als Vorbereitung auf eine Lastgang-Auswertung.",
+          label: "Zu den Rechnern",
         },
       ],
     },
@@ -307,68 +285,66 @@ const artikel = {
 
   faq: [
     {
-      q: "Wie lange dauert es, bis sich eine PV-Anlage amortisiert?",
-      a: `Typisch sind 10 bis 15 Jahre. Unsere 10-kWp-Beispielanlage auf einem Süddach mit 4.500 kWh Verbrauch amortisiert sich nach rund ${jD(BASIS)}, mit 8-kWh-Speicher nach ${jD(SP)}. Bei hohem Eigenverbrauch geht es schneller, bei Nord- oder Schattendächern deutlich langsamer.`,
+      q: "Nach wie vielen Jahren amortisiert sich eine PV-Anlage im Betrieb?",
+      a: "Mit unseren Grundannahmen nach 5 bis 8 Jahren vor Steuern, je nach Eigenverbrauch; der Referenzfall (100 kWp, 60 % Eigenverbrauch, 18 ct) nach 6,2 Jahren. Bei ungünstigen Annahmen können es über 11 Jahre werden.",
     },
     {
-      q: "Amortisiert sich eine PV-Anlage mit Speicher schneller?",
-      a: "Nicht automatisch. Der Speicher erhöht den Eigenverbrauch, kostet aber zusätzlich. Bei passender Größe und hohem Abendverbrauch verkürzt er die Amortisation, ein zu großer Speicher verlängert sie. Den Einzelfall prüft der [Stromspeicher-Rechner](/rechner/stromspeicher).",
+      q: "Was ist der Unterschied zwischen statischer und dynamischer Amortisation?",
+      a: "Die statische Amortisation teilt die Investition durch den Vorteil des ersten Jahres. Die dynamische rechnet Jahr für Jahr mit sinkendem Ertrag, steigenden Strompreisen und Betriebskosten. Für Betriebe ist die dynamische Rechnung aussagekräftiger.",
     },
     {
-      q: "Wie berechnet man die Amortisation einer Solaranlage?",
-      a: "Teilen Sie die Investition durch den jährlichen Vorteil. Der Vorteil ist die Stromersparnis durch Eigenverbrauch plus die Einspeisevergütung abzüglich der Betriebskosten. Für eine genauere Rechnung berücksichtigen Sie Degradation und Strompreisentwicklung Jahr für Jahr.",
+      q: "Welche Rendite (IRR) ist bei einer PV-Anlage realistisch?",
+      a: "Für Gewerbeanlagen mit 40 bis 80 % Eigenverbrauch errechnen wir vor Steuern rund 12 bis 20 % über 25 Jahre. Nach 23 % KöSt und mit IFB liegt der Wert etwa 1,5 bis 3 Prozentpunkte niedriger. In unseren Eigenheim-Szenarien sind es 2 bis 6 %.",
     },
     {
-      q: "Welche Rendite bringt eine PV-Anlage?",
-      a: `Gut geplante Anlagen erreichen über 20 Jahre typischerweise eine Rendite im mittleren einstelligen Prozentbereich. Unser Basisbeispiel kommt auf einen internen Zinsfuß von rund ${pct(irr(BASIS), 1)} – ohne die Betriebsjahre nach Ablauf der EEG-Vergütung.`,
+      q: "Was sind Stromgestehungskosten und wie hoch sind sie?",
+      a: "Stromgestehungskosten sind die Kosten je erzeugter Kilowattstunde über die Laufzeit, inklusive Betriebskosten und Kapitalverzinsung. Bei 100 kWp und 750 €/kWp liegen sie bei 5 % Kalkulationszins bei rund 7,4 ct/kWh, bei 500 kWp und 600 €/kWp bei rund 5,9 ct/kWh.",
     },
     {
-      q: "Lohnt sich eine PV-Anlage noch, wenn man 65 oder älter ist?",
-      a: "Oft ja: Rentnerhaushalte verbrauchen tagsüber mehr Strom, was den Eigenverbrauch erhöht. Außerdem steigert eine PV-Anlage in der Regel den Wert der Immobilie, sodass die Investition nicht verloren ist, wenn das Haus vor der Amortisation vererbt oder verkauft wird.",
+      q: "Verkürzt ein Speicher die Amortisation?",
+      a: "Nur, wenn er einen zweiten Nutzen hat. Erhöht ein 100-kWh-Speicher lediglich den Eigenverbrauch von 60 auf 75 %, verlängert sich die Amortisation im Beispiel von 6,2 auf rund 10 Jahre. Mit 2.000 € jährlicher Leistungspreis-Einsparung sind es 8,8 Jahre.",
     },
     {
-      q: "Wie lange hält eine PV-Anlage nach der Amortisation noch?",
-      a: "Hochwertige Module sind auf 25 bis 30 Jahre ausgelegt, viele Hersteller geben Leistungsgarantien über 25 Jahre oder mehr. Der Wechselrichter muss meist einmal getauscht werden. Nach der Amortisation bleiben daher oft 10 bis 15 Jahre mit reinem Überschuss.",
-    },
-    {
-      q: "Verlängert das Solarspitzengesetz die Amortisation?",
-      a: "Nur geringfügig. Neue Anlagen erhalten bei negativen Strompreisen keine Vergütung, der Zeitraum wird aber am Ende der Förderdauer angehängt. Wer viel selbst verbraucht oder einen Speicher nutzt, ist kaum betroffen. Mehr im Ratgeber [Solarspitzengesetz](/ratgeber/solarspitzengesetz).",
+      q: "Wie rechne ich den Investitionsfreibetrag in die Amortisation ein?",
+      a: "Als einmalige Steuerersparnis im Anschaffungsjahr: 22 % der Anschaffungskosten × Steuersatz, bei 75.000 € und 23 % KöSt also 3.795 €. Rechnen Sie dynamisch, nicht statisch – sonst wird der Einmaleffekt auf alle Jahre hochgerechnet.",
     },
   ],
 
   howTo: {
-    name: "Amortisationszeit einer Photovoltaikanlage berechnen",
+    name: "Amortisation und Rendite einer PV-Anlage berechnen",
     schritte: [
-      { name: "Verbrauch und Strompreis ermitteln", text: "Jahresverbrauch und Arbeitspreis von der Stromrechnung ablesen, geplante Verbraucher ergänzen." },
-      { name: "Jahresertrag schätzen", text: "Anlagengröße in kWp mit dem spezifischen Ertrag (ca. 900–1.000 kWh/kWp bei Süd) multiplizieren." },
-      { name: "Eigenverbrauch ansetzen", text: "Ohne Speicher etwa 30 % des Verbrauchs, mit Speicher 60–75 %; Rest wird eingespeist." },
-      { name: "Jährlichen Vorteil berechnen", text: "Eigenverbrauch × Strompreis + Einspeisung × Vergütung − Betriebskosten." },
-      { name: "Amortisation ermitteln", text: "Investition durch den jährlichen Vorteil teilen; für Genauigkeit Degradation und Preisentwicklung jährlich einrechnen." },
+      { name: "Vermeidbaren Strompreis ermitteln", text: "Nur arbeitsabhängige Teile der Strom- und Netzrechnung netto zusammenzählen." },
+      { name: "Ertrag ansetzen", text: "Anlagengröße mit dem spezifischen Ertrag multiplizieren, in Österreich meist 900 bis 1.200 kWh/kWp." },
+      { name: "Eigenverbrauch simulieren", text: "Erzeugung gegen die Viertelstundenwerte des Lastgangs legen." },
+      { name: "Jährlichen Vorteil berechnen", text: "Eigenverbrauch × Strompreis + Überschuss × Marktpreis − Betriebskosten." },
+      { name: "Dynamisch rechnen", text: "Über 25 Jahre mit Degradation und Preisentwicklung Amortisation, IRR und Kapitalwert ermitteln." },
+      { name: "Varianten und Steuer ergänzen", text: "Sensitivitäten rechnen und IFB, AfA sowie Zuschuss mit der Steuerberatung einbauen." },
     ],
   },
 
   passend: [
-    { href: "/solarrechner", titel: "Solarrechner", text: "Amortisation und 20-Jahres-Cashflow für Ihr Dach." },
-    { href: "/ratgeber/photovoltaik-lohnt-sich", titel: "Lohnt sich Photovoltaik 2026?", text: "Ehrliche Rechnung und wann es sich nicht lohnt." },
-    { href: "/ratgeber/solaranlage-kosten", titel: "Was kostet eine Solaranlage?", text: "Preise je kWp und Kostenbestandteile." },
-    { href: "/ratgeber/photovoltaik-mieten-oder-kaufen", titel: "Mieten oder kaufen?", text: "Gesamtkosten über 20 Jahre im Vergleich." },
+    { href: "/ratgeber/photovoltaik-gewerbe", titel: "Photovoltaik für Unternehmen", text: "Beispiele 100 und 500 kWp, IFB, AfA, ElWG." },
+    { href: "/ratgeber/photovoltaik-lohnt-sich", titel: "Lohnt sich Photovoltaik 2026?", text: "Szenarien für Betriebe, Gemeinden und Eigenheim." },
+    { href: "/service/finanzierung", titel: "Finanzierung", text: "Kauf, Kredit oder Leasing für Ihre Anlage." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Eigenverbrauch erhöhen, Leistungsspitzen senken." },
   ],
 
   quellen: [
-    { titel: "Verbraucherzentrale – Photovoltaik: Was bei der Planung einer Solaranlage wichtig ist", url: "https://www.verbraucherzentrale.de/wissen/energie/erneuerbare-energien/photovoltaik-was-bei-der-planung-einer-solaranlage-wichtig-ist-5574", stand: "08/2026" },
-    { titel: "Bundesnetzagentur – EEG-Förderung und Vergütungssätze", url: VERGUETUNG.quelle.url, stand: "09/2026" },
-    { titel: "Fraunhofer ISE – Aktuelle Fakten zur Photovoltaik in Deutschland", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/aktuelle-fakten-zur-photovoltaik-in-deutschland.html", stand: "09/2026" },
-    { titel: "BDEW – Strompreisanalyse", url: "https://www.bdew.de/service/daten-und-grafiken/bdew-strompreisanalyse/", stand: "09/2026" },
-    { titel: "§ 3 Nr. 72 EStG – Steuerbefreiung für kleine Photovoltaikanlagen", url: "https://www.gesetze-im-internet.de/estg/__3.html", stand: "09/2026" },
-    { titel: "§ 12 Abs. 3 UStG – Nullsteuersatz für Photovoltaikanlagen", url: "https://www.gesetze-im-internet.de/ustg_1980/__12.html", stand: "09/2026" },
+    { titel: "BMWET/Technikum Wien – Innovative Energietechnologien in Österreich, Marktentwicklung 2024 (PDF)", url: "https://nachhaltigwirtschaften.at/resources/nw_pdf/schriftenreihe-2025-23a_marktstatistik-2024.pdf", stand: "2025" },
+    { titel: "BMWET – PV-Speichersysteme, Marktentwicklung 2024 (PDF)", url: "https://www.bmwet.gv.at/dam/jcr:35a533b7-5724-464b-8737-ad014c18cd03/PV-Speichersysteme%20-%20Marktentwicklung%202024.pdf", stand: "2025" },
+    { titel: "Eurostat – Strompreise für Nicht-Haushaltskunden (nrg_pc_205)", url: "https://ec.europa.eu/eurostat/databrowser/view/nrg_pc_205/default/table", stand: "09/2026" },
+    { titel: "OeMAG – Marktpreis für Ökostrom", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
+    { titel: "USP – Abschreibung (AfA)", url: "https://www.usp.gv.at/themen/steuern-finanzen/steuerliche-gewinnermittlung/weitere-informationen-zur-steuerlichen-gewinnermittlung/betriebseinnahmen-und-ausgaben/abschreibung.html", stand: "09/2026" },
+    { titel: "USP – Investitionsfreibetrag", url: "https://www.usp.gv.at/themen/steuern-finanzen/steuerliche-gewinnermittlung/weitere-informationen-zur-steuerlichen-gewinnermittlung/betriebseinnahmen-und-ausgaben/investitionsfreibetrag.html", stand: "09/2026" },
+    { titel: "PV&B Austria – ElWG: Das Wichtigste im Überblick für den PV- und Speicherbereich", url: "https://pvbaustria.at/elwg-das-wichtigste-im-uberblick-fur-den-pv-und-speicherbereich/", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Wann rechnet sich Ihr Dach?", text: "Amortisation und Rendite mit Ihren Werten.", href: "/solarrechner", label: "Zum Solarrechner" },
+  seitenCta: { titel: "Ihre Anlage durchrechnen lassen?", text: "Wirtschaftlichkeit auf Basis Ihres Lastgangs und Ihrer Netzrechnung.", href: "/angebot", label: "Anfrage starten" },
   cta: {
-    title: "Wir rechnen Ihre Amortisation ehrlich durch.",
-    text: "Mit Vor-Ort-Prüfung von Dach und Zählerschrank und einer Wirtschaftlichkeitsrechnung mit realistischen Annahmen – auch wenn das Ergebnis gegen einen Speicher spricht.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/solarrechner" },
+    title: "Eine Rechnung, die auch ohne Förderung trägt.",
+    text: "Ökovolt plant PV-Anlagen für Betriebe in ganz Österreich auf Basis von Lastgang, Dach und Netzanschluss – und legt die Annahmen offen.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Finanzierung", href: "/service/finanzierung" },
   },
 };
 

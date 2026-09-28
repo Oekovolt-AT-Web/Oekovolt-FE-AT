@@ -1,6 +1,7 @@
 import React from "react";
 import { Phone, MapPin, Clock, Mail } from "lucide-react";
 import Image from "next/image";
+import { FIRMA } from "@/lib/site";
 
 const ContactSection = () => {
   return (
@@ -34,9 +35,9 @@ const ContactSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Telefon & E-Mail</h3>
                 <div className="space-y-3">
-                  <a href="tel:+498245967880" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
+                  <a href={FIRMA.telefonHref} className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
                     <Phone className="h-4 w-4 opacity-70" />
-                    +49 8245 96 788 0
+                    {FIRMA.telefon}
                   </a>
                   <a href="mailto:office@oekovolt.com" className="flex items-center gap-3 text-gray-700 hover:text-[#669933] transition-colors">
                     <Mail className="h-4 w-4 opacity-70" />
@@ -52,9 +53,9 @@ const ContactSection = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4 mt-2">Adresse</h3>
                 <div className="space-y-3 text-gray-700">
-                  <p>Schlingener Straße 1a</p>
-                  <p>86842 Türkheim</p>
-                  <p>Deutschland</p>
+                  <p>{FIRMA.strasse}</p>
+                  <p>{FIRMA.plz} {FIRMA.ort}</p>
+                  <p>{FIRMA.land}</p>
                 </div>
               </div>
 
@@ -68,7 +69,7 @@ const ContactSection = () => {
                     </div>
                     <div>
                       <h4 className="font-medium text-gray-800">Wochentage</h4>
-                      <p>Mo - Do: 08:00 - 16:00</p>
+                      <p>{FIRMA.oeffnungszeiten[0].tage}: {FIRMA.oeffnungszeiten[0].zeit}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -77,7 +78,7 @@ const ContactSection = () => {
                     </div>
                     <div>
                       <h4 className="font-medium text-gray-800">Freitag</h4>
-                      <p>08:00 - 13:00</p>
+                      <p>{FIRMA.oeffnungszeiten[1].zeit}</p>
                     </div>
                   </div>
                 </div>
@@ -93,7 +94,7 @@ const ContactSection = () => {
             <div className="relative h-96 rounded-3xl overflow-hidden shadow-2xl z-10">
               <Image
                 src="/Images/Kontakt/download-1.jpg"
-                alt="Zentrale von Ökovolt Österreich in Türkheim (Bayern)"
+                alt={`Firmensitz von ${FIRMA.name} in ${FIRMA.ort} (${FIRMA.bundesland})`}
                 fill
                 className="object-cover"
                 loading="eager"
@@ -106,7 +107,7 @@ const ContactSection = () => {
             <div className="hidden lg:block absolute -bottom-[-25px] -right-6 w-32 h-32  border-4 border-[#669933] rounded-lg z-10 opacity-50"></div>
             <div className="hidden lg:block absolute -top-6 -left-6 w-24 h-24 border-4 border-[#669933] rounded-lg z-10 opacity-50"></div>
             <p className="text-center text-gray-600 mt-8 text-sm italic">
-              Zentrale von Ökovolt Österreich in Türkheim (Bayern)
+              Firmensitz in {FIRMA.ort} ({FIRMA.bundesland})
             </p>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Mail, Phone } from "lucide-react";
+import { FIRMA } from "@/lib/site";
 
 /**
  * Feste Bewerbungsleiste auf Mobilgeräten. Erscheint nach dem Seitenkopf und
@@ -37,7 +38,7 @@ export default function BewerbungsLeiste({ href, titel }) {
     >
       <div className="mx-auto flex max-w-md items-center gap-2">
         <p className="mr-auto min-w-0 truncate text-[13px] font-semibold text-ink-700">{titel}</p>
-        <a href="tel:+498245967880" tabIndex={sichtbar ? 0 : -1} aria-label="Anrufen" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-ink-200">
+        <a href={FIRMA.telefonHref} tabIndex={sichtbar ? 0 : -1} aria-label="Anrufen" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-ink-200">
           <Phone aria-hidden="true" className="h-5 w-5 text-ov-600" />
         </a>
         <a href={href} tabIndex={sichtbar ? 0 : -1} className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white">

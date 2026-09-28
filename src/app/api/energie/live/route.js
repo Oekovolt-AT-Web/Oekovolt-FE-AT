@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getEnergySnapshot } from "@/lib/energy";
 
-// Kompakte Live-Daten für Client-Widgets. `?voll=1` liefert zusätzlich die
+// Kompakte Live-Daten zum Strommarkt Österreich (Gebotszone AT) für Client-Widgets. `?voll=1` liefert zusätzlich die
 // Zeitreihen (Dashboard); ohne Parameter nur die Kennzahlen (Ticker).
 export const revalidate = 900;
 
@@ -13,12 +13,15 @@ export async function GET(request) {
     ? s
     : {
         stand: s.stand,
+        gebotszone: s.gebotszone,
         preis: { quelle: s.preis.quelle, aktuell: s.preis.aktuell, heute: s.preis.heute, morgen: s.preis.morgen },
         erzeugung: {
           quelle: s.erzeugung.quelle,
           zeitpunkt: s.erzeugung.zeitpunkt,
           solarMw: s.erzeugung.solarMw,
           windMw: s.erzeugung.windMw,
+          wasserMw: s.erzeugung.wasserMw,
+          importMw: s.erzeugung.importMw,
           lastMw: s.erzeugung.lastMw,
           eeAnteil: s.erzeugung.eeAnteil,
           solarAnteil: s.erzeugung.solarAnteil,

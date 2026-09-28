@@ -6,6 +6,7 @@ import { cn } from "@/components/ui/cn";
 import Reveal from "@/components/ui/Reveal";
 import InlineText from "./InlineText";
 import { artikelPfad, datumLang, weitereArtikel } from "@/lib/ratgeber";
+import { FIRMA } from "@/lib/site";
 
 /* ------------------------------------------------------------------
    Redaktionelle Bausteine für Ratgeber-Artikel (Magazin-Look).
@@ -244,8 +245,8 @@ export function ArtikelMeta({ artikel }) {
           </span>
         </span>
         <div className="leading-tight">
-          <p className="text-[14.5px] font-semibold text-ink-900">Ökovolt-Redaktion</p>
-          <p className="text-[12.5px] text-ink-500">Fachbetrieb für Photovoltaik</p>
+          <p className="text-[14.5px] font-semibold text-ink-900">Ökovolt-Redaktion Österreich</p>
+          <p className="text-[12.5px] text-ink-500">Photovoltaik-Fachbetrieb aus {FIRMA.ort}</p>
         </div>
       </div>
       <p className="flex items-center gap-2 text-[14px] text-ink-600">
@@ -267,16 +268,16 @@ export function Autorenbox({ artikel }) {
       <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-navy-950 font-display text-[20px] font-extrabold text-white">ÖV</span>
       <div>
         <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Über die Redaktion</p>
-        <p className="mt-1.5 font-display text-[19px] font-extrabold text-ink-900">Ökovolt-Redaktion</p>
+        <p className="mt-1.5 font-display text-[19px] font-extrabold text-ink-900">Ökovolt-Redaktion Österreich</p>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-          Geschrieben von unseren Fachleuten aus Planung und Montage – dem Fachbetrieb für Photovoltaik aus Türkheim mit über 15 Jahren Erfahrung.
-          Zahlen und Rechtsstand prüfen wir regelmäßig; zuletzt am <time dateTime={artikel.aktualisiert}>{datumLang(artikel.aktualisiert)}</time>.
+          Geschrieben von unseren Fachleuten aus Planung, Netzanschluss und Montage – {FIRMA.name} aus {FIRMA.ort} ({FIRMA.bundesland}),
+          seit {FIRMA.gegruendet} in ganz Österreich tätig. Zahlen und österreichischen Rechtsstand prüfen wir regelmäßig; zuletzt am <time dateTime={artikel.aktualisiert}>{datumLang(artikel.aktualisiert)}</time>.
           Die Inhalte ersetzen keine Steuer- oder Rechtsberatung.
         </p>
         <p className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[14px]">
           <Link href="/uber-uns/team" className="font-semibold text-ov-700 hover:underline">Unser Team</Link>
           <Link href="/wissen/lexikon" className="font-semibold text-ov-700 hover:underline">Photovoltaik-Lexikon</Link>
-          <a href="mailto:office@oekovolt.com" className="font-semibold text-ov-700 hover:underline">Fehler gefunden? Schreiben Sie uns</a>
+          <a href={`mailto:${FIRMA.email}`} className="font-semibold text-ov-700 hover:underline">Fehler gefunden? Schreiben Sie uns</a>
         </p>
       </div>
     </div>

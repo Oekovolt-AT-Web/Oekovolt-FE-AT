@@ -1,98 +1,101 @@
 // src/data/unternehmen.js
 //
-// Firmengeschichte, Gesellschafterstruktur und Registerdaten der
-// ÖKOVOLT-Gruppe.
+// Unternehmensdaten für www.oekovolt.com – aus Sicht der österreichischen
+// Gesellschaft Ökovolt Solartechnik GmbH (Ostermiething, FN 375708m).
 //
-// QUELLEN: Die Registerangaben unter GESELLSCHAFTEN sind oeffentlich
-// abfragbar (Handelsregister DE / Firmenbuch AT) und auf der Seite bewusst
-// mit Registernummer ausgewiesen - wer will, kann jede Angabe nachschlagen.
-// Alles Uebrige (Rollen, Beteiligungsquoten, Erzaehltext) kommt aus der
-// Unternehmenskommunikation.
+// QUELLEN: Registerangaben der AT-Gesellschaft kommen aus src/lib/site.js
+// (FIRMA, verifiziert über Firmenbuch / WKO Firmen A–Z / FirmenABC) und werden
+// hier NICHT abgetippt. Die Registerangaben der deutschen Gesellschaft stammen
+// aus dem Impressum von oekovolt.de bzw. dem Handelsregister. Rollen,
+// Beteiligungsquoten und Erzähltext stammen aus der Unternehmenskommunikation.
 //
-// ACHTUNG BETEILIGUNGEN: Die Salzburg AG war von 2021 bis 2025 mit 49 %
-// beteiligt und ist 2025 ausgeschieden - die Gruppe ist seitdem wieder
-// vollstaendig in Familienhand. Oeffentliche Register hinken solchen
-// Aenderungen oft nach; vor jeder Aktualisierung hier den aktuellen
-// Firmenbuch-/Handelsregisterstand pruefen.
+// GESELLSCHAFTER (AT, Stand Firmenbuch 09/2026): Andreas Wegscheider 51 %,
+// Salzburg AG für Energie, Verkehr und Telekommunikation 49 % – seit 2021.
+// Auf der österreichischen Website ist die Salzburg AG AKTUELL
+// Gesellschafterin. Die deutsche Datei (oekovolt.de) spricht von einem
+// Ausscheiden 2025 – das gilt für diese Website NICHT. Vor jeder Änderung den
+// aktuellen Firmenbuchstand prüfen und die Angaben in src/lib/site.js pflegen.
 //
-// PFLEGE: `stand` dokumentiert den Redaktionsstand und wird ausgewiesen.
+// GESELLSCHAFTSRECHTLICH: Die Ökovolt Solartechnik GmbH ist keine
+// Tochtergesellschaft der deutschen GmbH (die Anteile halten Andreas
+// Wegscheider und die Salzburg AG). „Muttergesellschaft“ wird hier deshalb nur
+// im Sinn von Stammhaus der Gruppe verwendet – Ursprung, Standards, Marke.
+//
+// PFLEGE: `STAND` dokumentiert den Redaktionsstand und wird ausgewiesen.
 
-export const STAND = "2026-09-27";
+import { FIRMA, SCHWESTER, SOLENSA } from "@/lib/site";
+
+export const STAND = "2026-09-28";
 
 /** Kurzprofil für den Einstieg. */
 export const PROFIL = {
-  kopf: "Solarpioniere aus dem Allgäu. Seit 2010.",
-  titel: "Solarpioniere aus dem Allgäu",
+  kopf: "Seit 2012 in Österreich",
+  titel: "Photovoltaik aus Ostermiething – für ganz Österreich",
   lead:
-    "Als wir 2010 angefangen haben, war Photovoltaik noch keine Selbstverständlichkeit, sondern Überzeugungsarbeit. Große Solaranlagen galten als Wagnis, Finanzierer waren skeptisch, und Erfahrung musste man sich selbst erarbeiten. Andreas Wegscheider und Susanne Messmer haben damals eine einfache Entscheidung getroffen: Wir planen nicht nur, wir bauen selbst. Und wir betreiben, was wir bauen. Aus dieser Haltung ist über die Jahre ein Verbund eigener Gesellschaften gewachsen, gegründet und getragen von denselben zwei Menschen.",
+    "Die Ökovolt Solartechnik GmbH plant, errichtet und betreut seit 2012 Photovoltaikanlagen in Österreich – aus Ostermiething im Innviertel, direkt an der Salzach, für Gewerbe, Industrie, Landwirtschaft und öffentliche Hand in allen neun Bundesländern. Dahinter steht eine Gruppe, die Andreas Wegscheider und Susanne Messmer 2010 in Türkheim gegründet haben. Ihre Entscheidung von damals gilt bis heute: Wir planen nicht nur, wir bauen selbst. Und wir betreiben, was wir bauen.",
 };
 
 /** Schlusssatz des Kapitels. */
 export const CLAIM = "ÖKOVOLT. Wir bauen, was wir selbst betreiben würden.";
 
 /**
- * Kennzahlen für den "Heute"-Abschnitt.
- *
- * PLATZHALTER: `projekte` und `team` sind bewusst null - die Zahlen lagen bei
- * der Textabnahme noch nicht vor. Die Komponente blendet null-Werte aus,
- * damit nie ein "[X]" auf der Seite landet. Sobald die Zahlen feststehen,
- * hier eintragen.
+ * Kennzahlen für den "Heute"-Abschnitt – nur belegte Werte.
+ * PLATZHALTER: Projekt- und Mitarbeiterzahlen liegen nicht freigegeben vor und
+ * bleiben deshalb `null`; die Komponente blendet null-Werte aus.
  */
 export const HEUTE = [
-  { wert: "über 15 Jahre", label: "Erfahrung seit 2010" },
+  { wert: "seit 2012", label: "Photovoltaik-Errichter in Österreich" },
+  { wert: "30 MWp", label: "allein 2021 in Österreich errichtet" },
+  { wert: "9", label: "Bundesländer im Einzugsgebiet" },
   { wert: null, label: "realisierte Projekte" },
-  { wert: null, label: "Fachleute in Türkheim" },
+  { wert: null, label: "Fachleute in Ostermiething" },
 ];
 
 /**
- * Markenangaben - NUR ausfuellen, wenn eine Eintragung vorliegt, die fuer
- * Deutschland gilt (DPMA oder EUIPO). Eine rein oesterreichische Marke traegt
- * das ® auf oekovolt.de nicht: Das waere irrefuehrende Werbung.
- *
- * STAND: Eine Eintragung war oeffentlich nicht auffindbar (DPMAregister und
- * TMview liefern keinen Treffer). Solange `nummer` null ist, rendert die
- * Komponente weder Markensatz noch ®.
+ * Markenangaben – NUR ausfüllen, wenn eine Eintragung vorliegt, die für
+ * Österreich gilt (Österreichisches Patentamt, EUIPO oder IR mit Benennung AT).
+ * Inhaberin der Marken- und Websiterechte ist die deutsche Gesellschaft
+ * (SCHWESTER in src/lib/site.js). Solange `nummer` null ist, rendert die
+ * Komponente weder Registernummer noch ®.
  */
 export const MARKE = {
-  amt: null,        // "DPMA" | "EUIPO"
-  form: null,       // "Wortmarke" | "Wort-/Bildmarke"
+  amt: null, // "ÖPA" | "EUIPO" | "WIPO"
+  form: null, // "Wortmarke" | "Wort-/Bildmarke"
   nummer: null,
-  inhaber: null,
+  inhaber: SCHWESTER.name,
   jahr: null,
 };
 
-/**
- * "Betreiber aus Überzeugung" - das eigentliche Unterscheidungsmerkmal.
- */
+/** "Betreiber aus Überzeugung" – das eigentliche Unterscheidungsmerkmal. */
 export const HALTUNG = {
   kopf: "Betreiber aus Überzeugung",
-  titel: "Wir kennen unsere Anlagen nicht nur vom Bau",
+  titel: "Wir kennen Anlagen nicht nur vom Bau",
   absaetze: [
-    "Was ÖKOVOLT von Anfang an unterscheidet: Die Solarparks aus diesen frühen Jahren sind bis heute in der Hand der Gründer und werden von ihnen betrieben.",
-    "Deshalb wissen wir nicht nur, wie man eine Anlage baut, sondern wie sie sich über zehn, zwölf, fünfzehn Jahre verhält: Ertrag, Wartung, Wechselrichtertausch, Netzbetreiber, Direktvermarktung. Diese Erfahrung fließt in jede Anlage ein, die wir heute für unsere Kunden planen.",
+    "Was Ökovolt von Anfang an unterscheidet: Die Gründer betreiben seit 2012 eigene Solarparks – bis heute. Wer selbst Betreiber ist, plant anders.",
+    "Deshalb wissen wir nicht nur, wie man eine Anlage baut, sondern wie sie sich über zehn, zwölf, fünfzehn Jahre verhält: Ertrag, Wartung, Wechselrichtertausch, Netzbetreiber, Vermarktung. Diese Erfahrung steckt in jeder Anlage, die wir heute für Unternehmen, Landwirtschaft und Gemeinden in Österreich errichten.",
   ],
 };
 
 /**
- * Der rote Faden: Türkheim ist Ursprung und Muttergesellschaft. Von hier aus
- * wurde mit deutschem Know-how die österreichische Schwester aufgebaut.
+ * Der rote Faden: Türkheim ist Stammhaus der Gruppe, Ostermiething die
+ * österreichische Gesellschaft mit denselben Prozessen.
  */
 export const URSPRUNG = {
-  kopf: "Deutschland und Österreich",
-  titel: "Eine Mutter, eine Schwester – ein Verbund",
+  kopf: "Österreich und Deutschland",
+  titel: "Ein Stammhaus, eine Schwester – ein Verbund",
   absaetze: [
-    "Türkheim ist der Ursprung und bis heute die Muttergesellschaft. Hier sitzt die Technik, hier werden die Standards gesetzt, nach denen gebaut wird.",
-    "Mit diesem deutschen Know-how wurde die österreichische Schwestergesellschaft aufgebaut – mit denselben Prozessen und derselben Qualitätslatte. Heute zählt sie zu den führenden Errichtern von PV-Anlagen für Gewerbe und Industrie in Österreich.",
-    "Beide Gesellschaften arbeiten eng verzahnt: exklusiver Zentraleinkauf, gemeinsame Planungsdienstleistungen und eine gemeinsame EDV-Infrastruktur.",
+    `Die ${SCHWESTER.name} in ${SCHWESTER.ort} (Deutschland, seit 2010) ist das Stammhaus und die Muttergesellschaft der Gruppe: Dort werden die technischen Standards gesetzt, nach denen gebaut wird, und dort liegen die Rechte an der Marke Ökovolt und an dieser Website.`,
+    `Mit diesem Know-how entstand 2012 die österreichische Gesellschaft, die ${FIRMA.name} in ${FIRMA.ort} – mit denselben Prozessen und derselben Qualitätslatte. Gesellschaftsrechtlich ist sie eigenständig: Gesellschafter sind Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer} und die Salzburg AG.`,
+    "Beide Gesellschaften arbeiten eng verzahnt: Zentraleinkauf, gemeinsame Planungsdienstleistungen und eine gemeinsame EDV-Infrastruktur. In Österreich kommen eigene Systeme für den Netzanschluss dazu – Parkregler, Fernwartung und SCADA.",
   ],
   kennzahlen: [
-    { wert: "2010", label: "Muttergesellschaft in Türkheim" },
-    { wert: "2012", label: "Schwestergesellschaft in Österreich" },
+    { wert: "2010", label: "Stammhaus in Türkheim" },
+    { wert: "2012", label: "Gesellschaft in Österreich" },
     { wert: "Zentral", label: "Einkauf, Planung und EDV im Verbund" },
   ],
 };
 
-/** Die Menschen hinter dem Unternehmen. */
+/** Die Menschen hinter dem Unternehmen – nur belegte Personen. */
 export const GENERATIONEN = [
   {
     id: "erste",
@@ -104,15 +107,15 @@ export const GENERATIONEN = [
       {
         initialen: "AW",
         name: "Andreas Wegscheider",
-        rolle: "Gründer & Geschäftsführer",
+        rolle: `Gründer · Geschäftsführer der ${FIRMA.name}`,
         schlagzeile: "Pionier der ersten Stunde",
         text:
-          "Andreas Wegscheider gehört zu den Pionieren der Photovoltaik im DACH-Raum. Er hat Anlagen geplant und montiert, als Module noch ein Vielfaches kosteten und jede Installation Überzeugungsarbeit war. Dieses technische Fundament – und der Anspruch, jede Anlage so zu bauen, als stünde sie auf dem eigenen Dach – prägt ÖKOVOLT bis heute.",
+          "Andreas Wegscheider gehört zu den Pionieren der Photovoltaik im DACH-Raum. Er hat Anlagen geplant und montiert, als Module noch ein Vielfaches kosteten und jede Installation Überzeugungsarbeit war. Als Geschäftsführer und Mehrheitsgesellschafter der österreichischen Gesellschaft verantwortet er das Projektgeschäft in Österreich – mit dem Anspruch, jede Anlage so zu bauen, als stünde sie auf dem eigenen Dach.",
       },
       {
         initialen: "SM",
         name: "Susanne Messmer",
-        rolle: "Gründerin & Geschäftsführung",
+        rolle: "Mitgründerin der Gruppe",
         schlagzeile: "Pionierin der ersten Stunde",
         text:
           "Susanne Messmer steht für strategische Weitsicht und kaufmännische Stärke. Sie hat aus einem Handwerksbetrieb eine Unternehmensgruppe gemacht und die wirtschaftliche Entwicklung über alle Marktzyklen hinweg gesteuert – durch Förderstopps, Preisverfall und Boomjahre.",
@@ -124,15 +127,15 @@ export const GENERATIONEN = [
     kopf: "2. Generation",
     titel: "Internet of Energy & Vertrieb",
     einleitung:
-      "Seit 2025 führt die nächste Generation das Unternehmen weiter – mit Digitalisierung auf der einen und gewachsener Vertriebsstärke auf der anderen Seite.",
+      "Seit 2025 führt die nächste Generation die Gruppe mit weiter – mit Digitalisierung auf der einen und gewachsener Vertriebsstärke auf der anderen Seite.",
     personen: [
       {
         initialen: "AM",
         name: "Alexander Messmer",
-        rolle: "2. Generation · Digitalisierung & Cyber Security",
-        schlagzeile: "Seit 2025 im Verbund: Solensa GmbH",
+        rolle: `2. Generation · Digitalisierung & Cyber Security (${SOLENSA.name})`,
+        schlagzeile: `Seit 2025 im Verbund: ${SOLENSA.name}`,
         text:
-          "Als Sohn von Susanne Messmer tritt Alexander Messmer die zweite Generation an und ergänzt die Gruppe seit 2025 mit seiner Firma Solensa GmbH. Mit Know-how in Digitalisierung, Cyber Security und Softwareentwicklung vernetzt er alle Energiesysteme unter dem Konzept des Internet of Energy – und sichert die digitale Infrastruktur der Gruppe ab.",
+          `Als Sohn von Susanne Messmer tritt Alexander Messmer die zweite Generation an und ergänzt die Gruppe seit 2025 mit seiner Firma ${SOLENSA.name}. Mit Know-how in Digitalisierung, Cyber Security und Softwareentwicklung vernetzt er Energiesysteme unter dem Konzept des Internet of Energy – in Österreich etwa bei Fernwartung und SCADA – und sichert die digitale Infrastruktur der Gruppe ab.`,
         kompetenzen: [
           { icon: "ShieldCheck", titel: "Cyber Security", text: "Schutz digitaler Energieinfrastruktur" },
           { icon: "Code", titel: "Software-Entwicklung", text: "Eigenentwicklungen für IoE" },
@@ -142,32 +145,32 @@ export const GENERATIONEN = [
       {
         initialen: "MT",
         name: "Manuel Thaler",
-        rolle: "Vertrieb · PV GmbH",
+        rolle: "Vertrieb · PV GmbH · Geschäftsführung ÖkoInvest GmbH",
         schlagzeile: "Seit über 10 Jahren Teil der Familie",
         text:
-          "Manuel Thaler gehört seit mehr als zehn Jahren zur ÖKOVOLT-Familie und verantwortet mit der PV GmbH den Vertrieb der Gruppe. Er begleitet Kundinnen und Kunden von der ersten Frage bis zur fertigen Anlage – und kennt die Region, die Netzbetreiber und die Förderlandschaft aus tausenden Projekten.",
+          "Manuel Thaler gehört seit mehr als zehn Jahren zur Ökovolt-Familie. Mit der PV GmbH verantwortet er den Vertrieb der Gruppe, gemeinsam mit Andreas Wegscheider führt er die ÖkoInvest GmbH. Er begleitet Kundinnen und Kunden von der ersten Frage bis zur fertigen Anlage – und kennt Netzbetreiber und Förderlandschaft aus zahlreichen Projekten.",
       },
     ],
   },
 ];
 
 /**
- * Die Salzburg-AG-Partnerschaft – abgeschlossenes Kapitel (2021–2025).
- * Bewusst in der Vergangenheitsform: Die Beteiligung ist 2025 beendet worden.
+ * Die Salzburg AG – aktuelle Gesellschafterin der österreichischen
+ * Gesellschaft (49 %, seit 2021). Bewusst im Präsens.
  */
 export const SALZBURG_AG = {
-  zeitraum: "2021 – 2025",
-  kopf: "Ein Kapitel Konzerngeschichte",
+  zeitraum: "Seit 2021",
+  kopf: "Gesellschafterin in Österreich",
   titel: "Die Partnerschaft mit der Salzburg AG",
   text:
-    "Die Beteiligung betraf die österreichische Schwestergesellschaft, die Ökovolt Solartechnik GmbH. Sie gehörte 2021 bereits zu den TOP 3 der IPC-Errichter Österreichs – genau deshalb kam einer der großen Landesenergieversorger auf sie zu: Die Position war der Grund für den Einstieg, nicht sein Ergebnis. Vier Jahre lang öffnete die Partnerschaft zusätzlich den Zugang zu Liegenschaften und Infrastruktur eines Landesversorgers. 2025 ist die Salzburg AG wieder ausgeschieden – die Gruppe ist seitdem vollständig in Familienhand.",
+    `Seit 2021 ist die Salzburg AG für Energie, Verkehr und Telekommunikation mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer}. Die Gesellschaft zählte 2021 bereits zu den TOP 3 der IPC-Errichter Österreichs – genau deshalb kam einer der großen Landesenergieversorger auf sie zu: Die Position war der Grund für den Einstieg, nicht sein Ergebnis. Die Partnerschaft verbindet die Umsetzungsstärke eines spezialisierten Errichters mit dem Zugang zu Liegenschaften und Infrastruktur eines Landesversorgers.`,
   kennzahlen: [
     { wert: "TOP 3", label: "IPC-Errichter – schon vor dem Einstieg" },
-    { wert: "49 %", label: "Beteiligung von 2021 bis 2025" },
-    { wert: "2025", label: "Rückkehr in vollständigen Familienbesitz" },
+    { wert: "49 %", label: "Salzburg AG, seit 2021" },
+    { wert: "51 %", label: `${FIRMA.geschaeftsfuehrer}, Gründer und Geschäftsführer` },
   ],
   punkte: [
-    "Bereits vor 2021 unter den TOP 3 der IPC-Errichter (Integrierter Photovoltaik-Contractor) Österreichs",
+    "Bereits 2021 unter den TOP 3 der IPC-Errichter (Integrierter Photovoltaik-Contractor) Österreichs",
     "Bevorzugter PV-Errichter des Salzburg AG Konzerns",
     "Zugang zu Liegenschaften und Infrastrukturprojekten eines Landesenergieversorgers",
     "Großprojekte im Bereich Freifläche, Agri-PV und gewerbliche Dachanlagen",
@@ -175,29 +178,76 @@ export const SALZBURG_AG = {
 };
 
 /**
+ * Was die österreichische Gesellschaft macht.
+ * Leistungsbeschreibung laut Unternehmenskommunikation; Verlinkung auf die
+ * jeweiligen Leistungsseiten (Routen aus src/data/navigation.js).
+ */
+export const ROLLEN_AT = {
+  kopf: "Österreich",
+  titel: "Was die Ökovolt Solartechnik GmbH macht",
+  lead:
+    "Die österreichische Gesellschaft ist Errichterin mit eigener Technik: Sie plant, baut, schließt an und betreut Photovoltaikanlagen für Unternehmen, Landwirtschaft und öffentliche Hand – und liefert die Regelungs- und Leittechnik für den Netzanschluss selbst.",
+  eintraege: [
+    {
+      icon: "Building2",
+      rolle: "Projektgeschäft",
+      name: "Gewerbe, Industrie, Freifläche, Agri-PV",
+      text:
+        "Dach- und Freiflächenanlagen für Betriebe, Landwirtschaft, Gemeinden und Landesversorger – von der Lastganganalyse über Netzanschluss und Förderansuchen bis zur Inbetriebnahme.",
+      href: "/gewerbe",
+      hervorgehoben: true,
+    },
+    {
+      icon: "Wrench",
+      rolle: "Eigene Technik",
+      name: "Parkregler, Fernwartung, SCADA",
+      text:
+        "Eigener EZA-Regler für die Anforderungen der TOR Erzeuger, eigene Fernwartungssysteme und eigene SCADA-Systeme für Überwachung und Reporting – entwickelt gemeinsam mit Solensa (IT-Security).",
+      href: "/technik",
+    },
+    {
+      icon: "ShieldCheck",
+      rolle: "Service",
+      name: "Wartung, Prüfung, Betrieb",
+      text:
+        "Wartungsverträge, wiederkehrende Anlagenprüfung, Drohnen-Thermografie, Reinigung, Repowering sowie Beratung zu Versicherung, Finanzierung und Reststromvermarktung.",
+      href: "/service/wartung",
+    },
+    {
+      icon: "Network",
+      rolle: "Im Verbund",
+      name: `Standards und Marke aus ${SCHWESTER.ort}`,
+      text:
+        `Das Stammhaus ${SCHWESTER.name} setzt die technischen Standards der Gruppe und ist Inhaberin der Marke Ökovolt. Einkauf, Planungsdienstleistungen und EDV laufen gemeinsam.`,
+    },
+  ],
+};
+
+/**
  * Struktur der Unternehmensgruppe (Stand siehe STAND).
- * `ebene`: 0 = Holding, 1 = operative Landesgesellschaften, 2 = Beteiligungen.
+ * `ebene`: 0 = Gruppe, 1 = operative Landesgesellschaften, 2 = Beteiligungen.
+ * Auf der AT-Website steht die österreichische Gesellschaft zuerst.
  */
 export const GRUPPE = [
-  { ebene: 0, name: "ÖKOVOLT Gruppe", text: "Familiengeführte Unternehmensgruppe" },
-  {
-    ebene: 1,
-    flagge: "DE",
-    name: "ÖKOVOLT GmbH Solartechnik",
-    text: "Deutsche Gesellschaft – Planung, Installation und Service",
-    gesellschaft: "de",
-  },
+  { ebene: 0, name: "Ökovolt Gruppe", text: "Familiengeführte Unternehmensgruppe, gegründet 2010" },
   {
     ebene: 1,
     flagge: "AT",
-    name: "ÖKOVOLT Solartechnik GmbH",
-    text: "Österreichische Gesellschaft – Vertrieb und Projektgeschäft AT",
+    name: FIRMA.name,
+    text: `Österreichische Gesellschaft in ${FIRMA.ort} – Projektgeschäft, eigene Technik und Service. Gesellschafter: ${FIRMA.gesellschafter.map((g) => `${g.name.replace(" für Energie, Verkehr und Telekommunikation", "")} ${g.anteil}`).join(", ")}.`,
     gesellschaft: "at",
+  },
+  {
+    ebene: 1,
+    flagge: "DE",
+    name: SCHWESTER.name,
+    text: "Stammhaus in Türkheim – Standards, Technik, Marken- und Websiterechte; Projektgeschäft in Deutschland",
+    gesellschaft: "de",
   },
   {
     ebene: 2,
     name: "ÖkoInvest GmbH",
-    anteil: "ÖKOVOLT Solartechnik GmbH: 22,60 %",
+    anteil: `${FIRMA.name}: 22,60 %`,
     text: "Projektgesellschaft für Freiflächen-PV, Agri-PV, Contracting & PPA. Geschäftsführung: Andreas Wegscheider und Manuel Thaler.",
   },
   {
@@ -220,43 +270,45 @@ export const GRUPPE = [
   },
   {
     ebene: 2,
-    name: "Solensa GmbH",
+    name: SOLENSA.name,
     badge: "Neu seit 2025",
     text: "Digitalisierung, Cyber Security & Internet of Energy (Alexander Messmer)",
   },
 ];
 
 /**
- * Registerdaten der operativen Gesellschaften – oeffentlich abfragbar.
- * DE aus dem eigenen Impressum, AT aus dem oesterreichischen Firmenbuch.
+ * Registerdaten der operativen Gesellschaften – öffentlich abfragbar.
+ * AT aus src/lib/site.js (Firmenbuch), DE aus dem Impressum von oekovolt.de.
  */
 export const GESELLSCHAFTEN = {
+  at: {
+    land: FIRMA.land,
+    flagge: "AT",
+    name: FIRMA.name,
+    sitz: `${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}`,
+    register: `Firmenbuch ${FIRMA.firmenbuch}`,
+    gericht: FIRMA.firmenbuchgericht,
+    eingetragen: "16. Februar 2012",
+    ustId: FIRMA.uid,
+    gisa: FIRMA.gisa,
+    website: FIRMA.web,
+  },
   de: {
-    land: "Deutschland",
+    land: SCHWESTER.land,
     flagge: "DE",
-    name: "ÖKOVOLT GmbH Solartechnik",
-    sitz: "Schlingener Straße 1a, 86842 Türkheim",
-    register: "Handelsregister HRB 14166",
-    gericht: "Amtsgericht Memmingen",
+    name: SCHWESTER.name,
+    sitz: `${SCHWESTER.strasse}, ${SCHWESTER.plz} ${SCHWESTER.ort}`,
+    register: `Handelsregister ${SCHWESTER.register.split(",")[0]}`,
+    gericht: SCHWESTER.register.split(",")[1]?.trim() || "Amtsgericht Memmingen",
     eingetragen: "15. April 2010",
     ustId: "DE270816873",
-    website: "https://www.oekovolt.com",
-  },
-  at: {
-    land: "Österreich",
-    flagge: "AT",
-    name: "ÖKOVOLT Solartechnik GmbH",
-    sitz: "Gewerbegebiet 10, 5121 Ostermiething",
-    register: "Firmenbuch FN 375708m",
-    gericht: "Landesgericht Ried im Innkreis",
-    eingetragen: "16. Februar 2012",
-    website: "https://www.oekovolt.com",
+    website: SCHWESTER.web,
   },
 };
 
 /**
- * Projekt- und Beteiligungsgesellschaften - ebenfalls im oesterreichischen
- * Firmenbuch abfragbar. Bewusst ohne Ausschmueckung: reine Registerangaben.
+ * Projekt- und Beteiligungsgesellschaften – im österreichischen Firmenbuch
+ * abfragbar. Bewusst ohne Ausschmückung: reine Registerangaben.
  */
 export const BETEILIGUNGEN = [
   {
@@ -283,29 +335,28 @@ export const BETEILIGUNGEN = [
 
 /**
  * Chronologie – speist die Zeitleiste.
- * `text` ist ein Array: Ereignisse desselben Jahres gehoeren in EINE Station,
- * sonst steht die Jahreszahl mehrfach untereinander und wirkt wie ein Fehler.
+ * `text` ist ein Array: Ereignisse desselben Jahres gehören in EINE Station.
  */
 export const MEILENSTEINE = [
   {
     jahr: "2010",
     titel: "Der Anfang",
     text: [
-      "Andreas Wegscheider und Susanne Messmer gründen die ÖKOVOLT GmbH in Burgau und ziehen wenige Wochen später nach Türkheim im Unterallgäu, wo ÖKOVOLT bis heute zu Hause ist.",
-      "Noch im selben Jahr gründen sie mit der ÖKOVOLT Montage GmbH ihre eigene Montagegesellschaft. Von Beginn an gilt: Planung, Bau und Inbetriebnahme kommen aus einer Hand – mit eigenen Montageteams und einem festen Ansprechpartner, der das Projekt von der ersten Skizze bis zur Inbetriebnahme verantwortet.",
+      "Andreas Wegscheider und Susanne Messmer gründen die ÖKOVOLT GmbH in Burgau und ziehen wenige Wochen später nach Türkheim im Unterallgäu, wo das Stammhaus der Gruppe bis heute zu Hause ist.",
+      "Noch im selben Jahr gründen sie mit der ÖKOVOLT Montage GmbH ihre eigene Montagegesellschaft. Von Beginn an gilt: Planung, Bau und Inbetriebnahme kommen aus einer Hand – mit eigenen Montageteams und einem festen Ansprechpartner.",
     ],
     icon: "Building2",
     hervorgehoben: true,
   },
   {
     jahr: "2012",
-    titel: "Vom Dach aufs Feld",
+    titel: "Nach Österreich – und vom Dach aufs Feld",
     text: [
-      "Die Gründer gehen den nächsten Schritt: Solarparks. Sie bauen sie nicht nur, sie betreiben sie auch selbst. Dafür gründen sie die ÖKOVOLT Solarstrom Betriebs GmbH und darunter für jeden Park eine eigene Betreibergesellschaft – darunter die Artern Solarstrom GmbH & Co. KG und die Tilleda Solarstrom GmbH & Co. KG in Mitteldeutschland.",
-      "Weil die Fundamente dieser Parks spezialisierte Technik brauchen, gründen sie außerdem die Deutsche Solar & Rammtechnik GmbH. Sie wollten keine Abhängigkeit von Dritten, sondern die Kontrolle über jede Schraube im Boden.",
-      "Im selben Jahr überschreitet ÖKOVOLT die Grenze: Mit der Ökovolt Solartechnik GmbH entsteht die Schwestergesellschaft für den österreichischen Markt.",
+      `Am 16. Februar 2012 wird die ${FIRMA.name} ins österreichische Firmenbuch eingetragen: Die Gruppe überschreitet die Grenze – mit Sitz in ${FIRMA.ort}, an der Salzach im Innviertel.`,
+      "Im selben Jahr gehen die Gründer den nächsten Schritt: Solarparks. Sie bauen sie nicht nur, sie betreiben sie auch selbst – mit einer eigenen Betreibergesellschaft je Park. Für die Fundamente gründen sie die Deutsche Solar & Rammtechnik GmbH: keine Abhängigkeit von Dritten, sondern Kontrolle über jede Schraube im Boden.",
     ],
-    icon: "TrendingUp",
+    icon: "Flag",
+    hervorgehoben: true,
   },
   {
     jahr: "2013",
@@ -316,103 +367,49 @@ export const MEILENSTEINE = [
     icon: "Home",
   },
   {
-    jahr: "2021",
-    titel: "Neu aufgestellt für die nächste Welle",
+    jahr: "2020",
+    titel: "Eine Projektgesellschaft für große Flächen",
     text: [
-      "Die Gründer ordnen ihre Unternehmen neu. Die Solarparks werden in der AWSM Beteiligung GmbH gebündelt, der Beteiligungsgesellschaft von Andreas Wegscheider und Susanne Messmer. Die ÖKOVOLT GmbH Solartechnik konzentriert sich seitdem ganz auf Planung, Bau und Inbetriebnahme von PV-Anlagen für Gewerbe, Industrie, Kommunen und Landwirtschaft.",
-      "Wie stark ÖKOVOLT inzwischen gewachsen ist, zeigt ein Jahr: Allein 2021 errichtet die österreichische Schwestergesellschaft Ökovolt Solartechnik GmbH PV-Anlagen mit 30 MWp Leistung und gehört damit zu den führenden Errichtern von PV-Anlagen für Gewerbe und Industrie in Österreich.",
-      "Im selben Jahr beteiligt sich die Salzburg AG, einer der großen österreichischen Landesenergieversorger, mit 49 Prozent am Unternehmen.",
+      "Im September 2020 wird die ÖkoInvest GmbH mit Sitz in Ostermiething eingetragen – die Projektgesellschaft für Freiflächen-PV, Agri-PV, Contracting und PPA, an der die Ökovolt Solartechnik GmbH heute mit 22,60 % beteiligt ist.",
+    ],
+    icon: "TrendingUp",
+  },
+  {
+    jahr: "2021",
+    titel: "30 MWp und ein Landesversorger als Partner",
+    text: [
+      "Allein 2021 errichtet die Ökovolt Solartechnik GmbH PV-Anlagen mit 30 MWp Leistung und zählt damit zu den TOP 3 der IPC-Errichter Österreichs.",
+      "Im selben Jahr beteiligt sich die Salzburg AG, einer der großen österreichischen Landesenergieversorger, mit 49 % an der österreichischen Gesellschaft – eine Partnerschaft, die bis heute besteht. Ökovolt wird bevorzugter PV-Errichter des Salzburg AG Konzerns.",
+      "In Deutschland ordnen die Gründer ihre Solarparks neu und bündeln sie in ihrer Beteiligungsgesellschaft; das Stammhaus in Türkheim konzentriert sich seitdem ganz auf Planung, Bau und Inbetriebnahme für Gewerbe, Industrie, Kommunen und Landwirtschaft.",
     ],
     icon: "Network",
     hervorgehoben: true,
   },
   {
-    // Bewusst ohne Laenderbezug: Der Schweizer Franchisepartner ist seit dem
-    // 30.04.2026 in Konkurs. Eine Erfolgsstation daraus zu machen, faellt bei
-    // der ersten Handelsregister-Abfrage auf. Die Aussage selbst bleibt wahr.
+    // Bewusst ohne Länderbezug: Der Schweizer Franchisepartner ist seit dem
+    // 30.04.2026 in Konkurs. Die Aussage selbst bleibt wahr.
     jahr: "2022",
     titel: "Aus einem Konzept wird ein Franchisesystem",
     text: [
-      "ÖKOVOLT öffnet sein Konzept erstmals für Partner und startet ein eigenes Franchisesystem. Unternehmer, die Photovoltaik mit demselben Anspruch umsetzen wollen, arbeiten seitdem unter dem Namen ÖKOVOLT – mit unserem Know-how aus Planung, Bau und über einem Jahrzehnt Anlagenbetrieb.",
+      "Ökovolt öffnet sein Konzept erstmals für Partner und startet ein eigenes Franchisesystem. Unternehmer, die Photovoltaik mit demselben Anspruch umsetzen wollen, arbeiten seitdem unter dem Namen Ökovolt – mit unserem Know-how aus Planung, Bau und über einem Jahrzehnt Anlagenbetrieb.",
     ],
     icon: "Handshake",
   },
   {
-    jahr: "Heute",
-    titel: "Die Photovoltaik ist erwachsen geworden – wir waren von Anfang an dabei",
+    jahr: "2025",
+    titel: "Die zweite Generation",
     text: [
-      "Über 15 Jahre Erfahrung und ein Team von Fachleuten in Türkheim. Dahinter stehen bis heute dieselben Gründer, die 2010 angefangen haben. Und wir machen weiter: mit Speicher, Eigenverbrauchsoptimierung und intelligentem Energiemanagement.",
+      `Alexander Messmer bringt mit der ${SOLENSA.name} Digitalisierung, Cyber Security und Softwareentwicklung in die Gruppe – die Grundlage für Fernwartung, SCADA und das Internet of Energy.`,
+    ],
+    icon: "Code",
+  },
+  {
+    jahr: "Heute",
+    titel: "Aus Ostermiething für ganz Österreich",
+    text: [
+      "Über 15 Jahre Erfahrung in der Gruppe, seit 2012 in Österreich – für Unternehmen, Landwirtschaft, Gemeinden und Landesversorger in allen neun Bundesländern. Dahinter stehen bis heute dieselben Gründer, die 2010 angefangen haben. Und wir machen weiter: mit eigenen Parkreglern, Fernwartung und SCADA, mit Speichern, Energiegemeinschaften und intelligentem Energiemanagement.",
     ],
     icon: "Sunrise",
     hervorgehoben: true,
   },
 ];
-
-/**
- * Wer macht heute was - die deutsche Seite der Gruppe.
- *
- * Aufbau: eine operative Gesellschaft, eigene Montage und Rammtechnik,
- * darueber die Beteiligungsgesellschaft der Gruender, darunter die
- * Betriebs-GmbH als Komplementaerin der einzelnen Park-KGs. Jede Anlage
- * bekommt eine eigene Betreibergesellschaft - so lassen sich Finanzierung,
- * Haftung und Betrieb je Park sauber trennen.
- *
- * Angaben aus Handelsregister und veroeffentlichten Jahresabschluessen.
- */
-export const ROLLEN_DE = {
-  kopf: "Deutschland",
-  titel: "Wer macht heute was",
-  lead:
-    "Hinter dem Fachbetrieb steht eine gewachsene Struktur: eine operative Gesellschaft, eigene Montage und Rammtechnik – und je Solarpark eine eigene Betreibergesellschaft.",
-  eintraege: [
-    {
-      name: "ÖKOVOLT GmbH Solartechnik",
-      rolle: "Das operative Geschäft",
-      text:
-        "Konzentriert sich seit 2021 ganz auf Planung, Bau und Inbetriebnahme von PV-Anlagen für Gewerbe, Industrie, Kommunen und Landwirtschaft. Unternehmensgegenstand laut Satzung 2021: Handel mit Technologieprodukten, Vertrieb, Verkauf, Montage und Inbetriebnahme von Fotovoltaikanlagen, Planung und Consulting.",
-      hervorgehoben: true,
-    },
-    {
-      name: "ÖKOVOLT Montage GmbH",
-      rolle: "Eigene Montage",
-      text: "Seit 2010 eigene Montageteams – das Rückgrat der Ausführung. Bei Bedarf ergänzt durch geprüfte Partnerbetriebe, die Verantwortung bleibt bei uns.",
-    },
-    {
-      name: "Deutsche Solar & Rammtechnik GmbH",
-      rolle: "Fundamente",
-      text: "Seit 2012: Rammtechnik für Freiflächenanlagen – Kontrolle über jede Schraube im Boden.",
-    },
-    {
-      name: "AWSM Beteiligung GmbH",
-      rolle: "Beteiligungsgesellschaft der Gründer",
-      text: "Bündelt seit 2021 die Solarparks von Andreas Wegscheider und Susanne Messmer.",
-    },
-    {
-      name: "ÖKOVOLT Solarstrom Betriebs GmbH",
-      rolle: "Komplementärin der Park-KGs",
-      text: "Führt als Vollhafterin die Betreibergesellschaften der einzelnen Solarparks.",
-    },
-  ],
-  /** Je Solarpark eine eigene Betreibergesellschaft. */
-  parks: [
-    {
-      name: "Irsingen Solarstrom GmbH & Co. KG",
-      ort: "Irsingen – Ortsteil von Türkheim",
-      jahr: "seit 2013",
-      text: "Der Solarpark direkt vor der eigenen Haustür.",
-    },
-    {
-      name: "Tilleda Solarstrom GmbH & Co. KG",
-      ort: "Tilleda, Sachsen-Anhalt",
-      jahr: "seit Mai 2012",
-      text: "Gegenstand laut Register: Betrieb von Solarkraftwerken.",
-    },
-    {
-      name: "Artern Solarstrom GmbH & Co. KG",
-      ort: "Artern, Thüringen",
-      jahr: "seit 2012",
-      text: "Betreibergesellschaft des dortigen Solarparks.",
-    },
-  ],
-  weitere: [{ name: "Ventesimasun Srl", text: "Beteiligung laut Abschluss 2021" }],
-};

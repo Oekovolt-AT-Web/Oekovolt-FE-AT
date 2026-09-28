@@ -4,7 +4,7 @@ import Script from "next/script";
  * Cookielose Besucherstatistik mit selbst gehostetem Umami (z. B. auf Hetzner).
  *
  * Umgebungsvariablen:
- *   UMAMI_SCRIPT_URL   z. B. https://statistik.oekovolt.de/script.js
+ *   UMAMI_SCRIPT_URL   z. B. https://statistik.oekovolt.com/script.js (eigene Instanz/Website-ID für Österreich)
  *   UMAMI_WEBSITE_ID   Website-ID aus dem Umami-Dashboard
  *
  * Datenschutz: keine Cookies, kein localStorage, keine IP-Speicherung (Umami bildet einen täglich

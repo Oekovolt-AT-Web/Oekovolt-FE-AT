@@ -33,10 +33,10 @@ import {
   getApiHeaders,
   isApiConfigured,
 } from "@/lib/apiBaseUrl";
+import { BASE_URL, FIRMA } from "@/lib/site";
 
 const LIST_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 const DETAIL_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekt`;
-const BASE_URL = "https://www.oekovolt.com";
 const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
 // ---------- API helpers (only used in this file) ----------
@@ -74,7 +74,7 @@ function projektAusApi(p) {
     jahr: p?.jahr || basis.jahr || null,
     plz: p?.plz || "",
     ort: p?.ort || basis.ort || "",
-    land: p?.land || basis.land || "Deutschland",
+    land: p?.land || basis.land || "",
     segment: p?.objekt || basis.segment || "",
     dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
     kwp,
@@ -194,12 +194,9 @@ export async function generateMetadata({ params }) {
       };
     }
 
-    const seitenTitel = `${p.titel}${p.kwp != null ? ` – ${p.leistungText} PV` : ""} | Ökovolt`;
-    const description =
-      `${kurzbeschreibung(p)} Bilder, Kennzahlen und Projektdetails – jetzt ansehen und eigene Anlage anfragen.`.slice(
-        0,
-        200,
-      );
+    const langerTitel = `${p.titel}${p.kwp != null ? ` – ${p.leistungText} PV` : ""} | Ökovolt`;
+    const seitenTitel = langerTitel.length <= 60 ? langerTitel : `${p.titel} | Ökovolt`;
+    const description = `${kurzbeschreibung(p)} Bilder, Kennzahlen und Projektdetails der Referenz.`.slice(0, 160);
     const canonical = `${BASE_URL}/referenzen/projekte/${p.slug}`;
     const imgUrl = p.bilder[0] || `${BASE_URL}/og-image.jpg`;
 
@@ -243,8 +240,8 @@ const WISSEN = {
         x: "Ohne Speicher nutzt ein Haushalt typischerweise 25–35 % des Solarstroms selbst, mit passend dimensioniertem Speicher oft 60–80 %.",
       },
       {
-        t: "Steuern",
-        x: "Anlagen bis 30 kWp auf Wohngebäuden sind von der Umsatzsteuer (0 % nach § 12 Abs. 3 UStG) und der Einkommensteuer (§ 3 Nr. 72 EStG) befreit.",
+        t: "Förderung",
+        x: "Der EAG-Investitionszuschuss wird in OeMAG-Fördercalls vergeben und muss vor der Bestellung beantragt werden; Speicher sind bis 50 kWh mitförderbar.",
       },
       {
         t: "Zukunft mitdenken",
@@ -264,8 +261,8 @@ const WISSEN = {
         x: "Trapez-, Sandwich- und Flachdächer brauchen passende Unterkonstruktionen und eine Prüfung der Tragreserven.",
       },
       {
-        t: "Ab 100 kWp",
-        x: "Neue Anlagen über 100 kWp müssen ihren Überschuss direkt vermarkten und fernsteuerbar sein – wir binden das bei der Planung ein.",
+        t: "Netzanschluss",
+        x: "Ab 250 kW gilt Typ B nach TOR Stromerzeugungsanlagen mit Anforderungen an Fernsteuerbarkeit und Blindleistung – unser Parkregler erfüllt sie.",
       },
     ],
   },
@@ -274,7 +271,7 @@ const WISSEN = {
     punkte: [
       {
         t: "Große Dachflächen",
-        x: "Hallen, Ställe und Scheunen bieten viel Fläche – oft lohnt es sich, das Dach vollständig zu belegen.",
+        x: "Hallen, Ställe und Scheunen bieten viel Fläche. Glas-Glas-Module halten Ammoniak im Stallbereich stand.",
       },
       {
         t: "Eigenverbrauch",
@@ -298,8 +295,8 @@ const WISSEN = {
         x: "Süd bringt den höchsten Ertrag je Modul, Ost-West-Belegung verteilt die Erzeugung gleichmäßiger über den Tag.",
       },
       {
-        t: "Einspeisung",
-        x: "Neue Anlagen ohne Smart Meter speisen seit dem Solarspitzengesetz (2025) höchstens 60 % ihrer Leistung ein – ein Speicher gleicht das aus.",
+        t: "Schnee & Wind",
+        x: "Unterkonstruktion und Module werden nach Schneelastzone und Windlast des Standorts ausgelegt (ÖNORM B 1991-1-3 und -1-4).",
       },
     ],
   },
@@ -344,6 +341,7 @@ export default async function ProjectDetailPage({ params }) {
   const projectSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
+    inLanguage: "de-AT",
     headline: p.titel,
     description: kurzbeschreibung(p),
     url: canonicalUrl,
@@ -362,6 +360,7 @@ export default async function ProjectDetailPage({ params }) {
       contentLocation: {
         "@type": "Place",
         name: p.ort,
+        ...(p.land === "Österreich" && { address: { "@type": "PostalAddress", addressLocality: p.ort, addressCountry: "AT" } }),
         ...(p.lat &&
           p.lng && {
             geo: {
@@ -660,8 +659,8 @@ export default async function ProjectDetailPage({ params }) {
             ? `${fmtKwp(p.kwp)} kWp oder ganz anders – was passt auf Ihr Dach?`
             : "Was passt auf Ihr Dach?"
         }
-        text="Wir prüfen Dach, Verbrauch und Ihre Pläne und erstellen Ihnen ein ehrliches Angebot – mit Planung, Montage und Anmeldung aus einer Hand."
-        primary={{ label: "Kostenloses Angebot anfragen", href: "/angebot" }}
+        text={`${FIRMA.name} aus ${FIRMA.ort} prüft Lastgang, Dach und Netzanschluss und erstellt Ihnen ein ehrliches Angebot – mit Planung, Montage und Netzanschluss aus einer Hand, in ganz Österreich.`}
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
       />
     </div>

@@ -43,8 +43,8 @@
 //     ];
 
 //   const title = message.first_card_title || "WILLKOMMEN BEI ÖKOVOLT SOLARTECHNIK";
-//   const subtitle = message.first_card_subtitle || "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.";
-//   const description = message.first_card_description || "Wir sind spezialisiert auf die Planung und Umsetzung leistungsstarker Photovoltaikanlagen für Gewerbe, Industrie, Kommunen und Privathaushalte. Unsere Lösungen bieten maximale Effizienz, höchste Qualität und Energieunabhängigkeit.";
+//   const subtitle = message.first_card_subtitle || "Photovoltaik in ganz Österreich – seit 2012.";
+//   const description = message.first_card_description || "Wir sind spezialisiert auf die Planung und Umsetzung leistungsstarker Photovoltaikanlagen für Gewerbe, Industrie, Gemeinden und Privathaushalte. Unsere Lösungen bieten maximale Effizienz, höchste Qualität und Energieunabhängigkeit.";
 
 //   useEffect(() => {
 //     const updateLayout = () => {
@@ -267,7 +267,7 @@ export default function RotatingImageSection({ data = {} }) {
     message.first_card_title || "WILLKOMMEN BEI ÖKOVOLT SOLARTECHNIK";
   const subtitle =
     message.first_card_subtitle ||
-    "Ihr Experte für Photovoltaik in Deutschland – seit über 15 Jahren.";
+    "Photovoltaik für Gewerbe, Landwirtschaft und Gemeinden in ganz Österreich – seit 2012.";
   const description =
     message.first_card_description ||
     "Wir sind spezialisiert auf die Planung und Umsetzung leistungsstarker Photovoltaikanlagen.";

@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { Info, Mail } from "lucide-react";
+import { FIRMA } from "@/lib/site";
 
 /**
  * Kurzbewerbung: bereitet eine E-Mail an office@oekovolt.com vor (Betreff,
  * Name, Kontakt, Nachricht). Es wird nichts an einen Server gesendet – den
  * Lebenslauf hängen Bewerbende in ihrem E-Mail-Programm an.
  */
-export default function KurzBewerbung({ titel, email = "office@oekovolt.com" }) {
+export default function KurzBewerbung({ titel, email = FIRMA.email }) {
   const [f, setF] = useState({ name: "", telefon: "", nachricht: "" });
   const [fehler, setFehler] = useState("");
   const aendern = (e) => setF((x) => ({ ...x, [e.target.name]: e.target.value }));

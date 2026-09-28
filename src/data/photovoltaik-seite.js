@@ -1,66 +1,57 @@
 // src/data/photovoltaik-seite.js
 //
-// Zusatzinhalte für /dienstleistungen/photovoltaik.
-//
-// Warum: "Photovoltaik Allgäu" hat laut SISTRIX einen CPC von 12 € – der
-// höchste Wert aller analysierten Keywords – und die Suchergebnisse bestehen
-// nur aus lokalen Anbietern. Die Seite hatte aber keinen einzigen Abschnitt
-// mit Regionalbezug. Alle Orte unten sind durch echte Referenzprojekte unter
-// /referenzen/projekte belegt; nichts davon ist erfunden.
+// Zusatzinhalte für /dienstleistungen/photovoltaik – Österreich, Stand 09/2026.
+// Aussagen zur Rechtslage: Netzanschluss (Netzzugangsantrag,
+// Fertigstellungsmeldung, Stromabnehmer), TOR Stromerzeugungsanlagen
+// (E-Control), EAG-Investitionszuschuss (OeMAG), Umsatzsteuer (Nullsteuersatz
+// endete 31.03.2025), Baurecht je Bundesland (siehe @/data/regionen/laender).
 
-export const REGION_ORTE = [
-  { ort: "Türkheim", anzahl: 5, href: "/referenzen/projekte/tuerkheim", hinweis: "Firmensitz" },
-  { ort: "Bad Wörishofen", anzahl: 6, href: "/referenzen/projekte/bad-woerishofen" },
-  { ort: "Buchloe", anzahl: 5, href: "/referenzen/projekte/buchloe" },
-  { ort: "Mindelheim", anzahl: 2, href: "/referenzen/projekte/mindelheim-1" },
-  { ort: "Betzigau", anzahl: 1, href: "/referenzen/projekte/betzigau-landwirtschaft" },
-  { ort: "Mering", anzahl: 1, href: "/referenzen/projekte/mering-flachdach-ost-west" },
-];
+/**
+ * @deprecated Ortsliste der deutschen Seite. Österreichische Standorte kommen
+ * aus @/lib/regionen (RegionOesterreich). Bleibt leer, bis kein Import mehr
+ * darauf verweist.
+ */
+export const REGION_ORTE = [];
 
 export const PV_FAQ = [
   {
-    frage: "Wie lange dauert es von der Anfrage bis zur fertigen PV-Anlage?",
+    frage: "Wie lange dauert ein Photovoltaikprojekt für einen Betrieb?",
     antwort:
-      "Die Montage selbst ist bei einem Einfamilienhaus meist in ein bis zwei Tagen erledigt. Rechnen Sie vom Erstgespräch bis zur Inbetriebnahme mit einigen Wochen – der größte Zeitfaktor ist in der Regel nicht die Montage, sondern die Terminierung und die Abstimmung mit dem Netzbetreiber.",
+      "Bei Dachanlagen bis rund 250 kWp vergehen meist drei bis sechs Monate von der Lastganganalyse bis zur Inbetriebnahme. Die Montage selbst dauert wenige Tage bis Wochen. Den größten Einfluss haben die Bearbeitungszeit des Netzbetreibers, Förderfristen und Lieferzeiten – bei Anlagen mit Mittelspannungsanschluss auch die Netzprüfung.",
   },
   {
-    frage: "Brauche ich für eine Photovoltaikanlage eine Baugenehmigung?",
+    frage: "Wie läuft der Netzanschluss in Österreich ab?",
     antwort:
-      "Dachanlagen auf Wohngebäuden sind in den meisten Bundesländern genehmigungsfrei. Ausnahmen gibt es bei Denkmalschutz, in Ensembles und bei bestimmten Bebauungsplänen. Wir klären das vor der Planung für Ihr konkretes Grundstück.",
+      "Wir stellen den Netzzugangsantrag im Portal des zuständigen Netzbetreibers. Dieser prüft Anschlusspunkt und Leistung und bietet einen Netzzugangsvertrag an. Nach der Montage übermittelt unser Elektrotechniker die Fertigstellungsmeldung, und Sie geben den Stromabnehmer für den Überschuss bekannt – einen Stromhändler oder die OeMAG. Danach wird die Einspeisung freigegeben.",
   },
   {
-    frage: "Welche Anlagengröße passt zu meinem Haus?",
+    frage: "Was bedeutet TOR Stromerzeugungsanlagen für meine Anlage?",
     antwort:
-      "Als Faustregel gilt rund 1 kWp je 1.000 kWh Jahresverbrauch. Entscheidend sind aber auch Dachfläche, Ausrichtung und ob in den nächsten Jahren eine Wärmepumpe oder ein E-Auto dazukommt. Im Solarrechner können Sie verschiedene Größen durchspielen.",
+      "Die Technischen und organisatorischen Regeln (TOR) legen fest, welche Anforderungen eine Erzeugungsanlage am Netz erfüllen muss. Anlagen ab 0,8 kW bis unter 250 kW sind Typ A, ab 250 kW bis unter 35 MW Typ B. Ab Typ B kommen Anforderungen an Fernsteuerbarkeit, Blindleistung und Nachweise hinzu – dafür setzen wir unseren eigenen Parkregler ein.",
   },
   {
-    frage: "Übernimmt Ökovolt auch die Anmeldung beim Netzbetreiber?",
+    frage: "Brauche ich für eine Photovoltaikanlage eine Baubewilligung?",
     antwort:
-      "Ja. Netzanmeldung, Eintrag ins Marktstammdatenregister und Inbetriebnahmeprotokoll gehören bei uns zum Leistungsumfang. Sie müssen sich um keinen der Behördengänge selbst kümmern.",
+      "Das regelt jedes Bundesland in seiner Bauordnung. Dachanlagen sind in den meisten Ländern bewilligungs- und anzeigefrei, solange sie bestimmte Abstände und Höhen einhalten und keine Schutzzone betroffen ist. Freiflächenanlagen brauchen in der Regel eine passende Widmung oder Sonderausweisung nach dem Raumordnungsrecht. Wir klären das vor der Planung für Ihren Standort.",
   },
   {
-    frage: "Lohnt sich eine PV-Anlage im Allgäu überhaupt?",
+    frage: "Welche Förderung gibt es für Photovoltaik im Betrieb?",
     antwort:
-      "Gerade hier. Südbayern und das Allgäu liegen mit rund 950–1.050 kWh Ertrag je kWp deutlich über dem Bundesdurchschnitt. Über die Laufzeit einer Anlage wiegt dieser Standortvorteil mehr als die meisten Förderprogramme.",
+      "Auf Bundesebene den EAG-Investitionszuschuss, der in Fördercalls der OeMAG in den Kategorien A bis D bis 1.000 kWp vergeben wird. Er muss vor der Bestellung beantragt werden. Dazu kommen steuerliche Instrumente wie Investitionsfreibetrag und Abschreibung sowie Programme einzelner Bundesländer. Weil sich Sätze und Termine je Call ändern, prüfen wir die Förderfähigkeit im Angebot.",
   },
   {
-    frage: "Was passiert, wenn an der Anlage etwas nicht stimmt?",
+    frage: "Fällt auf die Photovoltaikanlage Umsatzsteuer an?",
     antwort:
-      "Mit Ökosys überwachen wir Ihre Anlage laufend und erkennen Leistungsabfälle, bevor sie Ihnen auffallen. Für Wartung und Störungen ist unser eigenes Serviceteam zuständig – kein Subunternehmer, den Sie erst suchen müssen.",
+      "Ja. Der befristete Nullsteuersatz für kleine Anlagen endete mit 31. März 2025; seither gilt wieder der Normalsteuersatz von 20 %. Für vorsteuerabzugsberechtigte Unternehmen ist die Umsatzsteuer kein Kostenfaktor. Die steuerliche Gestaltung im Einzelfall klären Sie mit Ihrer Steuerberatung.",
   },
   {
-    frage: "Wie hoch ist die Einspeisevergütung für neue PV-Anlagen 2026?",
+    frage: "Was passiert mit dem Strom, den der Betrieb nicht selbst nutzt?",
     antwort:
-      "Für Anlagen mit Inbetriebnahme ab dem 1. August 2026 gilt bei Teileinspeisung bis 10 kWp eine Vergütung von 7,70 Cent je kWh, festgeschrieben für 20 Jahre. Die Sätze sinken halbjährlich leicht. Weil Netzstrom ein Vielfaches kostet, lohnt sich vor allem der selbst verbrauchte Solarstrom (Stand September 2026, Orientierung).",
+      "Der Überschuss wird eingespeist und an einen Stromabnehmer verkauft: an einen Stromhändler, an die OeMAG zum veröffentlichten Marktpreis oder über einen Stromliefervertrag (PPA). Alternativ kann er in einer Energiegemeinschaft oder – im Gebäude – über eine gemeinschaftliche Erzeugungsanlage geteilt werden.",
   },
   {
-    frage: "Was bedeutet das Solarspitzengesetz für meine neue Anlage?",
+    frage: "Übernimmt Ökovolt auch die Wartung?",
     antwort:
-      "Neue Anlagen ohne Smart Meter und Steuerbox dürfen höchstens 60 % ihrer Modulleistung ins Netz einspeisen. Zudem gibt es in Zeiten negativer Börsenstrompreise keine Einspeisevergütung – diese Zeiten werden an das Ende des Förderzeitraums angehängt. Mit Speicher und gutem Energiemanagement fällt die Begrenzung kaum ins Gewicht; wir berücksichtigen sie bereits in der Planung.",
-  },
-  {
-    frage: "Muss ich auf die PV-Anlage Mehrwertsteuer zahlen?",
-    antwort:
-      "In der Regel nicht. Nach § 12 Abs. 3 UStG gilt für Lieferung und Montage von PV-Anlagen auf oder in der Nähe von Wohngebäuden ein Steuersatz von 0 %, typischerweise für Anlagen bis 30 kWp. Die Angebotspreise sind damit Endpreise. Im Einzelfall, etwa bei Gewerbe- oder Hallendächern, klären wir die steuerliche Einordnung mit Ihnen.",
+      "Ja. Wir überwachen Anlagen mit eigenen Fernwartungs- und SCADA-Systemen und bieten Wartungsverträge mit Service-Level passend zur Anlagengröße – inklusive wiederkehrender Prüfung, Reinigung und Thermografie auf Wunsch.",
   },
 ];

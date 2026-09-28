@@ -8,12 +8,13 @@ import FolgenBox from "@/components/Kanaele/FolgenBox";
 import MeldungKarte from "@/components/Kanaele/MeldungKarte";
 import { actorId } from "@/lib/kanaele/activitypub";
 import { KATEGORIEN, BASE_URL, veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
+import { FIRMA, SCHWESTER } from "@/lib/site";
 
 export const revalidate = 300;
 
 const PAGE_URL = `${BASE_URL}/presse`;
 const TITEL = "Presse & Neuigkeiten | Newsroom | Ökovolt";
-const BESCHREIBUNG = "Pressemitteilungen, Unternehmensnews und Projekte der ÖKOVOLT GmbH Solartechnik – mit RSS-Feed, Push-Benachrichtigungen und Fediverse-Konto @oekovolt@oekovolt.com.";
+const BESCHREIBUNG = "Pressemitteilungen, News und Projekte der Ökovolt Solartechnik GmbH aus Ostermiething – Photovoltaik in Österreich. Mit RSS-Feed, Push und Fediverse.";
 
 export const metadata = {
   title: TITEL,
@@ -60,7 +61,7 @@ export default async function PressePage({ searchParams }) {
         breadcrumbs={[{ name: "Presse & Neuigkeiten" }]}
         eyebrow="Newsroom"
         title={<>Neuigkeiten aus der <span className="ov-text-gradient-light">Energiewende.</span></>}
-        lead="Pressemitteilungen, Projekte und Unternehmensnews von Ökovolt – als RSS-Feed, Push-Benachrichtigung oder direkt im Fediverse, zum Beispiel über Mastodon oder Threads."
+        lead="Pressemitteilungen, Projekte und Unternehmensnews von Ökovolt Österreich – Photovoltaik für Gewerbe, Landwirtschaft und Gemeinden. Als RSS-Feed, Push-Benachrichtigung oder direkt im Fediverse, zum Beispiel über Mastodon oder Threads."
         actions={[
           { label: "Presse-Kontakt", href: "#kontakt", icon: Mail },
           { label: "RSS-Feed", href: "/presse/rss.xml", icon: Rss },
@@ -130,18 +131,18 @@ export default async function PressePage({ searchParams }) {
           <SectionHeading
             eyebrow="Für Redaktionen"
             title="Presse-Kontakt & Material"
-            lead="Sie berichten über Photovoltaik, Speicher, Energiewende in Kommunen oder über ein Projekt von uns? Wir liefern Zahlen, Bilder und Ansprechpartner – schnell und unkompliziert."
+            lead="Sie berichten über Photovoltaik in Betrieben, Agri-PV, Energiegemeinschaften, die Energiewende in Gemeinden oder über ein Projekt von uns? Wir liefern Zahlen, Bilder und Ansprechpartner – schnell und unkompliziert."
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            <a href="mailto:office@oekovolt.com?subject=Presseanfrage" className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
+            <a href={`mailto:${FIRMA.email}?subject=Presseanfrage`} className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
               <Mail aria-hidden="true" className="h-6 w-6 text-ov-600" />
               <p className="mt-4 text-[16px] font-semibold text-ink-900">Presseanfragen</p>
-              <p className="mt-1 text-[14.5px] text-ink-600">office@oekovolt.com</p>
+              <p className="mt-1 text-[14.5px] text-ink-600">{FIRMA.email}</p>
             </a>
-            <a href="tel:+498245967880" className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
+            <a href={FIRMA.telefonHref} className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
               <Phone aria-hidden="true" className="h-6 w-6 text-ov-600" />
               <p className="mt-4 text-[16px] font-semibold text-ink-900">Telefon</p>
-              <p className="mt-1 text-[14.5px] text-ink-600">08245 96 788 0</p>
+              <p className="mt-1 text-[14.5px] text-ink-600">{FIRMA.telefon}</p>
             </a>
             <a href="/Logo-Oekovolt-Gruen-mit-Weiss.webp" download className="group rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 transition hover:bg-white hover:ring-ov-300">
               <Download aria-hidden="true" className="h-6 w-6 text-ov-600" />
@@ -151,7 +152,12 @@ export default async function PressePage({ searchParams }) {
             <div className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
               <Building2 aria-hidden="true" className="h-6 w-6 text-ov-600" />
               <p className="mt-4 text-[16px] font-semibold text-ink-900">Unternehmen</p>
-              <p className="mt-1 text-[14.5px] leading-relaxed text-ink-600">ÖKOVOLT GmbH Solartechnik · Schlingener Straße 1a, 86842 Türkheim · HRB 14166, AG Memmingen</p>
+              <p className="mt-1 text-[14.5px] leading-relaxed text-ink-600">
+                {FIRMA.name} · {FIRMA.strasse}, {FIRMA.plz} {FIRMA.ort} · {FIRMA.firmenbuch}, {FIRMA.firmenbuchgericht}
+              </p>
+              <p className="mt-2 text-[13px] leading-relaxed text-ink-500">
+                Gesellschafter: {FIRMA.gesellschafter.map((g) => `${g.name} (${g.anteil})`).join(", ")}. Deutsche Schwestergesellschaft und Markeninhaberin: {SCHWESTER.name}, {SCHWESTER.ort} ({SCHWESTER.land}).
+              </p>
             </div>
           </div>
         </div>

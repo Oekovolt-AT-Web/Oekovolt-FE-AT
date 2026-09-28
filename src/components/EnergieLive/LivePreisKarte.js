@@ -86,7 +86,7 @@ export default function LivePreisKarte({ tone = "light", initial = null, href = 
               Günstigste 3 h: <strong className={dunkel ? "text-white" : "text-ink-900"}>{spanne(fenster.start, fenster.ende)}</strong>
             </>
           ) : (
-            "Day-Ahead-Preis Deutschland"
+            "Day-Ahead-Preis Österreich"
           )}
         </span>
         <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />

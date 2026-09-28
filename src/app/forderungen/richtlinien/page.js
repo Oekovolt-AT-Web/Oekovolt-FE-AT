@@ -1,10 +1,9 @@
-// src/app/forderungen/richtlinen/page.js
+// src/app/forderungen/richtlinien/page.js
+//
+// Normen, Elektrizitätsrecht (EAG, ElWG) und Netzanschluss-Prozess in Österreich.
 
-import React from "react";
 import Link from "next/link";
-import { ArrowRight, BatteryCharging, ClipboardCheck, FileCheck2, Gauge, PlugZap, Send, TrendingDown, Wrench, Zap } from "lucide-react";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import { hreflangLanguages } from "@/lib/hreflang";
+import { ArrowUpRight, Cable, ClipboardCheck, FileSignature, Gauge, PlugZap, Power, Radio, Wrench, Zap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,336 +12,284 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import NormenExplorer from "@/components/Forderungen/Richtlinen/NormenExplorer";
-import CmsProse from "@/components/Forderungen/Shared/CmsProse";
-import { Hinweis, HowTo, Kennzahlen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
+import { Hinweis, HowTo, Kennzahlen, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { ELWG, NETZZUTRITT, STAND } from "@/components/Forderungen/Shared/bund";
+import { alleBundeslaender } from "@/data/bundeslaender";
+import { BASE_URL } from "@/lib/site";
+import { hreflangLanguages } from "@/lib/hreflang";
 
-const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.richtlinen.api.get_richtlinen_data`;
+const PAGE_URL = `${BASE_URL}/forderungen/richtlinien`;
+const TITLE = "PV-Normen & Netzanschluss: TOR, OVE, ElWG | Ökovolt";
+const DESCRIPTION = "Normen und Netzanschluss für PV in Österreich: TOR Erzeuger Typ A–D, ÖVE/ÖNORM E 8101, OVE R 11-1, Schneelast B 1991-1-3, ElWG 2026 – mit Netzbetreibern.";
 
-async function fetchRichtlinenData() {
-  if (!isApiConfigured()) {
-    console.error("API not configured: Missing FRAPPE_API_KEY or FRAPPE_API_SECRET in environment variables");
-    return null;
-  }
+export const metadata = {
+  title: TITLE,
+  description: DESCRIPTION,
+  keywords: ["TOR Erzeuger", "Netzanschluss Photovoltaik Österreich", "ElWG Photovoltaik", "OVE R 11-1", "ÖVE/ÖNORM E 8101", "ÖNORM B 1991-1-3 Schneelast", "Netzzugangsantrag PV"],
+  alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "article",
+    url: PAGE_URL,
+    siteName: "Ökovolt Österreich",
+    locale: "de_AT",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Normen und Netzanschluss für Photovoltaik in Österreich" }],
+  },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
+};
 
-  try {
-    const headers = getApiHeaders();
-
-    const response = await fetch(DATA_URL, {
-      method: 'GET',
-      headers: headers,
-      next: { revalidate: 600 }
-    });
-
-    if (!response.ok) {
-      let errorText = "";
-      try {
-        const errorData = await response.json();
-        errorText = JSON.stringify(errorData);
-        console.error("Error response:", errorData);
-      } catch (e) {
-        errorText = await response.text();
-        console.error("Error text:", errorText);
-      }
-      console.error(`API returned ${response.status}: ${errorText}`);
-      return null;
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Fetch error details:", error);
-    return null;
-  }
-}
-
-const defaultTitle = "Normen & Richtlinien für PV-Anlagen 2026 | Ökovolt";
-const defaultDescription = "VDE-AR-N 4105, EEG & Solarspitzengesetz, Marktstammdatenregister: alle Normen und Pflichten für PV-Anlagen 2026 – mit Normen-Explorer und Anmelde-Fahrplan.";
-const defaultCanonical = "https://www.oekovolt.com/forderungen/richtlinien";
-
-// Generate metadata dynamically from fetched data
-export async function generateMetadata() {
-  const data = await fetchRichtlinenData();
-  const bannerData = data?.message?.banner;
-  const bild = bannerData?.image ? `/api/image?path=${bannerData.image}` : "/og-image.jpg";
-
-  return {
-    title: defaultTitle,
-    description: defaultDescription,
-    keywords: [
-      "Photovoltaik Richtlinien",
-      "PV-Anlage Normen",
-      "VDE-AR-N 4105",
-      "Solarspitzengesetz",
-      "Marktstammdatenregister Photovoltaik",
-      "Technische Normen Photovoltaik",
-      "VDE Richtlinien",
-    ],
-    alternates: { canonical: defaultCanonical, languages: hreflangLanguages(defaultCanonical) },
-    robots: { index: true, follow: true },
-    openGraph: {
-      type: "article",
-      url: defaultCanonical,
-      siteName: "Ökovolt Österreich",
-      title: defaultTitle,
-      description: defaultDescription,
-      images: [{ url: bild, width: 1200, height: 630, alt: bannerData?.image_alt_text || "Ökovolt" }],
-    },
-    twitter: { card: "summary_large_image", title: defaultTitle, description: defaultDescription, images: [bild] },
-  };
-}
-
-const RICHTLINEN_PAGE_URL = process.env.NEXT_PUBLIC_SITE === "de" || process.env.NEXT_PUBLIC_COUNTRY === "deutschland"
-  ? "https://www.oekovolt.com/forderungen/richtlinien"
-  : "https://www.oekovolt.com/forderungen/richtlinien";
-
-const img = (p) => (p ? `/api/image?path=${p}` : "/Images/Jobs/jobs1.jpg");
+const TYPEN = [
+  { typ: "Typ A", leistung: "ab 0,8 kW bis unter 250 kW", netz: "meist Netzebene 7, größere Anlagen 6", folgen: "Standard-Einheitenzertifikate, Blindleistung nach Vorgabe (z. B. Q(U) oder cos φ), Wirkleistungsreduktion" },
+  { typ: "Typ B", leistung: "250 kW bis unter 35 MW", netz: "Netzebene 6/5", folgen: "Anlagenzertifikat bzw. Nachweise, Fernsteuerbarkeit, Parkregler für Blindleistung und Wirkleistung" },
+  { typ: "Typ C", leistung: "35 MW bis unter 50 MW", netz: "Netzebene 5/4", folgen: "erweiterte Frequenz- und Spannungsregelung, Simulationsmodelle" },
+  { typ: "Typ D", leistung: "ab 50 MW oder Anschluss ab 110 kV", netz: "Netzebene 3 und höher", folgen: "volle Anforderungen der Übertragungsnetzbetreiber (APG)" },
+];
 
 const FAQ = [
   {
-    q: "Was regelt die VDE-AR-N 4105?",
-    a: "Die VDE-AR-N 4105 ist die Anwendungsregel für Erzeugungsanlagen und Speicher am Niederspannungsnetz. Sie legt fest, wie PV-Anlagen angeschlossen werden: Netz- und Anlagenschutz, Blindleistung, Einspeisemanagement und Zertifikate. Seit März 2026 gilt die Neufassung VDE-AR-N 4105:2026-03, die unter anderem Q(U) als Standardverfahren für die Blindleistung und vereinfachte Regeln bis 800 VA einführt.",
+    q: "Welche Normen gelten für PV-Anlagen in Österreich?",
+    a: "Verbindlich für die Installation ist die ÖVE/ÖNORM E 8101 (über die Elektrotechnikverordnung 2020), für Prüfung und Dokumentation die ÖVE/ÖNORM EN 62446-1. Statik richtet sich nach ÖNORM B 1991-1-3 (Schnee) und B 1991-1-4 (Wind), der Brandschutz nach OIB-Richtlinie 2 und der OVE-Richtlinie R 11-1. Für den Netzanschluss gelten die TOR Erzeuger der E-Control und die Technischen Anschlussbedingungen des Netzbetreibers.",
   },
   {
-    q: "Was bedeutet das Solarspitzengesetz für neue PV-Anlagen?",
-    a: "Seit 25. Februar 2025 dürfen neue Anlagen mit Einspeisevergütung höchstens 60 % ihrer installierten Leistung einspeisen, solange kein Smart Meter mit Steuerbox eingebaut ist – Steckersolargeräte sind ausgenommen. Außerdem gibt es für Zeiten mit negativen Börsenstrompreisen keine Vergütung; diese Zeiten werden nach Ende der 20 Jahre angehängt. Mit Speicher und hohem Eigenverbrauch fällt die Begrenzung kaum ins Gewicht.",
+    q: "Was sind die TOR Erzeuger Typ A, B, C und D?",
+    a: "Die Technischen und organisatorischen Regeln der E-Control teilen Erzeugungsanlagen nach Leistung ein: Typ A ab 0,8 kW bis unter 250 kW, Typ B bis unter 35 MW, Typ C bis unter 50 MW, Typ D ab 50 MW oder ab 110 kV Anschlussspannung. Je höher der Typ, desto mehr Nachweise, Regelfähigkeit und Fernsteuerbarkeit verlangt der Netzbetreiber.",
   },
   {
-    q: "Bis wann muss ich meine PV-Anlage im Marktstammdatenregister eintragen?",
-    a: "Innerhalb eines Monats nach Inbetriebnahme – für die PV-Anlage und separat für einen Batteriespeicher. Die Registrierung ist Pflicht, auch für Balkonkraftwerke. Ohne Eintrag kann der Netzbetreiber die Einspeisevergütung zurückhalten.",
+    q: "Wie lange dauert der Netzanschluss einer PV-Anlage?",
+    a: "Bis 20 kW genügt nach § 96 ElWG eine Anzeige; der Netzbetreiber kann nur binnen 4 Wochen aus Sicherheitsgründen widersprechen. Größere Anlagen durchlaufen eine Netzverträglichkeitsprüfung, deren Dauer vom Netzbetreiber und der Netzsituation abhängt. Bei Engpässen sind flexible Netzzugangsverträge mit befristeter Einspeisebeschränkung möglich.",
   },
   {
-    q: "Brauche ich für meine PV-Anlage einen Smart Meter?",
-    a: "Ab 7 kW installierter Leistung ist ein intelligentes Messsystem vorgesehen; der Messstellenbetreiber baut es nach und nach ein. Auch für steuerbare Verbraucher nach § 14a EnWG – Wärmepumpe, Wallbox oder Speicher über 4,2 kW – ist er Voraussetzung. Mit Smart Meter und Steuerbox entfällt zudem die 60-%-Einspeisegrenze.",
+    q: "Was ändert das ElWG für PV-Betreiber?",
+    a: "Das Elektrizitätswirtschaftsgesetz (BGBl. I Nr. 91/2025) gilt seit 24.12.2025 und tritt gestaffelt in Kraft. Wichtig für Betreiber: Netzbetreiber dürfen neue Anlagen auf 70 % der Modulleistung kappen, ab 01.10.2026 gelten neue Regeln für Energiegemeinschaften und Peer-to-Peer-Verträge, und ab 01.01.2027 zahlen Einspeiser über 20 kW einen Infrastrukturbeitrag von höchstens 0,05 ct/kWh.",
   },
   {
-    q: "Wird die Einspeisevergütung 2027 abgeschafft?",
-    a: "Das ist geplant, aber noch nicht beschlossen. Laut Kabinettsentwurf der EEG-Novelle vom 29. Juli 2026 sollen neue Anlagen unter 25 kW ab 2027 keine feste Einspeisevergütung mehr erhalten, sondern in die Direktvermarktung wechseln. Anlagen, die bis 31. Dezember 2026 in Betrieb gehen, sollen die Vergütung für 20 Jahre behalten. Bundestag, Bundesrat und EU-Kommission müssen noch zustimmen.",
+    q: "Wie ermittle ich die Schneelast für eine PV-Anlage?",
+    a: "Seit ÖNORM B 1991-1-3:2022 gibt es keine Schneelastzonen mit Seehöhenformel mehr. Die charakteristische Schneelast steht in einer Rasterkarte mit 50 × 50 m Auflösung, abrufbar über HORA bzw. eHORA. Unser Standort-Check liefert Schnee, Wind und Hagel für Ihre Adresse.",
   },
   {
-    q: "Wer ist für die Einhaltung der Normen verantwortlich?",
-    a: "Für die Errichtung der ausführende Elektrofachbetrieb, der beim Netzbetreiber eingetragen sein muss. Als Betreiber sind Sie für den sicheren Betrieb, die Registrierung und gegebenenfalls wiederkehrende Prüfungen verantwortlich. Bestehen Sie deshalb auf ein Inbetriebnahme- und Prüfprotokoll nach DIN EN 62446-1.",
+    q: "Brauche ich für eine PV-Anlage einen Parkregler?",
+    a: "Ab Typ B (250 kW) verlangen die Netzbetreiber in der Regel einen Park- bzw. EZA-Regler, der Blindleistung und Wirkleistung am Netzanschlusspunkt nach Vorgabe regelt und fernsteuerbar ist. Ökovolt setzt dafür einen selbst entwickelten Parkregler und eigene Fernwartungs- und SCADA-Systeme ein.",
   },
 ];
 
-export default async function Richtlinen() {
-  const response = await fetchRichtlinenData();
-  const data = response?.message;
-  const banner = data?.banner;
-  const body = data?.body;
-  const [s10, s40, s100] = VERGUETUNG.saetze;
+export default function Richtlinien() {
+  const laender = alleBundeslaender();
+  const netze = laender.map((l) => ({
+    land: l.name,
+    netz: (
+      <span className="flex flex-wrap gap-x-4 gap-y-1">
+        {l.netzbetreiber.map((n) => (
+          <a key={n.name} href={n.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+            {n.name}
+            <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+            <span className="sr-only">(externer Link, neues Fenster)</span>
+          </a>
+        ))}
+      </span>
+    ),
+    el: l.recht.elektrizitaet,
+  }));
 
-  const webPageSchema = {
+  const schema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "@id": `${RICHTLINEN_PAGE_URL}/#webpage`,
-    url: RICHTLINEN_PAGE_URL,
-    name: body?.title || "Technische Richtlinien für Photovoltaik | Ökovolt",
-    description: defaultDescription,
+    "@id": `${PAGE_URL}/#webpage`,
+    url: PAGE_URL,
+    name: "Normen, Elektrizitätsrecht und Netzanschluss für Photovoltaik in Österreich",
+    description: DESCRIPTION,
     inLanguage: "de-AT",
-    isPartOf: { "@id": "https://www.oekovolt.com/#website" },
-    about: { "@id": "https://www.oekovolt.com/#organization" },
-    datePublished: "2020-01-01",
-    dateModified: "2026-09-13",
+    isPartOf: { "@id": `${BASE_URL}/#website` },
+    about: { "@id": `${BASE_URL}/#organization` },
+    dateModified: STAND.iso,
   };
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        breadcrumbs={[{ name: "Förderungen" }, { name: "Normen & Richtlinien" }]}
-        eyebrow="Normen, EEG & Netzbetreiber · Stand 2026"
-        title={<>Normen und Richtlinien für <span className="ov-text-gradient">PV-Anlagen</span></>}
-        lead="Von der VDE-AR-N 4105 über das Solarspitzengesetz bis zum Marktstammdatenregister: Welche Regeln für Ihre Anlage gelten, was sich 2026 geändert hat – und was Sie selbst erledigen müssen."
-        image={{ src: img(banner?.image), alt: banner?.image_alt_text || "Techniker begutachten Solarmodule auf einem Dach" }}
-        points={["Neue VDE-AR-N 4105:2026-03", "Solarspitzengesetz erklärt", "Anmelde-Fahrplan", "15 Regelwerke im Explorer"]}
+        variant="dark"
+        breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Richtlinien & Netzanschluss" }]}
+        eyebrow={`Normen · ElWG · TOR · Stand ${STAND.kurz}`}
+        title={<>Normen und Netzanschluss für <span className="ov-text-gradient-light">Photovoltaik in Österreich</span></>}
+        lead="Welche Normen gelten, was die TOR Erzeuger verlangen und wie der Netzanschluss bei Netz Oberösterreich, Wiener Netze oder TINETZ abläuft – für Technik, Einkauf und Geschäftsführung, mit dem Rechtsstand nach ElWG."
+        points={["TOR Erzeuger Typ A–D", "ÖVE/ÖNORM E 8101 & EN 62446", "Schnee, Wind, Hagel", "Netzanschluss in 7 Schritten"]}
         actions={[
-          { label: "Normgerecht planen lassen", href: "/angebot" },
-          { label: "Zum Normen-Explorer", href: "#normen", icon: FileCheck2 },
+          { label: "Projekt anfragen", href: "/angebot" },
+          { label: "Zum Netzanschluss", href: "#netzanschluss", icon: PlugZap },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <ClipboardCheck aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[20px] font-extrabold leading-none text-ink-900">1 Monat</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Frist fürs Marktstammdatenregister</p>
-            </div>
-          </div>
-        }
       />
 
       <Kennzahlen
         items={[
-          { wert: "60 %", label: "max. Einspeisung ohne Steuerbox (Neuanlagen)" },
-          { wert: "7 kW", label: "ab hier Smart Meter vorgesehen" },
-          { wert: `${ct(s10.teileinspeisung)} ct`, label: `je kWh bis 10 kWp, ab ${VERGUETUNG.gueltigAbLabel}` },
-          { wert: "1 Monat", label: "Frist fürs Marktstammdatenregister" },
+          { wert: "20 kW", label: "Netzanschluss auf Anzeige (§ 96 ElWG)" },
+          { wert: "70 %", label: "mögliche Spitzenkappung bei Neuanlagen" },
+          { wert: "250 kW", label: "Grenze TOR Typ A zu Typ B" },
+          { wert: "01.10.2026", label: "ElWG-Regeln für Energiegemeinschaften" },
         ]}
       />
 
-      <Section tone="sand" space="lg" id="normen" className="scroll-mt-24">
+      <Section tone="sand" space="lg">
         <SectionHeading
           eyebrow="Normen-Explorer"
-          title={<>Welche Regel gilt <span className="ov-text-gradient">wann</span>?</>}
-          lead="Die wichtigsten Normen und Vorschriften nach Projektphase – mit dem, was sie für Sie als Betreiber konkret bedeuten."
+          title="Die wichtigsten Regelwerke nach Projektphase"
+          lead="Von der Statik bis zur Wiederholungsprüfung. Wo eine Ausgabe nicht an der Primärquelle belegt ist, steht der Prüfvermerk."
           align="center"
           className="mb-10"
         />
         <NormenExplorer />
       </Section>
 
-      {/* EEG & Solarspitzengesetz */}
-      <Section tone="white" space="lg">
-        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <Section tone="white" space="lg" id="tor">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            eyebrow="EEG 2023 & Solarspitzengesetz"
-            title="Einspeisen 2026: Vergütung, 60-Prozent-Regel und negative Preise"
-            lead="Das Erneuerbare-Energien-Gesetz garantiert die Vergütung für 20 Jahre. Seit dem Solarspitzengesetz vom 25. Februar 2025 gelten für neue Anlagen aber zusätzliche Spielregeln."
+            eyebrow="TOR Erzeuger"
+            title="Anlagentypen A bis D – was der Netzbetreiber verlangt"
+            lead="Die Typisierung folgt der EU-Verordnung für Netzanschlussbestimmungen von Stromerzeugern (RfG) mit den österreichischen Schwellen der E-Control."
           />
-          <StandPille className="shrink-0 self-start md:self-auto">Sätze ab {VERGUETUNG.gueltigAbLabel}</StandPille>
+          <StandPille className="shrink-0 self-start md:self-auto">Schwellen laut E-Control</StandPille>
         </div>
-
-        <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
-          <Reveal>
-            <Tabelle
-              caption={`EEG-Einspeisevergütung für Anlagen mit Inbetriebnahme ab ${VERGUETUNG.gueltigAbLabel}`}
-              spalten={[
-                { key: "klasse", label: "Anlagenteil" },
-                { key: "teil", label: "Teileinspeisung", className: "font-display text-[17px] font-bold text-ov-700" },
-                { key: "voll", label: "Volleinspeisung", className: "font-display text-[17px] font-bold text-ink-900" },
-              ]}
-              zeilen={[s10, s40, s100].map((s) => ({
-                klasse: s.klasse,
-                teil: `${ct(s.teileinspeisung)} ct/kWh`,
-                voll: `${ct(s.volleinspeisung)} ct/kWh`,
-              }))}
-            />
-            <p className="mt-4 text-[13.5px] leading-relaxed text-ink-500">
-              Gültig bis {new Date(VERGUETUNG.gueltigBis).toLocaleDateString("de-DE")}, danach −{VERGUETUNG.degressionProHalbjahr} % je Halbjahr. Die Sätze werden anteilig je Leistungsstufe berechnet. Quelle: {VERGUETUNG.quelle.name}.{" "}
-              <Link href="/ratgeber/einspeiseverguetung-2026" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
-                Einspeisevergütung 2026 im Detail
-              </Link>
-            </p>
-            <Hinweis ton="warn" titel="Geplant: Ende der festen Vergütung für kleine Neuanlagen ab 2027" className="mt-8">
-              Laut Kabinettsentwurf der EEG-Novelle (29. Juli 2026) sollen neue Anlagen unter 25 kW ab 2027 keine feste Einspeisevergütung mehr erhalten. Wer bis 31. Dezember 2026 in Betrieb geht, soll die Vergütung 20 Jahre behalten. Noch nicht beschlossen – Bundestag, Bundesrat und EU müssen zustimmen.
-            </Hinweis>
-          </Reveal>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            {[
-              { icon: Gauge, t: "60-%-Einspeisegrenze", x: "Neuanlagen ohne Smart Meter und Steuerbox speisen höchstens 60 % der Modulleistung ein. Mit Eigenverbrauch und Speicher kostet das meist nur wenige Prozent des Jahresertrags." },
-              { icon: TrendingDown, t: "Negative Börsenpreise", x: "In Stunden mit negativen Preisen gibt es keine Vergütung. Die ausgefallenen Zeiten werden nach Ablauf der 20 Jahre angehängt." },
-              { icon: Zap, t: "Smart Meter ab 7 kW", x: "Messstellenbetreiber rüsten intelligente Messsysteme nach. Mit Steuerbox entfällt die 60-%-Grenze." },
-              { icon: BatteryCharging, t: "§ 14a EnWG", x: "Wärmepumpe, Wallbox und Speicher über 4,2 kW sind steuerbar – im Gegenzug sinken die Netzentgelte." },
-            ].map((k, i) => (
-              <Reveal key={k.t} delay={i * 70} className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ink-200">
-                  <k.icon aria-hidden="true" className="h-5 w-5" />
-                </span>
-                <h3 className="mt-5 font-display text-[18px] font-bold text-ink-900">{k.t}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{k.x}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+        <Reveal>
+          <Tabelle
+            caption="TOR Erzeuger – Anlagentypen in Österreich"
+            spalten={[
+              { key: "typ", label: "Typ", breite: "w-[10%]" },
+              { key: "leistung", label: "Maximalkapazität" },
+              { key: "netz", label: "Typische Netzebene" },
+              { key: "folgen", label: "Was das bedeutet" },
+            ]}
+            zeilen={TYPEN}
+          />
+        </Reveal>
+        <p className="mt-4 text-[13px] text-ink-500">Netzebenen als Richtwert; maßgeblich ist der vom Netzbetreiber festgelegte Anschlusspunkt. Aktuelle Fassung der TOR: e-control.at, Stand 09/2026 bitte dort prüfen.</p>
+        <Hinweis titel="Parkregler aus eigener Entwicklung" className="mt-8">
+          Für Anlagen ab Typ B setzen wir unseren selbst entwickelten Parkregler (EZA-Regler) ein – mit eigener Fernwartung und SCADA. Wie Blindleistung Q(U), cos φ und Wirkleistungsbegrenzung geregelt werden, erklärt der Ratgeber{" "}
+          <Link href="/ratgeber/eza-regler-parkregler" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">EZA-Regler und Parkregler</Link>, die Netzanschlussregeln der Ratgeber{" "}
+          <Link href="/ratgeber/tor-erzeuger-netzanschluss" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">TOR Erzeuger und Netzanschluss</Link>.
+        </Hinweis>
       </Section>
 
-      {/* Anmelde-Fahrplan */}
-      <Section tone="sand" space="lg">
+      <Section tone="sand" space="lg" id="netzanschluss" className="scroll-mt-24">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading
-            eyebrow="Anmelde-Fahrplan"
-            title="Netzanschluss und Anmeldung: Schritt für Schritt"
-            lead="Sechs Stationen vom Netzanschlussbegehren bis zur ersten Vergütung. Planung, Montage und Anmeldung übernehmen wir für Sie aus einer Hand."
+            eyebrow="Netzanschluss in 7 Schritten"
+            title="Vom Netzzugangsantrag bis zum aktiven Einspeisezählpunkt"
+            lead="Der Netzanschluss gehört an den Anfang des Projekts: Die Bestätigung der Anschlussmöglichkeit ist Voraussetzung für den EAG-Förderantrag."
             className="lg:sticky lg:top-28 lg:self-start"
-          >
-            <div className="mt-8 grid grid-cols-2 gap-3 text-[14px]">
-              <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                <p className="font-display text-[22px] font-extrabold text-ink-900">4–8 Wo.</p>
-                <p className="mt-1 leading-snug text-ink-500">üblicher Zeitraum bis zur Zählersetzung (je Netzbetreiber)</p>
-              </div>
-              <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                <p className="font-display text-[22px] font-extrabold text-ink-900">≤ 1 Monat</p>
-                <p className="mt-1 leading-snug text-ink-500">nach Inbetriebnahme ins Marktstammdatenregister</p>
-              </div>
-            </div>
-          </SectionHeading>
+          />
           <HowTo
-            name="Photovoltaikanlage beim Netzbetreiber anmelden und in Betrieb nehmen"
-            beschreibung="Ablauf von Netzanschlussbegehren, Installation nach VDE-Normen, Inbetriebnahme und Registrierung im Marktstammdatenregister (Stand 2026)."
+            name="Netzanschluss einer Photovoltaikanlage in Österreich"
+            beschreibung={`Ablauf beim Verteilernetzbetreiber nach ElWG und TOR, Stand ${STAND.label}.`}
             schritte={[
-              { icon: Send, name: "Netzanschlussbegehren stellen", text: "Der Elektrofachbetrieb meldet die geplante Anlage mit Datenblättern und Einheitenzertifikaten nach VDE-AR-N 4105 beim Netzbetreiber an – vor der Montage." },
-              { icon: PlugZap, name: "Netzverträglichkeit abwarten", text: "Der Netzbetreiber prüft den Anschlusspunkt und bestätigt die Einspeisung. Bei kleinen Anlagen geschieht das meist vereinfacht innerhalb weniger Wochen." },
-              { icon: Wrench, name: "Normgerecht installieren", text: "Montage nach DIN VDE 0100-712 und DIN EN 62548 mit Überspannungsschutz, gegebenenfalls Anpassung des Zählerschranks nach VDE-AR-N 4100." },
-              { icon: ClipboardCheck, name: "Inbetriebnahme und Prüfprotokoll", text: "Erstprüfung nach DIN EN 62446-1, Inbetriebnahmeprotokoll und Fertigmeldung an den Netzbetreiber." },
-              { icon: Gauge, name: "Zähler setzen lassen", text: "Der Messstellenbetreiber installiert einen Zweirichtungszähler bzw. ab 7 kW ein intelligentes Messsystem. Ab dann wird eingespeister Strom erfasst." },
-              { icon: FileCheck2, name: "Im Marktstammdatenregister registrieren", text: "PV-Anlage und Speicher innerhalb eines Monats nach Inbetriebnahme bei der Bundesnetzagentur eintragen und die MaStR-Nummer an den Netzbetreiber geben." },
+              { icon: Gauge, name: "Lastgang und Anlagengröße festlegen", text: "Aus Viertelstundenwerten des Smart Meters ergeben sich Eigenverbrauch, Speichergröße und die sinnvolle Einspeiseleistung." },
+              { icon: FileSignature, name: "Netzzugangsantrag stellen", text: "Formular des Netzbetreibers mit Datenblättern und Schaltplan. Bis 20 kW genügt eine Anzeige (§ 96 ElWG) – der Netzbetreiber kann binnen 4 Wochen widersprechen." },
+              { icon: Cable, name: "Netzverträglichkeit prüfen lassen", text: "Größere Anlagen prüft der Netzbetreiber nach TOR Erzeuger: Anschlusspunkt, Netzebene, Blindleistungsverfahren, Einspeisebegrenzung – bei Engpässen flexibler Netzzugang." },
+              { icon: ClipboardCheck, name: "Netzzugangsvertrag und Netzzutrittsentgelt", text: "Nach Zusage folgen Netzzugangsvertrag und Netzzutrittsentgelt (für Erneuerbare pauschal je kW, siehe Tabelle)." },
+              { icon: Zap, name: "Stromabnahme regeln", text: "Einspeisezählpunkt anlegen lassen und einen Abnahmevertrag mit einem Stromhändler, der OeMAG (Marktpreis) oder über eine Energiegemeinschaft abschließen." },
+              { icon: Wrench, name: "Errichten, prüfen, Fertigstellung melden", text: "Installation nach ÖVE/ÖNORM E 8101, Erstprüfung nach EN 62446-1; die Elektrofachkraft meldet die Fertigstellung an den Netzbetreiber." },
+              { icon: Power, name: "Inbetriebnahme und Registrierung", text: "Zählerumbau bzw. Aktivierung des Zählpunkts, Registrierung in der Herkunftsnachweisdatenbank – Voraussetzung für EAG-Zuschuss und Marktprämie." },
             ]}
           />
         </div>
       </Section>
 
-      {body?.rules && (
-        <Section tone="white" space="lg">
-          <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
-            <Reveal as="article">
-              <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">
-                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
-                Im Detail erklärt
-              </p>
-              <h2 className="ov-h2 mt-4 text-ink-900">{body.title || "Normen und Richtlinien für Photovoltaikanlagen in Deutschland"}</h2>
-              {body.description && <p className="ov-lead mt-5 text-ink-600">{body.description}</p>}
-              <CmsProse
-                html={body.rules}
-                korrekturen={[
-                  ["VDE-AR-N 4105", "VDE-AR-N 4105 (Fassung 2026-03)"],
-                  ["(gewerblichen raus):", ""],
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <SectionHeading eyebrow="Netzzutrittsentgelt" title="Was der Anschluss für Erzeuger kostet" lead="Für Erneuerbare auf Netzebene 3–7 gilt ein pauschales Entgelt je kW Engpassleistung." />
+            <Reveal className="mt-8">
+              <Tabelle
+                dicht
+                caption="Pauschales Netzzutrittsentgelt für Erneuerbare 2026"
+                spalten={[
+                  { key: "leistung", label: "Engpassleistung" },
+                  { key: "entgelt", label: "Entgelt netto", className: "font-display font-bold text-ov-700" },
                 ]}
-                className="mt-8"
+                zeilen={NETZZUTRITT.stufen}
               />
             </Reveal>
-            <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
-              <div className="rounded-3xl bg-navy-950 p-6 text-white md:p-7">
-                <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">Neu 2026</p>
-                <ul className="mt-4 space-y-3 text-[14.5px] leading-relaxed text-white/75">
-                  <li><strong className="text-white">VDE-AR-N 4105:2026-03</strong> – Q(U)-Blindleistung als Standard, vereinfachte Regeln bis 800 VA.</li>
-                  <li><strong className="text-white">EEG-Novelle</strong> – Kabinettsentwurf zum Ende der festen Vergütung kleiner Neuanlagen ab 2027.</li>
-                  <li><strong className="text-white">Vergütung</strong> – {ct(s10.teileinspeisung)} ct/kWh bis 10 kWp ab {VERGUETUNG.gueltigAbLabel}.</li>
-                </ul>
-              </div>
-              <Link href="/forderungen/baurecht" className="group ov-card-hover flex items-center justify-between gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-200">
-                <span>
-                  <span className="block font-display text-[16.5px] font-bold text-ink-900 group-hover:text-ov-700">Baurecht & Solarpflicht</span>
-                  <span className="mt-1 block text-[14px] text-ink-500">Genehmigung nach Bundesland</span>
-                </span>
-                <ArrowRight aria-hidden="true" className="h-4 w-4 text-ov-600 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </aside>
+            <p className="mt-4 text-[13.5px] leading-relaxed text-ink-500">
+              Quelle: {NETZZUTRITT.quelle.label} und Preisblätter der Netzbetreiber; Stand 09/2026, bitte beim Netzbetreiber prüfen. PV bis 15 kW über einen bestehenden Anschluss braucht nach ElWG kein zusätzliches Netzanschlussentgelt.
+            </p>
           </div>
-        </Section>
-      )}
+          <div>
+            <SectionHeading eyebrow="Elektrizitätswirtschaftsgesetz" title="ElWG: was sich für Betreiber ändert" lead={ELWG.kurz} />
+            <ol className="mt-8 space-y-3">
+              {ELWG.termine.map((t) => (
+                <li key={t.datum} className="flex gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
+                  <span className="ov-num shrink-0 font-display text-[15px] font-bold text-ov-700">{t.datum}</span>
+                  <span className="text-[14.5px] leading-relaxed text-ink-700">{t.text}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+        <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {ELWG.punkte.map((p, i) => (
+            <Reveal as="li" key={p.titel} delay={(i % 3) * 70} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+              <p className="flex items-center gap-2 font-display text-[17px] font-bold text-ink-900"><Radio aria-hidden="true" className="h-4 w-4 text-ov-600" />{p.titel}</p>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{p.text}</p>
+            </Reveal>
+          ))}
+        </ul>
+        <p className="mt-6 max-w-3xl text-[15px] leading-relaxed text-ink-600">
+          Ausführlich im Ratgeber{" "}
+          <Link href="/ratgeber/elwg-elektrizitaetswirtschaftsgesetz" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">ElWG – was sich für PV-Betreiber ändert</Link>. Die Landes-Elektrizitätswirtschaftsgesetze regeln daneben die Bewilligung der Erzeugungsanlage selbst; Leitungen über 1 kV unterliegen den Starkstromwegegesetzen von Bund (über Landesgrenzen) bzw. Ländern – relevant bei Freiflächen mit eigener Mittelspannungsleitung.
+        </p>
+      </Section>
 
-      <Section tone="white" space="lg" className={body?.rules ? "pt-0 md:pt-0" : undefined}>
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Normen, EEG & Anmeldung – kurz beantwortet"
-            lead="Stand September 2026. Gesetzesvorhaben kennzeichnen wir ausdrücklich als geplant."
+      <Section tone="sand" space="lg" id="netzbetreiber">
+        <SectionHeading
+          eyebrow="Netzbetreiber und Landesrecht"
+          title="Netzbetreiber und Elektrizitätsrecht je Bundesland"
+          lead="Ihr Netzbetreiber steht auf der Stromrechnung. Die Tabelle nennt die großen Verteilernetzbetreiber und die elektrizitätsrechtlichen Schwellen des jeweiligen Landes."
+          className="mb-10"
+        />
+        <Reveal>
+          <Tabelle
+            dicht
+            caption="Netzbetreiber und Landes-Elektrizitätsrecht nach Bundesland"
+            spalten={[
+              { key: "land", label: "Land", breite: "w-[14%]" },
+              { key: "netz", label: "Netzbetreiber", breite: "w-[30%]" },
+              { key: "el", label: "Elektrizitätsrechtliche Schwellen" },
+            ]}
+            zeilen={netze}
           />
+        </Reveal>
+        <p className="mt-4 text-[13.5px] leading-relaxed text-ink-500">Neben den genannten gibt es in allen Ländern Stadt- und Gemeindewerke mit eigenem Netzgebiet. Details je Land auf den <Link href="/forderungen/landesforderungen" className="underline decoration-ink-300 underline-offset-2 hover:text-ov-700">Landesseiten</Link>.</p>
+      </Section>
+
+      <Section tone="white" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Normen und Netzanschluss – kurz beantwortet" lead={`Rechtsstand ${STAND.label}. Maßgeblich sind die aktuellen Ausgaben der Normen und die Vorgaben Ihres Netzbetreibers.`} />
           <Faq items={FAQ} />
         </div>
       </Section>
 
+      <Section tone="sand" space="md">
+        <Quellen
+          stand={STAND.label}
+          quellen={[
+            ...ELWG.quellen,
+            NETZZUTRITT.quelle,
+            { label: "E-Control – TOR (Technische und organisatorische Regeln)", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor" },
+            { label: "HORA – Naturgefahren inkl. Schneelast", url: "https://www.hora.gv.at" },
+            { label: "OVE – Richtlinien", url: "https://www.ove.at" },
+            { label: "Land OÖ – Leitfaden 2026 Photovoltaik (Speicher, OIB-RL 2)", url: "https://www.land-oberoesterreich.gv.at/Mediendateien/Formulare/Dokumente%20UWD%20Abt_US/Photovoltaik_Leitfaden.pdf" },
+          ]}
+        />
+      </Section>
+
       <Querverweise pfad="/forderungen/richtlinien" />
       <CtaBand
-        eyebrow="Normgerecht vom Fachbetrieb"
-        title="Noch 2026 in Betrieb gehen – normgerecht und angemeldet."
-        text="Wir planen nach aktueller VDE-AR-N 4105, übernehmen Netzanschlussbegehren, Inbetriebnahmeprotokoll und Marktstammdatenregister – damit Ihre Anlage rechtssicher läuft."
-        primary={{ label: "Angebot anfragen", href: "/angebot" }}
-        secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
+        eyebrow="Technik & Netz aus einer Hand"
+        title="Netzanschluss, TOR-Nachweise und Parkregler – von uns."
+        text="Wir stellen Netzzugangsantrag und Nachweise, stimmen Blindleistungsverfahren und Einspeisebegrenzung mit dem Netzbetreiber ab und regeln größere Anlagen mit eigenem Parkregler."
+        primary={{ label: "Projekt anfragen", href: "/angebot" }}
+        secondary={{ label: "Baurecht der Bundesländer", href: "/forderungen/baurecht" }}
       />
     </div>
   );

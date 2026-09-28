@@ -58,10 +58,10 @@ export default function Empfehlungen({ initial }) {
             ? `Günstigste 3 h heute: ca. ${zahl(dynamischBrutto(guenstig3h.avg), 0)} ct/kWh brutto`
             : "Börsenpreis direkt nutzen"
         }
-        text={`${heute ? `Im Tagesmittel wären es rund ${zahl(dynamischBrutto(heute.avg), 0)} ct/kWh, Festpreistarife liegen bei etwa ${TARIF_ANNAHMEN.festpreisCt} ct/kWh. ` : ""}Dynamische Tarife geben den Börsenpreis viertelstündlich weiter – lohnend vor allem, wenn Sie Verbrauch verschieben können, etwa mit E-Auto, Wärmepumpe oder Speicher. Voraussetzung ist ein intelligentes Messsystem.`}
+        text={`${heute ? `Im Tagesmittel wären es rund ${zahl(dynamischBrutto(heute.avg), 0)} ct/kWh, Festpreistarife liegen bei etwa ${TARIF_ANNAHMEN.festpreisCt} ct/kWh. ` : ""}Dynamische Tarife geben den Börsenpreis viertelstündlich weiter – lohnend vor allem, wenn Sie Verbrauch verschieben können, etwa mit E-Auto, Wärmepumpe oder Speicher. Voraussetzung ist ein Smart Meter, das Viertelstundenwerte übermittelt.`}
         links={[
           { href: "/rechner/dynamischer-stromtarif", label: "Ersparnis berechnen", primaer: true },
-          { href: "/service/stromtarif", label: "Ökovolt-Stromtarif" },
+          { href: "/service/stromtarif", label: "Dynamische Tarife in Österreich" },
         ]}
       />
       <LinkKarte

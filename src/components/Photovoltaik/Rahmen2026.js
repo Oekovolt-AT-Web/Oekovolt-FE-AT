@@ -3,39 +3,40 @@ import { BadgeEuro, Gauge, Percent, Receipt } from "lucide-react";
 import Reveal from "@/components/ui/Reveal";
 
 /**
- * Rechtlicher und wirtschaftlicher Rahmen für neue PV-Anlagen 2026.
- * Branchenwissen als Orientierung – mit Stand-Datum, zitierfähig formuliert.
+ * Rechtlicher und wirtschaftlicher Rahmen für neue PV-Anlagen in Österreich 2026.
+ * Branchenwissen als Orientierung – mit Stand-Datum, zitierfähig formuliert,
+ * bewusst ohne Fördersätze (ändern sich je OeMAG-Fördercall).
  */
 const ZEILEN = [
   {
     icon: BadgeEuro,
-    thema: "Einspeisevergütung",
-    wert: "7,70 ct/kWh",
-    text: "Teileinspeisung bis 10 kWp, Inbetriebnahme ab 1. August 2026, 20 Jahre fest. Sinkt halbjährlich leicht.",
-    href: "/ratgeber/einspeiseverguetung-2026",
-    link: "Vergütung 2026",
+    thema: "Förderung",
+    wert: "EAG",
+    text: "Investitionszuschuss nach § 56 EAG über OeMAG-Fördercalls, Kategorien A bis D bis 1.000 kWp. Antrag vor der Bestellung.",
+    href: "/forderungen/bundesfoerderung",
+    link: "Bundesförderung",
   },
   {
     icon: Percent,
     thema: "Umsatzsteuer",
-    wert: "0 %",
-    text: "Nullsteuersatz auf Lieferung und Montage nach § 12 Abs. 3 UStG – bei Anlagen auf Wohngebäuden in der Regel bis 30 kWp.",
+    wert: "20 %",
+    text: "Der befristete Nullsteuersatz endete mit 31. März 2025. Für vorsteuerabzugsberechtigte Betriebe kein Kostenfaktor.",
     href: "/forderungen/steuerlich",
     link: "Steuerliche Vorteile",
   },
   {
     icon: Receipt,
-    thema: "Einkommensteuer",
-    wert: "steuerfrei",
-    text: "Einnahmen aus Anlagen bis 30 kWp je Wohn- oder Gewerbeeinheit sind nach § 3 Nr. 72 EStG von der Einkommensteuer befreit.",
+    thema: "Elektrizitätsabgabe",
+    wert: "befreit",
+    text: "Selbst erzeugter und selbst verbrauchter PV-Strom ist von der Elektrizitätsabgabe befreit – ein Vorteil jeder Kilowattstunde Eigenverbrauch.",
   },
   {
     icon: Gauge,
-    thema: "Solarspitzengesetz",
-    wert: "60 %",
-    text: "Neue Anlagen ohne Smart Meter und Steuerbox speisen max. 60 % der Modulleistung ein; bei negativen Börsenpreisen keine Vergütung.",
-    href: "/produkte/smartmeter",
-    link: "Smart Meter",
+    thema: "Netzanschluss",
+    wert: "TOR",
+    text: "Typ A ab 0,8 kW, Typ B ab 250 kW nach TOR Stromerzeugungsanlagen – mit Anforderungen an Blindleistung und Fernsteuerbarkeit.",
+    href: "/technik/parkregler",
+    link: "Parkregler",
   },
 ];
 
@@ -43,7 +44,7 @@ export default function Rahmen2026() {
   return (
     <Reveal className="overflow-hidden rounded-[2rem] bg-white ring-1 ring-ink-200/70">
       <div className="flex flex-col gap-2 border-b border-ink-100 px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-8">
-        <h3 className="font-display text-[19px] font-bold text-ink-900 md:text-[21px]">Was 2026 für neue Anlagen gilt</h3>
+        <h3 className="font-display text-[19px] font-bold text-ink-900 md:text-[21px]">Was 2026 in Österreich für neue Anlagen gilt</h3>
         <p className="text-[13px] text-ink-500">Orientierung · Stand September 2026 · keine Steuerberatung</p>
       </div>
       <dl className="grid gap-px bg-ink-100 md:grid-cols-2 xl:grid-cols-4">

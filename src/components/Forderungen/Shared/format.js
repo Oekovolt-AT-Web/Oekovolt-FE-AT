@@ -3,7 +3,7 @@
 /** "2026-09-12" -> "12. September 2026" */
 export function datumLang(iso) {
   if (!iso) return "";
-  return new Date(iso).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" });
+  return new Date(iso).toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Vienna" });
 }
 
 /** "2026-09-12" -> "09/2026" */

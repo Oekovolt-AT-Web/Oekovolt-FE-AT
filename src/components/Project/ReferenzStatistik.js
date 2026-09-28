@@ -33,7 +33,7 @@ export default function ReferenzStatistik({ projekte = [] }) {
         <SectionHeading
           dark
           eyebrow="Die Auswahl in Zahlen"
-          title={<>Vom Einfamilienhaus bis zur <span className="ov-text-gradient-light">Gewerbehalle</span></>}
+          title={<>Von der Gewerbehalle bis zum <span className="ov-text-gradient-light">Premium-Wohnhaus</span></>}
           lead={`Unsere dokumentierten Referenzen reichen von ${fmtKwp(k.kleinste?.kwp)} bis ${fmtKwp(k.groesste?.kwp)} kWp – auf Ziegel-, Flach- und Trapezblechdächern ebenso wie an Fassaden.`}
         />
         <dl className="mt-10 grid grid-cols-2 gap-3 sm:gap-4">

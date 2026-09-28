@@ -1,336 +1,321 @@
-// Ratgeber: PV-Anlage – Größe berechnen
-// Verbrauchswerte: Stromspiegel für Deutschland 2025 (co2online). Szenarien: Rechenkern des
-// Solarrechners (berechne) mit den zentralen Annahmen. Rechtliche Schwellen: EEG, EStG, MsbG,
-// Recherchestand September 2026.
+// Ratgeber: PV-Anlage – Größe berechnen (Schwerpunkt Gewerbe nach Lastgang, Österreich)
+// Modellrechnung: eigene Simulation mit PVGIS-5.3-Stundenreihen (seriescalc, Linz, 2019–2023, 14 % Verluste)
+// und synthetischem Gewerbe-Lastprofil (~400 MWh/a). Speicher: vereinfachtes Modell (92 % Ladewirkungsgrad, 0,5 C).
+// Schwellen: TOR Stromerzeugungsanlagen (E-Control), EAG-IZ-VO Strom § 5 (2026).
 
-import { ANNAHMEN } from "@/data/solarrechner";
-import { VERGUETUNG, ct } from "@/data/einspeiseverguetung";
-import { SPEICHER } from "@/lib/rechner/annahmen";
-import { berechne } from "@/lib/solarrechner";
-
-const n0 = (v) => Math.round(v).toLocaleString("de-DE");
-const eur = (v) => `${n0(v)} €`;
-const pct = (v) => `${Math.round(v * 100)} %`;
-const jahre = (r) => (r.amortisationJahre ? `${r.amortisationJahre.toFixed(1).replace(".", ",")} J.` : "über 20 J.");
-
-// Beispielhaushalt: 4 Personen im Einfamilienhaus (Stromspiegel 2025: 3.800 kWh ohne elektrische Warmwasserbereitung)
-const HAUSHALT = 3800;
-const KM = 12000;
-const EAUTO = Math.round((KM * SPEICHER.eAutoVerbrauch) / 100 * SPEICHER.eAutoLadeanteilZuhause);
-const WP = SPEICHER.wpStromKwh;
-const GESAMT = HAUSHALT + WP + EAUTO;
-
-const GROESSEN = [4, 6, 8, 10, 12, 15, 20];
-const szenario = (verbrauch, speicherKwh) =>
-  GROESSEN.map((kwp) => ({
-    kwp,
-    ohne: berechne({ kwp, ausrichtung: "sued", neigung: "mittel", verbrauch, speicherKwh: 0 }),
-    mit: berechne({ kwp, ausrichtung: "sued", neigung: "mittel", verbrauch, speicherKwh }),
-  }));
-const A = szenario(HAUSHALT, 6);
-const B = szenario(GESAMT, 10);
-const bestIndex = (liste) => liste.reduce((best, x, i) => (x.ohne.ertrag20Jahre > liste[best].ohne.ertrag20Jahre ? i : best), 0);
+const MODELL = [
+  // [Variante, kWp, Speicher kWh, PV MWh, Eigenverbrauchsquote %, Autarkie %, Einspeisung MWh, max. Einspeiseleistung kW]
+  ["Süd 10°", 100, 0, 106, 91, 24, 10, 52],
+  ["Süd 10°", 200, 0, 211, 68, 36, 67, 133],
+  ["Süd 10°", 300, 0, 317, 52, 41, 151, 215],
+  ["Ost-West 10°", 300, 0, 289, 56, 41, 126, 197],
+  ["Süd 10°", 500, 0, 528, 36, 47, 339, 379],
+  ["Süd 10° + Speicher", 300, 200, 317, 68, 54, 98, 215],
+  ["Süd 10° + Speicher", 500, 300, 528, 52, 68, 247, 379],
+];
 
 const artikel = {
   slug: "pv-anlage-groesse-berechnen",
-  title: "PV-Anlage: Größe berechnen – so viel kWp brauchen Sie wirklich",
-  seoTitle: "PV-Anlage Größe berechnen: kWp richtig planen | Ökovolt",
+  title: "PV-Anlage Größe berechnen: So dimensionieren Betriebe nach Lastgang",
+  seoTitle: "PV-Anlage Größe berechnen: Gewerbe | Ökovolt",
   kurzTitel: "PV-Größe berechnen",
   description:
-    "PV-Anlage Größe berechnen: Faustregeln, Verbrauch nach Haushaltsgröße, Dachfläche je kWp, Wärmepumpe und E-Auto – mit Beispielrechnungen und den wichtigen Grenzen 2026.",
+    "PV-Anlage richtig dimensionieren: Lastgang auswerten, Grundlast bestimmen, Eigenverbrauch simulieren – Modell 100 bis 500 kWp und Schwellen in Österreich.",
   excerpt:
-    "Wie viel kWp passen zu Ihrem Haushalt – und wann lohnt es sich, das Dach voll zu belegen? Faustregeln, Verbrauchstabellen und zwei durchgerechnete Beispiele mit und ohne Wärmepumpe.",
+    "Nicht die Dachfläche, sondern der Lastgang bestimmt die richtige Anlagengröße. Wie Betriebe ihre Viertelstundenwerte auswerten, welche Größen sich rechnen und welche Schwellen in Österreich gelten – mit Simulation für einen 400-MWh-Betrieb.",
   hauptKeyword: "pv anlage größe berechnen",
   keywords: [
     "PV-Anlage Größe berechnen",
-    "Wie viel kWp brauche ich",
-    "Photovoltaik Größe Einfamilienhaus",
-    "PV-Anlage Dimensionierung",
-    "kWp pro Quadratmeter Dachfläche",
-    "PV-Anlage Größe Wärmepumpe E-Auto",
-    "Faustregel Photovoltaik Größe",
+    "Photovoltaik dimensionieren Gewerbe",
+    "Lastgang Photovoltaik",
+    "Eigenverbrauchsquote berechnen",
+    "wie viel kWp Betrieb",
+    "Lastprofilzähler Viertelstundenwerte",
+    "PV Anlagengröße Unternehmen",
   ],
-  veroeffentlicht: "2026-09-13",
-  aktualisiert: "2026-09-13",
+  veroeffentlicht: "2026-09-28",
+  aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
-  bild: "/Images/Home/download.jpg",
-  bildAlt: "Luftbild eines Hausdachs mit Photovoltaikmodulen",
-  badge: { wert: `~${ANNAHMEN.qmProKwp} m²`, text: "Dachfläche je kWp Anlagenleistung" },
+  bild: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg",
+  bildAlt: "Luftaufnahme eines Gewerbegebiets mit Photovoltaikanlagen auf Hallendächern",
+  badge: { wert: "91 %", text: "Eigenverbrauch bei 100 kWp und 400 MWh Bedarf (Modell)" },
 
   kurzFazit: [
-    "**Faustregel: Planen Sie mindestens 1 bis 1,5 kWp je 1.000 kWh Jahresverbrauch – und belegen Sie das Dach eher großzügig.** Für einen typischen Haushalt sind das 6 bis 12 kWp.",
-    `**Mit Wärmepumpe und E-Auto** steigt der Verbrauch schnell auf rund ${n0(GESAMT)} kWh. Dann sind 12 bis 20 kWp sinnvoll, soweit das Dach Platz bietet.`,
-    `**Je kWp brauchen Sie rund ${ANNAHMEN.qmProKwp} m² Dachfläche.** Ein 50 m² großes, freies Süddach trägt also etwa 10 kWp.`,
-    "Größer heißt nicht automatisch unwirtschaftlich: Der Preis je kWp sinkt mit der Anlagengröße, und künftige Verbraucher lassen sich später kaum günstig nachrüsten.",
-    "Wichtige Schwellen sind **7 kW** (Smart-Meter-Pflicht), **25 kW** (Fernsteuerbarkeit) und **30 kWp** (Steuerbefreiung je Einheit).",
+    "**Die richtige Größe einer Gewerbe-PV-Anlage ergibt sich aus dem Lastgang – den Viertelstundenwerten des Stromverbrauchs –, nicht aus der verfügbaren Dachfläche.** Maßgeblich ist, wie viel Leistung der Betrieb tagsüber dauerhaft abnimmt.",
+    "In unserer Modellrechnung für einen Betrieb mit **400 MWh Jahresverbrauch** und rund **75 kW Tageslast** verbraucht eine **100-kWp-Anlage 91 %** ihres Stroms selbst, deckt aber nur 24 % des Bedarfs. Mit **300 kWp** sinkt die Eigenverbrauchsquote auf **52 %**, die Autarkie steigt auf **41 %**.",
+    "Ein **Speicher** verschiebt die Grenze: 300 kWp mit 200 kWh erreichen im Modell 68 % Eigenverbrauch und 54 % Autarkie.",
+    "Wichtige Schwellen in Österreich: **250 kW** (Typ B nach TOR Stromerzeugungsanlagen), **100 kWp** und **1.000 kWp** beim EAG-Investitionszuschuss sowie die verfügbare **Netzkapazität** am Anschlusspunkt.",
   ],
 
   abschnitte: [
     {
-      id: "faustregeln",
-      titel: "Wie groß sollte eine PV-Anlage sein? Die Faustregeln",
-      tocLabel: "Faustregeln",
+      id: "antwort",
+      titel: "Wie groß sollte die PV-Anlage für einen Betrieb sein?",
+      tocLabel: "Die richtige Größe",
       bloecke: [
         {
           typ: "p",
-          text: "**Die passende Größe ergibt sich aus drei Grenzen: Ihrem Stromverbrauch (heute und künftig), der nutzbaren Dachfläche und Ihrem Budget.** Weil die [Einspeisevergütung](/ratgeber/einspeiseverguetung-2026) niedrig ist, zählt heute vor allem der selbst genutzte Solarstrom. Trotzdem wäre es ein Fehler, die Anlage nur auf den heutigen Verbrauch zuzuschneiden – im Winter liefert jede Anlage zu wenig, im Sommer fast immer zu viel.",
+          text: "**Eine Gewerbe-PV-Anlage ist dann richtig dimensioniert, wenn sie die werktägliche Grundlast weitgehend deckt und der Überschuss sinnvoll verwertet werden kann – durch Speicher, Energiegemeinschaft, Vermarktung oder neue Verbraucher.** Als erste Orientierung gilt: Die Anlagenleistung in kWp entspricht etwa dem 1- bis 1,5-Fachen der Leistung, die der Betrieb an Werktagen zwischen 9 und 16 Uhr mindestens abnimmt. Dann liegt die [Eigenverbrauchsquote](/wissen/lexikon#eigenverbrauchsquote) meist über 70 %.",
         },
         {
-          typ: "karten",
-          cols: 3,
-          items: [
-            { titel: "Nach Verbrauch", text: "Mindestens 1 bis 1,5 kWp je 1.000 kWh Jahresverbrauch. Bei 4.000 kWh also 4 bis 6 kWp – eher die Untergrenze." },
-            { titel: "Nach Dachfläche", text: `Nutzbare Dachfläche geteilt durch rund ${ANNAHMEN.qmProKwp} m² je kWp. Belegen Sie wirtschaftlich sinnvolle Flächen möglichst vollständig.` },
-            { titel: "Nach Zukunft", text: "Wärmepumpe, E-Auto oder Klimagerät geplant? Dann jetzt größer bauen – ein zweites Gerüst und eine Erweiterung kosten später deutlich mehr." },
-          ],
-        },
-        {
-          typ: "kennzahl",
-          wert: "6–12 kWp",
-          titel: "typische Größe für ein Einfamilienhaus ohne Wärmepumpe",
-          text: `Mit Wärmepumpe und E-Auto sind 12 bis 20 kWp üblich. Die Werte setzen ein geeignetes Dach voraus; unser Solarrechner rechnet mit ${n0(ANNAHMEN.ertragProKwpSued)} kWh Ertrag je kWp auf einem Süddach.`,
+          typ: "p",
+          text: "Größer zu bauen kann sich trotzdem lohnen – etwa weil der Preis pro kWp mit der Anlagengröße sinkt, weil künftig eine E-Flotte oder Wärmepumpe dazukommt oder weil der Überschuss über ein PPA oder eine Energiegemeinschaft gut verkauft werden kann. Die Entscheidung sollte aber auf Zahlen beruhen, nicht auf der Dachgröße. Wie sich Eigenverbrauch und Einspeisung auf die Rendite auswirken, zeigt der Ratgeber [Photovoltaik für Gewerbe](/ratgeber/photovoltaik-gewerbe).",
         },
       ],
     },
     {
-      id: "verbrauch",
-      titel: "Schritt 1: Den eigenen Stromverbrauch ermitteln",
-      tocLabel: "Verbrauch ermitteln",
+      id: "lastgang",
+      titel: "Schritt 1: Den Lastgang beschaffen",
+      tocLabel: "Lastgang beschaffen",
       bloecke: [
         {
           typ: "p",
-          text: "**Am genauesten ist der Jahresverbrauch von Ihren letzten Stromrechnungen.** Liegt keine Abrechnung vor – etwa im Neubau – helfen die Vergleichswerte des Stromspiegels 2025. Ein Einfamilienhaus verbraucht bei gleicher Personenzahl deutlich mehr als eine Wohnung, weil Heizungspumpe, Außenbeleuchtung und Geräte in Keller und Garage dazukommen.",
+          text: "**Der Lastgang ist die Zeitreihe des Strombezugs in Viertelstunden – 35.040 Werte pro Jahr.** Betriebe mit einem Jahresverbrauch über 100.000 kWh oder einer Anschlussleistung über 50 kW werden in Österreich in der Regel mit einem Lastprofilzähler gemessen, der genau diese Werte aufzeichnet. Darunter wird der Verbrauch über standardisierte Lastprofile abgerechnet; ein [Smart Meter](/ratgeber/smart-meter-pflicht) kann Viertelstundenwerte aber ebenfalls liefern, wenn die Viertelstundenauslesung aktiviert ist.",
         },
-        {
-          typ: "tabelle",
-          caption: "Durchschnittlicher Stromverbrauch im Einfamilienhaus nach Personenzahl (Stromspiegel 2025)",
-          kopf: ["Personen", "Warmwasser nicht elektrisch", "Warmwasser elektrisch", "Richtwert PV-Größe (Haushalt)"],
-          zeilen: [
-            ["1", "ca. 1.800 kWh", "ca. 2.100 kWh", "4–5 kWp"],
-            ["2", "2.700 kWh", "3.200 kWh", "5–7 kWp"],
-            ["3", "3.500 kWh", "4.100 kWh", "6–9 kWp"],
-            ["4", "3.800 kWh", "4.700 kWh", "7–10 kWp"],
-            ["5", "4.500 kWh", "6.000 kWh", "8–12 kWp"],
-          ],
-          hervorheben: 3,
-          fussnote: "Verbrauchswerte: Stromspiegel für Deutschland 2025 (co2online), Einfamilien- bzw. Zweifamilienhaus. Die PV-Richtwerte sind Orientierungen für den reinen Haushaltsstrom; kleine Anlagen sind je kWp teurer, daher die Untergrenze von rund 4 kWp.",
-        },
-        { typ: "h3", text: "Künftige Verbraucher addieren" },
-        {
-          typ: "tabelle",
-          caption: "Zusätzlicher Strombedarf durch Wärmepumpe, E-Auto und Co.",
-          kopf: ["Verbraucher", "Zusätzlicher Bedarf pro Jahr", "Rechenweg"],
-          zeilen: [
-            ["Wärmepumpe (Einfamilienhaus)", `ca. 3.000–5.000 kWh, typisch ${n0(WP)} kWh`, "Wärmebedarf ÷ Jahresarbeitszahl"],
-            ["E-Auto", `ca. ${n0(EAUTO)} kWh bei ${n0(KM)} km`, `${n0(KM)} km × ${SPEICHER.eAutoVerbrauch} kWh/100 km × ${pct(SPEICHER.eAutoLadeanteilZuhause)} Ladeanteil zu Hause`],
-            ["Elektrische Warmwasserbereitung", "ca. 300 kWh je Person", "co2online: im Schnitt rund 305 kWh je Person"],
-            ["Klimagerät, Pool, Sauna", "je nach Nutzung 300–2.000 kWh", "Leistung × Betriebsstunden"],
-          ],
-          minBreite: 620,
-          fussnote: "E-Auto und Wärmepumpe mit den Annahmen unserer Rechner (18 kWh/100 km inkl. Ladeverlusten, 80 % Laden zu Hause). Den Strombedarf einer Wärmepumpe für Ihr Haus schätzt der Wärmepumpen-Rechner.",
-        },
-        {
-          typ: "p",
-          text: "Wie viel Strom eine Wärmepumpe in Ihrem Gebäude braucht, hängt vor allem von Wärmebedarf und Jahresarbeitszahl ab – eine erste Schätzung liefert der [Wärmepumpen-Rechner](/rechner/waermepumpe). Für das E-Auto zählt, wie oft es tagsüber zu Hause steht; nur dann kann es Solarstrom laden. Mehr dazu im Ratgeber [PV-Überschussladen](/ratgeber/pv-ueberschussladen).",
-        },
-      ],
-    },
-    {
-      id: "dachflaeche",
-      titel: "Schritt 2: Wie viel kWp passen auf Ihr Dach?",
-      tocLabel: "Dachfläche",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Rechnen Sie mit etwa ${ANNAHMEN.qmProKwp} m² Dachfläche je kWp.** Ein aktuelles Modul mit rund 450 Wp misst etwa 1,7 × 1,1 m; dazu kommen Klemmbereiche, Fugen und Abstände zu Dachrand, First und Kaminen. Die belegbare Fläche ist deshalb kleiner als die Dachfläche – bei Satteldächern mit Fenstern oder Gauben oft nur 60 bis 80 %.`,
-        },
-        {
-          typ: "tabelle",
-          caption: "Dachfläche und mögliche Anlagenleistung (Orientierung)",
-          kopf: ["Belegbare Dachfläche", "Anzahl Module (ca. 450 Wp)", "Anlagenleistung", "Jahresertrag Süd (ca.)"],
-          zeilen: [20, 30, 40, 50, 60, 80, 100].map((qm) => {
-            const kwp = qm / ANNAHMEN.qmProKwp;
-            return [`${qm} m²`, `${Math.floor((kwp * 1000) / 450)}`, `${n0(kwp)} kWp`, `${n0(kwp * ANNAHMEN.ertragProKwpSued)} kWh`];
-          }),
-          minBreite: 560,
-          fussnote: `Belegbare Fläche nach Abzug von Randabständen, Fenstern und Aufbauten. Ertrag mit dem vorsichtigen Planungswert von ${n0(ANNAHMEN.ertragProKwpSued)} kWh je kWp; Region, Ausrichtung und Neigung verändern den Wert (siehe Ratgeber „Ertrag pro kWp“).`,
-        },
-        {
-          typ: "p",
-          text: "Ost- und Westdächer lassen sich beidseitig belegen und bringen so oft mehr Gesamtleistung als eine einzelne Südseite – bei rund 15 % weniger Ertrag je kWp. Auf Flachdächern hängt die Leistung stark von der Aufständerung ab: Ost-West-Systeme belegen die Fläche deutlich dichter als nach Süden aufgeständerte Reihen. Details im Ratgeber [Photovoltaik Ost-West](/ratgeber/photovoltaik-ost-west).",
-        },
-      ],
-    },
-    {
-      id: "beispiele",
-      titel: "Schritt 3: Größen vergleichen – zwei Beispielrechnungen",
-      tocLabel: "Beispielrechnungen",
-      bloecke: [
-        {
-          typ: "p",
-          text: `**Die folgenden Tabellen zeigen, was mehr Leistung bringt.** Gerechnet mit dem Rechenkern unseres [Solarrechners](/solarrechner): Süddach, ${n0(ANNAHMEN.ertragProKwpSued)} kWh je kWp, ${String(ANNAHMEN.strompreis * 100).replace(".", ",")} ct Strompreis, ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct Einspeisevergütung bis 10 kWp, Anlagenpreise je kWp nach Größe gestaffelt, Speicher ${eur(ANNAHMEN.speicherPreisProKwh)} je kWh.`,
-        },
-        { typ: "h3", text: `Beispiel A: 4-Personen-Haushalt, ${n0(HAUSHALT)} kWh, ohne Wärmepumpe` },
-        {
-          typ: "tabelle",
-          caption: `Anlagengröße im Vergleich bei ${n0(HAUSHALT)} kWh Jahresverbrauch (Süddach)`,
-          kopf: ["Anlage", "Investition", "Autarkie ohne Speicher", "Autarkie mit 6 kWh", "Amortisation ohne Speicher", "Überschuss nach 20 Jahren"],
-          zeilen: A.map(({ kwp, ohne, mit }) => [`**${kwp} kWp**`, eur(ohne.investition), pct(ohne.autarkie), pct(mit.autarkie), jahre(ohne), eur(ohne.ertrag20Jahre)]),
-          hervorheben: 5,
-          markierteZeile: bestIndex(A),
-          minBreite: 780,
-          fussnote: "Orientierungswerte, keine Angebote. Überschuss nach 20 Jahren = Summe aus Stromersparnis und Einspeiseerlös abzüglich Betriebskosten und Investition, ohne Speicher. Nach 20 Jahren arbeitet eine Anlage in der Regel weiter; dieser Zusatznutzen ist nicht enthalten.",
-        },
-        {
-          typ: "p",
-          text: `Das Ergebnis: Ohne Speicher steigt die Autarkie ab etwa 8 kWp kaum noch – sie bleibt bei rund ${pct(A[3].ohne.autarkie)}, weil abends und nachts niemand Solarstrom liefert. Der größte Überschuss nach 20 Jahren entsteht in diesem Beispiel bei **${A[bestIndex(A)].kwp} kWp**. Größere Anlagen amortisieren sich etwas langsamer, bleiben aber wirtschaftlich positiv – und schaffen Reserve für spätere Verbraucher.`,
-        },
-        { typ: "h3", text: `Beispiel B: derselbe Haushalt mit Wärmepumpe und E-Auto, ${n0(GESAMT)} kWh` },
-        {
-          typ: "tabelle",
-          caption: `Anlagengröße im Vergleich bei ${n0(GESAMT)} kWh Jahresverbrauch (Süddach)`,
-          kopf: ["Anlage", "Investition", "Autarkie ohne Speicher", "Autarkie mit 10 kWh", "Amortisation ohne Speicher", "Überschuss nach 20 Jahren"],
-          zeilen: B.map(({ kwp, ohne, mit }) => [`**${kwp} kWp**`, eur(ohne.investition), pct(ohne.autarkie), pct(mit.autarkie), jahre(ohne), eur(ohne.ertrag20Jahre)]),
-          hervorheben: 5,
-          markierteZeile: bestIndex(B),
-          minBreite: 780,
-          fussnote: `Haushalt ${n0(HAUSHALT)} kWh + Wärmepumpe ${n0(WP)} kWh + E-Auto ${n0(EAUTO)} kWh. Vereinfachte Jahresbetrachtung; der hohe Winterbedarf der Wärmepumpe wird über die Autarkiekurve des Solarrechners näherungsweise berücksichtigt.`,
-        },
-        {
-          typ: "p",
-          text: `Mit Wärmepumpe und E-Auto verschiebt sich das Optimum deutlich nach oben: Hier wächst der Überschuss bis ${B[B.length - 1].kwp} kWp weiter, die Amortisation bleibt bei rund ${B[3].ohne.amortisationJahre ? Math.round(B[3].ohne.amortisationJahre) : "10"} bis ${B[B.length - 1].ohne.amortisationJahre ? Math.round(B[B.length - 1].ohne.amortisationJahre) : "12"} Jahren. Wie viel Solarstrom eine Wärmepumpe tatsächlich nutzen kann, erklärt der Ratgeber [Wärmepumpe mit Photovoltaik](/ratgeber/waermepumpe-mit-photovoltaik).`,
-        },
-        { typ: "tool", href: "/solarrechner", titel: "Ihre Größe selbst durchrechnen", text: "Verbrauch, Dachausrichtung und Speicher eingeben – Autarkie, Amortisation und 20-Jahres-Cashflow sofort sehen.", label: "Zum Solarrechner" },
-      ],
-    },
-    {
-      id: "grenzen",
-      titel: "Welche Größengrenzen sind wichtig?",
-      tocLabel: "Wichtige Grenzen",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Für Hausanlagen sind vor allem die Schwellen bei 7 kW, 25 kW und 30 kWp relevant.** Die oft zitierte 10-kWp-Grenze ist dagegen keine Hürde mehr: Die Vergütung wird anteilig berechnet, sodass eine 12-kWp-Anlage nur für die letzten 2 kWp den etwas niedrigeren Satz erhält.",
-        },
-        {
-          typ: "tabelle",
-          caption: "Rechtliche und technische Schwellen nach Anlagengröße, Stand September 2026",
-          kopf: ["Schwelle", "Was sich ändert", "Rechtsgrundlage"],
-          zeilen: [
-            ["unter 25 kW", "Bis zum Einbau eines intelligenten Messsystems höchstens 60 % der installierten Leistung einspeisen (Neuanlagen; Steckersolar bis 2 kW/800 VA ausgenommen)", "§ 9 Abs. 2 EEG"],
-            ["über 7 kW", "Pflichteinbau eines intelligenten Messsystems mit Steuerungseinrichtung durch den Messstellenbetreiber; jährliche Kosten gesetzlich gedeckelt", "§ 29, § 30 MsbG"],
-            ["10 kWp", `Vergütung sinkt anteilig: ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct bis 10 kWp, ${ct(VERGUETUNG.saetze[1].teileinspeisung)} ct für den Teil darüber`, "§ 48 EEG"],
-            ["25 bis 100 kW", "Zusätzlich fernsteuerbar für den Netzbetreiber; bis zum Smart Meter gilt auch hier die 60-%-Begrenzung", "§ 9 Abs. 2 EEG"],
-            ["30 kWp", "Einnahmen steuerfrei bis 30 kWp je Wohn- oder Gewerbeeinheit (max. 100 kWp je Person); Nullsteuersatz beim Kauf gilt als erfüllt", "§ 3 Nr. 72 EStG, § 12 Abs. 3 UStG"],
-            ["30 kVA", "Zentraler Netz- und Anlagenschutz am Zählerplatz erforderlich", "VDE-AR-N 4105"],
-            ["100 kWp", "Pflicht zur Direktvermarktung statt fester Einspeisevergütung", "§ 21 EEG"],
-          ],
-          minBreite: 700,
-          fussnote: "Vereinfachte Übersicht, keine Rechts- oder Steuerberatung. Mehrere Anlagen auf einem Grundstück, die innerhalb von zwölf Monaten in Betrieb gehen, gelten nach § 9 Abs. 3 EEG als eine Anlage.",
-        },
-        {
-          typ: "kasten",
-          variant: "recht",
-          titel: "Smart Meter ist kein Grund, unter 7 kW zu bleiben",
-          text: "Das intelligente Messsystem kostet jährlich eine gedeckelte Gebühr, hebt aber die feste 60-%-Einspeisegrenze auf und ist Voraussetzung für dynamische Stromtarife und die Netzentgeltreduzierung nach § 14a EnWG. Mehr dazu im Ratgeber [Smart-Meter-Pflicht](/ratgeber/smart-meter-pflicht) und zu den Steuerfragen unter [Photovoltaik und Steuern](/ratgeber/photovoltaik-steuern).",
-        },
-      ],
-    },
-    {
-      id: "speicher",
-      titel: "Und wie groß sollte der Speicher sein?",
-      tocLabel: "Speichergröße",
-      bloecke: [
-        {
-          typ: "p",
-          text: "**Die HTW Berlin empfiehlt als Obergrenze rund 1,5 kWh nutzbare Speicherkapazität je 1.000 kWh Jahresverbrauch – und nicht mehr als 1,5 kWh je kWp Anlagenleistung.** Für einen Haushalt mit 4.000 kWh wären das höchstens etwa 6 kWh. Größere Speicher werden in vielen Nächten nicht mehr leer und in vielen Wintertagen nicht mehr voll.",
-        },
-        {
-          typ: "p",
-          text: `Ein Speicher erhöht die Autarkie im Beispiel A bei 10 kWp von ${pct(A[3].ohne.autarkie)} auf ${pct(A[3].mit.autarkie)}. Ob sich das rechnet, hängt vom Preis und Ihrem Abendverbrauch ab. Details liefern der Ratgeber [Stromspeicher-Größe berechnen](/ratgeber/stromspeicher-groesse) und der [Stromspeicher-Rechner](/rechner/stromspeicher).`,
-        },
-      ],
-    },
-    {
-      id: "fehler",
-      titel: "Typische Fehler bei der Größenplanung",
-      tocLabel: "Typische Fehler",
-      bloecke: [
         {
           typ: "checkliste",
           punkte: [
-            "**Nur auf den heutigen Verbrauch planen:** Wärmepumpe oder E-Auto kommen oft wenige Jahre später – eine Erweiterung kostet dann Gerüst, Anfahrt und oft einen zweiten Wechselrichter.",
-            "**Aus Angst vor der 10-kWp-Grenze kleiner bauen:** Die Vergütung ist anteilig, der Preis je kWp sinkt mit der Größe.",
-            "**Unwirtschaftliche Flächen mitbelegen:** Stark verschattete Dachteile oder steile Norddächer senken den Ertrag je investiertem Euro.",
-            "**Wechselrichter und Hausanschluss vergessen:** Die Größe muss zum [Wechselrichter](/ratgeber/wechselrichter-photovoltaik), zum Zählerschrank und zu den Vorgaben des Netzbetreibers passen.",
-            "**Dach nicht vorher prüfen:** Steht eine Dachsanierung an, erst sanieren – eine spätere Demontage kostet mehrere tausend Euro.",
+            "**Datenquelle:** Viertelstundenwerte stellt der Netzbetreiber bereit – meist im Kundenportal zum Download (CSV/Excel), sonst auf Anfrage. Auch der Stromlieferant hat die Daten häufig.",
+            "**Zeitraum:** Mindestens 12 Monate, besser 24, um Saisoneffekte und Ausnahmejahre zu erkennen.",
+            "**Mehrere Zählpunkte:** Bei mehreren Gebäuden oder Anschlüssen jeden Zählpunkt einzeln auswerten – die PV-Anlage speist nur in einen ein.",
+            "**Veränderungen einplanen:** Neue Maschinen, E-Flotte, Wärmepumpe oder Schichtmodell verändern den Lastgang; diese Pläne gehören in die Auslegung.",
+            "**Ohne Lastgang:** Monatsrechnungen, Betriebszeiten und Leistungen großer Verbraucher erlauben eine grobe Schätzung – für Anlagen über 100 kWp reicht das nicht.",
+          ],
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "Der Lastgang zeigt mehr als die PV-Größe",
+          text: "Aus denselben Daten lassen sich Lastspitzen, der Leistungspreis und Einsparpotenziale ablesen. Wer ohnehin den Lastgang analysiert, sollte Peak Shaving und Lastverschiebung gleich mitprüfen – siehe [Peak Shaving und Leistungspreis](/ratgeber/peak-shaving-leistungspreis) und unsere [Energieberatung](/service/energieberatung).",
+        },
+      ],
+    },
+    {
+      id: "auswertung",
+      titel: "Schritt 2: Grundlast und Tagesprofil auswerten",
+      tocLabel: "Grundlast auswerten",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Entscheidend ist nicht der Jahresverbrauch, sondern die Leistung, die tagsüber verlässlich abgenommen wird.** Zwei Betriebe mit je 400 MWh können völlig unterschiedliche Anlagen brauchen: ein Kühlhaus mit gleichmäßig hoher Last rund um die Uhr, ein Tischlereibetrieb mit hoher Last nur werktags von 6 bis 15 Uhr.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Kennwerte aus dem Lastgang und ihre Bedeutung für die PV-Auslegung",
+          kopf: ["Kennwert", "Wie ermitteln", "Bedeutung"],
+          zeilen: [
+            ["Grundlast Werktag mittags", "Minimum der Viertelstundenleistung Mo–Fr, 10–15 Uhr, Sommerhalbjahr", "Leistung, die PV fast vollständig abnehmen kann"],
+            ["Wochenend- und Nachtlast", "Mittelwert Sa/So bzw. 22–6 Uhr", "bestimmt Überschuss am Wochenende und Speichernutzen"],
+            ["Betriebsferien", "Kalenderwochen mit deutlich reduzierter Last", "Sommer-Stillstand senkt den Eigenverbrauch stark"],
+            ["Jahreshöchstlast", "höchster Viertelstundenwert", "Leistungspreis; PV senkt ihn selten allein"],
+            ["Tagesenergie Sommer", "kWh je Werktag Juni/Juli", "Vergleich mit PV-Tagesertrag (ca. 5–6 kWh je kWp an klaren Tagen)"],
+          ],
+          minBreite: 680,
+          fussnote: "Richtwerte; die Auswertung erfolgt am besten mit einer Simulation, die Viertelstunden-Lastgang und stündlichen PV-Ertrag überlagert.",
+        },
+        {
+          typ: "p",
+          text: "Den PV-Ertrag je Stunde liefert eine Simulation mit Standortdaten, etwa aus PVGIS. Die Jahreswerte je Landeshauptstadt und Ausrichtung zeigt der Ratgeber [Ertrag pro kWp](/ratgeber/photovoltaik-ertrag-pro-kwp); wie sich Süd- und Ost-West-Aufständerung im Tagesverlauf unterscheiden, erklärt [Photovoltaik Ost-West](/ratgeber/photovoltaik-ost-west).",
+        },
+      ],
+    },
+    {
+      id: "modell",
+      titel: "Modellrechnung: 400 MWh Verbrauch, 100 bis 500 kWp",
+      tocLabel: "Modellrechnung",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Mit wachsender Anlagengröße steigt der Anteil des selbst erzeugten Stroms am Verbrauch (Autarkie) immer langsamer, während der selbst genutzte Anteil der Erzeugung (Eigenverbrauchsquote) deutlich fällt.** Das zeigt unsere Simulation für einen typischen Produktionsbetrieb in Oberösterreich: 30 kW Grundlast rund um die Uhr, werktags von 6 bis 18 Uhr 75 kW, samstags vormittags 45 kW, zwei Wochen Betriebsurlaub im August und über Weihnachten – zusammen rund 400 MWh im Jahr.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Modellrechnung Eigenverbrauch und Autarkie, Betrieb bei Linz mit ca. 400 MWh/a, Stand 09/2026",
+          kopf: ["Variante", "Leistung", "Speicher", "PV-Ertrag", "Eigenverbrauchsquote", "Autarkie", "Einspeisung", "max. Einspeiseleistung"],
+          zeilen: MODELL.map(([v, kwp, sp, pv, evq, aut, ein, maxE]) => [
+            v,
+            `${kwp} kWp`,
+            sp ? `${sp} kWh` : "–",
+            `${pv} MWh`,
+            `${evq} %`,
+            `${aut} %`,
+            `${ein} MWh`,
+            `${maxE} kW`,
+          ]),
+          markierteZeile: 2,
+          hervorheben: 4,
+          minBreite: 820,
+          fussnote: "Eigene Simulation: PVGIS-5.3-Stundenwerte Linz 2019–2023 (Neigung 10°, 14 % Verluste), synthetisches Lastprofil, Mittelwerte je Jahr. Speicher vereinfacht mit 92 % Wirkungsgrad und 0,5 C Lade-/Entladeleistung. Modellwerte, keine Prognose für einen konkreten Betrieb.",
+        },
+        {
+          typ: "p",
+          text: "Die Ergebnisse zeigen die typische Abwägung: Bis etwa 100 kWp wird fast jede Kilowattstunde selbst genutzt – der wirtschaftlich stärkste Bereich. Zwischen 200 und 300 kWp wächst der Überschuss deutlich; hier entscheidet der Wert der eingespeisten Kilowattstunde, ob die größere Anlage rentabler ist. Ab 500 kWp wird mehr als die Hälfte eingespeist. Ost-West bringt bei gleicher Leistung etwas weniger Ertrag, aber eine höhere Eigenverbrauchsquote und niedrigere Einspeisespitzen.",
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Was ein Speicher im Modell bewirkt",
+          text: "Ein 200-kWh-Speicher zur 300-kWp-Anlage hebt die Eigenverbrauchsquote von 52 auf 68 % und die Autarkie von 41 auf 54 %. Der Grund: Der Betrieb braucht auch nachts 30 kW – der Speicher verschiebt Mittagsüberschuss in den Abend. Ob sich das rechnet, hängt von Speicherpreis, Strompreis und einem möglichen Zusatznutzen beim Leistungspreis ab. Mehr im Ratgeber [Gewerbespeicher Kosten](/ratgeber/gewerbespeicher-kosten).",
+        },
+      ],
+    },
+    {
+      id: "schwellen",
+      titel: "Schritt 3: Schwellenwerte in Österreich berücksichtigen",
+      tocLabel: "Schwellen in Österreich",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Neben dem Lastgang bestimmen technische und förderrechtliche Schwellen die sinnvolle Größe – knapp über einer Grenze zu planen, kann teurer sein als knapp darunter.**",
+        },
+        {
+          typ: "tabelle",
+          caption: "Wichtige Leistungsgrenzen für PV-Anlagen in Österreich, Stand 09/2026",
+          kopf: ["Grenze", "Regel", "Folge für die Planung"],
+          zeilen: [
+            ["20 kWp / 100 kWp", "EAG-Investitionszuschuss: Kategorie C (über 20 bis 100 kWp, bis 130 €/kWp) und D (über 100 bis 1.000 kWp, bis 120 €/kWp)", "Förderung per Gebot; Kategorie bestimmt Höchstsatz und Fördertopf"],
+            ["250 kW", "TOR Stromerzeugungsanlagen: ab 250 kW Maximalkapazität Typ B statt Typ A", "erweiterte Anforderungen an Netzstützung, Fernsteuerbarkeit und Nachweise; häufig Parkregler"],
+            ["1.000 kWp", "Obergrenze des Investitionszuschusses", "darüber Marktprämie über Ausschreibung oder ungeförderter Betrieb mit PPA"],
+            ["Netzebene", "Anschluss in Niederspannung (Netzebene 7/6) oder Mittelspannung (Netzebene 5)", "größere Anlagen brauchen oft eigene Trafostation; Netzbetreiber prüft Netzverträglichkeit"],
+            ["Einspeiseleistung", "vom Netzbetreiber zugestandene Einspeiseleistung am Anschlusspunkt", "bei knapper Netzkapazität Einspeisebegrenzung, Speicher oder Ost-West-Auslegung"],
+          ],
+          minBreite: 720,
+          fussnote: "Quellen: TOR Stromerzeugungsanlagen Typ A/B (E-Control, Version 1.4), EAG-IZ-VO Strom § 5 (Fassung 2026). Vereinfachte Darstellung; Details zum Netzanschluss im Ratgeber TOR Erzeuger und Netzanschluss.",
+        },
+        {
+          typ: "p",
+          text: "Die Anforderungen nach Anlagentyp und Netzebene erklärt der Ratgeber [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss); die Förderung der [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss). Für Anlagen ab dem Typ B übernimmt ein [Parkregler](/technik/parkregler) die Blindleistungs- und Wirkleistungsvorgaben des Netzbetreibers.",
+        },
+      ],
+    },
+    {
+      id: "flaeche",
+      titel: "Schritt 4: Dach, Statik und Fläche prüfen",
+      tocLabel: "Dach & Fläche",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die Dachfläche begrenzt die Größe nach oben – oft ist aber die Statik der eigentliche Engpass.** Moderne Module mit rund 22 bis 23 % Wirkungsgrad benötigen etwa 4,5 bis 5 m² Modulfläche je kWp. Auf dem Flachdach kommen Reihenabstände, Randzonen, Brandschutzabstände und Wartungswege dazu.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Flächenbedarf je kWp nach Montageart (Richtwerte)",
+          kopf: ["Montageart", "Dachfläche je kWp", "kWp je 1.000 m² nutzbarer Fläche"],
+          zeilen: [
+            ["Schrägdach, parallel zur Dachfläche", "ca. 5 m²", "ca. 200 kWp"],
+            ["Flachdach Ost-West, 10°", "ca. 6–7 m²", "ca. 150–170 kWp"],
+            ["Flachdach Süd, 10–15° mit Reihenabstand", "ca. 8–10 m²", "ca. 100–125 kWp"],
+            ["Freifläche Süd, 20–25°", "ca. 10–15 m² Grundstück", "ca. 70–100 kWp"],
+          ],
+          fussnote: "Richtwerte für Module mit ca. 22–23 % Wirkungsgrad; tatsächliche Belegung hängt von Dachform, Aufbauten, Statik, Windzonen und Brandschutz ab.",
+        },
+        {
+          typ: "p",
+          text: "Bei Hallendächern aus Trapezblech oder Sandwichpaneelen entscheidet die Tragreserve über das Montagesystem. Ballastierte Systeme erhöhen die Last, mechanisch befestigte Systeme brauchen Durchdringungen. Hinzu kommt die Schneelast des Standorts – in schneereichen Lagen oft der begrenzende Faktor. Details in den Ratgebern [Photovoltaik auf dem Flachdach](/ratgeber/photovoltaik-flachdach) und [Schneelast und Photovoltaik](/ratgeber/schneelast-photovoltaik).",
+        },
+      ],
+    },
+    {
+      id: "ueberschuss",
+      titel: "Schritt 5: Den Überschuss verwerten",
+      tocLabel: "Überschuss verwerten",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Jede Kilowattstunde, die nicht selbst verbraucht wird, braucht einen Abnehmer – und dessen Preis entscheidet, ob eine größere Anlage sinnvoll ist.** In Österreich gibt es dafür mehrere Wege, die sich auch kombinieren lassen.",
+        },
+        {
+          typ: "karten",
+          cols: 2,
+          items: [
+            { titel: "Vermarktung", text: "Einspeisung zum Marktpreis über einen Stromhändler, OeMAG-Marktpreis oder Direktvermarktung – siehe [Reststromvermarktung](/ratgeber/reststromvermarktung)." },
+            { titel: "Energiegemeinschaft", text: "Überschuss an Mitglieder in der Region liefern und reduzierte Netzentgelte nutzen – siehe [Energiegemeinschaft für Unternehmen](/ratgeber/energiegemeinschaft-gewerbe)." },
+            { titel: "Neue Verbraucher", text: "E-Flotte tagsüber laden, Wärmepumpe oder Prozesswärme in die Mittagsstunden legen – das erhöht den Eigenverbrauch ohne Speicher." },
+            { titel: "Speicher", text: "Mittagsüberschuss in Abend- und Nachtstunden verschieben, zusätzlich Lastspitzen kappen. Wirtschaftlich meist erst bei Kombination beider Effekte." },
           ],
         },
       ],
     },
     {
-      id: "vorgehen",
-      titel: "In 5 Schritten zur richtigen Anlagengröße",
-      tocLabel: "Vorgehen",
+      id: "privat",
+      titel: "Faustformel für Einfamilienhaus und Chalet",
+      tocLabel: "Privat: Faustformel",
       bloecke: [
         {
-          typ: "ablauf",
-          schritte: [
-            ["Verbrauch notieren", "Jahresverbrauch der letzten Stromrechnungen, bei Neubau Stromspiegel-Wert ansetzen."],
-            ["Zukunft addieren", `Wärmepumpe (ca. ${n0(WP)} kWh), E-Auto (ca. ${n0(EAUTO)} kWh bei ${n0(KM)} km) und weitere Verbraucher für die nächsten 10 Jahre einrechnen.`],
-            ["Dachfläche prüfen", `Belegbare, unverschattete Flächen ausmessen und durch ${ANNAHMEN.qmProKwp} m² je kWp teilen – das ist die Obergrenze.`],
-            ["Varianten rechnen", "Zwei bis drei Größen mit dem [Solarrechner](/solarrechner) vergleichen, mit und ohne Speicher."],
-            ["Vor Ort planen lassen", "Statik, Verschattung, Zählerschrank und Netzanschluss prüfen lassen – daraus entsteht die endgültige Modulbelegung und ein belastbares [Angebot](/angebot)."],
-          ],
+          typ: "p",
+          text: "**Für Privathaushalte gilt als grobe Faustformel: 1 kWp je 1.000 kWh Jahresverbrauch, bei Wärmepumpe und E-Auto eher 1,5 kWp.** Ein Haushalt mit 4.500 kWh Verbrauch landet damit bei 5 bis 7 kWp, mit Wärmepumpe und E-Auto bei 10 bis 15 kWp. Für Chalets und Premiumobjekte mit Pool, Wellness und Ladeinfrastruktur lohnt dagegen – wie im Betrieb – ein Blick auf den tatsächlichen Verbrauchsverlauf; siehe [Photovoltaik für Chalets](/chalets).",
+        },
+        {
+          typ: "tool",
+          href: "/solarrechner",
+          titel: "Größe und Ertrag grob berechnen",
+          text: "Der Solarrechner schätzt Ertrag, Eigenverbrauch und Amortisation für Ihr Dach – als erster Anhaltspunkt vor der Detailplanung.",
+          label: "Zum Solarrechner",
         },
       ],
     },
   ],
 
   faq: [
-    { q: "Wie viel kWp brauche ich für 4.000 kWh Verbrauch?", a: "Mindestens 4 bis 6 kWp; wirtschaftlich sinnvoll sind oft 8 bis 10 kWp, wenn das Dach Platz bietet. Ohne Speicher deckt die Anlage dann rund ein Drittel des Verbrauchs, mit Speicher etwa zwei Drittel." },
-    { q: "Wie groß sollte eine PV-Anlage für ein Einfamilienhaus sein?", a: "Ohne Wärmepumpe und E-Auto meist 6 bis 12 kWp, mit beiden eher 12 bis 20 kWp. Maßgeblich sind Verbrauch, nutzbare Dachfläche und Budget." },
-    { q: "Wie viel Dachfläche braucht 1 kWp?", a: `Rund ${ANNAHMEN.qmProKwp} m² Dachfläche, inklusive Abständen und Fugen. Die reine Modulfläche liegt bei aktuellen Modulen mit etwa 23 % Wirkungsgrad bei gut 4 m² je kWp.` },
-    { q: "Welche PV-Größe brauche ich mit Wärmepumpe?", a: "Rechnen Sie den Strombedarf der Wärmepumpe (typisch 3.000 bis 5.000 kWh) zum Haushaltsstrom hinzu und planen Sie rund 1 bis 1,5 kWp je 1.000 kWh Gesamtverbrauch. Beachten Sie, dass die Wärmepumpe vor allem im Winter Strom braucht, wenn die PV-Anlage wenig liefert." },
-    { q: "Ist eine PV-Anlage über 10 kWp noch sinnvoll?", a: `Ja. Die Vergütung wird anteilig berechnet: ${ct(VERGUETUNG.saetze[0].teileinspeisung)} ct für die ersten 10 kWp, ${ct(VERGUETUNG.saetze[1].teileinspeisung)} ct für den Rest. Steuerlich bleiben Anlagen bis 30 kWp je Wohneinheit begünstigt.` },
-    { q: "Kann eine PV-Anlage zu groß sein?", a: "Wirtschaftlich ja, wenn viel Strom zu niedriger Vergütung eingespeist wird und der Preis je kWp nicht mehr sinkt. Technisch begrenzen Dachfläche, Hausanschluss und Vorgaben des Netzbetreibers die Größe. Unsere Beispielrechnung zeigt, dass ohne Zusatzverbraucher der Überschuss ab einer gewissen Größe wieder sinkt." },
-    { q: "Kann ich meine PV-Anlage später erweitern?", a: "Grundsätzlich ja, meist als zweite Anlage mit eigenem Inbetriebnahmedatum. Das ist aber teurer als von Anfang an größer zu bauen: Gerüst, Anmeldung, oft ein zusätzlicher Wechselrichter und die Abstimmung mit dem Netzbetreiber fallen erneut an." },
+    {
+      q: "Wie berechne ich die richtige PV-Größe für meinen Betrieb?",
+      a: "Mit dem Lastgang: Viertelstundenwerte eines Jahres beim Netzbetreiber anfordern, die werktägliche Mittagslast bestimmen und die stündliche PV-Erzeugung dagegen simulieren. Als Faustregel ergibt das 1- bis 1,5-Fache der Tagesgrundlast in kW eine Eigenverbrauchsquote über 70 %.",
+    },
+    {
+      q: "Woher bekomme ich meinen Lastgang?",
+      a: "Vom Netzbetreiber, meist über dessen Kundenportal. Betriebe mit mehr als 100.000 kWh Jahresverbrauch oder über 50 kW Anschlussleistung haben in der Regel einen Lastprofilzähler; bei Smart Metern können Viertelstundenwerte aktiviert werden.",
+    },
+    {
+      q: "Welche Eigenverbrauchsquote ist gut?",
+      a: "Im Gewerbe sind 60 bis 90 % üblich und wirtschaftlich attraktiv. Niedrigere Quoten können sich lohnen, wenn der Überschuss über PPA, Energiegemeinschaft oder Vermarktung gut verkauft wird oder die Anlage bewusst für künftige Verbraucher dimensioniert ist.",
+    },
+    {
+      q: "Lohnt es sich, das ganze Dach zu belegen?",
+      a: "Nicht automatisch. In unserem Modell steigt die Autarkie von 300 auf 500 kWp nur von 41 auf 47 %, während sich die Einspeisung mehr als verdoppelt. Ob das rentabel ist, hängt vom erzielbaren Preis für den Überschuss und den Kosten je kWp ab.",
+    },
+    {
+      q: "Warum ist die Grenze von 250 kW wichtig?",
+      a: "Ab 250 kW Maximalkapazität gilt eine Anlage nach den TOR Stromerzeugungsanlagen als Typ B. Dann steigen die Anforderungen an Netzstützung, Kommunikation und Nachweise – oft ist ein Parkregler nötig. Knapp über 250 kW zu planen, verursacht daher Mehrkosten.",
+    },
+    {
+      q: "Brauche ich einen Speicher?",
+      a: "Nicht zwingend. Bei hoher Tageslast reicht die PV-Anlage allein. Ein Speicher lohnt sich vor allem bei Nacht- oder Abendlast, Wochenendbetrieb und wenn er zusätzlich Lastspitzen senkt. Im Modell hob ein 200-kWh-Speicher die Autarkie einer 300-kWp-Anlage von 41 auf 54 %.",
+    },
   ],
 
   howTo: {
-    name: "PV-Anlagengröße berechnen",
+    name: "PV-Anlage für einen Betrieb nach Lastgang dimensionieren",
     schritte: [
-      { name: "Stromverbrauch ermitteln", text: "Jahresverbrauch aus den letzten Stromrechnungen ablesen oder Stromspiegel-Werte nutzen." },
-      { name: "Künftige Verbraucher addieren", text: "Strombedarf von Wärmepumpe, E-Auto und weiteren Verbrauchern für die nächsten Jahre hinzurechnen." },
-      { name: "Dachfläche prüfen", text: "Belegbare Dachfläche ermitteln und durch rund 5 m² je kWp teilen." },
-      { name: "Größen vergleichen", text: "Mehrere Anlagengrößen mit und ohne Speicher im Solarrechner vergleichen." },
-      { name: "Vor Ort planen lassen", text: "Statik, Verschattung, Zählerschrank und Netzanschluss durch einen Fachbetrieb prüfen lassen." },
+      { name: "Lastgang beschaffen", text: "Viertelstundenwerte von mindestens 12 Monaten beim Netzbetreiber herunterladen oder anfordern." },
+      { name: "Grundlast auswerten", text: "Werktägliche Mittagslast, Wochenend- und Nachtlast sowie Betriebsferien bestimmen." },
+      { name: "Erzeugung simulieren", text: "Stündlichen PV-Ertrag für mögliche Dachflächen und Ausrichtungen berechnen und mit dem Lastgang überlagern." },
+      { name: "Schwellen prüfen", text: "Förderkategorien, TOR-Typ und Netzkapazität am Anschlusspunkt berücksichtigen." },
+      { name: "Fläche und Statik klären", text: "Belegbare Dachfläche, Tragreserven und Schneelast prüfen lassen." },
+      { name: "Überschuss planen", text: "Vermarktung, Energiegemeinschaft, Speicher oder neue Verbraucher festlegen und die Größe final wählen." },
     ],
   },
 
   passend: [
-    { href: "/ratgeber/photovoltaik-ertrag-pro-kwp", titel: "Ertrag pro kWp", text: "Ertragswerte nach Region, Monat und Dachausrichtung." },
-    { href: "/ratgeber/stromspeicher-groesse", titel: "Stromspeicher-Größe berechnen", text: "Wie viel Kapazität zu Ihrer Anlage passt." },
-    { href: "/ratgeber/solaranlage-kosten", titel: "Was kostet eine Solaranlage?", text: "Preise je kWp nach Anlagengröße." },
-    { href: "/rechner/waermepumpe", titel: "Wärmepumpen-Rechner", text: "Strombedarf und Kosten Ihrer Wärmepumpe abschätzen." },
+    { href: "/gewerbe", titel: "PV für Gewerbe & Industrie", text: "Planung nach Lastgang, Hallen- und Flachdächer." },
+    { href: "/service/energieberatung", titel: "Energieberatung", text: "Lastganganalyse und Energieaudit." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Peak Shaving, Eigenverbrauch, Notstrom." },
+    { href: "/ratgeber/photovoltaik-gewerbe", titel: "Photovoltaik für Gewerbe", text: "Wirtschaftlichkeit, Steuern, Planung." },
   ],
 
   quellen: [
-    { titel: "Stromspiegel für Deutschland 2025 (co2online) – Stromverbrauch nach Haushaltsgröße", url: "https://www.stromspiegel.de/stromverbrauch-verstehen/stromverbrauch-4-personen-haushalt/", stand: "05/2025" },
-    { titel: "HTW Berlin – FAQ zum Unabhängigkeitsrechner (Speicherdimensionierung)", url: "https://solar.htw-berlin.de/faq-unabhaengigkeitsrechner/", stand: "09/2026" },
-    { titel: "§ 9 EEG 2023 – Technische Vorgaben (Steuerbarkeit, 60-%-Begrenzung)", url: "https://www.gesetze-im-internet.de/eeg_2014/__9.html", stand: "09/2026" },
-    { titel: "§ 29 MsbG – Ausstattung von Messstellen mit intelligenten Messsystemen", url: "https://www.gesetze-im-internet.de/messbg/__29.html", stand: "09/2026" },
-    { titel: "§ 30 MsbG – Preisobergrenzen", url: "https://www.gesetze-im-internet.de/messbg/__30.html", stand: "09/2026" },
-    { titel: "§ 3 Nr. 72 EStG – Steuerbefreiung für Photovoltaikanlagen", url: "https://www.gesetze-im-internet.de/estg/__3.html", stand: "09/2026" },
-    { titel: "Bundesnetzagentur – EEG-Förderung und Vergütungssätze", url: VERGUETUNG.quelle.url, stand: "09/2026" },
+    { titel: "EU JRC – PVGIS 5.3, stündliche Zeitreihen (seriescalc)", url: "https://re.jrc.ec.europa.eu/pvg_tools/de/", stand: "09/2026" },
+    { titel: "E-Control – TOR Stromerzeugungsanlagen Typ A bis D (Version 1.4)", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor", stand: "09/2026" },
+    { titel: "RIS – EAG-Investitionszuschüsseverordnung-Strom, § 5 Fördercalls und Fördersätze 2026", url: "https://ogd.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40275220/NOR40275220.html", stand: "09/2026" },
+    { titel: "Oesterreichs Energie – Wechselrichterliste und TOR-Neuigkeiten", url: "https://oesterreichsenergie.at/downloads/publikationsdatenbank/detailseite/wechselrichterliste-tor-erzeuger-typ-a", stand: "09/2026" },
+    { titel: "Fraunhofer ISE – Photovoltaics Report (Modulwirkungsgrade, Juli 2026)", url: "https://www.ise.fraunhofer.de/de/veroeffentlichungen/studien/photovoltaics-report.html", stand: "09/2026" },
   ],
 
-  seitenCta: { titel: "Wie viel kWp passen zu Ihnen?", text: "Verbrauch und Dach eingeben – Größen in Sekunden vergleichen.", href: "/solarrechner", label: "Zum Solarrechner" },
+  seitenCta: { titel: "Lastgang auswerten lassen?", text: "Wir simulieren Größe, Eigenverbrauch und Speicher.", href: "/service/energieberatung", label: "Energieberatung" },
   cta: {
-    title: "Wir planen die Größe, die zu Ihrem Haus passt.",
-    text: "Mit Blick auf heutigen und künftigen Verbrauch, Dachfläche, Statik und Zählerschrank – und einer Wirtschaftlichkeitsrechnung für mehrere Varianten.",
-    primary: { label: "Angebot anfragen", href: "/angebot" },
-    secondary: { label: "Selbst rechnen", href: "/solarrechner" },
+    title: "Die richtige Anlagengröße – berechnet aus Ihrem Lastgang.",
+    text: "Schicken Sie uns Ihre Viertelstundenwerte: Wir simulieren Varianten mit und ohne Speicher und zeigen, welche Größe sich für Ihren Betrieb rechnet.",
+    primary: { label: "Anfrage starten", href: "/angebot" },
+    secondary: { label: "Energieberatung", href: "/service/energieberatung" },
   },
 };
 

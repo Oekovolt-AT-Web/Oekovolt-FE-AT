@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 /**
- * Kumulierter Cashflow ueber die EEG-Laufzeit als Balkendiagramm (SVG).
+ * Kumulierter Cashflow ueber den Betrachtungszeitraum (20 Jahre) als Balkendiagramm (SVG).
  * Grau = Investition noch nicht zurueckverdient, Gruen = im Plus.
  * Hover/Touch zeigt die Werte des Jahres; eine sr-only-Tabelle liefert
  * dieselben Daten fuer Screenreader.

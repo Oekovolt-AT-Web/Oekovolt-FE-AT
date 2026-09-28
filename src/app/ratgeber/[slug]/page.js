@@ -1,6 +1,7 @@
 // src/app/ratgeber/[slug]/page.js
 //
-// Rendert alle inhaltsgetriebenen Ratgeber-Artikel aus src/content/ratgeber.
+// Rendert alle inhaltsgetriebenen Ratgeber-Artikel aus src/content/ratgeber
+// (österreichische Inhalte, inLanguage de-AT, Canonical auf oekovolt.com).
 // Die drei handgebauten Artikel haben eigene Ordner und haben Vorrang.
 
 import { notFound } from "next/navigation";
@@ -10,8 +11,7 @@ import ArtikelLayout from "@/components/Ratgeber/ArtikelLayout";
 import ArtikelInhalt from "@/components/Ratgeber/ArtikelInhalt";
 import { klartext } from "@/components/Ratgeber/InlineText";
 import { INHALTS_ARTIKEL, artikelPfad } from "@/lib/ratgeber";
-
-const BASE_URL = "https://www.oekovolt.com";
+import { BASE_URL, SITE_NAME, LOCALE } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -35,8 +35,8 @@ export async function generateMetadata({ params }) {
     openGraph: {
       type: "article",
       url,
-      siteName: "Ökovolt Österreich",
-      locale: "de_AT",
+      siteName: SITE_NAME,
+      locale: LOCALE,
       title: a.title,
       description: a.description,
       publishedTime: a.veroeffentlicht,
@@ -72,7 +72,7 @@ export default async function RatgeberArtikelPage({ params }) {
       inLanguage: "de-AT",
       datePublished: a.veroeffentlicht,
       dateModified: a.aktualisiert,
-      author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },
+      author: { "@type": "Organization", name: "Ökovolt-Redaktion Österreich", "@id": `${BASE_URL}/#organization` },
       publisher: { "@id": `${BASE_URL}/#organization` },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
       image: [`${BASE_URL}${a.bild}`, `${BASE_URL}/og/ratgeber/${a.slug}.jpg`],

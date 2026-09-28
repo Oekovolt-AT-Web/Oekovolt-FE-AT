@@ -9,13 +9,13 @@ const FEATURES = [
     },
     {
         icon: Award,
-        title: "15+ Jahre Erfahrung",
-        text: "Als erfahrener Photovoltaik Anbieter mit über 15 Jahren am Markt begleiten wir Sie von der ersten Beratung über Planung und Montage bis zur laufenden Wartung – Ihr Komplettpaket aus einer Hand. Über 5.000 realisierte Anlagen auf Einfamilienhäusern und Eigenheimen in ganz Deutschland sprechen für sich.",
+        title: "Seit 2012 in Österreich",
+        text: "Seit 2012 begleiten wir Betriebe, Landwirtschaft und Gemeinden in ganz Österreich von der Lastganganalyse über Planung und Bau bis zum Betrieb – aus einer Hand. 2021 haben wir Anlagen mit rund 30 MWp errichtet.",
     },
     {
         icon: Cpu,
-        title: "KI-gestütztes Monitoring",
-        text: "Mit unserem KI-gestützten Monitoring Ökosys behalten wir Ihre Photovoltaikanlage rund um die Uhr im Blick, erkennen Leistungsabfälle sofort und sichern Ihnen maximale Erträge – über die gesamte Lebensdauer Ihrer Anlage.",
+        title: "Eigene Fern- und Leittechnik",
+        text: "Mit eigener Fernwartung und eigenem SCADA-System behalten wir Ihre Anlage im Blick, erkennen Leistungsabfälle früh und sichern die Erträge – über die gesamte Lebensdauer.",
     },
 ];
 
@@ -66,9 +66,9 @@ const SeoTextSection = () => {
                                     <Award className="h-4.5 w-4.5" aria-hidden="true" />
                                 </span>
                                 <span className="text-sm font-semibold leading-snug text-[#152315]">
-                                    15+ Jahre
+                                    Seit 2012
                                     <br />
-                                    Erfahrung
+                                    in Österreich
                                 </span>
                             </div>
                         </div>

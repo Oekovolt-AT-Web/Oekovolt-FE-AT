@@ -2,6 +2,7 @@ import { Phone, Calculator, ShieldCheck, Clock, BadgeCheck } from "lucide-react"
 import { cn } from "./cn";
 import Button from "./Button";
 import Reveal from "./Reveal";
+import { FIRMA } from "@/lib/site";
 
 /**
  * Abschluss-Handlungsaufruf für jede Seite. Dunkle, leuchtende Fläche mit
@@ -10,7 +11,7 @@ import Reveal from "./Reveal";
 export default function CtaBand({
   eyebrow = "Kostenlos & unverbindlich",
   title = "Ihr Dach kann mehr. Wir zeigen Ihnen, wie viel.",
-  text = "Persönliche Beratung vom Fachbetrieb aus Türkheim – mit ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner von der Planung bis zur Inbetriebnahme.",
+  text = "Persönliche Beratung vom Elektrotechnik-Fachbetrieb aus Ostermiething – für Projekte in ganz Österreich, mit ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner von der Planung bis zum Betrieb.",
   primary = { label: "Angebot in 2 Minuten anfragen", href: "/angebot" },
   secondary = { label: "Ertrag berechnen", href: "/solarrechner" },
   className,
@@ -44,17 +45,17 @@ export default function CtaBand({
 
           <div className="ov-glass min-w-0 rounded-3xl p-6 md:p-8">
             <p className="text-[13px] font-medium text-white/60">Lieber direkt sprechen?</p>
-            <a href="tel:+498245967880" className="group mt-2 flex items-center gap-3">
+            <a href={FIRMA.telefonHref} className="group mt-2 flex items-center gap-3">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
                 <Phone aria-hidden="true" className="h-5 w-5" />
               </span>
-              <span className="min-w-0 font-display text-[22px] font-extrabold tracking-tight md:text-[26px]">08245 96 788 0</span>
+              <span className="min-w-0 font-display text-[22px] font-extrabold tracking-tight md:text-[26px]">{FIRMA.telefon}</span>
             </a>
-            <p className="mt-2 text-[13.5px] text-white/55">Mo–Do 8–16 Uhr · Fr 8–13 Uhr</p>
+            <p className="mt-2 text-[13.5px] text-white/55">{FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit}`).join(" · ")}</p>
             <ul className="mt-6 space-y-3 border-t border-white/10 pt-6 text-[14.5px] text-white/80">
-              <li className="flex items-start gap-2.5"><BadgeCheck aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Fachbetrieb mit über 15 Jahren Erfahrung</span></li>
-              <li className="flex items-start gap-2.5"><ShieldCheck aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Planung, Montage & Anmeldung aus einer Hand</span></li>
-              <li className="flex items-start gap-2.5"><Clock aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Fester Ansprechpartner bis zur Inbetriebnahme</span></li>
+              <li className="flex items-start gap-2.5"><BadgeCheck aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Seit 2012 in Österreich, Gruppe seit 2010</span></li>
+              <li className="flex items-start gap-2.5"><ShieldCheck aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Planung, Netzanschluss, Montage & Betrieb aus einer Hand</span></li>
+              <li className="flex items-start gap-2.5"><Clock aria-hidden="true" className="mt-[3px] h-4 w-4 shrink-0 text-ov-300" /><span className="min-w-0">Eigener Parkregler, Fernwartung & SCADA</span></li>
             </ul>
           </div>
         </div>

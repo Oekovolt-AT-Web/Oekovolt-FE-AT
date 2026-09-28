@@ -2,12 +2,14 @@ import Link from "next/link";
 import { FileText, Mail, Phone } from "lucide-react";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { Eyebrow } from "@/components/ui/SectionHeading";
+import { FIRMA } from "@/lib/site";
 
 const RECHTLICHES = [
   { name: "Impressum", href: "/impressum" },
   { name: "Datenschutz", href: "/datenschutz" },
   { name: "AGB", href: "/agb" },
   { name: "Barrierefreiheit", href: "/barrierefreiheit" },
+  { name: "Hinweisgeberschutz", href: "/hinweisgeberschutz" },
 ];
 
 /**
@@ -55,11 +57,11 @@ export default function LegalShell({ titel, pfad, lead, children }) {
             </nav>
             <div className="mt-4 rounded-3xl bg-navy-950 p-6 text-white">
               <p className="font-display text-[17px] font-bold">Fragen zu diesem Text?</p>
-              <a href="tel:+498245967880" className="mt-4 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
-                <Phone aria-hidden="true" className="h-4 w-4 text-ov-300" /> +49 8245 96 788 0
+              <a href={FIRMA.telefonHref} className="mt-4 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
+                <Phone aria-hidden="true" className="h-4 w-4 text-ov-300" /> {FIRMA.telefon}
               </a>
-              <a href="mailto:office@oekovolt.com" className="mt-2 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
-                <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" /> office@oekovolt.com
+              <a href={`mailto:${FIRMA.email}`} className="mt-2 flex items-center gap-2.5 text-[14.5px] text-white/85 hover:text-white">
+                <Mail aria-hidden="true" className="h-4 w-4 text-ov-300" /> {FIRMA.email}
               </a>
             </div>
           </aside>

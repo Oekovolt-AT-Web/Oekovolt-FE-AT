@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BookOpen, Calculator, Home, Sun } from "lucide-react";
+import { ArrowRight, BadgeEuro, Factory, Home, MessageCircle } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export const metadata = {
@@ -8,9 +8,9 @@ export const metadata = {
 };
 
 const ZIELE = [
-  { titel: "Photovoltaikanlage", text: "Komplettanlage vom Fachbetrieb", href: "/produkte/photovoltaikanlage", icon: Sun },
-  { titel: "Solarrechner", text: "Ertrag & Ersparnis berechnen", href: "/solarrechner", icon: Calculator },
-  { titel: "Ratgeber", text: "Kosten, Förderung, Technik", href: "/ratgeber", icon: BookOpen },
+  { titel: "Gewerbe & Industrie", text: "Photovoltaik nach Lastgang", href: "/gewerbe", icon: Factory },
+  { titel: "Förder-Check", text: "EAG, IFB & Länder", href: "/foerdercheck", icon: BadgeEuro },
+  { titel: "Kontakt", text: "Beratung in ganz Österreich", href: "/kontakt", icon: MessageCircle },
 ];
 
 export default function NotFound() {
