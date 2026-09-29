@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import HerstellerDetail, { istBelegterPartner, kuerzen } from "@/components/Produktdetail/HerstellerDetail";
 import { generateSlug } from "@/lib/slugify";
-import { partnerFuer, partnerZuSlug } from "@/components/Hersteller/partner";
+import { partnerZuSlug } from "@/components/Hersteller/partner";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL } from "@/lib/site";
 
@@ -103,8 +103,11 @@ export async function generateStaticParams() {
     const items = await fetchAllStromspeicherItems();
 
     if (!items || items.length === 0) {
-      // Ohne Backoffice: statische Seiten für die belegten Speicher-Partner
-      return partnerFuer("stromspeicher").map((p) => ({ slug: p.slug }));
+      // Ohne Backoffice: Die Seiten der belegten Speicher-Partner werden beim
+      // ersten Aufruf gerendert (dynamicParams) und danach zwischengespeichert.
+      // Beim Vorrendern im Build lieferten sie fälschlich 404 – deshalb hier
+      // bewusst keine Vorab-Liste.
+      return [];
     }
 
     const params = items.map((item) => ({

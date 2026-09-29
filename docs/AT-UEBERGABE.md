@@ -1,4 +1,4 @@
-# Übergabe: oekovolt.com (Österreich) – Stand 29.09.2026
+# Übergabe: oekovolt.com (Österreich) – Stand 29.09.2026 (inkl. Premium-Überarbeitung)
 
 Branch `at-launch` (lokal, nicht gepusht). Produktions-Build fehlerfrei, QA-Crawl über alle 199
 Sitemap-URLs: 0 Fehlerseiten, 0 interne 404-Links, 0 fehlende Lexikon-Anker, Title/Description/
@@ -29,6 +29,34 @@ Canonical/H1/JSON-LD überall gültig. Grundlagen: `docs/AT-BRIEFING.md`, `docs/
 - **SEO/GEO:** Sitemap, robots.txt (Such- und Antwortmaschinen erlaubt, reine Trainings-Crawler
   gesperrt), IndexNow (`node scripts/indexnow.mjs` nach jedem Deploy), `llms.txt` und
   `llms-full.txt` automatisch aus den Inhalten, 301-Weiterleitungen alter URLs und Kurz-URLs.
+
+## Premium-Überarbeitung (zweite Runde)
+
+- **Visuelle Kontrolle im echten Browser** (Playwright/Chromium) für alle Bereiche, Desktop 1440 und Mobil 390,
+  im direkten Vergleich zur DE-Seite. Leitfaden: `docs/AT-DESIGN.md`.
+- **AT-Logo** statt „Solartechnik Deutschland“ mit Flagge: `public/logo-oekovolt.png` / `logo-oekovolt-weiss.png`.
+- **8 neue Gewerbe-Rechner** unter `/rechner/*`: gewerbe-pv, peak-shaving, e-flotte, ladeinfrastruktur,
+  energiegemeinschaft, blackout, co2-esg, freiflaeche-pacht; Rechner-Hub `/rechner` mit 19 Werkzeugen,
+  eigener Hauptmenüpunkt „Rechner“. Logik als reine Funktionen in `src/lib/rechner/*` (mit Node getestet).
+- **Startseite** mit Hallendach-Live-Rechner im Hero (übergibt Werte an /rechner/gewerbe-pv), Live-Strommarkt AT,
+  Rechner-Showcase, Referenz-Marquee.
+- **Alle Bereiche** (Lösungen, Technik, Service, Förderungen, Unternehmen, Produkte, Regionen, Wissen):
+  Foto-Heros, Kennzahlen-Animation, Foto-Bento, je Seite mindestens ein interaktives Element, Fachtiefe in Tabs.
+- **Zahlenformat** einheitlich mit Punkt (1.250) – `de-AT` formatiert in Node und Browser unterschiedlich und
+  verursachte Hydration-Warnungen. Datumsangaben bleiben `de-AT` („Jänner“).
+- **Schneelast**-Formulierungen site-weit auf ÖNORM B 1991-1-3:2022 (keine Zonen mehr, Rasterkarte in eHORA).
+
+### Zusätzlich vor dem Livegang prüfen
+
+- Viele Fotos sind frei lizenzierte **Symbolbilder** (teils DE/CH/USA, gekennzeichnet, CC-Nachweise auf den Seiten
+  und unter /bildnachweis). Eigene Ökovolt-Projektfotos würden die Wirkung deutlich steigern.
+- **Hero-Video** `intro.mp4` zeigt das ALPLA-Logo – Freigabe einholen oder `HOME_HERO.video = null` in `src/data/hero.js`.
+- **Rechner-Annahmen** mit Richtwert-Charakter fachlich freigeben (Speicher-, Ladepunkt-, Fahrzeug-, Pachtwerte).
+  CO₂-Faktor Strom: E-Flotte-Rechner 209 g/kWh (UBA inkl. Vorkette), übrige Rechner 105,4 g/kWh
+  (Marktentwicklung 2024) – bewusst unterschiedlich, auf Wunsch vereinheitlichen.
+- Einige Seiten liegen mit 12–13 Bildschirmhöhen leicht über dem Ziel (Fachtiefe); bei Bedarf weiter verdichten.
+- Ungenutzte Altkomponenten (u. a. `Technik/Systemverbund.js`, `Kennlinien.js`, `Signalkette.js`, alte DE-Bausteine)
+  können gelöscht werden.
 
 ## Vor dem Livegang – technisch
 
