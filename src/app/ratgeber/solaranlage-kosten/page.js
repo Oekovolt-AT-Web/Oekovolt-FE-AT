@@ -276,7 +276,7 @@ export default function SolaranlageKostenPage() {
             <p>
               Die größten Unterschiede zwischen Angeboten entstehen nicht bei den Modulen, sondern bei Unterkonstruktion und Montage: Ein
               Trapezblechdach mit geringer Lastreserve braucht eine leichtere, mechanisch befestigte Unterkonstruktion statt Ballast, ein
-              Standort mit hoher Schneelastzone stärkere Profile und Module mit höherer Prüflast. Hinweise dazu geben die Ratgeber{" "}
+              Standort mit hoher Schneelast stärkere Profile und Module mit höherer Prüflast. Hinweise dazu geben die Ratgeber{" "}
               <TextLink href="/ratgeber/photovoltaik-flachdach">Photovoltaik auf dem Flachdach</TextLink> und{" "}
               <TextLink href="/ratgeber/schneelast-photovoltaik">Schneelast und Photovoltaik</TextLink>.
             </p>

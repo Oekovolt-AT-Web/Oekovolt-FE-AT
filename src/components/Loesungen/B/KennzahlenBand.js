@@ -13,8 +13,8 @@ import { cn } from "@/components/ui/cn";
  */
 export default function KennzahlenBand({ items = [], quelle, ueberlappen = true, className }) {
   return (
-    <section aria-label="Kennzahlen" className={cn("relative z-10 bg-white", className)}>
-      <div className={cn("ov-container", ueberlappen ? "-mt-16 md:-mt-24" : "pt-12 md:pt-16")}>
+    <section aria-label="Kennzahlen" className={cn("relative z-10", className)}>
+      <div className={cn("ov-container", ueberlappen ? "-mt-10 md:-mt-14" : "pt-12 md:pt-16")}>
         <Reveal dir="scale">
           <dl className="grid grid-cols-2 overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-ink-200/70 lg:grid-cols-4">
             {items.map((k, i) => (
@@ -41,7 +41,7 @@ export default function KennzahlenBand({ items = [], quelle, ueberlappen = true,
             ))}
           </dl>
         </Reveal>
-        {quelle && <p className="mt-4 max-w-4xl px-1 text-[12px] leading-relaxed text-ink-400">{quelle}</p>}
+        {quelle && <p className="mt-5 max-w-4xl px-1 text-[12px] leading-relaxed text-ink-400">{quelle}</p>}
       </div>
     </section>
   );

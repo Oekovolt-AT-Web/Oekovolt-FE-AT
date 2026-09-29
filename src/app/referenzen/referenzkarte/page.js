@@ -173,7 +173,7 @@ const faqFuer = (ortsnamen) => [
   },
   {
     q: "Warum ist ein Fachbetrieb aus der Nähe von Vorteil?",
-    a: "Kurze Wege erleichtern Vor-Ort-Termine, Montage und spätere Service-Einsätze. Entscheidend ist aber, die Anforderungen des jeweiligen Netzbetreibers, die Bauordnung des Bundeslandes und die Schneelastzone des Standorts zu kennen – das gilt für jede Region Österreichs. Anlagen überwachen wir per Fernwartung, unabhängig von der Entfernung.",
+    a: "Kurze Wege erleichtern Vor-Ort-Termine, Montage und spätere Service-Einsätze. Entscheidend ist aber, die Anforderungen des jeweiligen Netzbetreibers, die Bauordnung des Bundeslandes und die Schneelast des Standorts zu kennen – das gilt für jede Region Österreichs. Anlagen überwachen wir per Fernwartung, unabhängig von der Entfernung.",
   },
   {
     q: "Wie genau sind die Standorte auf der Karte?",

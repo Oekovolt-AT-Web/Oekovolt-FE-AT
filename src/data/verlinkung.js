@@ -18,6 +18,47 @@
 //   - Nicht auf die eigene Seite verlinken.
 
 export const QUERVERWEISE = {
+  "/rechner/gewerbe-pv": [
+    { href: "/gewerbe", titel: "Photovoltaik für Gewerbe", text: "Auslegung nach Lastgang, Netzebene und Technik." },
+    { href: "/rechner/peak-shaving", titel: "Peak-Shaving-Rechner", text: "Leistungspreis zusätzlich mit Speicher senken." },
+    { href: "/service/finanzierung", titel: "Finanzierung & Leasing", text: "Kauf, Leasing oder Contracting vergleichen." },
+    { href: "/forderungen/bundesfoerderung", titel: "EAG-Investitionszuschuss", text: "Fördersätze und Fördercall 2026." },
+  ],
+  "/rechner/peak-shaving": [
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Peak Shaving, Eigenverbrauch und Ersatzstrom." },
+    { href: "/ratgeber/peak-shaving-leistungspreis", titel: "Peak Shaving & Leistungspreis", text: "Wie Monatsspitzen das Netzentgelt bestimmen." },
+    { href: "/ratgeber/gewerbespeicher-kosten", titel: "Gewerbespeicher-Kosten", text: "Preise, Größen und Förderung." },
+  ],
+  "/rechner/e-flotte": [
+    { href: "/rechner/ladeinfrastruktur", titel: "Ladeinfrastruktur-Planer", text: "Ladepunkte, Spitzenlast und Netzanschluss." },
+    { href: "/ladeinfrastruktur", titel: "Ladeinfrastruktur für Betriebe", text: "Planung, Lastmanagement und Abrechnung." },
+    { href: "/ratgeber/e-flotte-laden-photovoltaik", titel: "E-Flotte mit PV laden", text: "Sachbezug, Lastmanagement, Überschussladen." },
+  ],
+  "/rechner/ladeinfrastruktur": [
+    { href: "/rechner/e-flotte", titel: "E-Flotte-Rechner", text: "Gesamtkosten Verbrenner gegen Elektro." },
+    { href: "/gewerbespeicher", titel: "Speicher als Ladepuffer", text: "DC-Laden ohne teure Anschlusserhöhung." },
+    { href: "/ratgeber/wallbox-installation", titel: "Wallbox Installation", text: "Meldepflicht und Ablauf in Österreich." },
+  ],
+  "/rechner/energiegemeinschaft": [
+    { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "EEG, BEG und GEA richtig aufsetzen." },
+    { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Rechtsform, Nahbereich und Registrierung." },
+    { href: "/kommunen", titel: "Gemeinden & Länder", text: "Die Gemeinde als Initiatorin." },
+  ],
+  "/rechner/blackout": [
+    { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Ersatzstrom-Konzept für Ihren Betrieb." },
+    { href: "/ratgeber/blackout-vorsorge-unternehmen", titel: "Blackout-Vorsorge", text: "Krisenplan und Checkliste." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Speicher mit Ersatzstromfunktion." },
+  ],
+  "/rechner/co2-esg": [
+    { href: "/ratgeber/csrd-esg-photovoltaik", titel: "CSRD, ESG & Photovoltaik", text: "Scope 2 im Nachhaltigkeitsbericht." },
+    { href: "/service/nachhaltigkeitsmarketing", titel: "Nachhaltigkeitsmarketing", text: "Ihre Anlage mit Solensa sichtbar machen." },
+    { href: "/rechner/gewerbe-pv", titel: "Gewerbe-PV-Rechner", text: "Wie viel Solarstrom Ihr Dach liefert." },
+  ],
+  "/rechner/freiflaeche-pacht": [
+    { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Solarparks planen, bauen, betreiben." },
+    { href: "/agri-pv", titel: "Agri-PV", text: "Strom und Ernte auf derselben Fläche." },
+    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung je Bundesland", text: "Zonen und Sonderwidmung." },
+  ],
   "/gewerbe": [
     { href: "/gewerbespeicher", titel: "Gewerbespeicher & Peak Shaving", text: "Leistungspreis nach österreichischer Mechanik: Mittel der zwölf Monatsspitzen." },
     { href: "/ratgeber/investitionsfreibetrag-photovoltaik", titel: "Investitionsfreibetrag für PV", text: "22 % Öko-IFB für Anschaffungen bis 31.12.2026." },

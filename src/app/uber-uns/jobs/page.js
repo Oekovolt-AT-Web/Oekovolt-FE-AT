@@ -212,7 +212,7 @@ export default function JobsPage() {
             </p>
           </div>
         </div>
-        <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+        <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {FELDER.map((f, i) => (
             <Reveal as="li" key={f.title} delay={(i % 3) * 80} className="w-[82%] shrink-0 snap-start sm:w-auto">
               <FotoKachel bild={f.bild} icon={f.icon} kopf="Tätigkeitsfeld" titel={f.title} text={f.text} className="h-full min-h-[300px]" />

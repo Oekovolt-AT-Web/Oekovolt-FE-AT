@@ -109,7 +109,7 @@ export default function FoerdercheckPage() {
         className="pb-28 md:pb-36"
       />
 
-      <section id="foerdercheck" className="relative scroll-mt-24 bg-sand-50 pb-16 md:pb-24">
+      <section id="foerdercheck" className="relative flow-root scroll-mt-24 bg-sand-50 pb-16 md:pb-24">
         <div aria-hidden="true" className="absolute inset-x-0 top-0 h-40 bg-navy-950 md:h-48" />
         <div className="ov-container relative -mt-24 md:-mt-32">
           <Reveal dir="scale">

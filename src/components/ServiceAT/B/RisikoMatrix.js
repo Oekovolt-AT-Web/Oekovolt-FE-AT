@@ -55,7 +55,7 @@ const RISIKEN = [
       gebaeude: { s: "bedingt", t: "Je nach Vertrag; das Dach selbst ist Sache der Gebäudeversicherung." },
       montage: MONTAGE,
     },
-    vorbeugen: "Modul und Unterkonstruktion müssen für die Schneelastzone nach ÖNORM B 1991-1-3 ausgelegt sein – besonders im alpinen Raum. eHORA zeigt die Zone Ihres Standorts.",
+    vorbeugen: "Modul und Unterkonstruktion müssen für die Schneelast des Standorts nach ÖNORM B 1991-1-3 ausgelegt sein – besonders im alpinen Raum. eHORA zeigt den Wert für Ihr Grundstück.",
     nachweise: ["Statiknachweis für Schnee- und Windlast (eHORA-Zone)", "Prüflasten der Module laut Datenblatt", "Wartungsprotokoll"],
   },
   {

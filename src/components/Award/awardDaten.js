@@ -53,7 +53,7 @@ export const KATEGORIEN = [
     id: "architektur",
     icon: "Mountain",
     titel: "Architektur & alpine Chalets",
-    text: "Indach, Fassade, Carport oder Chalet in Schneelastzone: Anlagen, die gestalterisch überzeugen und alpinen Bedingungen standhalten.",
+    text: "Indach, Fassade, Carport oder Chalet in schneereicher Lage: Anlagen, die gestalterisch überzeugen und alpinen Bedingungen standhalten.",
   },
   {
     id: "energiegemeinschaft",

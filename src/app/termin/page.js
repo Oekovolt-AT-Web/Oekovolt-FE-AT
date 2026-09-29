@@ -297,7 +297,7 @@ export default async function TerminPage() {
             {
               icon: Home,
               title: "Standort-Check",
-              text: "Bei Bedarf prüfen wir Dach bzw. Freifläche, Statik, Schneelastzone und Trafo/Zählerplatz vor Ort.",
+              text: "Bei Bedarf prüfen wir Dach bzw. Freifläche, Statik, Schneelast und Trafo/Zählerplatz vor Ort.",
             },
             {
               icon: Ruler,

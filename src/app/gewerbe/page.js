@@ -218,7 +218,7 @@ export default async function GewerbePage({ searchParams }) {
         </div>
         <FotoBento
           items={[
-            { format: "gross", icon: Warehouse, titel: "Hallen- & Flachdächer", text: "Aufgeständert Ost-West oder Süd, ballastiert oder mechanisch befestigt – nach Statik, Schneelastzone, Dachhaut und Brandabschnitten.", bild: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", position: "center 70%", alt: "Photovoltaikanlage auf dem Flachdach einer Gewerbehalle in Dornbirn mit Bergpanorama" },
+            { format: "gross", icon: Warehouse, titel: "Hallen- & Flachdächer", text: "Aufgeständert Ost-West oder Süd, ballastiert oder mechanisch befestigt – nach Statik, Schneelast, Dachhaut und Brandabschnitten.", bild: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", position: "center 70%", alt: "Photovoltaikanlage auf dem Flachdach einer Gewerbehalle in Dornbirn mit Bergpanorama" },
             { icon: Factory, titel: "Produktion & Kühlung", text: "Grundlast aus Druckluft, Lüftung und Kälte deckt sich gut mit der Solarkurve.", bild: "/Images/Home/download-2.jpg", alt: "Aufgeständerte Photovoltaikmodule mit Ballastierung auf einem Flachdach" },
             { icon: BatteryCharging, titel: "Gewerbespeicher & Peak Shaving", text: "Lastspitzen kappen, Überschüsse in Abend- und Nachtstunden verschieben.", bild: "/Images/AT/loesungen/gewerbespeicher-batteriecontainer.jpg", alt: "Batteriespeicher-Container an einem Kraftwerksstandort in Niederösterreich", href: "/gewerbespeicher" },
             { icon: Car, titel: "E-Flotte & Ladeinfrastruktur", text: "Flotte mit Solarstrom laden – mit Lastmanagement passend zum Anschluss.", bild: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Solar-Carports mit Ladepunkten auf einem Parkplatz, Luftbild (Symbolbild)", href: "/ladeinfrastruktur" },
@@ -344,7 +344,7 @@ export default async function GewerbePage({ searchParams }) {
               </p>
               <p>
                 <strong>Beim Dach zählen Statik und Schnee.</strong> Wir bemessen nach ÖNORM B 1991-1-3 (Schneelast) und B 1991-1-4 (Wind) und
-                prüfen die Schneelastzone Ihres Standorts – schnell vorab mit dem <Link href="/standort-check">Standort-Check</Link>. Den
+                prüfen die Schneelast Ihres Standorts – schnell vorab mit dem <Link href="/standort-check">Standort-Check</Link>. Den
                 Brandschutz planen wir nach OVE-Richtlinie R 11-1 mit Freihaltezonen, Abschaltkonzept und Feuerwehrplan.
               </p>
             </Prosa>

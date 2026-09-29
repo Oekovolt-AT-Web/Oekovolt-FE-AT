@@ -296,7 +296,7 @@ const WISSEN = {
       },
       {
         t: "Schnee & Wind",
-        x: "Unterkonstruktion und Module werden nach Schneelastzone und Windlast des Standorts ausgelegt (ÖNORM B 1991-1-3 und -1-4).",
+        x: "Unterkonstruktion und Module werden nach Schneelast und Windlast des Standorts ausgelegt (ÖNORM B 1991-1-3 und -1-4).",
       },
     ],
   },

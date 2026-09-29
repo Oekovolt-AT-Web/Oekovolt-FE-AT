@@ -248,7 +248,7 @@ const FAQ = [
   },
   {
     q: "Wie berücksichtigen Sie Schnee und Hagel?",
-    a: "Wir ermitteln Schneelastzone und Seehöhe des Standorts über eHORA und legen Unterkonstruktion und Klemmbereiche danach aus. In schneereichen Lagen verwenden wir Module mit höherer geprüfter Last und Glas-Glas-Aufbau. Für Hagel achten wir auf die Hagelwiderstandsklasse der Module und beraten zur Versicherung. Den ersten Überblick liefert der Standort-Check.",
+    a: "Wir ermitteln die charakteristische Schneelast des Standorts über die eHORA-Rasterkarte und legen Unterkonstruktion und Klemmbereiche danach aus. In schneereichen Lagen verwenden wir Module mit höherer geprüfter Last und Glas-Glas-Aufbau. Für Hagel achten wir auf die Hagelwiderstandsklasse der Module und beraten zur Versicherung. Den ersten Überblick liefert der Standort-Check.",
   },
   {
     q: "Wann braucht eine Anlage einen Parkregler?",
@@ -452,10 +452,10 @@ export default function PhotovoltaikanlagePage() {
           eyebrow="Schneelast, Wind & Hagel"
           title="Ausgelegt für österreichische Standorte"
           text={[
-            "Die Schneelast in Österreich reicht vom Flachland bis in hochalpine Lagen über ein Vielfaches – maßgeblich sind Schneelastzone und Seehöhe nach ÖNORM B 1991-1-3. Wind wird nach ÖNORM B 1991-1-4 angesetzt, bei Gebäudekanten und Randbereichen mit erhöhten Sogkräften.",
+            "Die Schneelast in Österreich reicht vom Flachland bis in hochalpine Lagen über ein Vielfaches – maßgeblich ist die charakteristische Schneelast je Grundstück nach ÖNORM B 1991-1-3 (Rasterkarte in eHORA). Wind wird nach ÖNORM B 1991-1-4 angesetzt, bei Gebäudekanten und Randbereichen mit erhöhten Sogkräften.",
             "Wir ermitteln diese Werte für jede Adresse über die Naturgefahrenplattform eHORA und legen Unterkonstruktion, Klemmbereiche und Modulwahl darauf aus. Für Hagel berücksichtigen wir die Hagelwiderstandsklasse der Module.",
           ]}
-          points={["Schneelastzone und Seehöhe je Adresse", "Wind- und Sogkräfte an Dachrand und Ecken", "Module mit geprüfter Last und Hagelwiderstand", "Schneefang und Abrutschschutz bei Schrägdächern"]}
+          points={["Schneelast je Grundstück laut eHORA", "Wind- und Sogkräfte an Dachrand und Ecken", "Module mit geprüfter Last und Hagelwiderstand", "Schneefang und Abrutschschutz bei Schrägdächern"]}
           action={{ label: "Standort-Check starten", href: "/standort-check" }}
           image={{ src: "/Images/AT/ratgeber/schneelast-photovoltaik.jpg", alt: "Verschneite Photovoltaikanlage auf einem Hallendach" }}
         />

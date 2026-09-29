@@ -256,7 +256,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was ist bei Photovoltaik auf alpinen Chalets zu beachten?",
-        a: "Vor allem hohe Schneelasten, Schneerutsch und Wind: Module, Unterkonstruktion und Befestigung müssen für die Schneelastzone des Standorts nach ÖNORM B 1991-1-3 ausgelegt sein. Häufig gewünscht sind Indach-Lösungen, die sich architektonisch einfügen, sowie Notstrom für abgelegene Lagen. Für Eigentümer, die selten vor Ort sind, bieten wir eine Concierge-Wartung mit Fernüberwachung an.",
+        a: "Vor allem hohe Schneelasten, Schneerutsch und Wind: Module, Unterkonstruktion und Befestigung müssen für die Schneelast des Standorts nach ÖNORM B 1991-1-3 (Wert laut eHORA-Rasterkarte) ausgelegt sein. Häufig gewünscht sind Indach-Lösungen, die sich architektonisch einfügen, sowie Notstrom für abgelegene Lagen. Für Eigentümer, die selten vor Ort sind, bieten wir eine Concierge-Wartung mit Fernüberwachung an.",
       },
       {
         q: "Gibt es für private PV-Anlagen noch den Nullsteuersatz?",

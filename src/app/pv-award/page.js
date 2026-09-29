@@ -162,7 +162,7 @@ export default function PvAwardPage() {
           <div className="ov-hero-in relative" style={{ "--ov-delay": "200ms" }}>
             <div aria-hidden="true" className="absolute inset-x-[12%] bottom-[4%] h-10 rounded-[100%] bg-sun-400/25 blur-2xl" />
             <div className="motion-safe:animate-ov-float">
-              <Trophaee jahr={AWARD_JAHR} animiert className="max-w-[280px] md:max-w-[340px]" />
+              <Trophaee jahr={AWARD_JAHR} animiert className="max-w-[210px] sm:max-w-[280px] md:max-w-[340px]" />
             </div>
           </div>
         </div>

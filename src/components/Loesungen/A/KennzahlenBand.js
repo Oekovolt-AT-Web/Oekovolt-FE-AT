@@ -10,11 +10,11 @@ import { cn } from "@/components/ui/cn";
  */
 export default function KennzahlenBand({ items = [], quelle, className }) {
   return (
-    <div className={cn("relative z-10 bg-white", className)}>
+    <div className={cn("relative z-10", className)}>
       <div className="ov-container">
         <Reveal
           dir="scale"
-          className="relative -mt-10 overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_-30px_rgba(15,23,42,0.35)] ring-1 ring-ink-200/70 md:-mt-14"
+          className="relative -mt-8 overflow-hidden rounded-[2rem] bg-white shadow-[0_30px_80px_-30px_rgba(15,23,42,0.35)] ring-1 ring-ink-200/70 md:-mt-10"
         >
           <div aria-hidden="true" className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-ov-400 via-ov-600 to-sun-400" />
           <dl className="grid grid-cols-2 lg:grid-cols-4">

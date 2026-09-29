@@ -49,7 +49,7 @@ const FAQ = [
   },
   {
     q: "Hält eine PV-Anlage die Schneelast in den Alpen aus?",
-    a: "Ja, wenn sie dafür bemessen ist. Wir rechnen nach ÖNORM B 1991-1-3 mit der Schneelastzone und Seehöhe des Standorts, wählen Module mit hohen Prüflasten und eine passende Unterkonstruktion und planen Schneefang und Abrutschbereiche mit. Die Schneelastzone Ihres Standorts zeigt vorab der Standort-Check.",
+    a: "Ja, wenn sie dafür bemessen ist. Wir rechnen nach ÖNORM B 1991-1-3 mit der charakteristischen Schneelast des Grundstücks aus der eHORA-Rasterkarte, wählen Module mit hohen Prüflasten und eine passende Unterkonstruktion und planen Schneefang und Abrutschbereiche mit. Die Schneelast Ihres Standorts zeigt vorab der Standort-Check.",
   },
   {
     q: "Gibt es eine höhere Förderung für einen PV-Carport auf dem Gästeparkplatz?",
@@ -92,7 +92,7 @@ const HEBEL = [
 ];
 
 const ALPIN = [
-  { titel: "Schneelast", text: <>Bemessung nach ÖNORM B 1991-1-3 mit Schneelastzone und Seehöhe, Module mit hohen Prüflasten, verstärkte Unterkonstruktion, Schneefang über Eingängen und Wegen – vertieft im Ratgeber <Link href="/ratgeber/schneelast-photovoltaik" className="text-ov-300 underline decoration-ov-300/40 hover:decoration-current">Schneelast und Photovoltaik</Link>.</> },
+  { titel: "Schneelast", text: <>Bemessung nach ÖNORM B 1991-1-3 mit der Schneelast des Grundstücks laut eHORA, Module mit hohen Prüflasten, verstärkte Unterkonstruktion, Schneefang über Eingängen und Wegen – vertieft im Ratgeber <Link href="/ratgeber/schneelast-photovoltaik" className="text-ov-300 underline decoration-ov-300/40 hover:decoration-current">Schneelast und Photovoltaik</Link>.</> },
   { titel: "Wind und Naturgefahren", text: <>Windlasten nach ÖNORM B 1991-1-4, Prüfung von Lawinen-, Hochwasser- und Hagelrisiko mit den Daten von HORA – schnell über den <Link href="/standort-check" className="text-ov-300 underline decoration-ov-300/40 hover:decoration-current">Standort-Check</Link>.</> },
   { titel: "Ortsbild", text: <>Schwarze Full-Black-Module, Indach- oder Fassadenlösungen und abgestimmte Farben für Häuser in geschützten Ortsbildern; für Premium-Objekte siehe <Link href="/chalets" className="text-ov-300 underline decoration-ov-300/40 hover:decoration-current">Luxus-Chalets & Alpin</Link>.</> },
   { titel: "Seilbahnen", text: "Bei Anlagen an Seilbahnbauwerken stimmen wir uns mit Betriebsleitung und Behörde ab; Montage außerhalb der Betriebszeiten." },
@@ -272,7 +272,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         <SectionHeading eyebrow="Ablauf" title="Geplant für Ihre Saison" align="center" className="mb-14" />
         <Steps
           items={[
-            { icon: ClipboardList, title: "Lastprofil & Flächen", text: "Verbrauch nach Saison, Dach-, Fassaden- und Parkplatzflächen, Schneelastzone und Netzanschluss aufnehmen." },
+            { icon: ClipboardList, title: "Lastprofil & Flächen", text: "Verbrauch nach Saison, Dach-, Fassaden- und Parkplatzflächen, Schneelast und Netzanschluss aufnehmen." },
             { icon: HandCoins, title: "Konzept & Förderung", text: "Dach, Carport, Speicher und Ladepunkte als Varianten – mit EAG-Zuschlägen, IFB und Finanzierung." },
             { icon: Wrench, title: "Bau in der Zwischensaison", text: "Logistik, Kran und Lärmphasen außerhalb der Buchungsspitzen, Etappenbau bei geöffnetem Haus." },
             { icon: LineChart, title: "Betrieb & Geschichte", text: "Monitoring, Wartungsvertrag, Live-Anzeige für Gäste und Kommunikation Ihrer Anlage." },

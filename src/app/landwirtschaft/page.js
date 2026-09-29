@@ -304,7 +304,7 @@ export default async function LandwirtschaftPage({ searchParams }) {
             <h3 className="ov-h3 text-ink-900">Diese Punkte prüfen wir vor jedem Hofprojekt</h3>
             <Prosa className="mt-6">
               <ul className="grid gap-x-10 gap-y-3 xl:grid-cols-2">
-                <li><strong>Statik und Schneelast:</strong> Nachweis nach ÖNORM B 1991-1-3 für die Schneelastzone des Hofes; ältere Dachstühle brauchen oft eine Verstärkung. Die Zone zeigt vorab der <Link href="/standort-check">Standort-Check</Link>.</li>
+                <li><strong>Statik und Schneelast:</strong> Nachweis nach ÖNORM B 1991-1-3 für die Schneelast am Hof; ältere Dachstühle brauchen oft eine Verstärkung. Den Wert zeigt vorab der <Link href="/standort-check">Standort-Check</Link>.</li>
                 <li><strong>Eindeckung:</strong> Restlaufzeit von Trapezblech, Sandwichpaneel oder Ziegel; Asbestzement darf nicht bearbeitet werden und muss vorher saniert werden.</li>
                 <li><strong>Stallklima:</strong> ammoniakbeständige Module und Unterkonstruktion, Wechselrichter und Speicher außerhalb der Stallluft.</li>
                 <li><strong>Brandschutz:</strong> Leitungsführung abseits von Heu- und Strohlagern, Abschaltkonzept und Feuerwehrplan nach OVE-Richtlinie R 11-1 – Details im Ratgeber <Link href="/ratgeber/photovoltaik-brandschutz">Photovoltaik und Brandschutz</Link>.</li>

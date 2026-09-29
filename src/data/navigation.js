@@ -148,7 +148,7 @@ export const NAVIGATION = [
         label: "Werkzeuge",
         items: [
           { name: "Energie live", href: "/energie-live", icon: "Activity", text: "Strommarkt Österreich in Echtzeit" },
-          { name: "Angebots-Konfigurator", href: "/angebot", icon: "Sparkles", text: "Ersteinschätzung in 2 Minuten" },
+          { name: "Standort-Check (eHORA)", href: "/standort-check", icon: "Mountain", text: "Schneelast, Wind, Hagel, Ertrag" },
         ],
       },
     ],

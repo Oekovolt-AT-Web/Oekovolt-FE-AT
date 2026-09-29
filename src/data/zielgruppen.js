@@ -145,7 +145,7 @@ export const ZIELGRUPPEN = {
         eyebrow: "Für Bergbahnen & Skigebiete",
         titel: "Photovoltaik am Berg –",
         akzent: "wo die Sonne am längsten scheint.",
-        lead: "Tal- und Bergstationen, Garagen, Fassaden und Hangflächen bieten Platz für Photovoltaik mit hoher Einstrahlung und Schneereflexion. Wir planen für Schneelastzonen, Netzanschluss am Berg und den Lastgang von Liften und Beschneiung.",
+        lead: "Tal- und Bergstationen, Garagen, Fassaden und Hangflächen bieten Platz für Photovoltaik mit hoher Einstrahlung und Schneereflexion. Wir planen für hohe Schneelasten, Netzanschluss am Berg und den Lastgang von Liften und Beschneiung.",
         cta: "Standort am Berg prüfen",
       },
     ],

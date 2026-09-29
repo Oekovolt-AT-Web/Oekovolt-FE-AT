@@ -32,13 +32,13 @@ export default function Wochenzeiten({ dunkel = false }) {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className={`inline-flex items-center gap-2.5 font-display text-[18px] font-bold ${t.text}`} aria-live="polite">
+        <p className={`flex flex-wrap items-center gap-x-2.5 gap-y-0.5 font-display text-[18px] font-bold ${t.text}`} aria-live="polite">
           <span className="relative flex h-3 w-3" aria-hidden="true">
             {jetzt?.s.offen && <span className="absolute inset-0 animate-ping rounded-full bg-ov-400 opacity-60 motion-reduce:hidden" />}
             <span className={`relative h-3 w-3 rounded-full ${jetzt == null ? "bg-ink-300" : jetzt.s.offen ? "bg-ov-500" : "bg-sun-500"}`} />
           </span>
           {jetzt ? jetzt.s.titel : "Öffnungszeiten"}
-          {jetzt?.s.detail && <span className={`text-[14px] font-medium ${t.sub}`}>· {jetzt.s.detail}</span>}
+          {jetzt?.s.detail && <span className={`whitespace-nowrap text-[14px] font-medium ${t.sub}`}>· {jetzt.s.detail}</span>}
         </p>
         {jetzt && <p className={`ov-num text-[13px] ${t.sub}`}>Ostermiething, {hhmm(jetzt.b.minuten)} Uhr</p>}
       </div>

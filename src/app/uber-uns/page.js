@@ -394,7 +394,7 @@ export default function UberUnsPage() {
           lead="Wer wir sind, zeigt sich auch daran, mit wem wir arbeiten: mit unserem Team, mit Elektrotechnik-Betrieben, mit Vereinen – und mit Kundinnen und Kunden, deren Anlagen wir jedes Jahr auszeichnen."
           className="mb-12 max-w-3xl"
         />
-        <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+        <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {GEMEINSAM.map((g, i) => (
             <Reveal as="li" key={g.href} delay={(i % 3) * 80} className="w-[82%] shrink-0 snap-start sm:w-auto">
               <FotoKachel href={g.href} bild={g.bild} icon={g.icon} kopf={g.kopf} titel={g.titel} text={g.text} className="h-full min-h-[280px]" />
