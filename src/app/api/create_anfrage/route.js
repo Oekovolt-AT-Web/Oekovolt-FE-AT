@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { ipAdresse } from "@/lib/ipAdresse";
 import { getApiHeaders, isApiConfigured, API_BASE_URL } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
+import { herkunftAnNachricht, herkunftZeile } from "@/lib/herkunftServer";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.angebot.submit_angebot`;
 
@@ -18,7 +19,15 @@ export async function POST(request) {
     }
 
     try {
-        const body = await request.json();
+        // Herkunft (Kanal, UTM, Einstieg) als Textblock an `nachricht` und `ergebnis.angaben` –
+        // submit_angebot kennt dafür kein eigenes Feld, `angaben` wird mit dem Ergebnis gespeichert
+        const roh = await request.json();
+        const body = herkunftAnNachricht(roh);
+        const zeile = herkunftZeile(roh?.herkunft);
+        if (zeile && body?.ergebnis && typeof body.ergebnis === "object") {
+            const angaben = typeof body.ergebnis.angaben === "string" ? body.ergebnis.angaben.trim() : "";
+            body.ergebnis = { ...body.ergebnis, angaben: angaben ? `${angaben}\n\n—\n${zeile}` : zeile };
+        }
 
         // Get authenticated headers
         const headers = getApiHeaders();

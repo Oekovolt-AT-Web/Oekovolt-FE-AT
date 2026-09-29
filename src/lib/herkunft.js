@@ -10,8 +10,10 @@ let erfasst = null;
 const UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
 const kurz = (v, n = 100) => String(v || "").replace(/[^\p{L}\p{N} _.\-/:+|]/gu, "").slice(0, n);
 
+// Eigene Auftritte (AT: oekovolt.com, DE: oekovolt.de, jeweils auch mit www./Subdomain)
+// zählen nicht als Verweis – ein Wechsel zwischen ihnen soll die Herkunft nicht überschreiben.
 function eigeneDomain(host) {
-  return /(^|\.)oekovolt\.de$/.test(host) || host === location.host;
+  return /(^|\.)oekovolt\.(com|de)$/i.test(host) || host === location.host;
 }
 
 /** Einmalig beim ersten Laden aufrufen (HerkunftErfassen in LayoutWrapper). */

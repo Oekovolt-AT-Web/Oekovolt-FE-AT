@@ -25,6 +25,7 @@ import {
 } from "@/lib/rechner/energiegemeinschaft";
 import { Anteilsbalken, DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Liste, LogRegler, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
 import { EGFluss, EGMonate, EGPreisleiter } from "./EGDiagramme";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const PFAD = "/rechner/energiegemeinschaft";
 const ICON = { gemeinde: Landmark, betrieb: Factory, landwirtschaft: Tractor, haushalte: Home };
@@ -104,6 +105,7 @@ export default function EGRechner() {
   const grosse = teilnehmer.some((x) => x.gross);
   const query = egParams({ teilnehmer, modell, bereich, energiepreisCt: energiepreis, egPreisCt: egPreis });
   const summeErz = Math.max(0, energiepreis - marktpreis);
+  useRechnerErgebnis("energiegemeinschaft", w);
 
   return (
     <Karte>

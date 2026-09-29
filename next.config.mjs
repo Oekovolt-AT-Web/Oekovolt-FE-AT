@@ -11,6 +11,8 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/api/analyse/pdf": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
     "/solarrechner/ergebnis/bild": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
+    // Standort-Check: Schneelast-Richtwertraster (GeoSphere SNOWGRID-CL, eigene Auswertung), per fs gelesen
+    "/api/standort": ["./data/schneelast/sk50-at.bin", "./data/schneelast/sk50-at.json"],
   },
   compress: true,
   poweredByHeader: false,

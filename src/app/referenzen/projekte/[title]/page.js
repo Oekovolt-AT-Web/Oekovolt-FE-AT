@@ -28,15 +28,9 @@ import {
   normalisiereProjekt,
   projektSlug,
 } from "@/components/Project/projektDaten";
-import {
-  API_BASE_URL,
-  getApiHeaders,
-  isApiConfigured,
-} from "@/lib/apiBaseUrl";
+import { ladeProjekteRoh, ladeProjektRoh } from "@/components/Project/ladeProjekte";
 import { BASE_URL, FIRMA } from "@/lib/site";
 
-const LIST_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
-const DETAIL_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekt`;
 const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
 // ---------- API helpers (only used in this file) ----------
@@ -92,54 +86,15 @@ function projektAusApi(p) {
   };
 }
 
-/** All projects – for "Weitere Projekte" and generateStaticParams */
+/** All projects – for "Weitere Projekte" and generateStaticParams (API, else src/data/projekte.js) */
 async function fetchProjekteListe() {
-  if (!isApiConfigured()) return [];
-  try {
-    const res = await fetch(LIST_URL, {
-      method: "GET",
-      headers: getApiHeaders(),
-      next: { revalidate: 600 },
-    });
-    if (!res.ok) {
-      console.error(`Projekte API returned ${res.status}:`, await res.text());
-      return [];
-    }
-    const data = await res.json();
-    const liste = data?.message?.projekte;
-    return Array.isArray(liste)
-      ? liste.map(projektAusApi).filter((p) => p.slug)
-      : [];
-  } catch (error) {
-    console.error("Error fetching projekte:", error);
-    return [];
-  }
+  return (await ladeProjekteRoh()).map(projektAusApi).filter((p) => p.slug);
 }
 
-/** One project by projekt_website_name, e.g. "haydu-2" */
+/** One project by projekt_website_name, e.g. "haydu-2" (API, else src/data/projekte.js) */
 async function fetchProjekt(apiName) {
-  if (!isApiConfigured() || !apiName) return null;
-  try {
-    const res = await fetch(
-      `${DETAIL_URL}?projekt_website_name=${encodeURIComponent(apiName)}`,
-      {
-        method: "GET",
-        headers: getApiHeaders(),
-        next: { revalidate: 600 },
-      },
-    );
-    if (!res.ok) {
-      return null;
-    }
-    const data = await res.json();
-    const p = data?.message;
-    return p && typeof p === "object" && p.projekt_website_name
-      ? projektAusApi(p)
-      : null;
-  } catch (error) {
-    console.error("Error fetching projekt:", error);
-    return null;
-  }
+  const p = await ladeProjektRoh(apiName);
+  return p ? projektAusApi(p) : null;
 }
 
 /**

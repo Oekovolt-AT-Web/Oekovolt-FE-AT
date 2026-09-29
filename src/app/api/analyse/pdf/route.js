@@ -69,7 +69,7 @@ export async function POST(request) {
   if (kontakt.name.length < 2) return fehler("name");
   if (!emailGueltig(kontakt.email)) return fehler("email");
   if (kontakt.telefon.replace(/\D/g, "").length < 6) return fehler("telefon");
-  if (!/^\d{5}$/.test(kontakt.plz)) return fehler("plz");
+  if (!/^\d{4,5}$/.test(kontakt.plz)) return fehler("plz");
   if (gedrosselt(`analyse:${kontakt.email}`, 5, 24 * 3600 * 1000)) return fehler("zu_viele", 429);
 
   const daten = analyse(e.eingaben);

@@ -14,7 +14,7 @@ import { cn } from "@/components/ui/cn";
  *  - Speicher 150 €/kWh, mind. 0,5 kWh je kWp, max. 50 kWh je Anlage
  *  - § 6: zuerst Innovationszuschlag (+30 %) bzw. Flächenabschlag (−25 %), auf das Ergebnis
  *    Made in Europe (+10 % Module, +10 % Wechselrichter; Speicher +10 % auf den Speicherzuschuss)
- *  - § 11: max. 30 % der förderfähigen Nettokosten; mit Zuschlag PV 65/55/45 %,
+ *  - § 11: max. 30 % der förderfähigen Kosten (netto bei Vorsteuerabzug, sonst brutto – FAQ 2026 Frage 31); mit Zuschlag PV 65/55/45 %,
  *    Speicher mit Zuschlag 50/40/30 % (kleine/mittlere/große Unternehmen)
  * Orientierung – verbindlich ist der Fördervertrag der Abwicklungsstelle.
  */
@@ -110,11 +110,12 @@ export default function ZuschussRechner({ budgets = {}, callZeitraum = "", naech
   const [kostenSp, setKostenSp] = useState("");
 
   const r = useMemo(() => {
-    const kat = kwp > 1000 ? null : KAT.find((k) => kwp <= k.bis);
+    // Über 1.000 kWp: Kategorie D, anteilig bis 1.000 kWp gefördert (EAG-AS, FAQ 2026 Fragen 19 und 20)
+    const kat = KAT.find((k) => kwp <= k.bis) ?? KAT.find((k) => k.id === "D");
     const fl = FLAECHEN.find((f) => f.id === flaeche);
     if (!kat) return { kat: null };
     const satz = kat.fix ? kat.satz : Math.min(kat.satz, gebot ?? kat.satz);
-    const pvBasis = kwp * satz;
+    const pvBasis = Math.min(kwp, 1000) * satz;
     const pvFlaeche = pvBasis * fl.faktor;
     const mieFaktor = 1 + (mie.module ? 0.1 : 0) + (mie.wr ? 0.1 : 0);
     let pv = pvFlaeche * mieFaktor;
@@ -350,11 +351,11 @@ export default function ZuschussRechner({ budgets = {}, callZeitraum = "", naech
             </summary>
             <div className="grid gap-3 px-4 pb-4 sm:grid-cols-2">
               <label className="block text-[13.5px] font-semibold text-ink-700">
-                Förderfähige Nettokosten PV
+                Förderfähige Kosten PV (netto mit Vorsteuerabzug, sonst brutto)
                 <input inputMode="numeric" placeholder="z. B. 80000" value={kostenPv} onChange={(e) => setKostenPv(e.target.value.replace(/\D/g, ""))} className="ov-num mt-1.5 h-11 w-full rounded-xl bg-white px-3 text-[15px] font-semibold text-ink-900 ring-1 ring-ink-200 focus:outline-none focus:ring-2 focus:ring-ov-500" />
               </label>
               <label className="block text-[13.5px] font-semibold text-ink-700">
-                Förderfähige Nettokosten Speicher
+                Förderfähige Kosten Speicher
                 <input inputMode="numeric" placeholder="optional" value={kostenSp} onChange={(e) => setKostenSp(e.target.value.replace(/\D/g, ""))} className="ov-num mt-1.5 h-11 w-full rounded-xl bg-white px-3 text-[15px] font-semibold text-ink-900 ring-1 ring-ink-200 focus:outline-none focus:ring-2 focus:ring-ov-500" />
               </label>
               <fieldset className="sm:col-span-2">
@@ -392,7 +393,7 @@ export default function ZuschussRechner({ budgets = {}, callZeitraum = "", naech
                 {eur(gesamtAnim)}
               </p>
               <p className="mt-3 text-[14.5px] text-white/65">
-                {r.kat.leistung} · {r.kat.fix ? "Fixbetrag, Reihung nach Ticket" : "Gebot, Reihung nach Förderbedarf"} · effektiv {Math.round(r.satzEffektiv).toLocaleString("de-DE")} €/kWp
+                {kwp > 1000 ? "über 1.000 kWp, anteilig gefördert bis 1.000 kWp" : r.kat.leistung} · {r.kat.fix ? "Fixbetrag, Reihung nach Ticket" : "Gebot, Reihung nach Förderbedarf"} · effektiv {Math.round(r.satzEffektiv).toLocaleString("de-DE")} €/kWp
               </p>
 
               {/* Gebot */}
@@ -441,7 +442,7 @@ export default function ZuschussRechner({ budgets = {}, callZeitraum = "", naech
                   <Warnung>Der Deckel greift: max. {Math.round(r.pvQuote * 100)} % der PV-Kosten{r.kSp ? ` bzw. ${Math.round(r.spQuote * 100)} % der Speicherkosten` : ""} – der Zuschuss ist entsprechend gekürzt.</Warnung>
                 ) : (
                   <Hinweis>
-                    Voller Betrag nur bei förderfähigen Nettokosten ab {eur(r.minKostenPv)} (PV){r.minKostenSp ? ` und ${eur(r.minKostenSp)} (Speicher)` : ""} – Deckel {Math.round(r.pvQuote * 100)} %.
+                    Voller Betrag nur bei förderfähigen Kosten ab {eur(r.minKostenPv)} (PV){r.minKostenSp ? ` und ${eur(r.minKostenSp)} (Speicher)` : ""} – Deckel {Math.round(r.pvQuote * 100)} %.
                   </Hinweis>
                 )}
                 <Hinweis>
@@ -453,8 +454,8 @@ export default function ZuschussRechner({ budgets = {}, callZeitraum = "", naech
           ) : (
             <div className="my-auto">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Über 1.000 kWp</p>
-              <p className="mt-3 font-display text-[28px] font-extrabold leading-tight">Kein Investitionszuschuss – der Weg führt über die Marktprämie.</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-white/70">Der EAG-Investitionszuschuss endet bei 1.000 kWp. Größere Anlagen bieten in der Ausschreibung der Marktprämie mit. {naechsterGebotstermin ? `Nächster Gebotstermin: ${naechsterGebotstermin}.` : ""}</p>
+              <p className="mt-3 font-display text-[28px] font-extrabold leading-tight">Anteiliger Zuschuss oder Marktprämie.</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-white/70">Größere Anlagen werden anteilig bis 1.000 kWp gefördert; alternativ bieten sie in der Ausschreibung der Marktprämie mit. {naechsterGebotstermin ? `Nächster Gebotstermin: ${naechsterGebotstermin}.` : ""}</p>
               <a href="#marktpraemie" className="mt-5 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-300 hover:text-white">
                 Zur Marktprämie <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </a>

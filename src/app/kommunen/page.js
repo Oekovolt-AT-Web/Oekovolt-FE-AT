@@ -10,6 +10,9 @@ import {
   Handshake,
   Landmark,
   LineChart,
+  Mail,
+  MapPin,
+  Phone,
   School,
   Sprout,
   Users,
@@ -23,7 +26,6 @@ import SplitMedia from "@/components/ui/SplitMedia";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
-import FolgenBox from "@/components/Kanaele/FolgenBox";
 import MeldungKarte from "@/components/Kanaele/MeldungKarte";
 import LoesungSchema from "@/components/Loesungen/LoesungSchema";
 import { Bildnachweis, Hebel, Hinweis, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
@@ -182,8 +184,8 @@ export default async function KommunenPage() {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftbild eines Schulzentrums in Klagenfurt mit Photovoltaikanlage auf dem Flachdach" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
-          { label: "Liegenschaften bewerten lassen", href: "/angebot", icon: ClipboardList },
+          { label: v.cta, href: "/termin?art=video&thema=gemeinde" },
+          { label: "Liegenschaften bewerten lassen", href: "/angebot?objekt=gemeinde", icon: ClipboardList },
         ]}
         points={["Schulen, Bauhöfe, Kläranlagen, Freibäder", "Vergabe nach BVergG 2026", "Energiegemeinschaft der Gemeinde", "Salzburg AG als Gesellschafterin"]}
       />
@@ -364,7 +366,7 @@ export default async function KommunenPage() {
         </FachTabs>
       </Section>
 
-      <Section tone="white" space="md" id="folgen" className="scroll-mt-20">
+      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-20">
         <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-16">
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Bürgermeister, Amtsleitung und Gremien" className="mb-8" />
@@ -383,9 +385,9 @@ export default async function KommunenPage() {
           <div className="lg:sticky lg:top-28">
             <p className="mb-4 flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
               <CalendarCheck2 aria-hidden="true" className="h-4 w-4" />
-              Direkter Draht – ohne Algorithmus
+              Direkter Draht
             </p>
-            <FolgenBox konten={["oekovolt"]} pushThema="news" />
+            <AnsprechpartnerGemeinden />
           </div>
         </div>
       </Section>
@@ -396,11 +398,68 @@ export default async function KommunenPage() {
         eyebrow="Kostenlos & unverbindlich"
         title="Lassen Sie uns Ihre Liegenschaften gemeinsam bewerten."
         text="Erstgespräch per Video oder vor Ort – mit ersten Zahlen zu Potenzial, Wirtschaftlichkeit, Vergabeweg, Förderung und Energiegemeinschaft."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=gemeinde" }}
         secondary={{ label: "Zum Newsroom", href: "/presse?kategorie=Kommunen%20%26%20Stadtwerke", icon: Users }}
       />
 
       <Bildnachweis items={nachweise("schuleLuftbild", "schuleDach", "gemeindeamt", "feuerwehr", "klaeranlage", "freibad", "hochbehaelter", "molln", "leitwarte")} />
+    </div>
+  );
+}
+
+/** Kontaktkarte für Gemeinden – Firmendaten aus @/lib/site, bewusst ohne Personennamen. */
+function AnsprechpartnerGemeinden() {
+  return (
+    <div className="rounded-[1.75rem] bg-white p-6 text-ink-900 ring-1 ring-ink-200/70 md:p-8">
+      <h2 className="font-display text-[22px] font-extrabold tracking-tight">Ansprechpartner für Gemeinden</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
+        Unsere Projektberatung für Gemeinden, Stadtwerke und Verbände – persönlich aus {FIRMA.ort}, für Liegenschaften in ganz Österreich. Nennen Sie uns gern Gemeinde und Objekt, dann
+        bereiten wir das Gespräch vor.
+      </p>
+
+      <ul className="mt-6 space-y-3">
+        <li>
+          <a href={FIRMA.telefonHref} className="flex items-center gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 transition hover:ring-ov-300">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-600 text-white">
+              <Phone aria-hidden="true" className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[13px] text-ink-600">Telefon</span>
+              <span className="ov-num block text-[16px] font-semibold">{FIRMA.telefon}</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${FIRMA.email}`} className="flex items-center gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 transition hover:ring-ov-300">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-950 text-white">
+              <Mail aria-hidden="true" className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[13px] text-ink-600">E-Mail</span>
+              <span className="block text-[16px] font-semibold [overflow-wrap:anywhere]">{FIRMA.email}</span>
+            </span>
+          </a>
+        </li>
+      </ul>
+      <p className="mt-3 text-[13px] text-ink-600">Erreichbar {FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit}`).join(" · ")}</p>
+
+      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row lg:flex-col xl:flex-row">
+        <Link
+          href="/termin?art=video&thema=gemeinde"
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-700"
+        >
+          <CalendarCheck2 aria-hidden="true" className="h-4 w-4" />
+          Video-Termin
+        </Link>
+        <Link
+          href="/termin?art=vor-ort&thema=gemeinde"
+          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50 hover:ring-ink-300"
+        >
+          <MapPin aria-hidden="true" className="h-4 w-4" />
+          Vor-Ort-Termin
+        </Link>
+      </div>
+      <p className="mt-3 text-[12.5px] text-ink-500">Kostenlos und unverbindlich.</p>
     </div>
   );
 }

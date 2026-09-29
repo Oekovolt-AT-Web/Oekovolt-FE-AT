@@ -8,11 +8,12 @@ import {
   AlertCircle, ArrowLeft, ArrowRight, CalendarCheck2, CalendarDays, Check, ChevronLeft, ChevronRight, Clock, Loader2, Lock, MapPin, Phone, RefreshCw, Video,
 } from "lucide-react";
 import { cn } from "@/components/ui/cn";
-import { TERMIN_ARTEN, THEMEN, berlin, hhmm, slotsFuerArt, telefonNormalisieren } from "@/data/erreichbarkeit";
+import { TERMIN_ARTEN, THEMEN, berlin, hhmm, slotsFuerArt, telefonNormalisieren, themaAusParam } from "@/data/erreichbarkeit";
 import { tageAusApi } from "@/lib/terminSlots";
 import KalenderLinks from "./KalenderLinks";
 import { oeffneRueckruf } from "./oeffnen";
 import { ereignis } from "@/lib/statistik";
+import { herkunft } from "@/lib/herkunft";
 
 const ICONS = { Phone, Video, MapPin };
 const SCHRITTE = ["Art", "Termin", "Kontakt"];
@@ -162,7 +163,8 @@ export default function TerminBuchung({ kalender = null }) {
   const [daten, setDaten] = useState({ laden: false, tage: [], verfuegbar: true, live: true });
   const [tagIndex, setTagIndex] = useState(0);
   const [slot, setSlot] = useState("");
-  const [werte, setWerte] = useState({ name: "", firma: "", email: "", telefon: "", plz: "", adresse: "", thema: "", nachricht: "" });
+  // ?thema=gewerbe|freiflaeche|… (Links der Zielgruppenseiten) belegt das Thema vor
+  const [werte, setWerte] = useState(() => ({ name: "", firma: "", email: "", telefon: "", plz: "", adresse: "", thema: themaAusParam(params.get("thema")), nachricht: "" }));
   const [einwilligung, setEinwilligung] = useState(false);
   const [beruehrt, setBeruehrt] = useState({});
   const [senden, setSenden] = useState(false);
@@ -255,6 +257,8 @@ export default function TerminBuchung({ kalender = null }) {
           einwilligung: einwilligung ? 1 : 0,
           quelle: window.location.pathname,
           website: website.current?.value || "",
+          // Kampagnen-Zuordnung – /api/termin hängt sie als Textzeile an `nachricht` an (kein eigenes Frappe-Feld)
+          herkunft: herkunft(),
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -606,7 +610,7 @@ export default function TerminBuchung({ kalender = null }) {
               </button>
               <button type="submit" disabled={senden} className="inline-flex h-13 items-center justify-center gap-2 rounded-full bg-ov-600 px-8 py-3.5 text-[16px] font-semibold text-white shadow-[0_10px_26px_-10px_rgba(102,153,51,0.8)] transition hover:bg-ov-700 disabled:opacity-60">
                 {senden ? <Loader2 aria-hidden="true" className="h-5 w-5 animate-spin" /> : <CalendarCheck2 aria-hidden="true" className="h-5 w-5" />}
-                {senden ? "Wird gebucht …" : "Termin verbindlich anfragen"}
+                {senden ? "Wird gebucht …" : "Kostenlosen Termin anfragen"}
               </button>
             </div>
           </form>

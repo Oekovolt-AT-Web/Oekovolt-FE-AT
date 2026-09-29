@@ -13,6 +13,12 @@
 // s_100 und die Seehöhe; die Normen-Standortabfrage als PDF bietet HORA selbst zum
 // Download an.
 //
+// Ergänzung 09/2026: Der Standort-Check zeigt zusätzlich einen automatischen Schneelast-
+// RICHTWERT. Er stammt NICHT aus HORA, sondern aus unserer eigenen Auswertung offener Daten
+// von GeoSphere Austria (SNOWGRID-CL, CC BY 4.0; siehe src/lib/standort/schneelastRaster.js).
+// An der obigen Begründung ändert das nichts: HORA wird weiterhin nicht automatisiert
+// abgefragt, der Normwert s_k kommt weiterhin aus eHORA über diese Links.
+//
 // URL-Schema der HORA-Anwendung (aus der öffentlichen Web-App abgeleitet):
 //   https://hora.gv.at/#/c<Karte>/b<Hintergrund>/a<Zusatzlayer>/@<lat>,<lon>,<zoom>z/x<lat>,<lon>,<zoom>z
 //   c… = Themenkarte, b… = Hintergrundkarte (grau|farbe|dop), a- = keine Zusatzlayer,

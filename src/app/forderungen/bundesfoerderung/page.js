@@ -48,7 +48,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Wie hoch ist der EAG-Investitionszuschuss 2026?",
-    a: "Kategorie A (bis 10 kWp) erhält fix 150 €/kWp, Kategorie B (über 10 bis 20 kWp) fix 140 €/kWp. In Kategorie C (über 20 bis 100 kWp) sind höchstens 130 €/kWp, in Kategorie D (über 100 bis 1.000 kWp) höchstens 120 €/kWp möglich – dort bieten Förderwerber ihren Förderbedarf, gereiht wird vom niedrigsten Gebot an. Stromspeicher erhalten 150 €/kWh. Der Zuschuss ist auf 30 % der förderfähigen Nettokosten gedeckelt.",
+    a: "Kategorie A (bis 10 kWp) erhält fix 150 €/kWp, Kategorie B (über 10 bis 20 kWp) fix 140 €/kWp. In Kategorie C (über 20 bis 100 kWp) sind höchstens 130 €/kWp, in Kategorie D (über 100 bis 1.000 kWp) höchstens 120 €/kWp möglich – dort bieten Förderwerber ihren Förderbedarf, gereiht wird vom niedrigsten Gebot an. Stromspeicher erhalten 150 €/kWh. Der Zuschuss ist auf 30 % der förderfähigen Kosten gedeckelt – netto bei Vorsteuerabzug, sonst brutto.",
   },
   {
     q: "Wann ist der nächste OeMAG-Fördercall?",
@@ -278,13 +278,14 @@ export default function Bundesfoerderung() {
           { label: "Förder-Check starten", href: "/foerdercheck" },
         ]}
       >
-        <a href="#foerdercalls" className="ov-glass ov-hero-in mt-8 inline-flex items-center gap-3 rounded-2xl py-2.5 pl-2.5 pr-4 text-[14px] text-white/85 transition-colors hover:bg-white/15" style={{ "--ov-delay": "420ms" }}>
+        <Link href="/forderungen/eag-foerdercall" className="ov-glass ov-hero-in mt-8 inline-flex items-center gap-3 rounded-2xl py-2.5 pl-2.5 pr-4 text-[14px] text-white/85 transition-colors hover:bg-white/15" style={{ "--ov-delay": "420ms" }}>
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-ov-500 text-white"><CalendarClock aria-hidden="true" className="h-5 w-5" /></span>
           <span>
-            <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">Letzter Call 2026</span>
+            <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">Letzter Call 2026 · Checkliste & Countdown</span>
             <span className="ov-num font-semibold text-white">{EAG_IZ.naechsterCall.zeitraum}</span>
           </span>
-        </a>
+          <ArrowRight aria-hidden="true" className="h-4 w-4 text-ov-300" />
+        </Link>
       </PageHero>
 
       <KennzahlenBand
@@ -371,6 +372,10 @@ export default function Bundesfoerderung() {
             }
             hinweis={`${EAG_IZ.naechsterCall.hinweis}. Wer das Ticket früh zieht, wird früher gereiht – der Antrag selbst folgt danach mit den Unterlagen. Wir bereiten Netzbestätigung, Genehmigungsnachweise und Angebot so vor, dass Sie am ersten Tag des Calls bereit sind.`}
           />
+          <Link href="/forderungen/eag-foerdercall" className="group mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-300 hover:text-white">
+            Alles zum Oktober-Call: Checkliste, Ticketziehung und Schnellrechner
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
       </Section>
 

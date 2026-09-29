@@ -22,6 +22,7 @@ import {
 } from "@/lib/rechner/blackout";
 import { DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Vorlagen, Zahlfeld, euro, useStartAusUrl } from "./GewerbeBausteine";
 import { BlackoutVerlauf } from "./BlackoutDiagramme";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const PFAD = "/rechner/blackout";
 const START = BRANCHEN[0];
@@ -72,6 +73,7 @@ export default function BlackoutRechner() {
   const blackout = sz.find((s) => s.id === "blackout");
   const speicherMax = Math.max(500, Math.ceil((vorschlag * 4) / 100) * 100);
   const liter48 = useMemo(() => (e.ziel >= 48 ? sim.liter : simuliereAusfall({ ...volle, ziel: 48 }).liter), [sim]); // eslint-disable-line react-hooks/exhaustive-deps
+  useRechnerErgebnis("blackout", sim);
 
   return (
     <div className="space-y-6">

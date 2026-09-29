@@ -184,8 +184,8 @@ export default async function LandwirtschaftPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Bauernhof mit Photovoltaikanlagen auf den Dächern von Stall und Scheune vor Wald und Wiese", position: "center 60%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=vor-ort" },
-          { label: "Per Video beraten lassen", href: "/termin?art=video", icon: CalendarCheck2 },
+          { label: v.cta, href: "/termin?art=vor-ort&thema=landwirtschaft" },
+          { label: "Per Video beraten lassen", href: "/termin?art=video&thema=landwirtschaft", icon: CalendarCheck2 },
         ]}
         points={["Stall, Scheune & Maschinenhalle", "Speicher & Notstrom fürs Melken", "Pauschalierung & Förderung geklärt", "Agri-PV mit 30 % Zuschlag"]}
       />
@@ -417,8 +417,8 @@ export default async function LandwirtschaftPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Wir kommen auf Ihren Hof."
         text="Erstbewertung vor Ort oder per Video – mit ersten Zahlen zu Dach, Speicher, Eigenverbrauch, Förderung und Wirtschaftlichkeit."
-        primary={{ label: v.cta, href: "/termin?art=vor-ort" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=vor-ort&thema=landwirtschaft" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=landwirtschaft", icon: Cog }}
       />
 
       <Bildnachweis items={nachweise("hofStalldaecher", "hofLuftbild", "stall", "scheune", "batteriespeicher", "foulum", "kressbronn")} />

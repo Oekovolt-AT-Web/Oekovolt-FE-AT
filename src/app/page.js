@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 import { projektSlug } from "@/components/Project/projektDaten";
-import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
+import { ladeProjekteRoh } from "@/components/Project/ladeProjekte";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { getEnergySnapshot } from "@/lib/energy";
 import { BASE_URL, FIRMA, SCHWESTER } from "@/lib/site";
@@ -38,25 +38,10 @@ import HeroVideo from "@/components/Home2/HeroVideo";
 import HeroGewerbeRechner from "@/components/Home2/HeroGewerbeRechner";
 import HomeLive from "@/components/Home2/HomeLive";
 import RechnerShowcase from "@/components/Home2/RechnerShowcase";
+import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
 
-const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
-
-async function apiGet(url) {
-  if (!isApiConfigured()) return null;
-  try {
-    const res = await fetch(url, { headers: getApiHeaders(), next: { revalidate: 600 } });
-    if (!res.ok) {
-      console.error(`API ${url} -> ${res.status}`);
-      return null;
-    }
-    return (await res.json()).message;
-  } catch (e) {
-    console.error("Fetch error:", e);
-    return null;
-  }
-}
-
-const getProjekte = cache(() => apiGet(PROJEKTE_URL));
+// API, sonst statischer Stand src/data/projekte.js
+const getProjekte = cache(() => ladeProjekteRoh());
 
 const META = {
   title: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
@@ -223,6 +208,9 @@ export default async function HomePage() {
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(homePageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(zielgruppenSchema) }} />
+
+      {/* Hinweis EAG-Fördercall Oktober 2026 – blendet sich nach Call-Ende selbst aus; Rückbau: Zeile + Import löschen */}
+      <FoerdercallHinweis />
 
       {/* ================= HERO ================= */}
       <section className="relative isolate overflow-hidden bg-navy-950 text-white">

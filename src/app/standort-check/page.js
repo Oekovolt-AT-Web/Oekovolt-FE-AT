@@ -1,7 +1,8 @@
 // src/app/standort-check/page.js
 //
-// Standort-Check Photovoltaik: Schneelast (eHORA), Wind, Hagel und Ertrag (PVGIS) für einen
-// Punkt in Österreich. Das Werkzeug ist eine Client-Komponente; diese Seite liefert Rahmen,
+// Standort-Check Photovoltaik: Schneelast (automatischer Richtwert aus offenen GeoSphere-Daten,
+// Normwert in eHORA), Wind, Hagel und Ertrag (PVGIS) für einen Punkt in Österreich. HORA wird
+// nicht automatisch abgefragt. Das Werkzeug ist eine Client-Komponente; diese Seite liefert Rahmen,
 // Erklärtexte (SEO/GEO), FAQ und strukturierte Daten.
 
 import Link from "next/link";
@@ -26,7 +27,7 @@ const PFAD = "/standort-check";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "Standort-Check PV: Schneelast, Hagel & Ertrag | Ökovolt";
 const BESCHREIBUNG =
-  "Schneelast nach ÖNORM B 1991-1-3 aus eHORA, Wind, Hagel und PV-Ertrag (PVGIS) für Ihre Adresse in Österreich – mit Bewertung von Modulen und Unterkonstruktion.";
+  "Schneelast-Richtwert automatisch, Normwert nach ÖNORM B 1991-1-3 in eHORA, Wind, Hagel und PV-Ertrag (PVGIS) für Ihre Adresse in Österreich – mit Modul- und Unterkonstruktions-Check.";
 
 export const metadata = {
   title: TITEL,
@@ -47,7 +48,11 @@ export const metadata = {
 const FAQ = [
   {
     q: "Woher stammt die Schneelast im Standort-Check?",
-    a: "Die charakteristische Schneelast sₖ lesen Sie selbst in eHORA (hora.gv.at) ab – der Check öffnet die Schneelastkarte genau an Ihrem Standort. HORA ist die Naturgefahrenplattform des Landwirtschaftsministeriums (BMLUK) und enthält die Schneelastkarte der ÖNORM B 1991-1-3:2022. Eine automatische Abfrage bieten wir bewusst nicht an, weil HORA das automatisierte Herunterladen seiner Daten untersagt.",
+    a: "Der Check setzt automatisch einen Richtwert ein: die 50-jährliche Schneelast aus unserer eigenen Auswertung offener Schneedaten von GeoSphere Austria (SNOWGRID-CL, Schneewasseräquivalent 1961–2026 im 1-km-Raster, Lizenz CC BY 4.0). Maßgeblich für Statik und Einreichung bleibt der Normwert sₖ nach ÖNORM B 1991-1-3:2022 aus eHORA (hora.gv.at), der Naturgefahrenplattform des Landwirtschaftsministeriums (BMLUK) – der Check öffnet die Schneelastkarte genau an Ihrem Standort, und Sie können den Normwert dort ablesen und eintragen. HORA selbst fragen wir nicht automatisch ab, weil HORA das automatisierte Herunterladen seiner Daten untersagt.",
+  },
+  {
+    q: "Wie genau ist der automatische Schneelast-Richtwert?",
+    a: "Er ist eine gute erste Orientierung, aber kein Normwert. Wir werten für jede Rasterzelle von 1 × 1 km die höchste Schneelast jedes Winters (1. August bis 31. Juli) seit 1961 aus und leiten daraus mit einer Extremwertverteilung (GEV) den Wert ab, der im Mittel einmal in 50 Jahren erreicht wird. Die Normkarte in eHORA ist feiner (50 × 50 m) und nach dem Verfahren der ÖNORM erstellt. Vor allem im Gebirge, wo eine 1-km-Zelle große Höhenunterschiede zusammenfasst, kann der Normwert deutlich abweichen. Wir runden den Richtwert deshalb auf 0,1 kN/m² – feinere Stellen würden eine Genauigkeit vortäuschen, die das Raster nicht hat.",
   },
   {
     q: "Gibt es in Österreich noch Schneelastzonen?",
@@ -77,6 +82,7 @@ const FAQ = [
 
 const QUELLEN = [
   { name: "HORA – Natural Hazard Overview & Risk Assessment Austria (BMLUK)", url: "https://hora.gv.at/" },
+  { name: "GeoSphere Austria: SNOWGRID Klima v2.1, 1 km, täglich (CC BY 4.0)", url: "https://data.hub.geosphere.at/dataset/snowgrid_cl-v2-1d-1km" },
   { name: "Holzbau Austria: Neue Schneelastnorm veröffentlicht (2022)", url: "https://www.holzbauaustria.at/technik/2022/07/neue-schneelastnorm-veroeffentlicht.html" },
   { name: "Holzbau Austria: Im Schnitt 80 Kilo weniger (2021)", url: "https://www.holzbauaustria.at/technik/2021/11/im-schnitt-80-kilo-weniger-.html" },
   { name: "Hagelregister (Elementarschaden Präventionszentrum)", url: "https://www.hagelregister.at/" },
@@ -96,7 +102,7 @@ const schema = {
       name: "Ökovolt Standort-Check Photovoltaik",
       url: PAGE_URL,
       description:
-        "Ermittelt für einen Standort in Österreich Seehöhe und spezifischen PV-Ertrag (PVGIS), verlinkt die eHORA-Karten für Schneelast, Wind, Hagel und Erdbeben und bewertet die Schneelast nach ÖNORM B 1991-1-3 gegen die Prüflasten von PV-Modulen.",
+        "Ermittelt für einen Standort in Österreich Seehöhe, spezifischen PV-Ertrag (PVGIS) und einen Schneelast-Richtwert aus offenen GeoSphere-Daten (SNOWGRID-CL, eigene Auswertung), verlinkt die eHORA-Karten für Schneelast, Wind, Hagel und Erdbeben und bewertet die Schneelast nach ÖNORM B 1991-1-3 gegen die Prüflasten von PV-Modulen.",
       applicationCategory: "UtilitiesApplication",
       operatingSystem: "Web",
       browserRequirements: "Requires JavaScript",
@@ -104,7 +110,8 @@ const schema = {
       isAccessibleForFree: true,
       featureList: [
         "Adresssuche und Kartenauswahl in Österreich",
-        "Direktlink auf die eHORA-Schneelastkarte am Standort",
+        "Schneelast-Richtwert aus GeoSphere-Daten (SNOWGRID-CL, 1-km-Raster, 50-jährlich)",
+        "Direktlink auf die eHORA-Schneelastkarte am Standort (Normwert)",
         "Dachschneelast s = μ1 · Ce · Ct · sk",
         "Vergleich mit Modul-Prüflasten 2400, 5400 und 8100 Pa",
         "Kraft auf den Schneefang",
@@ -112,6 +119,14 @@ const schema = {
         "Hagelwiderstandsklasse",
         "Spezifischer Ertrag mit PVGIS",
       ],
+      isBasedOn: {
+        "@type": "Dataset",
+        name: "SNOWGRID Klima v2.1 (SNOWGRID-CL), 1 km, täglich",
+        url: "https://data.hub.geosphere.at/dataset/snowgrid_cl-v2-1d-1km",
+        identifier: "https://doi.org/10.60669/fsxx-6977",
+        license: "https://creativecommons.org/licenses/by/4.0/",
+        creator: { "@type": "Organization", name: "GeoSphere Austria", url: "https://www.geosphere.at/" },
+      },
       offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
       publisher: { "@id": `${BASE_URL}/#organization` },
     },
@@ -209,7 +224,7 @@ export default function StandortCheckPage() {
             Standort-Check Photovoltaik: <span className="ov-text-gradient-light">Schneelast, Wind, Hagel & Ertrag</span>
           </>
         }
-        lead="Für jede Adresse in Österreich: Seehöhe und Solarertrag automatisch, die Normwerte aus eHORA per Direktlink – und eine klare Bewertung, welche Module, welche Unterkonstruktion und welcher Schneefang zu Ihrem Dach passen."
+        lead="Für jede Adresse in Österreich: Seehöhe, Solarertrag und ein Schneelast-Richtwert automatisch, die Normwerte aus eHORA per Direktlink – und eine klare Bewertung, welche Module, welche Unterkonstruktion und welcher Schneefang zu Ihrem Dach passen."
         image={{ src: "/Images/AT/loesungen-b/standort-berghuette-pv.jpg", alt: "Berghütte mit Photovoltaikmodulen an der Fassade in verschneiter Alpenlandschaft", position: "60% 60%" }}
         points={["Kostenlos & ohne Anmeldung", "ÖNORM B 1991-1-3:2022", "Ertrag mit PVGIS"]}
         className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-40"
@@ -231,15 +246,15 @@ export default function StandortCheckPage() {
         <Steps
           cols={3}
           items={[
-            { icon: MapPin, title: "Standort wählen", text: "Adresse suchen oder das Dach im Orthofoto anklicken. Wir ermitteln die Seehöhe (EU-DEM 25 m) und rechnen den Ertrag mit PVGIS – optimal und für Ihre Dachneigung." },
-            { icon: Mountain, title: "eHORA-Werte übernehmen", text: "Der Link öffnet die HORA-Karte am Punkt samt Info-Fenster. Dort stehen die Schneelast sₖ, die Basiswindgeschwindigkeit und die Hagelkorngröße." },
+            { icon: MapPin, title: "Standort wählen", text: "Adresse suchen oder das Dach im Orthofoto anklicken. Wir ermitteln die Seehöhe (EU-DEM 25 m), rechnen den Ertrag mit PVGIS und setzen einen Schneelast-Richtwert aus GeoSphere-Daten ein." },
+            { icon: Mountain, title: "Normwerte aus eHORA ergänzen", text: "Der Richtwert ist eine Orientierung. Für den Normwert öffnet der Link die HORA-Karte am Punkt samt Info-Fenster – dort stehen die Schneelast sₖ, die Basiswindgeschwindigkeit und die Hagelkorngröße." },
             { icon: Snowflake, title: "Bewertung lesen", text: "Dachschneelast, Last je Modul und Auslastung von Modulen mit 2400, 5400 und 8100 Pa Prüflast – dazu Empfehlungen für Unterkonstruktion und Schneefang." },
           ]}
         />
         <FotoBento
           className="mt-16 md:mt-20"
           items={[
-            { bild: "/Images/AT/chalets/chalets-schneelast-luftbild.jpg", alt: "Luftbild tief verschneiter Chalets mit hohen Schneedecken auf den Dächern", tag: "Schnee", titel: "Schneelast je Grundstück", text: "Seit 2022 gilt eine Karte im 50-m-Raster statt Schneelastzonen – der Wert für Ihre Adresse steht in eHORA.", href: "#schneelast" },
+            { bild: "/Images/AT/chalets/chalets-schneelast-luftbild.jpg", alt: "Luftbild tief verschneiter Chalets mit hohen Schneedecken auf den Dächern", tag: "Schnee", titel: "Schneelast je Grundstück", text: "Seit 2022 gilt eine Karte im 50-m-Raster statt Schneelastzonen – den Normwert zeigt eHORA, einen Richtwert rechnet der Check automatisch.", href: "#schneelast" },
             { bild: "/Images/AT/loesungen-b/standort-schneedach-pv.jpg", alt: "Schneebedecktes Hausdach mit Photovoltaikmodulen bei starkem Schneefall", titel: "Module & Unterkonstruktion", text: "Prüflast laut Datenblatt geteilt durch 1,5 – verglichen mit der Last je Modulfläche." },
             { bild: "/Images/AT/loesungen/tourismus-seilbahn-pv-fassade.jpg", alt: "Bergstation einer Seilbahn mit Photovoltaik-Fassade", titel: "Wind & Hagel", text: "Basisgeschwindigkeitsdruck nach ÖNORM B 1991-1-4 und Hagelwiderstandsklasse HW 1–5.", href: "#fachwissen" },
           ]}
@@ -300,7 +315,8 @@ export default function StandortCheckPage() {
                     </p>
                     <p>
                       HORA weist ausdrücklich darauf hin, dass die Karten Informationsmaterial und keine amtliche Auskunft sind. Verbindliche Auskünfte erteilt die Baubehörde, meist die Gemeinde. Das automatisierte Herunterladen von
-                      HORA-Daten ist untersagt – deshalb verlinkt unser Check die Karte, statt sie im Hintergrund abzufragen.
+                      HORA-Daten ist untersagt – deshalb verlinkt unser Check die Karte, statt sie im Hintergrund abzufragen. Den automatischen Richtwert berechnen wir
+                      stattdessen selbst aus offenen Schneedaten von GeoSphere Austria (SNOWGRID-CL, CC BY 4.0); er ersetzt den Normwert aus HORA nicht.
                     </p>
                   </div>
                 </div>
@@ -356,7 +372,8 @@ export default function StandortCheckPage() {
                     ))}
                   </ul>
                   <p className="mt-5 text-[12.5px] leading-relaxed text-ink-500">
-                    Kartendarstellung: Datenquelle basemap.at (CC BY 4.0). Adresssuche: © OpenStreetMap-Mitwirkende (ODbL). Ertrag: PVGIS © Europäische Union. Seehöhe: EU-DEM v1.1, Copernicus Land Monitoring Service.
+                    Kartendarstellung: Datenquelle basemap.at (CC BY 4.0). Adresssuche: © OpenStreetMap-Mitwirkende (ODbL). Ertrag: PVGIS © Europäische Union. Seehöhe: EU-DEM v1.1, Copernicus Land Monitoring Service. Schneelast-Richtwert: Datenbasis GeoSphere Austria, SNOWGRID-CL v2.1 (CC BY 4.0), eigene Auswertung
+                    (Winterhöchstwerte 1961–2026, GEV, 50-jährlich).
                     HORA-Inhalte © BMLUK – keine amtliche Auskunft.
                   </p>
                 </div>

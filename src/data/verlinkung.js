@@ -285,6 +285,12 @@ export const QUERVERWEISE = {
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "Netzentgelte senken, Strom gemeinsam nutzen." },
     { href: "/service/finanzierung", titel: "Finanzierung & Leasing", text: "Den Eigenanteil clever finanzieren." },
   ],
+  "/forderungen/eag-foerdercall": [
+    { href: "/forderungen/bundesfoerderung", titel: "Bundesförderung (EAG & KPC)", text: "Alle Kategorien, Zuschläge und die Marktprämie." },
+    { href: "/forderungen/baurecht", titel: "Baurecht für PV-Anlagen", text: "Welche Anzeige oder Bewilligung vor dem Antrag vorliegen muss." },
+    { href: "/rechner/stromspeicher", titel: "Stromspeicher-Rechner", text: "Die passende Speichergröße zur geförderten PV-Anlage." },
+    { href: "/service/finanzierung", titel: "Finanzierung & Leasing", text: "Den Eigenanteil nach dem Zuschuss finanzieren." },
+  ],
   "/forderungen/steuerlich": [
     { href: "/ratgeber/investitionsfreibetrag-photovoltaik", titel: "Investitionsfreibetrag für PV", text: "22 % Öko-IFB bis Ende 2026." },
     { href: "/ratgeber/photovoltaik-steuern", titel: "Photovoltaik & Steuern", text: "Unternehmen, Land- und Forstwirtschaft, Privat." },

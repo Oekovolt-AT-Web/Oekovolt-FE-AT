@@ -9,6 +9,7 @@ import { cn } from "@/components/ui/cn";
 import { TERMIN_ARTEN, oeffnungsStatus } from "@/data/erreichbarkeit";
 import useFokusFalle from "@/components/ui/useFokusFalle";
 import RueckrufFormular from "./RueckrufFormular";
+import { ereignis } from "@/lib/statistik";
 
 import { RUECKRUF_EVENT } from "./oeffnen";
 
@@ -38,8 +39,10 @@ export default function RueckrufWidget() {
   // Öffnen per Event (MobileCta, Buttons auf Seiten)
   useEffect(() => {
     const oeffnen = (e) => {
-      setTab(e.detail?.tab === "termin" ? "termin" : "rueckruf");
+      const neu = e.detail?.tab === "termin" ? "termin" : "rueckruf";
+      setTab(neu);
       setOffen(true);
+      ereignis("rueckruf_geoeffnet", { tab: neu, ausloeser: "seite" });
     };
     window.addEventListener(RUECKRUF_EVENT, oeffnen);
     return () => window.removeEventListener(RUECKRUF_EVENT, oeffnen);
@@ -99,7 +102,7 @@ export default function RueckrufWidget() {
           <button
             ref={ausloeser}
             type="button"
-            onClick={() => (offen ? schliessen() : (setTab("rueckruf"), setOffen(true)))}
+            onClick={() => (offen ? schliessen() : (setTab("rueckruf"), setOffen(true), ereignis("rueckruf_geoeffnet", { tab: "rueckruf", ausloeser: "launcher" })))}
             aria-expanded={offen}
             aria-controls="ov-rueckruf-panel"
             aria-label={offen ? "Rückruf-Fenster schließen" : "Kostenlosen Rückruf anfordern"}

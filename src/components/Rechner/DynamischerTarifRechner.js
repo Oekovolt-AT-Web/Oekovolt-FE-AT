@@ -10,6 +10,7 @@ import { MobilKurz } from "./StromspeicherRechner";
 import { rechneDynamisch, wienTag, PROFILE } from "@/lib/rechner/dynamischerTarif";
 import { fmt, fmtEur } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const FARBE = { linie: "#1f5aa1", guenstig: "#669933", teuer: "#f5a70f", fest: "#151a24", raster: "#eef0f4", last: "#b2cbe9", lastVerschoben: "#669933" };
 const ct = (v, s = 1) => `${fmt(v, s)} ct`;
@@ -74,6 +75,7 @@ export default function DynamischerTarifRechner({ start, annahmen }) {
   const href = angebotUrl({ verbrauch: haushalt, wallbox: profilId === "eauto", waermepumpe: profilId === "wp" });
   const guenstiger = r ? r.dynamischMit < r.fest : false;
   const tageLabel = tag === heute ? "heute" : "morgen";
+  useRechnerErgebnis("dynamisch", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

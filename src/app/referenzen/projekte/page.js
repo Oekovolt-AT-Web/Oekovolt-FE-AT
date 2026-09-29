@@ -24,16 +24,8 @@ import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProjektPortfolio from "@/components/Project/ProjektPortfolio";
 import ReferenzStatistik from "@/components/Project/ReferenzStatistik";
-import {
-  fmtKwp,
-  kennzahlen,
-  normalisiereApiProjekt,
-} from "@/components/Project/projektDaten";
-import {
-  API_BASE_URL,
-  getApiHeaders,
-  isApiConfigured,
-} from "@/lib/apiBaseUrl";
+import { fmtKwp, kennzahlen } from "@/components/Project/projektDaten";
+import { ladeProjekte } from "@/components/Project/ladeProjekte";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -41,47 +33,15 @@ import { ReferenzNamenBand, ReferenzWand } from "@/components/Project/ReferenzNa
 import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import { KERNFAKTEN, REFERENZ_UNTERNEHMEN } from "@/data/hero";
 
-// Projekte aus der API (oekovolt_app). Seitentexte sind statisch: Die frühere
-// Backoffice-Seite (primary_page) lieferte Texte der deutschen Website.
-const PROJECTS_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
+// Projekte aus der API (oekovolt_app), sonst aus src/data/projekte.js (ladeProjekte).
+// Seitentexte sind statisch: Die frühere Backoffice-Seite (primary_page) lieferte Texte
+// der deutschen Website.
 const PFAD = "/referenzen/projekte";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 
 const TITLE = "Photovoltaik-Projekte in Österreich | Ökovolt";
 const DESCRIPTION =
   "Referenzen von Ökovolt: Photovoltaikanlagen für Gewerbe, Landwirtschaft, Gemeinden und Privat in Österreich – mit Leistung, Dachart und Ort je Projekt.";
-
-async function fetchProjectsList() {
-  if (!isApiConfigured()) return [];
-
-  try {
-    const response = await fetch(PROJECTS_API, {
-      method: "GET",
-      headers: getApiHeaders(),
-      next: { revalidate: 600 },
-    });
-
-    if (!response.ok) {
-      console.error(
-        `Projects API returned ${response.status}:`,
-        await response.text(),
-      );
-      return [];
-    }
-
-    const data = await response.json();
-
-    const msg = data?.message;
-    const liste = Array.isArray(msg)
-      ? msg
-      : (msg?.projekte ?? msg?.projects ?? msg?.data);
-
-    return Array.isArray(liste) ? liste : [];
-  } catch (error) {
-    console.error("Error fetching projects list:", error);
-    return [];
-  }
-}
 
 export const metadata = {
   title: TITLE,
@@ -183,9 +143,7 @@ function faqFuer(k) {
 }
 
 export default async function ProjektePage() {
-  const projectsList = await fetchProjectsList();
-
-  const projekte = projectsList.map(normalisiereApiProjekt).filter((p) => p.slug);
+  const projekte = await ladeProjekte();
 
   const k = kennzahlen(projekte);
 

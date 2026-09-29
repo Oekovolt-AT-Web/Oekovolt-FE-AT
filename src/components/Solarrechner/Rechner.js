@@ -32,6 +32,7 @@ import { KONTAKT } from "@/data/navigation";
 import CashflowChart from "./CashflowChart";
 import ErgebnisTeilen from "./ErgebnisTeilen";
 import useAnimierteZahl from "./useAnimierteZahl";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const zahl = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 const eur = (n) => `${n < 0 ? "−" : ""}${zahl(Math.abs(Math.round(n)))} €`;
@@ -257,6 +258,7 @@ export default function Solarrechner({ className = "", start = STANDARD }) {
     speicher: String(speicher),
     ...(betrieb ? { zielgruppe } : {}),
   }).toString()}`;
+  useRechnerErgebnis("solarrechner", r);
 
   return (
     <div className={`@container/karte overflow-hidden rounded-[2rem] bg-white text-ink-900 shadow-[0_40px_80px_-30px_rgba(0,20,50,0.55)] ring-1 ring-ink-200/60 ${className}`}>

@@ -3,16 +3,21 @@
 // Standort-Check (/standort-check): Adresssuche, Seehöhe und PV-Ertrag für einen Punkt in
 // Österreich. Alle externen Dienste werden serverseitig mit Timeout, Cache und Drosselung
 // abgefragt (Details und Nutzungsbedingungen in src/lib/standort/dienste.js).
-// Schneelast, Wind und Hagel kommen NICHT von hier: HORA untersagt das automatisierte
-// Abrufen seiner Daten – der Nutzer übernimmt die Werte aus eHORA (Direktlink mit Koordinaten).
+// HORA/eHORA wird weiterhin NICHT abgefragt: HORA untersagt das automatisierte Abrufen seiner
+// Daten. Die Normwerte für Schneelast, Wind und Hagel übernimmt der Nutzer aus eHORA (Direktlink
+// mit Koordinaten). Zusätzlich liefern wir einen Schneelast-RICHTWERT aus eigener Auswertung
+// offener GeoSphere-Daten (SNOWGRID-CL, CC BY 4.0) – aus einer lokalen Rasterdatei, ohne
+// externen Abruf (src/lib/standort/schneelastRaster.js). Er ersetzt den eHORA-Normwert nicht.
 //
 // GET /api/standort?q=<Adresse>                                  → { treffer: [...] }
 // GET /api/standort?lat=..&lon=..&neigung=..&azimut=..&montage=..  → Standortdaten + Ertrag
+//     + schneelastRichtwert ({ sk, quelle, zeitraum, methode, stand, … } oder null)
 //     optional: nur=ertrag (nur PVGIS für die gewählte Ausrichtung)
 
 import { NextResponse } from "next/server";
 import { ipAdresse } from "@/lib/ipAdresse";
 import { horaLinks } from "@/lib/standort/hora";
+import { skRichtwert } from "@/lib/standort/schneelastRaster";
 import { inOesterreichRahmen, ortZuKoordinate, pvgisErtrag, seehoehe, sucheAdresse } from "@/lib/standort/dienste";
 
 export const dynamic = "force-dynamic";
@@ -103,10 +108,23 @@ export async function GET(request) {
     if (Number.isFinite(pvgisHoehe)) hoeheWert = { m: pvgisHoehe, quelle: "Geländemodell von PVGIS (JRC)" };
   }
 
+  // Nur lokale Datei, kein externer Abruf; fehlt sie, bleibt der Wert null.
+  // Über 2.000 m kein Richtwert: Laut Schneelast.Reform-Endbericht ist die Modellierung erst bis
+  // 2.000 m verlässlich, darüber stehen im 1-km-Raster Hochgebirgswerte, die für Dächer nichts aussagen.
+  let schneelastRichtwert = null;
+  if (!nurErtrag && !(hoeheWert?.m > 2000)) {
+    try {
+      schneelastRichtwert = skRichtwert(lat, lon);
+    } catch (e) {
+      console.error("Standort-Check: Schneelast-Richtwert fehlgeschlagen", e?.message);
+    }
+  }
+
   return antwort(
     {
       lage: { lat, lon, adresse: ortWert?.label || null },
       seehoehe: hoeheWert,
+      schneelastRichtwert,
       ertrag: {
         optimal: optimalWert,
         gewaehlt: gewaehltWert,

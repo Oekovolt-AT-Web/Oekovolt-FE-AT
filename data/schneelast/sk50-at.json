@@ -1,0 +1,15 @@
+{
+ "nx": 584,
+ "ny": 329,
+ "x0": 112500,
+ "y0": 258500,
+ "dx": 1000,
+ "crs": "EPSG:3416",
+ "skala": 100,
+ "leer": 65535,
+ "quelle": "GeoSphere Austria, SNOWGRID-CL v2.1 (CC BY 4.0)",
+ "zeitraum": "Winter 1961/62–2025/26",
+ "methode": "GEV (L-Momente), 50-jährlich",
+ "kalibrierung": 1.0,
+ "stand": "2026-09-30"
+}

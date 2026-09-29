@@ -41,6 +41,7 @@ import {
   vorsteuerEPkw,
 } from "@/lib/rechner/eflotte";
 import { fmt, fmtEur } from "@/lib/rechner/annahmen";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const KLASSEN_ICON = { pkw: CarFront, transporter: Truck, lkw: Truck };
 const PRESET_ICON = { handwerk: Wrench, vertrieb: Gauge, logistik: Truck, pflege: HandHeart, gemeinde: Building2 };
@@ -77,6 +78,7 @@ export default function FlotteRechner() {
     fv: String(Math.round((depotKwh / Math.max(1, depotKm)) * 100) || 20),
     pv: String(e.pv ? e.kwp : 0),
   }).toString()}`;
+  useRechnerErgebnis("e-flotte", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

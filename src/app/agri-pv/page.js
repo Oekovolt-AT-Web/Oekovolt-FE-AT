@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "Welche Förderung gibt es für Agri-PV in Österreich?",
-    a: "Agri-PV-Anlagen, die die Anforderungen nach § 6 Abs. 3 der EAG-Investitionszuschüsseverordnung erfüllen, gelten als innovative Anlagen: Sie erhalten einen Zuschlag von 30 % auf den Investitionszuschuss, und der Abschlag für landwirtschaftliche Flächen entfällt. Gefördert werden Anlagen bis 1.000 kWp; größere Anlagen können an den Ausschreibungen für die Marktprämie teilnehmen.",
+    a: "Agri-PV-Anlagen, die die Anforderungen nach § 6 Abs. 3 der EAG-Investitionszuschüsseverordnung erfüllen, gelten als innovative Anlagen: Sie erhalten einen Zuschlag von 30 % auf den Investitionszuschuss, und der Abschlag für landwirtschaftliche Flächen entfällt. Gefördert wird bis 1.000 kWp – größere Anlagen anteilig bis 1.000 kWp – oder alternativ über die Ausschreibungen für die Marktprämie.",
   },
   {
     q: "Welche technischen Voraussetzungen gelten für den Förderzuschlag?",
@@ -175,8 +175,8 @@ export default async function AgriPvPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftbild einer Agri-PV-Anlage mit vertikalen bifazialen Modulreihen auf Grünland" }}
         actions={[
-          { label: v.cta, href: "/termin?art=vor-ort" },
-          { label: "Per Video beraten lassen", href: "/termin?art=video", icon: ClipboardList },
+          { label: v.cta, href: "/termin?art=vor-ort&thema=freiflaeche" },
+          { label: "Per Video beraten lassen", href: "/termin?art=video&thema=freiflaeche", icon: ClipboardList },
         ]}
         points={["30 % Förderzuschlag nach EAG-IZV", "Vertikal, hoch aufgeständert, nachgeführt", "Nutzungskonzept & Widmung", "Netzanschluss & Parkregler"]}
       />
@@ -217,7 +217,7 @@ export default async function AgriPvPage({ searchParams }) {
             umgekehrt. Wählen Sie ein Konzept.
           </p>
         </div>
-        <AgriKonzepte konzepte={KONZEPTE} link={{ label: "Fläche und Konzept besprechen", href: "/termin?art=vor-ort" }} />
+        <AgriKonzepte konzepte={KONZEPTE} link={{ label: "Fläche und Konzept besprechen", href: "/termin?art=vor-ort&thema=freiflaeche" }} />
       </Section>
 
       <Section tone="white" space="md" id="forschung">
@@ -399,8 +399,8 @@ export default async function AgriPvPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Wir kommen aufs Feld – und sagen Ihnen ehrlich, was geht."
         text="Erstbewertung vor Ort oder per Video: Kultur, Konzept, Widmung, Netzanschluss und Förderung mit Agri-PV-Zuschlag."
-        primary={{ label: v.cta, href: "/termin?art=vor-ort" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=vor-ort&thema=freiflaeche" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=agri", icon: Cog }}
       />
 
       <Bildnachweis items={nachweise("aasen", "foulum", "kressbronn", "schafe", "hagelnetz", "heggelbach", "tracker", "leitwarte")} />

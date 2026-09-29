@@ -155,7 +155,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Berghotel mit Schindeldächern vor verschneiten Gipfeln im Abendrot", position: "60% 60%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
+          { label: v.cta, href: "/termin?art=video&thema=gewerbe" },
           { label: "Schneelast & Standort prüfen", href: "/standort-check", icon: Mountain },
         ]}
         points={["Hotel, Therme, Bergbahn", "Alpine Schneelast & Winterertrag", "Gäste-Laden & Carport", "Geschichte für Ihr Marketing"]}
@@ -216,7 +216,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
               { title: "Carport", text: "Gästeparkplatz als Kraftwerk und Ladepark zugleich." },
               { title: "Speicher", text: "Abendspitze in Küche und Wellness abfedern, Notstrom für kritische Verbraucher." },
             ]}
-            action={{ label: "Hotel bewerten lassen", href: "/termin?art=video" }}
+            action={{ label: "Hotel bewerten lassen", href: "/termin?art=video&thema=gewerbe" }}
           />
           <Kapitel
             delay={120}
@@ -373,8 +373,8 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Planen wir Ihre Anlage für die nächste Zwischensaison."
         text="Erstgespräch per Video oder vor Ort – mit Einschätzung zu Flächen, Schneelast, Eigenverbrauch, Förderung und Ladepunkten für Gäste."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=gewerbe" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=hotellerie", icon: Cog }}
       />
 
       <Bildnachweis

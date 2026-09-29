@@ -8,6 +8,7 @@ import { cn } from "@/components/ui/cn";
 import { THEMEN, berlin, hhmm, oeffnungsStatus, slotsFuerArt, telefonNormalisieren } from "@/data/erreichbarkeit";
 import KalenderLinks from "./KalenderLinks";
 import { ereignis } from "@/lib/statistik";
+import { herkunft } from "@/lib/herkunft";
 import { tageAusApi } from "@/lib/terminSlots";
 
 // Gleiche Terminart wie auf /termin („Telefon“) – so zeigen beide dieselben belegten Zeiten
@@ -121,6 +122,8 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           einwilligung: einwilligung ? 1 : 0,
           quelle: typeof window !== "undefined" ? window.location.pathname : "",
           website: website.current?.value || "",
+          // Kampagnen-Zuordnung – /api/rueckruf hängt sie als Textzeile an `nachricht` an (kein eigenes Frappe-Feld)
+          herkunft: herkunft(),
         }),
       });
       const d = await r.json().catch(() => ({}));
@@ -355,7 +358,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           Worum geht es? <span className={cn("font-normal", t.leise)}>(optional)</span>
         </legend>
         <div className="flex flex-wrap gap-1.5">
-          {THEMEN.slice(0, 6).map((x) => (
+          {THEMEN.map((x) => (
             <button
               key={x}
               type="button"

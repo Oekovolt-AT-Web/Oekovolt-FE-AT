@@ -6,6 +6,7 @@ import { sitemapLanguages } from "@/lib/hreflang";
 import { alleArtikel, artikelPfad } from "@/lib/ratgeber";
 import { STELLEN, STELLEN_DATUM } from "@/data/stellen";
 import { normalisiereApiProjekt } from "@/components/Project/projektDaten";
+import { PROJEKTE } from "@/data/projekte";
 import { REGIONEN } from "@/data/regionen";
 import { LAENDER_SLUGS, STAND as LAENDER_STAND } from "@/data/bundeslaender";
 import { istBelegterPartner } from "@/components/Produktdetail/HerstellerDetail";
@@ -103,6 +104,8 @@ const STATIC_PAGES = [
   { path: "/service/notstrom", changeFrequency: "monthly", priority: 0.8, lastModified: AT_START },
   { path: "/service/nachhaltigkeitsmarketing", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
   { path: "/forderungen/bundesfoerderung", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  // Landingpage 3. EAG-Fördercall 2026 (08.–22.10.2026), Countdown/Status ändern sich täglich
+  { path: "/forderungen/eag-foerdercall", changeFrequency: "daily", priority: 0.9, lastModified: new Date("2026-09-30") },
   { path: "/pv-award", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
   { path: "/sponsoring", changeFrequency: "monthly", priority: 0.5, lastModified: AT_START },
   { path: "/partner", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
@@ -159,7 +162,9 @@ async function fetchAllProjects() {
   const data = await authenticatedFetch(API_URL);
   const msg = data?.message;
   const liste = Array.isArray(msg) ? msg : msg?.projekte;
-  return (Array.isArray(liste) ? liste : []).map(normalisiereApiProjekt).filter((p) => p.slug);
+  // API, sonst statischer Stand src/data/projekte.js
+  const quelle = Array.isArray(liste) && liste.length ? liste : PROJEKTE;
+  return quelle.map(normalisiereApiProjekt).filter((p) => p.slug);
 }
 
 // Fetch stromspeicher manufacturers from the stromspeicher page API

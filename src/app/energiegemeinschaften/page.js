@@ -145,7 +145,7 @@ export default async function EnergiegemeinschaftenPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Mehrere Wohnhäuser mit Photovoltaikanlagen auf den Satteldächern vor blauem Himmel", position: "70% 40%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
+          { label: v.cta, href: "/termin?art=video&thema=energiegemeinschaft" },
           { label: "Anlage anfragen", href: "/angebot", icon: Sun },
         ]}
         points={["EEG, BEG, GEA & P2P", "Neue Regeln ab 1. Oktober 2026", "Nahbereich & Netzbetreiber geklärt", "Anlage, Messkonzept, Abrechnung"]}
@@ -379,7 +379,7 @@ export default async function EnergiegemeinschaftenPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Planen wir die Anlage für Ihre Energiegemeinschaft."
         text="Erstgespräch per Video: Modell, Nahbereich, Anlagengröße, Mitgliederstruktur und Abrechnung – für Gemeinden, Betriebe und Initiativen."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=energiegemeinschaft" }}
         secondary={{ label: "Ersparnis berechnen", href: "/rechner/energiegemeinschaft" }}
       />
 

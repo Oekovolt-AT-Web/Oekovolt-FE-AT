@@ -138,8 +138,8 @@ export default async function GewerbespeicherPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Helle Produktionshalle mit Maschinen und Lagerregalen", position: "center 60%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
-          { label: "Lastgang senden", href: "/angebot", icon: FileSpreadsheet },
+          { label: v.cta, href: "/termin?art=video&thema=speicher" },
+          { label: "Lastgang senden", href: "/angebot?objekt=gewerbe&speicher=1", icon: FileSpreadsheet },
         ]}
         points={["Leistungspreis nach österreichischer Mechanik", "Dimensionierung aus dem Lastgang", "Notstrom & Blackout-Vorsorge", "Brandschutz nach OVE R 20"]}
         className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
@@ -398,8 +398,8 @@ export default async function GewerbespeicherPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Senden Sie uns Ihren Lastgang – wir zeigen, was ein Speicher bringt."
         text="Wir werten Ihre Monatsspitzen aus und sagen Ihnen offen, ob sich ein Speicher lohnt – und in welcher Größe."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=speicher" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=gewerbe&speicher=1", icon: Cog }}
       />
 
       <Bildnachweis

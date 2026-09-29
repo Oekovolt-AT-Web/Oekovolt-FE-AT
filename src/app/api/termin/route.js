@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { ipAdresse } from "@/lib/ipAdresse";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
+import { herkunftAnNachricht } from "@/lib/herkunftServer";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.termin.buche_termin`;
 
@@ -16,7 +17,8 @@ export async function POST(request) {
   }
 
   try {
-    const body = await request.json();
+    // Herkunft (Kanal, UTM, Einstieg) als Textblock an `nachricht` – buche_termin kennt kein eigenes Feld dafür
+    const body = herkunftAnNachricht(await request.json());
 
     // Forward the data to the external API (no auth – guest-accessible method)
     const response = await fetch(API_URL, {

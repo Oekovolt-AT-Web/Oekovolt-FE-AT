@@ -135,8 +135,8 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "DC-Schnellladesäule mit drei Ladekabeln auf einem Parkplatz mit Ladeplätzen für Elektrofahrzeuge", position: "62% 50%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
-          { label: "Anfrage starten", href: "/angebot", icon: ClipboardList },
+          { label: v.cta, href: "/termin?art=video&thema=speicher" },
+          { label: "Anfrage starten", href: "/angebot?objekt=gewerbe&wallbox=1", icon: ClipboardList },
         ]}
         points={["AC & DC mit Lastmanagement", "PV-Überschussladen & Carport", "Eichrecht & AFIR-konform", "Sachbezug & Förderung geklärt"]}
         className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
@@ -361,8 +361,8 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Planen wir Ladepunkte, die zu Ihrem Netzanschluss passen."
         text="Erstgespräch per Video: Fahrprofile, Parkplätze, Anschlussleistung, PV-Überschuss, Abrechnung und Förderung."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=speicher" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=gewerbe&wallbox=1", icon: Cog }}
       />
 
       <Bildnachweis

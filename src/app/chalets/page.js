@@ -394,7 +394,7 @@ export default function ChaletsPage() {
         lead="Von der Indach-Integration bis zur Concierge-Wartung – sechs Bereiche, in denen wir Maßstäbe für Premium-Photovoltaik in Luxus-Immobilien setzen."
         bild={{ src: HERO_BILD, alt: "Beleuchtetes Chalet unter Sternenhimmel über einem Bergsee im Winter", position: "50% 70%" }}
         aktionen={[
-          { label: "Diskrete Beratung anfragen", href: "/termin?art=video" },
+          { label: "Diskrete Beratung anfragen", href: "/termin?art=video&thema=chalet" },
           { label: "Standort-Check", href: "/standort-check", icon: Mountain },
         ]}
         punkte={["Indach & Full-Black", "Schneelast nach ÖNORM B 1991-1-3", "Blackout-Speicher", "Concierge-Wartung"]}
@@ -543,7 +543,7 @@ export default function ChaletsPage() {
         eyebrow="Diskret & persönlich"
         title="Sprechen wir vertraulich über Ihr Chalet."
         text="Ein Gespräch per Video oder vor Ort – mit Ihnen, Ihrem Architekten oder Ihrer Hausverwaltung. Wir bringen eine erste Einschätzung zu Schneelast, Gestaltung, Speicher und Service mit."
-        primary={{ label: "Diskrete Beratung anfragen", href: "/termin?art=video" }}
+        primary={{ label: "Diskrete Beratung anfragen", href: "/termin?art=video&thema=chalet" }}
         secondary={{ label: "Standort-Check", href: "/standort-check", icon: Mountain }}
       />
 

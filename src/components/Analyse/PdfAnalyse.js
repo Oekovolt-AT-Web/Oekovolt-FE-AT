@@ -11,7 +11,7 @@ const FEHLER = {
   name: "Bitte geben Sie Ihren Namen an.",
   email: "Bitte eine gültige E-Mail-Adresse angeben.",
   telefon: "Bitte eine Telefonnummer angeben.",
-  plz: "Bitte eine gültige Postleitzahl angeben (5 Ziffern).",
+  plz: "Bitte eine gültige Postleitzahl angeben (4 Ziffern, z. B. 5121).",
   einwilligung: "Bitte stimmen Sie der Verarbeitung zu.",
   zu_viele: "Sie haben heute bereits mehrere Analysen erstellt. Wir melden uns gern persönlich.",
   pdf: "Das PDF konnte gerade nicht erstellt werden. Bitte versuchen Sie es erneut.",
@@ -68,7 +68,7 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
     if (werte.name.trim().length < 2) return setFehler(FEHLER.name);
     if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(werte.email.trim())) return setFehler(FEHLER.email);
     if (werte.telefon.replace(/\D/g, "").length < 6) return setFehler(FEHLER.telefon);
-    if (!/^\d{5}$/.test(werte.plz.trim())) return setFehler(FEHLER.plz);
+    if (!/^\d{4,5}$/.test(werte.plz.trim())) return setFehler(FEHLER.plz);
     if (!einwilligung) return setFehler(FEHLER.einwilligung);
 
     setFehler("");

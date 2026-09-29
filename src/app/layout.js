@@ -1,4 +1,5 @@
 import GoogleAnalytics from "@/components/Statistik/GoogleAnalytics";
+import Umami from "@/components/Statistik/Umami";
 import "./globals.css";
 import { Inter, Manrope } from "next/font/google";
 import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
@@ -239,6 +240,8 @@ export default function RootLayout({ children }) {
         />
         <LayoutWrapper>{children}</LayoutWrapper>
         <GoogleAnalytics />
+        {/* Cookielose Reichweitenmessung (selbst gehostet) – rendert nur, wenn UMAMI_SCRIPT_URL und UMAMI_WEBSITE_ID gesetzt sind */}
+        <Umami />
       </body>
     </html>
   );

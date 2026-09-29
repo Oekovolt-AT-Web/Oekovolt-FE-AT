@@ -74,7 +74,7 @@ const FAQ = [
   },
   {
     q: "Gibt es für Freiflächenanlagen eine Förderung?",
-    a: "Ja, aber mit Einschränkungen. Anlagen bis 1.000 kWp können den EAG-Investitionszuschuss beantragen, größere Anlagen an den Ausschreibungen für die Marktprämie teilnehmen (Höchstpreis 2026: 7,77 ct/kWh). Auf landwirtschaftlich genutzten Flächen oder im Grünland gilt jeweils ein Abschlag von 25 %; für Deponien, Altlasten, Bergbau- und Infrastrukturstandorte sowie bestimmte Agri-PV-Anlagen entfällt er.",
+    a: "Ja, aber mit Einschränkungen. Der EAG-Investitionszuschuss fördert bis 1.000 kWp, größere Anlagen anteilig bis 1.000 kWp; alternativ ist die Teilnahme an den Ausschreibungen für die Marktprämie möglich (Höchstpreis 2026: 7,77 ct/kWh). Auf landwirtschaftlich genutzten Flächen oder im Grünland gilt jeweils ein Abschlag von 25 %; für Deponien, Altlasten, Bergbau- und Infrastrukturstandorte sowie bestimmte Agri-PV-Anlagen entfällt er.",
   },
   {
     q: "Wie wird der Strom eines Solarparks vermarktet?",
@@ -134,7 +134,7 @@ export default async function FreiflaechePage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftbild eines Photovoltaik-Parks auf einem ehemaligen Kraftwerksgelände in Niederösterreich" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
+          { label: v.cta, href: "/termin?art=video&thema=freiflaeche" },
           { label: "Standort prüfen", href: "/standort-check", icon: MapPin },
         ]}
         points={["500 kWp bis in den MW-Bereich", "Netzebene 5 & 4, Umspannwerk", "Eigener Parkregler & SCADA", "PPA, Direktvermarktung, Betrieb"]}
@@ -290,7 +290,7 @@ export default async function FreiflaechePage({ searchParams }) {
                   der 25-%-Abschlag bei Investitionszuschuss und Marktprämie – das verbessert die Wirtschaftlichkeit spürbar.
                 </p>
               </Prosa>
-              <Link href="/termin?art=video" className="mt-6 inline-flex items-center gap-2 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">Fläche kostenlos bewerten</Link>
+              <Link href="/termin?art=video&thema=freiflaeche" className="mt-6 inline-flex items-center gap-2 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">Fläche kostenlos bewerten</Link>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">
               {[
@@ -441,8 +441,8 @@ export default async function FreiflaechePage({ searchParams }) {
         eyebrow="Fläche oder Projekt?"
         title="Lassen Sie uns Ihre Fläche ehrlich bewerten – bevor Sie sich binden."
         text="Erstgespräch per Video mit Einschätzung zu Widmungschancen, Netzanschluss, Vermarktung und Wirtschaftlichkeit."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
-        secondary={{ label: "Projekt anfragen", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=freiflaeche" }}
+        secondary={{ label: "Projekt anfragen", href: "/angebot?objekt=freiflaeche", icon: Cog }}
       />
 
       <Bildnachweis items={nachweise("duernrohr", "solarparkLuftbild", "widmungDornbirn", "spitalberg", "umspannwerk", "molln", "schafe")} />

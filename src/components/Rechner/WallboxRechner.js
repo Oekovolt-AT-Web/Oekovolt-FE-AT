@@ -8,6 +8,7 @@ import { MobilKurz } from "./StromspeicherRechner";
 import { rechneWallbox } from "@/lib/rechner/wallbox";
 import { ALLGEMEIN, WALLBOX as WB, fmt, fmtEur } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const SEGMENTE = {
   kraftstoff: { farbe: "#97a0b0", label: "Kraftstoff" },
@@ -44,6 +45,7 @@ export default function WallboxRechner() {
   const kLabel = WB.kraftstoffe[kraftstoff].label;
   const fahrzeug = WB.kraftstoffe[kraftstoff].fahrzeug;
   const href = angebotUrl({ wallbox: true });
+  useRechnerErgebnis("wallbox", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

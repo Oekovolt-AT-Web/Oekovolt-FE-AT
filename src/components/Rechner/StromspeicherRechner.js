@@ -8,6 +8,7 @@ import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Tooltip, Zahl, useBreite }
 import { speicherErgebnis, speicherKurve, speicherReihen } from "@/lib/rechner/stromspeicher";
 import { SPEICHER, fmt, fmtEur } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const FARBE = { autarkie: "#669933", eigen: "#4a7cbd", optimum: "#f5a70f", raster: "#eef0f4", text: "#97a0b0" };
 const pct = (v) => Math.round(v * 100);
@@ -39,6 +40,7 @@ export default function StromspeicherRechner() {
   const opt = kurve.optimum;
   const href = angebotUrl({ kwp, verbrauch, speicher, wallbox: eAuto, waermepumpe: wp });
   const plusAutarkie = pct(r.mit.autarkie) - pct(r.ohne.autarkie);
+  useRechnerErgebnis("stromspeicher", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

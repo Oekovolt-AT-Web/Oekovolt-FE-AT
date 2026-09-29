@@ -25,6 +25,7 @@ import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/Rechner/bausteine";
 import { fmt } from "@/lib/rechner/annahmen";
+import { ereignis } from "@/lib/statistik";
 import { horaLinks } from "@/lib/standort/hora";
 import {
   ALTFORMEL_MAX_SEEHOEHE,
@@ -145,9 +146,10 @@ export default function StandortCheck() {
   const [schneefang, setSchneefang] = useState(true);
   const [dachtiefe, setDachtiefe] = useState(6);
 
-  // Werte aus eHORA
+  // Schneelast und Werte aus eHORA
   const [skText, setSkText] = useState("");
-  const [skQuelle, setSkQuelle] = useState("hora"); // hora | altformel
+  // hora = selbst eingetragen (eHORA), richtwert = automatisch aus GeoSphere-Raster, altformel = Grobschätzung
+  const [skQuelle, setSkQuelle] = useState("hora");
   const [hoeheText, setHoeheText] = useState("");
   const [windText, setWindText] = useState("");
   const [hagel, setHagel] = useState("");
@@ -163,6 +165,25 @@ export default function StandortCheck() {
   const abbruch = useRef(null);
   const ertragAbbruch = useRef(null);
   const ersterLauf = useRef(true);
+  // Aktueller Stand des sₖ-Felds für die Vorbelegung nach dem Laden (ohne analysieren neu zu erzeugen)
+  const skRef = useRef({ skText: "", skQuelle: "hora" });
+
+  /**
+   * sₖ-Feld mit dem Richtwert des neuen Standorts vorbelegen – nur wenn das Feld leer ist oder
+   * bereits einen (älteren) Richtwert enthält. Eigene Eingaben werden nie überschrieben.
+   */
+  const richtwertVorbelegen = useCallback((richtwert) => {
+    const { skText: text, skQuelle: quelle } = skRef.current;
+    if (text.trim() !== "" && quelle !== "richtwert") return;
+    if (richtwert?.sk > 0) {
+      setSkText(fmt(richtwert.sk, 1));
+      setSkQuelle("richtwert");
+    } else if (quelle === "richtwert") {
+      // Richtwert des vorigen Standorts nicht stehen lassen
+      setSkText("");
+      setSkQuelle("hora");
+    }
+  }, []);
 
   const azimut = Number(ausrichtung);
 
@@ -192,15 +213,19 @@ export default function StandortCheck() {
         const json = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(json.error || "Die Standortdaten konnten nicht geladen werden.");
         setDaten(json);
+        richtwertVorbelegen(json.schneelastRichtwert);
+        // Nur grobe Angaben, keine Adresse oder Koordinaten
+        ereignis("standort_check_ergebnis", { richtwert: json.schneelastRichtwert?.sk > 0 ? "ja" : "nein" });
       } catch (e) {
         if (e.name === "AbortError") return;
         setDaten(null);
+        richtwertVorbelegen(null);
         setFehler(e.message || "Die Standortdaten konnten nicht geladen werden.");
       } finally {
         if (abbruch.current === ctrl) setLaedt(false);
       }
     },
-    []
+    [richtwertVorbelegen]
   );
 
   // Aktuelle Dachwerte und Daten für Effekte, ohne sie bei jeder Änderung neu auszulösen
@@ -209,6 +234,7 @@ export default function StandortCheck() {
   useEffect(() => {
     dachRef.current = { neigung, azimut, montage };
     datenRef.current = daten;
+    skRef.current = { skText, skQuelle };
   });
 
   useEffect(() => {
@@ -314,6 +340,8 @@ export default function StandortCheck() {
   const seehoeheEingabe = zahlAus(hoeheText);
   const seehoehe = seehoeheEingabe ?? seehoeheApi;
 
+  const richtwert = daten?.schneelastRichtwert?.sk > 0 ? daten.schneelastRichtwert : null;
+  const istRichtwert = skQuelle === "richtwert";
   const sk = zahlAus(skText);
   const skFehler = skText.trim() !== "" && (sk == null || sk <= 0 || sk > 20) ? "Bitte einen Wert zwischen 0,1 und 20 kN/m² eingeben (z. B. 2,6)." : "";
   const schnee = useMemo(
@@ -361,7 +389,7 @@ export default function StandortCheck() {
           {[
             { n: 1, l: "Standort", ok: !!punkt },
             { n: 2, l: "Dach", ok: !!punkt },
-            { n: 3, l: "eHORA-Werte", ok: zahlAus(skText) != null },
+            { n: 3, l: "Schneelast", ok: zahlAus(skText) != null },
           ].map((st) => (
             <li
               key={st.n}
@@ -470,8 +498,8 @@ export default function StandortCheck() {
               <ol className="mt-4 grid gap-3 sm:grid-cols-3">
                 {[
                   { icon: MapPin, t: <>Adresse suchen oder Dach in der Karte anklicken.</> },
-                  { icon: Sun, t: <>Wir laden Seehöhe und Solarertrag (PVGIS) und öffnen für Sie die passende eHORA-Karte.</> },
-                  { icon: Snowflake, t: <>Sie übernehmen die Schneelast s<sub>k</sub> aus eHORA – der Check bewertet Dach, Module, Unterkonstruktion und Schneefang.</> },
+                  { icon: Sun, t: <>Wir laden Seehöhe, Solarertrag (PVGIS) und einen Schneelast-Richtwert aus offenen GeoSphere-Daten – und verlinken die passende eHORA-Karte.</> },
+                  { icon: Snowflake, t: <>Der Check bewertet mit dem Richtwert oder Ihrem Normwert s<sub>k</sub> aus eHORA Dach, Module, Unterkonstruktion und Schneefang.</> },
                 ].map((st, i) => (
                   <li key={i} className="relative rounded-2xl bg-sand-50 p-5 ring-1 ring-ink-200/70">
                     <div className="flex items-center justify-between">
@@ -514,12 +542,22 @@ export default function StandortCheck() {
               <section aria-labelledby="hora-titel" className="rounded-3xl bg-navy-950 p-5 text-white md:p-7">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="max-w-xl">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">3 · Werte aus eHORA übernehmen</p>
+                    <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">3 · Schneelast & Werte aus eHORA</p>
                     <h2 id="hora-titel" className="mt-2 font-display text-[21px] font-extrabold leading-snug md:text-[24px]">
-                      Schneelast s<sub>k</sub> für genau diesen Punkt ablesen
+                      {richtwert ? (
+                        <>
+                          Schneelast-Richtwert automatisch – Normwert s<sub>k</sub> in eHORA
+                        </>
+                      ) : (
+                        <>
+                          Schneelast s<sub>k</sub> für genau diesen Punkt ablesen
+                        </>
+                      )}
                     </h2>
                     <p className="mt-2 text-[14.5px] leading-relaxed text-white/70">
-                      Die Schneelastkarte der ÖNORM B 1991-1-3:2022 liegt nur in HORA vor (Raster 50 × 50 m). Der Link öffnet die Karte an Ihrem Standort samt Info-Fenster – dort steht s<sub>k</sub> in kN/m².
+                      {richtwert
+                        ? "Den Richtwert berechnen wir aus offenen Schneedaten von GeoSphere Austria (1-km-Raster, 50-jährlicher Wert). Maßgeblich für Statik und Einreichung ist die Schneelastkarte der ÖNORM B 1991-1-3:2022 in HORA (Raster 50 × 50 m) – der Link öffnet sie an Ihrem Standort samt Info-Fenster. HORA selbst fragen wir nicht automatisch ab."
+                        : "Die Schneelastkarte der ÖNORM B 1991-1-3:2022 liegt nur in HORA vor (Raster 50 × 50 m). Der Link öffnet die Karte an Ihrem Standort samt Info-Fenster – dort steht sₖ in kN/m²."}
                     </p>
                   </div>
                   {links && <HoraKnopf href={links.schnee.href}>Schneelast in eHORA öffnen</HoraKnopf>}
@@ -534,9 +572,37 @@ export default function StandortCheck() {
                       setSkText(v);
                       setSkQuelle("hora");
                     }}
-                    placeholder="z. B. 2,6"
+                    placeholder={laedt && !skText ? "Richtwert wird geladen …" : "z. B. 2,6"}
                     fehler={skFehler}
-                    hinweis={skQuelle === "altformel" ? "Grobschätzung nach alter Zonenformel – bitte durch den eHORA-Wert ersetzen." : "Wert „sₖ“ aus dem eHORA-Info-Fenster (50-jährliches Ereignis)."}
+                    hinweis={
+                      istRichtwert ? (
+                        <>
+                          Richtwert aus GeoSphere-Daten (1-km-Raster) – für die Statik gilt der Normwert aus eHORA.
+                          {richtwert?.nachbarzelle ? " Grenzlage: Wert der benachbarten Rasterzelle." : ""}{" "}
+                          <span className="block pt-0.5 text-[11.5px] text-ink-400">Datenbasis: GeoSphere Austria, SNOWGRID-CL (CC BY 4.0), eigene Auswertung</span>
+                        </>
+                      ) : (
+                        <>
+                          {skQuelle === "altformel" ? "Grobschätzung nach alter Zonenformel – bitte durch den eHORA-Wert ersetzen." : "Wert „sₖ“ aus dem eHORA-Info-Fenster (50-jährliches Ereignis)."}
+                          {richtwert && (
+                            <>
+                              {" "}
+                              Richtwert GeoSphere: <span className="ov-num">{fmt(richtwert.sk, 1)} kN/m²</span> –{" "}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setSkText(fmt(richtwert.sk, 1));
+                                  setSkQuelle("richtwert");
+                                }}
+                                className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2"
+                              >
+                                übernehmen
+                              </button>
+                            </>
+                          )}
+                        </>
+                      )
+                    }
                   />
                   <ZahlFeld
                     label="Seehöhe"
@@ -594,48 +660,51 @@ export default function StandortCheck() {
                   </div>
                 </div>
 
-                <details className="group mt-4 rounded-2xl bg-white/[0.06] ring-1 ring-white/10">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[14px] font-semibold text-white/85 [&::-webkit-details-marker]:hidden">
-                    Kein eHORA-Wert zur Hand? Konservative Grobschätzung
-                    <span aria-hidden="true" className="text-white/50 transition-transform group-open:rotate-45">+</span>
-                  </summary>
-                  <div className="space-y-3 px-4 pb-4 text-[13.5px] leading-relaxed text-white/70">
-                    <p>
-                      Bis 2022 galt eine Zonenformel: s<sub>k</sub> = (0,642 · Z + 0,009) · [1 + (A/728)²] mit A = Seehöhe. Sie ist nicht mehr normgültig, war nur bis 1.500 m anwendbar und lag im Mittel über den heutigen Werten.
-                      Kennen Sie die alte Zone Ihres Standorts (z. B. aus früheren Einreichunterlagen), erhalten Sie damit eine vorsichtige erste Annahme – mehr nicht.
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <label htmlFor="alt-zone" className="font-semibold text-white">
-                        Alte Zone
-                      </label>
-                      <select id="alt-zone" value={altZone} onChange={(e) => setAltZone(e.target.value)} className="min-h-10 rounded-lg bg-white px-3 text-[14px] text-ink-900">
-                        <option value="">wählen</option>
-                        {ALTZONEN.map((z) => (
-                          <option key={z.id} value={z.id}>
-                            Zone {z.id} (Z = {fmt(z.z, 1)})
-                          </option>
-                        ))}
-                      </select>
-                      {altSk != null && (
-                        <>
-                          <span className="ov-num font-semibold text-white">≈ {fmt(altSk, 2)} kN/m²</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSkText(fmt(Math.ceil(altSk * 20) / 20, 2));
-                              setSkQuelle("altformel");
-                            }}
-                            className="rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white ring-1 ring-white/20 hover:bg-white/15"
-                          >
-                            als Annahme verwenden
-                          </button>
-                        </>
-                      )}
+                {/* Rückfall ohne Richtwert (Rasterdatei fehlt oder Punkt ohne Wert): alte Zonenformel */}
+                {!richtwert && !laedt && (
+                  <details className="group mt-4 rounded-2xl bg-white/[0.06] ring-1 ring-white/10">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[14px] font-semibold text-white/85 [&::-webkit-details-marker]:hidden">
+                      Kein eHORA-Wert zur Hand? Konservative Grobschätzung
+                      <span aria-hidden="true" className="text-white/50 transition-transform group-open:rotate-45">+</span>
+                    </summary>
+                    <div className="space-y-3 px-4 pb-4 text-[13.5px] leading-relaxed text-white/70">
+                      <p>
+                        Bis 2022 galt eine Zonenformel: s<sub>k</sub> = (0,642 · Z + 0,009) · [1 + (A/728)²] mit A = Seehöhe. Sie ist nicht mehr normgültig, war nur bis 1.500 m anwendbar und lag im Mittel über den heutigen Werten.
+                        Kennen Sie die alte Zone Ihres Standorts (z. B. aus früheren Einreichunterlagen), erhalten Sie damit eine vorsichtige erste Annahme – mehr nicht.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <label htmlFor="alt-zone" className="font-semibold text-white">
+                          Alte Zone
+                        </label>
+                        <select id="alt-zone" value={altZone} onChange={(e) => setAltZone(e.target.value)} className="min-h-10 rounded-lg bg-white px-3 text-[14px] text-ink-900">
+                          <option value="">wählen</option>
+                          {ALTZONEN.map((z) => (
+                            <option key={z.id} value={z.id}>
+                              Zone {z.id} (Z = {fmt(z.z, 1)})
+                            </option>
+                          ))}
+                        </select>
+                        {altSk != null && (
+                          <>
+                            <span className="ov-num font-semibold text-white">≈ {fmt(altSk, 2)} kN/m²</span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSkText(fmt(Math.ceil(altSk * 20) / 20, 2));
+                                setSkQuelle("altformel");
+                              }}
+                              className="rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white ring-1 ring-white/20 hover:bg-white/15"
+                            >
+                              als Annahme verwenden
+                            </button>
+                          </>
+                        )}
+                      </div>
+                      {altZone && seehoehe == null && <p>Für die Schätzung wird die Seehöhe benötigt.</p>}
+                      {altSk != null && seehoehe > ALTFORMEL_MAX_SEEHOEHE && <p className="text-sun-300">Achtung: Die alte Formel war nur bis 1.500 m anwendbar.</p>}
                     </div>
-                    {altZone && seehoehe == null && <p>Für die Schätzung wird die Seehöhe benötigt.</p>}
-                    {altSk != null && seehoehe > ALTFORMEL_MAX_SEEHOEHE && <p className="text-sun-300">Achtung: Die alte Formel war nur bis 1.500 m anwendbar.</p>}
-                  </div>
-                </details>
+                  </details>
+                )}
               </section>
 
               {/* ---------- Schnee-Ergebnis ---------- */}
@@ -644,18 +713,28 @@ export default function StandortCheck() {
                   <h2 id="schnee-titel" className="flex items-center gap-2 font-display text-[21px] font-extrabold tracking-tight text-ink-900 md:text-[24px]">
                     <Snowflake aria-hidden="true" className="h-5 w-5 text-navy-600" /> Schneelast auf Dach und Modul
                   </h2>
-                  {schnee && <span className="rounded-full bg-ink-100 px-3 py-1 text-[12.5px] font-semibold text-ink-600">{skQuelle === "altformel" ? "Annahme: alte Zonenformel" : "sₖ aus eHORA"}</span>}
+                  {schnee && (
+                    <span className={cn("rounded-full px-3 py-1 text-[12.5px] font-semibold", istRichtwert ? "bg-navy-50 text-navy-700 ring-1 ring-navy-200" : "bg-ink-100 text-ink-600")}>
+                      {skQuelle === "altformel" ? "Annahme: alte Zonenformel" : istRichtwert ? "Richtwert GeoSphere" : "sₖ aus eHORA"}
+                    </span>
+                  )}
                 </div>
 
                 {!schnee ? (
                   <p className="mt-3 rounded-2xl bg-sand-50 px-4 py-3.5 text-[14.5px] leading-relaxed text-ink-600 ring-1 ring-ink-200/70">
-                    Tragen Sie oben die Schneelast s<sub>k</sub> aus eHORA ein – dann berechnen wir die Dachschneelast, die Last je Modul und vergleichen sie mit den Prüflasten gängiger Module.
+                    {laedt && !skText ? (
+                      "Der Schneelast-Richtwert für diesen Standort wird geladen …"
+                    ) : (
+                      <>
+                        Tragen Sie oben die Schneelast s<sub>k</sub> aus eHORA ein – dann berechnen wir die Dachschneelast, die Last je Modul und vergleichen sie mit den Prüflasten gängiger Module.
+                      </>
+                    )}
                   </p>
                 ) : (
                   <>
                     <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-                      <Kennzahl icon={Mountain} label="sₖ am Boden" zusatz="charakteristisch, 50 Jahre">
-                        <Zahl wert={schnee.sk} stellen={2} suffix=" kN/m²" />
+                      <Kennzahl icon={Mountain} label="sₖ am Boden" zusatz={istRichtwert ? "Richtwert, 50-jährlich" : "charakteristisch, 50 Jahre"}>
+                        <Zahl wert={schnee.sk} stellen={istRichtwert ? 1 : 2} suffix=" kN/m²" />
                       </Kennzahl>
                       <Kennzahl icon={Snowflake} label="Dachschneelast s" zusatz={`μ₁ = ${fmt(schnee.mu1, 2)} · Cₑ = 1 · Cₜ = 1`}>
                         <Zahl wert={schnee.s} stellen={2} suffix=" kN/m²" />
@@ -667,6 +746,21 @@ export default function StandortCheck() {
                         <Zahl wert={schnee.bemessungPa} suffix=" Pa" />
                       </Kennzahl>
                     </div>
+
+                    {istRichtwert && (
+                      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+                        s<sub>k</sub> = Richtwert aus dem 1-km-Raster
+                        {richtwert?.zeitraum ? ` (${richtwert.zeitraum}, 50-jährlich)` : ""}. Datenbasis: GeoSphere Austria, SNOWGRID-CL (CC BY 4.0), eigene Auswertung. Für die Statik gilt der Normwert aus{" "}
+                        {links ? (
+                          <a href={links.schnee.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                            eHORA
+                          </a>
+                        ) : (
+                          "eHORA"
+                        )}
+                        .
+                      </p>
+                    )}
 
                     <div className="mt-5 rounded-3xl ring-1 ring-ink-200/70">
                       <div className="px-5 pt-5 md:px-6">

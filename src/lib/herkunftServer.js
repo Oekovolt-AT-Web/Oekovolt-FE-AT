@@ -35,8 +35,23 @@ export function herkunftZeile(h) {
     f.utm_source && `Quelle: ${f.utm_source}`,
     f.utm_medium && `Medium: ${f.utm_medium}`,
     f.utm_campaign && `Kampagne: ${f.utm_campaign}`,
+    f.utm_term && `Keyword: ${f.utm_term}`,
     f.herkunft_referrer && `Verweis: ${f.herkunft_referrer}`,
     f.einstiegsseite && `Einstieg: ${f.einstiegsseite}`,
   ].filter(Boolean);
   return teile.length ? `[Herkunft] ${teile.join(" · ")}` : "";
+}
+
+/**
+ * Für Frappe-Methoden ohne eigene Herkunftsfelder (submit_angebot, buche_termin):
+ * entfernt das Rohobjekt `herkunft` aus dem Body (kein neues Top-Level-Feld an Frappe)
+ * und hängt die geprüfte Herkunftszeile als Textblock an `nachricht` an.
+ */
+export function herkunftAnNachricht(body) {
+  if (!body || typeof body !== "object") return body;
+  const { herkunft, ...rest } = body;
+  const zeile = herkunftZeile(herkunft);
+  if (!zeile) return rest;
+  const alt = typeof rest.nachricht === "string" ? rest.nachricht.trim() : "";
+  return { ...rest, nachricht: alt ? `${alt}\n\n—\n${zeile}` : zeile };
 }

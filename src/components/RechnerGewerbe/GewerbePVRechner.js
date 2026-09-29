@@ -13,6 +13,7 @@ import { VERGUETUNG } from "@/data/einspeiseverguetung";
 import { ANNAHMEN } from "@/data/solarrechner";
 import { DiagrammKarte, KumuliertDiagramm, Posten, PresetLeiste, StandortWahl, eur } from "./GewerbePVBausteine";
 import GewerbePVTagesprofil from "./GewerbePVTagesprofil";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const pct = (v) => Math.round(v * 100);
 const mwh = (kwh) => (kwh >= 10000 ? fmt(kwh / 1000) : fmt(kwh / 1000, 1));
@@ -112,9 +113,10 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   // Ergebnis-Anzeige folgt dem (zurückgestellten) Ergebnis, Eingaben dem Zustand
   const leasing = r.leasing != null;
   const leasingEingabe = finanzierung === "leasing";
-  const href = angebotUrl({ kwp, verbrauch, speicher: speicherAn ? speicher : 0 });
+  const href = angebotUrl({ objekt: "gewerbe", kwp, verbrauch, speicher: speicherAn ? speicher : 0 });
   const amortText = r.amortisation != null ? `${fmt(r.amortisation, 1).replace(",0", "")} J.` : "–";
   const irrAnzeige = r.irr == null ? "–" : r.irr < 0 ? "< 0 %" : null;
+  useRechnerErgebnis("gewerbe-pv", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

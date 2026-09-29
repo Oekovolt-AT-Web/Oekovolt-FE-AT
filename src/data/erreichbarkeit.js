@@ -81,6 +81,26 @@ export const TERMIN_ARTEN = [
 
 export const THEMEN = ["Gewerbe & Industrie", "Freifläche & Agri-PV", "Landwirtschaft", "Gemeinde & öffentliche Hand", "Speicher & Ladeinfrastruktur", "Service & Wartung", "Energiegemeinschaft", "Chalet & Privat", "Sonstiges"];
 
+// Kurzformen für Links (/termin?thema=gewerbe) – die Zielgruppenseiten geben so ihr Thema mit
+const THEMA_KURZ = {
+  gewerbe: "Gewerbe & Industrie",
+  freiflaeche: "Freifläche & Agri-PV",
+  landwirtschaft: "Landwirtschaft",
+  gemeinde: "Gemeinde & öffentliche Hand",
+  speicher: "Speicher & Ladeinfrastruktur",
+  service: "Service & Wartung",
+  energiegemeinschaft: "Energiegemeinschaft",
+  chalet: "Chalet & Privat",
+  sonstiges: "Sonstiges",
+};
+
+/** ?thema=… (Kurzform oder vollständige Bezeichnung) → Eintrag aus THEMEN oder "" */
+export function themaAusParam(wert) {
+  if (!wert) return "";
+  if (THEMEN.includes(wert)) return wert;
+  return THEMA_KURZ[String(wert).toLowerCase()] || "";
+}
+
 // Buchungsregeln
 export const TERMIN_REGELN = {
   raster: 30, // Minuten zwischen Slot-Starts

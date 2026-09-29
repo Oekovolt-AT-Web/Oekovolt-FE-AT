@@ -192,8 +192,8 @@ export default async function GewerbePage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video" },
-          { label: "Anfrage mit Lastgang", href: "/angebot", icon: FileSpreadsheet },
+          { label: v.cta, href: "/termin?art=video&thema=gewerbe" },
+          { label: "Anfrage mit Lastgang", href: "/angebot?objekt=gewerbe", icon: FileSpreadsheet },
         ]}
         points={["Auslegung nach Viertelstundenwerten", "Netzebene 7 bis 5 inkl. Parkregler", "Förderung, IFB & Netzzugang geklärt", "Wartung & Vermarktung aus einer Hand"]}
       />
@@ -498,8 +498,8 @@ export default async function GewerbePage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Schicken Sie uns Ihren Lastgang – wir zeigen, was Ihr Dach leisten kann."
         text="Erstgespräch per Video oder vor Ort, mit erster Einschätzung zu Anlagengröße, Netzebene, Eigenverbrauch, Förderung und Wirtschaftlichkeit."
-        primary={{ label: v.cta, href: "/termin?art=video" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot", icon: Cog }}
+        primary={{ label: v.cta, href: "/termin?art=video&thema=gewerbe" }}
+        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=gewerbe", icon: Cog }}
       />
 
       <Bildnachweis items={nachweise("flachdachDornbirn", "batteriecontainer", "carport", "weitendorf", "leitwarte")} />

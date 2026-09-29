@@ -30,6 +30,7 @@ import {
 
 import { berechne, empfohlenerSpeicher } from "@/lib/solarrechner";
 import { ereignis } from "@/lib/statistik";
+import { herkunft } from "@/lib/herkunft";
 import { submitAnfrage } from "@/lib/api/anfrage/create_anfrage";
 import { FIRMA } from "@/lib/site";
 
@@ -126,8 +127,21 @@ const zahl = (n) => Math.round(n).toLocaleString("de-DE");
 const eur = (n) => zahl(n) + " €";
 const rundeKwp = (k) => (k >= 100 ? Math.round(k / 10) * 10 : k >= 30 ? Math.round(k / 5) * 5 : Math.round(k * 2) / 2);
 
-/** EAG-Kategorie nach Engpassleistung (Stand 2026) */
-const eagKategorie = (kwp) => (kwp <= 10 ? "A (bis 10 kWp)" : kwp <= 20 ? "B (10–20 kWp)" : kwp <= 100 ? "C (20–100 kWp)" : "D (über 100 kWp)");
+/**
+ * EAG-Kategorie (Investitionszuschuss) nach Engpassleistung, Stand 2026.
+ * Größere Anlagen als 1.000 kWp werden anteilig bis 1.000 kWp gefördert
+ * (EAG-Abwicklungsstelle, FAQ 2026 Fragen 19 und 20); alternativ ist die Marktprämie möglich.
+ */
+const eagKategorie = (kwp) =>
+  kwp <= 10
+    ? "A (bis 10 kWp)"
+    : kwp <= 20
+      ? "B (10–20 kWp)"
+      : kwp <= 100
+        ? "C (20–100 kWp)"
+        : kwp <= 1000
+          ? "D (100–1.000 kWp)"
+          : "D – anteilig bis 1.000 kWp, alternativ Marktprämie";
 /** TOR-Erzeuger-Typ – Näherung über die kWp (maßgeblich ist die Wechselrichter-/Anschlussleistung) */
 const torTyp = (kwp) => (kwp < 250 ? "Typ A" : kwp < 35000 ? "Typ B" : "Typ C/D");
 
@@ -205,7 +219,8 @@ export default function Konfigurator() {
   }, [params]);
 
   const setze = (k, v) => {
-    setF((alt) => ({ ...alt, [k]: v }));
+    // Ändert jemand Verbrauch oder Fläche selbst, gilt der aus einem Rechner übernommene kWp-Wert nicht mehr
+    setF((alt) => ({ ...alt, [k]: v, ...(k === "verbrauch" || k === "flaeche" ? { kwpOverride: undefined } : {}) }));
     setFehler((e) => ({ ...e, [k]: undefined }));
   };
 
@@ -255,8 +270,11 @@ export default function Konfigurator() {
     const gesamt = f.verbrauch;
     const probe = berechne({ kwp: 100, ausrichtung: ausr, neigung, verbrauch: gesamt, speicherKwh: 0 });
     const spez = probe.spezifischerErtrag || 1000;
+    // Vorrang: eigene Wunschleistung > Wert aus einem Rechner (?kwp=) > Richtwert aus Verbrauch/Fläche
+    const override = f.kwpOverride > 0 ? f.kwpOverride : 0;
     let kwp;
     if (wunsch > 0) kwp = wunsch;
+    else if (override > 0) kwp = override;
     else if (f.dach === "Freifläche" && flaeche > 0) kwp = flaeche / dach.qm;
     else {
       kwp = (gesamt * 0.7) / spez;
@@ -274,7 +292,7 @@ export default function Konfigurator() {
       spezifischerErtrag: spez,
       deckung: gesamt > 0 ? jahresertrag / gesamt : 0,
       flaecheBedarf: kwp * dach.qm,
-      flaecheBegrenzt: flaeche > 0 && wunsch === 0 && f.dach !== "Freifläche" && kwp < rundeKwp((gesamt * 0.7) / spez),
+      flaecheBegrenzt: flaeche > 0 && wunsch === 0 && override === 0 && f.dach !== "Freifläche" && kwp < rundeKwp((gesamt * 0.7) / spez),
       eag: eagKategorie(kwp),
       tor: torTyp(kwp),
     };
@@ -336,6 +354,8 @@ export default function Konfigurator() {
     if (ziel > schritt && !pruefen(schritt)) return;
     setRichtung(ziel > schritt ? 1 : -1);
     setSchritt(ziel);
+    // Trichter-Messung: nur Vorwärtsschritte, ohne Eingabewerte
+    if (ziel > schritt) ereignis("konfigurator_schritt", { schritt: ziel + 1, name: SCHRITTE[ziel] });
     requestAnimationFrame(() => {
       const top = kopfRef.current?.getBoundingClientRect().top;
       if (top !== undefined && (top < 80 || top > window.innerHeight * 0.5)) {
@@ -361,6 +381,7 @@ export default function Konfigurator() {
       !istPrivat && `Lastgang (15-Minuten-Werte): ${label(LASTGANG, f.lastgang)}`,
       !istPrivat && `Netzebene: ${label(NETZEBENE, f.netzebene)}`,
       f.kwpWunsch && `Wunschleistung: ${f.kwpWunsch} kWp`,
+      !f.kwpWunsch && f.kwpOverride > 0 && `Leistung aus Online-Rechner übernommen: ${zahl(f.kwpOverride)} kWp`,
       `Richtwert Konfigurator: ${zahl(schaetzung.kwp)} kWp, ca. ${zahl(schaetzung.jahresertrag)} kWh/Jahr`,
     ]
       .filter(Boolean)
@@ -387,6 +408,8 @@ export default function Konfigurator() {
       nachricht: angaben,
 
       website: website.current?.value || "",
+      // Kampagnen-Zuordnung – /api/create_anfrage hängt sie als Text an `nachricht` und `ergebnis.angaben` an
+      herkunft: herkunft(),
     };
 
     try {

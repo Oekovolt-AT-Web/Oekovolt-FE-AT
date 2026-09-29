@@ -134,7 +134,7 @@ export function normalisiereApiProjekt(p) {
     jahr: p?.jahr || basis.jahr,
     segment: p?.objekt || basis.segment,
     dacharten: p?.dach ? [p.dach] : basis.dacharten || [],
-    kwp: Number(p?.leistung) || basis.kwp || 0,
+    kwp: Number(p?.leistung) || basis.kwp || null,
     leistungText: p?.leistung_label || basis.leistungText,
     bild,
     bilder: bild ? [bild] : basis.bilder || [],
@@ -143,14 +143,14 @@ export function normalisiereApiProjekt(p) {
 }
 
 /**
- * Kennzahlen über eine Projektliste. Doppelt gepflegte Einträge (gleicher Ort,
+ * Kennzahlen über eine Projektliste. Doppelt gepflegte Einträge (gleicher Ort – ohne Ort gleicher Slug –,
  * gleiche Leistung, gleiches Jahr) zählen für die Leistungssumme nur einmal.
  */
 export function kennzahlen(projekte) {
   const eindeutig = new Map();
   for (const p of projekte) {
     if (p.kwp == null) continue;
-    eindeutig.set(`${p.ort}|${p.kwp}|${p.jahr}`, p);
+    eindeutig.set(`${p.ort || p.slug}|${p.kwp}|${p.jahr}`, p);
   }
   const summeKwp = [...eindeutig.values()].reduce((s, p) => s + p.kwp, 0);
   const jahre = projekte.map((p) => p.jahr).filter(Boolean);

@@ -2,11 +2,13 @@
 // Baut den Link "Angebot mit diesen Werten" für den Angebots-Konfigurator.
 
 /**
- * @param {object} w { kwp, verbrauch, speicher, wallbox, waermepumpe }
+ * @param {object} w { objekt, kwp, verbrauch, speicher, wallbox, waermepumpe }
+ *   objekt: z. B. "gewerbe" – sonst leitet der Konfigurator bei kleinem Verbrauch ein Wohngebäude ab
  * @returns {string} z. B. /angebot?kwp=10&verbrauch=4500&speicher=8&wallbox=1
  */
-export function angebotUrl({ kwp, verbrauch, speicher, wallbox, waermepumpe } = {}) {
+export function angebotUrl({ objekt, kwp, verbrauch, speicher, wallbox, waermepumpe } = {}) {
   const q = new URLSearchParams();
+  if (objekt) q.set("objekt", objekt);
   if (kwp > 0) q.set("kwp", String(Math.round(kwp * 10) / 10));
   if (verbrauch > 0) q.set("verbrauch", String(Math.round(verbrauch)));
   if (speicher > 0) q.set("speicher", String(Math.round(speicher)));

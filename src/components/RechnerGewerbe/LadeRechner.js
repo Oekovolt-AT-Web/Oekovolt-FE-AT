@@ -38,6 +38,7 @@ import {
   rechneLadeinfrastruktur,
 } from "@/lib/rechner/ladeinfrastruktur";
 import { SOLAR, fmt, fmtEur } from "@/lib/rechner/annahmen";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const PRESET_ICON = { gewerbe: Factory, handel: ShoppingBag, logistik: Truck, hotel: Hotel, gemeinde: Landmark };
 const FAHRZEUGTYP = [
@@ -80,6 +81,7 @@ export default function LadeRechner() {
   };
   const s = STATUS[r.status];
   const StatusIcon = s.icon;
+  useRechnerErgebnis("ladeinfrastruktur", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

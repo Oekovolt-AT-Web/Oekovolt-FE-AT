@@ -42,7 +42,7 @@ export const BUND = [
     themen: PV,
     zielgruppen: ALLE_ZG,
     hoehe: "150 €/kWp (A) bis max. 120 €/kWp (D)",
-    kurz: `Zuschuss für neue oder erweiterte PV bis 1.000 kWp; max. 30 % der Nettokosten. Nächster Fördercall: ${EAG_IZ.naechsterCall.zeitraum}.`,
+    kurz: `Zuschuss für neue oder erweiterte PV bis 1.000 kWp; max. 30 % der förderfähigen Kosten (netto bei Vorsteuerabzug, sonst brutto). Nächster Fördercall: ${EAG_IZ.naechsterCall.zeitraum}.`,
     bedingungen: ["Kategorie C und D: Gebot in €/kWp, Reihung nach niedrigstem Förderbedarf", "Freifläche und Grünland: 25 % Abschlag", "Agri-PV mit Hauptnutzung Landwirtschaft ohne Abschlag, vertikal bzw. ab 2 m Unterkante +30 %", "Genehmigungen und Netzbestätigung müssen beim Antrag vorliegen"],
     antrag: "vorIbn",
     extern: { href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/", label: "EAG-Abwicklungsstelle" },

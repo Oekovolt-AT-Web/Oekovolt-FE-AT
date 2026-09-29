@@ -78,7 +78,11 @@ export function torTyp(kw) {
 /** EAG-Kategorie nach § 5 EAG-IZV 2026 (Anlagengröße). */
 export function eagKategorie(kwp) {
   const kat = ANNAHMEN.eagInvestitionszuschuss.kategorien.find((k) => kwp <= k.bisKwp);
-  if (!kat) return { id: null, text: "über 1.000 kWp – kein Investitionszuschuss, Marktprämie möglich" };
+  // Über 1.000 kWp: anteilige Förderung bis 1.000 kWp (EAG-Abwicklungsstelle, FAQ 2026 Fragen 19 und 20)
+  if (!kat) {
+    const d = ANNAHMEN.eagInvestitionszuschuss.kategorien.find((k) => k.id === "D");
+    return { id: "D", eurProKwp: d?.eurProKwp, anteiligBisKwp: 1000, text: `Kategorie D, anteilig bis 1.000 kWp gefördert (höchstens ${d?.eurProKwp} €/kWp), alternativ Marktprämie` };
+  }
   const von = { A: "bis 10 kWp", B: "über 10 bis 20 kWp", C: "über 20 bis 100 kWp", D: "über 100 bis 1.000 kWp" }[kat.id];
   return { id: kat.id, eurProKwp: kat.eurProKwp, text: `Kategorie ${kat.id} (${von}), ${kat.id === "C" || kat.id === "D" ? "höchstens " : ""}${kat.eurProKwp} €/kWp` };
 }

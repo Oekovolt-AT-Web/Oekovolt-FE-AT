@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FIRMA, SCHWESTER } from "@/lib/site";
 
 /** Stand der Datenschutzerklärung – bei jeder inhaltlichen Änderung anpassen. */
-export const DATENSCHUTZ_STAND = "29. September 2026";
+export const DATENSCHUTZ_STAND = "30. September 2026";
 
 const extern = { target: "_blank", rel: "noopener noreferrer" };
 const NeuerTab = () => <span className="sr-only"> (öffnet in neuem Tab)</span>;
@@ -21,7 +21,7 @@ const INHALT = [
   ["grundlagen", "Rechtsgrundlagen im Überblick"],
   ["hosting", "Hosting, Server-Logdateien und Sicherheit"],
   ["cookies", "Cookies und Einwilligungsverwaltung"],
-  ["statistik", "Besucherstatistik mit Google Analytics"],
+  ["statistik", "Besucherstatistik: cookielose Reichweitenmessung und Google Analytics"],
   ["karten", "Karten: Google Maps und OpenStreetMap"],
   ["anfragen", "Kontaktformular, Angebots- und Serviceanfragen"],
   ["herkunft", "Herkunft Ihrer Anfrage (Kampagnen-Zuordnung)"],
@@ -113,8 +113,8 @@ const PrivacyPolicy = () => {
           </li>
           <li>
             <strong>Berechtigte Interessen</strong> (Art. 6 Abs. 1 lit. f DSGVO) – z. B. sicherer Betrieb der Website,
-            Missbrauchsschutz, Nachweis von Einwilligungen, Auswertung unserer Marketingmaßnahmen, Geschäftskommunikation mit
-            Unternehmen. Dieser Verarbeitung können Sie nach Art. 21 DSGVO widersprechen.
+            Missbrauchsschutz, Nachweis von Einwilligungen, cookielose Reichweitenmessung, Auswertung unserer
+            Marketingmaßnahmen, Geschäftskommunikation mit Unternehmen. Dieser Verarbeitung können Sie nach Art. 21 DSGVO widersprechen.
           </li>
         </ul>
         <p className="mt-3">
@@ -156,6 +156,7 @@ const PrivacyPolicy = () => {
           enthalten keine Kennungen, mit denen wir Sie wiedererkennen könnten.
         </p>
         <p>
+          Die cookielose Reichweitenmessung (Abschnitt 5) setzt keine Cookies und legt nichts im Speicher Ihres Browsers ab.
           Alle weiteren Dienste – Google Analytics (Statistik), Google Maps und OpenStreetMap-Karten – werden erst nach Ihrer
           Einwilligung geladen. Rechtsgrundlage ist dann Art. 6 Abs. 1 lit. a DSGVO in Verbindung mit § 165 Abs. 3 TKG 2021.
           Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft über „Privatsphäre-Einstellungen“ bzw.
@@ -164,9 +165,33 @@ const PrivacyPolicy = () => {
         </p>
       </Abschnitt>
 
-      <Abschnitt id="statistik" titel="5. Besucherstatistik mit Google Analytics">
+      <Abschnitt id="statistik" titel="5. Besucherstatistik: cookielose Reichweitenmessung und Google Analytics">
         <p>
-          Sofern Sie im Cookie-Banner unter „Statistik“ eingewilligt haben, nutzen wir Google Analytics 4, einen
+          <strong>a) Cookielose Reichweitenmessung mit Umami.</strong> Um zu verstehen, welche Seiten und Funktionen unserer
+          Website genutzt werden (z. B. wie viele Besucher einen Rechner verwenden oder eine Anfrage beginnen), setzen wir die
+          quelloffene Statistiksoftware Umami ein. Sie läuft auf einem Server, den wir selbst betreiben und bei einem
+          Hosting-Dienstleister in der Europäischen Union angemietet haben; dieser ist als Auftragsverarbeiter nach Art. 28
+          DSGVO gebunden. Eine Weitergabe an Dritte zu eigenen Zwecken findet nicht statt.
+        </p>
+        <p>
+          Umami setzt keine Cookies, legt nichts im Speicher Ihres Browsers ab und bildet keine Nutzerprofile. Erfasst werden die aufgerufene Seite (ohne Such- und Formularparameter; Kampagnenparameter wie
+          utm_source bleiben erhalten), die Domain der verweisenden Website, Browsertyp, Betriebssystem, Gerätekategorie,
+          Bildschirmgröße, Sprache und das ungefähre Herkunftsland bzw. die Region sowie Ereignisse wie „Rechner-Ergebnis
+          angezeigt“, „Konfigurator-Schritt“ oder „Rückruf-Fenster geöffnet“ – ohne Namen, Kontaktdaten oder andere
+          Formularinhalte. Ihre IP-Adresse wird nur kurzzeitig zur Bestimmung des Landes und zur Bildung eines gesalzenen
+          Hashwerts verwendet, dessen Salt regelmäßig wechselt, und nicht gespeichert; eine Zuordnung zu Ihrer Person oder
+          eine Wiedererkennung über längere Zeit ist damit nicht vorgesehen. Seiten mit Einmal-Zugangscodes (z. B. Upload per
+          QR-Code) und die Info-Bildschirme werden nicht erfasst. Ist in Ihrem Browser „Do Not Track“ aktiviert, findet keine
+          Messung statt.
+        </p>
+        <p>
+          Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen, zusammengefassten Auswertung und
+          Verbesserung unseres Webangebots (Art. 6 Abs. 1 lit. f DSGVO). Sie können dieser Verarbeitung nach Art. 21 DSGVO
+          jederzeit widersprechen – z. B. durch Aktivieren von „Do Not Track“ in Ihrem Browser oder durch eine Nachricht an{" "}
+          {FIRMA.email}. Die Messdaten werden gelöscht, sobald sie für die Auswertung nicht mehr erforderlich sind.
+        </p>
+        <p>
+          <strong>b) Google Analytics (nur mit Einwilligung).</strong> Sofern Sie im Cookie-Banner unter „Statistik“ eingewilligt haben, nutzen wir Google Analytics 4, einen
           Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland („Google“). Ohne Ihre
           Einwilligung wird Google Analytics nicht geladen und es werden keine Daten an Google übertragen.
         </p>
@@ -521,7 +546,7 @@ const PrivacyPolicy = () => {
           oder Sie eingewilligt haben. Unsere Auftragsverarbeiter sind vertraglich nach Art. 28 DSGVO gebunden, insbesondere:
         </p>
         <ul className="mt-2 space-y-1">
-          <li>Hosting- und IT-Dienstleister für Website und Backoffice</li>
+          <li>Hosting- und IT-Dienstleister für Website, Backoffice und die cookielose Reichweitenmessung (Server in der EU)</li>
           <li>Google Ireland Limited (Google Analytics, Google Maps – nur nach Einwilligung)</li>
           <li>CloudTalk s.r.o. (Sofort-Rückruf)</li>
           <li>Anthropic, PBC (KI-Auswertung von Unterlagen – nur nach Einwilligung)</li>

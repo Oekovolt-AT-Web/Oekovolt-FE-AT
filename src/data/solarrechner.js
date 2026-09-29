@@ -326,9 +326,10 @@ export function betriebskostenProKwp(kwp, zielgruppe = "privat") {
  */
 export function eagZuschuss(kwp, speicherKwh = 0) {
   const z = ANNAHMEN.eagInvestitionszuschuss;
-  const kat = z.kategorien.find((k) => kwp <= k.bisKwp);
+  // Über 1.000 kWp: Kategorie D, gefördert anteilig bis 1.000 kWp (EAG-AS, FAQ 2026 Fragen 19 und 20)
+  const kat = z.kategorien.find((k) => kwp <= k.bisKwp) ?? z.kategorien.find((k) => k.id === "D");
   if (!kat || !(kwp > 0)) return { kategorie: null, pv: 0, speicher: 0, summe: 0 };
-  const pv = kwp * kat.eurProKwp;
+  const pv = Math.min(kwp, 1000) * kat.eurProKwp;
   const speicher = Math.min(Math.max(speicherKwh, 0), z.speicherMaxKwh) * z.speicherEurProKwh;
   return { kategorie: kat.id, pv, speicher, summe: pv + speicher };
 }

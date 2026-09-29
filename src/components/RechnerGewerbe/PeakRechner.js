@@ -24,6 +24,7 @@ import {
 } from "@/lib/rechner/peakshaving";
 import { DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Liste, LogRegler, Umschalter, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
 import { PeakLastkurve, PeakMonate } from "./PeakDiagramme";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const START = PS_PRESETS[0];
 const PFAD = "/rechner/peak-shaving";
@@ -98,7 +99,7 @@ export default function PeakRechner() {
   const w = r.wirtschaft;
   const kap = r.speicher.kwh;
   const speicherMax = Math.max(1000, Math.ceil((r.vorschlag.kwh * 3) / 100) * 100);
-  const href = angebotUrl({ kwp, verbrauch, speicher: kap });
+  const href = angebotUrl({ objekt: "gewerbe", kwp, verbrauch, speicher: kap });
 
   const setzeSpitze = (v) => {
     setVorlage(null);
@@ -118,6 +119,7 @@ export default function PeakRechner() {
     setJahresspitze(Math.max(...neu));
     setVorlage(null);
   };
+  useRechnerErgebnis("peak-shaving", r);
 
   return (
     <Karte>

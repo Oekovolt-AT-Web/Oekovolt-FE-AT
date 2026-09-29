@@ -15,6 +15,7 @@ import { FIRMENSITZ, ortPasst } from "@/components/Referenzkarte/standorte";
 import { orteAusProjekten } from "@/lib/referenzOrte";
 import ProjektKarte from "@/components/Project/ProjektKarte";
 import { fmtKwp, kennzahlen, normalisiereProjekt, projektSlug } from "@/components/Project/projektDaten";
+import { ladeProjektListe } from "@/components/Project/ladeProjekte";
 import {
   API_BASE_URL,
   getApiHeaders,
@@ -30,7 +31,6 @@ import { alleRegionen } from "@/lib/regionen";
 // Kartenorte + Projekte aus der API (oekovolt_app). Seitentexte sind statisch:
 // Die frühere Backoffice-Seite lieferte Texte der deutschen Website.
 const KARTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_referenzkarte`;
-const PROJEKTE_URL = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 const PFAD = "/referenzen/referenzkarte";
 const RK_PAGE_URL = `${BASE_URL}${PFAD}`;
 
@@ -80,27 +80,15 @@ function projektAusApi(p) {
   };
 }
 
-/** Projects + totals from get_projekte: { projekte, anzahl, summeKwp } */
+/** Projects + totals from get_projekte (else src/data/projekte.js): { projekte, anzahl, summeKwp } */
 async function fetchProjekteListe() {
-  const leer = { projekte: [], anzahl: 0, summeKwp: 0 };
-  if (!isApiConfigured()) return leer;
-  try {
-    const res = await fetch(PROJEKTE_URL, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
-    if (!res.ok) {
-      console.error(`Projekte API returned ${res.status}:`, await res.text());
-      return leer;
-    }
-    const m = (await res.json())?.message || {};
-    const projekte = Array.isArray(m.projekte) ? m.projekte.map(projektAusApi).filter((p) => p.slug) : [];
-    return {
-      projekte,
-      anzahl: Number(m.anzahl) || projekte.length,
-      summeKwp: Number(m.summe_kwp) || projekte.reduce((s, p) => s + (p.kwp || 0), 0),
-    };
-  } catch (error) {
-    console.error("Error fetching Projekte:", error);
-    return leer;
-  }
+  const m = await ladeProjektListe();
+  const projekte = m.projekte.map(projektAusApi).filter((p) => p.slug);
+  return {
+    projekte,
+    anzahl: Number(m.anzahl) || projekte.length,
+    summeKwp: Number(m.summe_kwp) || projekte.reduce((s, p) => s + (p.kwp || 0), 0),
+  };
 }
 
 /** Project (from get_projekte or get_referenzkarte) → { slug, titel, leistung } for the links on the map */
@@ -239,9 +227,10 @@ export default async function ReferenzkarteSeite() {
   const heroStats = projektDaten.anzahl
     ? [
         { value: projektDaten.anzahl, label: "Projekte" },
-        { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
+        // ohne Ortsangaben (z. B. statischer Stand aus src/data/projekte.js) keine „0 Orte“ zeigen
+        anzahlOrte > 0 && { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
         { value: Math.round(projektDaten.summeKwp), suffix: " kWp", label: "installierte Leistung" },
-      ]
+      ].filter(Boolean)
     : [
         { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
         { value: 30, suffix: " MWp", label: "errichtet allein 2021" },

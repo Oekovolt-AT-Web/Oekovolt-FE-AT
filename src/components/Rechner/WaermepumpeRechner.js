@@ -11,6 +11,7 @@ import { rechneWaermepumpe } from "@/lib/rechner/waermepumpe";
 import { WAERMEPUMPE as W, fmt, fmtEur } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
 import { MONATE_LANG } from "@/lib/rechner/profile";
+import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 
 const FARBE = { solar: "#669933", netz: "#7fa7d6", raster: "#eef0f4" };
 
@@ -81,6 +82,7 @@ export default function WaermepumpeRechner() {
     zeilen[1].bestes = true;
   }
   const maxSumme = Math.max(...zeilen.map((z) => z.summe));
+  useRechnerErgebnis("waermepumpe", r);
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">

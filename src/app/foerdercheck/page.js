@@ -1,6 +1,7 @@
 // src/app/foerdercheck/page.js
 
-import { BadgeEuro, Clock, Database, FileSignature, Map, ShieldCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BadgeEuro, CalendarClock, Clock, Database, FileSignature, Map, ShieldCheck } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -15,6 +16,7 @@ import { Quellen, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
 import { Fachdetails, Glow } from "@/components/Forderungen/Shared/Premium";
 import { EAG_IZ, KPC_BEENDET, STAND, STEUER } from "@/components/Forderungen/Shared/bund";
 import { VORHABEN, ZIELGRUPPEN } from "@/data/bundeslaender";
+import { callPhase } from "@/lib/foerdercall";
 import { BASE_URL } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/foerdercheck`;
@@ -115,6 +117,24 @@ export default function FoerdercheckPage() {
           <Reveal dir="scale">
             <FoerderWizard laender={laender} />
           </Reveal>
+          {/* Hinweis auf den Oktober-Call – entfällt beim ersten Rendern nach Call-Ende */}
+          {callPhase(Date.now()) !== "nach" && (
+            <Link href="/forderungen/eag-foerdercall" className="group mt-5 flex flex-col gap-3 rounded-3xl bg-white p-5 ring-1 ring-ov-200 transition-colors hover:bg-ov-50 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <span className="flex items-start gap-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-600 text-white">
+                  <CalendarClock aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span>
+                  <span className="block font-display text-[17px] font-bold text-ink-900">3. EAG-Fördercall: {EAG_IZ.naechsterCall.zeitraum}</span>
+                  <span className="mt-0.5 block text-[14.5px] leading-relaxed text-ink-600">Ticketziehung am 08.10. um 17 Uhr – Checkliste, Countdown und Schnellrechner für Ihre Einreichung.</span>
+                </span>
+              </span>
+              <span className="inline-flex shrink-0 items-center gap-2 text-[15px] font-semibold text-ov-700">
+                Zum Fördercall
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Link>
+          )}
         </div>
       </section>
 
