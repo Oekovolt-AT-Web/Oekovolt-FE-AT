@@ -4,21 +4,19 @@
 // registrieren sich für gemeinsame PV-Projekte. Formular:
 // src/components/Partner/PartnerRegistrierung.js → /api/partner-registrierung
 
-import {
-  BadgeCheck, Boxes, CalendarCheck2, ClipboardList, FileCheck2, GraduationCap, HandCoins, Handshake, HardHat, Headset, MonitorDot, PencilRuler,
-  SearchCheck, ShieldCheck, Sun, Users,
-} from "lucide-react";
+import { BadgeCheck, CalendarCheck2, ClipboardList, FileCheck2, GraduationCap, Handshake, HardHat, SearchCheck, ShieldCheck } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import PartnerRegistrierung from "@/components/Partner/PartnerRegistrierung";
+import Zusammenarbeit from "@/components/Partner/Zusammenarbeit";
+import Einzugsgebiet from "@/components/Team/Einzugsgebiet";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/partner`;
@@ -40,17 +38,6 @@ export const metadata = {
     images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630, alt: "Elektro-Partner werden bei Ökovolt" }],
   },
 };
-
-const PLATTFORM = [
-  { icon: Sun, title: "Projekte", text: "Gewerbe-, Industrie-, Landwirtschafts- und Freiflächenprojekte in Ihrer Region – mit klar beschriebenem Leistungsumfang je Auftrag." },
-  { icon: Boxes, title: "Material & Zentraleinkauf", text: "Module, Wechselrichter, Unterkonstruktion und Speicher über den Zentraleinkauf der Gruppe – geliefert nach Projektplan." },
-  { icon: PencilRuler, title: "Planung", text: "Belegungs-, String- und Verteilerpläne, Statik- und Brandschutzvorgaben kommen von uns – Sie bauen nach geprüften Unterlagen." },
-  { icon: Headset, title: "Technik-Support", text: "Ansprechpartner aus Projektleitung und Netzanschluss für Rückfragen auf der Baustelle und bei der Inbetriebnahme." },
-  { icon: MonitorDot, title: "Parkregler & SCADA", text: "Unsere eigenen EZA-Regler, Fernwartung und SCADA – Inbetriebnahme gemeinsam mit unserem Leittechnik-Team." },
-  { icon: GraduationCap, title: "Schulungen", text: "Einweisung in unsere Montage- und Dokumentationsstandards sowie in Parkregler und Fernwartung." },
-  { icon: HandCoins, title: "Faire Abrechnung", text: "Vereinbarte Preise je Leistungsposition, Abrechnung nach Aufmaß bzw. Pauschale und verbindliche Zahlungsziele im Vertrag." },
-  { icon: Users, title: "Ein Team auf der Baustelle", text: "Feste Projektleitung als Ansprechpartner, abgestimmte Bauabläufe mit unseren Montage- und Technikteams." },
-];
 
 const ANFORDERUNGEN = [
   {
@@ -149,15 +136,15 @@ export default function PartnerPage() {
         ]}
       />
 
-      {/* Plattform */}
+      {/* So arbeiten wir zusammen */}
       <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Was wir bieten"
-          title={<>Ökovolt als <span className="ov-text-gradient">zentrale Plattform</span></>}
-          lead="Das Elektro-Partnerprogramm verbindet Elektrotechnik-Betriebe mit der Projekt-, Einkaufs- und Technikstruktur von Ökovolt. Sie konzentrieren sich auf die Ausführung – den Rest organisieren wir."
-          className="mb-12"
-        />
-        <FeatureGrid items={PLATTFORM} cols={4} />
+        <div className="mb-12 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="So arbeiten wir zusammen" title={<>Eine Plattform, <span className="ov-text-gradient">klare Rollen</span></>} />
+          <p className="text-[16.5px] leading-relaxed text-ink-600">
+            Wir bringen Projekte, Material, Planung und Leittechnik – Sie bringen Ihr Handwerk. Die Verantwortung gegenüber Kunde und Netzbetreiber bleibt bei der {FIRMA.name}.
+          </p>
+        </div>
+        <Zusammenarbeit />
       </Section>
 
       {/* Anforderungen */}
@@ -169,7 +156,7 @@ export default function PartnerPage() {
               title="Was Partnerbetriebe mitbringen"
               lead="Wir arbeiten nur mit Betrieben, die rechtlich und fachlich für Arbeiten an elektrischen Anlagen berechtigt sind. Das schützt unsere Kunden, Ihre Mitarbeiter:innen und uns."
             />
-            <Reveal className="mt-8 flex items-start gap-4 rounded-3xl bg-white p-5 ring-1 ring-ov-200">
+            <Reveal className="mt-8 flex items-start gap-4 rounded-3xl bg-ov-50 p-5 ring-1 ring-ov-200">
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
                 <ShieldCheck aria-hidden="true" className="h-5 w-5" />
               </span>
@@ -180,7 +167,12 @@ export default function PartnerPage() {
           </div>
           <ul className="grid gap-4 sm:grid-cols-2">
             {ANFORDERUNGEN.map((a, i) => (
-              <Reveal as="li" key={a.titel} delay={(i % 2) * 80} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+              <Reveal
+                as="li"
+                key={a.titel}
+                delay={(i % 2) * 80}
+                className={`rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 ${i === ANFORDERUNGEN.length - 1 && ANFORDERUNGEN.length % 2 === 1 ? "sm:col-span-2" : ""}`}
+              >
                 <BadgeCheck aria-hidden="true" className="h-6 w-6 text-ov-600" />
                 <h3 className="ov-h3 mt-4 text-ink-900">{a.titel}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{a.text}</p>
@@ -194,6 +186,22 @@ export default function PartnerPage() {
       <Section tone="white" space="lg">
         <SectionHeading eyebrow="Ablauf" title="Von der Registrierung zum ersten Projekt" align="center" className="mb-14" />
         <Steps items={ABLAUF} />
+      </Section>
+
+      {/* Einsatzgebiet */}
+      <Section tone="navy" space="lg" id="einsatzgebiet" className="scroll-mt-20 overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-40 top-10 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="relative">
+          <SectionHeading
+            dark
+            eyebrow="Einsatzgebiet"
+            title={<>Wo arbeiten Sie? <span className="ov-text-gradient-light">Markieren Sie Ihre Bundesländer.</span></>}
+            lead="Wir suchen Partnerbetriebe in ganz Österreich. Tippen Sie die Bundesländer an, in denen Ihr Betrieb Aufträge übernimmt – die Auswahl landet direkt in Ihrer Registrierung."
+            className="mb-12 max-w-3xl"
+          />
+          <Einzugsgebiet modus="auswahl" dunkel />
+        </div>
       </Section>
 
       {/* Registrierung */}

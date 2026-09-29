@@ -152,9 +152,9 @@ const oemagSchnitt = OEMAG_2026.reduce((s, m) => s + m.wert, 0) / OEMAG_2026.len
 const spot2025 = MARKT.solar2025 / 10 - B.vermarktungsEntgelt;
 const spot2026 = MARKT.solar2026 / 10 - B.vermarktungsEntgelt;
 
-const eur = (n) => Math.round(n).toLocaleString("de-AT") + " €";
-const kwh = (n) => Math.round(n).toLocaleString("de-AT") + " kWh";
-const ct = (n, st = 2) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
+const kwh = (n) => Math.round(n).toLocaleString("de-DE") + " kWh";
+const ct = (n, st = 2) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const ct3 = (n) => (n == null ? "noch offen" : ct(n, 3));
 
 const TOC = [
@@ -449,7 +449,7 @@ export default function EinspeisetarifPage() {
                 Jahr, die Einspeisung je nach Abnehmer nur rund {eur((einspeisungKwh * spot2025) / 100)} bis{" "}
                 {eur((einspeisungKwh * oemagGewichtet) / 100)}.
               </strong>{" "}
-              Annahmen: Standort Oberösterreich, {B.ertragProKwp.toLocaleString("de-AT")} kWh Ertrag je kWp, Anschluss auf Netzebene 6 im Netzbereich
+              Annahmen: Standort Oberösterreich, {B.ertragProKwp.toLocaleString("de-DE")} kWh Ertrag je kWp, Anschluss auf Netzebene 6 im Netzbereich
               Oberösterreich, Energiepreis {ct(B.energiepreis, 0)} ct/kWh netto.
             </p>
           </Prosa>

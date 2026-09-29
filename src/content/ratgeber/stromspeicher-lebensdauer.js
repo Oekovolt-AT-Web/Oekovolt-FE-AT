@@ -5,7 +5,7 @@
 // Rückgewinnungsziele Lithium laut Europäischem Parlament.
 // Kosten je gespeicherter kWh werden unten selbst berechnet (Annahmen offengelegt).
 
-const zahl = (n, st = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const zahl = (n, st = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const eur = (n) => zahl(Math.round(n)) + " €";
 const ct = (eurProKwh) => zahl(eurProKwh * 100, 1) + " ct";
 

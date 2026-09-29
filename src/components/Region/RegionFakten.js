@@ -46,15 +46,17 @@ const E_CONTROL = "https://www.e-control.at/tarifkalkulator";
 const fahrzeit = (min) => [Math.floor(min / 60) && `${Math.floor(min / 60)} h`, min % 60 && `${min % 60} min`].filter(Boolean).join(" ");
 
 /** Belegte Fakten zum Ort – jede Angabe mit Quelle. Fehlende Angaben werden weggelassen. */
-export default function RegionFakten({ region }) {
+export default function RegionFakten({ region, ohne = [] }) {
   const f = region.fakten;
   const land = region.landDaten;
   const p = region.pvgis;
   const name = region.kurzname || region.name;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {f.netzbetreiber?.name && (
+    // Mauerwerk-Layout: Karten unterschiedlicher Höhe ohne Lücken und ohne verwaiste Einzelkarte
+    <div className="gap-4 md:columns-2 xl:columns-3 [&>*]:mb-4 [&>*]:break-inside-avoid">
+
+      {f.netzbetreiber?.name && !ohne.includes("netz") && (
         <Karte icon={Gauge} titel="Verteilnetzbetreiber">
           <p className="font-semibold text-ink-900">{f.netzbetreiber.name}</p>
           {f.netzbetreiber.hinweis && <p className="mt-1 text-[14px] text-ink-600">{f.netzbetreiber.hinweis}</p>}
@@ -110,6 +112,7 @@ export default function RegionFakten({ region }) {
         </Karte>
       )}
 
+      {!ohne.includes("anfahrt") && (
       <Karte icon={Route} titel="Einsatz ab Ostermiething">
         {region.heimat ? (
           <p>Hier sitzen wir: Planung, Lager, Montage-Teams und Service starten im Gewerbegebiet Ostermiething.</p>
@@ -121,6 +124,7 @@ export default function RegionFakten({ region }) {
           </p>
         )}
       </Karte>
+      )}
 
       {land?.energieberatung && (
         <Karte icon={LifeBuoy} titel="Neutrale Energieberatung">

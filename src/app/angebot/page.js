@@ -8,7 +8,7 @@ import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
-import FeaturedLogos from "@/components/photovoltaikanlage/partners";
+import Kennzahlen from "@/components/Team/Kennzahlen";
 import { BASE_URL } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/angebot`;
@@ -86,7 +86,21 @@ export default function AngebotPage() {
         </div>
       </div>
 
-      <FeaturedLogos />
+      {/* Vertrauensband – nur belegte Unternehmensfakten */}
+      <section className="border-y border-ink-100 bg-white py-12 md:py-16">
+        <div className="ov-container">
+          <p className="mb-10 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ink-500">Ihr Errichter aus Ostermiething</p>
+          <Kennzahlen
+            klein
+            items={[
+              { value: "2012", label: "in Österreich eingetragen", text: "Ökovolt Solartechnik GmbH" },
+              { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "TOP 3 der IPC-Errichter" },
+              { value: 9, label: "Bundesländer", text: "Vor-Ort-Termine in ganz Österreich" },
+              { value: 0, suffix: " €", label: "Ersteinschätzung", text: "kostenlos und unverbindlich" },
+            ]}
+          />
+        </div>
+      </section>
 
       <Section tone="sand" space="lg">
         <SectionHeading eyebrow="Nach Ihrer Anfrage" title="So geht es weiter" align="center" className="mb-14" />

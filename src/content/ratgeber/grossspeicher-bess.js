@@ -20,7 +20,7 @@ const NV_NE5_OOE = 0.197; // ct/kWh Netzverlustentgelt
 const LEISTUNG_KW = 2000;
 const LADUNG_MWH_JAHR = (4 / 0.88) * 365; // Netzbezug bei 1 Vollzyklus pro Tag
 
-const de = (n, st = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const de = (n, st = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const eur = (n) => de(Math.round(n / 100) * 100) + " €";
 const netzLp = LEISTUNG_KW * LP_NE5_OOE;
 const netzAp = LADUNG_MWH_JAHR * 1000 * ((AP_NE5_OOE + NV_NE5_OOE) / 100);

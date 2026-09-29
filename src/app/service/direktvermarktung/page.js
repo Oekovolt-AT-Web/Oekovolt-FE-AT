@@ -4,37 +4,28 @@
 // Gebotszone AT). Die frühere Backend-Anbindung (deutsche Inhalte zu EEG und
 // Marktprämienmodell nach deutschem Recht) wird hier bewusst nicht mehr genutzt.
 
-import {
-  Ban,
-  Building2,
-  CalendarCheck2,
-  Cable,
-  Calculator,
-  FileSignature,
-  Gauge,
-  Handshake,
-  Landmark,
-  LineChart,
-  Receipt,
-  Share2,
-  SlidersHorizontal,
-  Sun,
-  TrendingUp,
-} from "lucide-react";
+import { Ban, Building2, Cable, Calculator, CalendarCheck2, FileSignature, Gauge, Landmark, LineChart, Receipt, Scale, Share2, SlidersHorizontal, Sun, TrendingUp } from "lucide-react";
 
-import Link from "next/link";
-
-import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
+import Button from "@/components/ui/Button";
 import LivePreisKarte from "@/components/EnergieLive/LivePreisKarte";
-import { Hinweis, Kurzantwort, Punkte, Quellen, Tabelle, Verweise } from "@/components/Technik/Bausteine";
+import { Hinweis, Tabelle } from "@/components/Technik/Bausteine";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
+import Stil from "@/components/ServiceAT/B/Stil";
+import HeroBild from "@/components/ServiceAT/B/HeroBild";
+import Kennzahlen from "@/components/ServiceAT/B/Kennzahlen";
+import Dunkel from "@/components/ServiceAT/B/Dunkel";
+import FotoBento from "@/components/ServiceAT/B/FotoBento";
+import Bildband from "@/components/ServiceAT/B/Bildband";
+import Fachdetails from "@/components/ServiceAT/B/Fachdetails";
+import Tabs from "@/components/ServiceAT/B/Tabs";
+import Abschluss from "@/components/ServiceAT/B/Abschluss";
+import ErloesVergleich from "@/components/ServiceAT/B/ErloesVergleich";
 import { getEnergySnapshot } from "@/lib/energy";
 
 export const revalidate = 900;
@@ -104,21 +95,24 @@ const OPTIONEN = [
 ];
 
 const GROESSEN = [
-  [
-    "bis ca. 20 kWp Überschuss",
-    "Eigenverbrauch maximieren; Überschuss über OeMAG-Marktpreis oder Einspeisetarif eines Energieversorgers",
-    "Aufwand für Direktvermarktung meist höher als der Mehrerlös",
-  ],
-  [
-    "20 bis 500 kWp",
-    "OeMAG-Marktpreis als Basis, Angebote von Energieversorgern und Direktvermarktern vergleichen; Speicher und Energiegemeinschaft prüfen",
-    "Ab hier lohnen sich Viertelstundendaten und ein Parkregler, der bei negativen Preisen abregeln kann",
-  ],
-  [
-    "ab 500 kWp",
-    "Direktvermarkter, PPA oder EAG-Marktprämie über Ausschreibung – die OeMAG-Marktpreis-Abnahme steht nicht offen",
-    "Fernsteuerbarkeit, Prognose und saubere Datenübergabe sind Voraussetzung; Parkregler und SCADA gehören zur Grundausstattung",
-  ],
+  {
+    id: "klein",
+    label: "bis ca. 20 kWp Überschuss",
+    wege: "Eigenverbrauch maximieren; Überschuss über OeMAG-Marktpreis oder Einspeisetarif eines Energieversorgers",
+    worauf: "Aufwand für Direktvermarktung meist höher als der Mehrerlös",
+  },
+  {
+    id: "mittel",
+    label: "20 bis 500 kWp",
+    wege: "OeMAG-Marktpreis als Basis, Angebote von Energieversorgern und Direktvermarktern vergleichen; Speicher und Energiegemeinschaft prüfen",
+    worauf: "Ab hier lohnen sich Viertelstundendaten und ein Parkregler, der bei negativen Preisen abregeln kann",
+  },
+  {
+    id: "gross",
+    label: "ab 500 kWp",
+    wege: "Direktvermarkter, PPA oder EAG-Marktprämie über Ausschreibung – die OeMAG-Marktpreis-Abnahme steht nicht offen",
+    worauf: "Fernsteuerbarkeit, Prognose und saubere Datenübergabe sind Voraussetzung; Parkregler und SCADA gehören zur Grundausstattung",
+  },
 ];
 
 const FAQ = [
@@ -163,19 +157,6 @@ const QUELLEN = [
   { titel: "Energy-Charts (Fraunhofer ISE): Day-Ahead-Preise Gebotszone AT und Nettostromerzeugung Österreich", href: "https://www.energy-charts.info/?l=de&c=AT", hinweis: "CC BY 4.0; Grundlage der eigenen Auswertung 2025" },
 ];
 
-function Fakt({ wert, label, icon: Icon, delay }) {
-  return (
-    <Reveal delay={delay} className="flex items-start gap-3 px-2 md:border-l md:border-ink-200 md:px-6 md:first:border-l-0 md:first:pl-0">
-      <Icon aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
-      <div>
-        <dt className="sr-only">{label}</dt>
-        <dd className="font-display text-[20px] font-extrabold leading-tight tracking-tight text-ink-900 md:text-[24px]">{wert}</dd>
-        <dd className="mt-1 text-[13px] leading-snug text-ink-500">{label}</dd>
-      </div>
-    </Reveal>
-  );
-}
-
 export default async function ReststromvermarktungPage() {
   const snapshot = await getEnergySnapshot().catch(() => null);
   const kompakt = snapshot
@@ -184,6 +165,7 @@ export default async function ReststromvermarktungPage() {
 
   return (
     <div>
+      <Stil />
       <JsonLd
         daten={seitenSchema({
           pfad: PFAD,
@@ -198,8 +180,7 @@ export default async function ReststromvermarktungPage() {
         })}
       />
 
-      <PageHero
-        variant="dark"
+      <HeroBild
         breadcrumbs={[{ name: "Service" }, { name: "Reststromvermarktung" }]}
         eyebrow="Reststromvermarktung & Direktvermarktung · Österreich"
         title={
@@ -208,178 +189,170 @@ export default async function ReststromvermarktungPage() {
           </>
         }
         lead="Was Ihr Betrieb nicht selbst verbraucht, lässt sich in Österreich auf mehreren Wegen verkaufen – an die OeMAG, an Energieversorger, über Direktvermarkter, per PPA oder in einer Energiegemeinschaft. Wir vergleichen die Optionen und bauen die Technik, die sie verlangen."
+        image={{ src: "/Images/AT/service-b/hochspannung-abendrot.jpg", alt: "Hochspannungsmasten im Abendrot" }}
+        ton="tief"
+        points={["OeMAG, Energieversorger, Direktvermarkter", "EAG-Marktprämie & PPA", "Spotpreis AT live", "Parkregler für Abregelung"]}
         actions={[
           { label: "Vermarktung prüfen lassen", href: "/termin?art=video" },
-          { label: "Optionen vergleichen", href: "#vergleich", icon: Calculator },
+          { label: "Erlöse vergleichen", href: "#erloese", icon: Calculator },
         ]}
-        points={["OeMAG, Energieversorger, Direktvermarkter", "EAG-Marktprämie & PPA", "Spotpreis AT live", "Parkregler für Abregelung"]}
+        aside={<LivePreisKarte tone="dark" initial={kompakt} className="lg:ml-auto lg:max-w-sm" />}
+      />
+
+      <Kennzahlen
+        frage="Wie verkaufe ich überschüssigen PV-Strom in Österreich am besten?"
+        zahlen={[
+          { text: "< 500 kWp", label: "Grenze für die OeMAG-Marktpreis-Abnahme" },
+          { text: "1.10.2018", label: "seit dann eigene Gebotszone Österreich (AT)" },
+          { value: 378, suffix: " h", label: "negative Day-Ahead-Stunden in AT 2025*" },
+          { text: "≈ 50 %", label: "Marktwert Solar 2025 im Verhältnis zum Durchschnittspreis*" },
+        ]}
+        fussnote="* Eigene Auswertung der Day-Ahead-Preise der Gebotszone AT und der österreichischen PV-Erzeugung 2025 (Energy-Charts, Fraunhofer ISE, CC BY 4.0): Stundenmittel unter null; solargewichteter Preis rund 49 €/MWh gegenüber einem Durchschnitt von rund 99 €/MWh. Rund ein Fünftel der PV-Erzeugung fiel in Stunden mit negativem Preis."
       >
-        <div className="ov-hero-in mt-12 max-w-md" style={{ "--ov-delay": "300ms" }}>
-          <LivePreisKarte tone="dark" initial={kompakt} />
+        <p>
+          Für Anlagen unter 500 kWp ist die Abnahme durch die OeMAG zum Marktpreis die einfache Basis: kein Vermarktungsaufwand, monatlich kündbar nach einem Jahr. Größere Anlagen und
+          Betriebe, die ihre Einspeisung steuern können, erzielen über Direktvermarkter, PPA oder die EAG-Marktprämie oft planbarere oder höhere Erlöse.
+        </p>
+        <p>
+          <strong>Entscheidend ist fast immer dasselbe:</strong> möglichst viel selbst nutzen, in Stunden mit negativen Preisen nicht einspeisen – und dafür die Technik haben, die das
+          automatisch regelt.
+        </p>
+      </Kennzahlen>
+
+      {/* Erlösvergleich live */}
+      <Dunkel id="erloese">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            dark
+            eyebrow="Spotpreis Gebotszone AT · live"
+            title={
+              <>
+                Der Börsenpreis bestimmt fast jeden Erlös – <span className="ov-text-gradient-light">auch indirekt</span>
+              </>
+            }
+          />
+          <Reveal delay={100} className="space-y-4 text-[16px] leading-relaxed text-white/70">
+            <p>
+              Ob OeMAG-Marktpreis, indexierter Einspeisetarif oder Direktvermarktung: am Ende hängt der Erlös am Day-Ahead-Preis der Gebotszone Österreich. Seit 1. Oktober 2025 wird der
+              europäisch gekoppelte Day-Ahead-Markt in Viertelstunden gehandelt; die Preise für den Folgetag stehen nach der Auktion zu Mittag fest.
+            </p>
+          </Reveal>
         </div>
-      </PageHero>
-
-      <Kurzantwort frage="Wie verkaufe ich überschüssigen PV-Strom in Österreich am besten?">
-        <p>
-          Für Anlagen unter 500 kWp ist die Abnahme durch die OeMAG zum Marktpreis die einfache Basis: kein Vermarktungsaufwand, monatlich
-          kündbar nach einem Jahr. Größere Anlagen und Betriebe, die ihre Einspeisung steuern können, erzielen über Direktvermarkter, PPA oder
-          die EAG-Marktprämie oft planbarere oder höhere Erlöse.
-        </p>
-        <p>
-          Entscheidend ist fast immer dasselbe: möglichst viel selbst nutzen, in Stunden mit negativen Preisen nicht einspeisen – und dafür die
-          Technik haben, die das automatisch regelt.
-        </p>
-      </Kurzantwort>
-
-      {/* Fakten */}
-      <section aria-label="Fakten zur Reststromvermarktung" className="border-b border-ink-200/70 bg-white">
-        <dl className="ov-container grid grid-cols-2 gap-y-8 py-10 md:grid-cols-4 md:py-12">
-          <Fakt icon={Receipt} wert="< 500 kWp" label="Grenze für die OeMAG-Marktpreis-Abnahme" delay={0} />
-          <Fakt icon={Landmark} wert="seit 1.10.2018" label="eigene Gebotszone Österreich (AT)" delay={70} />
-          <Fakt icon={Ban} wert="378 h" label="negative Day-Ahead-Stunden in AT 2025*" delay={140} />
-          <Fakt icon={Sun} wert="≈ 50 %" label="Marktwert Solar 2025 im Verhältnis zum Durchschnittspreis*" delay={210} />
-        </dl>
-        <p className="ov-container -mt-4 pb-8 text-[12.5px] leading-relaxed text-ink-500">
-          * Eigene Auswertung der Day-Ahead-Preise der Gebotszone AT und der österreichischen PV-Erzeugung 2025 (Energy-Charts, Fraunhofer ISE,
-          CC BY 4.0): Stundenmittel unter null; solargewichteter Preis rund 49 €/MWh gegenüber einem Durchschnitt von rund 99 €/MWh. Rund ein
-          Fünftel der PV-Erzeugung fiel in Stunden mit negativem Preis.
-        </p>
-      </section>
+        <Reveal dir="scale" className="mt-12">
+          <ErloesVergleich initial={kompakt} />
+        </Reveal>
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <Hinweis ton="dunkel" titel="Negative Preise sind kein Randthema mehr">
+            <p>
+              2025 lag der Day-Ahead-Preis in Österreich in 378 Stunden im Stundenmittel unter null, 2026 bis Ende September bereits in rund 260 Stunden (eigene Auswertung, Energy-Charts). Wer
+              in diesen Stunden einspeist, verschenkt Strom oder zahlt drauf.
+            </p>
+          </Hinweis>
+          <Hinweis ton="dunkel" titel="Solarwert statt Durchschnittspreis">
+            <p>
+              Für Photovoltaik zählt der Preis zu den Stunden, in denen sie einspeist. Weil viele Anlagen gleichzeitig erzeugen, liegt der solargewichtete Preis deutlich unter dem Mittel – in
+              unserer Auswertung für 2025 bei etwa der Hälfte. Österreich bildet seit 1. Oktober 2018 eine eigene Gebotszone; davor gab es eine gemeinsame Preiszone mit Deutschland und
+              Luxemburg.
+            </p>
+          </Hinweis>
+        </div>
+      </Dunkel>
 
       {/* Optionen */}
       <Section tone="white" space="lg" id="optionen" className="scroll-mt-24">
         <SectionHeading
           eyebrow="Optionen in Österreich"
           title="Sieben Wege, Reststrom zu verkaufen"
-          lead="Die Wege schließen sich nicht immer aus: Ein Betrieb kann zum Beispiel einen Teil über eine Energiegemeinschaft abgeben und den Rest über die OeMAG oder einen Direktvermarkter vermarkten. Welche Kombination passt, hängt von Größe, Lastgang und Risikobereitschaft ab."
+          lead="Die Wege schließen sich nicht immer aus: Ein Betrieb kann zum Beispiel einen Teil über eine Energiegemeinschaft abgeben und den Rest über die OeMAG oder einen Direktvermarkter vermarkten."
           className="mb-12"
         />
-        <FeatureGrid
-          cols={3}
+        <FotoBento
           items={[
-            { icon: Receipt, title: "OeMAG-Marktpreis", text: "Abnahme für Anlagen unter 500 kWp zum monatlichen Marktpreis nach ÖSG 2012 – ohne Prognose- und Vermarktungsaufwand." },
-            { icon: Building2, title: "Einspeisetarif eines Energieversorgers", text: "Fix- oder indexierte Tarife von Landesversorgern und Stromhändlern, teils an den Strombezug gekoppelt." },
-            { icon: TrendingUp, title: "Direktvermarkter", text: "Verkauf am Spotmarkt über einen Stromhändler – mit Vermarktungsentgelt, Prognose und Abregelung bei negativen Preisen." },
-            { icon: Landmark, title: "EAG-Marktprämie", text: "Gleitende Prämie über 20 Jahre für PV-Anlagen mit Zuschlag in der Ausschreibung." },
-            { icon: Handshake, title: "PPA vor Ort und über das Netz", text: "Langfristiger Liefervertrag mit einem Abnehmer – über eine Direktleitung nach § 64 ElWG oder bilanziell über das Netz." },
-            { icon: Share2, title: "Energiegemeinschaft", text: "Strom an Mitglieder einer EEG oder BEG abgeben; ab 1. Oktober 2026 erweitert das ElWG die gemeinsame Energienutzung." },
+            {
+              bild: { src: "/Images/AT/ratgeber/gemeinschaftliche-erzeugungsanlage.jpg", alt: "Photovoltaikanlage einer gemeinschaftlichen Erzeugungsanlage" },
+              icon: TrendingUp,
+              tag: "ab 500 kWp üblich",
+              titel: "Direktvermarkter",
+              text: "Verkauf am Spotmarkt über einen Stromhändler – mit Vermarktungsentgelt, Prognose und Abregelung bei negativen Preisen.",
+            },
+            { bild: { src: "/Images/AT/ratgeber/pv-gewerbe-dornbirn.jpg", alt: "Gewerbebetrieb mit Photovoltaik" }, icon: Receipt, titel: "OeMAG-Marktpreis", text: "Für Anlagen unter 500 kWp – ohne Prognose- und Vermarktungsaufwand." },
+            { bild: { src: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Solarcarport eines Betriebs" }, icon: Building2, titel: "Einspeisetarif eines Versorgers", text: "Fix oder indexiert, teils an den Strombezug gekoppelt." },
+            { bild: { src: "/Images/AT/loesungen/freiflaeche-spitalberg-kaernten.jpg", alt: "Photovoltaik-Freiflächenanlage" }, icon: Landmark, titel: "EAG-Marktprämie", text: "Gleitende Prämie über 20 Jahre nach Zuschlag in der Ausschreibung." },
+            { bild: { src: "/Images/AT/ratgeber/photovoltaik-gemeinde.jpg", alt: "Photovoltaik in einer Gemeinde" }, icon: Share2, titel: "PPA & Energiegemeinschaft", text: "Direktleitung nach § 64 ElWG, bilanzielles PPA oder EEG/BEG." },
           ]}
         />
       </Section>
 
-      {/* Vergleichstabelle */}
-      <Section tone="sand" space="lg" id="vergleich" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Vergleich"
-          title="Reststromvermarktung im Vergleich: Preislogik, Bindung, Technik"
-          lead="Die Tabelle zeigt die Mechanik der Optionen, keine Preise – die ändern sich monatlich. Konkrete Angebote vergleichen wir für Ihre Anlage auf Basis von Erzeugungsprofil und Eigenverbrauch."
-          className="mb-10"
-        />
-        <Tabelle
-          caption="Optionen für die Vermarktung von PV-Überschussstrom in Österreich"
-          kopf={["Option", "Für wen", "Preislogik", "Laufzeit & Bindung", "Technik"]}
-          zeilen={OPTIONEN}
-          kompakt
-          minBreite={1040}
-          quelle="Stand September 2026. Quellen: OeMAG (Marktpreis), EAG-Förderabwicklungsstelle, ElWG. Bedingungen von Energieversorgern und Direktvermarktern unterscheiden sich im Detail – Vertragsprüfung im Einzelfall."
-        />
-      </Section>
+      {/* Technik */}
+      <Bildband
+        rechts
+        bild={{ src: "/Images/AT/ratgeber/eza-regler-parkregler.jpg", alt: "Schaltschrank mit Regelungstechnik für eine PV-Anlage" }}
+        eyebrow="Fernsteuerbarkeit, Parkregler, SCADA"
+        titel="Vermarktung ist heute auch eine Regelungsaufgabe"
+        text="Direktvermarkter wollen abregeln können, Netzbetreiber setzen Einspeiselimits, der Betrieb will Eigenverbrauch und Speicher optimieren. Der Parkregler bringt alle Vorgaben am Netzanschlusspunkt in eine feste Reihenfolge."
+        punkte={[
+          { icon: SlidersHorizontal, titel: "Klare Priorität", text: "Schutz und Netzbetreiber zuerst, dann Vermarktung, dann Eigenoptimierung." },
+          { icon: Ban, titel: "Abregelung bei negativen Preisen", text: "Das Signal des Direktvermarkters senkt die Einspeisung – Eigenverbrauch und Speicherladung laufen weiter." },
+          { icon: Gauge, titel: "Spitzenkappung § 101 ElWG", text: "Begrenzung auf 70 % der Modulspitzenleistung möglich; Spitzen wandern in Speicher und Verbraucher." },
+          { icon: LineChart, titel: "Daten für Abrechnung", text: "Viertelstundenwerte, Abregelzeiten und Verfügbarkeit im SCADA protokolliert." },
+        ]}
+      >
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:justify-end">
+          <Button href="/technik/parkregler" icon={SlidersHorizontal}>
+            Parkregler im Detail
+          </Button>
+          <Button href="/technik/scada" variant="outlineLight" icon={LineChart}>
+            SCADA & Reporting
+          </Button>
+        </div>
+      </Bildband>
 
-      {/* Spotpreis AT */}
-      <Section tone="white" space="lg" id="spotpreis" className="scroll-mt-24">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Spotpreis Gebotszone AT"
-              title="Der Börsenpreis bestimmt fast jeden Erlös – auch indirekt"
-              lead="Ob OeMAG-Marktpreis, indexierter Einspeisetarif oder Direktvermarktung: am Ende hängt der Erlös am Day-Ahead-Preis der Gebotszone Österreich."
-            />
-            <div className="mt-8 space-y-4 text-[16px] leading-relaxed text-ink-600">
-              <p>
-                Österreich bildet seit 1. Oktober 2018 eine eigene Gebotszone; davor gab es eine gemeinsame Preiszone mit Deutschland und
-                Luxemburg. Seit 1. Oktober 2025 wird der europäisch gekoppelte Day-Ahead-Markt in Viertelstunden gehandelt. Die Preise für den
-                Folgetag stehen nach der Auktion zu Mittag fest.
-              </p>
-              <p>
-                Für Photovoltaik entscheidend ist nicht der Durchschnittspreis, sondern der Preis zu den Stunden, in denen sie einspeist. Weil
-                viele Anlagen gleichzeitig erzeugen, liegt der solargewichtete Preis deutlich unter dem Mittel – in unserer Auswertung für 2025
-                bei etwa der Hälfte.
-              </p>
-            </div>
-          </div>
-          <Reveal dir="right" className="space-y-4">
-            <LivePreisKarte initial={kompakt} />
-            <Hinweis ton="achtung" titel="Negative Preise sind kein Randthema mehr">
-              <p>
-                2025 lag der Day-Ahead-Preis in Österreich in 378 Stunden im Stundenmittel unter null, 2026 bis Ende September bereits in rund 260
-                Stunden (eigene Auswertung, Energy-Charts). Wer in diesen Stunden einspeist, verschenkt Strom oder zahlt drauf.
-              </p>
-            </Hinweis>
+      {/* Entscheidungshilfe */}
+      <Section tone="sand" space="lg" id="entscheidung" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Entscheidungshilfe" title="Welche Vermarktung passt zu welcher Anlagengröße?" />
+          <Reveal delay={100}>
+            <p className="ov-lead text-ink-600">Faustregeln aus der Praxis – keine starren Grenzen. Den Ausschlag geben Überschussmenge, Lastgang, Speicher und wie viel Preisrisiko Sie tragen wollen.</p>
           </Reveal>
         </div>
-      </Section>
-
-      {/* Technik */}
-      <Section tone="navy" space="lg" className="overflow-hidden" id="technik">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-10 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            dark
-            eyebrow="Fernsteuerbarkeit, Parkregler, SCADA"
-            title="Vermarktung ist heute auch eine Regelungsaufgabe"
-            lead="Direktvermarkter wollen abregeln können, Netzbetreiber setzen Einspeiselimits, der Betrieb will Eigenverbrauch und Speicher optimieren. Der Parkregler bringt alle Vorgaben am Netzanschlusspunkt in eine feste Reihenfolge."
-          />
-          <Punkte
-            dunkel
-            spalten={2}
-            items={[
-              { titel: "Klare Priorität", tag: "Regelkern", text: "Schutz und Netzbetreiber zuerst, dann Vermarktung, dann Eigenoptimierung – so sind Signale nie widersprüchlich." },
-              { titel: "Abregelung bei negativen Preisen", tag: "Direktvermarkter", text: "Das Signal des Direktvermarkters senkt die Einspeisung am Netzanschlusspunkt – Eigenverbrauch und Speicherladung laufen weiter." },
-              { titel: "Spitzenkappung", tag: "§ 101 ElWG", text: "Bei neuen oder erweiterten PV-Anlagen darf der Netzbetreiber die Einspeisung auf 70 % der Modulspitzenleistung begrenzen; der Regler verschiebt Spitzen in Speicher und Verbraucher." },
-              { titel: "Daten für Abrechnung", tag: "SCADA", text: "Viertelstundenwerte, Abregelzeiten und Verfügbarkeit werden protokolliert – Basis für Prognose, Erlösabrechnung und Nachweise." },
-            ]}
-          />
-        </div>
-        <div className="relative mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Link href="/technik/parkregler" className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white transition-colors hover:bg-ov-700">
-            <SlidersHorizontal aria-hidden="true" className="h-4 w-4" />
-            Parkregler im Detail
-          </Link>
-          <Link href="/technik/scada" className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-white ring-1 ring-inset ring-white/35 transition-colors hover:bg-white/10">
-            <LineChart aria-hidden="true" className="h-4 w-4" />
-            SCADA & Reporting
-          </Link>
-        </div>
-      </Section>
-
-      {/* Entscheidungshilfe nach Größe */}
-      <Section tone="white" space="lg" id="entscheidung" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Entscheidungshilfe"
-          title="Welche Vermarktung passt zu welcher Anlagengröße?"
-          lead="Faustregeln aus der Praxis – keine starren Grenzen. Den Ausschlag geben Überschussmenge, Lastgang, Speicher und wie viel Preisrisiko Sie tragen wollen."
-          className="mb-10"
+        <Tabs
+          label="Anlagengröße wählen"
+          tabs={GROESSEN.map((g) => ({
+            id: g.id,
+            label: g.label,
+            icon: <Sun />,
+            inhalt: (
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="rounded-3xl bg-navy-950 p-7 text-white md:p-8">
+                  <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">Naheliegende Wege</p>
+                  <p className="mt-3 font-display text-[20px] font-bold leading-snug md:text-[22px]">{g.wege}</p>
+                </div>
+                <div className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-8">
+                  <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-700">Worauf es ankommt</p>
+                  <p className="mt-3 text-[17px] leading-relaxed text-ink-700">{g.worauf}</p>
+                </div>
+              </div>
+            ),
+          }))}
         />
-        <Tabelle caption="Orientierung nach Überschuss bzw. Anlagengröße" kopf={["Größe", "Naheliegende Wege", "Worauf es ankommt"]} zeilen={GROESSEN} minBreite={720} />
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <Hinweis ton="info" titel="EAG-Marktprämie 2026">
             <p>
-              Die zweite Ausschreibung für PV wurde am 10. Juli 2026 bezuschlagt – bei einem Volumen von 179.033 kWp wurden Gebote bis 6,69 ct/kWh
-              berücksichtigt. Weitere Termine stehen im Förderkalender der EAG-Förderabwicklungsstelle.
+              Die zweite Ausschreibung für PV wurde am 10. Juli 2026 bezuschlagt – bei einem Volumen von 179.033 kWp wurden Gebote bis 6,69 ct/kWh berücksichtigt. Weitere Termine stehen im
+              Förderkalender der EAG-Förderabwicklungsstelle.
             </p>
           </Hinweis>
           <Hinweis ton="norm" titel="Einspeisen kostet künftig einen kleinen Beitrag">
             <p>
-              Mit dem ElWG kommt ab 1. Jänner 2027 ein Beitrag je eingespeister Kilowattstunde, nach oben mit 0,05 Cent gedeckelt; Anlagen bis 20
-              kW sind ausgenommen. Für neue Einspeiser gelten gestaffelte Netzanschlusspauschalen je kW.
+              Mit dem ElWG kommt ab 1. Jänner 2027 ein Beitrag je eingespeister Kilowattstunde, nach oben mit 0,05 Cent gedeckelt; Anlagen bis 20 kW sind ausgenommen. Für neue Einspeiser
+              gelten gestaffelte Netzanschlusspauschalen je kW.
             </p>
           </Hinweis>
         </div>
       </Section>
 
       {/* Ablauf */}
-      <Section tone="sand" space="lg">
+      <Section tone="white" space="lg">
         <SectionHeading eyebrow="Ablauf" title="So setzen wir die Reststromvermarktung mit Ihnen um" align="center" className="mb-14" />
         <Steps
           items={[
@@ -390,33 +363,55 @@ export default async function ReststromvermarktungPage() {
           ]}
         />
         <p className="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-ink-500">
-          Wir sind kein Stromhändler und vermitteln keine Finanzprodukte. Wir beraten herstellerunabhängig, stellen die Technik bereit und begleiten
-          den Vertragsabschluss mit dem Vermarktungspartner Ihrer Wahl.
+          Wir sind kein Stromhändler und vermitteln keine Finanzprodukte. Wir beraten herstellerunabhängig, stellen die Technik bereit und begleiten den Vertragsabschluss mit dem
+          Vermarktungspartner Ihrer Wahl.
         </p>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Reststromvermarktung in Österreich – kurz & belegt"
-            lead="Rechts- und Förderlage Stand September 2026. Bei Ausschreibungen und Verträgen zählen die jeweils aktuellen Bedingungen."
-          />
+      {/* Fachdetails + FAQ */}
+      <Section tone="sand" space="lg">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-20">
+          <div>
+            <SectionHeading
+              eyebrow="Häufige Fragen"
+              title="Reststromvermarktung in Österreich – kurz & belegt"
+              lead="Rechts- und Förderlage Stand September 2026. Bei Ausschreibungen und Verträgen zählen die jeweils aktuellen Bedingungen."
+            />
+            <Fachdetails
+              className="mt-8"
+              items={[
+                {
+                  titel: "Vergleichstabelle: Preislogik, Bindung, Technik",
+                  kurz: "Sieben Optionen im Detail",
+                  icon: Scale,
+                  inhalt: (
+                    <Tabelle
+                      caption="Optionen für die Vermarktung von PV-Überschussstrom in Österreich"
+                      kopf={["Option", "Für wen", "Preislogik", "Laufzeit & Bindung", "Technik"]}
+                      zeilen={OPTIONEN}
+                      kompakt
+                      minBreite={1040}
+                      quelle="Stand September 2026. Quellen: OeMAG (Marktpreis), EAG-Förderabwicklungsstelle, ElWG. Bedingungen von Energieversorgern und Direktvermarktern unterscheiden sich im Detail – Vertragsprüfung im Einzelfall."
+                    />
+                  ),
+                },
+              ]}
+            />
+          </div>
           <Faq items={FAQ} />
         </div>
       </Section>
 
-      <Verweise
-        ueberschrift="Weiterlesen"
-        items={[
-          { href: "/energie-live", titel: "Strompreis Österreich live", text: "Day-Ahead-Preis der Gebotszone AT, negative Preise und Erzeugungsmix." },
-          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Abregelung, Einspeiselimit und Fernwirkanbindung am Netzanschlusspunkt." },
-          { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Überschüsse speichern statt zu negativen Preisen einspeisen." },
-          { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "EEG, BEG und gemeinsame Energienutzung nach ElWG." },
+      <Abschluss
+        links={[
+          { href: "/energie-live", art: "Live", titel: "Strompreis Österreich live" },
+          { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)" },
+          { href: "/gewerbespeicher", art: "Lösung", titel: "Gewerbespeicher" },
+          { href: "/energiegemeinschaften", art: "Lösung", titel: "Energiegemeinschaften" },
+          { href: "/service/stromtarif", art: "Service", titel: "Dynamischer Stromtarif" },
         ]}
+        quellen={QUELLEN}
       />
-
-      <Quellen items={QUELLEN} />
 
       <CtaBand
         eyebrow="Reststromvermarktung"

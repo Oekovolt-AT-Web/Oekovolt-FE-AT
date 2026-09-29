@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import HerstellerDetail, { istBelegterPartner, kuerzen } from "@/components/Produktdetail/HerstellerDetail";
 import { generateSlug } from "@/lib/slugify";
+import { partnerFuer, partnerZuSlug } from "@/components/Hersteller/partner";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL } from "@/lib/site";
 
@@ -11,12 +12,24 @@ import { BASE_URL } from "@/lib/site";
 // Use the single shared slug function so URLs match the sitemap exactly.
 const createSlug = (title) => generateSlug(title);
 
+/**
+ * Eintrag zum Slug: zuerst aus dem Backoffice, sonst – für belegte Speicher-Partner –
+ * aus den statischen Herstellerdaten. So bleiben die Detailseiten auch ohne API erreichbar.
+ */
+function eintragZuSlug(items, slug) {
+  const item = items.find((i) => createSlug(i.title) === slug);
+  if (item) return { item, partner: partnerZuSlug("stromspeicher", slug) };
+  const partner = partnerZuSlug("stromspeicher", slug);
+  if (!partner) return { item: null, partner: null };
+  return { item: { title: partner.title, main_description: partner.main_description, alt_banner_image: partner.alt_banner_image }, partner };
+}
+
 // 1. ALLE Stromspeicher Items holen (für generateStaticParams)
 async function fetchAllStromspeicherItems() {
   const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
 
   if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    // Ohne API-Zugang (z. B. lokal ohne .env) still zurückfallen
     return [];
   }
 
@@ -52,7 +65,7 @@ async function fetchManufacturerByName(name) {
   const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(name)}`;
 
   if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    // Ohne API-Zugang (z. B. lokal ohne .env) still zurückfallen
     return null;
   }
 
@@ -90,8 +103,8 @@ export async function generateStaticParams() {
     const items = await fetchAllStromspeicherItems();
 
     if (!items || items.length === 0) {
-      console.warn("⚠️ No stromspeicher items found - returning empty params");
-      return [];
+      // Ohne Backoffice: statische Seiten für die belegten Speicher-Partner
+      return partnerFuer("stromspeicher").map((p) => ({ slug: p.slug }));
     }
 
     const params = items.map((item) => ({
@@ -112,7 +125,7 @@ export async function generateMetadata({ params }) {
 
   // Wir müssen den Titel aus dem Slug finden
   const items = await fetchAllStromspeicherItems();
-  const item = items.find(i => createSlug(i.title) === slug);
+  const { item, partner } = eintragZuSlug(items, slug);
 
   if (!item) {
     return {
@@ -123,7 +136,7 @@ export async function generateMetadata({ params }) {
   }
 
   // Jetzt den Hersteller mit dem Titel holen
-  const manufacturer = await fetchManufacturerByName(item.title);
+  const manufacturer = partner && !items.length ? null : await fetchManufacturerByName(item.title);
   const name = manufacturer?.title || item.title;
   const url = `${BASE_URL}/produkte/stromspeicher/${slug}`;
   const langerTitel = `${name} Stromspeicher: Planung & Einbau | Ökovolt`;
@@ -162,7 +175,7 @@ export default async function HerstellerDetailPage({ params }) {
 
   // 1. Erst alle Items holen um den Titel zu finden
   const items = await fetchAllStromspeicherItems();
-  const item = items.find(i => createSlug(i.title) === slug);
+  const { item, partner } = eintragZuSlug(items, slug);
 
   if (!item) {
     notFound();
@@ -172,7 +185,7 @@ export default async function HerstellerDetailPage({ params }) {
   //    rendert die Seite mit den Basisdaten aus der Übersicht weiter.
   let hersteller = null;
   try {
-    hersteller = await fetchManufacturerByName(item.title);
+    hersteller = items.length ? await fetchManufacturerByName(item.title) : null;
   } catch (err) {
     console.error("Error fetching data:", err);
   }
@@ -184,6 +197,7 @@ export default async function HerstellerDetailPage({ params }) {
       item={item}
       hersteller={hersteller}
       alleItems={items}
+      partner={partner}
     />
   );
 }

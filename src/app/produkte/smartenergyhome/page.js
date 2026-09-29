@@ -27,6 +27,7 @@ import {
   Zap,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
@@ -132,15 +133,16 @@ export default function SmartEnergyPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Smart Energy Home" }]}
         eyebrow="Smart Energy Home"
         title={
           <>
-            Ein Gebäude, das seine Energie <span className="ov-text-gradient">selbst managt</span>
+            Ein Gebäude, das seine Energie <span className="ov-text-gradient-light">selbst managt</span>
           </>
         }
         lead="Photovoltaik, Speicher, Wallbox und Wärmepumpe arbeiten als ein System – gesteuert von einem Energiemanager, der jede Kilowattstunde dorthin schickt, wo sie am meisten bringt. Auf Wunsch mit Ersatzstrom für den Fall eines Blackouts."
-        image={{ src: "/Images/Dienstleistungen/Smartphone/smart-home-3920905_1280.jpg", alt: "Smart Energy Home mit Photovoltaik" }}
+        image={{ src: "/Images/Home/download-1.jpg", alt: "Wohnhaus mit schwarzen Solarmodulen auf dem Satteldach", position: "60% 40%" }}
         points={["Mehr Eigenverbrauch, weniger Netzstrom", "Ersatzstrom & Blackout-Vorsorge", "Bereit für Spotpreis-Tarife", "Herstellerübergreifend geplant"]}
         actions={[
           { label: "Smart Energy Home planen", href: "/angebot" },
@@ -158,6 +160,8 @@ export default function SmartEnergyPage() {
           </div>
         }
       />
+
+      <HerstellerWortmarken titel="Wechselrichter, Speicher und Monitoring unserer Partner" />
 
       <Section tone="navy" space="lg" className="overflow-hidden" id="energiefluss">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />

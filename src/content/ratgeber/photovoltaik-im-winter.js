@@ -28,7 +28,7 @@ const WINTER = [
 ];
 
 const pct = (a, b) => String(Math.round((a / b) * 1000) / 10).replace(".", ",") + " %";
-const r0 = (x) => Math.round(x).toLocaleString("de-AT");
+const r0 = (x) => Math.round(x).toLocaleString("de-DE");
 
 const artikel = {
   slug: "photovoltaik-im-winter",

@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Leaf, Sun, Wind, TrendingDown, TrendingUp } from "lucide-react";
+import { ArrowRight, Droplets, Leaf, Sun, Wind, TrendingDown, TrendingUp } from "lucide-react";
 import useEnergyLive, { fmtCt, fmtGw, fmtUhr } from "@/components/ui/useEnergyLive";
 import { LiveDot } from "@/components/ui/LiveTicker";
 
@@ -10,19 +10,33 @@ import { LiveDot } from "@/components/ui/LiveTicker";
  * Startseiten-Modul „Strommarkt jetzt": Börsenpreis heute als Flächenverlauf
  * mit Jetzt-Markierung und günstigstem 3-Stunden-Fenster, dazu drei Kennzahlen.
  * `initial` kommt serverseitig (SEO, kein leerer Zustand), der Client aktualisiert.
+ *
+ * Hydration: Alles, was von der aktuellen Uhrzeit abhängt (Jetzt-Markierung im
+ * Diagramm), wird erst nach dem Mounten gezeichnet. Server-HTML und erster
+ * Client-Render rechnen mit dem Datenstand `d.stand` – sonst weichen die
+ * SVG-Attribute (x/cx der Markierung) ab, sobald zwischen Server-Render und
+ * Hydration ein neues Viertelstunden-Intervall beginnt.
  */
 export default function HomeLive({ initial }) {
   const live = useEnergyLive({ voll: true, intervall: 10 * 60000 });
   const d = live || initial;
   const [hover, setHover] = useState(null);
+  const [jetzt, setJetzt] = useState(null);
+
+  useEffect(() => {
+    setJetzt(Date.now());
+    const t = setInterval(() => setJetzt(Date.now()), 60000);
+    return () => clearInterval(t);
+  }, []);
 
   const heute = useMemo(() => {
     const punkte = d?.preis?.punkte || [];
     if (!punkte.length) return [];
-    const tag = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Vienna" }).format(new Date());
     const fmt = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Vienna" });
+    const bezug = jetzt ?? (d?.stand ? Date.parse(d.stand) : punkte[0].t);
+    const tag = fmt.format(new Date(bezug));
     return punkte.filter((p) => fmt.format(new Date(p.t)) === tag);
-  }, [d]);
+  }, [d, jetzt]);
 
   const fenster = useMemo(() => {
     if (heute.length < 4) return null;
@@ -46,10 +60,11 @@ export default function HomeLive({ initial }) {
   const y = (v) => PT + (H - PT - PB) * (1 - (v - min) / (max - min || 1));
   const linie = heute.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p.eurMwh).toFixed(1)}`).join(" ");
   const flaeche = heute.length ? `${linie} L${W},${y(min)} L0,${y(min)} Z` : "";
-  const jetztIdx = heute.findIndex((p, i) => Date.now() >= p.t && (i === heute.length - 1 || Date.now() < heute[i + 1].t));
+  const jetztIdx = jetzt == null ? -1 : heute.findIndex((p, i) => jetzt >= p.t && (i === heute.length - 1 || jetzt < heute[i + 1].t));
   const aktiv = hover != null ? heute[hover] : d.preis.aktuell;
   const e = d.erzeugung || {};
-  const solarAktiv = e.solarMw > 500;
+  // Österreich: ab rund 100 MW Solarleistung ist „Solar“ aussagekräftiger als Wind (wie LiveTicker)
+  const solarAktiv = e.solarMw > 100;
   const trend = d.preis.aktuell && d.preis.heute ? d.preis.aktuell.eurMwh - d.preis.heute.avg : 0;
 
   return (
@@ -127,20 +142,21 @@ export default function HomeLive({ initial }) {
         )}
         {fenster && (
           <p className="mt-3 text-[13.5px] text-white/60">
-            Günstigste Zeit heute: <strong className="text-white">{fmtUhr(heute[fenster.i].t)} – {fmtUhr(heute[fenster.i + fenster.n - 1].t + (heute[1].t - heute[0].t))} Uhr</strong> (Ø {fmtCt(fenster.avg)} ct/kWh) – ideal zum Laden von E-Auto und Speicher.
+            Günstigste Zeit heute: <strong className="text-white">{fmtUhr(heute[fenster.i].t)} – {fmtUhr(heute[fenster.i + fenster.n - 1].t + (heute[1].t - heute[0].t))} Uhr</strong> (Ø {fmtCt(fenster.avg)} ct/kWh) – ideal für Speicher, E-Flotte und flexible Lasten.
           </p>
         )}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
+      <div className="grid grid-cols-2 gap-4 md:gap-5 lg:auto-rows-fr">
         <Kachel icon={Leaf} label="Erneuerbare am Verbrauch" wert={e.eeAnteil != null ? `${Math.round(e.eeAnteil)} %` : "–"} />
+        <Kachel icon={Droplets} label="Wasserkraft im Netz" wert={e.wasserMw != null ? `${fmtGw(e.wasserMw)} GW` : "–"} farbe="text-navy-200" />
         {solarAktiv ? (
           <Kachel icon={Sun} label="Solarleistung im Netz" wert={`${fmtGw(e.solarMw)} GW`} farbe="text-sun-300" />
         ) : (
           <Kachel icon={Wind} label="Windleistung im Netz" wert={e.windMw != null ? `${fmtGw(e.windMw)} GW` : "–"} farbe="text-navy-200" />
         )}
-        <Link href="/energie-live" className="group flex flex-col justify-between rounded-[1.5rem] bg-ov-600 p-6 text-white transition-colors hover:bg-ov-700">
-          <p className="font-display text-[18px] font-bold leading-snug">Alle Live-Daten: Preise, Erzeugung, Prognose</p>
+        <Link href="/energie-live" className="group flex flex-col justify-between rounded-[1.5rem] bg-ov-600 p-5 text-white transition-colors hover:bg-ov-700 md:p-6">
+          <p className="font-display text-[16px] font-bold leading-snug md:text-[18px]">Alle Live-Daten: Preise, Erzeugung, Prognose</p>
           <span className="mt-4 inline-flex items-center gap-2 text-[14.5px] font-semibold">
             Zum Dashboard <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </span>
@@ -152,11 +168,11 @@ export default function HomeLive({ initial }) {
 
 function Kachel({ icon: Icon, label, wert, farbe = "text-ov-300" }) {
   return (
-    <div className="rounded-[1.5rem] bg-white/[0.04] p-6 ring-1 ring-white/10">
-      <p className="flex items-center gap-2 text-[13px] text-white/60">
-        <Icon aria-hidden="true" className={`h-4 w-4 ${farbe}`} /> {label}
+    <div className="flex flex-col justify-between rounded-[1.5rem] bg-white/[0.04] p-5 ring-1 ring-white/10 md:p-6">
+      <p className="flex items-start gap-2 text-[13px] leading-snug text-white/60">
+        <Icon aria-hidden="true" className={`mt-px h-4 w-4 shrink-0 ${farbe}`} /> {label}
       </p>
-      <p className="ov-num mt-2 font-display text-[32px] font-extrabold leading-none tracking-tight text-white">{wert}</p>
+      <p className="ov-num mt-3 font-display text-[28px] font-extrabold leading-none tracking-tight text-white md:text-[32px]">{wert}</p>
     </div>
   );
 }

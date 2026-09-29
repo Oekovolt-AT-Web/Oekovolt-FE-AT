@@ -1,15 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CalendarCheck, Car, Clock, FileText, Mail, MapPin, Navigation, Phone, TrainFront } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarCheck, Clock, FileText, Mail, MapPin, Phone } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import Map from "@/components/Kontakt/map";
+import AnfahrtKarte from "@/components/Kontakt/AnfahrtKarte";
+import Wochenzeiten from "@/components/Kontakt/Wochenzeiten";
+import Einzugsgebiet from "@/components/Team/Einzugsgebiet";
+import { regionFuer } from "@/lib/regionen";
 import KontaktFormular from "@/components/Kontakt/KontaktFormular";
-import OeffnungsStatus, { OeffnungszeitenListe } from "@/components/Kontakt/OeffnungsStatus";
+import OeffnungsStatus from "@/components/Kontakt/OeffnungsStatus";
 import { OEFFNUNGSZEITEN_KURZ } from "@/data/erreichbarkeit";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -53,8 +56,6 @@ const oeffnungSchema = FIRMA.oeffnungszeiten.map((o) => {
   const [opens, closes] = o.zeit.split(/[–-]/).map((x) => x.trim());
   return { "@type": "OpeningHoursSpecification", dayOfWeek: tage, opens, closes };
 });
-
-const BUNDESLAENDER = ["Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"];
 
 const FAQ = [
   {
@@ -184,7 +185,10 @@ export default function KontaktPage() {
                 <Mail aria-hidden="true" className="h-6 w-6" />
               </span>
               <h3 className="mt-8 text-[15px] font-semibold uppercase tracking-[0.14em] text-ink-600">E-Mail schreiben</h3>
-              <p className="mt-2 break-all font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">{FIRMA.email}</p>
+              <p className="mt-2 font-display text-[clamp(1.35rem,1.1rem+0.8vw,1.75rem)] font-extrabold leading-tight tracking-tight text-ink-900">
+                {FIRMA.email.split("@")[0]}
+                <wbr />@{FIRMA.email.split("@")[1]}
+              </p>
               <p className="mb-8 mt-3 text-[15.5px] leading-relaxed text-ink-600">Ideal für Lastgang, Netzrechnung, Dachpläne oder Ausschreibungsunterlagen.</p>
               <div className="mt-auto flex items-center justify-between gap-3 border-t border-ink-200/70 pt-6 text-[14px] font-semibold text-ov-700">
                 E-Mail-Programm öffnen
@@ -243,14 +247,13 @@ export default function KontaktPage() {
               </Link>
             </Reveal>
 
-            <Reveal delay={140} className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
-              <h3 className="flex items-center gap-2 font-display text-[18px] font-bold text-ink-900">
+            <Reveal delay={140} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
+              <h3 className="mb-4 flex items-center gap-2 font-display text-[18px] font-bold text-ink-900">
                 <Clock aria-hidden="true" className="h-5 w-5 text-ov-600" />
                 Öffnungszeiten
               </h3>
-              <OeffnungsStatus className="mt-3" />
-              <OeffnungszeitenListe className="mt-4" />
-              <p className="mt-3 text-[13px] leading-relaxed text-ink-500">An gesetzlichen Feiertagen in Österreich sowie am 24. und 31. Dezember geschlossen.</p>
+              <Wochenzeiten />
+              <p className="mt-4 text-[13px] leading-relaxed text-ink-500">An gesetzlichen Feiertagen in Österreich sowie am 24. und 31. Dezember geschlossen.</p>
             </Reveal>
 
             <Reveal delay={200} className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
@@ -278,81 +281,45 @@ export default function KontaktPage() {
 
       {/* Anfahrt */}
       <Section tone="white" space="lg" id="anfahrt" className="scroll-mt-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Anfahrt"
-              title={
-                <>
-                  Besuchen Sie uns in <span className="ov-text-gradient">{FIRMA.ort}</span>
-                </>
-              }
-              lead={`${FIRMA.ort} liegt im Innviertel (${FIRMA.bundesland}) an der Salzach, gut 30 Kilometer nördlich der Stadt Salzburg und direkt an der Grenze zu Bayern.`}
-            />
-            <ul className="mt-8 space-y-4 text-[15.5px] leading-relaxed text-ink-600">
-              <li className="flex gap-3">
-                <Car aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
-                <span>
-                  <strong className="text-ink-900">Mit dem Auto aus Salzburg:</strong> A1 Westautobahn bis Salzburg-Nord, weiter über die B156 Lamprechtshausener Straße Richtung Lamprechtshausen und über die L205/L501 nach Ostermiething. Aus Braunau über die L501 Weilhart Landesstraße.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <TrainFront aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-ov-600" />
-                <span>
-                  <strong className="text-ink-900">Mit der Bahn:</strong> Salzburger Lokalbahn (S-Bahn Salzburg) bis Bürmoos, dort weiter mit der S11 bis zur Endstation Ostermiething.
-                </span>
-              </li>
-            </ul>
-            <Reveal className="mt-8 flex items-center gap-5 rounded-3xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
-              <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-2xl bg-ink-100 sm:h-28 sm:w-40">
-                <Image src="/Images/AT/unternehmen/salzach-ostermiething-tauernradweg.jpg" alt="Tauernradweg an der Salzach bei Ostermiething im Innviertel" fill sizes="160px" className="object-cover" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-display text-[17px] font-bold text-ink-900">{FIRMA.name}</p>
-                <p className="mt-1 text-[14.5px] leading-snug text-ink-600">{ADRESSE_EINZEILIG}</p>
-                <p className="mt-1 text-[13px] text-ink-500">{OEFFNUNGSZEITEN_KURZ}</p>
-              </div>
-            </Reveal>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <a href={ROUTE_URL} target="_blank" rel="noopener noreferrer" className="group inline-flex h-12 items-center justify-center gap-2 rounded-full bg-navy-700 px-6 text-[15px] font-semibold text-white hover:bg-navy-800">
-                <Navigation aria-hidden="true" className="h-4 w-4" />
-                Route planen
-              </a>
-              <a href={FIRMA.telefonHref} className="inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 hover:bg-ink-50">
+        <div className="mb-10 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            eyebrow="Anfahrt"
+            title={
+              <>
+                Besuchen Sie uns in <span className="ov-text-gradient">{FIRMA.ort}</span>
+              </>
+            }
+            lead={`${FIRMA.ort} liegt im Innviertel (${FIRMA.bundesland}) an der Salzach, gut 30 Kilometer nördlich der Stadt Salzburg und direkt an der Grenze zu Bayern.`}
+          />
+          <Reveal className="flex items-center gap-4 rounded-3xl bg-sand-50 p-3 ring-1 ring-ink-200/60">
+            <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl bg-ink-100 sm:h-28 sm:w-40">
+              <Image src="/Images/AT/unternehmen-b/pfarrkirche-ostermiething.jpg" alt="Ortskern von Ostermiething mit Pfarrkirche im Innviertel" fill sizes="160px" className="object-cover" />
+            </div>
+            <div className="min-w-0 pr-2">
+              <p className="font-display text-[16.5px] font-bold text-ink-900">{FIRMA.name}</p>
+              <p className="mt-1 text-[14px] leading-snug text-ink-600">{ADRESSE_EINZEILIG}</p>
+              <p className="mt-1 text-[13px] text-ink-500">{OEFFNUNGSZEITEN_KURZ}</p>
+              <a href={FIRMA.telefonHref} className="mt-2 inline-flex items-center gap-1.5 text-[14px] font-semibold text-ov-700 hover:text-ov-800">
                 <Phone aria-hidden="true" className="h-4 w-4" />
                 Besuch telefonisch vereinbaren
               </a>
             </div>
-          </div>
-          <Reveal dir="right" className="overflow-hidden rounded-[2rem] shadow-xl ring-1 ring-ink-200/70">
-            <Map />
           </Reveal>
         </div>
+        <Reveal>
+          <AnfahrtKarte km={{ salzburg: regionFuer("salzburg")?.km, braunau: regionFuer("braunau")?.km }} />
+        </Reveal>
       </Section>
 
       {/* Einzugsgebiet */}
-      <Section tone="sand" space="md">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16">
-          <SectionHeading
-            eyebrow="Einzugsgebiet"
-            title="Aus Ostermiething für ganz Österreich"
-            lead="Wir planen, errichten und betreuen Photovoltaikanlagen in allen neun Bundesländern – mit denselben Prozessen, eigener Regelungs- und Fernwartungstechnik und einem festen Projektleiter."
-          />
-          <ul className="flex flex-wrap gap-2.5">
-            {BUNDESLAENDER.map((b) => (
-              <li key={b} className="inline-flex h-11 items-center gap-2 rounded-full bg-white px-4 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
-                <MapPin aria-hidden="true" className="h-4 w-4 text-ov-600" />
-                {b}
-              </li>
-            ))}
-            <li>
-              <Link href="/photovoltaik" className="inline-flex h-11 items-center gap-2 rounded-full bg-ink-900 px-5 text-[14.5px] font-semibold text-white hover:bg-ink-800">
-                Bundesländer & Städte
-                <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </Link>
-            </li>
-          </ul>
-        </div>
+      <Section tone="sand" space="lg" id="einzugsgebiet" className="scroll-mt-20">
+        <SectionHeading
+          eyebrow="Einzugsgebiet"
+          title={<>Aus Ostermiething <span className="ov-text-gradient">für ganz Österreich</span></>}
+          lead="Wir planen, errichten und betreuen Photovoltaikanlagen in allen neun Bundesländern – mit denselben Prozessen, eigener Regelungs- und Fernwartungstechnik und einem festen Projektleiter. Wählen Sie Ihr Bundesland."
+          className="mb-12 max-w-3xl"
+        />
+        <Einzugsgebiet />
       </Section>
 
       {/* FAQ */}

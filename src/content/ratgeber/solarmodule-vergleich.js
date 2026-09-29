@@ -26,7 +26,7 @@ const artikel = {
   veroeffentlicht: "2026-09-28",
   aktualisiert: "2026-09-28",
   kategorie: "Technik & Planung",
-  bild: "/Images/Jobs/jobs2.jpg",
+  bild: "/Images/AT/wissen/pv-modul-pruefung.jpg",
   bildAlt: "Techniker prüft ein monokristallines Solarmodul auf einem Dach",
   badge: { wert: "22,7 %", text: "mittlerer Wirkungsgrad kristalliner Module (Fraunhofer ISE)" },
 

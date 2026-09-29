@@ -15,6 +15,7 @@ import {
   FIRMENSITZ as FIRMENSITZ_STATISCH,
   STANDORTE as STANDORTE_STATISCH,
 } from "./standorte";
+import { AT_KARTE, AT_KARTE_QUELLE, BUNDESLAND_PFADE, projiziereAT } from "@/components/Region/oesterreichKarte";
 
 const LeafletKarte = dynamic(() => import("./LeafletKarte"), {
   ssr: false,
@@ -25,23 +26,20 @@ const LeafletKarte = dynamic(() => import("./LeafletKarte"), {
   ),
 });
 
-// Ausschnitt der Vorschau (Süddeutschland / Westösterreich)
-const BOX = { lngMin: 9.2, lngMax: 13.4, latMin: 47.05, latMax: 48.62 };
-const K = Math.cos((47.8 * Math.PI) / 180);
-const B = 1000;
-const H = Math.round(
-  (B * (BOX.latMax - BOX.latMin)) / ((BOX.lngMax - BOX.lngMin) * K),
-);
-const PX_JE_KM = H / (BOX.latMax - BOX.latMin) / 111;
-const projiziere = (s) => ({
-  x: ((s.lng - BOX.lngMin) * K * B) / ((BOX.lngMax - BOX.lngMin) * K),
-  y: ((BOX.latMax - s.lat) / (BOX.latMax - BOX.latMin)) * H,
-});
-const imBild = (s) =>
-  s.lat >= BOX.latMin &&
-  s.lat <= BOX.latMax &&
-  s.lng >= BOX.lngMin &&
-  s.lng <= BOX.lngMax;
+// Vorschau: ganz Österreich (Bundesländer-Umrisse, Statistik Austria CC BY 4.0)
+const B = AT_KARTE.breite;
+const H = AT_KARTE.hoehe;
+const PX_JE_KM = AT_KARTE.s / 111;
+const projiziere = (s) => projiziereAT(s.lat, s.lng);
+const imBild = (s) => {
+  const { x, y } = projiziere(s);
+  return x >= 0 && x <= B && y >= 0 && y <= H;
+};
+// Einsatzzonen ab Firmensitz (wie auf den Regionalseiten, @/lib/regionen ZONEN)
+const RINGE = [
+  { km: 80, label: "Heimatregion · 80 km" },
+  { km: 200, label: "200 km" },
+];
 
 /** Link for a place: always the project list filtered by this place */
 function zielLink(s) {
@@ -140,6 +138,7 @@ export default function ReferenzKarte({
   umkreisKm = 100,
   imUmkreis,
   projekteJeOrt = {},
+  einsatzOrte = [],
 }) {
   const [zustimmung, setZustimmung] = useState(false);
   const [auswahl, setAuswahl] = useState(null);
@@ -180,6 +179,13 @@ export default function ReferenzKarte({
   const anzahlImUmkreis =
     imUmkreis ?? standorte.filter((s) => s.km <= umkreisKm).length;
   const ausserhalb = standorte.filter((s) => !imBild(s));
+  // Noch keine Referenzorte mit Koordinaten: Einsatzgebiet (Standorte mit Regionalseite) zeigen
+  const leer = standorte.length === 0 && einsatzOrte.length > 0;
+  const einsatzListe = useMemo(() => {
+    const q = suche.trim().toLowerCase();
+    const l = q ? einsatzOrte.filter((s) => s.label.toLowerCase().includes(q) || (s.land || "").toLowerCase().includes(q)) : einsatzOrte;
+    return [...l].sort((a, b) => a.km - b.km);
+  }, [suche, einsatzOrte]);
 
   const laden = () => {
     speichereZustimmung();
@@ -193,16 +199,29 @@ export default function ReferenzKarte({
         <div className="border-b border-white/10 p-5">
           <div className="flex items-baseline justify-between gap-3">
             <p className="font-display text-[17px] font-bold text-white">
-              Referenzstandorte
+              {leer ? "Einsatzgebiet Österreich" : "Referenzstandorte"}
             </p>
             <p className="ov-num text-[13px] text-white/55">
-              {gesamtProjekte > 0 && `${gesamtProjekte} ${gesamtProjekte === 1 ? "Projekt" : "Projekte"} · `}
-              {anzahlOrte} {anzahlOrte === 1 ? "Ort" : "Orte"}
+              {leer ? (
+                `${einsatzOrte.length} Standorte`
+              ) : (
+                <>
+                  {gesamtProjekte > 0 && `${gesamtProjekte} ${gesamtProjekte === 1 ? "Projekt" : "Projekte"} · `}
+                  {anzahlOrte} {anzahlOrte === 1 ? "Ort" : "Orte"}
+                </>
+              )}
             </p>
           </div>
           <p className="mt-1 text-[13.5px] text-white/60">
-            <span className="font-semibold text-ov-300">{anzahlImUmkreis}</span>{" "}
-            davon im Umkreis von {umkreisKm} km um {firmensitz.label}
+            {leer ? (
+              <>
+                <span className="font-semibold text-ov-300">{einsatzOrte.filter((s) => s.km <= 80).length}</span> davon in der Heimatregion bis 80 km – Standorte mit eigener Seite zu Ertrag, Netz und Förderung
+              </>
+            ) : (
+              <>
+                <span className="font-semibold text-ov-300">{anzahlImUmkreis}</span> davon im Umkreis von {umkreisKm} km um {firmensitz.label}
+              </>
+            )}
           </p>
           <label className="relative mt-4 block">
             <span className="sr-only">Ort suchen</span>
@@ -214,7 +233,7 @@ export default function ReferenzKarte({
               type="search"
               value={suche}
               onChange={(e) => setSuche(e.target.value)}
-              placeholder="Ort oder PLZ suchen, z. B. Buchloe"
+              placeholder={leer ? "Ort oder Bundesland, z. B. Linz" : "Ort oder PLZ suchen, z. B. Linz"}
               className="h-11 w-full rounded-full bg-white/[0.06] pl-11 pr-10 text-[14.5px] text-white placeholder:text-white/40 ring-1 ring-inset ring-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-400 [&::-webkit-search-cancel-button]:hidden"
             />
             {suche && (
@@ -327,7 +346,28 @@ export default function ReferenzKarte({
               </li>
             );
           })}
-          {liste.length === 0 && (
+          {leer &&
+            einsatzListe.map((s) => (
+              <li key={s.id}>
+                <Link
+                  href={s.href}
+                  onMouseEnter={() => setHover(s.id)}
+                  onMouseLeave={() => setHover(null)}
+                  onFocus={() => setHover(s.id)}
+                  className="group flex w-full items-center gap-3 rounded-2xl p-3 pr-4 transition hover:bg-white/[0.05]"
+                >
+                  <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition", hover === s.id ? "bg-ov-500 text-white" : "bg-white/[0.06] text-white/50")}>
+                    <MapPin aria-hidden="true" className="h-4 w-4" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-semibold text-white">Photovoltaik {s.label}</span>
+                    <span className="block text-[12.5px] text-white/55">{s.land}</span>
+                  </span>
+                  <span className="ov-num shrink-0 text-[13px] font-semibold text-white/70">{s.km} km</span>
+                </Link>
+              </li>
+            ))}
+          {!leer && liste.length === 0 && (
             <li className="px-4 py-8 text-center text-[14px] text-white/60">
               Kein Referenzstandort gefunden. Wir sind trotzdem gern für Sie da
               – auch außerhalb der gezeigten Orte.
@@ -364,46 +404,67 @@ export default function ReferenzKarte({
               role="img"
               aria-label={`Vorschau der Referenzstandorte rund um ${firmensitz.label}`}
             >
+              <defs>
+                <clipPath id="rk-at">
+                  {Object.entries(BUNDESLAND_PFADE).map(([id, d]) => (
+                    <path key={id} d={d} />
+                  ))}
+                </clipPath>
+              </defs>
+              <g aria-hidden="true">
+                {Object.entries(BUNDESLAND_PFADE).map(([id, d]) => (
+                  <path key={id} d={d} fill="rgba(255,255,255,0.045)" stroke="rgba(255,255,255,0.22)" strokeWidth="1" strokeLinejoin="round" />
+                ))}
+              </g>
               {(() => {
                 const sitz = projiziere(firmensitz);
                 return (
                   <g aria-hidden="true">
-                    {[50, 100, 150, 200].map((km) => (
-                      <g key={km}>
-                        <circle
-                          cx={sitz.x}
-                          cy={sitz.y}
-                          r={km * PX_JE_KM}
-                          fill="none"
-                          stroke="rgba(255,255,255,0.13)"
-                          strokeDasharray="4 6"
-                        />
-                        {(() => {
-                          const r = km * PX_JE_KM;
-                          const ly =
-                            sitz.y - r > 24
-                              ? sitz.y - r - 8
-                              : sitz.y + r < H - 10
-                                ? sitz.y + r + 20
-                                : null;
-                          return ly == null ? null : (
-                            <text
-                              x={sitz.x}
-                              y={ly}
-                              textAnchor="middle"
-                              fill="rgba(255,255,255,0.45)"
-                              fontSize={15 * Math.min(f, 1.8)}
-                              fontFamily="inherit"
-                            >
-                              {km} km
-                            </text>
-                          );
-                        })()}
-                      </g>
-                    ))}
+                    {/* Einsatzzonen – innerhalb Österreichs leicht eingefärbt */}
+                    <g clipPath="url(#rk-at)">
+                      <circle cx={sitz.x} cy={sitz.y} r={200 * PX_JE_KM} fill="rgba(102,153,51,0.10)" />
+                      <circle cx={sitz.x} cy={sitz.y} r={80 * PX_JE_KM} fill="rgba(102,153,51,0.22)" />
+                    </g>
+                    {RINGE.map(({ km, label }) => {
+                      const r = km * PX_JE_KM;
+                      const w = (35 * Math.PI) / 180;
+                      return (
+                        <g key={km}>
+                          <circle cx={sitz.x} cy={sitz.y} r={r} fill="none" stroke="rgba(174,208,131,0.45)" strokeDasharray="4 6" />
+                          <text
+                            x={sitz.x + r * Math.cos(w) + 6}
+                            y={sitz.y + r * Math.sin(w) + 4}
+                            fill="rgba(255,255,255,0.6)"
+                            fontSize={14 * Math.min(f, 1.8)}
+                            fontWeight="600"
+                            fontFamily="inherit"
+                            paintOrder="stroke"
+                            stroke="rgba(1,14,33,0.7)"
+                            strokeWidth={3}
+                          >
+                            {label}
+                          </text>
+                        </g>
+                      );
+                    })}
                   </g>
                 );
               })()}
+              {leer &&
+                einsatzOrte.map((s) => {
+                  const { x, y } = projiziere(s);
+                  const an = hover === s.id;
+                  return (
+                    <g key={s.id} aria-hidden="true">
+                      <circle cx={x} cy={y} r={(an ? 8 : 4.5) * Math.min(f, 1.8)} fill={an ? "#ffc53d" : "rgba(255,255,255,0.55)"} stroke="rgba(3,18,43,0.8)" strokeWidth="1.5" className="transition-all duration-300" />
+                      {an && (
+                        <text x={x + 12 * f} y={y + 5 * f} fill="#fff" fontSize={17 * f} fontWeight="700" fontFamily="inherit" paintOrder="stroke" stroke="rgba(1,14,33,0.8)" strokeWidth={4 * f}>
+                          {s.label}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
               {beschriftung(standorte, auswahl, hover, f).map(
                 ({ s, x, y, aktiv, beschriften, links, dy }) => (
                   <g
@@ -508,6 +569,8 @@ export default function ReferenzKarte({
                 ))}
               </div>
             )}
+
+            <p className="px-4 pt-2 text-[11px] leading-snug text-white/35 lg:absolute lg:bottom-5 lg:left-6 lg:max-w-[45%] lg:p-0">{AT_KARTE_QUELLE}</p>
 
             {/* Zustimmung */}
             <div className="relative p-3 sm:p-5 lg:absolute lg:bottom-5 lg:right-5 lg:max-w-sm lg:p-0">

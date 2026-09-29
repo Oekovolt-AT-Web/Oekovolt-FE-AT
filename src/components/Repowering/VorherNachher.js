@@ -19,7 +19,7 @@ const BILD_FLAECHE = 100; // m² – die Illustration zeigt einen Dachausschnitt
 const DEGRADATION_ALT = 0.006; // pro Jahr, ältere Modulgenerationen
 const WR_ALT = 0.95; // relativer Wirkungsgrad alter Wechselrichter gegenüber neuen
 
-const zahl = (n, s = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: s, maximumFractionDigits: s });
+const zahl = (n, s = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: s, maximumFractionDigits: s });
 const wirkungsgradAlt = (jahr) => 0.105 + (jahr - 1998) * 0.0035;
 
 function Dach({ anzahl, reihen, neu }) {

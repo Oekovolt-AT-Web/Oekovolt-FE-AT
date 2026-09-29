@@ -122,7 +122,7 @@ const ZEITPLAN = ["So bald wie möglich", "In den nächsten 3 Monaten", "In 3–
 const SCHRITTE = ["Vorhaben", "Objekt", "Fläche", "Verbrauch & Netz", "Kontakt"];
 const SPEICHER_KEY = "ov_angebot_entwurf_at_v1";
 
-const zahl = (n) => Math.round(n).toLocaleString("de-AT");
+const zahl = (n) => Math.round(n).toLocaleString("de-DE");
 const eur = (n) => zahl(n) + " €";
 const rundeKwp = (k) => (k >= 100 ? Math.round(k / 10) * 10 : k >= 30 ? Math.round(k / 5) * 5 : Math.round(k * 2) / 2);
 
@@ -599,7 +599,7 @@ export default function Konfigurator() {
                             onClick={() => setze("verbrauch", kwh)}
                             className={`h-11 rounded-full px-4 text-[14px] font-semibold transition-all ${f.verbrauch === kwh ? "bg-ink-900 text-white" : "bg-ink-100 text-ink-700 hover:bg-ink-200"}`}
                           >
-                            {kwh >= 1000000 ? `${(kwh / 1000000).toLocaleString("de-AT")} Mio.` : zahl(kwh)}
+                            {kwh >= 1000000 ? `${(kwh / 1000000).toLocaleString("de-DE")} Mio.` : zahl(kwh)}
                             {kwh === VERBRAUCH_GEWERBE[VERBRAUCH_GEWERBE.length - 1] ? "+" : ""}
                           </button>
                         ))}
@@ -876,7 +876,7 @@ function Einschaetzung({ s, vorhaben }) {
         ) : (
           <>
             <div className="mt-5 grid grid-cols-2 gap-4">
-              <Wert label="Anlagengröße" wert={`${s.kwp.toLocaleString("de-AT")} kWp`} />
+              <Wert label="Anlagengröße" wert={`${s.kwp.toLocaleString("de-DE")} kWp`} />
               <Wert label="Speicher" wert={s.speicherKwh ? `${s.speicherKwh} kWh` : "–"} />
               <Wert label="Jahresertrag" wert={`${zahl(s.jahresertrag)} kWh`} />
               <Wert label="Autarkie" wert={`${Math.round(s.autarkie * 100)} %`} />

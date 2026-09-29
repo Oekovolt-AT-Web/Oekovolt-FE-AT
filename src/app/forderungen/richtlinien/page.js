@@ -12,7 +12,10 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import NormenExplorer from "@/components/Forderungen/Richtlinen/NormenExplorer";
-import { Hinweis, HowTo, Kennzahlen, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import Prozess from "@/components/Forderungen/Shared/Prozess";
+import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
+import { BILDER, nachweise } from "@/components/Forderungen/Shared/bildnachweise";
+import { Hinweis, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import { ELWG, NETZZUTRITT, STAND } from "@/components/Forderungen/Shared/bund";
 import { alleBundeslaender } from "@/data/bundeslaender";
 import { BASE_URL } from "@/lib/site";
@@ -74,23 +77,11 @@ const FAQ = [
   },
 ];
 
+const LINK = "font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800";
+const TYP_BREITE = [22, 48, 72, 100];
+
 export default function Richtlinien() {
   const laender = alleBundeslaender();
-  const netze = laender.map((l) => ({
-    land: l.name,
-    netz: (
-      <span className="flex flex-wrap gap-x-4 gap-y-1">
-        {l.netzbetreiber.map((n) => (
-          <a key={n.name} href={n.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
-            {n.name}
-            <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
-            <span className="sr-only">(externer Link, neues Fenster)</span>
-          </a>
-        ))}
-      </span>
-    ),
-    el: l.recht.elektrizitaet,
-  }));
 
   const schema = {
     "@context": "https://schema.org",
@@ -110,40 +101,42 @@ export default function Richtlinien() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        variant="dark"
+        variant="immersive"
         breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Richtlinien & Netzanschluss" }]}
         eyebrow={`Normen · ElWG · TOR · Stand ${STAND.kurz}`}
         title={<>Normen und Netzanschluss für <span className="ov-text-gradient-light">Photovoltaik in Österreich</span></>}
         lead="Welche Normen gelten, was die TOR Erzeuger verlangen und wie der Netzanschluss bei Netz Oberösterreich, Wiener Netze oder TINETZ abläuft – für Technik, Einkauf und Geschäftsführung, mit dem Rechtsstand nach ElWG."
+        image={{ src: BILDER.umspannwerk.src, alt: "Umspannwerk Villach Landskron in Kärnten", position: "center 55%" }}
         points={["TOR Erzeuger Typ A–D", "ÖVE/ÖNORM E 8101 & EN 62446", "Schnee, Wind, Hagel", "Netzanschluss in 7 Schritten"]}
         actions={[
-          { label: "Projekt anfragen", href: "/angebot" },
           { label: "Zum Netzanschluss", href: "#netzanschluss", icon: PlugZap },
+          { label: "Projekt anfragen", href: "/angebot" },
         ]}
       />
 
-      <Kennzahlen
+      <KennzahlenBand
         items={[
-          { wert: "20 kW", label: "Netzanschluss auf Anzeige (§ 96 ElWG)" },
-          { wert: "70 %", label: "mögliche Spitzenkappung bei Neuanlagen" },
-          { wert: "250 kW", label: "Grenze TOR Typ A zu Typ B" },
-          { wert: "01.10.2026", label: "ElWG-Regeln für Energiegemeinschaften" },
+          { value: 20, suffix: " kW", label: "Netzanschluss auf Anzeige (§ 96 ElWG)" },
+          { value: 70, suffix: " %", label: "mögliche Spitzenkappung bei Neuanlagen" },
+          { value: 250, suffix: " kW", label: "Grenze TOR Typ A zu Typ B" },
+          { text: "01.10.2026", label: "ElWG-Regeln für Energiegemeinschaften" },
         ]}
       />
 
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Normen-Explorer"
-          title="Die wichtigsten Regelwerke nach Projektphase"
-          lead="Von der Statik bis zur Wiederholungsprüfung. Wo eine Ausgabe nicht an der Primärquelle belegt ist, steht der Prüfvermerk."
-          align="center"
-          className="mb-10"
-        />
+      <Section tone="sand" space="md" id="normen" className="scroll-mt-24">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Normen-Explorer"
+            title="Die wichtigsten Regelwerke nach Projektphase"
+            lead="Von der Statik bis zur Wiederholungsprüfung – filtern, suchen, aufklappen. Wo eine Ausgabe nicht an der Primärquelle belegt ist, steht der Prüfvermerk."
+          />
+          <StandPille className="shrink-0 self-start md:self-auto">Stand {STAND.label}</StandPille>
+        </div>
         <NormenExplorer />
       </Section>
 
-      <Section tone="white" space="lg" id="tor">
-        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <Section tone="white" space="md" id="tor" className="scroll-mt-24">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             eyebrow="TOR Erzeuger"
             title="Anlagentypen A bis D – was der Netzbetreiber verlangt"
@@ -151,77 +144,86 @@ export default function Richtlinien() {
           />
           <StandPille className="shrink-0 self-start md:self-auto">Schwellen laut E-Control</StandPille>
         </div>
-        <Reveal>
-          <Tabelle
-            caption="TOR Erzeuger – Anlagentypen in Österreich"
-            spalten={[
-              { key: "typ", label: "Typ", breite: "w-[10%]" },
-              { key: "leistung", label: "Maximalkapazität" },
-              { key: "netz", label: "Typische Netzebene" },
-              { key: "folgen", label: "Was das bedeutet" },
-            ]}
-            zeilen={TYPEN}
-          />
-        </Reveal>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {TYPEN.map((t, i) => (
+            <Reveal as="li" key={t.typ} delay={i * 80} className="flex">
+              <article className={`group ov-card-hover relative flex w-full flex-col overflow-hidden rounded-3xl p-6 ring-1 ${i === 0 ? "bg-white ring-ink-200/70" : i === 1 ? "bg-navy-950 text-white ring-navy-950" : "bg-sand-50 ring-ink-200/70"}`}>
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`font-display text-[40px] font-extrabold leading-none tracking-tight ${i === 1 ? "text-ov-300" : "text-ink-900"}`}>{t.typ}</span>
+                  {i === 1 && <span className="rounded-full bg-ov-500 px-2.5 py-1 text-[11.5px] font-semibold uppercase tracking-wider text-white">Parkregler</span>}
+                </div>
+                <span aria-hidden="true" className={`mt-5 block h-1.5 overflow-hidden rounded-full ${i === 1 ? "bg-white/15" : "bg-ink-200/70"}`}>
+                  <span className="block h-full rounded-full bg-gradient-to-r from-ov-300 to-ov-600" style={{ width: `${TYP_BREITE[i]}%` }} />
+                </span>
+                <h3 className={`mt-5 font-display text-[17px] font-bold leading-snug ${i === 1 ? "text-white" : "text-ink-900"}`}>{t.leistung}</h3>
+                <p className={`mt-1 text-[13.5px] font-semibold ${i === 1 ? "text-ov-300" : "text-ov-700"}`}>{t.netz}</p>
+                <p className={`mt-3 text-[14.5px] leading-relaxed ${i === 1 ? "text-white/70" : "text-ink-600"}`}>{t.folgen}</p>
+              </article>
+            </Reveal>
+          ))}
+        </ul>
         <p className="mt-4 text-[13px] text-ink-500">Netzebenen als Richtwert; maßgeblich ist der vom Netzbetreiber festgelegte Anschlusspunkt. Aktuelle Fassung der TOR: e-control.at, Stand 09/2026 bitte dort prüfen.</p>
-        <Hinweis titel="Parkregler aus eigener Entwicklung" className="mt-8">
+        <Hinweis titel="Parkregler aus eigener Entwicklung" className="mt-6">
           Für Anlagen ab Typ B setzen wir unseren selbst entwickelten Parkregler (EZA-Regler) ein – mit eigener Fernwartung und SCADA. Wie Blindleistung Q(U), cos φ und Wirkleistungsbegrenzung geregelt werden, erklärt der Ratgeber{" "}
-          <Link href="/ratgeber/eza-regler-parkregler" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">EZA-Regler und Parkregler</Link>, die Netzanschlussregeln der Ratgeber{" "}
-          <Link href="/ratgeber/tor-erzeuger-netzanschluss" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">TOR Erzeuger und Netzanschluss</Link>.
+          <Link href="/ratgeber/eza-regler-parkregler" className={LINK}>EZA-Regler und Parkregler</Link>, die Netzanschlussregeln der Ratgeber{" "}
+          <Link href="/ratgeber/tor-erzeuger-netzanschluss" className={LINK}>TOR Erzeuger und Netzanschluss</Link>.
         </Hinweis>
       </Section>
 
-      <Section tone="sand" space="lg" id="netzanschluss" className="scroll-mt-24">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+      <Section tone="navy" space="md" id="netzanschluss" className="ov-noise scroll-mt-24 overflow-hidden">
+        <Glow />
+        <div className="relative">
           <SectionHeading
+            dark
             eyebrow="Netzanschluss in 7 Schritten"
             title="Vom Netzzugangsantrag bis zum aktiven Einspeisezählpunkt"
             lead="Der Netzanschluss gehört an den Anfang des Projekts: Die Bestätigung der Anschlussmöglichkeit ist Voraussetzung für den EAG-Förderantrag."
-            className="lg:sticky lg:top-28 lg:self-start"
+            className="mb-10 md:mb-12"
           />
-          <HowTo
+          <Prozess
+            ton="dark"
             name="Netzanschluss einer Photovoltaikanlage in Österreich"
             beschreibung={`Ablauf beim Verteilernetzbetreiber nach ElWG und TOR, Stand ${STAND.label}.`}
             schritte={[
-              { icon: Gauge, name: "Lastgang und Anlagengröße festlegen", text: "Aus Viertelstundenwerten des Smart Meters ergeben sich Eigenverbrauch, Speichergröße und die sinnvolle Einspeiseleistung." },
-              { icon: FileSignature, name: "Netzzugangsantrag stellen", text: "Formular des Netzbetreibers mit Datenblättern und Schaltplan. Bis 20 kW genügt eine Anzeige (§ 96 ElWG) – der Netzbetreiber kann binnen 4 Wochen widersprechen." },
-              { icon: Cable, name: "Netzverträglichkeit prüfen lassen", text: "Größere Anlagen prüft der Netzbetreiber nach TOR Erzeuger: Anschlusspunkt, Netzebene, Blindleistungsverfahren, Einspeisebegrenzung – bei Engpässen flexibler Netzzugang." },
-              { icon: ClipboardCheck, name: "Netzzugangsvertrag und Netzzutrittsentgelt", text: "Nach Zusage folgen Netzzugangsvertrag und Netzzutrittsentgelt (für Erneuerbare pauschal je kW, siehe Tabelle)." },
-              { icon: Zap, name: "Stromabnahme regeln", text: "Einspeisezählpunkt anlegen lassen und einen Abnahmevertrag mit einem Stromhändler, der OeMAG (Marktpreis) oder über eine Energiegemeinschaft abschließen." },
-              { icon: Wrench, name: "Errichten, prüfen, Fertigstellung melden", text: "Installation nach ÖVE/ÖNORM E 8101, Erstprüfung nach EN 62446-1; die Elektrofachkraft meldet die Fertigstellung an den Netzbetreiber." },
-              { icon: Power, name: "Inbetriebnahme und Registrierung", text: "Zählerumbau bzw. Aktivierung des Zählpunkts, Registrierung in der Herkunftsnachweisdatenbank – Voraussetzung für EAG-Zuschuss und Marktprämie." },
+              { icon: <Gauge />, name: "Lastgang und Anlagengröße festlegen", text: "Aus Viertelstundenwerten des Smart Meters ergeben sich Eigenverbrauch, Speichergröße und die sinnvolle Einspeiseleistung." },
+              { icon: <FileSignature />, name: "Netzzugangsantrag stellen", text: "Formular des Netzbetreibers mit Datenblättern und Schaltplan. Bis 20 kW genügt eine Anzeige (§ 96 ElWG) – der Netzbetreiber kann binnen 4 Wochen widersprechen." },
+              { icon: <Cable />, name: "Netzverträglichkeit prüfen lassen", text: "Größere Anlagen prüft der Netzbetreiber nach TOR Erzeuger: Anschlusspunkt, Netzebene, Blindleistungsverfahren, Einspeisebegrenzung – bei Engpässen flexibler Netzzugang." },
+              { icon: <ClipboardCheck />, name: "Netzzugangsvertrag und Netzzutrittsentgelt", text: "Nach Zusage folgen Netzzugangsvertrag und Netzzutrittsentgelt (für Erneuerbare pauschal je kW, siehe unten)." },
+              { icon: <Zap />, name: "Stromabnahme regeln", text: "Einspeisezählpunkt anlegen lassen und einen Abnahmevertrag mit einem Stromhändler, der OeMAG (Marktpreis) oder über eine Energiegemeinschaft abschließen." },
+              { icon: <Wrench />, name: "Errichten, prüfen, Fertigstellung melden", text: "Installation nach ÖVE/ÖNORM E 8101, Erstprüfung nach EN 62446-1; die Elektrofachkraft meldet die Fertigstellung an den Netzbetreiber." },
+              { icon: <Power />, name: "Inbetriebnahme und Registrierung", text: "Zählerumbau bzw. Aktivierung des Zählpunkts, Registrierung in der Herkunftsnachweisdatenbank – Voraussetzung für EAG-Zuschuss und Marktprämie." },
             ]}
           />
         </div>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <Section tone="white" space="md">
+        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
             <SectionHeading eyebrow="Netzzutrittsentgelt" title="Was der Anschluss für Erzeuger kostet" lead="Für Erneuerbare auf Netzebene 3–7 gilt ein pauschales Entgelt je kW Engpassleistung." />
-            <Reveal className="mt-8">
-              <Tabelle
-                dicht
-                caption="Pauschales Netzzutrittsentgelt für Erneuerbare 2026"
-                spalten={[
-                  { key: "leistung", label: "Engpassleistung" },
-                  { key: "entgelt", label: "Entgelt netto", className: "font-display font-bold text-ov-700" },
-                ]}
-                zeilen={NETZZUTRITT.stufen}
-              />
-            </Reveal>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-3">
+              {NETZZUTRITT.stufen.map((s) => (
+                <li key={s.leistung} className="flex items-baseline justify-between gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/60 sm:block">
+                  <p className="text-[13px] font-semibold text-ink-500">{s.leistung}</p>
+                  <p className="ov-num mt-2 font-display text-[22px] font-extrabold leading-tight text-ov-700">{s.entgelt}</p>
+                </li>
+              ))}
+            </ul>
             <p className="mt-4 text-[13.5px] leading-relaxed text-ink-500">
               Quelle: {NETZZUTRITT.quelle.label} und Preisblätter der Netzbetreiber; Stand 09/2026, bitte beim Netzbetreiber prüfen. PV bis 15 kW über einen bestehenden Anschluss braucht nach ElWG kein zusätzliches Netzanschlussentgelt.
             </p>
           </div>
           <div>
             <SectionHeading eyebrow="Elektrizitätswirtschaftsgesetz" title="ElWG: was sich für Betreiber ändert" lead={ELWG.kurz} />
-            <ol className="mt-8 space-y-3">
-              {ELWG.termine.map((t) => (
-                <li key={t.datum} className="flex gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
-                  <span className="ov-num shrink-0 font-display text-[15px] font-bold text-ov-700">{t.datum}</span>
-                  <span className="text-[14.5px] leading-relaxed text-ink-700">{t.text}</span>
-                </li>
+            <ol className="relative mt-8 space-y-3 before:absolute before:bottom-4 before:left-[7px] before:top-4 before:w-px before:bg-gradient-to-b before:from-ov-400 before:to-ink-200">
+              {ELWG.termine.map((t, i) => (
+                <Reveal as="li" key={t.datum} delay={i * 80} className="relative flex gap-5 pl-7">
+                  <span aria-hidden="true" className="absolute left-0 top-5 h-[15px] w-[15px] rounded-full border-[3px] border-white bg-ov-500 shadow" />
+                  <div className="flex-1 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
+                    <span className="ov-num font-display text-[15px] font-bold text-ov-700">{t.datum}</span>
+                    <p className="mt-1 text-[14.5px] leading-relaxed text-ink-700">{t.text}</p>
+                  </div>
+                </Reveal>
               ))}
             </ol>
           </div>
@@ -235,42 +237,55 @@ export default function Richtlinien() {
           ))}
         </ul>
         <p className="mt-6 max-w-3xl text-[15px] leading-relaxed text-ink-600">
-          Ausführlich im Ratgeber{" "}
-          <Link href="/ratgeber/elwg-elektrizitaetswirtschaftsgesetz" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">ElWG – was sich für PV-Betreiber ändert</Link>. Die Landes-Elektrizitätswirtschaftsgesetze regeln daneben die Bewilligung der Erzeugungsanlage selbst; Leitungen über 1 kV unterliegen den Starkstromwegegesetzen von Bund (über Landesgrenzen) bzw. Ländern – relevant bei Freiflächen mit eigener Mittelspannungsleitung.
+          Ausführlich im Ratgeber <Link href="/ratgeber/elwg-elektrizitaetswirtschaftsgesetz" className={LINK}>ElWG – was sich für PV-Betreiber ändert</Link>. Die Landes-Elektrizitätswirtschaftsgesetze regeln daneben die Bewilligung der Erzeugungsanlage selbst; Leitungen über 1 kV unterliegen den Starkstromwegegesetzen von Bund (über Landesgrenzen) bzw. Ländern – relevant bei Freiflächen mit eigener Mittelspannungsleitung.
         </p>
       </Section>
 
-      <Section tone="sand" space="lg" id="netzbetreiber">
+      <Section tone="sand" space="md" id="netzbetreiber" className="scroll-mt-24">
         <SectionHeading
           eyebrow="Netzbetreiber und Landesrecht"
           title="Netzbetreiber und Elektrizitätsrecht je Bundesland"
-          lead="Ihr Netzbetreiber steht auf der Stromrechnung. Die Tabelle nennt die großen Verteilernetzbetreiber und die elektrizitätsrechtlichen Schwellen des jeweiligen Landes."
+          lead="Ihr Netzbetreiber steht auf der Stromrechnung. Die Karten nennen die großen Verteilernetzbetreiber und die elektrizitätsrechtlichen Schwellen des jeweiligen Landes."
           className="mb-10"
         />
-        <Reveal>
-          <Tabelle
-            dicht
-            caption="Netzbetreiber und Landes-Elektrizitätsrecht nach Bundesland"
-            spalten={[
-              { key: "land", label: "Land", breite: "w-[14%]" },
-              { key: "netz", label: "Netzbetreiber", breite: "w-[30%]" },
-              { key: "el", label: "Elektrizitätsrechtliche Schwellen" },
-            ]}
-            zeilen={netze}
-          />
-        </Reveal>
-        <p className="mt-4 text-[13.5px] leading-relaxed text-ink-500">Neben den genannten gibt es in allen Ländern Stadt- und Gemeindewerke mit eigenem Netzgebiet. Details je Land auf den <Link href="/forderungen/landesforderungen" className="underline decoration-ink-300 underline-offset-2 hover:text-ov-700">Landesseiten</Link>.</p>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {laender.map((l, i) => (
+            <Reveal as="li" key={l.key} delay={(i % 3) * 60} className="flex">
+              <article className="flex w-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="font-display text-[18px] font-bold text-ink-900">{l.name}</h3>
+                  <span className="flex h-9 min-w-9 items-center justify-center rounded-xl bg-ov-50 px-1.5 font-display text-[12.5px] font-extrabold text-ov-700 ring-1 ring-ov-100">{l.kuerzel}</span>
+                </div>
+                <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1">
+                  {l.netzbetreiber.map((n) => (
+                    <li key={n.name}>
+                      <a href={n.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[14.5px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                        {n.name}
+                        <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+                        <span className="sr-only">(externer Link, neues Fenster)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 border-t border-dashed border-ink-200 pt-4 text-[14px] leading-relaxed text-ink-600">
+                  <span className="font-semibold text-ink-900">Schwellen: </span>
+                  {l.recht.elektrizitaet}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </ul>
+        <p className="mt-6 text-[13.5px] leading-relaxed text-ink-500">Neben den genannten gibt es in allen Ländern Stadt- und Gemeindewerke mit eigenem Netzgebiet. Details je Land auf den <Link href="/forderungen/landesforderungen" className="underline decoration-ink-300 underline-offset-2 hover:text-ov-700">Landesseiten</Link>.</p>
       </Section>
 
-      <Section tone="white" space="lg">
+      <Section tone="white" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Normen und Netzanschluss – kurz beantwortet" lead={`Rechtsstand ${STAND.label}. Maßgeblich sind die aktuellen Ausgaben der Normen und die Vorgaben Ihres Netzbetreibers.`} />
           <Faq items={FAQ} />
         </div>
-      </Section>
-
-      <Section tone="sand" space="md">
         <Quellen
+          klappbar
+          className="mt-12"
           stand={STAND.label}
           quellen={[
             ...ELWG.quellen,
@@ -291,6 +306,7 @@ export default function Richtlinien() {
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Baurecht der Bundesländer", href: "/forderungen/baurecht" }}
       />
+      <Bildnachweis items={nachweise("umspannwerk")} />
     </div>
   );
 }

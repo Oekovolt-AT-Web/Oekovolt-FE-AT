@@ -4,12 +4,12 @@
 // PPA-Preis, Stromgestehungskosten und Ertrag im Beispiel sind offengelegte Annahmen. Keine Imports.
 
 // ---------------------------------------------------------------- Formatierung
-const n = (x) => Math.round(x).toLocaleString("de-AT");
+const n = (x) => Math.round(x).toLocaleString("de-DE");
 const eur = (x) => n(x) + " €";
 const kwhFmt = (x) => n(x) + " kWh";
-const z3 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-const z2 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const z1 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const z3 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const z2 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const z1 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const pct = (x) => Math.round(x * 100) + " %";
 const vz = (x) => (x >= 0 ? "+" : "−") + eur(Math.abs(x));
 

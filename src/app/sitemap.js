@@ -106,6 +106,15 @@ const STATIC_PAGES = [
   { path: "/pv-award", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
   { path: "/sponsoring", changeFrequency: "monthly", priority: 0.5, lastModified: AT_START },
   { path: "/partner", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
+  // Gewerbe-Rechner (Premium-Überarbeitung)
+  { path: "/rechner/gewerbe-pv", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/peak-shaving", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/e-flotte", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/ladeinfrastruktur", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/energiegemeinschaft", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/blackout", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/co2-esg", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+  { path: "/rechner/freiflaeche-pacht", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
 ];
 
 // Helper function to make authenticated fetch requests.
@@ -288,7 +297,21 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
-  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries];
+  // Speicher-Detailseiten der belegten Partner existieren auch ohne Backoffice (statisch)
+  ["byd", "sigenergy", "huawei"].forEach((slug) => {
+    const url = `${BASE_URL}/produkte/stromspeicher/${slug}`;
+    if (dynamicEntries.some((e) => e.url === url)) return;
+    const languages = sitemapLanguages(`/produkte/stromspeicher/${slug}`);
+    dynamicEntries.push({ url, lastModified: AT_START, changeFrequency: "monthly", priority: 0.6, ...(languages ? { alternates: { languages } } : {}) });
+  });
+
+  // Doppelte URLs (z. B. Backoffice-Slug = statischer Slug) nur einmal ausgeben
+  const gesehen = new Set();
+  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries].filter((e) => {
+    if (gesehen.has(e.url)) return false;
+    gesehen.add(e.url);
+    return true;
+  });
 
   return allEntries;
 }

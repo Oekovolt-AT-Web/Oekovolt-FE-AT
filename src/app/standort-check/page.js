@@ -5,7 +5,7 @@
 // Erklärtexte (SEO/GEO), FAQ und strukturierte Daten.
 
 import Link from "next/link";
-import { ArrowUpRight, Calculator, Info, MapPin, Mountain, Snowflake } from "lucide-react";
+import { ArrowUpRight, Calculator, Info, MapPin, Mountain, Snowflake, Wind } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -16,6 +16,10 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import StandortCheck from "@/components/StandortCheck/StandortCheck";
+import { Bildnachweis } from "@/components/Loesungen/Bausteine";
+import FotoBento from "@/components/Loesungen/B/FotoBento";
+import FachTabs from "@/components/Loesungen/B/FachTabs";
+import DunkelSektion from "@/components/Loesungen/B/DunkelSektion";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/standort-check";
@@ -36,7 +40,7 @@ export const metadata = {
     siteName: "Ökovolt Österreich",
     title: TITEL,
     description: BESCHREIBUNG,
-    images: [{ url: `${BASE_URL}/Images/AT/chalets/chalets-schneelast-luftbild.jpg`, width: 1600, height: 900, alt: "Tief verschneite Chalets aus der Luft" }],
+    images: [{ url: `${BASE_URL}/Images/AT/loesungen-b/standort-berghuette-pv.jpg`, width: 1920, height: 1279, alt: "Berghütte mit Photovoltaik in verschneiter Alpenlandschaft" }],
   },
 };
 
@@ -146,13 +150,58 @@ const WEITER = [
   { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Solarparks mit Unterkonstruktion für Schnee- und Windlasten am Standort." },
 ];
 
+function NormTabellen() {
+  return (
+    <div className="grid gap-6">
+      <div className="overflow-hidden rounded-3xl bg-white/[0.05] ring-1 ring-white/10">
+        <table className="w-full text-left text-[14.5px]">
+          <caption className="px-5 pt-5 text-left font-display text-[17px] font-bold text-white">Formbeiwert μ₁ nach Dachneigung</caption>
+          <thead>
+            <tr className="border-b border-white/10 text-[12.5px] uppercase tracking-wider text-white/50">
+              <th scope="col" className="px-5 py-3 font-semibold">Neigung</th>
+              <th scope="col" className="px-3 py-3 font-semibold">μ₁</th>
+              <th scope="col" className="px-5 py-3 font-semibold">Bedeutung</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/10">
+            {MU_TABELLE.map(([n, m, b]) => (
+              <tr key={n}>
+                <th scope="row" className="px-5 py-3 font-semibold text-white">{n}</th>
+                <td className="ov-num px-3 py-3 font-display text-[16px] font-bold text-ov-300">{m}</td>
+                <td className="px-5 py-3 text-white/65">{b}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <p className="px-5 pb-5 pt-2 text-[12.5px] text-white/45">Zwischen 30° und 60° linear: μ₁ = 0,8 · (60° − α) / 30°. Quelle: ÖNORM EN 1991-1-3, Tabelle 5.2.</p>
+      </div>
+      <div className="overflow-hidden rounded-3xl bg-white/[0.05] ring-1 ring-white/10">
+        <table className="w-full text-left text-[14px]">
+          <caption className="px-5 pt-5 text-left font-display text-[17px] font-bold text-white">Schneelastnormen in Österreich</caption>
+          <tbody className="divide-y divide-white/10">
+            {NORMSTAND.map(([n, i, s]) => (
+              <tr key={n}>
+                <th scope="row" className="w-[36%] px-5 py-3.5 align-top font-semibold text-white">{n}</th>
+                <td className="px-3 py-3.5 align-top text-white/65">{i}</td>
+                <td className="px-5 py-3.5 align-top">
+                  <span className={s === "gültig" ? "rounded-full bg-ov-500/20 px-2 py-0.5 text-[12px] font-semibold text-ov-300 ring-1 ring-ov-400/40" : "rounded-full bg-white/10 px-2 py-0.5 text-[12px] font-semibold text-white/60"}>{s}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 export default function StandortCheckPage() {
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
-        variant="dark"
+        variant="immersive"
         breadcrumbs={[{ name: "Rechner & Tools", href: "/rechner" }, { name: "Standort-Check" }]}
         eyebrow="Standort-Check mit eHORA"
         title={
@@ -161,11 +210,12 @@ export default function StandortCheckPage() {
           </>
         }
         lead="Für jede Adresse in Österreich: Seehöhe und Solarertrag automatisch, die Normwerte aus eHORA per Direktlink – und eine klare Bewertung, welche Module, welche Unterkonstruktion und welcher Schneefang zu Ihrem Dach passen."
+        image={{ src: "/Images/AT/loesungen-b/standort-berghuette-pv.jpg", alt: "Berghütte mit Photovoltaikmodulen an der Fassade in verschneiter Alpenlandschaft", position: "60% 60%" }}
         points={["Kostenlos & ohne Anmeldung", "ÖNORM B 1991-1-3:2022", "Ertrag mit PVGIS"]}
-        className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
+        className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-40"
       />
 
-      <section aria-label="Standort-Check" className="relative z-10 -mt-20 pb-6 md:-mt-28 md:pb-10">
+      <section aria-label="Standort-Check" id="werkzeug" className="relative z-10 -mt-20 scroll-mt-24 pb-6 md:-mt-28 md:pb-10">
         <div className="ov-container">
           <StandortCheck />
         </div>
@@ -186,171 +236,160 @@ export default function StandortCheckPage() {
             { icon: Snowflake, title: "Bewertung lesen", text: "Dachschneelast, Last je Modul und Auslastung von Modulen mit 2400, 5400 und 8100 Pa Prüflast – dazu Empfehlungen für Unterkonstruktion und Schneefang." },
           ]}
         />
+        <FotoBento
+          className="mt-16 md:mt-20"
+          items={[
+            { bild: "/Images/AT/chalets/chalets-schneelast-luftbild.jpg", alt: "Luftbild tief verschneiter Chalets mit hohen Schneedecken auf den Dächern", tag: "Schnee", titel: "Schneelast je Grundstück", text: "Seit 2022 gilt eine Karte im 50-m-Raster statt Schneelastzonen – der Wert für Ihre Adresse steht in eHORA.", href: "#schneelast" },
+            { bild: "/Images/AT/loesungen-b/standort-schneedach-pv.jpg", alt: "Schneebedecktes Hausdach mit Photovoltaikmodulen bei starkem Schneefall", titel: "Module & Unterkonstruktion", text: "Prüflast laut Datenblatt geteilt durch 1,5 – verglichen mit der Last je Modulfläche." },
+            { bild: "/Images/AT/loesungen/tourismus-seilbahn-pv-fassade.jpg", alt: "Bergstation einer Seilbahn mit Photovoltaik-Fassade", titel: "Wind & Hagel", text: "Basisgeschwindigkeitsdruck nach ÖNORM B 1991-1-4 und Hagelwiderstandsklasse HW 1–5.", href: "#fachwissen" },
+          ]}
+        />
       </Section>
 
-      <Section tone="sand" space="md">
-        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div>
-            <SectionHeading eyebrow="Schneelast Österreich" title="Schneelastzonen in Österreich – was seit 2022 gilt" />
-            <div className="ov-prose mt-8 max-w-2xl">
-              <p>
-                <strong>Österreich hat seit der ÖNORM B 1991-1-3 vom 15. Mai 2022 keine Schneelastzonen mehr.</strong> Die charakteristische Schneelast s<sub>k</sub> wird für jeden Standort aus einer Schneelastkarte im Raster von
-                50 × 50 m abgelesen. Grundlage sind Auswertungen von über 900 Messstationen; die Karte gilt bis 2.000 m Seehöhe und ist über HORA öffentlich zugänglich.
-              </p>
-              <p>
-                Vorher bestimmten Zone und Seehöhe den Wert: s<sub>k</sub> = (0,642 · Z + 0,009) · [1 + (A/728)²] mit Z = 1,6 (Zone 2*), 2, 3 oder 4,5 (Zone 4). Diese Formel war nur bis 1.500 m anwendbar und ergab laut Holzbau Austria im
-                Mittel rund 1,16 kN/m² zu hohe Werte. Mit der neuen Karte sinkt die Schneelast an vielen Orten – in einzelnen Lagen steigt sie aber auch. Bestehende Gebäude wurden oft nach dem alten Wert bemessen; für eine
-                PV-Nachrüstung zählt die Reserve des Dachstuhls, nicht der neue Kartenwert allein.
-              </p>
-              <p>
-                Aus s<sub>k</sub> wird die <strong>Dachschneelast s = μ₁ · Cₑ · Cₜ · s<sub>k</sub></strong> (ÖNORM EN 1991-1-3). Der Formbeiwert μ₁ hängt von der Dachneigung ab; Cₑ und Cₜ sind im Normalfall 1,0. Wo ein Schneefang das
-                Abrutschen verhindert, bleibt μ₁ bei mindestens 0,8.
-              </p>
-            </div>
-          </div>
-          <div className="space-y-6">
-            <Reveal>
-              <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70">
-                <table className="w-full text-left text-[14.5px]">
-                  <caption className="px-5 pt-5 text-left font-display text-[17px] font-bold text-ink-900">Formbeiwert μ₁ nach Dachneigung</caption>
-                  <thead>
-                    <tr className="border-b border-ink-200 text-[12.5px] uppercase tracking-wider text-ink-500">
-                      <th scope="col" className="px-5 py-3 font-semibold">Neigung</th>
-                      <th scope="col" className="px-3 py-3 font-semibold">μ₁</th>
-                      <th scope="col" className="px-5 py-3 font-semibold">Bedeutung</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-ink-100">
-                    {MU_TABELLE.map(([n, m, b]) => (
-                      <tr key={n}>
-                        <th scope="row" className="px-5 py-3 font-semibold text-ink-900">{n}</th>
-                        <td className="ov-num px-3 py-3 text-ink-900">{m}</td>
-                        <td className="px-5 py-3 text-ink-600">{b}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <p className="px-5 pb-5 pt-2 text-[12.5px] text-ink-500">Zwischen 30° und 60° linear: μ₁ = 0,8 · (60° − α) / 30°. Quelle: ÖNORM EN 1991-1-3, Tabelle 5.2.</p>
-              </div>
-            </Reveal>
-            <Reveal delay={100}>
-              <div className="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70">
-                <table className="w-full text-left text-[14px]">
-                  <caption className="px-5 pt-5 text-left font-display text-[17px] font-bold text-ink-900">Schneelastnormen in Österreich</caption>
-                  <tbody className="divide-y divide-ink-100">
-                    {NORMSTAND.map(([n, i, s]) => (
-                      <tr key={n}>
-                        <th scope="row" className="w-[38%] px-5 py-3 align-top font-semibold text-ink-900">{n}</th>
-                        <td className="px-3 py-3 align-top text-ink-600">{i}</td>
-                        <td className="px-5 py-3 align-top">
-                          <span className={s === "gültig" ? "rounded-full bg-ov-50 px-2 py-0.5 text-[12px] font-semibold text-ov-800 ring-1 ring-ov-200" : "rounded-full bg-ink-100 px-2 py-0.5 text-[12px] font-semibold text-ink-600"}>{s}</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Reveal>
-          </div>
+      <DunkelSektion
+        id="schneelast"
+        eyebrow="Schneelast Österreich"
+        title="Schneelastzonen in Österreich – was seit 2022 gilt"
+      >
+        <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
+          <Reveal className="space-y-5 text-[16px] leading-[1.75] text-white/70">
+            <p>
+              <strong className="text-white">Österreich hat seit der ÖNORM B 1991-1-3 vom 15. Mai 2022 keine Schneelastzonen mehr.</strong> Die charakteristische Schneelast s<sub>k</sub> wird für jeden Standort aus einer
+              Schneelastkarte im Raster von 50 × 50 m abgelesen. Grundlage sind Auswertungen von über 900 Messstationen; die Karte gilt bis 2.000 m Seehöhe und ist über HORA öffentlich zugänglich.
+            </p>
+            <p>
+              Vorher bestimmten Zone und Seehöhe den Wert: s<sub>k</sub> = (0,642 · Z + 0,009) · [1 + (A/728)²] mit Z = 1,6 (Zone 2*), 2, 3 oder 4,5 (Zone 4). Diese Formel war nur bis 1.500 m anwendbar und ergab laut Holzbau
+              Austria im Mittel rund 1,16 kN/m² zu hohe Werte. Mit der neuen Karte sinkt die Schneelast an vielen Orten – in einzelnen Lagen steigt sie aber auch. Bestehende Gebäude wurden oft nach dem alten Wert bemessen; für eine
+              PV-Nachrüstung zählt die Reserve des Dachstuhls, nicht der neue Kartenwert allein.
+            </p>
+            <p>
+              Aus s<sub>k</sub> wird die <strong className="text-white">Dachschneelast s = μ₁ · Cₑ · Cₜ · s<sub>k</sub></strong> (ÖNORM EN 1991-1-3). Der Formbeiwert μ₁ hängt von der Dachneigung ab; Cₑ und Cₜ sind im Normalfall
+              1,0. Wo ein Schneefang das Abrutschen verhindert, bleibt μ₁ bei mindestens 0,8.
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <NormTabellen />
+          </Reveal>
         </div>
-      </Section>
+      </DunkelSektion>
 
-      <Section tone="white" space="md">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <SectionHeading eyebrow="eHORA erklärt" title="Was HORA zeigt – und wie Sie die Werte richtig ablesen" />
-            <div className="ov-prose mt-8">
-              <p>
-                <strong>HORA (Natural Hazard Overview & Risk Assessment Austria) ist die Naturgefahrenplattform des Bundesministeriums für Land- und Forstwirtschaft, Klima- und Umweltschutz, Regionen und Wasserwirtschaft.</strong> Neben
-                Hochwasser, Rutschungen und Wetterwarnungen enthält sie Normen-Standortabfragen für Schneelast (ÖNORM B 1991-1-3:2022), Basiswindgeschwindigkeit (ÖNORM B 1991-1-4), Erdbeben (ÖNORM B 1998-1) und Hagel.
-              </p>
-              <p>
-                Klickt man in der Schneelastkarte auf einen Punkt, zeigt das Info-Fenster die Seehöhe, den Normwert <strong>s<sub>k</sub></strong> (50-jährliches Ereignis) sowie s<sub>25</sub> und s<sub>100</sub>. Über dasselbe Fenster
-                lässt sich die Standortabfrage als PDF herunterladen – dieses Dokument braucht auch Ihr Tragwerksplaner.
-              </p>
-              <p>
-                HORA weist ausdrücklich darauf hin, dass die Karten Informationsmaterial und keine amtliche Auskunft sind. Verbindliche Auskünfte erteilt die Baubehörde, meist die Gemeinde. Das automatisierte Herunterladen von
-                HORA-Daten ist untersagt – deshalb verlinkt unser Check die Karte, statt sie im Hintergrund abzufragen.
-              </p>
-            </div>
-          </div>
-          <div>
-            <SectionHeading eyebrow="Wind & Hagel" title="Zwei weitere Lasten, die in den Alpen und im Alpenvorland zählen" />
-            <div className="ov-prose mt-8">
-              <p>
-                <strong>Wind:</strong> Die Basiswindgeschwindigkeit v<sub>b,0</sub> nach ÖNORM B 1991-1-4 ist für jeden Ort in HORA ausgewiesen (mit zugehörigem Referenzort). Daraus folgt der Basisgeschwindigkeitsdruck q<sub>b,0</sub> = ½ · ρ ·
-                v<sub>b,0</sub>² mit ρ = 1,25 kg/m³. Auf die Anlage wirken vor allem Sogkräfte an Dachrändern und Ecken; die Unterkonstruktion wird dafür mit der Herstellerstatik bemessen.
-              </p>
-              <p>
-                <strong>Hagel:</strong> HORA zeigt die zu erwartende Hagelkorngröße für 10, 20 und 30 Jahre. Das Hagelregister stuft Bauteile in die Hagelwiderstandsklassen HW 1 bis HW 5 ein, geprüft mit Eiskugeln von 1 bis 5 cm
-                Durchmesser. Die Typprüfung von PV-Modulen nach IEC 61215 verwendet dagegen nur 25-mm-Eiskugeln – für hagelgefährdete Lagen ist die HW-Klasse der bessere Maßstab.
-              </p>
-              <p>
-                Tiefer ins Thema gehen die Ratgeber <Link href="/ratgeber/schneelast-photovoltaik">Schneelast und Photovoltaik</Link> und <Link href="/ratgeber/hagel-photovoltaik">Hagel und Photovoltaik</Link>.
-              </p>
-            </div>
-          </div>
-        </div>
+      <Section tone="white" space="md" id="fachwissen" className="scroll-mt-24">
+        <SectionHeading eyebrow="Fachwissen" title="eHORA, Wind und Hagel – kompakt erklärt" className="mb-10" />
+        <FachTabs
+          tabs={[
+            {
+              id: "hora",
+              label: "eHORA erklärt",
+              icon: <Mountain />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <div>
+                    <h3 className="ov-h3 text-ink-900">Was HORA zeigt – und wie Sie die Werte richtig ablesen</h3>
+                    <Link href="#werkzeug" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                      <MapPin aria-hidden="true" className="h-4 w-4" /> Zurück zum Check
+                    </Link>
+                  </div>
+                  <div className="ov-prose">
+                    <p>
+                      <strong>HORA (Natural Hazard Overview & Risk Assessment Austria) ist die Naturgefahrenplattform des Bundesministeriums für Land- und Forstwirtschaft, Klima- und Umweltschutz, Regionen und Wasserwirtschaft.</strong>{" "}
+                      Neben Hochwasser, Rutschungen und Wetterwarnungen enthält sie Normen-Standortabfragen für Schneelast (ÖNORM B 1991-1-3:2022), Basiswindgeschwindigkeit (ÖNORM B 1991-1-4), Erdbeben (ÖNORM B 1998-1) und Hagel.
+                    </p>
+                    <p>
+                      Klickt man in der Schneelastkarte auf einen Punkt, zeigt das Info-Fenster die Seehöhe, den Normwert <strong>s<sub>k</sub></strong> (50-jährliches Ereignis) sowie s<sub>25</sub> und s<sub>100</sub>. Über dasselbe
+                      Fenster lässt sich die Standortabfrage als PDF herunterladen – dieses Dokument braucht auch Ihr Tragwerksplaner.
+                    </p>
+                    <p>
+                      HORA weist ausdrücklich darauf hin, dass die Karten Informationsmaterial und keine amtliche Auskunft sind. Verbindliche Auskünfte erteilt die Baubehörde, meist die Gemeinde. Das automatisierte Herunterladen von
+                      HORA-Daten ist untersagt – deshalb verlinkt unser Check die Karte, statt sie im Hintergrund abzufragen.
+                    </p>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              id: "wind-hagel",
+              label: "Wind & Hagel",
+              icon: <Wind />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <div>
+                    <h3 className="ov-h3 text-ink-900">Zwei weitere Lasten, die in den Alpen und im Alpenvorland zählen</h3>
+                  </div>
+                  <div className="ov-prose">
+                    <p>
+                      <strong>Wind:</strong> Die Basiswindgeschwindigkeit v<sub>b,0</sub> nach ÖNORM B 1991-1-4 ist für jeden Ort in HORA ausgewiesen (mit zugehörigem Referenzort). Daraus folgt der Basisgeschwindigkeitsdruck q
+                      <sub>b,0</sub> = ½ · ρ · v<sub>b,0</sub>² mit ρ = 1,25 kg/m³. Auf die Anlage wirken vor allem Sogkräfte an Dachrändern und Ecken; die Unterkonstruktion wird dafür mit der Herstellerstatik bemessen.
+                    </p>
+                    <p>
+                      <strong>Hagel:</strong> HORA zeigt die zu erwartende Hagelkorngröße für 10, 20 und 30 Jahre. Das Hagelregister stuft Bauteile in die Hagelwiderstandsklassen HW 1 bis HW 5 ein, geprüft mit Eiskugeln von 1 bis 5 cm
+                      Durchmesser. Die Typprüfung von PV-Modulen nach IEC 61215 verwendet dagegen nur 25-mm-Eiskugeln – für hagelgefährdete Lagen ist die HW-Klasse der bessere Maßstab.
+                    </p>
+                    <p>
+                      Tiefer ins Thema gehen die Ratgeber <Link href="/ratgeber/schneelast-photovoltaik">Schneelast und Photovoltaik</Link> und <Link href="/ratgeber/hagel-photovoltaik">Hagel und Photovoltaik</Link>.
+                    </p>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              id: "quellen",
+              label: "Quellen & Grenzen",
+              icon: <Info />,
+              inhalt: (
+                <div className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/70 md:p-8">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200">
+                      <Info aria-hidden="true" className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <h3 className="font-display text-[19px] font-bold text-ink-900">Quellen, Daten & Grenzen</h3>
+                      <p className="text-[12.5px] text-ink-500">Stand September 2026 · Vorabschätzung, keine Statik</p>
+                    </div>
+                  </div>
+                  <ul className="mt-5 grid gap-x-8 gap-y-2 text-[13.5px] leading-relaxed text-ink-600 md:grid-cols-2">
+                    {QUELLEN.map((q) => (
+                      <li key={q.name}>
+                        <a href={q.url} target="_blank" rel="noopener noreferrer" className="underline decoration-ink-300 underline-offset-2 hover:text-ink-900">
+                          {q.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-5 text-[12.5px] leading-relaxed text-ink-500">
+                    Kartendarstellung: Datenquelle basemap.at (CC BY 4.0). Adresssuche: © OpenStreetMap-Mitwirkende (ODbL). Ertrag: PVGIS © Europäische Union. Seehöhe: EU-DEM v1.1, Copernicus Land Monitoring Service.
+                    HORA-Inhalte © BMLUK – keine amtliche Auskunft.
+                  </p>
+                </div>
+              ),
+            },
+          ]}
+        />
       </Section>
 
       <Section tone="sand" space="md">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading eyebrow="Häufige Fragen" title="Standort-Check: Fragen & Antworten" lead="Ihre Frage ist nicht dabei? Wir prüfen Ihren Standort gerne persönlich." />
+          <div>
+            <SectionHeading eyebrow="Häufige Fragen" title="Standort-Check: Fragen & Antworten" lead="Ihre Frage ist nicht dabei? Wir prüfen Ihren Standort gerne persönlich." />
+            <nav aria-labelledby="weiter-titel" className="mt-10">
+              <h2 id="weiter-titel" className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ink-500">Weiterlesen: Schnee, Hagel & Anlagenplanung</h2>
+              <ul className="mt-4 divide-y divide-ink-200 border-y border-ink-200">
+                {WEITER.map((v) => (
+                  <li key={v.href}>
+                    <Link href={v.href} className="group flex items-start justify-between gap-4 py-4">
+                      <span>
+                        <span className="block font-display text-[16px] font-bold text-ink-900 transition-colors group-hover:text-ov-700">{v.titel}</span>
+                        <span className="mt-0.5 block text-[13.5px] leading-relaxed text-ink-500">{v.text}</span>
+                      </span>
+                      <ArrowUpRight aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-300 transition-all duration-300 group-hover:rotate-45 group-hover:text-ov-600" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
           <Faq items={FAQ} />
         </div>
       </Section>
-
-      <section aria-labelledby="weiter-titel" className="bg-white">
-        <div className="ov-container py-16 md:py-20">
-          <div className="mb-8 flex items-end justify-between gap-6 border-b border-ink-200 pb-6">
-            <h2 id="weiter-titel" className="ov-h3 text-ink-900 md:text-[28px]">
-              Weiterlesen: Schnee, Hagel & Anlagenplanung
-            </h2>
-          </div>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {WEITER.map((v, i) => (
-              <Reveal as="li" key={v.href} delay={i * 60} className="flex">
-                <article className="group ov-card-hover relative flex w-full flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 focus-within:ring-2 focus-within:ring-ov-500 hover:bg-white">
-                  <span className="mb-6 flex h-10 w-10 items-center justify-center rounded-full bg-white text-ink-400 ring-1 ring-ink-200 transition-all duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
-                    <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:rotate-45" />
-                  </span>
-                  <h3 className="font-display text-[18px] font-bold leading-snug text-ink-900">
-                    <Link href={v.href} className="outline-none after:absolute after:inset-0 after:rounded-3xl after:content-['']">
-                      {v.titel}
-                    </Link>
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{v.text}</p>
-                </article>
-              </Reveal>
-            ))}
-          </ul>
-
-          <aside aria-labelledby="quellen-titel" className="mt-12 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/70 md:p-8">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200">
-                <Info aria-hidden="true" className="h-5 w-5" />
-              </span>
-              <div>
-                <h2 id="quellen-titel" className="font-display text-[19px] font-bold text-ink-900">Quellen, Daten & Grenzen</h2>
-                <p className="text-[12.5px] text-ink-500">Stand September 2026 · Vorabschätzung, keine Statik</p>
-              </div>
-            </div>
-            <ul className="mt-5 grid gap-x-8 gap-y-2 text-[13.5px] leading-relaxed text-ink-600 md:grid-cols-2">
-              {QUELLEN.map((q) => (
-                <li key={q.name}>
-                  <a href={q.url} target="_blank" rel="noopener noreferrer" className="underline decoration-ink-300 underline-offset-2 hover:text-ink-900">
-                    {q.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-5 text-[12.5px] leading-relaxed text-ink-500">
-              Kartendarstellung: Datenquelle basemap.at (CC BY 4.0). Adresssuche: © OpenStreetMap-Mitwirkende (ODbL). Ertrag: PVGIS © Europäische Union. Seehöhe: EU-DEM v1.1, Copernicus Land Monitoring Service. HORA-Inhalte © BMLUK – keine
-              amtliche Auskunft.
-            </p>
-          </aside>
-        </div>
-      </section>
 
       <Querverweise pfad={PFAD} />
 
@@ -360,6 +399,15 @@ export default function StandortCheckPage() {
         text="Schneelast, Wind und Hagel aus HORA, Dachstuhl und Unterkonstruktion geprüft, Module passend zur Last gewählt: Wir bereiten alles so vor, dass Ihr Tragwerksplaner und die Baubehörde damit arbeiten können."
         primary={{ label: "Standort prüfen lassen", href: "/angebot" }}
         secondary={{ label: "Solarertrag rechnen", href: "/solarrechner", icon: Calculator }}
+      />
+
+      <Bildnachweis
+        items={[
+          { motiv: "Berghütte mit PV", urheber: "Jean-Paul Wettstein", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/sunny-alpine-landscape-with-mountain-retreat-35486171/" },
+          { motiv: "Schneedach mit PV", urheber: "Budget Bizar", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/close-up-of-a-roof-of-a-house-covered-in-snow-during-a-heavy-snowfall-15922991/" },
+          { motiv: "Verschneite Chalets", urheber: "Daniel Reust", lizenz: "CC BY 4.0", href: "https://commons.wikimedia.org/wiki/File:Chalets_im_Winter.jpg" },
+          { motiv: "Panoramabahn Bürserberg, Bergstation", urheber: "Asurnipal", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:Buerserberg-Panoramabahn-top_station-photovoltaic_system-01ASD.jpg" },
+        ]}
       />
     </div>
   );

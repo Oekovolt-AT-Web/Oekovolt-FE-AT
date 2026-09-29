@@ -64,7 +64,7 @@ export function actor(name) {
     indexable: true,
     published: "2026-09-14T00:00:00Z",
     attributionDomains: [HANDLE_DOMAIN, `www.${HANDLE_DOMAIN}`],
-    icon: { type: "Image", mediaType: "image/webp", url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp` },
+    icon: { type: "Image", mediaType: "image/png", url: `${BASE_URL}/logo-oekovolt.png` },
     image: { type: "Image", mediaType: "image/jpeg", url: `${BASE_URL}/og-image.jpg` },
     attachment: [
       { type: "PropertyValue", name: "Website", value: `<a href="${BASE_URL}" rel="me nofollow noopener" target="_blank">oekovolt.com</a>` },

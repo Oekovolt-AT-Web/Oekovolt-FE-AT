@@ -129,12 +129,12 @@ export default function TvAnzeige({ start = [], standort = "", standardDauer = 1
       {/* Leiste */}
       <footer className={`flex items-center gap-[2.5em] px-[2.5em] py-[1.1em] ${farben.leiste}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt" className="h-[3em] w-auto" />
+        <img src="/logo-oekovolt-weiss.png" alt="Ökovolt" className="h-[3em] w-auto" />
         {energie && strom && (
           <div className="flex items-center gap-[2.2em] text-[1.35em]">
             <span className="flex items-center gap-[0.5em]">
               <Zap aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#f5b700]" />
-              Börsenstrom <b>{(strom.preis?.aktuell?.eurMwh / 10).toLocaleString("de-AT", { maximumFractionDigits: 1 })} ct/kWh</b>
+              Börsenstrom <b>{(strom.preis?.aktuell?.eurMwh / 10).toLocaleString("de-DE", { maximumFractionDigits: 1 })} ct/kWh</b>
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Leaf aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#8cc152]" />
@@ -142,11 +142,11 @@ export default function TvAnzeige({ start = [], standort = "", standardDauer = 1
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Sun aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#f5b700]" />
-              Solar <b>{((strom.erzeugung?.solarMw ?? 0) / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW</b>
+              Solar <b>{((strom.erzeugung?.solarMw ?? 0) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW</b>
             </span>
             <span className="flex items-center gap-[0.5em]">
               <Wind aria-hidden="true" className="h-[1.1em] w-[1.1em] text-[#8cc152]" />
-              Wind <b>{((strom.erzeugung?.windMw ?? 0) / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW</b>
+              Wind <b>{((strom.erzeugung?.windMw ?? 0) / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW</b>
             </span>
           </div>
         )}
@@ -180,9 +180,9 @@ function MarkenFolie({ strom, farben }) {
         <div className="grid grid-cols-2 gap-[1.2em]">
           {[
             { l: "Anteil Erneuerbare jetzt", w: `${Math.round(strom.erzeugung.eeAnteil)} %` },
-            { l: "Börsenstrompreis", w: `${(strom.preis.aktuell.eurMwh / 10).toLocaleString("de-AT", { maximumFractionDigits: 1 })} ct` },
-            { l: "Solarleistung AT", w: `${(strom.erzeugung.solarMw / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW` },
-            { l: "Windleistung AT", w: `${(strom.erzeugung.windMw / 1000).toLocaleString("de-AT", { maximumFractionDigits: 1 })} GW` },
+            { l: "Börsenstrompreis", w: `${(strom.preis.aktuell.eurMwh / 10).toLocaleString("de-DE", { maximumFractionDigits: 1 })} ct` },
+            { l: "Solarleistung AT", w: `${(strom.erzeugung.solarMw / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW` },
+            { l: "Windleistung AT", w: `${(strom.erzeugung.windMw / 1000).toLocaleString("de-DE", { maximumFractionDigits: 1 })} GW` },
           ].map((k) => (
             <div key={k.l} className="min-w-[14em] rounded-[1.2em] bg-white/5 p-[1.6em] ring-1 ring-white/10">
               <p className="text-[3.2em] font-extrabold tabular-nums">{k.w}</p>

@@ -145,7 +145,7 @@ export default function Navbar() {
         <div className={`ov-container flex items-center justify-between gap-6 transition-[height] duration-500 ${gescrollt ? "h-[68px]" : "h-[84px]"}`}>
           <Link href="/" aria-label="Ökovolt Solartechnik – zur Startseite" className="relative shrink-0">
             <div className={`relative origin-left transition-transform duration-500 ${gescrollt ? "scale-[0.86]" : ""}`} style={{ width: 168, height: 56 }}>
-              <Image src="/logo-Photoroom.png" alt="Ökovolt Solartechnik Deutschland" fill priority sizes="168px" className="object-contain object-left" />
+              <Image src="/logo-oekovolt.png" alt="Ökovolt Solartechnik Österreich" fill priority sizes="168px" className="object-contain object-left" />
             </div>
           </Link>
 
@@ -353,7 +353,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }
     >
       <div className="flex h-[72px] items-center justify-between border-b border-ink-100 px-5">
         <Link href="/" onClick={schliessen} className="relative" style={{ width: 150, height: 50 }} aria-label="Startseite">
-          <Image src="/logo-Photoroom.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
+          <Image src="/logo-oekovolt.png" alt="Ökovolt" fill sizes="150px" className="object-contain object-left" />
         </Link>
         <button ref={schliessKnopf} type="button" onClick={schliessen} aria-label="Menü schließen" className="flex h-11 w-11 items-center justify-center rounded-full bg-ink-100 text-ink-900">
           <X aria-hidden="true" className="h-5 w-5" />

@@ -1,20 +1,43 @@
-// src/app/rechner/page.js – Hub „Rechner & Tools"
+// src/app/rechner/page.js – Hub „Rechner & Tools für Unternehmen“ (Showcase)
+//
+// Alle Tools kommen aus src/components/Rechner/tools.js (auch die, die parallel
+// entstehen). Fehlt ein Eintrag, wird die Karte einfach übersprungen – der Hub
+// stürzt nie ab. Vorschauwerte stammen aus derselben Rechenlogik wie die Rechner.
 
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BatteryCharging, Car, Leaf, MapPinned, TrendingUp } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
-import SectionHeading from "@/components/ui/SectionHeading";
+import SectionHeading, { Eyebrow } from "@/components/ui/SectionHeading";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import { cn } from "@/components/ui/cn";
-import { TOOLS, toolById } from "@/components/Rechner/tools";
-import { VorschauBalken, VorschauCheckliste, VorschauLivePreis, VorschauSchritte, VorschauSolar, VorschauSpeicher } from "@/components/Rechner/ToolVorschau";
+import { KATEGORIEN, TOOLS, toolById, toolsVon } from "@/components/Rechner/tools";
+import {
+  VorschauBalken,
+  VorschauBlackout,
+  VorschauCashflow,
+  VorschauCheckliste,
+  VorschauFlaeche,
+  VorschauFlotte,
+  VorschauGemeinschaft,
+  VorschauLadepunkte,
+  VorschauLastspitze,
+  VorschauLivePreis,
+  VorschauSolar,
+  VorschauSpeicher,
+  VorschauStile,
+} from "@/components/Rechner/ToolVorschau";
+import HubKarte from "@/components/RechnerGewerbe/HubKarte";
+import { standortGruppen } from "@/components/RechnerGewerbe/standorte";
 import { rechnerMetadata } from "@/components/Rechner/RechnerSeite";
 import { getEnergySnapshot, dynamischBrutto } from "@/lib/energy";
 import { rechneWaermepumpe } from "@/lib/rechner/waermepumpe";
 import { rechneWallbox } from "@/lib/rechner/wallbox";
+import { rechneGewerbePv, annuitaet, kwpAusFlaeche, GEWERBE_PRESETS } from "@/lib/rechner/gewerbepv";
+import { rechneCo2 } from "@/lib/rechner/co2";
+import { rechnePacht } from "@/lib/rechner/pacht";
 import { fmt } from "@/lib/rechner/annahmen";
 import { berechne as solarBerechne } from "@/lib/solarrechner";
 import { ANNAHMEN } from "@/data/solarrechner";
@@ -28,24 +51,28 @@ const BASE = BASE_URL;
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "PV-Rechner & Tools Österreich: Solar, Speicher | Ökovolt",
+  title: "Rechner & Tools für Unternehmen: PV Österreich | Ökovolt",
   description:
-    "Kostenlose Rechner für Österreich: Solarrechner für Betrieb, Hof und Haus, Standort-Check, Speicher, Wärmepumpe, E-Auto und Spotpreis-Tarif mit Börsendaten.",
-  keywords: ["Photovoltaik Rechner Österreich", "PV Rechner Gewerbe", "Standort-Check Schneelast", "Stromspeicher Rechner", "Wärmepumpe Rechner", "dynamischer Stromtarif Österreich"],
+    "Kostenlose PV-Rechner für Betriebe in Österreich: Gewerbe-PV mit IRR, Peak Shaving, Speicher, E-Flotte, Energiegemeinschaft, CO₂/Scope 2, Pacht und Förderung.",
+  keywords: ["Photovoltaik Rechner Österreich", "PV Rechner Gewerbe", "Peak Shaving Rechner", "Scope 2 Rechner", "Freiflächen Pacht Rechner", "Energiegemeinschaft Rechner", "Stromspeicher Rechner"],
 });
 
 const TZ = "Europe/Vienna";
 const tagVon = (t) => new Intl.DateTimeFormat("sv-SE", { timeZone: TZ }).format(new Date(t));
 const uhr = (t) => new Intl.DateTimeFormat("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: TZ }).format(new Date(t));
+const eur = (n) => `${fmt(Math.round(n))} €`;
+const tsd = (n) => (Math.abs(n) >= 1e6 ? `${fmt(n / 1e6, 1)} Mio. €` : `${fmt(Math.round(n / 1000))} T€`);
+
+const KAT_ICON = { wirtschaftlichkeit: TrendingUp, "speicher-netz": BatteryCharging, mobilitaet: Car, "standort-foerderung": MapPinned, esg: Leaf };
 
 const FAQ = [
   {
-    q: "Wie genau sind die Ökovolt-Rechner?",
-    a: "Die Rechner liefern eine fundierte Orientierung für Österreich: Betriebe, Stromspeicher und Wärmepumpen werden stündlich über ein ganzes Jahr simuliert, der Tarifrechner nutzt echte Börsenpreise der Gebotszone Österreich. Alle Annahmen legen wir auf jeder Seite mit Quelle offen. Ein verbindliches Angebot erstellen wir nach Prüfung von Dach, Lastgang, Netzanschluss und Technik vor Ort.",
+    q: "Welchen Rechner sollte ich als Betrieb zuerst nutzen?",
+    a: "Planen Sie Photovoltaik auf einer Halle oder einem Betriebsgebäude, starten Sie mit dem Gewerbe-PV-Rechner: Er zeigt Eigenverbrauch, Amortisation, Rendite, EAG-Zuschuss und Investitionsfreibetrag. Zahlen Sie einen hohen Leistungspreis, prüft der Peak-Shaving-Rechner einen Gewerbespeicher. Für Klimabilanz und Bankgespräche liefert der CO₂- & ESG-Rechner die Scope-2-Werte, für Grundeigentümer der Freiflächen- & Pacht-Rechner die mögliche Leistung ihrer Fläche.",
   },
   {
-    q: "Welchen Rechner sollte ich zuerst nutzen?",
-    a: "Planen Sie eine neue Photovoltaikanlage für Betrieb, Hof oder Haus, starten Sie mit dem Solarrechner; den Standort mit Schneelast, Hagel und Ertrag prüft der Standort-Check. Haben Sie bereits PV, zeigt der Stromspeicher-Rechner, ob sich eine Batterie lohnt. Wer die Heizung tauschen möchte, nutzt den Wärmepumpen-Rechner, E-Auto-Fahrer den Laderechner. Der Dynamischer-Tarif-Rechner lohnt sich für alle mit Smart Meter und flexiblen Verbrauchern.",
+    q: "Wie genau sind die Ökovolt-Rechner?",
+    a: "Die Rechner liefern eine fundierte Orientierung für Österreich: Betriebe, Stromspeicher und Wärmepumpen werden stündlich über ein ganzes Jahr simuliert, der Ertrag kommt aus PVGIS-Daten für 37 Orte, der Tarifrechner nutzt echte Börsenpreise der Gebotszone Österreich. Alle Annahmen legen wir auf jeder Seite mit Quelle offen. Ein verbindliches Angebot erstellen wir nach Prüfung von Dach, Lastgang, Netzanschluss und Technik vor Ort.",
   },
   {
     q: "Kosten die Rechner etwas oder muss ich mich anmelden?",
@@ -53,28 +80,62 @@ const FAQ = [
   },
   {
     q: "Mit welchen Preisen rechnen die Tools?",
-    a: `Mit vorsichtigen, belegten Richtwerten, Stand September 2026: vermeidbarer Haushalts-Strompreis ${Math.round(ANNAHMEN.strompreis * 100)} ct/kWh, im Betrieb je nach Verbrauch netto, Einspeiseerlös ${String(VERGUETUNG.saetze[0].teileinspeisung).replace(".", ",")} ct/kWh auf Basis OeMAG-Marktpreis, Anlagen- und Speicherpreise aus der österreichischen Marktstatistik, Gas und Heizöl nach E-Control-Preismonitor und EU-Ölpreisbericht. Die meisten Werte können Sie im Rechner an Ihre Situation anpassen.`,
+    a: `Mit vorsichtigen, belegten Richtwerten, Stand September 2026: im Betrieb mit dem vermeidbaren Arbeitspreis netto nach Verbrauchsklasse (Eurostat), privat mit ${Math.round(ANNAHMEN.strompreis * 100)} ct/kWh brutto, Einspeiseerlös ${String(VERGUETUNG.saetze[0].teileinspeisung).replace(".", ",")} ct/kWh auf Basis OeMAG-Marktpreis, Anlagen- und Speicherpreise aus der österreichischen Marktstatistik. Die meisten Werte können Sie im Rechner an Ihre Situation anpassen.`,
   },
 ];
 
-export default async function RechnerHub() {
-  const snap = await getEnergySnapshot();
-  const erzeugung = snap.erzeugung?.zeitpunkt ? snap.erzeugung : null;
-  const heute = tagVon(Date.now());
-  const heutePunkte = snap.preis.punkte.filter((p) => tagVon(p.t) === heute);
-  const aktuell = snap.preis.aktuell;
-  const minHeute = snap.preis.heute?.min;
-
-  // Kleine Beispielrechnungen für die Vorschauen – mit derselben Logik wie die Rechner
+// Kleine Beispielrechnungen – mit derselben Logik wie die Rechner
+function beispiele() {
+  const orte = standortGruppen().flatMap((g) => g.orte);
+  const linz = orte.find((o) => o.slug === "linz") || orte[0];
+  const stp = orte.find((o) => o.slug === "st-poelten") || orte[0];
+  const p = GEWERBE_PRESETS[0];
+  const gewerbe = rechneGewerbePv({
+    kwp: Math.round(kwpAusFlaeche(p.flaeche, p.dachart) / 5) * 5,
+    dachart: p.dachart,
+    standort: linz,
+    verbrauchKwh: p.verbrauch,
+    typ: p.typ,
+    betriebstage: p.betriebstage,
+    schichten: p.schichten,
+    eag: true,
+    ifb: true,
+    profil: false,
+  });
+  const co2 = rechneCo2({ strombezugKwh: 1500000, marktFaktorG: 150, pv: { kwp: 800, ertragProKwp: 1000, eigenverbrauchsquote: 0.7 } });
+  const pacht = rechnePacht({ hektar: 10, standort: stp, konzept: "freiflaeche" });
+  const solar = solarBerechne({ kwp: 100, ausrichtung: "ost-west", neigung: "flach", verbrauch: 250000, speicherKwh: 0, zielgruppe: "gewerbe", betriebstage: 5, schichten: 1 });
   const wp = rechneWaermepumpe({ flaeche: 150, standard: "1995", heizung: "gas", preis: 12, jaz: 3.5, pv: "pv", kwp: 10 });
-  // Vorschau Solarrechner: Gewerbebetrieb (Zielgruppe der AT-Seite)
-  const pv = solarBerechne({ kwp: 100, ausrichtung: "ost-west", neigung: "flach", verbrauch: 250000, speicherKwh: 0, zielgruppe: "gewerbe", betriebstage: 5, schichten: 1 });
   const ea = rechneWallbox({ km: 15000, verbrauch: 18, anteilZuhause: 0.8, anteilPv: 0.4, kraftstoff: "benzin" });
+  const rate = annuitaet(gewerbe.investition, 0.05, 10);
+  return { gewerbe, co2, pacht, solar, wp, ea, rate, linz };
+}
+
+async function liveDaten() {
+  try {
+    const snap = await getEnergySnapshot();
+    const heute = tagVon(Date.now());
+    return {
+      punkte: snap.preis.punkte.filter((p) => tagVon(p.t) === heute),
+      aktuell: snap.preis.aktuell,
+      stat: snap.preis.heute,
+      erzeugung: snap.erzeugung?.zeitpunkt ? snap.erzeugung : null,
+      jetzt: new Date(snap.stand).getTime(),
+    };
+  } catch {
+    return { punkte: [], aktuell: null, stat: null, erzeugung: null, jetzt: null };
+  }
+}
+
+export default async function RechnerHub() {
+  const live = await liveDaten();
+  const b = beispiele();
+  const anzahl = TOOLS.filter((t) => t.kategorie !== "start").length;
 
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Ökovolt Rechner & Tools",
+    name: "Ökovolt Rechner & Tools für Unternehmen",
     url: `${BASE}${PFAD}`,
     numberOfItems: TOOLS.length,
     itemListElement: TOOLS.map((t, i) => ({
@@ -86,174 +147,223 @@ export default async function RechnerHub() {
     })),
   };
 
-  const karten = [
-    {
-      id: "solarrechner",
-      klasse: "sm:col-span-2 lg:row-span-2",
-      ton: "hell",
-      vorschau: (
-        <div className="flex h-full flex-col gap-4">
-          <dl className="grid grid-cols-3 gap-2 sm:gap-3">
-            {[
-              ["Jahresertrag", `${fmt(Math.round(pv.jahresertrag / 1000))} MWh`],
-              ["Eigenverbrauch", `${Math.round(pv.eigenverbrauchsquote * 100)} %`],
-              ["Amortisation", pv.amortisationJahre ? `${fmt(pv.amortisationJahre, 1)} J.` : "–"],
-            ].map(([k, v]) => (
-              <div key={k} className="rounded-2xl bg-white p-3 ring-1 ring-ink-200/70 sm:p-4">
-                <dt className="text-[11.5px] text-ink-500 sm:text-[12.5px]">{k}</dt>
-                <dd className="ov-num mt-0.5 whitespace-nowrap font-display text-[14px] font-extrabold tracking-tight text-ink-900 min-[400px]:text-[16px] sm:text-[22px]">{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="flex flex-1 flex-col justify-between gap-4 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 md:p-6">
-            <p className="mb-3 text-[12.5px] text-ink-500">Beispiel Gewerbe: 100 kWp Ost-West auf dem Hallendach, 250 MWh Verbrauch, Mo–Fr eine Schicht · Ertrag je Monat</p>
-            <VorschauSolar />
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: "stromspeicher",
-      klasse: "sm:col-span-2",
-      ton: "hell",
-      vorschau: (
-        <div className="rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
-          <div className="mb-2 flex items-baseline justify-between text-[12.5px] text-ink-500">
-            <span>Autarkie nach Speichergröße</span>
-            <span className="font-semibold text-sun-500">● Optimum</span>
-          </div>
-          <VorschauSpeicher />
-        </div>
-      ),
-    },
-    {
-      id: "waermepumpe",
-      ton: "hell",
-      vorschau: (
-        <VorschauBalken
-          reihen={[
-            { label: "Gasheizung", wert: wp.fossil.summe, anzeige: `${fmt(Math.round(wp.fossil.summe / 10) * 10)} €`, farbe: "#97a0b0" },
-            { label: "Wärmepumpe + PV", wert: wp.solar.summe, anzeige: `${fmt(Math.round(wp.solar.summe / 10) * 10)} €`, farbe: "#669933" },
-          ]}
-        />
-      ),
-    },
-    {
-      id: "wallbox",
-      ton: "hell",
-      vorschau: (
-        <VorschauBalken
-          reihen={[
-            { label: "Benziner", wert: ea.verbrenner.summe, anzeige: `${fmt(ea.verbrenner.je100, 2)} €/100 km`, farbe: "#97a0b0" },
-            { label: "E-Auto + PV", wert: ea.solar.summe, anzeige: `${fmt(ea.solar.je100, 2)} €/100 km`, farbe: "#669933" },
-          ]}
-        />
-      ),
-    },
-    {
-      id: "dynamisch",
-      klasse: "sm:col-span-2",
-      ton: "dunkel",
-      vorschau: (
-        <div className="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-          <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2 text-[12.5px] text-white/60">
-            <span className="inline-flex items-center gap-2">
-              <span className="relative flex h-2 w-2" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-ov-400 opacity-60 motion-reduce:animate-none" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-ov-400" />
-              </span>
-              Börsenpreis Österreich heute{aktuell ? <> · jetzt <strong className="ov-num text-white">{fmt(aktuell.eurMwh / 10, 1)} ct</strong></> : null}
-            </span>
-            {minHeute && (
-              <span>
-                Tiefstwert <strong className="ov-num text-sun-300">{uhr(minHeute.t)} Uhr</strong>
-              </span>
-            )}
-          </div>
-          <VorschauLivePreis punkte={heutePunkte} jetzt={new Date(snap.stand).getTime()} />
-        </div>
-      ),
-    },
-    {
-      id: "energie-live",
-      ton: "dunkel",
-      vorschau: (
-        <dl className="grid grid-cols-2 gap-2">
+  // Vorschau je Tool (fehlt eine, zeigt die Karte nur Text)
+  const vorschau = {
+    "gewerbe-pv": (
+      <div className="rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 md:p-5">
+        <dl className="mb-4 grid grid-cols-3 gap-2">
           {[
-            ["Solar AT", erzeugung?.solarMw != null ? `${fmt(erzeugung.solarMw / 1000, 1)} GW` : "–", "text-sun-300"],
-            ["Wasserkraft", erzeugung?.wasserMw != null ? `${fmt(erzeugung.wasserMw / 1000, 1)} GW` : "–", "text-white"],
-            ["Erneuerbar", erzeugung?.eeAnteil != null ? `${fmt(erzeugung.eeAnteil)} %` : "–", "text-ov-300"],
-            ["Endpreis dyn.", aktuell ? `${fmt(dynamischBrutto(aktuell.eurMwh))} ct` : "–", "text-white"],
-          ].map(([k, v, farbe]) => (
-            <div key={k} className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-              <dt className="text-[11.5px] text-white/60">{k}</dt>
-              <dd className={`ov-num font-display text-[19px] font-extrabold ${farbe}`}>{v}</dd>
+            ["Eigenverbrauch", `${fmt(b.gewerbe.eigenverbrauchsquote * 100)} %`],
+            ["Amortisation", b.gewerbe.amortisation != null ? `${fmt(b.gewerbe.amortisation, 1)} J.` : "–"],
+            ["Rendite (IRR)", b.gewerbe.irr != null ? `${fmt(b.gewerbe.irr * 100, 1)} %` : "–"],
+          ].map(([kk, v]) => (
+            <div key={kk} className="rounded-xl bg-white p-2.5 ring-1 ring-ink-200/70 sm:p-3">
+              <dt className="text-[11.5px] leading-tight text-ink-500 [hyphens:auto]" lang="de">{kk}</dt>
+              <dd className="ov-num mt-0.5 whitespace-nowrap font-display text-[16px] font-extrabold tracking-tight text-ink-900 sm:text-[20px]">{v}</dd>
             </div>
           ))}
         </dl>
-      ),
-    },
-    {
-      id: "foerdercheck",
-      ton: "sand",
-      vorschau: <VorschauCheckliste punkte={["EAG-Investitionszuschuss", "Investitionsfreibetrag", "Landesförderungen"]} />,
-    },
-    {
-      id: "standort-check",
-      klasse: "sm:col-span-2 lg:col-span-1",
-      ton: "hell",
-      vorschau: <VorschauCheckliste punkte={["Schneelast sₖ (eHORA)", "Wind, Hagel & Naturgefahren", "PV-Ertrag (PVGIS)"]} />,
-    },
-    {
-      id: "angebot",
-      klasse: "sm:col-span-2 lg:col-span-3",
-      ton: "gruen",
-      vorschau: <VorschauSchritte />,
-    },
-  ];
+        <p className="mb-3 flex flex-wrap justify-between gap-2 text-[12.5px] text-ink-500">
+          <span>
+            Beispiel Logistikhalle, {fmt(b.gewerbe.kwp)} kWp in {b.linz.name} · kumulierter Cashflow 25 Jahre
+          </span>
+          <span className="ov-num font-semibold text-ov-700">+{tsd(b.gewerbe.summe)}</span>
+        </p>
+        <VorschauCashflow reihe={b.gewerbe.cashflow} />
+      </div>
+    ),
+    solarrechner: <VorschauSolar />,
+    "freiflaeche-pacht": (
+      <div>
+        <VorschauFlaeche />
+        <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+          Beispiel 10 ha Freifläche: <strong className="ov-num text-ink-800">{fmt(b.pacht.kwp / 1000, 1)} MWp</strong>, rechnerisch{" "}
+          <strong className="ov-num text-ink-800">{fmt(Math.round(b.pacht.haushalte / 100) * 100)} Haushalte</strong>
+        </p>
+      </div>
+    ),
+    finanzierung: (
+      <VorschauBalken
+        reihen={[
+          { label: "Vorteil Jahr 1 (Beispiel)", wert: b.gewerbe.nutzenJahr1, anzeige: eur(Math.round(b.gewerbe.nutzenJahr1 / 100) * 100), farbe: "#669933" },
+          { label: "Rate 5 % / 10 J. (angenommen)", wert: b.rate, anzeige: eur(Math.round(b.rate / 100) * 100), farbe: "#97a0b0" },
+        ]}
+      />
+    ),
+    waermepumpe: (
+      <VorschauBalken
+        reihen={[
+          { label: "Gasheizung", wert: b.wp.fossil.summe, anzeige: `${fmt(Math.round(b.wp.fossil.summe / 10) * 10)} €`, farbe: "#97a0b0" },
+          { label: "Wärmepumpe + PV", wert: b.wp.solar.summe, anzeige: `${fmt(Math.round(b.wp.solar.summe / 10) * 10)} €`, farbe: "#669933" },
+        ]}
+      />
+    ),
+    "peak-shaving": <VorschauLastspitze />,
+    stromspeicher: <VorschauSpeicher dunkel />,
+    energiegemeinschaft: <VorschauGemeinschaft />,
+    blackout: <VorschauBlackout />,
+    "energie-live": (
+      <dl className="grid grid-cols-2 gap-2">
+        {[
+          ["Solar AT jetzt", live.erzeugung?.solarMw != null ? `${fmt(live.erzeugung.solarMw / 1000, 1)} GW` : "–", "text-sun-300"],
+          ["Erneuerbar", live.erzeugung?.eeAnteil != null ? `${fmt(live.erzeugung.eeAnteil)} %` : "–", "text-ov-300"],
+        ].map(([kk, v, farbe]) => (
+          <div key={kk} className="rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
+            <dt className="text-[11.5px] text-white/60">{kk}</dt>
+            <dd className={`ov-num font-display text-[19px] font-extrabold ${farbe}`}>{v}</dd>
+          </div>
+        ))}
+      </dl>
+    ),
+    "e-flotte": <VorschauFlotte />,
+    ladeinfrastruktur: <VorschauLadepunkte />,
+    wallbox: (
+      <VorschauBalken
+        reihen={[
+          { label: "Benziner", wert: b.ea.verbrenner.summe, anzeige: `${fmt(b.ea.verbrenner.je100, 2)} €/100 km`, farbe: "#97a0b0" },
+          { label: "E-Auto + PV", wert: b.ea.solar.summe, anzeige: `${fmt(b.ea.solar.je100, 2)} €/100 km`, farbe: "#669933" },
+        ]}
+      />
+    ),
+    "standort-check": <VorschauCheckliste punkte={["Schneelast sₖ (eHORA)", "Wind, Hagel & Naturgefahren", "PV-Ertrag (PVGIS)"]} />,
+    foerdercheck: <VorschauCheckliste punkte={["EAG-Investitionszuschuss", "Investitionsfreibetrag", "Landesförderungen"]} />,
+    ifb: (
+      <VorschauBalken
+        reihen={[
+          { label: `IFB ${fmt(ANNAHMEN.ifb.satzOeko * 100)} % (Beispiel Halle)`, wert: b.gewerbe.ifb.betrag, anzeige: eur(Math.round(b.gewerbe.ifb.betrag / 100) * 100), farbe: "#669933" },
+          { label: `Steuerersparnis (${fmt(ANNAHMEN.ifb.koest * 100)} % KöSt)`, wert: b.gewerbe.ifb.steuereffekt, anzeige: eur(Math.round(b.gewerbe.ifb.steuereffekt / 100) * 100), farbe: "#f5a70f" },
+        ]}
+      />
+    ),
+    "co2-esg": <Scope2Vorschau r={b.co2} />,
+  };
+
+  const karte = (id, props = {}) => {
+    const tool = toolById(id);
+    if (!tool) return null;
+    return (
+      <HubKarte tool={tool} {...props}>
+        {vorschau[id]}
+      </HubKarte>
+    );
+  };
 
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }} />
+      <VorschauStile />
 
       <PageHero
         variant="dark"
         breadcrumbs={[{ name: "Rechner & Tools" }]}
-        eyebrow="Rechner & Tools"
-        title={<>Erst rechnen, <span className="ov-text-gradient-light">dann entscheiden.</span></>}
-        lead="Kostenlose Werkzeuge rund um Photovoltaik für Betriebe, Landwirtschaft, Gemeinden und Private in Österreich – mit transparenten Annahmen, stündlicher Simulation, Standortdaten und Börsenpreisen der Gebotszone Österreich."
-        stats={[
-          { value: TOOLS.length, label: "kostenlose Tools" },
-          { value: 8760, label: "Stunden je Simulation" },
-          { value: 15, suffix: " min", label: "Takt der Börsenpreise" },
+        eyebrow="Rechner & Tools für Unternehmen"
+        title={
+          <>
+            Erst rechnen, <span className="ov-text-gradient-light">dann investieren.</span>
+          </>
+        }
+        lead="Kostenlose Werkzeuge für Betriebe, Landwirtschaft und Gemeinden in Österreich: Hallendach, Lastspitzen, Speicher, E-Flotte, Energiegemeinschaft, Klimabilanz und Pacht – stündlich simuliert, mit Standortdaten, Börsenpreisen und offenen Quellen."
+        actions={[
+          { label: "Gewerbe-PV-Rechner starten", href: "/rechner/gewerbe-pv" },
+          { label: "Alle Tools ansehen", href: "#wirtschaftlichkeit" },
         ]}
-        className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
-      />
+        stats={[
+          { value: anzahl, label: "kostenlose Rechner & Tools" },
+          { value: 8760, label: "Stunden je Simulation" },
+          { value: 37, label: "Orte mit PVGIS-Ertrag" },
+        ]}
+      >
+        <nav
+          aria-label="Kategorien"
+          className="ov-hero-in mt-12 xl:absolute xl:right-[max(2rem,calc((100vw-80rem)/2+2rem))] xl:top-1/2 xl:mt-0 xl:w-[390px] xl:-translate-y-1/2"
+          style={{ "--ov-delay": "300ms" }}
+        >
+          <div className="ov-glass rounded-3xl p-3 shadow-[0_40px_80px_-30px_rgba(0,0,0,0.6)]">
+            <p className="px-3 pb-2 pt-2 text-[11.5px] font-semibold uppercase tracking-[0.16em] text-white/55">Direkt zur Kategorie</p>
+            <ul className="grid gap-1 sm:grid-cols-2 xl:grid-cols-1">
+              {KATEGORIEN.map((kat) => {
+                const Icon = KAT_ICON[kat.id];
+                const n = toolsVon(kat.id).length;
+                return (
+                  <li key={kat.id}>
+                    <a href={`#${kat.id}`} className="group flex min-h-14 items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors hover:bg-white/10">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-ov-300 ring-1 ring-white/15 transition-colors group-hover:bg-ov-500 group-hover:text-white">
+                        <Icon aria-hidden="true" className="h-5 w-5" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block font-display text-[15.5px] font-bold text-white">{kat.titel}</span>
+                        <span className="block text-[12.5px] text-white/55">
+                          {n} {n === 1 ? "Tool" : "Tools"}
+                        </span>
+                      </span>
+                      <ArrowRight aria-hidden="true" className="h-4 w-4 text-white/40 transition-transform group-hover:translate-x-0.5 group-hover:text-white" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </nav>
+      </PageHero>
 
-      <section aria-label="Alle Rechner und Tools" className="relative z-10 -mt-20 md:-mt-28">
-        <div className="ov-container">
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-            {karten.map((k, i) => (
-              <Reveal as="li" key={k.id} delay={i * 60} className={cn("flex", k.klasse)}>
-                <ToolKarte tool={toolById(k.id)} ton={k.ton} gross={k.id === "solarrechner"} breit={k.id === "angebot"}>
-                  {k.vorschau}
-                </ToolKarte>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* 01 Wirtschaftlichkeit */}
+      <KategorieSektion id="wirtschaftlichkeit" nr="01" tone="white">
+        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          <Reveal as="li" className="flex md:col-span-2">{karte("gewerbe-pv", { form: "breit" })}</Reveal>
+          <Reveal as="li" delay={80} className="flex">{karte("solarrechner")}</Reveal>
+          <Reveal as="li" delay={60} className="flex">{karte("freiflaeche-pacht", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={120} className="flex">{karte("finanzierung")}</Reveal>
+          <Reveal as="li" delay={180} className="flex md:col-span-2 lg:col-span-1">{karte("waermepumpe", { ton: "sand" })}</Reveal>
+        </ul>
+      </KategorieSektion>
+
+      {/* 02 Speicher & Netz – dunkle Kontrast-Sektion mit Live-Strompreis */}
+      <KategorieSektion id="speicher-netz" nr="02" tone="navy">
+        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          <Reveal as="li" className="flex md:col-span-2">{karte("peak-shaving", { ton: "glas", form: "breit" })}</Reveal>
+          <Reveal as="li" delay={80} className="flex">{karte("stromspeicher", { ton: "glas" })}</Reveal>
+          <Reveal as="li" delay={60} className="flex">{karte("energiegemeinschaft", { ton: "glas" })}</Reveal>
+          <Reveal as="li" delay={120} className="flex">{karte("blackout", { ton: "glas" })}</Reveal>
+          <Reveal as="li" delay={180} className="flex md:col-span-2 lg:col-span-1">{karte("energie-live", { ton: "glas", mobilVorschau: true })}</Reveal>
+          <Reveal as="li" delay={100} className="md:col-span-2 lg:col-span-3">
+            <LiveKachel tool={toolById("dynamisch")} live={live} />
+          </Reveal>
+        </ul>
+      </KategorieSektion>
+
+      {/* 03 Mobilität */}
+      <KategorieSektion id="mobilitaet" nr="03" tone="sand">
+        <ul className="grid gap-4 md:grid-cols-3 lg:gap-5">
+          <Reveal as="li" className="flex">{karte("e-flotte")}</Reveal>
+          <Reveal as="li" delay={80} className="flex">{karte("ladeinfrastruktur")}</Reveal>
+          <Reveal as="li" delay={160} className="flex">{karte("wallbox")}</Reveal>
+        </ul>
+      </KategorieSektion>
+
+      {/* 04 Standort & Förderung */}
+      <KategorieSektion id="standort-foerderung" nr="04" tone="white">
+        <ul className="grid gap-4 md:grid-cols-3 lg:gap-5">
+          <Reveal as="li" className="flex">{karte("standort-check", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={80} className="flex">{karte("foerdercheck", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={160} className="flex">{karte("ifb", { ton: "sand" })}</Reveal>
+        </ul>
+      </KategorieSektion>
+
+      {/* 05 ESG */}
+      <KategorieSektion id="esg" nr="05" tone="green">
+        <Reveal className="flex">{karte("co2-esg", { form: "breit" })}</Reveal>
+      </KategorieSektion>
 
       <Section tone="white" space="md">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Wegweiser"
-            title="Welcher Rechner passt zu Ihrer Frage?"
-            lead="Kurz beantwortet: Wählen Sie das Werkzeug nach Ihrem Vorhaben – alle Ergebnisse lassen sich direkt in eine Angebotsanfrage übernehmen."
-          />
+          <SectionHeading eyebrow="Wegweiser" title="Welcher Rechner passt zu Ihrer Frage?" lead="Kurz beantwortet: Wählen Sie das Werkzeug nach Ihrem Vorhaben – die Ergebnisse lassen sich direkt in eine Anfrage übernehmen.">
+            <Link href="/angebot" className="mt-6 inline-flex items-center gap-1.5 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+              Oder gleich zum Angebots-Konfigurator <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </SectionHeading>
           <Reveal className="min-w-0">
             <div tabIndex={0} role="region" aria-label="Wegweiser: Vorhaben und passender Rechner" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[520px] text-left text-[15px]">
+              <table className="w-full min-w-[560px] text-left text-[15px]">
                 <caption className="sr-only">Wegweiser: Vorhaben und passender Rechner</caption>
                 <thead className="bg-sand-50 text-[12.5px] uppercase tracking-[0.12em] text-ink-600">
                   <tr>
@@ -264,21 +374,25 @@ export default async function RechnerHub() {
                 </thead>
                 <tbody className="divide-y divide-ink-100">
                   {[
-                    ["PV für Betrieb, Hof oder Haus planen", "solarrechner", "Eigenverbrauch, Amortisation"],
+                    ["PV auf Halle oder Betriebsgebäude", "gewerbe-pv", "Eigenverbrauch, IRR, Förderung"],
+                    ["Leistungspreis senken", "peak-shaving", "Speichergröße, Ersparnis"],
+                    ["Klimabilanz für Bericht oder Bank", "co2-esg", "Scope 2 vorher/nachher"],
+                    ["Fläche verpachten oder Solarpark", "freiflaeche-pacht", "MWp, Ertrag, Pacht"],
+                    ["Strom mit Nachbarn teilen", "energiegemeinschaft", "Netzentgelt-Vorteil"],
+                    ["Fuhrpark elektrifizieren", "e-flotte", "Kosten und CO₂"],
+                    ["Ladepunkte am Firmenparkplatz", "ladeinfrastruktur", "Anzahl, Leistung, Netz"],
+                    ["Betrieb gegen Stromausfall absichern", "blackout", "Ausfallkosten, Ersatzstrom"],
                     ["Standort prüfen (Schnee, Hagel, Ertrag)", "standort-check", "Lasten & Naturgefahren"],
-                    ["Speicher nachrüsten oder mitkaufen", "stromspeicher", "Autarkie, optimale Größe"],
-                    ["Gas- oder Ölheizung ersetzen", "waermepumpe", "Heizkosten, CO₂, Förderung"],
-                    ["E-Auto anschaffen", "wallbox", "Kosten je 100 km"],
-                    ["Smart Meter / neuen Tarif", "dynamisch", "Tageskosten, Ladefenster"],
-                    ["Förderungen & Steuervorteile klären", "foerdercheck", "passende Förderungen"],
+                    ["Förderungen & Steuervorteile klären", "foerdercheck", "passende Programme"],
                   ].map(([frage, id, ergebnis]) => {
                     const t = toolById(id);
+                    if (!t) return null;
                     return (
                       <tr key={id} className="bg-white">
                         <td className="px-5 py-3.5 text-ink-700">{frage}</td>
                         <td className="px-5 py-3.5">
                           <Link href={t.href} className="inline-flex items-center gap-1.5 font-semibold text-ov-700 hover:text-ov-800">
-                            {t.titel} <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
+                            {t.titel} <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
                           </Link>
                         </td>
                         <td className="px-5 py-3.5 text-ink-500">{ergebnis}</td>
@@ -303,60 +417,124 @@ export default async function RechnerHub() {
         title="Aus Zahlen wird ein Plan – mit Ihrem Fachbetrieb."
         text={`Sie haben gerechnet – wir prüfen Dach, Lastgang, Netzanschluss und Technik und machen daraus ein belastbares Angebot. Persönlich, aus ${FIRMA.ort}, für ganz Österreich – seit ${FIRMA.gegruendet}.`}
         primary={{ label: "Angebot anfragen", href: "/angebot" }}
-        secondary={{ label: "Zum Solarrechner", href: "/solarrechner" }}
+        secondary={{ label: "Zum Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv" }}
       />
     </div>
   );
 }
 
-function ToolKarte({ tool, ton, gross, breit, children }) {
-  const Icon = tool.icon;
-  const dunkel = ton === "dunkel" || ton === "gruen";
-  const toene = {
-    hell: "bg-white ring-1 ring-ink-200/70 shadow-[0_24px_48px_-32px_rgba(3,18,43,0.35)] hover:ring-ov-300",
-    sand: "bg-sand-50 ring-1 ring-ink-200/70 shadow-[0_24px_48px_-32px_rgba(3,18,43,0.35)] hover:ring-ov-300",
-    dunkel: "ov-noise bg-navy-900 text-white ring-1 ring-white/10 shadow-[0_24px_48px_-24px_rgba(3,18,43,0.6)]",
-    gruen: "bg-gradient-to-br from-ov-500 to-ov-700 text-white shadow-[0_30px_60px_-30px_rgba(67,102,33,0.7)]",
-  };
+function KategorieSektion({ id, nr, tone, children }) {
+  const kat = KATEGORIEN.find((x) => x.id === id);
+  const dunkel = tone === "navy";
+  const n = toolsVon(id).length;
   return (
-    <Link
-      href={tool.href}
-      className={cn(
-        "group ov-card-hover relative flex w-full overflow-hidden rounded-3xl p-6 md:p-7",
-        breit ? "flex-col gap-6 md:flex-row md:items-center md:justify-between" : "flex-col",
-        toene[ton]
+    <Section id={id} tone={tone} space="md" className={cn("scroll-mt-24 overflow-hidden", dunkel && "ov-noise")}>
+      {dunkel && (
+        <>
+          <div aria-hidden="true" className="ov-grid-bg pointer-events-none absolute inset-0" />
+          <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-1/4 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[120px]" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-navy-400/25 blur-[120px]" />
+        </>
       )}
-    >
-      <div className={cn("relative", breit && "md:max-w-md")}>
-        <div className="flex items-start justify-between gap-4">
-          <span className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", dunkel ? "bg-white/10 text-ov-300 ring-1 ring-white/15" : "bg-ov-50 text-ov-600 ring-1 ring-ov-100", ton === "gruen" && "text-white")}>
-            <Icon aria-hidden="true" className="h-6 w-6" />
-          </span>
-          {tool.tag && !breit && (
-            <span
-              className={cn(
-                "rounded-full px-2.5 py-1 text-[11.5px] font-semibold",
-                tool.tag === "Live" ? "bg-sun-400 text-navy-950" : dunkel ? "bg-white/10 text-white" : "bg-ink-900 text-white"
-              )}
-            >
-              {tool.tag}
+      <Reveal className="relative mb-10 max-w-2xl md:mb-12">
+        <Eyebrow dark={dunkel} className="mb-4">
+          {nr} · {n} {n === 1 ? "Tool" : "Tools"}
+        </Eyebrow>
+        <h2 className={cn("ov-h2", dunkel ? "text-white" : "text-ink-900")}>{kat.titel}</h2>
+        <p className={cn("ov-lead mt-4", dunkel ? "text-white/70" : "text-ink-600")}>{kat.text}</p>
+      </Reveal>
+      <div className="relative">{children}</div>
+    </Section>
+  );
+}
+
+/** Große Live-Kachel: Börsenstrompreis Österreich heute + Dynamischer-Tarif-Rechner */
+function LiveKachel({ tool, live }) {
+  if (!tool) return null;
+  const { aktuell, stat, punkte, jetzt } = live;
+  const Icon = tool.icon;
+  return (
+    <Link href={tool.href} className="group ov-card-hover relative block overflow-hidden rounded-3xl bg-white p-6 text-ink-900 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)] md:p-8">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.6fr)] lg:items-center lg:gap-12">
+        <div>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600 ring-1 ring-ov-100">
+              <Icon aria-hidden="true" className="h-6 w-6" />
             </span>
-          )}
+            <span className="inline-flex items-center gap-2 rounded-full bg-sun-400 px-3 py-1 text-[12px] font-semibold text-navy-950">
+              <span className="relative flex h-2 w-2" aria-hidden="true">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-navy-950 opacity-40 motion-reduce:animate-none" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-navy-950" />
+              </span>
+              Live · Gebotszone Österreich
+            </span>
+          </div>
+          <h3 className="mt-5 font-display text-[24px] font-extrabold leading-tight tracking-tight md:text-[30px]">Börsenstrompreis jetzt</h3>
+          <p className="mt-3 flex flex-wrap items-baseline gap-x-2">
+            <span className="ov-num font-display text-[clamp(2.4rem,2rem+1.5vw,3.4rem)] font-extrabold leading-none tracking-tight">{aktuell ? fmt(aktuell.eurMwh / 10, 1) : "–"}</span>
+            <span className="text-[15px] font-semibold text-ink-500">ct/kWh netto</span>
+          </p>
+          <dl className="mt-5 grid grid-cols-3 gap-2">
+            {[
+              ["Tiefstwert heute", stat?.min ? `${fmt(stat.min.eurMwh / 10, 1)} ct` : "–", stat?.min ? `${uhr(stat.min.t)} Uhr` : ""],
+              ["Höchstwert heute", stat?.max ? `${fmt(stat.max.eurMwh / 10, 1)} ct` : "–", stat?.max ? `${uhr(stat.max.t)} Uhr` : ""],
+              ["Endpreis dyn.", aktuell ? `${fmt(dynamischBrutto(aktuell.eurMwh))} ct` : "–", "brutto, Beispiel"],
+            ].map(([kk, v, z]) => (
+              <div key={kk} className="rounded-2xl bg-sand-50 p-3 ring-1 ring-ink-200/60">
+                <dt className="text-[11.5px] leading-tight text-ink-500">{kk}</dt>
+                <dd className="ov-num mt-1 whitespace-nowrap font-display text-[16px] font-extrabold md:text-[18px]">{v}</dd>
+                <dd className="text-[11.5px] text-ink-500">{z}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
-        <h2 className={cn("mt-5 font-display font-extrabold leading-tight tracking-tight", gross ? "text-[26px] md:text-[32px]" : "text-[20px]", dunkel ? "text-white" : "text-ink-900")}>{tool.titel}</h2>
-        <p className={cn("mt-2 leading-relaxed", gross ? "text-[16px]" : "text-[14.5px]", dunkel ? "text-white/70" : "text-ink-600")}>{gross ? tool.text : tool.kurz}</p>
+        <div className="min-w-0">
+          <div className="rounded-2xl bg-navy-950 p-4 md:p-5">
+            <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2 text-[12.5px] text-white/60">
+              <span>Day-Ahead heute, 15-Minuten-Werte</span>
+              <span className="inline-flex items-center gap-3">
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden="true" className="w-3 border-t-2 border-dashed border-sun-300" />
+                  Tiefstwert
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <span aria-hidden="true" className="h-3 w-0.5 bg-white" />
+                  jetzt
+                </span>
+              </span>
+            </div>
+            <VorschauLivePreis punkte={punkte} jetzt={jetzt} hoehe={150} />
+          </div>
+          <p className="mt-4 flex flex-wrap items-center justify-between gap-3 text-[14px] text-ink-600">
+            <span className="max-w-lg">{tool.text}</span>
+            <span className="inline-flex items-center gap-1.5 font-semibold text-ov-700">
+              {tool.titel} öffnen
+              <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </span>
+          </p>
+        </div>
       </div>
-      <div className={cn("relative", breit ? "md:w-[420px]" : "mt-6 flex-1", gross && "flex flex-col justify-end")}>{children}</div>
-      <span
-        className={cn(
-          "relative inline-flex items-center gap-1.5 text-[14.5px] font-semibold",
-          breit ? "shrink-0 self-start rounded-full bg-white px-5 py-3 text-ov-800 md:self-auto" : "mt-5",
-          !breit && (dunkel ? "text-ov-300" : "text-ov-700")
-        )}
-      >
-        {breit ? "Jetzt konfigurieren" : "Öffnen"}
-        <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </span>
     </Link>
+  );
+}
+
+/** Scope-2-Vorschau: echte Beispielrechnung des CO₂-Rechners */
+function Scope2Vorschau({ r }) {
+  const t = (kg) => fmt(kg / 1000);
+  return (
+    <div className="rounded-2xl bg-ov-50/70 p-4 ring-1 ring-ov-100 md:p-5">
+      <p className="mb-4 text-[12.5px] text-ink-500">Beispiel Produktion 1,5 GWh mit 800 kWp PV und 70 % Eigenverbrauch · t CO₂e pro Jahr</p>
+      <VorschauBalken
+        reihen={[
+          { label: "Standortbasiert vorher", wert: r.scope2.location.vorher, anzeige: `${t(r.scope2.location.vorher)} t`, farbe: "#97a0b0" },
+          { label: "Standortbasiert nachher", wert: r.scope2.location.nachher, anzeige: `${t(r.scope2.location.nachher)} t · −${fmt(r.scope2.location.reduktion * 100)} %`, farbe: "#669933" },
+          { label: "Marktbasiert vorher", wert: r.scope2.market.vorher, anzeige: `${t(r.scope2.market.vorher)} t`, farbe: "#97a0b0" },
+          { label: "Marktbasiert nachher", wert: r.scope2.market.nachher, anzeige: `${t(r.scope2.market.nachher)} t · −${fmt(r.scope2.market.reduktion * 100)} %`, farbe: "#669933" },
+        ]}
+      />
+      <p className="mt-4 rounded-xl bg-white px-3.5 py-3 text-[12.5px] leading-relaxed text-ink-600 ring-1 ring-ink-200/70">
+        <span className="font-semibold text-ink-800">Textbaustein inklusive:</span> „… sinken die Scope-2-Emissionen rechnerisch auf {t(r.scope2.location.nachher)} t CO₂e standortbasiert …“
+      </p>
+    </div>
   );
 }

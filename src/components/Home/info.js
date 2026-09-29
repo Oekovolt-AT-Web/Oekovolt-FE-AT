@@ -111,7 +111,7 @@ export default function SolutionsPage({ data }) {
                 {item.icon}
               </span>
               <div className="mb-1 text-[34px] font-semibold leading-none tabular-nums text-[#669933] md:text-[42px]">
-                {counters[i]?.toLocaleString("de-AT")}
+                {counters[i]?.toLocaleString("de-DE")}
                 {item.suffix && (
                   <span className="ml-1 text-[20px] font-medium md:text-[24px]">
                     {item.suffix}

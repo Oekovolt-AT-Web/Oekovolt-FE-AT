@@ -1,33 +1,21 @@
-import {
-  BellRing,
-  CalendarCheck2,
-  ClipboardList,
-  Cpu,
-  FileLock2,
-  Fingerprint,
-  History,
-  KeyRound,
-  Network,
-  RotateCcw,
-  ScanSearch,
-  ShieldCheck,
-  Siren,
-  Stethoscope,
-  Truck,
-  Wrench,
-} from "lucide-react";
+import { CalendarCheck2, ClipboardList, Cpu, FileText, Scale, ScanSearch, ShieldCheck, Wrench } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
-import Steps from "@/components/ui/Steps";
-import Faq from "@/components/ui/Faq";
+import SplitMedia from "@/components/ui/SplitMedia";
 import CtaBand from "@/components/ui/CtaBand";
 import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
-import { Hinweis, Kurzantwort, Punkte, Quellen, Tabelle, Verweise } from "@/components/Technik/Bausteine";
+import Schichtenmodell from "@/components/Technik/Schichtenmodell";
+import Reaktionskette from "@/components/Technik/Reaktionskette";
+import { Hinweis, Tabelle } from "@/components/Technik/Bausteine";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
+import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
+import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
+import Tabs from "@/components/ServiceAT/A/Tabs";
+import Animationen from "@/components/ServiceAT/A/Animationen";
+import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 import { SOLENSA } from "@/lib/site";
 
 const PFAD = "/technik/fernwartung";
@@ -39,18 +27,9 @@ export const metadata = seitenMeta({
   pfad: PFAD,
   titel: TITEL,
   beschreibung: BESCHREIBUNG,
-  bild: "/Images/AT/technik/serverraum-racks.jpg",
+  bild: "/Images/AT/technik-service/netzwerk-sicherheit.jpg",
   keywords: ["PV Fernwartung", "Fernüberwachung Photovoltaik", "NISG 2026 Photovoltaik", "IEC 62443", "OT-Security PV", "Firmware-Management Wechselrichter"],
 });
-
-const ZUGRIFF = [
-  { icon: Network, title: "Keine offenen Ports an der Anlage", text: "Das Gateway in der Anlage baut die verschlüsselte Verbindung von innen nach außen auf. Von außen erreichbare Modbus- oder Webschnittstellen gibt es nicht." },
-  { icon: Fingerprint, title: "Mehr-Faktor-Authentifizierung", text: "Jeder Zugriff auf Regler, Wechselrichter oder Datenlogger erfordert eine persönliche Kennung mit zweitem Faktor – keine geteilten Sammelkonten." },
-  { icon: KeyRound, title: "Zero Trust & minimale Rechte", text: "Jede Sitzung wird einzeln geprüft und nur für die benötigten Geräte freigeschaltet. Lesender Zugriff ist die Regel, schreibender die begründete Ausnahme." },
-  { icon: History, title: "Lückenloses Protokoll", text: "Wer wann worauf zugegriffen und was geändert hat, wird zeitgestempelt protokolliert – inklusive Parameteränderungen an netzrelevanten Einstellungen." },
-  { icon: FileLock2, title: "Zonen & Übergänge", text: "Anlagennetz, Fernwirkanbindung des Netzbetreibers und Büro-IT sind getrennte Zonen mit definierten Übergängen nach dem Zonen-Conduit-Modell der IEC 62443." },
-  { icon: ShieldCheck, title: "Gesicherte Protokolle", text: "Modbus TCP und IEC 60870-5-104 bringen keine eigene Authentifizierung mit. Sie bleiben im Anlagennetz; wo Geräte es unterstützen, nutzen wir gesicherte Varianten nach IEC 62351." },
-];
 
 const NORMEN = [
   [
@@ -63,11 +42,7 @@ const NORMEN = [
     "Normenreihe zur Security industrieller Automatisierungs- und Steuerungssysteme (OT)",
     "Teil 2-4: Anforderungen an Dienstleister; 3-2: Risikobewertung, Zonen und Conduits; 3-3: Systemanforderungen und Security-Level; 4-1/4-2: sichere Produktentwicklung und Komponenten",
   ],
-  [
-    "ISO/IEC 27001:2022",
-    "Managementsystem für Informationssicherheit (ISMS)",
-    "Organisatorischer Rahmen: Risiken, Rollen, Zugriffskontrolle, Lieferanten, Vorfallbehandlung, laufende Verbesserung",
-  ],
+  ["ISO/IEC 27001:2022", "Managementsystem für Informationssicherheit (ISMS)", "Organisatorischer Rahmen: Risiken, Rollen, Zugriffskontrolle, Lieferanten, Vorfallbehandlung, laufende Verbesserung"],
   [
     "Cyber Resilience Act, VO (EU) 2024/2847",
     "EU-Anforderungen an Produkte mit digitalen Elementen, stufenweise anwendbar",
@@ -78,11 +53,7 @@ const NORMEN = [
     "Sektorspezifische Vorgaben für grenzüberschreitende Stromflüsse",
     "Wird von der TOR Typ A ausdrücklich für die digitale Schnittstelle zur Ansteuerung von Erzeugungsanlagen genannt",
   ],
-  [
-    "DSGVO",
-    "Datenschutz-Grundverordnung",
-    "Zugriffsprotokolle, Benutzerkonten und Verbrauchsdaten sind personenbezogen: Auftragsverarbeitung nach Art. 28, Datenminimierung, Speicherdauer",
-  ],
+  ["DSGVO", "Datenschutz-Grundverordnung", "Zugriffsprotokolle, Benutzerkonten und Verbrauchsdaten sind personenbezogen: Auftragsverarbeitung nach Art. 28, Datenminimierung, Speicherdauer"],
 ];
 
 const FAQ = [
@@ -146,17 +117,19 @@ export default function FernwartungPage() {
           },
         })}
       />
+      <Animationen />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Technik", href: "/technik" }, { name: "Fernwartung" }]}
         eyebrow="Eigene Technik · Fernwartung"
         title={
           <>
-            Fernwartung, die Ausfälle verkürzt – <span className="ov-text-gradient">und sicher bleibt</span>
+            Fernwartung, die Ausfälle verkürzt – <span className="ov-text-gradient-light">und sicher bleibt</span>
           </>
         }
         lead="Mit eigenen Fernwartungssystemen erkennen wir Störungen an PV-Anlagen, Speichern und Parkreglern früh, beheben viele aus der Ferne und schicken Technikerinnen und Techniker nur dann, wenn es nötig ist – mit Diagnose und passendem Ersatzteil."
-        image={{ src: "/Images/AT/technik/serverraum-racks.jpg", alt: "Serverraum mit Netzwerk-Racks und verkabelten Patchfeldern" }}
+        image={{ src: "/Images/AT/technik-service/netzwerk-sicherheit.jpg", alt: "Netzwerkstecker vor dunkelblauem Hintergrund – Symbol für gesicherte Datenverbindungen", position: "80% 50%" }}
         actions={[
           { label: "Fernwartung anfragen", href: "/service/wartung" },
           { label: "Termin vereinbaren", href: "/termin?art=video", icon: CalendarCheck2 },
@@ -164,92 +137,118 @@ export default function FernwartungPage() {
         points={["VPN, MFA & Protokollierung", "24/7-Alarmierung", "Firmware-Management", "Architektur nach IEC-62443-Prinzipien"]}
       />
 
-      <Kurzantwort frage="Was leistet die Fernwartung einer PV-Anlage?">
+      <AntwortBand
+        frage="Was leistet die Fernwartung einer PV-Anlage?"
+        zahlen={[
+          { value: "24/7", label: "Überwachung & Alarmierung", text: "klassifiziert, gebündelt, eskaliert" },
+          { value: 0, label: "offene Ports an der Anlage", text: "Verbindung nur von innen nach außen" },
+          { value: 2, label: "Faktoren je Zugriff", text: "persönliche Kennung plus zweiter Faktor" },
+          { value: "1.10.2026", label: "NISG 2026 in Kraft", text: "Fernwartung wird Teil der Lieferkette" },
+        ]}
+      >
         <p>
-          Fernwartung heißt: Die Anlage wird rund um die Uhr überwacht, Störungen lösen automatisch einen Alarm aus, und Fachleute können
-          Wechselrichter, Datenlogger und Parkregler über einen gesicherten Zugang analysieren, neu starten oder umparametrieren. Das verkürzt
-          Ausfallzeiten, weil die Ursache oft feststeht, bevor jemand zur Anlage fährt.
+          Fernwartung heißt: Die Anlage wird rund um die Uhr überwacht, Störungen lösen automatisch einen Alarm aus, und Fachleute können Wechselrichter, Datenlogger und Parkregler über
+          einen gesicherten Zugang analysieren, neu starten oder umparametrieren. Das verkürzt Ausfallzeiten, weil die Ursache oft feststeht, bevor jemand zur Anlage fährt.
         </p>
         <p>
-          Weil jeder Fernzugang auch ein Angriffsweg ist, gehört IT-Security dazu: Verbindungen nur von innen nach außen, Multi-Faktor-
-          Authentifizierung, minimale Rechte und ein lückenloses Protokoll.
+          Weil jeder Fernzugang auch ein Angriffsweg ist, gehört IT-Security dazu: Verbindungen nur von innen nach außen, Multi-Faktor-Authentifizierung, minimale Rechte und ein
+          lückenloses Protokoll.
         </p>
-      </Kurzantwort>
+      </AntwortBand>
 
-      {/* Sicherer Zugriff */}
-      <Section tone="white" space="lg" id="zugriff" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Sicherer Fernzugriff"
-          title="Sechs Grundsätze für jeden Zugriff auf Ihre Anlage"
-          lead="Unsere Fernwartungssysteme sind gemeinsam mit der Solensa GmbH entstanden, die für Digitalisierung und IT-Security unseres „Internet of Energy“ verantwortlich ist. Die Architektur folgt dem Zonen-Conduit-Modell der IEC 62443 und den Prinzipien von Zero Trust."
-          className="mb-12"
-        />
-        <FeatureGrid cols={3} items={ZUGRIFF} />
+      {/* Sicherheits-Schichtenmodell */}
+      <Section tone="sand" space="md" id="zugriff" className="scroll-mt-24">
+        <div className="mb-12 grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end">
+          <SectionHeading
+            eyebrow="Sicherer Fernzugriff · Zero Trust"
+            title="Sechs Grundsätze für jeden Zugriff auf Ihre Anlage"
+            lead="Unsere Fernwartungssysteme sind gemeinsam mit der Solensa GmbH entstanden, die für Digitalisierung und IT-Security unseres „Internet of Energy“ verantwortlich ist. Die Architektur folgt dem Zonen-Conduit-Modell der IEC 62443 und den Prinzipien von Zero Trust."
+          />
+          <p className="text-[15px] leading-relaxed text-ink-600 lg:pb-2">
+            Klicken Sie sich durch die Schichten – oder spielen Sie einen Beispiel-Zugriff durch: Er muss jede Schicht passieren, bevor er die Anlage erreicht, und das Protokoll schreibt
+            mit.
+          </p>
+        </div>
+        <Schichtenmodell />
       </Section>
 
       {/* Alarmierung & Diagnose */}
-      <Section tone="sand" space="lg" id="alarmierung" className="scroll-mt-24">
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="24/7-Alarmierung & Fehlerdiagnose"
-            title="Nicht jeder Alarm ist eine Störung – aber jede Störung wird ein Alarm"
-            lead="Die Überwachung läuft rund um die Uhr. Entscheidend ist, was danach passiert: Alarme werden klassifiziert, gebündelt und mit Messdaten angereichert, damit die richtige Person mit der richtigen Information reagiert."
-          />
-          <Punkte
-            spalten={2}
-            items={[
-              { titel: "Alarmklassen", text: "Anlagenstillstand, Teilausfall, Kommunikationsverlust, Minderertrag und Schutzauslösung werden unterschiedlich priorisiert und eskaliert." },
-              { titel: "Plausibilisierung", text: "Minderertrag wird gegen die gemessene Einstrahlung geprüft – ein bewölkter Tag erzeugt keinen Fehlalarm, ein ausgefallener String schon." },
-              { titel: "Diagnose aus der Ferne", text: "Fehlerspeicher, Isolationswerte, String- und MPP-Daten sowie Ereignisprotokolle werden ausgelesen, bevor jemand losfährt." },
-              { titel: "Parkregler im Blick", text: "Sollwerte des Netzbetreibers, Rückfallbetrieb und Abregelungen werden als eigene Ereignisse geführt – wichtig für Ertragsnachweis und Abrechnung." },
-            ]}
-          />
-        </div>
+      <Section tone="white" space="md" id="alarmierung" className="scroll-mt-24">
+        <SplitMedia
+          eyebrow="24/7-Alarmierung & Fehlerdiagnose"
+          title="Nicht jeder Alarm ist eine Störung – aber jede Störung wird ein Alarm"
+          text="Die Überwachung läuft rund um die Uhr. Entscheidend ist, was danach passiert: Alarme werden klassifiziert, gebündelt und mit Messdaten angereichert, damit die richtige Person mit der richtigen Information reagiert."
+          points={[
+            { title: "Alarmklassen", text: "Anlagenstillstand, Teilausfall, Kommunikationsverlust, Minderertrag und Schutzauslösung werden unterschiedlich priorisiert und eskaliert." },
+            { title: "Plausibilisierung", text: "Minderertrag wird gegen die gemessene Einstrahlung geprüft – ein bewölkter Tag erzeugt keinen Fehlalarm, ein ausgefallener String schon." },
+            { title: "Diagnose aus der Ferne", text: "Fehlerspeicher, Isolationswerte, String- und MPP-Daten sowie Ereignisprotokolle werden ausgelesen, bevor jemand losfährt." },
+            { title: "Parkregler im Blick", text: "Sollwerte des Netzbetreibers, Rückfallbetrieb und Abregelungen werden als eigene Ereignisse geführt – wichtig für Ertragsnachweis und Abrechnung." },
+          ]}
+          image={{ src: "/Images/AT/technik-service/techniker-messung-schaltschrank.jpg", alt: "Techniker verdrahtet einen Schaltschrank mit Umrichtern, Schützen und Klemmleisten" }}
+        />
       </Section>
 
+      {/* Reaktionskette */}
+      <section id="reaktionskonzept" className="ov-noise relative scroll-mt-24 overflow-hidden bg-navy-950 py-20 text-white md:py-24">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div aria-hidden="true" className="absolute -left-40 bottom-0 h-[380px] w-[380px] rounded-full bg-sun-400/10 blur-[130px]" />
+        <div className="ov-container relative">
+          <SectionHeading
+            dark
+            align="center"
+            eyebrow="Reaktionskonzept"
+            title="Vom Alarm bis zum Störungsbericht"
+            lead="Jede Störung durchläuft dieselben Stufen. Welche Fristen gelten, legen wir im Wartungsvertrag fest – abhängig von Anlagengröße und Bedeutung für Ihren Betrieb."
+            className="mb-14"
+          />
+          <Reaktionskette />
+        </div>
+      </section>
+
       {/* Firmware & Reset */}
-      <Section tone="white" space="lg" id="firmware" className="scroll-mt-24">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
+      <Section tone="white" space="md" id="firmware" className="scroll-mt-24">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Reveal className="rounded-[2rem] bg-sand-50 p-7 ring-1 ring-ink-200/70 md:p-10">
             <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
               Firmware-Management
             </p>
             <h2 className="ov-h2 mt-4 text-ink-900">Updates mit Plan statt auf Zuruf</h2>
             <p className="mt-5 text-[16.5px] leading-relaxed text-ink-600">
-              Firmware schließt Sicherheitslücken und behebt Fehler – kann aber auch Einstellungen oder Kommunikationsverhalten verändern. Nach TOR
-              dürfen Softwareupdates die netzrelevanten Einstellungen nicht verändern; verantwortlich dafür ist der Betreiber.
+              Firmware schließt Sicherheitslücken und behebt Fehler – kann aber auch Einstellungen oder Kommunikationsverhalten verändern. Nach TOR dürfen Softwareupdates die
+              netzrelevanten Einstellungen nicht verändern; verantwortlich dafür ist der Betreiber.
             </p>
-            <ul className="mt-6 space-y-3 text-[15.5px] leading-relaxed text-ink-700">
+            <ol className="mt-6 space-y-2.5 text-[15.5px] leading-relaxed text-ink-700">
               {[
                 "Geräteinventar mit Typ, Seriennummer und Firmwarestand je Anlage",
                 "Bewertung von Hersteller-Hinweisen und Sicherheitsmeldungen",
                 "Test an einzelnen Geräten, danach gestaffelter Rollout",
                 "Parameterauszug vor und nach dem Update, Rückfallplan",
                 "Abstimmung mit dem Netzbetreiber, wenn Regelfunktionen betroffen sind",
-              ].map((t) => (
+              ].map((t, i) => (
                 <li key={t} className="flex gap-3">
-                  <Cpu aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-600" />
+                  <span className="ov-num flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-navy-950 text-[11.5px] font-bold text-ov-300">{i + 1}</span>
                   {t}
                 </li>
               ))}
-            </ul>
+            </ol>
           </Reveal>
-          <Reveal delay={120}>
+          <Reveal delay={120} className="flex flex-col rounded-[2rem] bg-white p-7 ring-1 ring-ink-200/70 md:p-10">
             <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
               Remote-Reset
             </p>
             <h2 className="ov-h2 mt-4 text-ink-900">Neustart ja – aber nicht blind</h2>
             <p className="mt-5 text-[16.5px] leading-relaxed text-ink-600">
-              Viele Stillstände lassen sich mit einem kontrollierten Neustart beheben: hängende Kommunikationsmodule, Datenlogger nach Stromausfall,
-              Wechselrichter nach einem Softwarefehler. Schutzauslösungen sind anders – sie haben eine Ursache, die zuerst geklärt wird.
+              Viele Stillstände lassen sich mit einem kontrollierten Neustart beheben: hängende Kommunikationsmodule, Datenlogger nach Stromausfall, Wechselrichter nach einem
+              Softwarefehler. Schutzauslösungen sind anders – sie haben eine Ursache, die zuerst geklärt wird.
             </p>
-            <div className="mt-6">
+            <div className="mt-auto pt-6">
               <Hinweis ton="achtung" titel="Was wir nicht aus der Ferne quittieren">
                 <p>
-                  Auslösungen des Netzentkupplungsschutzes, Isolationsfehler und Lichtbogen- oder Brandschutzmeldungen werden erst nach
-                  Ursachenklärung zurückgesetzt – bei Bedarf vor Ort durch eine Elektrofachkraft.
+                  Auslösungen des Netzentkupplungsschutzes, Isolationsfehler und Lichtbogen- oder Brandschutzmeldungen werden erst nach Ursachenklärung zurückgesetzt – bei Bedarf vor Ort
+                  durch eine Elektrofachkraft.
                 </p>
               </Hinweis>
             </div>
@@ -257,68 +256,49 @@ export default function FernwartungPage() {
         </div>
       </Section>
 
-      {/* Reaktionskonzept */}
-      <Section tone="navy" space="lg" className="overflow-hidden" id="reaktionskonzept">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <SectionHeading
-          dark
-          eyebrow="Reaktionskonzept"
-          title="Vom Alarm bis zum Störungsbericht"
-          lead="Jede Störung durchläuft dieselben Stufen. Welche Fristen gelten, legen wir im Wartungsvertrag fest – abhängig von Anlagengröße und Bedeutung für Ihren Betrieb."
-          align="center"
-          className="relative mb-14"
-        />
-        <Steps
-          tone="dark"
-          cols={3}
-          className="relative"
-          items={[
-            { icon: BellRing, title: "Erkennen", text: "Automatischer Alarm aus Wechselrichter, Datenlogger, Zähler oder Parkregler – plausibilisiert gegen Einstrahlung und Sollwerte." },
-            { icon: Siren, title: "Einstufen", text: "Priorität nach Ertragsverlust, Sicherheitsrelevanz und Netzvorgaben; Eskalation nach festgelegter Kette." },
-            { icon: Stethoscope, title: "Diagnose", text: "Fehlerspeicher, Messwerte und Ereignisprotokolle auswerten; Ursache und benötigte Teile festlegen." },
-            { icon: RotateCcw, title: "Fern beheben", text: "Neustart, Parameterkorrektur oder Kommunikationswiederherstellung – protokolliert und bestätigt." },
-            { icon: Truck, title: "Einsatz vor Ort", text: "Wenn nötig: Techniker mit Diagnose und Ersatzteil, Arbeiten nach ÖVE/ÖNORM EN 50110-1." },
-            { icon: ClipboardList, title: "Bericht", text: "Ursache, Maßnahmen, Ausfallzeit und Ertragsverlust dokumentiert – für Versicherung, Bank und Ihr Controlling." },
-          ]}
-        />
-      </Section>
-
       {/* IT-Security & Recht */}
-      <Section tone="white" space="lg" id="it-security" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="IT-Security & Datenschutz"
-          title="NISG 2026, IEC 62443 und DSGVO: was für Fernwartung gilt"
-          lead="Am 1. Oktober 2026 tritt das NISG 2026 in Kraft. Für betroffene Einrichtungen im Energiesektor wird die Fernwartung Teil der Lieferkette, deren Sicherheit sie nachweisen müssen."
-          className="mb-10"
-        />
-        <Tabelle
-          caption="Regelwerke für sichere Fernwartung von PV-Anlagen"
-          kopf={["Regelwerk", "Worum es geht", "Bedeutung für die Fernwartung"]}
-          zeilen={NORMEN}
-          minBreite={820}
-          quelle="Stand September 2026. Ob und in welcher Rolle Ihr Unternehmen unter das NISG 2026 fällt, ist eine Rechtsfrage des Einzelfalls – keine Rechtsberatung."
-        />
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          <Hinweis ton="norm" titel="NISG 2026: die wichtigsten Fristen">
-            <p>
-              Inkrafttreten am 1. Oktober 2026, ohne Übergangsfrist für die Sicherheitsmaßnahmen. Registrierung betroffener Einrichtungen binnen drei
-              Monaten, also bis Jahresende 2026. Erhebliche Sicherheitsvorfälle: Frühwarnung binnen 24 Stunden, Meldung binnen 72 Stunden,
-              Abschlussbericht binnen eines Monats.
-            </p>
-          </Hinweis>
-          <Hinweis ton="info" titel="Datenschutz in der Fernwartung">
-            <p>
-              Reine Anlagendaten sind meist nicht personenbezogen – Benutzerkonten, Zugriffsprotokolle und Verbrauchsdaten von Mietern oder
-              Mitgliedern einer Energiegemeinschaft sehr wohl. Dafür gibt es einen Auftragsverarbeitungsvertrag nach Art. 28 DSGVO, klare
-              Speicherfristen und Datenminimierung.
-            </p>
-          </Hinweis>
+      <Section tone="sand" space="md" id="it-security" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="IT-Security & Datenschutz" title="NISG 2026, IEC 62443 und DSGVO: was für Fernwartung gilt" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Am 1. Oktober 2026 tritt das NISG 2026 in Kraft. Für betroffene Einrichtungen im Energiesektor wird die Fernwartung Teil der Lieferkette, deren Sicherheit sie nachweisen
+            müssen.
+          </p>
         </div>
+        <Tabs
+          label="Regelwerke und Fristen"
+          tabs={[
+            { label: "Regelwerke im Überblick", icon: <Scale /> },
+            { label: "NISG-Fristen & Datenschutz", icon: <FileText /> },
+          ]}
+        >
+          <Tabelle
+            caption="Regelwerke für sichere Fernwartung von PV-Anlagen"
+            kopf={["Regelwerk", "Worum es geht", "Bedeutung für die Fernwartung"]}
+            zeilen={NORMEN}
+            kompakt
+            minBreite={820}
+            quelle="Stand September 2026. Ob und in welcher Rolle Ihr Unternehmen unter das NISG 2026 fällt, ist eine Rechtsfrage des Einzelfalls – keine Rechtsberatung."
+          />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Hinweis ton="norm" titel="NISG 2026: die wichtigsten Fristen">
+              <p>
+                Inkrafttreten am 1. Oktober 2026, ohne Übergangsfrist für die Sicherheitsmaßnahmen. Registrierung betroffener Einrichtungen binnen drei Monaten, also bis Jahresende 2026.
+                Erhebliche Sicherheitsvorfälle: Frühwarnung binnen 24 Stunden, Meldung binnen 72 Stunden, Abschlussbericht binnen eines Monats.
+              </p>
+            </Hinweis>
+            <Hinweis ton="info" titel="Datenschutz in der Fernwartung">
+              <p>
+                Reine Anlagendaten sind meist nicht personenbezogen – Benutzerkonten, Zugriffsprotokolle und Verbrauchsdaten von Mietern oder Mitgliedern einer Energiegemeinschaft sehr
+                wohl. Dafür gibt es einen Auftragsverarbeitungsvertrag nach Art. 28 DSGVO, klare Speicherfristen und Datenminimierung.
+              </p>
+            </Hinweis>
+          </div>
+        </Tabs>
       </Section>
 
       {/* Ergebnis & Wartungsvertrag */}
-      <Section tone="sand" space="lg" id="ergebnis" className="scroll-mt-24">
+      <Section tone="white" space="md" id="ergebnis" className="scroll-mt-24">
         <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <div>
             <SectionHeading
@@ -333,7 +313,7 @@ export default function FernwartungPage() {
                 { icon: ClipboardList, t: "Dokumentierte Verfügbarkeit", x: "für Reporting, Garantie und Versicherung" },
                 { icon: ShieldCheck, t: "Nachvollziehbare Security", x: "für Ihre Lieferantenbewertung" },
               ].map((k) => (
-                <li key={k.t} className="flex gap-3 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
+                <li key={k.t} className="flex gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/70">
                   <k.icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
                   <span className="text-[15px] leading-snug text-ink-700">
                     <strong className="block text-ink-900">{k.t}</strong>
@@ -343,46 +323,47 @@ export default function FernwartungPage() {
               ))}
             </ul>
           </div>
-          <Reveal className="rounded-3xl bg-navy-950 p-7 text-white md:p-9">
-            <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Wartungsvertrag</p>
-            <h3 className="ov-h3 mt-3 text-white">Fernwartung ist Teil unseres Wartungsvertrags</h3>
-            <p className="mt-4 text-[15.5px] leading-relaxed text-white/70">
-              Service-Level, Reaktionszeiten, Prüfintervalle nach ESV 2012 und ÖVE/ÖNORM EN 62446-1 sowie Berichte legen wir passend zu Ihrer
-              Anlage fest. Die Fernwartung ist die Basis dafür.
-            </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Button href="/service/wartung" pfeil>
-                Wartungsvertrag ansehen
-              </Button>
-              <Button href="/technik/scada" variant="outlineLight">
-                Zur Leitwarte
-              </Button>
+          <Reveal className="relative overflow-hidden rounded-[2rem] bg-navy-950 p-7 text-white md:p-9">
+            <div aria-hidden="true" className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-ov-500/30 blur-[70px]" />
+            <div className="relative">
+              <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">
+                <Cpu aria-hidden="true" className="h-4 w-4" />
+                Wartungsvertrag
+              </p>
+              <h3 className="ov-h3 mt-3 text-white">Fernwartung ist Teil unseres Wartungsvertrags</h3>
+              <p className="mt-4 text-[15.5px] leading-relaxed text-white/70">
+                Service-Level, Reaktionszeiten, Prüfintervalle nach ESV 2012 und ÖVE/ÖNORM EN 62446-1 sowie Berichte legen wir passend zu Ihrer Anlage fest. Die Fernwartung ist die Basis
+                dafür.
+              </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <Button href="/service/wartung" pfeil>
+                  Wartungsvertrag ansehen
+                </Button>
+                <Button href="/technik/scada" variant="outlineLight">
+                  Zur Leitwarte
+                </Button>
+              </div>
             </div>
           </Reveal>
         </div>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Fernwartung und IT-Security – kurz beantwortet"
-            lead={`Digitalisierung und IT-Security entwickeln wir gemeinsam mit der ${SOLENSA.name}.`}
-          />
-          <Faq items={FAQ} />
-        </div>
-      </Section>
-
-      <Verweise
-        ueberschrift="Technik im Verbund"
-        items={[
-          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Regelung am Netzanschlusspunkt nach TOR – das wichtigste Gerät hinter der Fernwartung." },
-          { href: "/technik/scada", titel: "SCADA & Leitwarte", text: "Portfolio-Übersicht, Kennzahlen und Reporting für Investoren und Banken." },
-          { href: "/service/wartung", titel: "Wartung & Wartungsvertrag", text: "Service-Level nach Anlagengröße – mit Fernwartung als Grundlage." },
+      <FaqPlus
+        tone="sand"
+        items={FAQ}
+        eyebrow="Häufige Fragen"
+        titel="Fernwartung und IT-Security – kurz beantwortet"
+        lead={`Digitalisierung und IT-Security entwickeln wir gemeinsam mit der ${SOLENSA.name}.`}
+        linkTitel="Technik im Verbund"
+        links={[
+          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)" },
+          { href: "/technik/scada", titel: "SCADA & Leitwarte" },
+          { href: "/service/wartung", titel: "Wartung & Wartungsvertrag" },
         ]}
       />
 
-      <Quellen items={QUELLEN} bildnachweis="Serverraum: Carl Lender, CC BY 2.0, via Wikimedia Commons (Symbolbild)." />
+
+      <QuellenKompakt items={QUELLEN} bildnachweis="Netzwerkstecker: Yuri Samoilov, CC BY 2.0, via Wikimedia Commons · Techniker am Schaltschrank: AndGra (Pixabay), CC0, via Wikimedia Commons." />
 
       <CtaBand
         eyebrow="Fernwartung & Wartungsvertrag"

@@ -5,7 +5,7 @@ import {
   Activity, Map, Percent, Landmark, FileCheck2, Images, MapPin, BookOpen, Library, Euro,
   HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Circle, Tractor, Warehouse,
   Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
-  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake,
+  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake, Car, Leaf,
 } from "lucide-react";
 
 const ICONS = {
@@ -14,7 +14,7 @@ const ICONS = {
   Activity, Map, Percent, Landmark, FileCheck2, Images, MapPin, BookOpen, Library, Euro,
   HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Tractor, Warehouse,
   Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
-  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake,
+  Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake, Car, Leaf,
 };
 
 export function iconFor(name) {

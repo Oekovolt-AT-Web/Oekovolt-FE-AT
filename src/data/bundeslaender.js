@@ -56,6 +56,8 @@ export const BUNDESLAENDER = {
     name: "Wien",
     kuerzel: "W",
     hauptstadt: "Wien",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-wien-donau-city.jpg", alt: "Donau City und Reichsbrücke in Wien", position: "center 60%", motiv: "Donau City, Wien", urheber: "Hubertl", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:2014-09-29_-_Reichsbr%C3%BCcke-Donau_City-Sunken_City.jpg" },
     slugs: ["landesfoerderungen-in-wien"],
     stand: STAND.iso,
     foerderart: "gezielt",
@@ -141,6 +143,8 @@ export const BUNDESLAENDER = {
     name: "Niederösterreich",
     kuerzel: "NÖ",
     hauptstadt: "St. Pölten",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-niederoesterreich-wachau-duernstein.jpg", alt: "Dürnstein in der Wachau an der Donau", position: "center 45%", motiv: "Dürnstein, Wachau", urheber: "Uoaei1", lizenz: "CC BY-SA 3.0", href: "https://commons.wikimedia.org/wiki/File:D%C3%BCrnstein_Panorama_01.JPG" },
     slugs: ["landesfoerderungen-in-niederoesterreich"],
     stand: STAND.iso,
     foerderart: "bund",
@@ -166,6 +170,7 @@ export const BUNDESLAENDER = {
         hoehe: "max. 45 % der umweltrelevanten Mehrkosten, Bonuspunkte für Speicher und E-Ladestellen",
         was: "PV als Parkplatzüberdachung für Betriebe, Gemeinden und Vereine; Budget 2 Mio. €",
         status: "einziger Stichtag 30.06.2026 – derzeit keine Einreichung; neuen Call abwarten",
+        anzeigeStatus: "pausiert", // Anzeige: Ampel „derzeit keine Einreichung“
         url: "https://www.noe.gv.at/noe/Energie/PV-Ueberdachung_Parkplaetze.html",
         quelle: "noe.gv.at",
       },
@@ -238,6 +243,8 @@ export const BUNDESLAENDER = {
     name: "Oberösterreich",
     kuerzel: "OÖ",
     hauptstadt: "Linz",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-oberoesterreich-traunsee-traunstein.jpg", alt: "Traunstein über dem Traunsee im Salzkammergut", position: "center 40%", motiv: "Traunsee mit Traunstein", urheber: "Tigerente", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:Traunstein_Karbach_Traunsee_20210313.jpg" },
     slugs: ["landesfoerderungen-in-oberoesterreich"],
     stand: STAND.iso,
     foerderart: "bund",
@@ -313,6 +320,8 @@ export const BUNDESLAENDER = {
     name: "Salzburg",
     kuerzel: "S",
     hauptstadt: "Salzburg",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-salzburg-altstadt.jpg", alt: "Salzburger Altstadt mit Festung Hohensalzburg", position: "center 40%", motiv: "Salzburger Altstadt", urheber: "Uoaei1", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:Salzburg_Altstadt_Panorama_20230607_01.jpg" },
     slugs: ["landesfoerderungen-in-salzburg"],
     stand: STAND.iso,
     foerderart: "gezielt",
@@ -387,6 +396,8 @@ export const BUNDESLAENDER = {
     name: "Tirol",
     kuerzel: "T",
     hauptstadt: "Innsbruck",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-tirol-innsbruck-nordkette.jpg", alt: "Innufer in Innsbruck mit der Nordkette", position: "center 35%", motiv: "Innsbruck mit Nordkette", urheber: "Taxiarchos228", lizenz: "Free Art License", href: "https://commons.wikimedia.org/wiki/File:Innsbruck_-_Innufer1.jpg" },
     slugs: ["landesfoerderungen-in-tirol"],
     stand: STAND.iso,
     foerderart: "gezielt",
@@ -485,6 +496,8 @@ export const BUNDESLAENDER = {
     name: "Vorarlberg",
     kuerzel: "V",
     hauptstadt: "Bregenz",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-vorarlberg-bregenzerwald.jpg", alt: "Hügellandschaft im Vorderen Bregenzerwald", position: "center 50%", motiv: "Vorderer Bregenzerwald", urheber: "Friedrich Böhringer", lizenz: "CC BY-SA 3.0 AT", href: "https://commons.wikimedia.org/wiki/File:Vorderer_Bregenzerwald_von_M%C3%BCselbach_gesehen.jpg" },
     slugs: ["landesfoerderungen-in-vorarlberg"],
     stand: STAND.iso,
     foerderart: "gezielt",
@@ -558,6 +571,8 @@ export const BUNDESLAENDER = {
     name: "Kärnten",
     kuerzel: "K",
     hauptstadt: "Klagenfurt",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-kaernten-woerthersee.jpg", alt: "Wörthersee mit Maria Wörth und den Karawanken", position: "center 45%", motiv: "Wörthersee", urheber: "Johann Jaritz", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:P%C3%B6rtschach_Halbinselpromenade_W%C3%B6rther_See_mit_Maria_W%C3%B6rth_19112017_2022.jpg" },
     slugs: ["landesfoerderungen-in-kaernten"],
     stand: STAND.iso,
     foerderart: "zuschuss",
@@ -654,6 +669,8 @@ export const BUNDESLAENDER = {
     name: "Steiermark",
     kuerzel: "ST",
     hauptstadt: "Graz",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-steiermark-weinstrasse.jpg", alt: "Weinberge an der Südsteirischen Weinstraße", position: "center 55%", motiv: "Südsteirische Weinstraße", urheber: "Simon Legner", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:S%C3%BCdsteirische_Weinstra%C3%9Fe_(IMG_20240929_104056).jpg" },
     slugs: ["landesfoerderungen-in-steiermark"],
     stand: STAND.iso,
     foerderart: "gezielt",
@@ -743,6 +760,8 @@ export const BUNDESLAENDER = {
     name: "Burgenland",
     kuerzel: "B",
     hauptstadt: "Eisenstadt",
+    // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
+    bild: { src: "/Images/AT/foerderung/land-burgenland-neusiedler-see.jpg", alt: "Neusiedler See bei Rust im Abendlicht", position: "center 55%", motiv: "Neusiedler See bei Rust", urheber: "Jakub Hałun", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:Lake_Neusiedl_in_Rust_during_sunset,_20220424_1941_4890.jpg" },
     slugs: ["landesfoerderungen-in-burgenland"],
     stand: STAND.iso,
     foerderart: "gezielt",

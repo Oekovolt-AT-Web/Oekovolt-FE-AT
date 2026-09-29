@@ -30,7 +30,7 @@ const KWP = 500;
 const ERTRAG_KWP = 1050; // kWh/kWp, Annahme
 const MWH = (KWP * ERTRAG_KWP) / 1000;
 
-const de = (n, st = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const de = (n, st = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const eur = (n) => de(Math.round(n)) + " €";
 const ctv = (eurMwh) => de(eurMwh / 10, 2);
 const spread = (y) => Math.round(MITTAG_ABEND[y][1] - MITTAG_ABEND[y][0]);

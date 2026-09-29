@@ -40,7 +40,7 @@ const VARIANTEN = {
 
 export default function KostenAufteilung({ gesamt, variante = "privat", titel }) {
   const v = VARIANTEN[variante] || VARIANTEN.privat;
-  const eur = (n) => (Math.round(n / 50) * 50).toLocaleString("de-AT") + " €";
+  const eur = (n) => (Math.round(n / 50) * 50).toLocaleString("de-DE") + " €";
   return (
     <figure className="my-8 rounded-3xl bg-white p-5 ring-1 ring-ink-200/80 md:p-7">
       <div className="flex items-baseline justify-between gap-4">

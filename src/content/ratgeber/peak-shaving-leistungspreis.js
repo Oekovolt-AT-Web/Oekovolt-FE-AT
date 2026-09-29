@@ -3,7 +3,7 @@
 // Regeln ab 2027 laut ElWG (BGBl. I Nr. 91/2025) und SNE-G-V-Begutachtungsentwurf der E-Control.
 // Lastgang, Energiepreis, Speicherpreis und Betriebskosten sind offengelegte Annahmen (Beispiel).
 
-const fmt = (n, d = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmt = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 const eur = (n) => `${fmt(Math.round(n))} €`;
 const eur2 = (n) => `${fmt(n, 2)} €`;
 const kw = (n) => `${fmt(Math.round(n))} kW`;

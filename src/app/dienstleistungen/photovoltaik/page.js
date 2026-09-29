@@ -29,7 +29,9 @@ import FeatureGrid from "@/components/ui/FeatureGrid";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import FeaturedLogos from "@/components/photovoltaikanlage/partners";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
+import { KERNFAKTEN } from "@/data/hero";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 import ZielgruppenWahl from "@/components/Photovoltaik/ZielgruppenWahl";
@@ -130,15 +132,16 @@ export default function PhotovoltaikPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Dienstleistungen" }, { name: "Photovoltaik", href: PFAD }]}
         eyebrow={`Photovoltaik vom Elektrotechnik-Fachbetrieb aus ${FIRMA.ort}`}
         title={
           <>
-            Photovoltaik aus einer Hand – <span className="ov-text-gradient">geplant, errichtet, am Netz</span>
+            Photovoltaik aus einer Hand – <span className="ov-text-gradient-light">geplant, errichtet, am Netz</span>
           </>
         }
         lead="Wir planen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden nach Lastgang, errichten sie mit eigenem Elektrotechnik-Gewerbe und übernehmen den Netzanschluss vom Netzzugangsantrag bis zur Fertigstellungsmeldung. Ein Ansprechpartner, vom ersten Gespräch bis zum laufenden Betrieb."
-        image={{ src: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg", alt: "Gewerbegebäude mit Photovoltaikanlagen auf den Flachdächern" }}
+        image={{ src: "/Images/Referenzen/referenzkarte4.jpg", alt: "Projektteam mit Planunterlagen zwischen den Modulreihen einer Freiflächenanlage", position: "22% 45%" }}
         points={["Planung nach Lastgang", "Netzzugangsantrag & TOR", "Fertigstellungsmeldung inklusive", "Monitoring & Wartung"]}
         actions={[
           { label: "Projekt anfragen", href: "/angebot" },
@@ -162,7 +165,9 @@ export default function PhotovoltaikPage() {
         }
       />
 
-      <FeaturedLogos />
+      <Kennzahlenband items={KERNFAKTEN.map((f) => ({ wert: f.wert, label: f.label }))} />
+
+      <HerstellerWortmarken />
 
       {/* Zielgruppen */}
       <Section tone="sand" space="lg">

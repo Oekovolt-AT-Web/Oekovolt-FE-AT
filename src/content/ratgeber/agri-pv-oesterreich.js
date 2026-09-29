@@ -3,7 +3,7 @@
 // EAG-IZ-VO Strom §§ 5, 6 und 9 (Fassung 2026), K-PhV 2024, Sbg. PV-Kennzeichnungsverordnung,
 // Stmk. Sachprogramm Solarenergie und StROG § 33. Forschung: Fraunhofer ISE / APV-RESOLA, Laub et al. 2022.
 
-const eur = (n) => Math.round(n).toLocaleString("de-AT") + " €";
+const eur = (n) => Math.round(n).toLocaleString("de-DE") + " €";
 
 // Beispiel Investitionszuschuss 500 kWp, Kategorie D, Gebot 110 €/kWp (Höchstsatz 2026: 120 €/kWp)
 const KWP = 500;

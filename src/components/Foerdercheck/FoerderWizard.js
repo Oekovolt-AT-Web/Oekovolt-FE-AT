@@ -7,6 +7,7 @@ import {
   Info, Landmark, Percent, PlugZap, RotateCcw, Sprout, Sun, Thermometer, Tractor, Users, Zap,
 } from "lucide-react";
 import { ANTRAG, ARTEN, STAND, VORHABEN, ZIELGRUPPEN, ermittleProgramme } from "./programme";
+import { KARTE_PFADE, KARTE_VIEWBOX } from "@/components/Forderungen/Shared/kartePfade";
 
 /**
  * Förder-Check Österreich: Bundesland → Zielgruppe → Vorhaben → Programme.
@@ -30,13 +31,20 @@ const ZG_LABEL = Object.fromEntries(ZIELGRUPPEN.map((z) => [z.id, z.label]));
 const SCHRITTE = ["Bundesland", "Wer investiert", "Vorhaben"];
 
 export default function FoerderWizard({ laender = [] }) {
-  const [schritt, setSchritt] = useState(0);
+  const [schritt, setSchrittRoh] = useState(0);
+  const [richtung, setRichtung] = useState("vor");
+  const [hoverLand, setHoverLand] = useState(null);
   const [land, setLand] = useState(null);
   const [zielgruppe, setZielgruppe] = useState(null);
   const [vorhaben, setVorhaben] = useState([]);
   const [kopiert, setKopiert] = useState(false);
   const kopfRef = useRef(null);
   const ersterRender = useRef(true);
+
+  function setSchritt(neu) {
+    setRichtung(neu >= schritt ? "vor" : "zurueck");
+    setSchrittRoh(neu);
+  }
 
   const nachKey = useMemo(() => Object.fromEntries(laender.map((l) => [l.key, l])), [laender]);
 
@@ -52,9 +60,9 @@ export default function FoerderWizard({ laender = [] }) {
         setZielgruppe(zg);
         if (v.length) {
           setVorhaben(v);
-          setSchritt(3);
-        } else setSchritt(2);
-      } else setSchritt(1);
+          setSchrittRoh(3);
+        } else setSchrittRoh(2);
+      } else setSchrittRoh(1);
     }
   }, [nachKey]);
 
@@ -106,20 +114,22 @@ export default function FoerderWizard({ laender = [] }) {
   return (
     <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_90px_-50px_rgba(3,18,43,0.55)] ring-1 ring-ink-200/70">
       {/* Fortschritt */}
-      <div ref={kopfRef} tabIndex={-1} className="border-b border-ink-100 bg-sand-50/70 px-5 py-5 outline-none sm:px-8 md:px-10">
-        <ol className="flex items-center gap-2 sm:gap-3" aria-label="Fortschritt">
+      <div ref={kopfRef} tabIndex={-1} className="border-b border-ink-100 bg-sand-50/70 px-5 pb-5 pt-5 outline-none sm:px-8 md:px-10">
+        <div aria-hidden="true" className="h-1.5 overflow-hidden rounded-full bg-ink-200/70">
+          <div className="h-full rounded-full bg-gradient-to-r from-ov-400 to-ov-600 transition-[width] duration-700 ease-out" style={{ width: `${(Math.min(schritt, 3) / 3) * 100}%` }} />
+        </div>
+        <ol className="mt-4 grid grid-cols-4 gap-2" aria-label="Fortschritt">
           {[...SCHRITTE, "Ergebnis"].map((s, i) => {
             const fertig = i < schritt;
             const aktiv = i === schritt;
             return (
-              <li key={s} className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3" aria-current={aktiv ? "step" : undefined}>
-                <button type="button" disabled={i > schritt || (i === 3 && schritt !== 3)} onClick={() => setSchritt(i)} className="flex min-w-0 items-center gap-2 rounded-full text-left disabled:cursor-default">
-                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition-colors ${fertig ? "bg-ov-600 text-white" : aktiv ? "bg-navy-950 text-white" : "bg-white text-ink-500 ring-1 ring-ink-200"}`}>
+              <li key={s} className="min-w-0" aria-current={aktiv ? "step" : undefined}>
+                <button type="button" disabled={i > schritt || (i === 3 && schritt !== 3)} onClick={() => setSchritt(i)} className="flex w-full min-w-0 items-center gap-2 rounded-full text-left disabled:cursor-default">
+                  <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition-all duration-300 ${fertig ? "bg-ov-600 text-white" : aktiv ? "scale-110 bg-navy-950 text-white shadow-lg" : "bg-white text-ink-500 ring-1 ring-ink-200"}`}>
                     {fertig ? <Check aria-hidden="true" className="h-4 w-4" strokeWidth={3} /> : i + 1}
                   </span>
                   <span className={`hidden truncate text-[14px] font-semibold sm:block ${aktiv ? "text-ink-900" : fertig ? "text-ink-700" : "text-ink-500"}`}>{s}</span>
                 </button>
-                {i < 3 && <span aria-hidden="true" className={`h-px flex-1 ${fertig ? "bg-ov-400" : "bg-ink-200"}`} />}
               </li>
             );
           })}
@@ -127,21 +137,43 @@ export default function FoerderWizard({ laender = [] }) {
       </div>
 
       <div className="p-5 sm:p-8 md:p-10">
+        <div key={schritt} className={richtung === "vor" ? "ov-step-vor" : "ov-step-zurueck"}>
         {schritt === 0 && (
           <fieldset>
             <legend className="font-display text-[clamp(1.4rem,1.1rem+1vw,1.9rem)] font-extrabold tracking-tight text-ink-900">Wo entsteht die Anlage?</legend>
             <p className="mt-2 text-[15.5px] text-ink-600">Bundesland des Standorts wählen – maßgeblich ist der Ort der Anlage, nicht der Firmensitz.</p>
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="mt-6 grid items-center gap-6 lg:grid-cols-[1.1fr_1fr] lg:gap-10">
+            <div className="relative hidden lg:block">
+              <div aria-hidden="true" className="absolute inset-10 rounded-full bg-ov-100/70 blur-3xl" />
+              <svg viewBox={KARTE_VIEWBOX} className="relative h-auto w-full drop-shadow-[0_18px_30px_rgba(3,18,43,0.12)]" aria-hidden="true" onMouseLeave={() => setHoverLand(null)}>
+                {Object.keys(KARTE_PFADE)
+                  .sort((a, b) => (a === land ? 1 : b === land ? -1 : a === "wien" ? 1 : b === "wien" ? -1 : 0))
+                  .map((k) => (
+                    <path
+                      key={k}
+                      d={KARTE_PFADE[k].d}
+                      fillRule="evenodd"
+                      strokeLinejoin="round"
+                      onClick={() => setLand(k)}
+                      onMouseEnter={() => setHoverLand(k)}
+                      className={`cursor-pointer transition-colors duration-300 ${k === land ? "fill-ov-500 stroke-white" : k === hoverLand ? "fill-ov-200 stroke-white" : "fill-ink-200 stroke-white"}`}
+                      strokeWidth={k === land ? 2 : 1}
+                    />
+                  ))}
+              </svg>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-2">
               {laender.map((l) => {
                 const an = land === l.key;
                 return (
-                  <label key={l.key} className={`flex min-h-[56px] cursor-pointer items-center gap-2.5 rounded-2xl px-3 py-2.5 transition-all focus-within:ring-2 focus-within:ring-ov-500 ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white hover:ring-ink-300"}`}>
+                  <label key={l.key} onMouseEnter={() => setHoverLand(l.key)} onMouseLeave={() => setHoverLand(null)} className={`flex min-h-[56px] cursor-pointer items-center gap-2.5 rounded-2xl px-3 py-2.5 transition-all focus-within:ring-2 focus-within:ring-ov-500 ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white hover:ring-ink-300"}`}>
                     <input type="radio" name="land" value={l.key} checked={an} onChange={() => setLand(l.key)} className="sr-only" />
                     <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-display text-[12px] font-extrabold ${an ? "bg-ov-600 text-white" : "bg-white text-ink-600 ring-1 ring-ink-200"}`}>{l.kuerzel}</span>
-                    <span className={`text-[14.5px] font-semibold leading-tight ${an ? "text-ov-800" : "text-ink-800"}`}>{l.name}</span>
+                    <span className={`min-w-0 break-words text-[13.5px] font-semibold leading-tight sm:text-[14.5px] ${an ? "text-ov-800" : "text-ink-800"}`} lang="de">{l.name}</span>
                   </label>
                 );
               })}
+            </div>
             </div>
           </fieldset>
         )}
@@ -223,6 +255,7 @@ export default function FoerderWizard({ laender = [] }) {
         {schritt === 3 && ergebnis && (
           <Ergebnis ergebnis={ergebnis} land={aktivesLand} vorhaben={vorhaben} zielgruppe={zielgruppe} onNeu={neuStarten} onKopieren={linkKopieren} kopiert={kopiert} onAendern={setSchritt} />
         )}
+        </div>
       </div>
     </div>
   );
@@ -277,6 +310,21 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
             </button>
           </div>
         </div>
+        <dl className="relative mt-6 grid grid-cols-2 gap-2 sm:grid-cols-5">
+          {Object.keys(ARTEN).map((art, i) => {
+            const n = alle.filter((p) => p.art === art).length;
+            const Icon = ART_ICON[art];
+            return (
+              <div key={art} className={`ov-step-vor rounded-2xl p-3 ring-1 ${n ? "bg-white/[0.08] ring-white/15" : "bg-white/[0.02] ring-white/5 opacity-50"}`} style={{ animationDelay: `${150 + i * 80}ms` }}>
+                <dt className="flex items-center gap-1.5 text-[12px] font-semibold text-white/60">
+                  <Icon aria-hidden="true" className="h-3.5 w-3.5 text-ov-300" />
+                  {ARTEN[art]}
+                </dt>
+                <dd className="ov-num mt-1 font-display text-[24px] font-extrabold leading-none text-white">{n}</dd>
+              </div>
+            );
+          })}
+        </dl>
         {vorher > 0 && (
           <p className="relative mt-6 flex items-start gap-2.5 border-t border-white/10 pt-5 text-[14.5px] leading-relaxed text-white/75">
             <CircleAlert aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sun-400" />
@@ -292,9 +340,9 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
               {g.titel}
               <span className="ov-num rounded-full bg-ink-100 px-2 py-0.5 text-[13px] font-semibold text-ink-600">{g.items.length}</span>
             </h3>
-            <ul className="mt-5 grid gap-4 lg:grid-cols-2">
-              {g.items.map((p) => (
-                <ProgrammKarte key={p.id} p={p} />
+            <ul className="mt-5 grid gap-4 lg:grid-cols-2 lg:[&>li:last-child:nth-child(odd)]:col-span-2">
+              {g.items.map((p, i) => (
+                <ProgrammKarte key={p.id} p={p} verzoegerung={i * 90} />
               ))}
             </ul>
           </section>
@@ -372,11 +420,11 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
   );
 }
 
-function ProgrammKarte({ p }) {
+function ProgrammKarte({ p, verzoegerung = 0 }) {
   const Icon = ART_ICON[p.art] || BadgeEuro;
   const antrag = ANTRAG[p.antrag] || ANTRAG.frist;
   return (
-    <li className="flex flex-col rounded-3xl bg-white p-5 ring-1 ring-ink-200/80 transition-shadow hover:shadow-[0_24px_48px_-32px_rgba(3,18,43,0.45)] md:p-6">
+    <li className="ov-step-vor flex flex-col rounded-3xl bg-white p-5 ring-1 ring-ink-200/80 transition-shadow hover:shadow-[0_24px_48px_-32px_rgba(3,18,43,0.45)] hover:ring-ov-200 md:p-6" style={{ animationDelay: `${200 + verzoegerung}ms` }}>
       <div className="flex items-start gap-4">
         <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${ART_TON[p.art]}`}>
           <Icon aria-hidden="true" className="h-5 w-5" />

@@ -5,19 +5,23 @@
 
 import { Clapperboard, Gift, Handshake, HeartHandshake, Link2, Send, Trophy, UserPlus, Wrench } from "lucide-react";
 
-import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
+import Button from "@/components/ui/Button";
 import Querverweise from "@/components/Reusable/Querverweise";
 import PraemienRechner from "@/components/Vorteilswelt/PraemienRechner";
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
-import Hinweis from "@/components/ServiceAT/Hinweis";
 import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
 import FaqSektion from "@/components/ServiceAT/FaqSektion";
+import Stil from "@/components/ServiceAT/B/Stil";
+import HeroBild from "@/components/ServiceAT/B/HeroBild";
+import Kennzahlen from "@/components/ServiceAT/B/Kennzahlen";
+import Dunkel from "@/components/ServiceAT/B/Dunkel";
+import FotoBento from "@/components/ServiceAT/B/FotoBento";
+import Bildband from "@/components/ServiceAT/B/Bildband";
 import { SOLENSA } from "@/lib/site";
 
 const PFAD = "/service/vorteilswelt";
@@ -71,15 +75,20 @@ export default function VorteilsweltPage() {
 
   return (
     <div>
+      <Stil />
       <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Ökovolt Vorteilswelt – Empfehlungsprogramm und Kundenvorteile", beschreibung: BESCHREIBUNG, serviceType: "Kunden- und Empfehlungsprogramm" })} />
       <JsonLd daten={howToSchema} />
 
-      <PageHero
+      <HeroBild
         breadcrumbs={[{ name: "Service" }, { name: "Vorteilswelt" }]}
         eyebrow="Ökovolt Vorteilswelt · für Kunden & Partner"
-        title={<>Gute Anlagen sprechen sich herum. <span className="ov-text-gradient">Wir sagen Danke.</span></>}
+        title={
+          <>
+            Gute Anlagen sprechen sich herum. <span className="ov-text-gradient-light">Wir sagen Danke.</span>
+          </>
+        }
         lead="Sie sind mit Ihrer Anlage zufrieden? Dann empfehlen Sie Ökovolt weiter – an Geschäftspartner, Nachbarbetriebe, Ihre Gemeinde oder Bekannte. Dazu gehören in der Vorteilswelt der Ökovolt PV Award, Nachhaltigkeitsmarketing mit Solensa und das Partnerprogramm für Elektrotechnikbetriebe."
-        image={{ src: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-02-11-14-15-57-utc.jpg", alt: "Zwei Techniker montieren Solarmodule auf einer großen PV-Anlage" }}
+        image={{ src: "/Images/AT/service-b/handschlag-partner.jpg", alt: "Handschlag zweier Geschäftspartner" }}
         points={["Empfehlungsprogramm mit Prämie", "Textvorschläge für Betriebe & Gemeinden", "Ökovolt PV Award", "Nachhaltigkeitsmarketing mit Solensa"]}
         actions={[
           { label: "Als Empfehlungsgeber registrieren", href: "#anmelden" },
@@ -87,6 +96,16 @@ export default function VorteilsweltPage() {
         ]}
       />
 
+      <Kennzahlen
+        zahlen={[
+          { value: 4, label: "Schritte vom Link bis zur Prämie", hinweis: "gemäß Teilnahmebedingungen" },
+          { value: 6, label: "Vorteile für Kunden und Partner", hinweis: "Empfehlung, Award, Marketing, Service, Partner, Sponsoring" },
+          { value: 9, label: "Bundesländer – Projekte in ganz Österreich" },
+          { text: "seit 2012", label: "Ökovolt in Österreich, Gruppe seit 2010" },
+        ]}
+      />
+
+      {/* Vorteile */}
       <Section tone="white" space="lg">
         <SectionHeading
           eyebrow="Vorteilswelt"
@@ -94,51 +113,71 @@ export default function VorteilsweltPage() {
           lead="Die Vorteilswelt verbindet Kundinnen, Kunden und Partner, die die Energiewende in Österreich mit uns umsetzen."
           className="mb-12"
         />
-        <FeatureGrid
-          cols={3}
+        <FotoBento
           items={[
-            { icon: Gift, title: "Empfehlungsprogramm", text: "Empfehlen Sie Ökovolt weiter und erhalten Sie eine Prämie, wenn daraus ein Vertrag entsteht – gemäß Teilnahmebedingungen.", href: "#anmelden" },
-            { icon: Trophy, title: "Ökovolt PV Award", text: "Jährliche Auszeichnung für die besten Anlagen und Nachhaltigkeitsinvestitionen unserer Kundinnen und Kunden.", href: "/pv-award" },
-            { icon: Clapperboard, title: "Nachhaltigkeitsmarketing", text: `Video, Imagespot und ESG-Kennzahlen zu Ihrer Anlage – umgesetzt von der ${SOLENSA.name}.`, href: "/service/nachhaltigkeitsmarketing" },
-            { icon: Wrench, title: "Service für Bestandskunden", text: "Wartungsvertrag, Anlagenprüfung, Repowering-Check und Speicher-Nachrüstung aus einer Hand.", href: "/service/wartung" },
-            { icon: Handshake, title: "Elektro-Partnerprogramm", text: "Für Elektrotechnikbetriebe: als Subunternehmer registrieren und an Projekten in ganz Österreich mitarbeiten.", href: "/partner" },
-            { icon: HeartHandshake, title: "Sponsoring", text: "Vereine, Kultur und Nachwuchs in der Region – Anfragen über das Sponsoring-Formular.", href: "/sponsoring" },
+            {
+              bild: { src: "/Images/AT/loesungen/freiflaeche-spitalberg-kaernten.jpg", alt: "Photovoltaik-Freiflächenanlage in Kärnten" },
+              icon: Gift,
+              tag: "Empfehlungsprogramm",
+              titel: "Empfehlen und Danke sagen lassen",
+              text: "Empfehlen Sie Ökovolt weiter und erhalten Sie eine Prämie, wenn daraus ein Vertrag entsteht – gemäß Teilnahmebedingungen.",
+              href: "#anmelden",
+            },
+            { bild: { src: "/Images/AT/loesungen/agri-pv-vertikal-bifazial.jpg", alt: "Vertikale Agri-PV-Anlage" }, icon: Trophy, titel: "Ökovolt PV Award", text: "Jährliche Auszeichnung für die besten Anlagen und Nachhaltigkeitsinvestitionen.", href: "/pv-award" },
+            { bild: { src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Luftaufnahme eines Hotels mit Photovoltaik" }, icon: Clapperboard, titel: "Nachhaltigkeitsmarketing", text: `Video, Imagespot und ESG-Kennzahlen – umgesetzt von der ${SOLENSA.name}.`, href: "/service/nachhaltigkeitsmarketing" },
+            { bild: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker bei der Wartung einer PV-Anlage" }, icon: Wrench, titel: "Service für Bestandskunden", text: "Wartung, Anlagenprüfung, Repowering-Check und Speicher-Nachrüstung.", href: "/service/wartung" },
+            { bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Elektrotechniker vor einer Photovoltaikanlage" }, icon: Handshake, titel: "Elektro-Partnerprogramm", text: "Als Subunternehmer registrieren und an Projekten in ganz Österreich mitarbeiten.", href: "/partner" },
+            { icon: HeartHandshake, ton: "gruen", titel: "Sponsoring", text: "Vereine, Kultur und Nachwuchs in der Region – Anfragen über das Sponsoring-Formular.", href: "/sponsoring" },
           ]}
         />
       </Section>
 
-      <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Empfehlungsprogramm" title="In vier Schritten weiterempfehlen" align="center" className="mb-14" />
-        <Steps items={SCHRITTE} />
-        <Hinweis ton="info" titel="Prämie und Teilnahmebedingungen" className="mx-auto mt-12 max-w-3xl">
-          <p>
-            Höhe, Voraussetzungen und Auszahlung der Empfehlungsprämie regeln die aktuellen Teilnahmebedingungen für Österreich. Sie erhalten sie zusammen mit Ihrem persönlichen
-            Empfehlungslink nach der Registrierung.
-          </p>
-        </Hinweis>
-      </Section>
-
-      <Section id="baukasten" tone="navy" space="lg" className="scroll-mt-24 overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-24 h-[480px] w-[480px] rounded-full bg-ov-500/25 blur-[130px]" />
-        <div className="relative">
+      {/* Empfehlungsprogramm + Baukasten */}
+      <Dunkel id="baukasten">
+        <SectionHeading dark eyebrow="Empfehlungsprogramm" title="In vier Schritten weiterempfehlen" align="center" className="mb-14" />
+        <Steps tone="dark" items={SCHRITTE} />
+        <div className="mx-auto mt-20 max-w-3xl text-center">
           <SectionHeading
             dark
             align="center"
             eyebrow="Empfehlungs-Baukasten"
-            title={<>Die passenden Worte – <span className="ov-text-gradient-light">für jede Empfehlung</span></>}
+            title={
+              <>
+                Die passenden Worte – <span className="ov-text-gradient-light">für jede Empfehlung</span>
+              </>
+            }
             lead="Wählen Sie, wem Sie Ökovolt empfehlen, und teilen Sie den Textvorschlag direkt. Ersetzen Sie den Link durch Ihren persönlichen Empfehlungslink."
-            className="mb-12"
           />
-          <Reveal dir="scale">
-            <PraemienRechner />
-          </Reveal>
         </div>
-      </Section>
+        <Reveal dir="scale" className="mt-12">
+          <PraemienRechner />
+        </Reveal>
+        <p className="mx-auto mt-8 max-w-3xl text-center text-[14px] leading-relaxed text-white/60">
+          Höhe, Voraussetzungen und Auszahlung der Empfehlungsprämie regeln die aktuellen Teilnahmebedingungen für Österreich. Sie erhalten sie zusammen mit Ihrem persönlichen
+          Empfehlungslink nach der Registrierung.
+        </p>
+      </Dunkel>
+
+      {/* PV Award */}
+      <Bildband
+        bild={{ src: "/Images/AT/loesungen/tourismus-pv-skigebiet-wildkogel.jpg", alt: "Photovoltaikanlage in einem alpinen Skigebiet" }}
+        eyebrow="Ökovolt PV Award"
+        titel="Die besten Anlagen des Jahres verdienen eine Bühne"
+        text="Mit dem PV Award zeichnen wir jährlich Kundinnen und Kunden für besonders gelungene Anlagen und Nachhaltigkeitsinvestitionen aus. Ein Video oder eine gute Projektdokumentation – etwa mit der Solensa GmbH – ist eine starke Grundlage für die Einreichung."
+      >
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Button href="/pv-award" icon={Trophy}>
+            Zum PV Award
+          </Button>
+          <Button href="/service/nachhaltigkeitsmarketing" variant="outlineLight" icon={Clapperboard}>
+            Nachhaltigkeitsmarketing
+          </Button>
+        </div>
+      </Bildband>
 
       <AnfrageSektion
         id="anmelden"
-        tone="white"
+        tone="sand"
         eyebrow="Registrierung"
         titel="Als Empfehlungsgeber registrieren"
         lead="Nach der Registrierung erhalten Sie Ihren persönlichen Empfehlungslink und die Teilnahmebedingungen per E-Mail."
@@ -158,7 +197,7 @@ export default function VorteilsweltPage() {
         }}
       />
 
-      <FaqSektion items={FAQ} titel="Vorteilswelt – kurz erklärt" tone="sand" />
+      <FaqSektion items={FAQ} titel="Vorteilswelt – kurz erklärt" tone="white" />
 
       <Querverweise pfad={PFAD} />
 

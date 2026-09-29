@@ -72,7 +72,7 @@ export default function Footer() {
         <div className="flex flex-col gap-8 border-b border-white/10 pb-12 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
             <Link href="/" className="relative block h-[62px] w-[200px]" aria-label="Zur Startseite">
-              <Image src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt Solartechnik GmbH" fill sizes="200px" className="object-contain object-left" />
+              <Image src="/logo-oekovolt-weiss.png" alt="Ökovolt Solartechnik GmbH" fill sizes="200px" className="object-contain object-left" />
             </Link>
             <p className="mt-5 font-display text-[clamp(1.4rem,1.1rem+1vw,2rem)] font-bold leading-tight tracking-tight">
               Solarenergie für alle – <span className="ov-text-gradient-light">einfach, sicher, wirtschaftlich.</span>

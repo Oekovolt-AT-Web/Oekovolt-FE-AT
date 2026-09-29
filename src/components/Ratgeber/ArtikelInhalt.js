@@ -4,7 +4,7 @@ import { ArrowRight, Calculator } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import Faq from "@/components/ui/Faq";
 import InlineText, { klartext } from "./InlineText";
-import { Ablauf, Abschnitt, Checkliste, KartenRaster, Kennzahlband, KurzFazit, LinkKarten, Merkkasten, Prosa, Tabelle, Zwischentitel } from "./Bausteine";
+import { Ablauf, Abschnitt, Checkliste, KartenRaster, Kennzahlband, KurzFazit, LinkKarten, Merkkasten, Prosa, RechnerKarte, Tabelle, Zwischentitel } from "./Bausteine";
 
 /**
  * Rendert einen inhaltsgetriebenen Ratgeber-Artikel (src/content/ratgeber/*).
@@ -23,6 +23,8 @@ export default function ArtikelInhalt({ artikel }) {
         </Abschnitt>
       ))}
 
+      <RechnerKarte artikel={artikel} className="mb-0 mt-16" />
+
       {artikel.faq?.length > 0 && (
         <Abschnitt id="faq" titel={artikel.faqTitel || "Häufige Fragen"}>
           <Faq items={artikel.faq.map((f) => ({ q: f.q, a: <InlineText text={f.a} />, aText: klartext(f.a) }))} />
@@ -37,13 +39,19 @@ export default function ArtikelInhalt({ artikel }) {
 
       {artikel.quellen?.length > 0 && (
         <Abschnitt id="quellen" titel="Quellen">
-          <ol className="list-decimal space-y-2 pl-5 text-[14.5px] leading-relaxed text-ink-600 marker:text-ink-500">
-            {artikel.quellen.map((q) => (
-              <li key={q.url}>
-                <a href={q.url} target="_blank" rel="noopener noreferrer" className="text-ink-700 underline decoration-ink-300 underline-offset-2 hover:text-ov-700">
-                  {q.titel}
-                </a>
-                {q.stand && <span className="text-ink-500"> · abgerufen {q.stand}</span>}
+          <ol className="divide-y divide-ink-100 overflow-hidden rounded-2xl bg-sand-50 ring-1 ring-ink-200/60">
+            {artikel.quellen.map((q, i) => (
+              <li key={q.url} className="flex gap-4 px-5 py-3.5 text-[14.5px] leading-relaxed text-ink-600">
+                <span className="ov-num mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white text-[11.5px] font-bold text-ink-600 ring-1 ring-ink-200">{i + 1}</span>
+                <span className="min-w-0">
+                  <a href={q.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ink-800 underline decoration-ink-300 underline-offset-2 hover:text-ov-700">
+                    {q.titel}
+                  </a>
+                  <span className="block text-[12.5px] text-ink-500">
+                    {domain(q.url)}
+                    {q.stand && <> · abgerufen {q.stand}</>}
+                  </span>
+                </span>
               </li>
             ))}
           </ol>
@@ -128,6 +136,15 @@ function Block({ block: b }) {
       );
     default:
       return null;
+  }
+}
+
+/** Domain einer Quelle für die Anzeige („www.e-control.at“ -> „e-control.at“). */
+function domain(url) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
   }
 }
 

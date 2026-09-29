@@ -5,10 +5,7 @@
 // (doctype "Team", Route /api/team) werden angezeigt, sobald
 // fetchTeamMitglieder() sie liefert – bis dahin greifen die Texte unten.
 
-import {
-  Briefcase, Building2, Calculator, ClipboardList, GraduationCap, HandHeart, HardHat, Headset, Leaf, Mail, MessagesSquare, MonitorDot, Phone, PlugZap,
-  ShieldCheck, Sparkles, TrendingUp, Users,
-} from "lucide-react";
+import { Briefcase, Building2, Handshake, HandHeart, Leaf, Mail, MessagesSquare, Phone, ShieldCheck } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -19,7 +16,10 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import TeamKarte, { normalisiereMitglied } from "@/components/Team/TeamKarte";
-import { Generationen, Haltung } from "@/components/Team/Firmengeschichte";
+import { Generationen } from "@/components/Team/Firmengeschichte";
+import RollenPfad from "@/components/Team/RollenPfad";
+import Kennzahlen from "@/components/Team/Kennzahlen";
+import FotoKachel from "@/components/Team/FotoKachel";
 import { GENERATIONEN, STAND } from "@/data/unternehmen";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -62,19 +62,19 @@ const WERTE = [
 ];
 
 const ROLLEN = [
-  { icon: Headset, title: "Vertrieb & Beratung", text: "Klärt Ziele, Lastgang und Flächen und erstellt ein Angebot, das zu Betrieb, Netzanschluss und Budget passt." },
-  { icon: ClipboardList, title: "Projektleitung", text: "Koordiniert Termine, Material, Gewerke und Partnerbetriebe – und hält Sie während des Projekts auf dem Laufenden." },
-  { icon: Calculator, title: "Planung & Engineering", text: "Modulbelegung, Statik und Schneelast, Wechselrichter, Speicher und Kabelnetz – digital geplant und wirtschaftlich durchgerechnet." },
-  { icon: PlugZap, title: "Netzanschluss & Elektrotechnik", text: "Netzzugangsantrag, Anforderungen nach TOR Erzeuger, AC-Installation, Prüfung und Inbetriebnahme mit dem Netzbetreiber." },
-  { icon: MonitorDot, title: "Leittechnik & Fernwartung", text: "Eigene Parkregler, Fernwartung und SCADA: Die Anlage bleibt steuerbar, überwacht und dokumentiert." },
-  { icon: HardHat, title: "Montage & Service", text: "Montage auf Hallen-, Flach- und Steildächern sowie auf Freiflächen, danach Wartung, Prüfung und Thermografie." },
+  { phase: "Erstgespräch", titel: "Vertrieb & Beratung", text: "Klärt Ziele, Lastgang und Flächen und erstellt ein Angebot, das zu Betrieb, Netzanschluss und Budget passt.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", pos: "60% 40%" } },
+  { phase: "Projektstart", titel: "Projektleitung", text: "Koordiniert Termine, Material, Gewerke und Partnerbetriebe – und hält Sie während des Projekts auf dem Laufenden.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", pos: "50% 30%" } },
+  { phase: "Planung", titel: "Planung & Engineering", text: "Modulbelegung, Statik und Schneelast, Wechselrichter, Speicher und Kabelnetz – digital geplant und wirtschaftlich durchgerechnet.", bild: { src: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", alt: "Photovoltaikanlage auf einem großen Flachdach eines Gewerbebaus" } },
+  { phase: "Netz", titel: "Netzanschluss & Elektrotechnik", text: "Netzzugangsantrag, Anforderungen nach TOR Erzeuger, AC-Installation, Prüfung und Inbetriebnahme mit dem Netzbetreiber.", bild: { src: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator in einem Umspannwerk" } },
+  { phase: "Betrieb", titel: "Leittechnik & Fernwartung", text: "Eigene Parkregler, Fernwartung und SCADA: Die Anlage bleibt steuerbar, überwacht und dokumentiert.", bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" } },
+  { phase: "Bau & Service", titel: "Montage & Service", text: "Montage auf Hallen-, Flach- und Steildächern sowie auf Freiflächen, danach Wartung, Prüfung und Thermografie.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%" } },
 ];
 
-const KARRIERE = [
-  { icon: GraduationCap, title: "Lehre & Weiterbildung", text: "Lehrberuf Elektrotechnik, Herstellerschulungen und Weiterbildung für Fachkräfte." },
-  { icon: Users, title: "Kleine Teams", text: "Kurze Wege zwischen Planung, Montage und Leittechnik." },
-  { icon: TrendingUp, title: "Wachstumsbranche", text: "Photovoltaik, Speicher und Netzintegration – mit wachsender Nachfrage." },
-  { icon: Sparkles, title: "Eigene Technik", text: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung." },
+const KENNZAHLEN = [
+  { value: 15, suffix: "+", label: "Jahre Erfahrung", text: "Photovoltaik in der Gruppe seit 2010" },
+  { value: 2, label: "Generationen", text: "Gründer und zweite Generation an Bord" },
+  { value: 6, label: "Fachrollen je Projekt", text: "vom Erstgespräch bis zum Service" },
+  { value: 9, label: "Bundesländer", text: "Montage- und Serviceteams in ganz Österreich" },
 ];
 
 const FAQ = [
@@ -135,33 +135,22 @@ export default async function TeamPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Team" }]}
         eyebrow="Ökovolt Solartechnik GmbH · Ostermiething"
-        title={<>Das Team hinter <span className="ov-text-gradient">Ihrer PV-Anlage</span></>}
+        title={<>Das Team hinter <span className="ov-text-gradient-light">Ihrer PV-Anlage</span></>}
         lead="Gründer, die seit 2012 eigene Solarparks betreiben, eine zweite Generation für Digitalisierung und Vertrieb – und Fachleute für Projektleitung, Elektrotechnik, Netzanschluss, Leittechnik und Service."
-        image={{ src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Projektbesprechung zu einer Photovoltaikanlage" }}
+        image={{ src: "/Images/Team/download.jpg", alt: "Fachleute mit Helmen und Warnwesten besprechen sich vor Photovoltaikmodulen", position: "65% 35%" }}
         points={["Firmensitz Ostermiething", "Seit 2012 in Österreich", "Projektleitung bis Inbetriebnahme", "Eigene Leittechnik & Service"]}
         actions={[
           { label: "Projekt besprechen", href: "/termin" },
           { label: "Offene Stellen", href: "/uber-uns/jobs", icon: Briefcase },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <Users aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">
-                15+ <span className="text-[14px] font-semibold text-ink-500">Jahre</span>
-              </p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Photovoltaik-Erfahrung in der Gruppe</p>
-            </div>
-          </div>
-        }
       />
 
-      {/* Werte */}
+      {/* Werte + Kennzahlen */}
       <Section tone="white" space="lg">
+        <Kennzahlen items={KENNZAHLEN} className="mb-20 border-b border-ink-200 pb-14 md:mb-24" />
         <SectionHeading
           eyebrow="Wofür wir stehen"
           title={<>Vier Werte, <span className="ov-text-gradient">ein Anspruch</span></>}
@@ -172,24 +161,10 @@ export default async function TeamPage() {
         <FeatureGrid items={WERTE} cols={4} />
       </Section>
 
-      {/* Wer wir sind */}
-      <Section tone="sand" space="lg">
-        <SplitMedia
-          eyebrow="Unser Team"
-          title="Errichter, die selbst betreiben"
-          text={[
-            "Unser Team plant und baut Photovoltaikanlagen für Betriebe, Landwirtschaft, Gemeinden und Landesversorger in ganz Österreich. Was uns dabei leitet, ist die Perspektive des Betreibers: Die Gründer betreiben seit 2012 eigene Solarparks und wissen, was eine Anlage nach zehn Jahren braucht.",
-            "Deshalb gehören Netzanschluss, Parkregler, Fernwartung und Service bei uns von Anfang an zum Projekt – nicht erst, wenn etwas nicht funktioniert.",
-          ]}
-          image={{ src: "/Images/Team/solar-power-6860359_1280.jpg", alt: "Photovoltaikmodule auf einem Dach in der Montage" }}
-          action={{ label: "Mehr über das Unternehmen", href: "/uber-uns" }}
-        />
-      </Section>
-
       {/* Personen & Rollen */}
-      <Section tone="white" space="lg" id="team">
+      <Section tone="sand" space="lg" id="team" className="scroll-mt-20">
         {mitglieder.length > 0 ? (
-          <>
+          <div className="mb-20">
             <SectionHeading eyebrow="Ansprechpartner" title="Die Menschen bei Ökovolt" lead="Persönlich statt anonym: Diese Kolleginnen und Kollegen begleiten Ihr Projekt." className="mb-12" />
             <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {mitglieder.map((m, i) => (
@@ -198,58 +173,39 @@ export default async function TeamPage() {
                 </Reveal>
               ))}
             </ul>
-          </>
+          </div>
         ) : null}
 
-        <div className={mitglieder.length > 0 ? "mt-20" : ""}>
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <SectionHeading
-                eyebrow="Wer an Ihrer Anlage arbeitet"
-                title="Ein interdisziplinäres Team – ein Ziel"
-                lead="Von der Lastganganalyse bis zur Leitwarte: Jede Rolle bringt ihre Stärke in Ihr Projekt ein."
-              />
-              <Reveal className="mt-8 rounded-3xl bg-navy-950 p-6 text-white md:p-7">
-                <p className="text-[13px] font-medium text-white/60">Ihr direkter Draht ins Team</p>
-                <a href={FIRMA.telefonHref} className="group mt-2 flex items-center gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
-                    <Phone aria-hidden="true" className="h-5 w-5" />
-                  </span>
-                  <span className="font-display text-[22px] font-extrabold tracking-tight">{FIRMA.telefon}</span>
-                </a>
-                <a href={`mailto:${FIRMA.email}`} className="mt-3 flex items-center gap-3 text-[15px] text-white/80 hover:text-white">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10">
-                    <Mail aria-hidden="true" className="h-5 w-5" />
-                  </span>
-                  {FIRMA.email}
-                </a>
-                <p className="mt-4 border-t border-white/10 pt-4 text-[13.5px] text-white/55">
-                  {FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit} Uhr`).join(" · ")}
-                </p>
-              </Reveal>
-            </div>
-            <ol className="grid gap-4 sm:grid-cols-2">
-              {ROLLEN.map((r, i) => (
-                <Reveal as="li" key={r.title} delay={(i % 2) * 90} className="group ov-card-hover relative rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-7">
-                  <div className="flex items-center justify-between">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200 transition-colors group-hover:bg-ov-500 group-hover:text-white">
-                      <r.icon aria-hidden="true" className="h-6 w-6" strokeWidth={1.8} />
-                    </span>
-                    <span className="ov-num font-display text-[30px] font-extrabold leading-none text-ink-200">{String(i + 1).padStart(2, "0")}</span>
-                  </div>
-                  <h3 className="ov-h3 mt-5 text-ink-900">{r.title}</h3>
-                  <p className="mt-2 text-[15.5px] leading-relaxed text-ink-600">{r.text}</p>
-                </Reveal>
-              ))}
-            </ol>
-          </div>
+        <div className="mb-12 grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            eyebrow="Wer an Ihrer Anlage arbeitet"
+            title="Ein interdisziplinäres Team – ein Ziel"
+            lead="Von der Lastganganalyse bis zur Leitwarte: Wählen Sie eine Rolle und sehen Sie, wer in welcher Projektphase für Sie arbeitet."
+          />
+          <Reveal className="flex flex-wrap items-center gap-4 rounded-3xl bg-navy-950 p-5 text-white md:p-6">
+            <a href={FIRMA.telefonHref} className="group flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 transition-transform group-hover:scale-110">
+                <Phone aria-hidden="true" className="h-5 w-5" />
+              </span>
+              <span>
+                <span className="block text-[12.5px] text-white/60">Ihr direkter Draht ins Team</span>
+                <span className="font-display text-[19px] font-extrabold tracking-tight">{FIRMA.telefon}</span>
+              </span>
+            </a>
+            <a href={`mailto:${FIRMA.email}`} className="flex items-center gap-2 text-[14.5px] text-white/80 hover:text-white sm:ml-auto">
+              <Mail aria-hidden="true" className="h-4 w-4" />
+              {FIRMA.email}
+            </a>
+          </Reveal>
         </div>
+        <RollenPfad rollen={ROLLEN} />
       </Section>
 
       {/* Gründer & zweite Generation */}
       <Section tone="navy" space="lg" className="overflow-hidden" id="menschen">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
         <div aria-hidden="true" className="absolute -right-40 top-40 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div aria-hidden="true" className="absolute -left-40 bottom-20 h-[380px] w-[380px] rounded-full bg-sun-400/10 blur-[130px]" />
         <SectionHeading
           dark
           eyebrow="Die Menschen dahinter"
@@ -259,8 +215,7 @@ export default async function TeamPage() {
           className="mb-4"
         />
         <div className="relative">
-          <Generationen className="mt-14 md:mt-20" />
-          <Haltung />
+          <Generationen className="mt-14 md:mt-16" />
         </div>
         <div className="relative mt-14 flex flex-wrap justify-center gap-3">
           <Button href="/uber-uns#geschichte" variant="outlineLight" pfeil>
@@ -272,10 +227,28 @@ export default async function TeamPage() {
         </div>
       </Section>
 
+      {/* Wer wir sind */}
+      <Section tone="white" space="lg">
+        <SplitMedia
+          eyebrow="Betreiber aus Überzeugung"
+          title="Errichter, die selbst betreiben"
+          text={[
+            "Unser Team plant und baut Photovoltaikanlagen für Betriebe, Landwirtschaft, Gemeinden und Landesversorger in ganz Österreich. Was uns dabei leitet, ist die Perspektive des Betreibers: Die Gründer betreiben seit 2012 eigene Solarparks und wissen, was eine Anlage nach zehn Jahren braucht.",
+            "Deshalb gehören Netzanschluss, Parkregler, Fernwartung und Service bei uns von Anfang an zum Projekt – nicht erst, wenn etwas nicht funktioniert.",
+          ]}
+          points={[
+            { title: "Eine Projektleitung", text: "vom Erstgespräch bis zur Inbetriebnahme" },
+            { title: "Eigene Leittechnik", text: "Parkregler, Fernwartung und SCADA" },
+          ]}
+          image={{ src: "/Images/Team/solar-power-6860359_1280.jpg", alt: "Photovoltaikmodule auf einem Dach in der Montage" }}
+          action={{ label: "Mehr über das Unternehmen", href: "/uber-uns" }}
+        />
+      </Section>
+
       {/* Karriere-Teaser */}
       <Section tone="green" space="lg" className="overflow-hidden">
         <div aria-hidden="true" className="ov-grid-bg-light absolute inset-0" />
-        <div className="relative grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:gap-16">
+        <div className="relative grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
           <div>
             <SectionHeading
               eyebrow="Karriere bei Ökovolt"
@@ -291,7 +264,30 @@ export default async function TeamPage() {
               </Button>
             </div>
           </div>
-          <FeatureGrid items={KARRIERE} cols={2} />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Reveal>
+              <FotoKachel
+                href="/uber-uns/jobs"
+                bild={{ src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen" }}
+                icon={Briefcase}
+                kopf="Jobs & Lehre"
+                titel="Offene Stellen in Ostermiething"
+                text="Mit KV-Mindestentgelt in jeder Anzeige."
+                className="h-full min-h-[320px]"
+              />
+            </Reveal>
+            <Reveal delay={100}>
+              <FotoKachel
+                href="/partner"
+                bild={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" }}
+                icon={Handshake}
+                kopf="Für Betriebe"
+                titel="Elektro-Partner werden"
+                text="Elektrotechnik-Betriebe bauen gemeinsam mit uns."
+                className="h-full min-h-[320px]"
+              />
+            </Reveal>
+          </div>
         </div>
       </Section>
 

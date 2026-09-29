@@ -12,6 +12,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import FoerderWizard from "@/components/Foerdercheck/FoerderWizard";
 import { BUND, laenderFuerCheck } from "@/components/Foerdercheck/programme";
 import { Quellen, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import { Fachdetails, Glow } from "@/components/Forderungen/Shared/Premium";
 import { EAG_IZ, KPC_BEENDET, STAND, STEUER } from "@/components/Forderungen/Shared/bund";
 import { VORHABEN, ZIELGRUPPEN } from "@/data/bundeslaender";
 import { BASE_URL } from "@/lib/site";
@@ -105,16 +106,19 @@ export default function FoerdercheckPage() {
         title={<>Welche Förderung <span className="ov-text-gradient-light">passt zu Ihrem Projekt</span>?</>}
         lead="Drei Fragen, 30 Sekunden: Der Förder-Check zeigt Bundes- und Landesprogramme für PV auf dem Dach, Freifläche, Agri-PV, Speicher, Ladeinfrastruktur und Wärmepumpe – für Unternehmen, Landwirtschaft, Gemeinden, Private und Energiegemeinschaften."
         points={["Alle 9 Bundesländer", "5 Zielgruppen, 6 Vorhaben", "Keine Datenübertragung", `Nächster EAG-Call ${EAG_IZ.naechsterCall.zeitraum}`]}
-        actions={[{ label: "Jetzt prüfen", href: "#foerdercheck" }]}
+        className="pb-28 md:pb-36"
       />
 
-      <Section tone="sand" space="md" id="foerdercheck" className="scroll-mt-24">
-        <Reveal dir="scale">
-          <FoerderWizard laender={laender} />
-        </Reveal>
-      </Section>
+      <section id="foerdercheck" className="relative scroll-mt-24 bg-sand-50 pb-16 md:pb-24">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-40 bg-navy-950 md:h-48" />
+        <div className="ov-container relative -mt-24 md:-mt-32">
+          <Reveal dir="scale">
+            <FoerderWizard laender={laender} />
+          </Reveal>
+        </div>
+      </section>
 
-      <Section tone="white" space="lg">
+      <Section tone="white" space="md">
         <SectionHeading eyebrow="So funktioniert es" title="Ehrliche Orientierung statt Fördermittel-Versprechen" lead="Wir zeigen, was wir wissen – und sagen dazu, wo die Grenzen liegen." align="center" className="mb-12" />
         <FeatureGrid
           cols={3}
@@ -129,41 +133,53 @@ export default function FoerdercheckPage() {
         />
       </Section>
 
-      <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Datenbasis Bund" title="Bundesweite Programme im Förder-Check" lead="Diese Programme gelten unabhängig vom Bundesland. Landesprogramme ergänzt der Check je nach Standort." className="mb-10" />
-        <Reveal>
-          <Tabelle
-            dicht
-            caption={`Bundesweite Förderprogramme für Photovoltaik und verwandte Vorhaben in Österreich (Stand ${STAND.label})`}
-            spalten={[
-              { key: "name", label: "Programm", breite: "w-[26%]" },
-              { key: "traeger", label: "Träger / Grundlage" },
-              { key: "hoehe", label: "Förderung", className: "font-semibold text-ov-700" },
-              { key: "fuer", label: "Für" },
-            ]}
-            zeilen={programmTabelle}
-          />
-        </Reveal>
-        <div className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
-          <p className="font-display text-[17px] font-bold text-ink-900">Beendet – wird aber noch häufig gesucht</p>
-          <ul className="mt-3 grid gap-2 md:grid-cols-2">
-            {KPC_BEENDET.map((b) => (
-              <li key={b.name} className="text-[14.5px] text-ink-600"><strong className="text-ink-900">{b.name}</strong> – {b.ende}</li>
-            ))}
-          </ul>
+      <Section tone="navy" space="md" className="ov-noise overflow-hidden">
+        <Glow />
+        <div className="relative grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading dark eyebrow="Datenbasis Bund" title="Bundesweite Programme im Förder-Check" lead="Diese Programme gelten unabhängig vom Bundesland. Landesprogramme ergänzt der Check je nach Standort." />
+          <div className="space-y-3">
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {BUND.slice(0, 4).map((p) => (
+                <li key={p.id} className="ov-glass rounded-2xl p-4">
+                  <p className="text-[12.5px] text-white/55">{p.traeger}</p>
+                  <p className="mt-0.5 font-semibold leading-snug text-white">{p.name}</p>
+                  <p className="mt-2 text-[14px] font-semibold text-ov-300">{p.hoehe}</p>
+                </li>
+              ))}
+            </ul>
+            <Fachdetails dark titel={`Alle ${BUND.length} Bundesprogramme als Tabelle`} untertitel="Träger, Förderhöhe, Zielgruppen und Vorhaben – plus beendete Programme">
+              <Tabelle
+                dicht
+                caption={`Bundesweite Förderprogramme für Photovoltaik und verwandte Vorhaben in Österreich (Stand ${STAND.label})`}
+                spalten={[
+                  { key: "name", label: "Programm", breite: "w-[26%]" },
+                  { key: "traeger", label: "Träger / Grundlage" },
+                  { key: "hoehe", label: "Förderung", className: "font-semibold text-ov-700" },
+                  { key: "fuer", label: "Für" },
+                ]}
+                zeilen={programmTabelle}
+              />
+              <div className="mt-5 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                <p className="font-display text-[17px] font-bold text-ink-900">Beendet – wird aber noch häufig gesucht</p>
+                <ul className="mt-3 grid gap-2 md:grid-cols-2">
+                  {KPC_BEENDET.map((b) => (
+                    <li key={b.name} className="text-[14.5px] text-ink-600"><strong className="text-ink-900">{b.name}</strong> – {b.ende}</li>
+                  ))}
+                </ul>
+              </div>
+            </Fachdetails>
+          </div>
         </div>
       </Section>
 
-      <Section tone="white" space="lg">
+      <Section tone="white" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Förderung 2026 – kurz beantwortet" lead="Sie möchten es konkret wissen? Im Rahmen Ihres Projekts prüfen wir alle Programme für den Standort." />
           <Faq items={FAQ} />
         </div>
+        <Quellen klappbar className="mt-12" stand={STAND.label} quellen={[...EAG_IZ.quellen.slice(0, 3), ...STEUER.quellen.slice(0, 1), ...KPC_BEENDET.map((b) => ({ label: `KPC – ${b.name}`, url: b.url }))]} hinweis="Orientierung ohne Gewähr. Keine Rechts- oder Steuerberatung. Alle Landesquellen stehen auf den jeweiligen Landesseiten." />
       </Section>
 
-      <Section tone="sand" space="md">
-        <Quellen stand={STAND.label} quellen={[...EAG_IZ.quellen.slice(0, 3), ...STEUER.quellen.slice(0, 1), ...KPC_BEENDET.map((b) => ({ label: `KPC – ${b.name}`, url: b.url }))]} hinweis="Orientierung ohne Gewähr. Keine Rechts- oder Steuerberatung. Alle Landesquellen stehen auf den jeweiligen Landesseiten." />
-      </Section>
 
       <Querverweise pfad="/foerdercheck" />
       <CtaBand

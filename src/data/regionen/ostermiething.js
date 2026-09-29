@@ -7,6 +7,8 @@ const ostermiething = {
   bezirk: "Bezirk Braunau am Inn",
   plz: "5121",
   alpin: false,
+  // Anzeige: Foto im Seitenkopf (Nachweis in public/Images/AT/QUELLEN-produkte-regionen.md)
+  bild: { src: "/Images/AT/produkte-regionen/region-innviertel.jpg", alt: "Hügellandschaft im Innviertel mit Einzelhöfen und Wiesen", position: "50% 60%" },
   beschreibung:
     "Photovoltaik aus Ostermiething: Firmensitz von Ökovolt im Innviertel. PV-Anlagen für Gewerbe, Landwirtschaft und Gemeinden zwischen Salzach, Braunau, Salzburg.",
   eyebrow: "Heimatstandort Innviertel",

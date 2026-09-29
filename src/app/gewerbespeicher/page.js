@@ -1,31 +1,22 @@
 import Link from "next/link";
-import {
-  Activity,
-  BatteryCharging,
-  Cog,
-  FileSpreadsheet,
-  Flame,
-  Gauge,
-  HandCoins,
-  PlugZap,
-  ShieldCheck,
-  Sun,
-  TrendingDown,
-  Waves,
-  Wrench,
-} from "lucide-react";
+import { BatteryCharging, Cog, FileSpreadsheet, Flame, Gauge, HandCoins, ShieldCheck, Wrench } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
+import SplitMedia from "@/components/ui/SplitMedia";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import LoesungSchema from "@/components/Loesungen/LoesungSchema";
-import TechnikVerbund from "@/components/Loesungen/TechnikVerbund";
-import { Bildnachweis, Fachabschnitt, Hebel, Hinweis, Kennzahlen, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
+import { Bildnachweis, Hinweis, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
+import KennzahlenBand from "@/components/Loesungen/B/KennzahlenBand";
+import FotoBento from "@/components/Loesungen/B/FotoBento";
+import FachTabs from "@/components/Loesungen/B/FachTabs";
+import Rechenbeleg from "@/components/Loesungen/B/Rechenbeleg";
+import DunkelSektion, { SystemKarten } from "@/components/Loesungen/B/DunkelSektion";
+import Lastkurve from "@/components/Loesungen/B/Lastkurve";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
 
@@ -34,13 +25,13 @@ const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "Gewerbespeicher & Peak Shaving in Österreich | Ökovolt";
 const BESCHREIBUNG =
   "Gewerbespeicher in Österreich: Peak Shaving gegen den Leistungspreis, Eigenverbrauch, Notstrom und Spotpreis – aus Ihrem Lastgang dimensioniert.";
-const HERO_BILD = "/Images/AT/loesungen/gewerbespeicher-batteriecontainer.jpg";
+const HERO_BILD = "/Images/AT/loesungen-b/speicher-produktionshalle.jpg";
 
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}${HERO_BILD}`, width: 1240, height: 900 }] },
+  openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}${HERO_BILD}`, width: 1920, height: 1280 }] },
 };
 
 const FAQ = [
@@ -89,6 +80,8 @@ const LEISTUNGSPREISE = [
   { bereich: "Vorarlberg", lp: "58,44 €/kW", ap: "2,42 ct/kWh" },
   { bereich: "Wien", lp: "59,52 €/kW", ap: "1,93 ct/kWh" },
 ];
+// Für die interaktive Lastkurve: dieselben Werte als Zahl
+const NETZBEREICHE = LEISTUNGSPREISE.map((l) => ({ name: l.bereich, lp: Number(l.lp.replace(/[^\d,]/g, "").replace(",", ".")) }));
 
 const DIMENSIONIERUNG = [
   { schritt: "Lastgang", inhalt: "12 Monate Viertelstundenwerte, idealerweise mit PV-Erzeugung; Ausreißer (Tests, Störungen) markieren." },
@@ -112,6 +105,16 @@ const BEISPIEL = [
   { pos: "Öko-IFB 22 % (bis 31.12.2026)", wert: "Freibetrag auf 152.500 €, Körperschaftsteuer 23 %", ergebnis: "≈ 7.700 € Steuerwirkung" },
 ];
 
+function TabKopf({ titel, text, children }) {
+  return (
+    <div>
+      <h3 className="ov-h3 text-ink-900">{titel}</h3>
+      {text && <p className="mt-4 text-[16px] leading-relaxed text-ink-600">{text}</p>}
+      {children}
+    </div>
+  );
+}
+
 export default async function GewerbespeicherPage({ searchParams }) {
   const v = zielgruppenVariante("speicher", await searchParams);
 
@@ -133,20 +136,21 @@ export default async function GewerbespeicherPage({ searchParams }) {
         eyebrow={v.eyebrow}
         title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
         lead={v.lead}
-        image={{ src: HERO_BILD, alt: "Batteriespeicher-Container im Freien auf einem Betriebsgelände" }}
+        image={{ src: HERO_BILD, alt: "Helle Produktionshalle mit Maschinen und Lagerregalen", position: "center 60%" }}
         actions={[
           { label: v.cta, href: "/termin?art=video" },
           { label: "Lastgang senden", href: "/angebot", icon: FileSpreadsheet },
         ]}
         points={["Leistungspreis nach österreichischer Mechanik", "Dimensionierung aus dem Lastgang", "Notstrom & Blackout-Vorsorge", "Brandschutz nach OVE R 20"]}
+        className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
       />
 
-      <Kennzahlen
+      <KennzahlenBand
         items={[
-          { wert: "12", label: "Monatsspitzen – ihr Mittelwert bestimmt den Leistungspreis bei gemessener Leistung" },
-          { wert: "88 €/kW", label: "höchster Leistungspreis Netzebene 6 unter den neun Landes-Netzbereichen 2026 (Burgenland, gerundet)" },
-          { wert: "150 €/kWh", label: "EAG-Zuschuss für Speicher bis 50 kWh – nur zusammen mit PV" },
-          { wert: "22 %", label: "Öko-Investitionsfreibetrag für Stromspeicher bis 31.12.2026" },
+          { wert: 12, label: "Monatsspitzen – ihr Mittelwert bestimmt den Leistungspreis bei gemessener Leistung" },
+          { wert: 88, suffix: " €/kW", label: "höchster Leistungspreis Netzebene 6 unter den neun Landes-Netzbereichen 2026 (Burgenland, gerundet)" },
+          { wert: 150, suffix: " €/kWh", label: "EAG-Zuschuss für Speicher bis 50 kWh – nur zusammen mit PV" },
+          { wert: 22, suffix: " %", label: "Öko-Investitionsfreibetrag für Stromspeicher bis 31.12.2026" },
         ]}
         quelle="Quellen: § 52 ElWOG 2010; SNE-V 2018 – Novelle 2026, BGBl. II Nr. 305/2025; EAG-IZV 2026 laut Leitfaden Land Oberösterreich (06/2026); WKO (Investitionsfreibetrag)."
       />
@@ -158,179 +162,65 @@ export default async function GewerbespeicherPage({ searchParams }) {
           lead="Ein Gewerbespeicher rechnet sich, wenn er mehrere Aufgaben gleichzeitig übernimmt. Die Reihenfolge der Prioritäten legt das Energiemanagement fest."
           className="mb-12"
         />
-        <FeatureGrid
-          cols={3}
+        <FotoBento
           items={[
-            { icon: TrendingDown, title: "Peak Shaving", text: "Lastspitzen über einem Zielwert kappen – jede gesenkte Monatsspitze reduziert den Leistungspreis um ein Zwölftel ihres Jahreswerts." },
-            { icon: Sun, title: "Eigenverbrauch", text: "PV-Überschüsse vom Mittag in Nachmittag, Abend und Nachtschicht verschieben – statt sie für wenige Cent einzuspeisen." },
-            { icon: ShieldCheck, title: "Notstrom & Ersatzstrom", text: "Kritische Verbraucher bei Netzausfall weiterversorgen – mit Netztrennung und Reserve im Speicher.", href: "/service/notstrom" },
-            { icon: Activity, title: "Spotpreis-Optimierung", text: "Mit spotpreisbasiertem Liefervertrag in günstigen Stunden laden und in teuren entladen – Gebotszone Österreich." },
-            { icon: PlugZap, title: "Ladeinfrastruktur puffern", text: "Schnellladepunkte ohne teuren Netzausbau betreiben – der Speicher liefert die Spitzenleistung.", href: "/ladeinfrastruktur" },
-            { icon: Waves, title: "Regelenergie (Zukunft)", text: "Vermarktung von Flexibilität über Aggregatoren an den Regelreservemärkten der APG – technisch vorbereitet." },
+            { bild: "/Images/AT/loesungen/gewerbespeicher-batteriecontainer.jpg", alt: "Batteriespeicher-Container auf einem Betriebsgelände", tag: "Kernnutzen", titel: "Peak Shaving", text: "Lastspitzen über einem Zielwert kappen – jede gesenkte Monatsspitze reduziert den Leistungspreis um ein Zwölftel ihres Jahreswerts.", position: "70% 50%" },
+            { bild: "/Images/AT/loesungen-b/speicher-industriedach-pv.jpg", alt: "Luftbild eines Industriedachs mit Photovoltaikmodulen", titel: "Eigenverbrauch", text: "PV-Überschüsse vom Mittag in Nachmittag, Abend und Nachtschicht verschieben – statt sie für wenige Cent einzuspeisen." },
+            { bild: "/Images/AT/ratgeber/blackout-vorsorge-unternehmen.jpg", alt: "Notstromaggregat im Container vor einem Betriebsgebäude", titel: "Notstrom & Ersatzstrom", text: "Kritische Verbraucher bei Netzausfall weiterversorgen – mit Netztrennung und Reserve im Speicher.", href: "/service/notstrom" },
+            { bild: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Großbildwand (Symbolbild)", titel: "Spotpreis-Optimierung", text: "Mit spotpreisbasiertem Liefervertrag in günstigen Stunden laden und in teuren entladen – Gebotszone Österreich." },
+            { bild: "/Images/AT/loesungen-b/laden-tiefgarage.jpg", alt: "Elektroautos an Ladepunkten in einer Tiefgarage", titel: "Ladeinfrastruktur puffern", text: "Schnellladepunkte ohne teuren Netzausbau betreiben – der Speicher liefert die Spitzenleistung.", href: "/ladeinfrastruktur" },
+            { bild: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Eingezäunte Batteriespeicher-Anlage mit Containern und Trafostationen", titel: "Regelenergie (Zukunft)", text: "Vermarktung von Flexibilität über Aggregatoren an den Regelreservemärkten der APG – technisch vorbereitet." },
           ]}
         />
       </Section>
 
       <Section tone="sand" space="lg" id="leistungspreis">
-        <Fachabschnitt
-          eyebrow="Leistungspreis in Österreich"
-          title="Nicht die Jahresspitze zählt, sondern zwölf Monatsspitzen."
-          lead="Der Leistungspreis für gemessene Leistung wird in Österreich auf den Mittelwert der monatlich höchsten Viertelstundenleistung verrechnet. Das verändert die Strategie für Peak Shaving grundlegend."
-          aside={<StandPille>Netzentgelte 2026, Netzebene 6</StandPille>}
-        >
-          <Prosa>
-            <p>
-              <strong>So funktioniert die Rechnung:</strong> Der Netzbetreiber ermittelt für jeden Monat die höchste Viertelstunde, bildet
-              daraus am Ende des Abrechnungsjahres den Mittelwert und multipliziert ihn mit dem Leistungspreis in € je kW und Jahr (§ 52 ElWOG
-              2010, SNE-V 2018). Eine Spitze im Jänner kostet also ein Zwölftel – aber sie kostet es sicher.
+        <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Leistungspreis in Österreich" title="Nicht die Jahresspitze zählt, sondern zwölf Monatsspitzen." />
+          <div>
+            <p className="text-[16.5px] leading-relaxed text-ink-600">
+              Der Leistungspreis für gemessene Leistung wird in Österreich auf den Mittelwert der monatlich höchsten Viertelstundenleistung verrechnet. Das verändert die Strategie für Peak Shaving grundlegend.
             </p>
-            <p>
-              <strong>Was das für den Speicher heißt:</strong> Er muss nicht jede denkbare Spitze des Jahres abfangen, sondern Monat für Monat
-              zuverlässig arbeiten. Winterspitzen, Schichtbeginn und Anfahrvorgänge sind die typischen Ziele – die PV-Anlage senkt dagegen eher
-              die Spitzen der Sommermonate.
-            </p>
-            <p>
-              <strong>Ausblick 2027:</strong> Mit dem Elektrizitätswirtschaftsgesetz (ElWG) wird die Netzentgeltstruktur umgebaut; laut
-              Entwürfen soll die Leistungskomponente auch auf Netzebene 7 an Gewicht gewinnen. Die konkrete Verordnung der E-Control stand im
-              September 2026 noch aus – wir rechnen mit den geltenden Werten und zeigen die Sensitivität. Mehr im Ratgeber{" "}
-              <Link href="/ratgeber/peak-shaving-leistungspreis">Peak Shaving und Leistungspreis</Link>.
-            </p>
-          </Prosa>
-          <Tabelle
-            className="mt-8"
-            dicht
-            caption="Leistungspreise und Arbeitspreise Netzebene 6 im Jahr 2026 nach Netzbereich"
-            spalten={[
-              { key: "bereich", label: "Netzbereich", breite: "w-[34%]" },
-              { key: "lp", label: "Leistungspreis / Jahr" },
-              { key: "ap", label: "Arbeitspreis" },
-            ]}
-            zeilen={LEISTUNGSPREISE}
-            fuss="Quelle: SNE-V 2018 – Novelle 2026, BGBl. II Nr. 305/2025, § 5 Abs. 1 Z 5 (Netznutzungsentgelt Netzebene 6, gemessene Leistung, netto). Städtische Netzbereiche (z. B. Linz, Graz, Innsbruck, Klagenfurt) haben eigene Werte."
-          />
-        </Fachabschnitt>
-      </Section>
-
-      <Section tone="white" space="lg" id="dimensionierung">
-        <Fachabschnitt
-          eyebrow="Dimensionierung"
-          title="Wir berechnen den Speicher aus Ihrem Lastgang – nicht aus einem Faustwert."
-          lead="Leistung und Kapazität eines Gewerbespeichers folgen aus zwölf Monaten Viertelstundenwerten. Diese sechs Schritte gehen wir mit Ihnen durch."
-        >
-          <Tabelle
-            dicht
-            caption="Vorgehen bei der Dimensionierung eines Gewerbespeichers"
-            spalten={[
-              { key: "schritt", label: "Schritt", breite: "w-[24%]" },
-              { key: "inhalt", label: "Was wir auswerten" },
-            ]}
-            zeilen={DIMENSIONIERUNG}
-          />
-          <Hinweis className="mt-8" titel="Erste Orientierung">
-            Für eine grobe Größenordnung nutzen Sie den <Link href="/rechner/stromspeicher" className="text-ov-700 underline">Stromspeicher-Rechner</Link>.
-            Für Peak Shaving brauchen wir den Lastgang – Sie erhalten ihn im Kundenportal Ihres Netzbetreibers.
-          </Hinweis>
-        </Fachabschnitt>
-      </Section>
-
-      <Section tone="green" space="lg" id="beispiel">
-        <SectionHeading
-          eyebrow="Beispielrechnung"
-          title="200 kW / 400 kWh in einem Salzburger Produktionsbetrieb"
-          lead="Ein Rechenbeispiel mit offengelegten Annahmen – kein Angebot. Es zeigt, warum ein Speicher meist mehrere Nutzen braucht."
-          className="mb-10"
-        />
-        <Tabelle
-          caption="Beispielrechnung Gewerbespeicher mit Peak Shaving und PV-Verschiebung"
-          spalten={[
-            { key: "pos", label: "Position", breite: "w-[28%]" },
-            { key: "wert", label: "Annahme / Rechnung" },
-            { key: "ergebnis", label: "Ergebnis", breite: "w-[20%]", className: "font-semibold text-ink-900" },
-          ]}
-          zeilen={BEISPIEL}
-          fuss="Beispiel, Stand 09/2026. Leistungspreis Netzebene 6 Netzbereich Salzburg laut SNE-V 2026; vermiedene Bezugskosten 14,6 ct/kWh, Einspeisung 6 ct/kWh; Zyklen, Wirkungsgrad und Investitionskosten sind Annahmen (kein Ökovolt-Preis). Nicht enthalten: Arbitrage, Notstromwert, Degradation, Ersatz von Komponenten, Finanzierung. Förderungen können die IFB-Bemessungsgrundlage mindern."
-        />
-        <div className="mt-10">
-          <Hebel
-            cols={3}
-            items={[
-              { icon: Gauge, titel: "Ehrlich gerechnet", text: "Peak Shaving allein trägt den Speicher selten. Wir zeigen jeden Nutzen einzeln und empfehlen auch einmal keinen Speicher." },
-              { icon: ShieldCheck, titel: "Notstrom hat einen Wert", text: "Was kostet eine Stunde Stillstand in Ihrem Betrieb? Diesen Wert setzen wir mit Ihnen gemeinsam an." },
-              { icon: HandCoins, titel: "Steuer & Förderung", text: "Öko-IFB 22 % bis Ende 2026, EAG-Zuschuss nur bis 50 kWh und nur mit PV." },
-            ]}
-          />
+            <StandPille className="mt-5">Netzentgelte 2026, Netzebene 6</StandPille>
+          </div>
         </div>
-      </Section>
-
-      <Section tone="white" space="lg" id="notstrom">
-        <Fachabschnitt
-          eyebrow="Notstrom, Arbitrage & Regelenergie"
-          title="Vom Blackout-Schutz bis zur Börse"
-          lead="Neben Leistungspreis und Eigenverbrauch kann ein Speicher den Betrieb absichern und Erlöse am Strommarkt erzielen. Beides stellt eigene technische Anforderungen."
-        >
-          <Prosa>
-            <h3>Notstrom und Ersatzstrom</h3>
-            <p>
-              Für Ersatzstrom braucht es einen inselnetzfähigen Wechselrichter, eine automatische Netztrennung und eine definierte Reserve. Wir
-              planen, welche Verbraucher versorgt werden, wie lange, und wie die Umschaltung die Anforderungen des Netzbetreibers erfüllt.
-              Mehr unter <Link href="/service/notstrom">Notstrom und Blackout-Vorsorge</Link> und im Ratgeber{" "}
-              <Link href="/ratgeber/blackout-vorsorge-unternehmen">Blackout-Vorsorge für Unternehmen</Link>.
-            </p>
-            <h3>Spotpreis und negative Preise</h3>
-            <p>
-              Mit einem spotpreisbasierten Liefervertrag kann der Speicher in günstigen Stunden der Gebotszone Österreich laden und in teuren
-              entladen. An sonnigen Tagen fallen die Day-Ahead-Preise zu Mittag zunehmend unter null – live zu sehen unter{" "}
-              <Link href="/energie-live">Strommarkt Österreich live</Link>. Hintergrund im Ratgeber{" "}
-              <Link href="/ratgeber/negative-strompreise">Negative Strompreise</Link>.
-            </p>
-            <h3>Regelenergie und Flexibilität</h3>
-            <p>
-              Die Austrian Power Grid (APG) beschafft Primär-, Sekundär- und Tertiärregelreserve. Batteriespeicher können präqualifiziert und
-              über Aggregatoren im Pool vermarktet werden. Für die meisten Gewerbespeicher ist das eine Zukunftsoption – vorbereitet über
-              offene Schnittstellen. Vertiefung im Ratgeber{" "}
-              <Link href="/ratgeber/regelenergie-flexibilitaet">Regelenergie und Flexibilität</Link>.
-            </p>
-          </Prosa>
-        </Fachabschnitt>
-      </Section>
-
-      <Section tone="sand" space="lg" id="brandschutz">
-        <Fachabschnitt
-          eyebrow="Brandschutz & Normen"
-          title="Sicherheit ist Planungsaufgabe, nicht Zubehör."
-          lead="Lithium-Speicher im Gewerbe brauchen ein abgestimmtes Brandschutzkonzept: Zellchemie, Aufstellort, Brandabschnitte, Detektion und Einsatzplanung der Feuerwehr."
-        >
-          <Prosa>
-            <ul>
-              <li><strong>OVE-Richtlinie R 20:</strong> Sicherheitsanforderungen an stationäre elektrische Energiespeichersysteme zum Anschluss an das Niederspannungsnetz, inklusive Aufstellung.</li>
-              <li><strong>OIB-Richtlinie 2 und Bauordnung:</strong> Batterieräume gelten als Räume mit erhöhter Brandgefahr; ob ein eigener Raum nötig ist, hängt von Energieinhalt, Prüfnachweisen und Landesrecht ab.</li>
-              <li><strong>TRVB 165 (Batteriespeichersysteme):</strong> Mindestanforderungen an den Brandschutz größerer Batteriespeichersysteme über 250 kWh.</li>
-              <li><strong>Container im Freien:</strong> Abstände zu Gebäuden und Grundgrenzen, Zufahrt für die Feuerwehr, Entlüftung und Explosionsschutz nach Herstellerangaben.</li>
-              <li><strong>Technik:</strong> bevorzugt Lithium-Eisenphosphat (LFP), Batteriemanagement mit Zellüberwachung, Brand- und Gasdetektion, Fernabschaltung.</li>
-            </ul>
-            <p>
-              Ausführlich im Ratgeber <Link href="/ratgeber/photovoltaik-brandschutz">Photovoltaik und Brandschutz</Link>; Kosten und Größen im
-              Ratgeber <Link href="/ratgeber/gewerbespeicher-kosten">Gewerbespeicher-Kosten</Link>.
-            </p>
-          </Prosa>
-        </Fachabschnitt>
+        <Lastkurve netzbereiche={NETZBEREICHE} standardBereich="Salzburg" />
       </Section>
 
       <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Technik"
-          title="Speicher, PV und Netz aus einer Steuerung"
-          lead="Ein Speicher ist nur so gut wie sein Energiemanagement. Unsere eigenen Systeme verbinden Lastgang, PV, Speicher, Ladepunkte und Netzvorgaben."
-          className="mb-12"
+        <SplitMedia
+          eyebrow="Ehrlich gerechnet"
+          title="Ein Speicher braucht meist mehrere Nutzen."
+          text="Peak Shaving allein trägt den Speicher selten. Wir zeigen jeden Nutzen einzeln und empfehlen auch einmal keinen Speicher – die vollständige Beispielrechnung für einen Salzburger Produktionsbetrieb finden Sie in den Fachdetails."
+          points={[
+            { title: "Notstrom hat einen Wert", text: "Was kostet eine Stunde Stillstand in Ihrem Betrieb? Diesen Wert setzen wir mit Ihnen gemeinsam an." },
+            { title: "Steuer & Förderung", text: "Öko-IFB 22 % bis Ende 2026, EAG-Zuschuss nur bis 50 kWh und nur mit PV." },
+            { title: "Erste Orientierung", text: "Für eine grobe Größenordnung nutzen Sie den Stromspeicher-Rechner; für Peak Shaving brauchen wir den Lastgang aus dem Kundenportal Ihres Netzbetreibers." },
+          ]}
+          image={{ src: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Batteriespeicher-Anlage mit Containern und Trafostationen hinter einem Zaun" }}
+          action={{ label: "Zur Beispielrechnung", href: "#fachdetails" }}
         />
-        <TechnikVerbund
+      </Section>
+
+      <DunkelSektion
+        eyebrow="Technik"
+        title="Speicher, PV und Netz aus einer Steuerung"
+        lead="Ein Speicher ist nur so gut wie sein Energiemanagement. Unsere eigenen Systeme verbinden Lastgang, PV, Speicher, Ladepunkte und Netzvorgaben."
+        bild={{
+          src: "/Images/AT/loesungen-b/speicher-schaltanlage.jpg",
+          alt: "Reihe von Schalt- und Schutzschränken in einem hellen Technikraum",
+          position: "90% 50%",
+          badge: "Prioritäten im Energiemanagement: Spitze vor Eigenverbrauch vor Arbitrage.",
+        }}
+      >
+        <SystemKarten
           texte={{
             parkregler: "Hält am Netzverknüpfungspunkt Einspeise- und Bezugsgrenzen ein – auch wenn Speicher und PV gleichzeitig arbeiten.",
             fernwartung: "Ladestände, Zelltemperaturen und Alarme im Blick; Parameter der Betriebsstrategie anpassen, ohne vor Ort zu sein.",
             scada: "Monatsspitzen live verfolgen, Zielwerte je Monat setzen und die Einsparung beim Leistungspreis dokumentieren.",
           }}
         />
-      </Section>
+      </DunkelSektion>
 
       <Section tone="sand" space="lg">
         <SectionHeading eyebrow="Ablauf" title="Vom Lastgang zum laufenden Speicher" align="center" className="mb-14" />
@@ -344,14 +234,165 @@ export default async function GewerbespeicherPage({ searchParams }) {
         />
       </Section>
 
-      <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Leistungspreis, Kosten & Sicherheit" />
+      <Section tone="white" space="lg" id="fachdetails" className="scroll-mt-24">
+        <SectionHeading
+          eyebrow="Für Technik, Controlling & Einkauf"
+          title="Die Fachdetails – kompakt nachgeschlagen"
+          lead="Netzentgelte je Netzbereich, Vorgehen bei der Dimensionierung, die vollständige Beispielrechnung sowie Notstrom, Markt und Brandschutz."
+          className="mb-10"
+        />
+        <FachTabs
+          tabs={[
+            {
+              id: "leistungspreis",
+              label: "Leistungspreis",
+              icon: <Gauge />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+                  <Prosa>
+                    <p>
+                      <strong>So funktioniert die Rechnung:</strong> Der Netzbetreiber ermittelt für jeden Monat die höchste Viertelstunde, bildet daraus am Ende des Abrechnungsjahres den Mittelwert und multipliziert ihn mit dem
+                      Leistungspreis in € je kW und Jahr (§ 52 ElWOG 2010, SNE-V 2018). Eine Spitze im Jänner kostet also ein Zwölftel – aber sie kostet es sicher.
+                    </p>
+                    <p>
+                      <strong>Was das für den Speicher heißt:</strong> Er muss nicht jede denkbare Spitze des Jahres abfangen, sondern Monat für Monat zuverlässig arbeiten. Winterspitzen, Schichtbeginn und Anfahrvorgänge sind die
+                      typischen Ziele – die PV-Anlage senkt dagegen eher die Spitzen der Sommermonate.
+                    </p>
+                    <p>
+                      <strong>Ausblick 2027:</strong> Mit dem Elektrizitätswirtschaftsgesetz (ElWG) wird die Netzentgeltstruktur umgebaut; laut Entwürfen soll die Leistungskomponente auch auf Netzebene 7 an Gewicht gewinnen. Die
+                      konkrete Verordnung der E-Control stand im September 2026 noch aus – wir rechnen mit den geltenden Werten und zeigen die Sensitivität. Mehr im Ratgeber{" "}
+                      <Link href="/ratgeber/peak-shaving-leistungspreis">Peak Shaving und Leistungspreis</Link>.
+                    </p>
+                  </Prosa>
+                  <Tabelle
+                    dicht
+                    caption="Leistungspreise und Arbeitspreise Netzebene 6 im Jahr 2026 nach Netzbereich"
+                    spalten={[
+                      { key: "bereich", label: "Netzbereich", breite: "w-[34%]" },
+                      { key: "lp", label: "Leistungspreis / Jahr" },
+                      { key: "ap", label: "Arbeitspreis" },
+                    ]}
+                    zeilen={LEISTUNGSPREISE}
+                    fuss="Quelle: SNE-V 2018 – Novelle 2026, BGBl. II Nr. 305/2025, § 5 Abs. 1 Z 5 (Netznutzungsentgelt Netzebene 6, gemessene Leistung, netto). Städtische Netzbereiche (z. B. Linz, Graz, Innsbruck, Klagenfurt) haben eigene Werte."
+                  />
+                </div>
+              ),
+            },
+            {
+              id: "dimensionierung",
+              label: "Dimensionierung",
+              icon: <BatteryCharging />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <TabKopf
+                    titel="Wir berechnen den Speicher aus Ihrem Lastgang – nicht aus einem Faustwert."
+                    text="Leistung und Kapazität eines Gewerbespeichers folgen aus zwölf Monaten Viertelstundenwerten. Diese sechs Schritte gehen wir mit Ihnen durch."
+                  >
+                    <Hinweis className="mt-8" titel="Erste Orientierung">
+                      Für eine grobe Größenordnung nutzen Sie den <Link href="/rechner/stromspeicher" className="text-ov-700 underline">Stromspeicher-Rechner</Link>, für Peak Shaving den{" "}
+                      <Link href="/rechner/peak-shaving" className="text-ov-700 underline">Peak-Shaving-Rechner</Link>. Den Lastgang erhalten Sie im Kundenportal Ihres Netzbetreibers.
+                    </Hinweis>
+                  </TabKopf>
+                  <Tabelle
+                    dicht
+                    caption="Vorgehen bei der Dimensionierung eines Gewerbespeichers"
+                    spalten={[
+                      { key: "schritt", label: "Schritt", breite: "w-[24%]" },
+                      { key: "inhalt", label: "Was wir auswerten" },
+                    ]}
+                    zeilen={DIMENSIONIERUNG}
+                  />
+                </div>
+              ),
+            },
+            {
+              id: "beispiel",
+              label: "Beispielrechnung",
+              icon: <HandCoins />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <TabKopf
+                    titel="200 kW / 400 kWh in einem Salzburger Produktionsbetrieb"
+                    text="Ein Rechenbeispiel mit offengelegten Annahmen – kein Angebot. Es zeigt, warum ein Speicher meist mehrere Nutzen braucht."
+                  />
+                  <Rechenbeleg
+                    titel="Peak Shaving und PV-Verschiebung"
+                    caption="Beispielrechnung Gewerbespeicher mit Peak Shaving und PV-Verschiebung"
+                    zeilen={BEISPIEL}
+                    fuss="Beispiel, Stand 09/2026. Leistungspreis Netzebene 6 Netzbereich Salzburg laut SNE-V 2026; vermiedene Bezugskosten 14,6 ct/kWh, Einspeisung 6 ct/kWh; Zyklen, Wirkungsgrad und Investitionskosten sind Annahmen (kein Ökovolt-Preis). Nicht enthalten: Arbitrage, Notstromwert, Degradation, Ersatz von Komponenten, Finanzierung. Förderungen können die IFB-Bemessungsgrundlage mindern."
+                  />
+                </div>
+              ),
+            },
+            {
+              id: "notstrom",
+              label: "Notstrom & Markt",
+              icon: <ShieldCheck />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <TabKopf
+                    titel="Vom Blackout-Schutz bis zur Börse"
+                    text="Neben Leistungspreis und Eigenverbrauch kann ein Speicher den Betrieb absichern und Erlöse am Strommarkt erzielen. Beides stellt eigene technische Anforderungen."
+                  />
+                  <Prosa>
+                    <h3>Notstrom und Ersatzstrom</h3>
+                    <p>
+                      Für Ersatzstrom braucht es einen inselnetzfähigen Wechselrichter, eine automatische Netztrennung und eine definierte Reserve. Wir planen, welche Verbraucher versorgt werden, wie lange, und wie die Umschaltung
+                      die Anforderungen des Netzbetreibers erfüllt. Mehr unter <Link href="/service/notstrom">Notstrom und Blackout-Vorsorge</Link> und im Ratgeber{" "}
+                      <Link href="/ratgeber/blackout-vorsorge-unternehmen">Blackout-Vorsorge für Unternehmen</Link>.
+                    </p>
+                    <h3>Spotpreis und negative Preise</h3>
+                    <p>
+                      Mit einem spotpreisbasierten Liefervertrag kann der Speicher in günstigen Stunden der Gebotszone Österreich laden und in teuren entladen. An sonnigen Tagen fallen die Day-Ahead-Preise zu Mittag zunehmend unter
+                      null – live zu sehen unter <Link href="/energie-live">Strommarkt Österreich live</Link>. Hintergrund im Ratgeber <Link href="/ratgeber/negative-strompreise">Negative Strompreise</Link>.
+                    </p>
+                    <h3>Regelenergie und Flexibilität</h3>
+                    <p>
+                      Die Austrian Power Grid (APG) beschafft Primär-, Sekundär- und Tertiärregelreserve. Batteriespeicher können präqualifiziert und über Aggregatoren im Pool vermarktet werden. Für die meisten Gewerbespeicher ist
+                      das eine Zukunftsoption – vorbereitet über offene Schnittstellen. Vertiefung im Ratgeber <Link href="/ratgeber/regelenergie-flexibilitaet">Regelenergie und Flexibilität</Link>.
+                    </p>
+                  </Prosa>
+                </div>
+              ),
+            },
+            {
+              id: "brandschutz",
+              label: "Brandschutz & Normen",
+              icon: <Flame />,
+              inhalt: (
+                <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+                  <TabKopf
+                    titel="Sicherheit ist Planungsaufgabe, nicht Zubehör."
+                    text="Lithium-Speicher im Gewerbe brauchen ein abgestimmtes Brandschutzkonzept: Zellchemie, Aufstellort, Brandabschnitte, Detektion und Einsatzplanung der Feuerwehr."
+                  />
+                  <Prosa>
+                    <ul>
+                      <li><strong>OVE-Richtlinie R 20:</strong> Sicherheitsanforderungen an stationäre elektrische Energiespeichersysteme zum Anschluss an das Niederspannungsnetz, inklusive Aufstellung.</li>
+                      <li><strong>OIB-Richtlinie 2 und Bauordnung:</strong> Batterieräume gelten als Räume mit erhöhter Brandgefahr; ob ein eigener Raum nötig ist, hängt von Energieinhalt, Prüfnachweisen und Landesrecht ab.</li>
+                      <li><strong>TRVB 165 (Batteriespeichersysteme):</strong> Mindestanforderungen an den Brandschutz größerer Batteriespeichersysteme über 250 kWh.</li>
+                      <li><strong>Container im Freien:</strong> Abstände zu Gebäuden und Grundgrenzen, Zufahrt für die Feuerwehr, Entlüftung und Explosionsschutz nach Herstellerangaben.</li>
+                      <li><strong>Technik:</strong> bevorzugt Lithium-Eisenphosphat (LFP), Batteriemanagement mit Zellüberwachung, Brand- und Gasdetektion, Fernabschaltung.</li>
+                    </ul>
+                    <p>
+                      Ausführlich im Ratgeber <Link href="/ratgeber/photovoltaik-brandschutz">Photovoltaik und Brandschutz</Link>; Kosten und Größen im Ratgeber{" "}
+                      <Link href="/ratgeber/gewerbespeicher-kosten">Gewerbespeicher-Kosten</Link>.
+                    </p>
+                  </Prosa>
+                </div>
+              ),
+            },
+          ]}
+        />
+      </Section>
 
-      <Section tone="white" space="lg">
+      <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Technik, Controlling und Geschäftsführung" />
           <Faq items={FAQ} />
         </div>
       </Section>
+
+      <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Leistungspreis, Kosten & Sicherheit" />
 
       <CtaBand
         eyebrow="Kostenlos & unverbindlich"
@@ -362,7 +403,15 @@ export default async function GewerbespeicherPage({ searchParams }) {
       />
 
       <Bildnachweis
-        items={[{ motiv: "Batteriespeicher Theiß (Ausschnitt)", urheber: "Bp 95", lizenz: "CC BY 4.0", href: "https://commons.wikimedia.org/wiki/File:Batteriespeicher_Theiss.jpg" }]}
+        items={[
+          { motiv: "Batteriespeicher Theiß (Ausschnitt)", urheber: "Bp 95", lizenz: "CC BY 4.0", href: "https://commons.wikimedia.org/wiki/File:Batteriespeicher_Theiss.jpg" },
+          { motiv: "Batteriespeicher-Anlage", urheber: "Qurren", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:Nirazuka_Battery_Storage_Power_Station_2.jpg" },
+          { motiv: "Netzleitwarte (Symbolbild)", urheber: "Dpysh w", lizenz: "CC BY 3.0", href: "https://commons.wikimedia.org/wiki/File:ERCOTOperator_2.jpg" },
+          { motiv: "Produktionshalle", urheber: "Freek Wolsink", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/modern-industrial-warehouse-interior-with-machinery-34207364/" },
+          { motiv: "Industriedach mit PV", urheber: "Giant Asparagus", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/aerial-view-of-rooftop-solar-panel-installation-35691079/" },
+          { motiv: "Schaltanlage", urheber: "Shameer Vayalakkad Hydrose", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/modern-control-room-with-electrical-panels-33706868/" },
+          { motiv: "Ladepunkte in der Tiefgarage", urheber: "Jakub Zerdzicki", lizenz: "Pexels-Lizenz", href: "https://www.pexels.com/photo/eco-friendly-electric-cars-in-underground-parking-28851165/" },
+        ]}
       />
     </div>
   );

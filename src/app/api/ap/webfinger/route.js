@@ -22,7 +22,7 @@ export async function GET(request) {
       links: [
         { rel: "self", type: "application/activity+json", href: actorId(name) },
         { rel: "http://webfinger.net/rel/profile-page", type: "text/html", href: `${BASE_URL}${konto.profilPfad}` },
-        { rel: "http://webfinger.net/rel/avatar", type: "image/png", href: `${BASE_URL}/Logo_ov_4cDeutschland-removebg-preview.png` },
+        { rel: "http://webfinger.net/rel/avatar", type: "image/png", href: `${BASE_URL}/logo-oekovolt.png` },
       ],
     },
     { headers: { "Content-Type": "application/jrd+json; charset=utf-8", "Access-Control-Allow-Origin": "*", "Cache-Control": "public, max-age=3600" } }

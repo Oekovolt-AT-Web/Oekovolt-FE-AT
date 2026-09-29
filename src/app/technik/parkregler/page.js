@@ -6,27 +6,34 @@ import {
   Cable,
   FileCheck2,
   Gauge,
+  Network,
   Power,
   RefreshCw,
+  Scale,
   ShieldCheck,
   SlidersHorizontal,
   TrendingDown,
   Waves,
+  Wrench,
   Zap,
 } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SplitMedia from "@/components/ui/SplitMedia";
-import FeatureGrid from "@/components/ui/FeatureGrid";
-import Steps from "@/components/ui/Steps";
-import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
-import Signalkette from "@/components/Technik/Signalkette";
-import Kennlinien from "@/components/Technik/Kennlinien";
-import { Hinweis, Kennwerte, Kurzantwort, Punkte, Quellen, Tabelle, UnterlagenAufAnfrage, Verweise } from "@/components/Technik/Bausteine";
+import TorTypFinder from "@/components/Technik/TorTypFinder";
+import { TYPEN } from "@/components/Technik/torTypen";
+import SignalketteLive from "@/components/Technik/SignalketteLive";
+import KennlinieInteraktiv from "@/components/Technik/KennlinieInteraktiv";
+import { Hinweis, Kennwerte, Punkte, Tabelle, UnterlagenAufAnfrage } from "@/components/Technik/Bausteine";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
+import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
+import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
+import ThemenExplorer from "@/components/ServiceAT/A/ThemenExplorer";
+import Tabs from "@/components/ServiceAT/A/Tabs";
+import Bildband from "@/components/ServiceAT/A/Bildband";
+import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 
 const PFAD = "/technik/parkregler";
 const TITEL = "EZA-Regler & Parkregler nach TOR Erzeuger | Ökovolt";
@@ -41,82 +48,69 @@ export const metadata = seitenMeta({
   keywords: ["Parkregler", "EZA-Regler Österreich", "TOR Erzeuger Typ B", "Q(U)-Regelung", "Blindleistungsregelung PV", "Einspeisebegrenzung", "Spitzenkappung ElWG", "Fernwirktechnik PV"],
 });
 
-const TYPEN = [
-  [
-    "Typ A",
-    "≥ 0,8 kW bis < 250 kW",
-    "< 110 kV",
-    "TOR Stromerzeugungsanlagen Typ A, V1.4 (gültig ab 01.06.2026)",
-    "Wirkleistungsbeendigung über Eingangsport binnen 5 s; bei dynamischer Vorgabe nach § 76 ElWG digitale Schnittstelle (OpenADR), Sollwert in 1 min, Rückfallfunktion; Blindleistungsverfahren nach Netzanschlussvertrag; P(U) bei Umrichtern im NS-Netz standardmäßig aktiv.",
-  ],
-  [
-    "Typ B",
-    "≥ 250 kW bis < 35 MW",
-    "< 110 kV",
-    "TOR Stromerzeugungsanlagen Typ B, V1.3 (gültig ab 01.07.2024)",
-    "Wirkleistungsvorgabe in bis zu 4 Stufen (< 1 MW), Sollwert bei Umrichtern in 1 min; Blindleistungsbereich II (cos φ 0,925 unter- bis übererregt); ab 1 MW Fernwirkschnittstelle nach Wahl des Netzbetreibers, Online-Sollwerte und Umschaltung des Q-Verfahrens; FRT und – im MS-Netz auf Verlangen – dynamische Blindstromstützung.",
-  ],
-  [
-    "Typ C",
-    "≥ 35 MW bis < 50 MW",
-    "< 110 kV",
-    "TOR Erzeuger Typ C",
-    "Zusätzlich u. a. frequenzabhängiger Modus (FSM) und LFSM-U, erweiterte Spannungs- und Blindleistungsregelung, Echtzeit-Datenaustausch mit Netzbetreiber und Übertragungsnetzbetreiber.",
-  ],
-  [
-    "Typ D",
-    "≥ 50 MW",
-    "oder Netzanschluss ≥ 110 kV",
-    "TOR Erzeuger Typ D",
-    "Anforderungen wie Typ C, dazu erweiterte Robustheits- und Stabilitätsanforderungen; Abstimmung mit dem Übertragungsnetzbetreiber (APG).",
-  ],
-];
+// Übersichtstabelle (Fachdetails) aus denselben Daten wie der Typ-Finder
+const TYPEN_TABELLE = Object.entries(TYPEN).map(([k, t]) => [`Typ ${k}`, t.grenze, t.netz, t.regelwerk, `${t.anforderungen.join("; ")}.`]);
 
 const FUNKTIONEN = [
   {
-    icon: SlidersHorizontal,
-    title: "Wirkleistungsbegrenzung",
+    icon: <SlidersHorizontal />,
+    titel: "Wirkleistungsbegrenzung",
+    tag: "P-Sollwert",
     text: "Sollwerte des Netzbetreibers in Stufen (z. B. 100/60/30/0 %) oder stufenlos umsetzen. Umrichter-Anlagen müssen den Sollwert nach TOR Typ B innerhalb von 1 Minute erreichen – in jedem Betriebspunkt.",
   },
   {
-    icon: Waves,
-    title: "Blindleistung: cos φ, cos φ(P), Q(U), Q fix",
+    icon: <Waves />,
+    titel: "Blindleistung: cos φ, cos φ(P), Q(U), Q fix",
+    tag: "Q-Verfahren",
     text: "Das Verfahren gibt der Netzbetreiber im Netzanschlussvertrag vor. Standard ohne Vorgabe ist cos φ = 1. Der Regler führt Q am Netzanschlusspunkt, nicht nur an den Wechselrichterklemmen.",
   },
   {
-    icon: Gauge,
-    title: "Spannungsregelung Q(U) und P(U)",
+    icon: <Gauge />,
+    titel: "Spannungsregelung Q(U) und P(U)",
+    tag: "Spannung",
     text: "Q(U) mit mindestens 4 frei parametrierbaren Stützpunkten, PT1-Dynamik 3–60 s. Spannungsgeführte Wirkleistungsabregelung P(U) greift, bevor der Netzentkupplungsschutz die Anlage ganz abschaltet.",
   },
   {
-    icon: Activity,
-    title: "Frequenz: P(f) im LFSM-O",
+    icon: <Activity />,
+    titel: "Frequenz: P(f) im LFSM-O",
+    tag: "Frequenz",
     text: "Die Wechselrichter reduzieren ab 50,2 Hz autonom mit 5 % Statik. Der Parkregler ist so koordiniert, dass er dieser Reaktion nicht entgegenregelt – der LFSM-O-Sollwert hat Vorrang vor allen anderen Wirkleistungsvorgaben.",
   },
   {
-    icon: TrendingDown,
-    title: "Rampen & Gradienten",
+    icon: <TrendingDown />,
+    titel: "Rampen & Gradienten",
+    tag: "Dynamik",
     text: "Sollwertwechsel und Wiederzuschaltung werden rampenbegrenzt ausgeführt. Nach einer Auslösung des Entkupplungsschutzes empfiehlt die TOR höchstens 10 % Pmax pro Minute.",
   },
   {
-    icon: Zap,
-    title: "Einspeiselimit & Nulleinspeisung",
+    icon: <Zap />,
+    titel: "Einspeiselimit & Nulleinspeisung",
+    tag: "Netzwirksame Leistung",
     text: "Die im Vertrag vereinbarte netzwirksame Leistung am Netzanschlusspunkt wird dynamisch eingehalten – bis hin zur Nulleinspeisung, während Eigenverbrauch, Speicher und Ladepunkte weiterlaufen.",
   },
   {
-    icon: Power,
-    title: "Fernabschaltung durch den Netzbetreiber",
+    icon: <Power />,
+    titel: "Fernabschaltung durch den Netzbetreiber",
+    tag: "Netzsicherheit",
     text: "Der Netzbetreiber gibt nur das Signal; die Umsetzung liegt in der Verantwortung des Anlagenbetreibers. Kann ein Reduktionssollwert nicht fristgerecht erreicht werden, ist die Anlage abzuschalten.",
   },
   {
-    icon: ShieldCheck,
-    title: "Netzsicherheitsmanagement & Rückfallwert",
+    icon: <ShieldCheck />,
+    titel: "Netzsicherheitsmanagement & Rückfallwert",
+    tag: "Ausfallsicher",
     text: "Fällt die Kommunikation aus, geht der Regler auf einen vereinbarten Rückfallwert. Bei Online-Sollwertvorgabe verlangt die TOR eine Backup-Versorgung der Kommunikation für mindestens 30 Minuten.",
   },
   {
-    icon: BatteryCharging,
-    title: "Speicher & Ladepunkte im Regelkreis",
-    text: "Überschüsse über dem Einspeiselimit fließen zuerst in Speicher und Ladepunkte, bevor Wechselrichter abgeregelt werden. Die Maximalkapazität wird für die Gesamtanordnung betrachtet.",
+    icon: <BatteryCharging />,
+    titel: "Speicher & Ladepunkte im Regelkreis",
+    tag: "Ein Netzanschlusspunkt, eine Regelung",
+    text: "Überschüsse über dem Einspeiselimit fließen zuerst in Speicher und Ladepunkte, bevor Wechselrichter abgeregelt werden. Die Maximalkapazität wird für die Gesamtanordnung betrachtet. Sobald Speicher und Ladepunkte hinter demselben Netzanschluss hängen, entscheidet die Regelung, wohin jede Kilowattstunde fließt – genau hier entsteht der wirtschaftliche Mehrwert.",
+    punkte: [
+      { titel: "Einspeiselimit ohne Energieverlust", text: "Überschüsse über der netzwirksamen Leistung – etwa bei der Spitzenkappung auf 70 % – lädt der Regler zuerst in den Speicher und in Fahrzeuge, bevor Wechselrichter abgeregelt werden." },
+      { titel: "Bezugsseite im Blick", text: "Ladepunkte werden über das Lademanagement (OCPP) so geführt, dass die vereinbarte Bezugsleistung und der Leistungspreis nicht durch gleichzeitiges Laden in die Höhe gehen." },
+      { titel: "Speicher als Netzbenutzer", text: "Für elektrische Energiespeicher verweist die TOR auf die TOR Verteilernetzanschluss – inklusive LFSM-U und FRT im Bezugsbetrieb. Maximalkapazität und Regelkonzept werden für die Gesamtanordnung betrachtet." },
+      { titel: "Klare Priorität", text: "Schutz und Netzbetreiber-Vorgaben stehen immer über Vermarktung und Eigenoptimierung. Diese Reihenfolge ist im Regler fest hinterlegt und dokumentiert." },
+    ],
   },
 ];
 
@@ -233,264 +227,308 @@ export default function ParkreglerPage() {
         image={{ src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "Freiluft-Schaltanlage eines Umspannwerks in Kärnten unter blauem Himmel" }}
         actions={[
           { label: "Projekt besprechen", href: "/termin?art=video" },
-          { label: "Datenblatt anfragen", href: "/kontakt", icon: ClipboardCheck },
+          { label: "Typ-Finder", href: "#anlagentypen", icon: Scale },
         ]}
         points={["Q(U), cos φ(P), P(f), P(U)", "Fernwirkanbindung an den Netzbetreiber", "Herstellerunabhängig", "Nachrüstung von Bestandsanlagen"]}
       />
 
-      <Kurzantwort frage="Was macht ein Parkregler (EZA-Regler)?">
+      <AntwortBand
+        frage="Was macht ein Parkregler (EZA-Regler)?"
+        zahlen={[
+          { value: 250, suffix: " kW", label: "ab hier Typ B", text: "Wirkleistungsvorgaben und Blindleistungsverfahren am Netzanschlusspunkt" },
+          { value: 1, suffix: " min", label: "bis zum P-Sollwert", text: "Umrichter-Anlagen nach TOR Typ B" },
+          { value: 4, label: "Q(U)-Stützpunkte", text: "frei parametrierbar, PT1-Dynamik 3–60 s" },
+          { value: 70, suffix: " %", label: "Spitzenkappung", text: "der Modulspitzenleistung, § 101 ElWG" },
+        ]}
+      >
         <p>
-          Ein Parkregler ist die übergeordnete Regelung einer PV-Anlage: Er misst Spannung, Strom, Wirk- und Blindleistung am
-          Netzanschlusspunkt und gibt den einzelnen Wechselrichtern, Speichern und Ladepunkten laufend Sollwerte vor. So hält die gesamte
-          Anlage dort ein, was der Netzbetreiber verlangt – Einspeiselimit, Blindleistungsverfahren und Fernabschaltung.
+          Ein Parkregler ist die übergeordnete Regelung einer PV-Anlage: Er misst Spannung, Strom, Wirk- und Blindleistung am Netzanschlusspunkt und gibt den einzelnen
+          Wechselrichtern, Speichern und Ladepunkten laufend Sollwerte vor. So hält die gesamte Anlage dort ein, was der Netzbetreiber verlangt – Einspeiselimit,
+          Blindleistungsverfahren und Fernabschaltung.
         </p>
         <p>
-          In Österreich stehen die Anforderungen in den TOR Stromerzeugungsanlagen der E-Control (Typ A bis D) und im Netzanschlussvertrag.
-          Wechselrichter allein können das nicht leisten, weil jeder nur seine eigenen Klemmen sieht.
+          In Österreich stehen die Anforderungen in den TOR Stromerzeugungsanlagen der E-Control (Typ A bis D) und im Netzanschlussvertrag. Wechselrichter allein können das
+          nicht leisten, weil jeder nur seine eigenen Klemmen sieht.
         </p>
-      </Kurzantwort>
+      </AntwortBand>
 
-      {/* Anlagentypen */}
-      <Section tone="white" space="lg" id="anlagentypen" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Einordnung"
-          title="Anlagentypen A bis D: welche Regeln für Ihre Anlage gelten"
-          lead="Österreich teilt Stromerzeugungsanlagen nach der RfG-Schwellenwert-Verordnung der E-Control in vier Typen ein. Maßgeblich ist die Maximalkapazität der Anlage – mehrere Einheiten und Speicher an einem Netzanschlusspunkt zählen zusammen."
-          className="mb-10"
-        />
-        <Tabelle
-          caption="Typeinteilung von Stromerzeugungsanlagen in Österreich"
-          kopf={["Typ", "Maximalkapazität", "Netzanschluss", "Regelwerk", "Wesentliche Regelungs- und Kommunikationsanforderungen"]}
-          zeilen={TYPEN}
-          kompakt
-          minBreite={900}
-          quelle="Quelle: E-Control, TOR Stromerzeugungsanlagen Typ A V1.4 und Typ B V1.3; Typeinteilung nach RfG-Schwellenwert-V. Vereinfachte Darstellung – verbindlich sind TOR, Netzanschlussvertrag und Ausführungsbestimmungen Ihres Netzbetreibers."
-        />
-        <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          <Hinweis ton="norm" titel="Wann die TOR ausdrücklich einen Park- und Anlagenregler verlangt">
-            <p>
-              Fordert der Netzbetreiber bei Anlagen auf Netzebene 5 oder 6 die Messwerte für die Blindleistungsbereitstellung auf der
-              Mittelspannungsseite, ist ein Park- und Anlagenregler erforderlich, sobald die Summe der Engpassleistungen am
-              Netzanschlusspunkt über <strong>100 kVA</strong> liegt (mit Mittelspannungsmessung) bzw. über <strong>400 kVA</strong> (ohne
-              Mittelspannungsmessung).
-            </p>
-          </Hinweis>
-          <Hinweis ton="info" titel="Maximalkapazität ist nicht netzwirksame Leistung">
-            <p>
-              Für den Typ zählt die Maximalkapazität der Gesamtanordnung. Die netzwirksame Leistung ist die im Vertrag vereinbarte maximale
-              Leistung am Netzanschlusspunkt – genau die Größe, die ein Parkregler dynamisch einhält, etwa wenn der Netzanschluss kleiner ist
-              als die installierte Leistung.
-            </p>
-          </Hinweis>
+      {/* TOR-Typ-Finder */}
+      <Section tone="sand" space="md" id="anlagentypen" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Einordnung" title="Anlagentypen A bis D: welche Regeln für Ihre Anlage gelten" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Österreich teilt Stromerzeugungsanlagen nach der RfG-Schwellenwert-Verordnung der E-Control in vier Typen ein. Maßgeblich ist die Maximalkapazität der Anlage – mehrere
+            Einheiten und Speicher an einem Netzanschlusspunkt zählen zusammen.
+          </p>
         </div>
+        <TorTypFinder />
       </Section>
 
       {/* Signalkette */}
-      <Section tone="sand" space="lg" id="signalkette" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Funktionsprinzip"
-          title="Vom Sollwert des Netzbetreibers bis zum einzelnen Wechselrichter"
-          lead="Der Parkregler ist ein geschlossener Regelkreis: Vorgaben kommen von Netzbetreiber, Direktvermarkter und Betreiber, gemessen wird am Netzanschlusspunkt, gestellt wird an jedem Wechselrichter, Speicher und Ladepunkt."
-          className="mb-10"
-        />
-        <Signalkette />
-      </Section>
+      <section id="signalkette" className="ov-noise relative scroll-mt-24 overflow-hidden bg-navy-950 py-20 text-white md:py-24">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute left-1/3 top-1/3 h-[520px] w-[520px] rounded-full bg-ov-500/15 blur-[140px]" />
+        <div className="ov-container relative">
+          <div className="mb-12 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+            <SectionHeading dark eyebrow="Funktionsprinzip" title="Vom Sollwert des Netzbetreibers bis zum einzelnen Wechselrichter" />
+            <p className="ov-lead text-white/70 lg:pb-1">
+              Der Parkregler ist ein geschlossener Regelkreis: Vorgaben kommen von Netzbetreiber, Direktvermarkter und Betreiber, gemessen wird am Netzanschlusspunkt, gestellt wird an
+              jedem Wechselrichter, Speicher und Ladepunkt.
+            </p>
+          </div>
+          <SignalketteLive />
+        </div>
+      </section>
 
       {/* Regelfunktionen */}
-      <Section tone="white" space="lg" id="regelfunktionen" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Regelfunktionen"
-          title="Was der Parkregler am Netzanschlusspunkt regelt"
-          lead="Die Funktionen entsprechen den Anforderungen, die TOR und Netzanschlussvertrag an die Gesamtanlage stellen. Welche davon aktiv sind und mit welchen Parametern, legt der Netzbetreiber fest."
-          className="mb-12"
-        />
-        <FeatureGrid cols={3} items={FUNKTIONEN} />
+      <Section tone="white" space="md" id="regelfunktionen" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Regelfunktionen" title="Was der Parkregler am Netzanschlusspunkt regelt" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Die Funktionen entsprechen den Anforderungen, die TOR und Netzanschlussvertrag an die Gesamtanlage stellen. Welche davon aktiv sind und mit welchen Parametern, legt der
+            Netzbetreiber fest.
+          </p>
+        </div>
+        <ThemenExplorer items={FUNKTIONEN} label="Regelfunktionen des Parkreglers" zweispaltig />
       </Section>
 
       {/* Kennlinien */}
-      <Section tone="ink" space="lg" id="kennlinien" className="scroll-mt-24">
-        <div className="mb-10 grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
+      <Section tone="sand" space="md" id="kennlinien" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
           <SectionHeading
-            eyebrow="Normwerte"
+            eyebrow="Normwerte zum Ausprobieren"
             title="Standardkennlinien nach TOR – und was der Regler daraus macht"
-            lead="Ohne abweichende Vorgabe des Netzbetreibers gelten die Standardeinstellungen der TOR. In der Praxis schreiben viele Netzbetreiber eigene Stützpunkte, Verschiebungsfaktoren oder Zeitkonstanten vor."
+            lead="Schieben Sie die Netzspannung oder -frequenz und sehen Sie, wie die Anlage laut Kennlinie reagiert. Ohne abweichende Vorgabe des Netzbetreibers gelten diese Standardeinstellungen."
           />
-          <Kennwerte
-            items={[
-              { label: "Blindleistungsbereich (Typ B)", wert: "Bereich II: cos φ 0,925", text: "Q/Pmax ±0,411 bei Maximalkapazität; Bereich I oder III nur in begründeten Ausnahmefällen" },
-              { label: "Standard ohne Vorgabe", wert: "cos φ = 1, Q fix = 0", text: "cos φ(P) standardmäßig deaktiviert" },
-              { label: "Q-Sollwerte ab 1 MW", wert: "an der Messstelle in ≤ 1 min", text: "Online-Vorgabe und Umschaltung der Verfahren über Fernwirkschnittstelle" },
-              { label: "Wiederzuschaltung", wert: "≤ 10 % Pmax pro Minute", text: "Wartezeit Standard 60 s, nach Schutzauslösung 300 s (NS, Umrichter)" },
-            ]}
-          />
+          <p className="text-[14.5px] leading-relaxed text-ink-600 lg:pb-1">
+            Q(U) wird – sofern nicht jede Phase einzeln geregelt wird – auf die höchste Phasenspannung geregelt. Im Arbeitsbereich unter 0,2 Pmax darf sich das
+            Blindleistungsverhalten nicht sprunghaft ändern. Wichtig für die Koordination: Regeln Wechselrichter und Parkregler beide auf Q(U), müssen Zeitkonstanten und
+            Referenzpunkte aufeinander abgestimmt sein, sonst schwingen die Regelkreise gegeneinander.
+          </p>
         </div>
-        <Kennlinien />
-        <p className="mt-6 max-w-4xl text-[14px] leading-relaxed text-ink-600">
-          Q(U) wird – sofern nicht jede Phase einzeln geregelt wird – auf die höchste Phasenspannung geregelt. Im Arbeitsbereich unter 0,2 Pmax
-          darf sich das Blindleistungsverhalten nicht sprunghaft ändern. Wichtig für die Koordination: Regeln Wechselrichter und Parkregler
-          beide auf Q(U), müssen Zeitkonstanten und Referenzpunkte aufeinander abgestimmt sein, sonst schwingen die Regelkreise gegeneinander.
-        </p>
+        <KennlinieInteraktiv />
+        <Kennwerte
+          className="mt-5 lg:grid-cols-4"
+          items={[
+            { label: "Blindleistungsbereich (Typ B)", wert: "Bereich II: cos φ 0,925", text: "Q/Pmax ±0,411 bei Maximalkapazität; Bereich I oder III nur in begründeten Ausnahmefällen" },
+            { label: "Standard ohne Vorgabe", wert: "cos φ = 1, Q fix = 0", text: "cos φ(P) standardmäßig deaktiviert" },
+            { label: "Q-Sollwerte ab 1 MW", wert: "an der Messstelle in ≤ 1 min", text: "Online-Vorgabe und Umschaltung der Verfahren über Fernwirkschnittstelle" },
+            { label: "Wiederzuschaltung", wert: "≤ 10 % Pmax pro Minute", text: "Wartezeit Standard 60 s, nach Schutzauslösung 300 s (NS, Umrichter)" },
+          ]}
+        />
       </Section>
 
       {/* Messung am Netzanschlusspunkt */}
-      <Section tone="white" space="lg" id="messung" className="scroll-mt-24">
-        <SplitMedia
-          eyebrow="Messung am Netzanschlusspunkt"
-          title="Geregelt wird dort, wo der Netzbetreiber misst"
-          text={[
-            "Die Vorgaben des Netzbetreibers gelten am Netzanschlusspunkt. Deshalb braucht der Parkregler dort eine eigene, schnelle Messung von Spannung, Strom, Wirk- und Blindleistung sowie Frequenz – über Strom- und Spannungswandler, bei Mittelspannungsanschluss nach Vorgabe des Netzbetreibers auf der Mittelspannungsseite.",
-            "Wird auf der Niederspannungsseite gemessen, verlangt die TOR bei Netzebene 5 den Messabgriff in der Niederspannungs-Hauptverteilung und bei Netzebene 6 an der Verrechnungsmessung. Die Stufenstellung des Transformators muss vertraglich festgelegt sein, damit die Einstellwerte auf die Mittelspannung umgerechnet werden können.",
-          ]}
-          points={[
-            { title: "Blindleistungsbedarf der Kabelstrecke", text: "Liegt der Netzanschlusspunkt nicht am Transformator, kann der Netzbetreiber die Kompensation der MS-Leitung verlangen – der Regler berücksichtigt das im Sollwert." },
-            { title: "Wandler und Genauigkeit", text: "Wandlerübersetzung, Phasenlage und Messkette prüfen wir bei der Inbetriebnahme gegen die Verrechnungsmessung." },
-            { title: "Getrennte Rollen", text: "Die Messung für die Regelung ersetzt nicht den Zähler des Netzbetreibers und nicht den Netzentkupplungsschutz." },
-          ]}
-          image={{ src: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator mit Schaltgeräten in einem Umspannwerk" }}
-        />
-      </Section>
-
-      {/* Kommunikation zu Wechselrichtern */}
-      <Section tone="sand" space="lg" id="kommunikation" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Feldebene"
-          title="Wechselrichter verschiedener Hersteller in einem Regelkreis"
-          lead="Große Anlagen wachsen über Jahre, Wechselrichter werden getauscht, Speicher kommen dazu. Ein herstellerunabhängiger Regler hält die Anlage trotzdem als Ganzes regelbar."
-          className="mb-12"
-        />
-        <Punkte
-          spalten={3}
-          items={[
-            { titel: "Protokolle", tag: "Modbus TCP · SunSpec", text: "Anbindung über Modbus TCP mit SunSpec-Informationsmodellen oder über dokumentierte Herstellerregister. Jede Gerätefamilie wird mit Sollwertsprüngen im Feld verifiziert." },
-            { titel: "Sollwertverteilung", tag: "Regelstrategie", text: "Sollwerte werden nach verfügbarer Leistung verteilt, nicht starr nach Nennleistung. Fällt ein Wechselrichter aus, übernehmen die übrigen – das Ergebnis am Netzanschlusspunkt bleibt gleich." },
-            { titel: "Zykluszeiten", tag: "Timing", text: "Messung, Regelung und Kommunikation sind so ausgelegt, dass die TOR-Fristen am Netzanschlusspunkt eingehalten werden – etwa 1 Minute für Wirkleistungssollwerte bei Umrichtern." },
-            { titel: "Parametrierschutz", tag: "TOR 6.2.3", text: "Netzrelevante Einstellungen sind gegen unbefugte Änderung geschützt; Softwareupdates dürfen sie nicht verändern. Wir sichern die Parameter vor und nach jedem Update." },
-            { titel: "Netzwerk & Security", tag: "Segmentierung", text: "Feldbus und Anlagennetz sind vom Internet getrennt. Modbus und IEC 60870-5-104 haben keine eingebaute Authentifizierung – Zugriffe laufen deshalb ausschließlich über gesicherte Fernwartungswege." },
-            { titel: "Dokumentation", tag: "Parameterauszug", text: "Einstellwerte, Registerbelegung und Signalliste werden maschinenlesbar dokumentiert – als Teil des Konformitätsnachweises und für spätere Änderungen." },
-          ]}
-        />
-      </Section>
-
-      {/* Speicher & Ladeinfrastruktur */}
-      <Section tone="navy" space="lg" className="overflow-hidden" id="speicher">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-10 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            dark
-            eyebrow="Speicher & Ladeinfrastruktur"
-            title="Ein Netzanschlusspunkt, eine Regelung – auch mit Batterie und E-Flotte"
-            lead="Sobald Speicher und Ladepunkte hinter demselben Netzanschluss hängen, entscheidet die Regelung, wohin jede Kilowattstunde fließt. Genau hier entsteht der wirtschaftliche Mehrwert."
-          />
-          <Punkte
-            dunkel
-            spalten={1}
-            items={[
-              { titel: "Einspeiselimit ohne Energieverlust", text: "Überschüsse über der netzwirksamen Leistung – etwa bei der Spitzenkappung auf 70 % – lädt der Regler zuerst in den Speicher und in Fahrzeuge, bevor Wechselrichter abgeregelt werden." },
-              { titel: "Bezugsseite im Blick", text: "Ladepunkte werden über das Lademanagement (OCPP) so geführt, dass die vereinbarte Bezugsleistung und der Leistungspreis nicht durch gleichzeitiges Laden in die Höhe gehen." },
-              { titel: "Speicher als Netzbenutzer", text: "Für elektrische Energiespeicher verweist die TOR auf die TOR Verteilernetzanschluss – inklusive LFSM-U und FRT im Bezugsbetrieb. Maximalkapazität und Regelkonzept werden für die Gesamtanordnung betrachtet." },
-              { titel: "Klare Priorität", text: "Schutz und Netzbetreiber-Vorgaben stehen immer über Vermarktung und Eigenoptimierung. Diese Reihenfolge ist im Regler fest hinterlegt und dokumentiert." },
-            ]}
-          />
-        </div>
-      </Section>
-
-      {/* Konformität AT vs. DE */}
-      <Section tone="white" space="lg" id="konformitaet" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Nachweise & Konformität"
-          title="Konformitätsnachweis in Österreich – anders als das deutsche Zertifikatsmodell"
-          lead="Wer Anlagen in Deutschland kennt, erwartet Einheiten-, Komponenten- und Anlagenzertifikate. Österreich setzt auf Konformitätserklärung, Prüfberichte und Tests nach RKS-AT – Zertifikate sind möglich, aber nicht der Regelweg."
-          className="mb-10"
-        />
-        <Tabelle
-          caption="Nachweislogik für Erzeugungsanlagen und Regler: Österreich und Deutschland im Vergleich"
-          kopf={["Thema", "Österreich", "Deutschland (zum Vergleich)"]}
-          zeilen={KONFORMITAET}
-          hervor={1}
-          minBreite={820}
-          quelle="Quellen: TOR Stromerzeugungsanlagen Typ B V1.3, Kap. 8; RKS-AT Typ B V1.1; VDE-AR-N 4105/4110. Deutsche Zertifikate gelten in Österreich nicht automatisch, können aber als Nachweis für einzelne Anforderungen dienen."
-        />
-        <div className="mt-8">
-          <UnterlagenAufAnfrage
-            text="Funktionsbeschreibung, Schnittstellen- und Signalliste sowie Prüfprotokoll-Vorlagen unseres Parkreglers stellen wir Planern, Netzbetreibern und Gutachtern projektbezogen zur Verfügung."
-          />
-        </div>
-      </Section>
-
-      {/* Inbetriebnahme */}
-      <Section tone="sand" space="lg" id="inbetriebnahme" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Inbetriebnahme & Prüfprotokoll"
-          title="Von der Parametrierung bis zur Betriebserlaubnis"
-          lead="Der Netzbetreiber kann bei der Prüfung anwesend sein – unter anderem bei Schutzprüfung, Zuschaltbedingungen und Blindleistungs- und Spannungsregelung. Wir bereiten die Nachweise so vor, dass sie ohne Nachforderung durchgehen."
-          align="center"
-          className="mb-14"
-        />
-        <Steps
-          cols={3}
-          items={[
-            { icon: FileCheck2, title: "Vorgaben übernehmen", text: "Netzanschlussvertrag, Blindleistungsverfahren, Stützpunkte, Signalliste und Rückfallwerte des Netzbetreibers in die Parametrierung übernehmen." },
-            { icon: Cable, title: "Signaltest Fernwirk", text: "Stufen oder Online-Sollwerte gemeinsam mit der Leitstelle des Netzbetreibers durchfahren und Rückmeldungen prüfen." },
-            { icon: Activity, title: "Sprungantworten messen", text: "Wirk- und Blindleistungssprünge am Netzanschlusspunkt aufzeichnen: Verzögerung, Anschwing- und Einschwingzeit, Toleranzband." },
-            { icon: ShieldCheck, title: "Schutz & Zuschaltung", text: "Netzentkupplungsschutz mit analogen Prüfgrößen: Ansprech- und Rückfallwerte, Auslösezeiten und Auslösung des Schaltgeräts protokollieren." },
-            { icon: RefreshCw, title: "Ausfall simulieren", text: "Kommunikation trennen und prüfen, ob der Regler den Rückfallwert einnimmt; Backup-Versorgung der Kommunikation testen." },
-            { icon: ClipboardCheck, title: "Dokumentation", text: "Prüfprotokoll, maschinenlesbarer Parameterauszug und Unterlagen nach ÖVE/ÖNORM EN 62446-1 an Netzbetreiber und Betreiber übergeben." },
-          ]}
-        />
-      </Section>
-
-      {/* Nachrüstung */}
-      <Section tone="white" space="lg" id="nachruestung" className="scroll-mt-24">
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Bestandsanlagen"
-            title="Parkregler nachrüsten: wann es sich lohnt und was zu prüfen ist"
-            lead="Viele Anlagen der letzten zehn Jahre regeln nur über Rundsteuerempfänger und feste Wechselrichterparameter. Ein Parkregler macht sie fit für Einspeiselimits, Speicher und Direktvermarktung."
-          />
-          <Punkte
-            spalten={2}
-            items={[
-              { titel: "Anlass", text: "Erweiterung, Speicher-Nachrüstung, neuer Netzzugang mit Einspeiselimit, Wechsel in die Direktvermarktung oder Auflagen des Netzbetreibers." },
-              { titel: "Wesentliche Änderung", tag: "TOR Kap. 2.2", text: "Wird eine Anlage wesentlich geändert, können für sie die aktuellen TOR-Anforderungen gelten. Das klären wir vorab mit dem Netzbetreiber." },
-              { titel: "Bestandsaufnahme", text: "Wechselrichter-Kommunikation und Firmware, vorhandene Messung und Wandler, Rundsteuer- oder Fernwirkgerät, Netzwerk und Schaltschrankplatz." },
-              { titel: "Umbau im Betrieb", text: "Der Regler wird parallel aufgebaut und erst nach erfolgreichem Test scharf geschaltet – die Anlage speist bis dahin mit bisheriger Einstellung weiter." },
-            ]}
-          />
-        </div>
-        <div className="mt-10">
-          <Hinweis ton="achtung" titel="Spitzenkappung bei Erweiterungen">
-            <p>
-              Für neu angeschlossene und erweiterte PV-Anlagen darf der Netzbetreiber die Einspeiseleistung nach § 101 ElWG auf bis zu 70 % der
-              Modulspitzenleistung begrenzen (ausgenommen Anlagen bis 7 kW netzwirksamer Leistung). Ein Parkregler setzt diese Grenze am
-              Netzanschlusspunkt um, statt jeden Wechselrichter pauschal zu drosseln.
-            </p>
-          </Hinweis>
-        </div>
-      </Section>
-
-      <Section tone="sand" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Parkregler und EZA-Regler – für Technik, Planung und Asset Management"
-            lead="Ihre Frage betrifft einen konkreten Netzanschluss? Schicken Sie uns Netzanschlussvertrag oder Anschlusskonzept – wir sagen Ihnen, was der Regler dort leisten muss."
-          />
-          <Faq items={FAQ} />
-        </div>
-      </Section>
-
-      <Verweise
-        ueberschrift="Technik im Verbund"
-        items={[
-          { href: "/technik/scada", titel: "SCADA & Leitwarte", text: "Wie Messwerte, Sollwerte und Alarme aus dem Parkregler im Portfolio-Monitoring landen." },
-          { href: "/technik/fernwartung", titel: "Fernwartung & IT-Security", text: "Sichere Zugriffe auf Regler und Wechselrichter nach NISG 2026 und IEC 62443." },
-          { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "Warum Direktvermarkter Fernsteuerbarkeit verlangen – und wer im Regler Vorrang hat." },
-          { href: "/forderungen/richtlinien", titel: "Richtlinien & Netzanschluss", text: "EAG, ElWG, TOR und OVE-Richtlinien im Überblick." },
+      <Bildband
+        bild={{ src: "/Images/AT/technik-service/trafostation-solarpark.jpg", alt: "Transformatorstation und Zentralwechselrichter in einem Solarpark bei Sonnenaufgang", position: "70% 50%" }}
+        rechts
+        eyebrow="Messung am Netzanschlusspunkt"
+        titel="Geregelt wird dort, wo der Netzbetreiber misst"
+        text={[
+          "Die Vorgaben des Netzbetreibers gelten am Netzanschlusspunkt. Deshalb braucht der Parkregler dort eine eigene, schnelle Messung von Spannung, Strom, Wirk- und Blindleistung sowie Frequenz – über Strom- und Spannungswandler, bei Mittelspannungsanschluss nach Vorgabe des Netzbetreibers auf der Mittelspannungsseite.",
+          "Wird auf der Niederspannungsseite gemessen, verlangt die TOR bei Netzebene 5 den Messabgriff in der Niederspannungs-Hauptverteilung und bei Netzebene 6 an der Verrechnungsmessung. Die Stufenstellung des Transformators muss vertraglich festgelegt sein, damit die Einstellwerte auf die Mittelspannung umgerechnet werden können.",
+        ]}
+        punkte={[
+          { titel: "Blindleistungsbedarf der Kabelstrecke", text: "Liegt der Netzanschlusspunkt nicht am Transformator, kann der Netzbetreiber die Kompensation der MS-Leitung verlangen – der Regler berücksichtigt das im Sollwert." },
+          { titel: "Wandler und Genauigkeit", text: "Wandlerübersetzung, Phasenlage und Messkette prüfen wir bei der Inbetriebnahme gegen die Verrechnungsmessung." },
+          { titel: "Getrennte Rollen", text: "Die Messung für die Regelung ersetzt nicht den Zähler des Netzbetreibers und nicht den Netzentkupplungsschutz." },
         ]}
       />
 
-      <Quellen items={QUELLEN} bildnachweis="Umspannwerk Obersielach: Christiankral, CC BY 4.0, via Wikimedia Commons · Transformator im Umspannwerk: PtiBzh, CC0, via Wikimedia Commons." />
+      {/* Fachdetails in Tabs */}
+      <Section tone="sand" space="md" id="fachdetails" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Für Technik, Planung & Einkauf" title="Inbetriebnahme und Fachdetails" />
+          <p className="ov-lead text-ink-600 lg:pb-1">Die Detailtiefe, die Planer, Gutachter und Netzbetreiber brauchen – zum Umschalten statt zum Scrollen.</p>
+        </div>
+        <Tabs
+          label="Fachdetails zum Parkregler"
+          tabs={[
+            { label: "Inbetriebnahme", icon: <ClipboardCheck /> },
+            { label: "Anlagentypen A–D", icon: <Scale /> },
+            { label: "Konformität AT/DE", icon: <FileCheck2 /> },
+            { label: "Feldebene & Kommunikation", icon: <Network /> },
+            { label: "Nachrüstung", icon: <Wrench /> },
+          ]}
+        >
+          <div className="grid gap-8">
+            <p className="max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              <strong className="text-ink-900">Von der Parametrierung bis zur Betriebserlaubnis.</strong> Der Netzbetreiber kann bei der Prüfung anwesend sein – unter anderem bei
+              Schutzprüfung, Zuschaltbedingungen und Blindleistungs- und Spannungsregelung. Wir bereiten die Nachweise so vor, dass sie ohne Nachforderung durchgehen.
+            </p>
+            <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <FileCheck2 aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">01</span>
+                    Vorgaben übernehmen
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Netzanschlussvertrag, Blindleistungsverfahren, Stützpunkte, Signalliste und Rückfallwerte des Netzbetreibers in die Parametrierung übernehmen.</span>
+                </span>
+              </li>
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <Cable aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">02</span>
+                    Signaltest Fernwirk
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Stufen oder Online-Sollwerte gemeinsam mit der Leitstelle des Netzbetreibers durchfahren und Rückmeldungen prüfen.</span>
+                </span>
+              </li>
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <Activity aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">03</span>
+                    Sprungantworten messen
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Wirk- und Blindleistungssprünge am Netzanschlusspunkt aufzeichnen: Verzögerung, Anschwing- und Einschwingzeit, Toleranzband.</span>
+                </span>
+              </li>
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <ShieldCheck aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">04</span>
+                    Schutz & Zuschaltung
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Netzentkupplungsschutz mit analogen Prüfgrößen: Ansprech- und Rückfallwerte, Auslösezeiten und Auslösung des Schaltgeräts protokollieren.</span>
+                </span>
+              </li>
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <RefreshCw aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">05</span>
+                    Ausfall simulieren
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Kommunikation trennen und prüfen, ob der Regler den Rückfallwert einnimmt; Backup-Versorgung der Kommunikation testen.</span>
+                </span>
+              </li>
+              <li className="flex gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+                  <ClipboardCheck aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-display text-[16.5px] font-bold text-ink-900">
+                    <span className="mr-1.5 text-[13px] text-ov-700">06</span>
+                    Dokumentation
+                  </span>
+                  <span className="mt-1.5 block text-[14.5px] leading-relaxed text-ink-600">Prüfprotokoll, maschinenlesbarer Parameterauszug und Unterlagen nach ÖVE/ÖNORM EN 62446-1 an Netzbetreiber und Betreiber übergeben.</span>
+                </span>
+              </li>
+            </ol>
+          </div>
+          <div className="grid gap-5">
+            <Tabelle
+              caption="Typeinteilung von Stromerzeugungsanlagen in Österreich"
+              kopf={["Typ", "Maximalkapazität", "Netzanschluss", "Regelwerk", "Wesentliche Regelungs- und Kommunikationsanforderungen"]}
+              zeilen={TYPEN_TABELLE}
+              kompakt
+              minBreite={900}
+              quelle="Quelle: E-Control, TOR Stromerzeugungsanlagen Typ A V1.4 und Typ B V1.3; Typeinteilung nach RfG-Schwellenwert-V. Vereinfachte Darstellung – verbindlich sind TOR, Netzanschlussvertrag und Ausführungsbestimmungen Ihres Netzbetreibers."
+            />
+            <div className="grid gap-4 lg:grid-cols-2">
+              <Hinweis ton="norm" titel="Wann die TOR ausdrücklich einen Park- und Anlagenregler verlangt">
+                <p>
+                  Fordert der Netzbetreiber bei Anlagen auf Netzebene 5 oder 6 die Messwerte für die Blindleistungsbereitstellung auf der Mittelspannungsseite, ist ein Park- und
+                  Anlagenregler erforderlich, sobald die Summe der Engpassleistungen am Netzanschlusspunkt über <strong>100 kVA</strong> liegt (mit Mittelspannungsmessung) bzw. über{" "}
+                  <strong>400 kVA</strong> (ohne Mittelspannungsmessung).
+                </p>
+              </Hinweis>
+              <Hinweis ton="info" titel="Maximalkapazität ist nicht netzwirksame Leistung">
+                <p>
+                  Für den Typ zählt die Maximalkapazität der Gesamtanordnung. Die netzwirksame Leistung ist die im Vertrag vereinbarte maximale Leistung am Netzanschlusspunkt – genau
+                  die Größe, die ein Parkregler dynamisch einhält, etwa wenn der Netzanschluss kleiner ist als die installierte Leistung.
+                </p>
+              </Hinweis>
+            </div>
+          </div>
+          <div className="grid gap-5">
+            <p className="max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              Wer Anlagen in Deutschland kennt, erwartet Einheiten-, Komponenten- und Anlagenzertifikate. Österreich setzt auf Konformitätserklärung, Prüfberichte und Tests nach RKS-AT –
+              Zertifikate sind möglich, aber nicht der Regelweg.
+            </p>
+            <Tabelle
+              caption="Nachweislogik für Erzeugungsanlagen und Regler: Österreich und Deutschland im Vergleich"
+              kopf={["Thema", "Österreich", "Deutschland (zum Vergleich)"]}
+              zeilen={KONFORMITAET}
+              hervor={1}
+              kompakt
+              minBreite={820}
+              quelle="Quellen: TOR Stromerzeugungsanlagen Typ B V1.3, Kap. 8; RKS-AT Typ B V1.1; VDE-AR-N 4105/4110. Deutsche Zertifikate gelten in Österreich nicht automatisch, können aber als Nachweis für einzelne Anforderungen dienen."
+            />
+            <UnterlagenAufAnfrage text="Funktionsbeschreibung, Schnittstellen- und Signalliste sowie Prüfprotokoll-Vorlagen unseres Parkreglers stellen wir Planern, Netzbetreibern und Gutachtern projektbezogen zur Verfügung." />
+          </div>
+          <div className="grid gap-5">
+            <p className="max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              Große Anlagen wachsen über Jahre, Wechselrichter werden getauscht, Speicher kommen dazu. Ein herstellerunabhängiger Regler hält die Anlage trotzdem als Ganzes regelbar.
+            </p>
+            <Punkte
+              spalten={3}
+              items={[
+                { titel: "Protokolle", tag: "Modbus TCP · SunSpec", text: "Anbindung über Modbus TCP mit SunSpec-Informationsmodellen oder über dokumentierte Herstellerregister. Jede Gerätefamilie wird mit Sollwertsprüngen im Feld verifiziert." },
+                { titel: "Sollwertverteilung", tag: "Regelstrategie", text: "Sollwerte werden nach verfügbarer Leistung verteilt, nicht starr nach Nennleistung. Fällt ein Wechselrichter aus, übernehmen die übrigen – das Ergebnis am Netzanschlusspunkt bleibt gleich." },
+                { titel: "Zykluszeiten", tag: "Timing", text: "Messung, Regelung und Kommunikation sind so ausgelegt, dass die TOR-Fristen am Netzanschlusspunkt eingehalten werden – etwa 1 Minute für Wirkleistungssollwerte bei Umrichtern." },
+                { titel: "Parametrierschutz", tag: "TOR 6.2.3", text: "Netzrelevante Einstellungen sind gegen unbefugte Änderung geschützt; Softwareupdates dürfen sie nicht verändern. Wir sichern die Parameter vor und nach jedem Update." },
+                { titel: "Netzwerk & Security", tag: "Segmentierung", text: "Feldbus und Anlagennetz sind vom Internet getrennt. Modbus und IEC 60870-5-104 haben keine eingebaute Authentifizierung – Zugriffe laufen deshalb ausschließlich über gesicherte Fernwartungswege." },
+                { titel: "Dokumentation", tag: "Parameterauszug", text: "Einstellwerte, Registerbelegung und Signalliste werden maschinenlesbar dokumentiert – als Teil des Konformitätsnachweises und für spätere Änderungen." },
+              ]}
+            />
+          </div>
+          <div className="grid gap-5">
+            <p className="max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              <strong className="text-ink-900">Parkregler nachrüsten: wann es sich lohnt und was zu prüfen ist.</strong> Viele Anlagen der letzten zehn Jahre regeln nur über
+              Rundsteuerempfänger und feste Wechselrichterparameter. Ein Parkregler macht sie fit für Einspeiselimits, Speicher und Direktvermarktung.
+            </p>
+            <Punkte
+              spalten={2}
+              items={[
+                { titel: "Anlass", text: "Erweiterung, Speicher-Nachrüstung, neuer Netzzugang mit Einspeiselimit, Wechsel in die Direktvermarktung oder Auflagen des Netzbetreibers." },
+                { titel: "Wesentliche Änderung", tag: "TOR Kap. 2.2", text: "Wird eine Anlage wesentlich geändert, können für sie die aktuellen TOR-Anforderungen gelten. Das klären wir vorab mit dem Netzbetreiber." },
+                { titel: "Bestandsaufnahme", text: "Wechselrichter-Kommunikation und Firmware, vorhandene Messung und Wandler, Rundsteuer- oder Fernwirkgerät, Netzwerk und Schaltschrankplatz." },
+                { titel: "Umbau im Betrieb", text: "Der Regler wird parallel aufgebaut und erst nach erfolgreichem Test scharf geschaltet – die Anlage speist bis dahin mit bisheriger Einstellung weiter." },
+              ]}
+            />
+            <Hinweis ton="achtung" titel="Spitzenkappung bei Erweiterungen">
+              <p>
+                Für neu angeschlossene und erweiterte PV-Anlagen darf der Netzbetreiber die Einspeiseleistung nach § 101 ElWG auf bis zu 70 % der Modulspitzenleistung begrenzen
+                (ausgenommen Anlagen bis 7 kW netzwirksamer Leistung). Ein Parkregler setzt diese Grenze am Netzanschlusspunkt um, statt jeden Wechselrichter pauschal zu drosseln.
+              </p>
+            </Hinweis>
+          </div>
+        </Tabs>
+      </Section>
+
+      <FaqPlus
+        tone="white"
+        items={FAQ}
+        eyebrow="Häufige Fragen"
+        titel="Parkregler und EZA-Regler – für Technik, Planung und Asset Management"
+        lead="Ihre Frage betrifft einen konkreten Netzanschluss? Schicken Sie uns Netzanschlussvertrag oder Anschlusskonzept – wir sagen Ihnen, was der Regler dort leisten muss."
+        linkTitel="Technik im Verbund"
+        links={[
+          { href: "/technik/scada", titel: "SCADA & Leitwarte" },
+          { href: "/technik/fernwartung", titel: "Fernwartung & IT-Security" },
+          { href: "/service/direktvermarktung", titel: "Reststromvermarktung" },
+          { href: "/forderungen/richtlinien", titel: "Richtlinien & Netzanschluss" },
+        ]}
+      />
+
+
+      <QuellenKompakt items={QUELLEN} bildnachweis="Umspannwerk Obersielach: Christiankral, CC BY 4.0, via Wikimedia Commons · Solarpark mit Trafostation: Ken Oltmann/CoServ, U.S. Department of Energy, gemeinfrei, via Wikimedia Commons." />
 
       <CtaBand
         eyebrow="Für Planer, Betreiber und Asset Manager"
@@ -502,4 +540,3 @@ export default function ParkreglerPage() {
     </div>
   );
 }
-

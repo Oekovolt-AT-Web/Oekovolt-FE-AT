@@ -34,6 +34,7 @@ import {
   Wrench,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
@@ -144,15 +145,16 @@ export default function GemeinschaftlicheErzeugungsanlagePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Gemeinschaftliche Erzeugungsanlage" }]}
         eyebrow="GEA · Mehrparteienhaus & Gewerbepark"
         title={
           <>
-            Solarstrom vom Dach – <span className="ov-text-gradient">gemeinsam im Gebäude genutzt</span>
+            Solarstrom vom Dach – <span className="ov-text-gradient-light">gemeinsam im Gebäude genutzt</span>
           </>
         }
         lead="Mit einer gemeinschaftlichen Erzeugungsanlage teilen Bewohner eines Mehrparteienhauses oder Mieter eines Gewerbeparks den Strom einer Photovoltaikanlage – über die eigene Hauptleitung, ohne Netzentgelte für den intern verteilten Strom. Wir planen Anlage, Messung und Aufteilung nach österreichischem Recht."
-        image={{ src: "/Images/Dienstleistungen/Photovoltaik/download-2.jpg", alt: "Wohnanlage mit Photovoltaikmodulen auf dem Dach" }}
+        image={{ src: "/Images/AT/produkte-regionen/mieterstrom-mehrfamilienhaus-pv.jpg", alt: "Mehrfamilienhaus mit Photovoltaikanlage auf dem Flachdach (Symbolbild)", position: "50% 35%" }}
         points={["Nach ElWG ab 1. Oktober 2026", "Wohnanlage, WEG, Gewerbepark", "Statischer oder dynamischer Schlüssel", "Anlage, Messung & Vertrag aus einer Hand"]}
         actions={[
           { label: "GEA-Projekt anfragen", href: "/angebot" },
@@ -169,6 +171,15 @@ export default function GemeinschaftlicheErzeugungsanlagePage() {
             </div>
           </div>
         }
+      />
+
+      <Kennzahlenband
+        tone="light"
+        items={[
+          { value: 0, suffix: " €", label: "Netzentgelt für den im Gebäude verteilten Solarstrom" },
+          { wert: "1.10.2026", label: "GEA nach dem neuen ElWG" },
+          { value: 2, label: "Aufteilungsmodelle: statischer oder dynamischer Schlüssel" },
+        ]}
       />
 
       <Section tone="white" space="md">

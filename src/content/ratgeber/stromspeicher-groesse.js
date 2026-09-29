@@ -4,7 +4,7 @@
 // Marktdaten: BMWET/FH Technikum Wien "PV-Batteriespeichersysteme – Marktentwicklung 2024";
 // Netzentgelte: SNE-V 2018 idF BGBl. II Nr. 305/2025; Reform 2027: ElWG + SNE-G-V-Entwurf.
 
-const zahl = (n, st = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const zahl = (n, st = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const eur = (n) => zahl(Math.round(n)) + " €";
 const pct = (x) => zahl(x * 100) + " %";
 const kwh = (n) => zahl(Math.round(n)) + " kWh";

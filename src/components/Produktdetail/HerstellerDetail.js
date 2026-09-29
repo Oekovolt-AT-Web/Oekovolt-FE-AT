@@ -22,6 +22,8 @@ import Reveal from "@/components/ui/Reveal";
 import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProduktGalerie from "@/components/Produktdetail/ProduktGalerie";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
+import { partnerFuer } from "@/components/Hersteller/partner";
 import { generateSlug } from "@/lib/slugify";
 import { BASE_URL, FIRMA } from "@/lib/site";
 
@@ -35,6 +37,13 @@ export const KONTEXTE = {
     pfad: "/produkte/stromspeicher",
     rechner: { href: "/rechner/stromspeicher", label: "Speichergröße berechnen", titel: "Welche Speichergröße passt zu Ihnen?", text: "Verbrauch, Anlagengröße und E-Auto oder Wärmepumpe eingeben – der Rechner zeigt Autarkie, Ersparnis und die sinnvolle Kapazität." },
     fallbackBild: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg",
+    szeneBild: { src: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Batteriespeicher-Schränke im Freien neben einer Trafostation" },
+    einsatz: [
+      "Auslegung nach Lastgang bzw. Verbrauchsprofil",
+      "Einbindung in PV-Anlage, Wechselrichter und Energiemanagement",
+      "Brandschutzkonzept nach OVE-Richtlinie R 20",
+      "Meldung beim Netzbetreiber und Förderansuchen vor der Bestellung",
+    ],
     vorteil: { icon: Plug, title: "Auch zum Nachrüsten", text: "Wir prüfen Ihre Bestandsanlage und binden den Speicher DC- oder AC-seitig ein – im Gewerbe auch für Peak Shaving." },
   },
   warmepumpe: {
@@ -42,6 +51,7 @@ export const KONTEXTE = {
     pfad: "/produkte/warmepumpe",
     rechner: { href: "/rechner/waermepumpe", label: "Ersparnis berechnen", titel: "Was spart eine Wärmepumpe in Ihrem Haus?", text: "Wärmebedarf, Heizsystem und PV-Anlage eingeben – der Rechner zeigt Heizkosten, Förderung und Amortisation." },
     fallbackBild: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg",
+    szeneBild: { src: "/Images/Ratgeber/waermepumpe-mit-photovoltaik.jpg", alt: "Wärmepumpen-Außeneinheit vor einem Wohnhaus" },
     vorteil: { icon: FileCheck2, title: "Förderung im Blick", text: "Wir prüfen Bundes- und Landesförderungen vor der Bestellung, damit Registrierung und Förderansuchen rechtzeitig gestellt sind." },
   },
 };
@@ -83,15 +93,27 @@ export function kuerzen(text = "", max = 155) {
 
 const mailAdresse = (m) => (m || "").replace(/\s*\(at\)\s*/i, "@").trim();
 
-export default function HerstellerDetail({ kontext = "stromspeicher", slug, item, hersteller, alleItems = [] }) {
+/**
+ * partner – statische Herstellerdaten (@/components/Hersteller/partner), falls das
+ * Backoffice nichts liefert: Produktbild, Rolle und belegte Kerndaten.
+ */
+export default function HerstellerDetail({ kontext = "stromspeicher", slug, item, hersteller, alleItems = [], partner = null }) {
   const k = KONTEXTE[kontext];
   const titel = hersteller?.title || item.title;
   const seitenUrl = `${BASE}${k.pfad}/${slug}`;
   const produkte = produkteAus(hersteller);
   const beschreibung = hersteller?.main_description || item.main_description || "";
-  const banner = img(hersteller?.banner_image || item.banner_image) || k.fallbackBild;
+  const apiBanner = img(hersteller?.banner_image || item.banner_image);
+  const banner = apiBanner || k.fallbackBild;
+  const produktBild = partner?.bild || null;
   const logo = img(hersteller?.logo_image || item.logo_image);
-  const verwandte = alleItems.filter((i) => i.title && generateSlug(i.title) !== slug && i.status !== "Passiv" && istBelegterPartner(i.title)).slice(0, 4);
+  const ausApi = alleItems.filter((i) => i.title && generateSlug(i.title) !== slug && i.status !== "Passiv" && istBelegterPartner(i.title)).slice(0, 4);
+  // Ohne Backoffice: die übrigen belegten Partner dieses Produktbereichs
+  const verwandte = ausApi.length
+    ? ausApi
+    : partnerFuer(kontext)
+        .filter((p) => p.slug !== slug)
+        .map((p) => ({ title: p.title, main_description: p.main_description, bild: p.bild, alt_banner_image: p.alt_banner_image }));
   const email = mailAdresse(hersteller?.email);
 
   const jsonLd = {
@@ -141,7 +163,8 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
   const kerndaten = [
     ["Hersteller", hersteller?.company_name || titel],
     hersteller?.location && ["Sitz / Region", hersteller.location],
-    ["Produktbereich", k.label],
+    ["Produktbereich", partner?.rolle || k.label],
+    ...(partner?.fakten || []),
     produkte.length > 0 && ["Produktlinien", produkte.map((p) => p.name).join(", ")],
     hersteller?.website_url && [
       "Website",
@@ -160,15 +183,17 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant={apiBanner ? "split" : "immersive"}
         breadcrumbs={[{ name: "Produkte" }, { name: k.label, href: k.pfad }, { name: titel }]}
         eyebrow={`Hersteller · ${k.label}`}
         title={
           <>
-            {titel}-Produkte, <span className="ov-text-gradient">fachgerecht eingebaut</span>
+            {titel}-Produkte, <span className={apiBanner ? "ov-text-gradient" : "ov-text-gradient-light"}>fachgerecht eingebaut</span>
           </>
         }
         lead={beschreibung}
-        image={{ src: banner, alt: hersteller?.alt_banner_image || item.alt_banner_image || titel }}
+        image={apiBanner ? { src: banner, alt: hersteller?.alt_banner_image || item.alt_banner_image || titel } : k.szeneBild}
+        points={apiBanner ? [] : [partner?.rolle, "Planung & Einbau in ganz Österreich", "Meldung beim Netzbetreiber inklusive"].filter(Boolean)}
         actions={[
           { label: "Angebot anfragen", href: "/angebot" },
           { label: k.rechner.label, href: k.rechner.href, icon: Calculator },
@@ -191,6 +216,8 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
           </div>
         }
       />
+
+      <HerstellerWortmarken titel="Hersteller, mit denen wir in Österreich zusammenarbeiten" fokus={[slug]} />
 
       {produkte.length > 0 && (
         <Section tone="white" space="lg" id="produkte">
@@ -215,7 +242,17 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
           <div>
             <SectionHeading eyebrow="Über den Hersteller" title={`${titel} im Überblick`} />
             <Reveal delay={80}>
-              <Fliesstext text={ueberText || beschreibung} className="mt-6 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
+              <Fliesstext text={ueberText || (partner ? `${titel} gehört zu den Herstellern, mit denen wir in Österreich zusammenarbeiten. Welche Produktlinie und Größe passt, entscheiden wir nach Lastgang, Wechselrichter und Aufstellort – nicht nach dem Datenblatt allein.` : beschreibung)} className="mt-6 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
+              {partner && (
+                <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+                  {(k.einsatz || []).map((punkt) => (
+                    <li key={punkt} className="flex items-start gap-3 rounded-2xl bg-white p-4 text-[15px] leading-snug text-ink-700 ring-1 ring-ink-200/70">
+                      <BadgeCheck aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
+                      {punkt}
+                    </li>
+                  ))}
+                </ul>
+              )}
               {(email || hersteller?.phone_number) && (
                 <div className="mt-8 flex flex-wrap gap-3">
                   {email && (
@@ -240,6 +277,11 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
 
           <Reveal delay={120} className="lg:sticky lg:top-28 lg:self-start">
             <div className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-ink-200/70">
+              {produktBild && (
+                <div className="relative aspect-[16/10] bg-gradient-to-br from-ink-50 to-ink-100">
+                  <Image src={produktBild} alt={partner.alt_banner_image || `${titel} – Produktbild`} fill sizes="(max-width: 1024px) 100vw, 40vw" className="object-contain p-8" />
+                </div>
+              )}
               <div className="flex items-center justify-between gap-4 border-b border-ink-100 px-6 py-5">
                 <h2 className="font-display text-[18px] font-bold text-ink-900">Auf einen Blick</h2>
                 {logo && <Image src={logo} alt="" width={72} height={28} className="h-7 w-auto object-contain" />}
@@ -299,12 +341,12 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
-          <ul className={`grid gap-5 sm:grid-cols-2 ${verwandte.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"}`}>
+          <ul className={`grid gap-5 sm:grid-cols-2 ${verwandte.length === 3 ? "lg:grid-cols-3" : verwandte.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-4"}`}>
             {verwandte.map((v, i) => (
               <Reveal as="li" key={v.title} delay={i * 80} className="flex">
                 <Link href={`${k.pfad}/${generateSlug(v.title)}`} className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200">
                   <div className="relative aspect-[16/10] overflow-hidden bg-ink-100">
-                    <Image src={img(v.banner_image) || k.fallbackBild} alt={v.alt_banner_image || v.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <Image src={v.bild || img(v.banner_image) || k.fallbackBild} alt={v.alt_banner_image || v.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className={`${v.bild ? "bg-gradient-to-br from-ink-50 to-ink-100 object-contain p-6" : "object-cover"} transition-transform duration-700 group-hover:scale-105`} />
                     {v.logo_image && (
                       <span className="absolute left-4 top-4 flex h-10 items-center rounded-full bg-white/95 px-3 shadow-md backdrop-blur">
                         <Image src={img(v.logo_image)} alt={v.alt_logo_image || ""} width={72} height={24} className="h-5 w-auto object-contain" />

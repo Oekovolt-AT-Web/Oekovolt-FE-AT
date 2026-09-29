@@ -2,12 +2,10 @@
 //
 // Keine konkreten Konditionen, Zinssätze oder Partnernamen – nur Strukturen und Ablauf.
 
-import { Banknote, Building2, Calculator, FileSignature, FileText, Handshake, Landmark, PiggyBank, Receipt, Sun, Wallet, Wrench } from "lucide-react";
+import { Banknote, Building2, Calculator, FileSignature, FileText, Landmark, Receipt, Scale, Wrench } from "lucide-react";
 
-import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
@@ -16,10 +14,16 @@ import FinanzierungsRechner from "@/components/Finanzierung/FinanzierungsRechner
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
 import Tabelle from "@/components/ServiceAT/Tabelle";
 import Hinweis from "@/components/ServiceAT/Hinweis";
-import Weiterlesen from "@/components/ServiceAT/Weiterlesen";
 import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
 import FaqSektion from "@/components/ServiceAT/FaqSektion";
-import Quellen from "@/components/ServiceAT/Quellen";
+import Stil from "@/components/ServiceAT/B/Stil";
+import HeroBild from "@/components/ServiceAT/B/HeroBild";
+import Kennzahlen from "@/components/ServiceAT/B/Kennzahlen";
+import Dunkel from "@/components/ServiceAT/B/Dunkel";
+import Bildband from "@/components/ServiceAT/B/Bildband";
+import Fachdetails from "@/components/ServiceAT/B/Fachdetails";
+import Abschluss from "@/components/ServiceAT/B/Abschluss";
+import FinanzModelle from "@/components/ServiceAT/B/FinanzModelle";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/service/finanzierung";
@@ -98,51 +102,78 @@ export default function FinanzierungPage() {
 
   return (
     <div>
+      <Stil />
       <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Finanzierung von Photovoltaikanlagen für Unternehmen", beschreibung: BESCHREIBUNG, serviceType: "Organisation von PV-Finanzierung, Leasing und Contracting" })} />
       <JsonLd daten={rechnerSchema} />
 
-      <PageHero
+      <HeroBild
         breadcrumbs={[{ name: "Service" }, { name: "Finanzierung & Leasing" }]}
         eyebrow="Finanzierung · Leasing · Contracting"
-        title={<>PV-Anlage finanzieren – <span className="ov-text-gradient">passend zu Bilanz und Liquidität</span></>}
+        title={
+          <>
+            PV-Anlage finanzieren – <span className="ov-text-gradient-light">passend zu Bilanz und Liquidität</span>
+          </>
+        }
         lead="Kauf, Bankkredit, Leasing, Mietkauf oder Contracting: Jede Form wirkt anders auf Bilanz, Liquidität und Steuer. Wir rechnen die Varianten für Ihre Anlage durch und organisieren die Finanzierung gemeinsam mit Leasing- und Bankpartnern."
-        image={{ src: "/Images/Referenzen/Referenzkarte-1.jpg", alt: "Luftaufnahme einer großen Photovoltaik-Freiflächenanlage" }}
-        points={["Fünf Finanzierungswege im Vergleich", "Leasing organisiert durch Ökovolt", "IFB, AfA und EAG-Förderung berücksichtigt", "Unterlagen aus einer Hand"]}
+        image={{ src: "/Images/AT/service-b/besprechung-vertrag.jpg", alt: "Handschlag über einem unterschriebenen Finanzierungsvertrag" }}
+        points={["Sechs Finanzierungswege im Vergleich", "Leasing organisiert durch Ökovolt", "IFB, AfA und EAG-Förderung berücksichtigt", "Unterlagen aus einer Hand"]}
         actions={[
           { label: "Finanzierung anfragen", href: "#anfrage" },
-          { label: "Varianten vergleichen", href: "#vergleich", icon: Calculator },
+          { label: "Rate berechnen", href: "#rechner", icon: Calculator },
         ]}
       />
 
-      <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Finanzierungswege"
-          title="Fünf Wege zur eigenen Solarstromversorgung"
-          lead="Welche Form passt, hängt von Liquidität, Kreditrahmen, Bilanzpolitik und dem Wunsch nach Eigentum ab – nicht vom Dach."
-          className="mb-12"
-        />
-        <FeatureGrid
-          cols={3}
-          items={[
-            { icon: PiggyBank, title: "Kauf aus Eigenmitteln", text: "Höchste Rendite, volle Steuervorteile, volle Kontrolle – wenn die Liquidität es zulässt." },
-            { icon: Landmark, title: "Bankkredit", text: "Eigentum ab Tag eins, AfA und IFB bei Ihnen. Die Anlage trägt die Rate oft aus dem laufenden Vorteil." },
-            { icon: FileSignature, title: "Leasing", text: "Planbare Raten, geringe Anfangsbelastung, Kreditrahmen bleibt frei. Ökovolt organisiert das Leasing mit Partnern." },
-            { icon: Wallet, title: "Mietkauf", text: "Raten wie beim Leasing, das Eigentum geht mit der letzten Rate auf Sie über." },
-            { icon: Handshake, title: "Contracting", text: "Ein Contractor errichtet und betreibt die Anlage auf Ihrem Dach – Sie zahlen ein Entgelt statt zu investieren." },
-            { icon: Sun, title: "On-site-PPA", text: "Sie kaufen den Solarstrom vom eigenen Dach zu einem festen Preis je kWh – ohne Investition." },
-          ]}
-        />
-      </Section>
+      <Kennzahlen
+        frage="Welche Finanzierung passt zu einer Gewerbe-PV-Anlage?"
+        zahlen={[
+          { value: 22, suffix: " %", label: "Öko-Investitionsfreibetrag für PV", hinweis: "befristet 11/2025 bis 12/2026, sonst 15 %" },
+          { text: "1 Mio. €", label: "höchste IFB-Bemessungsgrundlage pro Wirtschaftsjahr", hinweis: "Behaltefrist vier Jahre" },
+          { value: 30, suffix: " %", label: "degressive AfA höchstens", hinweis: "beim Kauf, Kredit und Mietkauf" },
+          { value: 6, label: "Wege: Kauf, Kredit, Leasing, Mietkauf, Contracting, PPA", hinweis: "interaktiv verglichen" },
+        ]}
+      >
+        <p>
+          <strong>Das hängt von Liquidität, Kreditrahmen, Bilanzpolitik und dem Wunsch nach Eigentum ab – nicht vom Dach.</strong> Beim Kauf und Kredit bleiben AfA und
+          Investitionsfreibetrag bei Ihnen, Leasing schont den Kreditrahmen, Contracting und PPA kommen ganz ohne Investition aus.
+        </p>
+      </Kennzahlen>
 
+      {/* Rechner */}
+      <Dunkel id="rechner">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            dark
+            eyebrow="Finanzierungsrechner"
+            title={
+              <>
+                Trägt die Anlage <span className="ov-text-gradient-light">ihre Finanzierung selbst?</span>
+              </>
+            }
+          />
+          <Reveal delay={100}>
+            <p className="ov-lead text-white/70">
+              Stellen Sie Investition, Eigenmittel, einen Beispiel-Zinssatz und den jährlichen Vorteil aus Ihrer Wirtschaftlichkeitsrechnung ein. Der Rechner zeigt Jahresrate, Überschuss und
+              die Wirkung des Investitionsfreibetrags.
+            </p>
+          </Reveal>
+        </div>
+        <Reveal dir="scale" className="mt-12">
+          <FinanzierungsRechner />
+        </Reveal>
+      </Dunkel>
+
+      {/* Vergleich */}
       <Section tone="sand" space="lg" id="vergleich" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Vergleich"
-          title="Kauf, Kredit, Leasing, Mietkauf und Contracting im Vergleich"
-          lead="Die Übersicht zeigt die Grundmuster. Die konkrete Wirkung hängt vom Vertrag ab – Leasing kann je nach Gestaltung auch beim Leasingnehmer bilanziert werden."
-          className="mb-10"
-        />
-        <Tabelle kopf={VERGLEICH_KOPF} zeilen={VERGLEICH} kompakt quelle="Orientierung, Stand September 2026. Keine Steuer-, Rechts- oder Finanzierungsberatung – maßgeblich sind Vertrag, UGB/IFRS und Ihre Steuerberatung." />
-        <Hinweis ton="recht" titel="Keine Konditionen auf der Website" className="mt-8">
+        <div className="mb-12 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Vergleich" title="Kauf, Leasing, Contracting oder PPA – was passt zu Ihnen?" />
+          <Reveal delay={100}>
+            <p className="ov-lead text-ink-600">Wählen Sie einen Finanzierungsweg: Eigentum, Liquidität, Bilanz, Steuer und Förderung auf einen Blick – mit schematischem Zahlungsprofil.</p>
+          </Reveal>
+        </div>
+        <Reveal dir="scale">
+          <FinanzModelle />
+        </Reveal>
+        <Hinweis ton="recht" titel="Keine Konditionen auf der Website" className="mt-6">
           <p>
             Zinssätze, Leasingfaktoren und Restwerte hängen von Bonität, Laufzeit, Sicherheiten und Marktzins ab und werden ausschließlich vom Finanzierungspartner festgelegt. Wir nennen
             deshalb hier keine Konditionen, sondern holen für Sie konkrete Angebote ein.
@@ -150,63 +181,20 @@ export default function FinanzierungPage() {
         </Hinweis>
       </Section>
 
-      <Section tone="white" space="lg" id="rechner" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Finanzierungsrechner"
-          title="Trägt die Anlage ihre Finanzierung selbst?"
-          lead="Stellen Sie Investition, Eigenmittel, einen Beispiel-Zinssatz und den jährlichen Vorteil aus Ihrer Wirtschaftlichkeitsrechnung ein. Der Rechner zeigt Jahresrate, Überschuss und die Wirkung des Investitionsfreibetrags."
-          align="center"
-          className="mb-12"
-        />
-        <Reveal dir="scale">
-          <FinanzierungsRechner />
-        </Reveal>
-      </Section>
+      {/* Steuer & Förderung */}
+      <Bildband
+        bild={{ src: "/Images/AT/service-b/drohne-solarpark-2.jpg", alt: "Gewerbedach voller Photovoltaikmodule von oben" }}
+        eyebrow="Steuer & Förderung"
+        titel="Drei Punkte, die vor der Entscheidung geklärt sein sollten"
+        text="Förderung und Steuer wirken je nach Finanzierungsform unterschiedlich. Leasing organisieren wir mit Partnern – die technischen Unterlagen und die Wirtschaftlichkeitsrechnung kommen von uns."
+        punkte={[
+          { icon: Receipt, titel: "Investitionsfreibetrag", text: "PV ist eine ökologische Investition: befristet 22 % (11/2025–12/2026, sonst 15 %), Bemessung höchstens 1 Mio. € pro Wirtschaftsjahr, Behaltefrist vier Jahre." },
+          { icon: Banknote, titel: "EAG-Investitionszuschuss", text: "Über die OeMAG-Fördercalls; das Förderansuchen muss vor Inbetriebnahme gestellt werden. Die Kategorie richtet sich nach der Engpassleistung." },
+          { icon: FileText, titel: "Abschreibung", text: "Linear oder degressiv mit bis zu 30 % – beim Kauf, Kredit und Mietkauf bei Ihnen, beim Leasing in der Regel beim Leasinggeber." },
+        ]}
+      />
 
-      <Section tone="green" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Steuer & Förderung"
-              title="Was die Finanzierung beeinflusst"
-              lead="Förderung und Steuer wirken je nach Finanzierungsform unterschiedlich. Drei Punkte sollten vor der Entscheidung geklärt sein."
-            />
-            <Reveal delay={80}>
-              <ul className="mt-8 space-y-4">
-                {[
-                  { icon: Receipt, t: "Investitionsfreibetrag", x: "Photovoltaik gilt als ökologische Investition. Für Anschaffungen von November 2025 bis Ende 2026 beträgt der IFB befristet 22 % (sonst 15 %), Bemessungsgrundlage höchstens 1 Mio. € pro Wirtschaftsjahr, Behaltefrist vier Jahre." },
-                  { icon: Banknote, t: "EAG-Investitionszuschuss", x: "Förderung über die OeMAG-Fördercalls; das Förderansuchen muss vor Inbetriebnahme gestellt werden. Die Förderkategorie richtet sich nach der Engpassleistung." },
-                  { icon: FileText, t: "Abschreibung", x: "Linear über die Nutzungsdauer oder degressiv mit bis zu 30 % – beim Kauf, Kredit und Mietkauf bei Ihnen, beim Leasing in der Regel beim Leasinggeber." },
-                ].map((k) => (
-                  <li key={k.t} className="flex gap-4 rounded-2xl bg-white p-5 ring-1 ring-ink-200/60">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-600 text-white">
-                      <k.icon aria-hidden="true" className="h-5 w-5" />
-                    </span>
-                    <span>
-                      <span className="block font-display text-[17px] font-bold text-ink-900">{k.t}</span>
-                      <span className="mt-1 block text-[15px] leading-relaxed text-ink-600">{k.x}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-          <Reveal className="self-start rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
-            <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-700">Checkliste</p>
-            <h3 className="mt-2 font-display text-[19px] font-bold text-ink-900">Diese Unterlagen braucht der Finanzierungspartner</h3>
-            <ul className="mt-5 space-y-2.5">
-              {UNTERLAGEN.map((u) => (
-                <li key={u} className="flex gap-3 text-[15px] leading-relaxed text-ink-700">
-                  <FileText aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-600" />
-                  {u}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 text-[14px] leading-relaxed text-ink-500">Die technischen Unterlagen und die Wirtschaftlichkeitsrechnung stellen wir zusammen.</p>
-          </Reveal>
-        </div>
-      </Section>
-
+      {/* Ablauf */}
       <Section tone="white" space="lg">
         <SectionHeading eyebrow="Ablauf" title="Von der Variantenrechnung zur finanzierten Anlage" align="center" className="mb-14" />
         <Steps
@@ -219,7 +207,61 @@ export default function FinanzierungPage() {
         />
       </Section>
 
+      {/* Fachdetails */}
+      <Section tone="sand" space="lg">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <SectionHeading eyebrow="Für Controlling & Einkauf" title="Vergleichstabelle und Unterlagen" lead="Die vollständige Übersicht für Geschäftsführung, Steuerberatung und Finanzierungspartner." />
+          <Fachdetails
+            items={[
+              {
+                titel: "Kauf, Kredit, Leasing, Mietkauf und Contracting im Vergleich",
+                kurz: "Acht Kriterien, fünf Wege",
+                icon: Scale,
+                inhalt: (
+                  <Tabelle
+                    kopf={VERGLEICH_KOPF}
+                    zeilen={VERGLEICH}
+                    kompakt
+                    quelle="Orientierung, Stand September 2026. Keine Steuer-, Rechts- oder Finanzierungsberatung – maßgeblich sind Vertrag, UGB/IFRS und Ihre Steuerberatung."
+                  />
+                ),
+              },
+              {
+                titel: "Diese Unterlagen braucht der Finanzierungspartner",
+                kurz: "Checkliste für Bank und Leasinggeber",
+                icon: FileText,
+                inhalt: (
+                  <>
+                    <ul className="grid gap-2.5 sm:grid-cols-2">
+                      {UNTERLAGEN.map((u) => (
+                        <li key={u} className="flex gap-2.5 rounded-2xl bg-sand-50 p-3.5 text-[14.5px] leading-snug text-ink-700 ring-1 ring-ink-200/60">
+                          <FileText aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+                          {u}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-4 text-[14px] leading-relaxed text-ink-500">Die technischen Unterlagen und die Wirtschaftlichkeitsrechnung stellen wir zusammen.</p>
+                  </>
+                ),
+              },
+              {
+                titel: "Gemeinden und öffentliche Hand",
+                kurz: "Haushalt, Darlehen, Beteiligung",
+                icon: Landmark,
+                inhalt: (
+                  <p className="text-[15.5px] leading-relaxed text-ink-700">
+                    Gemeinden finanzieren meist aus dem Haushalt, über Darlehen oder über Beteiligungsmodelle mit Bürgerinnen und Bürgern. Leasing und Contracting sind möglich, müssen aber
+                    haushaltsrechtlich und gegenüber der Gemeindeaufsicht geprüft werden.
+                  </p>
+                ),
+              },
+            ]}
+          />
+        </div>
+      </Section>
+
       <AnfrageSektion
+        tone="white"
         titel="Finanzierung anfragen"
         lead="Nennen Sie uns Projekt und bevorzugte Finanzierungsform. Wir melden uns mit einer Variantenrechnung und holen Angebote unserer Partner ein."
         schritte={["Sie beschreiben Projekt und Wunsch.", "Wir rechnen Varianten und sagen, welche Unterlagen nötig sind.", "Sie erhalten Angebote der Finanzierungspartner zum Vergleich."]}
@@ -238,27 +280,22 @@ export default function FinanzierungPage() {
         }}
       />
 
-      <Section tone="white" space="md">
-        <Weiterlesen
-          items={[
-            { href: "/ratgeber/photovoltaik-leasing", art: "Ratgeber", titel: "Photovoltaik-Leasing", text: "Voll- und Teilamortisation, Bilanz und Steuer." },
-            { href: "/ratgeber/investitionsfreibetrag-photovoltaik", art: "Ratgeber", titel: "Investitionsfreibetrag für PV", text: "Öko-IFB, Höchstbetrag und Behaltefrist." },
-            { href: "/ratgeber/eag-investitionszuschuss", art: "Ratgeber", titel: "EAG-Investitionszuschuss", text: "Fördercalls, Kategorien, Ablauf und Fristen." },
-            { href: "/ratgeber/photovoltaik-mieten-oder-kaufen", art: "Ratgeber", titel: "Kaufen, leasen oder Contracting?", text: "Die Varianten mit Beispielrechnung." },
-            { href: "/ratgeber/ppa-oesterreich", art: "Ratgeber", titel: "PPA in Österreich", text: "On-site- und Off-site-PPA, Laufzeiten." },
-            { href: "/forderungen/steuerlich", art: "Förderung", titel: "Steuerliche Vorteile", text: "IFB, AfA und Elektrizitätsabgabe." },
-            { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie", text: "Planung nach Lastgang." },
-            { href: "/service/energieberatung", art: "Service", titel: "Energieberatung", text: "Lastganganalyse als Basis der Wirtschaftlichkeit." },
-          ]}
-        />
-      </Section>
-
       <FaqSektion items={FAQ} titel="Finanzierung & Leasing – häufige Fragen" lead="Allgemeine Informationen, keine Steuer- oder Finanzierungsberatung." tone="sand" />
 
       <Querverweise pfad={PFAD} ueberschrift="Mehr zu Wirtschaftlichkeit und Förderung" />
 
-      <Quellen
-        items={[
+      <Abschluss
+        links={[
+          { href: "/ratgeber/photovoltaik-leasing", art: "Ratgeber", titel: "Photovoltaik-Leasing" },
+          { href: "/ratgeber/investitionsfreibetrag-photovoltaik", art: "Ratgeber", titel: "Investitionsfreibetrag für PV" },
+          { href: "/ratgeber/eag-investitionszuschuss", art: "Ratgeber", titel: "EAG-Investitionszuschuss" },
+          { href: "/ratgeber/photovoltaik-mieten-oder-kaufen", art: "Ratgeber", titel: "Kaufen, leasen oder Contracting?" },
+          { href: "/ratgeber/ppa-oesterreich", art: "Ratgeber", titel: "PPA in Österreich" },
+          { href: "/forderungen/steuerlich", art: "Förderung", titel: "Steuerliche Vorteile" },
+          { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie" },
+          { href: "/service/energieberatung", art: "Service", titel: "Energieberatung" },
+        ]}
+        quellen={[
           { titel: "WKO – Investitionsfreibetrag (inkl. befristeter Erhöhung)", href: "https://www.wko.at/steuern/investitionsfreibetrag" },
           { titel: "Parlament – Nationalrat verdoppelt Investitionsfreibetrag vorübergehend (PK 0901, 15.10.2025)", href: "https://www.parlament.gv.at/aktuelles/pk/jahr_2025/pk0901" },
           { titel: "EAG-Abwicklungsstelle – Investitionszuschuss Photovoltaik & Speicher", href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/" },

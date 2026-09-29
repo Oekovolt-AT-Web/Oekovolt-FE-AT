@@ -40,6 +40,16 @@ export default function TableOfContents({ items, variant = "desktop" }) {
 
   const aktivIndex = Math.max(items.findIndex((i) => i.id === aktiv), 0);
 
+  // Desktop: aktiven Eintrag in der (begrenzt hohen) Liste sichtbar halten – ohne die Seite zu scrollen
+  const box = useRef(null);
+  useEffect(() => {
+    const el = box.current;
+    const eintrag = el?.querySelector('[aria-current="location"]');
+    if (!el || !eintrag) return;
+    const oben = eintrag.offsetTop - el.clientHeight / 2 + eintrag.clientHeight / 2;
+    el.scrollTo({ top: Math.max(oben, 0), behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }, [aktiv]);
+
   const liste = (
     <ol className="relative space-y-0.5">
       {items.map((item, i) => {
@@ -99,7 +109,12 @@ export default function TableOfContents({ items, variant = "desktop" }) {
       <div aria-hidden="true" className="mx-3 mb-3 h-1 overflow-hidden rounded-full bg-ink-100">
         <div className="h-full rounded-full bg-ov-500 transition-[width] duration-500" style={{ width: `${((aktivIndex + 1) / items.length) * 100}%` }} />
       </div>
-      {liste}
+      <div className="relative">
+        <div ref={box} className="ov-no-scrollbar relative max-h-[max(15rem,calc(100vh-34rem))] overflow-y-auto overscroll-contain pb-4">
+          {liste}
+        </div>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white to-transparent" />
+      </div>
     </nav>
   );
 }

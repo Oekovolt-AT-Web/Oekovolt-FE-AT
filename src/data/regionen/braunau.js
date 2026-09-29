@@ -8,6 +8,8 @@ const braunau = {
   bezirk: "Bezirk Braunau am Inn",
   plz: "5280",
   alpin: false,
+  // Anzeige: Foto im Seitenkopf (Nachweis in public/Images/AT/QUELLEN-produkte-regionen.md)
+  bild: { src: "/Images/AT/produkte-regionen/region-innviertel.jpg", alt: "Hügellandschaft im Innviertel mit Einzelhöfen und Wiesen", position: "50% 60%" },
   beschreibung:
     "Photovoltaik in Braunau am Inn: PV für Aluminium-, Metall- und Zulieferbetriebe in Ranshofen und im Innviertel – 28 km vom Firmensitz, Netz OÖ, PVGIS-Ertrag.",
   titel: "Photovoltaik für Braunau –",

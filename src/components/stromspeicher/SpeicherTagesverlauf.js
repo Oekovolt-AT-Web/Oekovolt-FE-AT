@@ -104,8 +104,8 @@ export default function SpeicherTagesverlauf() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_280px]">
-        <div className="relative p-4 md:p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="relative min-w-0 p-4 md:p-6">
           <div className="overflow-x-auto">
             <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full min-w-[520px]" role="img" aria-label={`Tagesverlauf ${mitSpeicher ? "mit" : "ohne"} Speicher: Eigenverbrauch ${Math.round(eigenQuote * 100)} Prozent, Autarkie ${Math.round(autarkie * 100)} Prozent`}>
               {[0, 1, 2, 3, 4].map((v) => (

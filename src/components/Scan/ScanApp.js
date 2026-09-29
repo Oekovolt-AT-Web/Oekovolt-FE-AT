@@ -147,7 +147,7 @@ export default function ScanApp({ token, start }) {
     <Rahmen>
       <header className="flex items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/Logo-Oekovolt-Gruen-mit-Weiss.webp" alt="Ökovolt" className="h-8 w-auto" />
+        <img src="/logo-oekovolt-weiss.png" alt="Ökovolt" className="h-8 w-auto" />
         <span className="flex items-center gap-1.5 rounded-full bg-[#8cc152]/15 px-3 py-1 text-[12px] font-semibold text-[#b5e07f]">
           <span className="h-2 w-2 rounded-full bg-[#8cc152] motion-safe:animate-pulse" aria-hidden="true" />
           Mit PC verbunden

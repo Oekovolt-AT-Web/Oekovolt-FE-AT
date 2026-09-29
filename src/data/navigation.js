@@ -145,13 +145,45 @@ export const NAVIGATION = [
         ],
       },
       {
-        label: "Rechner & Tools",
+        label: "Werkzeuge",
         items: [
-          { name: "Standort-Check (eHORA)", href: "/standort-check", icon: "Mountain", text: "Schneelast, Wind, Hagel, Ertrag" },
-          { name: "Solarrechner", href: "/solarrechner", icon: "Calculator", text: "Ertrag, Ersparnis & Amortisation" },
-          { name: "Stromspeicher-Rechner", href: "/rechner/stromspeicher", icon: "BatteryCharging", text: "Die passende Speichergröße" },
-          { name: "Alle Rechner", href: "/rechner", icon: "Sparkles", text: "Wärmepumpe, E-Auto, Tarif" },
           { name: "Energie live", href: "/energie-live", icon: "Activity", text: "Strommarkt Österreich in Echtzeit" },
+          { name: "Angebots-Konfigurator", href: "/angebot", icon: "Sparkles", text: "Ersteinschätzung in 2 Minuten" },
+        ],
+      },
+    ],
+    feature: { title: "Alle Rechner & Tools", text: "Gewerbe-PV, Peak Shaving, E-Flotte, Energiegemeinschaft, Blackout, CO₂ – rechnen Sie Ihr Projekt selbst durch.", href: "/rechner", cta: "Zur Übersicht" },
+  },
+  {
+    title: "Rechner",
+    slug: "rechner",
+    intro: "Ehrliche Zahlen für Ihren Betrieb – bevor Sie mit uns sprechen.",
+    groups: [
+      {
+        label: "Wirtschaftlichkeit",
+        items: [
+          { name: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv", icon: "Warehouse", text: "Was bringt Ihr Hallendach?" },
+          { name: "Solarrechner", href: "/solarrechner", icon: "Calculator", text: "Privat, Gewerbe, Landwirtschaft" },
+          { name: "Freiflächen & Pacht", href: "/rechner/freiflaeche-pacht", icon: "Sun", text: "Für Grundeigentümer" },
+          { name: "CO₂- & ESG-Rechner", href: "/rechner/co2-esg", icon: "Leaf", text: "Scope 2 für den Bericht" },
+        ],
+      },
+      {
+        label: "Speicher & Netz",
+        items: [
+          { name: "Peak-Shaving-Rechner", href: "/rechner/peak-shaving", icon: "Gauge", text: "Leistungspreis senken" },
+          { name: "Stromspeicher-Rechner", href: "/rechner/stromspeicher", icon: "BatteryCharging", text: "Die passende Speichergröße" },
+          { name: "Energiegemeinschaft", href: "/rechner/energiegemeinschaft", icon: "Share2", text: "Netzentgelt teilen und sparen" },
+          { name: "Blackout-Rechner", href: "/rechner/blackout", icon: "ShieldAlert", text: "Ausfallkosten vs. Ersatzstrom" },
+        ],
+      },
+      {
+        label: "Mobilität & Standort",
+        items: [
+          { name: "E-Flotte-Rechner", href: "/rechner/e-flotte", icon: "Car", text: "Firmenflotte auf Elektro" },
+          { name: "Ladeinfrastruktur-Planer", href: "/rechner/ladeinfrastruktur", icon: "PlugZap", text: "Ladepunkte & Lastmanagement" },
+          { name: "Standort-Check (eHORA)", href: "/standort-check", icon: "Mountain", text: "Schneelast, Wind, Hagel, Ertrag" },
+          { name: "Förder-Check", href: "/foerdercheck", icon: "BadgeEuro", text: "Passende Programme finden" },
         ],
       },
     ],

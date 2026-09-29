@@ -12,6 +12,7 @@
 //   - Smart Meter: Opt-out mit meldepflichtiger Wärmepumpe nicht möglich (§ 54 ElWG)
 // Keine Backoffice-Texte mehr (die API lieferte die deutsche Förderlage).
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -46,6 +47,9 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Heizkostenvergleich from "@/components/Warmepumpe/Heizkostenvergleich";
 import SonnenJahr from "@/components/Warmepumpe/SonnenJahr";
+import TemperaturSkala from "@/components/Warmepumpe/TemperaturSkala";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
+import FachAkkordeon, { FachTabelle } from "@/components/Produktdetail/FachAkkordeon";
 
 const PFAD = "/produkte/warmepumpe";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
@@ -82,11 +86,11 @@ const GEWERBE = [
 ];
 
 const TEMPERATUREN = [
-  { anwendung: "Flächenheizung (Fußboden, Industrieboden)", temp: "ca. 30–40 °C", hinweis: "Beste Effizienz, Standard im Neubau und in Hallen" },
-  { anwendung: "Heizkörper im Bestand", temp: "ca. 50–60 °C", hinweis: "Mit Heizlastberechnung und ggf. Tausch einzelner Heizkörper" },
-  { anwendung: "Deckenstrahlplatten Halle", temp: "ca. 40–60 °C", hinweis: "Abhängig von Hallenhöhe und Auslegung" },
-  { anwendung: "Warmwasser Hotel, Pflege, Sport", temp: "≥ 60 °C", hinweis: "Legionellenschutz nach ÖNORM B 5019 beachten" },
-  { anwendung: "Niedertemperatur-Prozesswärme", temp: "bis ca. 90 °C", hinweis: "Hochtemperatur-Wärmepumpe, idealerweise mit Abwärme als Quelle" },
+  { anwendung: "Flächenheizung (Fußboden, Industrieboden)", von: 30, bis: 40, temp: "ca. 30–40 °C", hinweis: "Beste Effizienz, Standard im Neubau und in Hallen" },
+  { anwendung: "Heizkörper im Bestand", von: 50, bis: 60, temp: "ca. 50–60 °C", hinweis: "Mit Heizlastberechnung und ggf. Tausch einzelner Heizkörper" },
+  { anwendung: "Deckenstrahlplatten Halle", von: 40, bis: 60, temp: "ca. 40–60 °C", hinweis: "Abhängig von Hallenhöhe und Auslegung" },
+  { anwendung: "Warmwasser Hotel, Pflege, Sport", von: 60, bis: 68, temp: "≥ 60 °C", hinweis: "Legionellenschutz nach ÖNORM B 5019 beachten" },
+  { anwendung: "Niedertemperatur-Prozesswärme", von: 60, bis: 90, temp: "bis ca. 90 °C", hinweis: "Hochtemperatur-Wärmepumpe, idealerweise mit Abwärme als Quelle" },
 ];
 
 const FOERDERUNG = [
@@ -181,7 +185,7 @@ export default function WarmepumpePage() {
         eyebrow="Wärmepumpe + Photovoltaik"
         title={
           <>
-            Wärme für Betrieb und Gebäude – <span className="ov-text-gradient">mit eigenem Sonnenstrom</span>
+            Wärme für Betrieb und Gebäude – <span className="ov-text-gradient-light">mit eigenem Sonnenstrom</span>
           </>
         }
         lead="Eine Wärmepumpe macht aus einer Kilowattstunde Strom drei bis vier Kilowattstunden Wärme. Kombiniert mit Photovoltaik heizen, kühlen und erzeugen Betriebe, Hotels und Gebäude ihr Warmwasser zu einem guten Teil mit Strom vom eigenen Dach. Wir planen und binden die Wärmepumpe in PV-Anlage und Energiemanagement ein."
@@ -189,58 +193,67 @@ export default function WarmepumpePage() {
         points={["Hallen, Prozesswärme, Hotellerie", "Heizlastberechnung statt Schätzung", "Einbindung in PV & Energiemanagement", "Förderstand geprüft"]}
         actions={[
           { label: "Projekt anfragen", href: "/angebot" },
-          { label: "Ersparnis berechnen", href: "/rechner/waermepumpe", icon: Calculator },
+          { label: "Heizkosten vergleichen", href: "#heizkosten", icon: Calculator },
+        ]}
+      />
+
+      <Kennzahlenband
+        items={[
+          { wert: "3–4", label: "kWh Wärme aus einer Kilowattstunde Strom" },
+          { value: 90, prefix: "bis ", suffix: " °C", label: "Niedertemperatur-Prozesswärme mit Hochtemperatur-Wärmepumpe" },
+          { wert: "20–35 %", label: "des Wärmepumpenstroms im Wohngebäude aus eigener PV realistisch" },
+          { value: 60, prefix: "≥ ", suffix: " °C", label: "Warmwasser in Hotel und Pflege – Legionellenschutz nach ÖNORM B 5019" },
         ]}
       />
 
       {/* Gewerbe */}
       <Section tone="white" space="lg" id="gewerbe">
-        <SectionHeading
-          eyebrow="Für Betriebe"
-          title={
-            <>
-              Wärmepumpen im Gewerbe: <span className="ov-text-gradient">Halle, Prozess, Hotel</span>
-            </>
-          }
-          lead="Im Gewerbe rechnet sich die Wärmepumpe besonders dort, wo Wärme oder Kälte tagsüber gebraucht wird und eine PV-Anlage am Dach sitzt. Entscheidend ist das Temperaturniveau – je niedriger, desto effizienter."
-          className="mb-12"
-        />
-        <FeatureGrid items={GEWERBE} cols={3} />
+        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
+          <div>
+            <SectionHeading
+              eyebrow="Für Betriebe"
+              title={
+                <>
+                  Wärmepumpen im Gewerbe: <span className="ov-text-gradient">Halle, Prozess, Hotel</span>
+                </>
+              }
+              lead="Im Gewerbe rechnet sich die Wärmepumpe besonders dort, wo Wärme oder Kälte tagsüber gebraucht wird und eine PV-Anlage am Dach sitzt. Entscheidend ist das Temperaturniveau – je niedriger, desto effizienter."
+            />
+            <Reveal dir="scale" delay={100} className="relative mt-10 hidden aspect-[4/3] overflow-hidden rounded-[2rem] shadow-2xl lg:block">
+              <Image src="/Images/AT/produkte-regionen/waermepumpe-ventilator-detail.jpg" alt="Ventilator einer Luft-Wasser-Wärmepumpe, Nahaufnahme" fill sizes="40vw" className="object-cover" />
+              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-transparent" />
+              <p className="ov-glass absolute bottom-5 left-5 right-5 rounded-2xl px-5 py-4 text-[15px] font-semibold text-white">Heizlastberechnung statt Schätzung – für Halle, Hotel und Prozess.</p>
+            </Reveal>
+          </div>
+          <FeatureGrid items={GEWERBE} cols={2} />
+        </div>
       </Section>
 
       {/* Temperaturniveaus */}
       <Section tone="sand" space="lg">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-16">
           <SectionHeading
             eyebrow="Temperaturniveau"
             title="Welche Temperatur braucht Ihre Anwendung?"
             lead="Die Jahresarbeitszahl sinkt, je höher die Vorlauftemperatur ist. Deshalb beginnt jede Planung mit der Frage, welche Temperatur wirklich gebraucht wird – und ob sich das Wärmeabgabesystem anpassen lässt."
           />
-          <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Temperaturniveaus nach Anwendung" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
-                <caption className="sr-only">Typische Vorlauftemperaturen nach Anwendung</caption>
-                <thead>
-                  <tr className="bg-navy-950 text-white">
-                    <th scope="col" className="px-5 py-4 font-semibold">Anwendung</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Vorlauf</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Hinweis</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100 bg-white">
-                  {TEMPERATUREN.map((t) => (
-                    <tr key={t.anwendung}>
-                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{t.anwendung}</th>
-                      <td className="ov-num whitespace-nowrap px-5 py-4 align-top text-ink-700">{t.temp}</td>
-                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{t.hinweis}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div>
+            <TemperaturSkala items={TEMPERATUREN} />
             <p className="mt-3 text-[13px] text-ink-500">Typische Richtwerte; die Auslegung erfolgt nach Heizlastberechnung und Herstellerdaten.</p>
-          </Reveal>
+          </div>
         </div>
+        <FachAkkordeon
+          className="mt-10"
+          items={[
+            {
+              id: "temperaturen-tabelle",
+              icon: ThermometerSun,
+              titel: "Für Technik & Einkauf: Vorlauftemperaturen als Tabelle",
+              kurz: "Anwendung, Vorlauf, Hinweis",
+              inhalt: <FachTabelle caption="Typische Vorlauftemperaturen nach Anwendung" minBreite={560} kopf={["Anwendung", "Vorlauf", "Hinweis"]} zeilen={TEMPERATUREN.map((t) => [t.anwendung, t.temp, t.hinweis])} />,
+            },
+          ]}
+        />
       </Section>
 
       {/* Heizen mit Sonne */}
@@ -281,25 +294,29 @@ export default function WarmepumpePage() {
       </Section>
 
       {/* Förderung */}
-      <Section tone="white" space="lg" id="foerderung">
+      <Section tone="navy" space="lg" id="foerderung" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -left-40 top-16 h-[440px] w-[440px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div aria-hidden="true" className="absolute -right-24 bottom-0 h-[360px] w-[360px] rounded-full bg-sun-400/10 blur-[130px]" />
         <SectionHeading
+          dark
           eyebrow="Förderung in Österreich"
           title="Förderstand 2026 – ehrlich eingeordnet"
           lead="Die Förderlandschaft für Wärmepumpen hat sich 2026 stark verändert. Beträge nennen wir hier bewusst nicht, weil sie sich laufend ändern – wir prüfen den aktuellen Stand vor jedem Angebot."
-          className="mb-12"
+          className="relative mb-12"
         />
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="relative grid gap-5 md:grid-cols-3">
           {FOERDERUNG.map((f, i) => {
             const Icon = f.icon;
             return (
               <Reveal key={f.titel} delay={i * 80}>
-                <article className="flex h-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
+                <article className="ov-glass flex h-full flex-col rounded-3xl p-7">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500/20 text-ov-300">
                     <Icon aria-hidden="true" className="h-6 w-6" />
                   </span>
-                  <h3 className="mt-6 font-display text-[18px] font-bold text-ink-900">{f.titel}</h3>
-                  <p className="mt-2 flex-1 text-[15px] leading-relaxed text-ink-600">{f.text}</p>
-                  <Link href={f.href} className="group mt-4 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                  <h3 className="mt-6 font-display text-[18px] font-bold text-white">{f.titel}</h3>
+                  <p className="mt-2 flex-1 text-[15px] leading-relaxed text-white/70">{f.text}</p>
+                  <Link href={f.href} className="group mt-4 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-300 hover:text-ov-200">
                     {f.link}
                     <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
@@ -308,7 +325,7 @@ export default function WarmepumpePage() {
             );
           })}
         </div>
-        <Reveal className="mt-8 flex flex-col gap-4 rounded-3xl bg-navy-950 p-7 text-white md:flex-row md:items-center md:justify-between md:p-9">
+        <Reveal className="relative mt-8 flex flex-col gap-4 rounded-3xl bg-gradient-to-r from-ov-600 to-ov-700 p-7 text-white shadow-xl md:flex-row md:items-center md:justify-between md:p-9">
           <div>
             <p className="font-display text-[19px] font-bold">Finanzierung und Leasing</p>
             <p className="mt-1 text-[15px] text-white/70">Für Betriebe organisieren wir auf Wunsch Leasing oder vermitteln Finanzierungspartner.</p>
@@ -317,14 +334,14 @@ export default function WarmepumpePage() {
             Finanzierung ansehen
           </Button>
         </Reveal>
-        <p className="mt-5 flex gap-2 text-[13px] leading-relaxed text-ink-500">
-          <FileCheck2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+        <p className="relative mt-5 flex gap-2 text-[13px] leading-relaxed text-white/55">
+          <FileCheck2 aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
           Stand September 2026. Förderansuchen bzw. Registrierung müssen in der Regel vor der Bestellung erfolgen. Keine Rechts- oder Förderberatung im Einzelfall.
         </p>
       </Section>
 
       {/* Ablauf */}
-      <Section tone="sand" space="lg">
+      <Section tone="white" space="lg">
         <SectionHeading
           eyebrow="Ablauf"
           title="In vier Schritten zur Wärmepumpe"
@@ -349,7 +366,7 @@ export default function WarmepumpePage() {
         text="Wärmebedarf, Heizsystem und PV-Anlage eingeben – der Rechner zeigt eine erste Einschätzung der Heizkosten im Vergleich zur bisherigen Heizung."
       />
 
-      <Section tone="white" space="lg">
+      <Section tone="sand" space="lg">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div>
             <SectionHeading
@@ -357,7 +374,7 @@ export default function WarmepumpePage() {
               title="Wärmepumpe – fachlich beantwortet"
               lead="Sie haben eine andere Frage? Rufen Sie uns an – wir beraten persönlich und herstellerunabhängig."
             />
-            <Reveal delay={100} className="mt-8 flex items-center gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/70">
+            <Reveal delay={100} className="mt-8 flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
                 <Sparkles aria-hidden="true" className="h-6 w-6" />
               </span>

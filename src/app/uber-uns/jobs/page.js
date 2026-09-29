@@ -13,12 +13,13 @@ import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import JobsListe from "@/components/Jobs/JobsListe";
+import FotoKachel from "@/components/Team/FotoKachel";
+import Kennzahlen from "@/components/Team/Kennzahlen";
 import { alleStellen, bewerbungsLink, euro } from "@/components/Jobs/jobDaten";
 import { KV, LEHRLINGSEINKOMMEN } from "@/data/stellen";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
@@ -56,12 +57,12 @@ const VORTEILE = [
 ];
 
 const FELDER = [
-  { icon: Compass, title: "Projekt & Planung", text: "Projektleitung und Elektroplanung für Dach- und Freiflächenanlagen – vom Belegungsplan bis zur Übergabe." },
-  { icon: ClipboardList, title: "Netzanschluss", text: "Netzzugang, TOR Erzeuger, Parkregler und Inbetriebnahme mit dem Netzbetreiber." },
-  { icon: MonitorDot, title: "Leittechnik", text: "SCADA, Fernwartung und Monitoring – gemeinsam mit der Solensa GmbH für IT-Sicherheit." },
-  { icon: HardHat, title: "Montage & Service", text: "Elektro- und Mechanikmontage, Wartung, Prüfung und Drohnen-Thermografie in ganz Österreich." },
-  { icon: Briefcase, title: "Vertrieb & Beratung", text: "Key Account Gewerbe und Energieberatung für Betriebe, Landwirtschaft und Gemeinden." },
-  { icon: GraduationCap, title: "Lehre", text: "Lehrberuf Elektrotechnik – mit Photovoltaik und Speichern von Anfang an." },
+  { icon: Compass, title: "Projekt & Planung", text: "Projektleitung und Elektroplanung für Dach- und Freiflächenanlagen – vom Belegungsplan bis zur Übergabe.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", pos: "50% 30%" } },
+  { icon: ClipboardList, title: "Netzanschluss", text: "Netzzugang, TOR Erzeuger, Parkregler und Inbetriebnahme mit dem Netzbetreiber.", bild: { src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "Schaltanlagen eines Umspannwerks unter blauem Himmel" } },
+  { icon: MonitorDot, title: "Leittechnik", text: "SCADA, Fernwartung und Monitoring – gemeinsam mit der Solensa GmbH für IT-Sicherheit.", bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" } },
+  { icon: HardHat, title: "Montage & Service", text: "Elektro- und Mechanikmontage, Wartung, Prüfung und Drohnen-Thermografie in ganz Österreich.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%" } },
+  { icon: Briefcase, title: "Vertrieb & Beratung", text: "Key Account Gewerbe und Energieberatung für Betriebe, Landwirtschaft und Gemeinden.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", pos: "60% 40%" } },
+  { icon: GraduationCap, title: "Lehre", text: "Lehrberuf Elektrotechnik – mit Photovoltaik und Speichern von Anfang an.", bild: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul", pos: "50% 35%" } },
 ];
 
 const ABLAUF = [
@@ -164,28 +165,37 @@ export default function JobsPage() {
       <Section tone="navy" space="lg" className="overflow-hidden">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
         <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <div>
+        <div aria-hidden="true" className="absolute -left-40 bottom-0 h-[380px] w-[380px] rounded-full bg-sun-400/10 blur-[130px]" />
+        <div className="relative">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
             <SectionHeading
               dark
               eyebrow="Warum Ökovolt"
               title={<>Ihre Vorteile <span className="ov-text-gradient-light">bei Ökovolt</span></>}
               lead="Ein Errichter mit eigener Technik, kurzen Wegen und Projekten in ganz Österreich."
             />
-            <Reveal className="mt-10 grid grid-cols-3 gap-3 border-t border-white/15 pt-8">
-              {[
-                { w: "2012", l: "in Österreich gegründet" },
-                { w: "30 MWp", l: "allein 2021 errichtet" },
-                { w: "9", l: "Bundesländer im Einsatzgebiet" },
-              ].map((k) => (
-                <div key={k.l}>
-                  <p className="font-display text-[clamp(1.5rem,1.1rem+1.4vw,2.25rem)] font-extrabold leading-none text-white">{k.w}</p>
-                  <p className="mt-2 text-[13px] leading-snug text-white/60">{k.l}</p>
-                </div>
-              ))}
-            </Reveal>
+            <Kennzahlen
+              dunkel
+              items={[
+                { value: "2012", label: "in Österreich gegründet" },
+                { value: 30, suffix: " MWp", label: "allein 2021 errichtet" },
+                { value: 9, label: "Bundesländer im Einsatzgebiet" },
+              ]}
+              klein
+            />
           </div>
-          <FeatureGrid items={VORTEILE} cols={2} tone="dark" />
+          <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {VORTEILE.map((v, i) => (
+              <Reveal as="li" key={v.title} delay={i * 90} className="group ov-glass relative overflow-hidden rounded-3xl p-6 transition-colors hover:bg-white/[0.12] md:p-7">
+                <span aria-hidden="true" className="ov-num absolute -right-2 -top-4 font-display text-[96px] font-extrabold leading-none text-white/[0.05]">{String(i + 1).padStart(2, "0")}</span>
+                <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500 text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.9)] transition-transform duration-300 group-hover:scale-110">
+                  <v.icon aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h3 className="relative mt-6 font-display text-[19px] font-bold text-white">{v.title}</h3>
+                <p className="relative mt-2 text-[15px] leading-relaxed text-white/65">{v.text}</p>
+              </Reveal>
+            ))}
+          </ul>
         </div>
       </Section>
 
@@ -202,7 +212,13 @@ export default function JobsPage() {
             </p>
           </div>
         </div>
-        <FeatureGrid items={FELDER} cols={3} />
+        <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+          {FELDER.map((f, i) => (
+            <Reveal as="li" key={f.title} delay={(i % 3) * 80} className="w-[82%] shrink-0 snap-start sm:w-auto">
+              <FotoKachel bild={f.bild} icon={f.icon} kopf="Tätigkeitsfeld" titel={f.title} text={f.text} className="h-full min-h-[300px]" />
+            </Reveal>
+          ))}
+        </ul>
       </Section>
 
       {/* Entgelt & Kollektivvertrag */}

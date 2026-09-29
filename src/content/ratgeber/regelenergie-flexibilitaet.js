@@ -24,7 +24,7 @@ const LP_NE6_SBG = 66.6; // €/kW und Jahr, NE 6 Netzbereich Salzburg 2026 (SNE
 const FLEX_KW = 150;
 const ABSCHLAG_BEISPIEL = 0.75; // Beispielwert aus den Erläuterungen (nur 25 % LP) – Tarifwerte 2027 noch offen
 
-const de = (n, st = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: st, maximumFractionDigits: st });
+const de = (n, st = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: st, maximumFractionDigits: st });
 const eur = (n) => de(Math.round(n)) + " €";
 
 const artikel = {

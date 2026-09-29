@@ -3,7 +3,7 @@
 // BloombergNEF Batteriepreis-Erhebung (12/2025). Netzentgelte 2026: SNE-V 2018 idF BGBl. II Nr. 305/2025.
 // Spannen je kWh für Gewerbespeicher sind redaktionelle Richtwerte (keine amtliche Statistik) – offengelegt.
 
-const fmt = (n, d = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmt = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 const eur = (n) => `${n < 0 ? "−" : ""}${fmt(Math.abs(Math.round(n)))} €`;
 const eur2 = (n) => `${fmt(n, 2)} €`;
 const ctF = (n, d = 2) => `${fmt(n, d)} ct`;

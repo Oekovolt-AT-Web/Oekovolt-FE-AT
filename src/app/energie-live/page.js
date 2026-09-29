@@ -1,7 +1,6 @@
 // energie-live/page.js – Strommarkt Österreich live (Gebotszone AT)
 
 import { Activity, AlertTriangle, BatteryCharging, Clock, Database, ExternalLink, Scale, Sun } from "lucide-react";
-import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Faq from "@/components/ui/Faq";
@@ -10,9 +9,12 @@ import Reveal from "@/components/ui/Reveal";
 import LiveKennzahlen from "@/components/EnergieLive/LiveKennzahlen";
 import PreisChart from "@/components/EnergieLive/PreisChart";
 import ErzeugungChart from "@/components/EnergieLive/ErzeugungChart";
-import Empfehlungen from "@/components/EnergieLive/Empfehlungen";
 import MeritOrder from "@/components/EnergieLive/MeritOrder";
-import { Verweise } from "@/components/Technik/Bausteine";
+import Stil from "@/components/ServiceAT/B/Stil";
+import HeroBild from "@/components/ServiceAT/B/HeroBild";
+import StundenRanking from "@/components/ServiceAT/B/StundenRanking";
+import Abschluss from "@/components/ServiceAT/B/Abschluss";
+import Button from "@/components/ui/Button";
 import { getEnergySnapshot } from "@/lib/energy";
 import { preisTage, zeitfenster, ct, gw, uhr, spanne, tagLang } from "@/components/EnergieLive/berechnung";
 
@@ -181,8 +183,8 @@ export default async function EnergieLivePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(datasetSchema) }} />
 
-      <PageHero
-        variant="dark"
+      <Stil />
+      <HeroBild
         breadcrumbs={[{ name: "Wissen", href: "/ratgeber" }, { name: "Strommarkt Österreich live" }]}
         eyebrow="Energie live · Gebotszone Österreich"
         title={
@@ -191,9 +193,11 @@ export default async function EnergieLivePage() {
           </>
         }
         lead="Börsenstrompreis der Gebotszone AT, Strommix und Anteil erneuerbarer Energien – viertelstündlich aus offenen Daten. Und was das für den Stromverbrauch Ihres Betriebs heute bedeutet."
+        image={{ src: "/Images/AT/service-b/wasserkraft-oesterreich.jpg", alt: "Donaukraftwerk Ybbs-Persenbeug in Niederösterreich aus der Luft" }}
+        ton="tief"
       >
         <LiveKennzahlen initial={kompakt} />
-      </PageHero>
+      </HeroBild>
 
       {/* Preisverlauf */}
       <Section tone="white" space="lg" id="preisverlauf" className="scroll-mt-24">
@@ -212,19 +216,40 @@ export default async function EnergieLivePage() {
         </Reveal>
       </Section>
 
-      {/* Was bedeutet das für Sie? */}
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Was bedeutet das für Sie?"
-          title="Aus Börsendaten werden Handlungsempfehlungen"
-          lead="Wer Verbrauch in günstige Stunden verschiebt, spart mit einem dynamischen Tarif – und nutzt Strom dann, wenn besonders viel Solar-, Wasser- und Windstrom im Netz ist."
-          className="mb-10 md:mb-12"
-        />
-        <Empfehlungen initial={kompakt} />
-        <p className="mt-6 text-[13px] leading-relaxed text-ink-500">
-          Orientierung, keine Beratung: Berechnet aus den veröffentlichten Day-Ahead-Preisen der Gebotszone AT. Ob sich ein dynamischer Tarif lohnt,
-          hängt von Verbrauch, Flexibilität, Leistungspreis und Tarifaufbau ab.
-        </p>
+      {/* Günstigste Stunden */}
+      <Section tone="sand" space="lg" id="guenstigste-stunden" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16 md:mb-12">
+          <SectionHeading
+            eyebrow="Was bedeutet das für Sie?"
+            title={
+              <>
+                Die günstigsten Stunden – <span className="ov-text-gradient">auf einen Blick</span>
+              </>
+            }
+          />
+          <Reveal delay={100}>
+            <p className="ov-lead text-ink-600">
+              Wer Verbrauch in günstige Stunden verschiebt, spart mit einem dynamischen Tarif – und nutzt Strom dann, wenn besonders viel Solar-, Wasser- und Windstrom im Netz ist.
+            </p>
+          </Reveal>
+        </div>
+        <Reveal dir="scale">
+          <StundenRanking initial={kompakt} />
+        </Reveal>
+        <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="max-w-3xl text-[13px] leading-relaxed text-ink-500">
+            Orientierung, keine Beratung: Berechnet aus den veröffentlichten Day-Ahead-Preisen der Gebotszone AT. Ob sich ein dynamischer Tarif lohnt, hängt von Verbrauch, Flexibilität,
+            Leistungspreis und Tarifaufbau ab.
+          </p>
+          <div className="flex shrink-0 flex-col gap-2.5 sm:flex-row">
+            <Button href="/rechner/dynamischer-stromtarif" variant="navy" size="md">
+              Tarif-Rechner
+            </Button>
+            <Button href="/gewerbespeicher" variant="secondary" size="md">
+              PV & Speicher
+            </Button>
+          </div>
+        </div>
       </Section>
 
       {/* Strommix */}
@@ -340,13 +365,12 @@ export default async function EnergieLivePage() {
         </div>
       </Section>
 
-      <Verweise
-        ueberschrift="Weiterlesen"
-        items={[
-          { href: "/service/stromtarif", titel: "Dynamischer Stromtarif in Österreich", text: "§ 22 ElWG, Smart Meter und Lastverschiebung für Betriebe." },
-          { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "OeMAG-Marktpreis, Direktvermarkter und PPA – was negative Preise für Ihren Überschuss bedeuten." },
-          { href: "/rechner/dynamischer-stromtarif", titel: "Dynamischer-Tarif-Rechner", text: "Was die heutigen Preise für Ihre Stromrechnung bedeuten." },
-          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Bei negativen Preisen automatisch abregeln – am Netzanschlusspunkt." },
+      <Abschluss
+        links={[
+          { href: "/service/stromtarif", art: "Service", titel: "Dynamischer Stromtarif in Österreich" },
+          { href: "/service/direktvermarktung", art: "Service", titel: "Reststromvermarktung" },
+          { href: "/rechner/dynamischer-stromtarif", art: "Rechner", titel: "Dynamischer-Tarif-Rechner" },
+          { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)" },
         ]}
       />
       <CtaBand

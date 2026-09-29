@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CircleAlert, CircleCheck, FileSignature, Fence, Home, LayoutPanelTop, Sprout, Warehouse } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleAlert, CircleCheck, FileSignature, Fence, Home, LayoutPanelTop, Sprout, Warehouse } from "lucide-react";
+import { cn } from "@/components/ui/cn";
+import { KARTE_PFADE, KARTE_VIEWBOX } from "@/components/Forderungen/Shared/kartePfade";
 
 /**
  * Genehmigungs-Check Österreich: Welche Verfahren braucht eine PV-Anlage je
@@ -151,7 +153,7 @@ function Auswahl({ legend, name, optionen, wert, onChange }) {
       <legend className="text-[14.5px] font-semibold text-ink-800">{legend}</legend>
       <div className="mt-3 inline-flex flex-wrap gap-1 rounded-full bg-ink-100 p-1">
         {optionen.map((o) => (
-          <label key={o.id} className={`inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500 ${wert === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-600 hover:text-ink-800"}`}>
+          <label key={o.id} className={cn("inline-flex h-10 cursor-pointer items-center rounded-full px-4 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500", wert === o.id ? "bg-white text-ink-900 shadow-sm" : "text-ink-600 hover:text-ink-800")}>
             <input type="radio" name={name} value={o.id} checked={wert === o.id} onChange={() => onChange(o.id)} className="sr-only" />
             {o.label}
           </label>
@@ -161,12 +163,21 @@ function Auswahl({ legend, name, optionen, wert, onChange }) {
   );
 }
 
+const SCHRITTE = [
+  { id: "land", label: "Bundesland" },
+  { id: "art", label: "Anlagenart" },
+  { id: "groesse", label: "Größe & Lage" },
+];
+
 export default function GenehmigungsCheck({ laenderPfade = {} }) {
+  const [schritt, setSchritt] = useState(0);
+  const [richtung, setRichtung] = useState("vor");
   const [land, setLand] = useState("oberoesterreich");
   const [art, setArt] = useState("dach");
   const [kw, setKw] = useState(100);
   const [schutz, setSchutz] = useState("nein");
   const [denkmal, setDenkmal] = useState("nein");
+  const [hoverLand, setHoverLand] = useState(null);
 
   const e = useMemo(() => {
     const m2 = kw * 5;
@@ -181,53 +192,146 @@ export default function GenehmigungsCheck({ laenderPfade = {} }) {
   }, [land, art, kw, schutz, denkmal]);
 
   const G = STATUS[e.gesamt];
+  const landName = LAENDER.find((l) => l.key === land)?.name;
+  const artLabel = ARTEN.find((a) => a.id === art)?.label;
+
+  function gehe(i) {
+    setRichtung(i >= schritt ? "vor" : "zurueck");
+    setSchritt(Math.max(0, Math.min(SCHRITTE.length - 1, i)));
+  }
 
   return (
-    <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_80px_-50px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
-      <div className="grid lg:grid-cols-[1fr_1fr]">
-        <div className="space-y-7 border-b border-ink-100 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-          <label className="block">
-            <span className="text-[14.5px] font-semibold text-ink-800">Bundesland</span>
-            <select value={land} onChange={(ev) => setLand(ev.target.value)} className="mt-2 h-12 w-full rounded-2xl bg-sand-50 px-4 text-[16px] font-semibold text-ink-900 ring-1 ring-ink-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-ov-500">
-              {LAENDER.map((l) => (
-                <option key={l.key} value={l.key}>{l.name}</option>
-              ))}
-            </select>
-          </label>
+    <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_50px_100px_-60px_rgba(3,18,43,0.6)] ring-1 ring-ink-200/70">
+      <div className="grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        {/* Stepper */}
+        <div className="flex flex-col p-6 sm:p-8 md:p-10">
+          <ol className="grid grid-cols-3 gap-2" aria-label="Schritte">
+            {SCHRITTE.map((s, i) => {
+              const aktiv = i === schritt;
+              const fertig = i < schritt;
+              return (
+                <li key={s.id}>
+                  <button type="button" onClick={() => gehe(i)} aria-current={aktiv ? "step" : undefined} className="group w-full text-left">
+                    <span aria-hidden="true" className="block h-1.5 overflow-hidden rounded-full bg-ink-100">
+                      <span className={cn("block h-full rounded-full bg-gradient-to-r from-ov-400 to-ov-600 transition-[width] duration-500", aktiv || fertig ? "w-full" : "w-0")} />
+                    </span>
+                    <span className={cn("mt-2.5 flex items-center gap-2 text-[13px] font-semibold", aktiv ? "text-ink-900" : fertig ? "text-ov-700" : "text-ink-400")}>
+                      <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11.5px] font-bold", aktiv ? "bg-navy-950 text-white" : fertig ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-500")}>
+                        {fertig ? <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} /> : i + 1}
+                      </span>
+                      <span className="truncate">{s.label}</span>
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
 
-          <fieldset>
-            <legend className="text-[14.5px] font-semibold text-ink-800">Art der Anlage</legend>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {ARTEN.map((a) => {
-                const an = art === a.id;
-                return (
-                  <label key={a.id} className={`flex cursor-pointer flex-col gap-2 rounded-2xl p-3 transition-all focus-within:ring-2 focus-within:ring-ov-500 ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white"}`}>
-                    <input type="radio" name="art" className="sr-only" checked={an} onChange={() => setArt(a.id)} />
-                    <a.icon aria-hidden="true" className={`h-5 w-5 ${an ? "text-ov-600" : "text-ink-500"}`} />
-                    <span className="text-[14px] font-semibold leading-tight text-ink-900">{a.label}</span>
-                    <span className="text-[12px] leading-tight text-ink-500">{a.sub}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
+          <div key={schritt} className={cn("mt-8 flex-1", richtung === "vor" ? "ov-step-vor" : "ov-step-zurueck")}>
+            {schritt === 0 && (
+              <fieldset>
+                <legend className="font-display text-[clamp(1.35rem,1.1rem+0.8vw,1.75rem)] font-extrabold tracking-tight text-ink-900">Wo steht die Anlage?</legend>
+                <p className="mt-1.5 text-[15px] text-ink-600">Bundesland auf der Karte oder in der Liste wählen.</p>
+                <div className="relative mx-auto mt-5 max-w-[520px]">
+                  <svg viewBox={KARTE_VIEWBOX} className="h-auto w-full" aria-hidden="true" onMouseLeave={() => setHoverLand(null)}>
+                    {Object.keys(KARTE_PFADE)
+                      .sort((a, b) => (a === land ? 1 : b === land ? -1 : a === "wien" ? 1 : b === "wien" ? -1 : 0))
+                      .map((k) => (
+                        <path
+                          key={k}
+                          d={KARTE_PFADE[k].d}
+                          fillRule="evenodd"
+                          strokeLinejoin="round"
+                          onClick={() => setLand(k)}
+                          onMouseEnter={() => setHoverLand(k)}
+                          className={cn("cursor-pointer transition-colors duration-300", k === land ? "fill-ov-500 stroke-white" : k === hoverLand ? "fill-ov-200 stroke-white" : "fill-ink-200 stroke-white")}
+                          strokeWidth={k === land ? 1.8 : 1}
+                        />
+                      ))}
+                  </svg>
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {LAENDER.map((l) => {
+                    const an = land === l.key;
+                    return (
+                      <label key={l.key} onMouseEnter={() => setHoverLand(l.key)} onMouseLeave={() => setHoverLand(null)} className={cn("flex min-h-[44px] cursor-pointer items-center rounded-xl px-3 text-[14px] font-semibold transition-all focus-within:ring-2 focus-within:ring-ov-500", an ? "bg-ov-50 text-ov-800 ring-2 ring-ov-500" : "bg-sand-50 text-ink-700 ring-1 ring-ink-200 hover:bg-white")}>
+                        <input type="radio" name="gc-land" className="sr-only" checked={an} onChange={() => setLand(l.key)} />
+                        {l.name}
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
 
-          <label className="block">
-            <span className="flex items-baseline justify-between text-[14.5px] font-semibold text-ink-800">
-              Leistung
-              <span className="ov-num font-display text-[20px] font-extrabold text-ink-900">{kw.toLocaleString("de-AT")} kWp</span>
-            </span>
-            <input type="range" min={5} max={2000} step={5} value={kw} onChange={(ev) => setKw(Number(ev.target.value))} className="mt-3 w-full accent-ov-600" aria-describedby="flaeche-hinweis" />
-            <span id="flaeche-hinweis" className="mt-1 block text-[13px] text-ink-500">entspricht rund {e.m2.toLocaleString("de-AT")} m² Modulfläche (Annahme 5 m² je kWp)</span>
-          </label>
+            {schritt === 1 && (
+              <fieldset>
+                <legend className="font-display text-[clamp(1.35rem,1.1rem+0.8vw,1.75rem)] font-extrabold tracking-tight text-ink-900">Welche Art von Anlage?</legend>
+                <p className="mt-1.5 text-[15px] text-ink-600">Auf Gebäuden gelten meist andere Regeln als auf Freiflächen.</p>
+                <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {ARTEN.map((a) => {
+                    const an = art === a.id;
+                    return (
+                      <label key={a.id} className={cn("group flex cursor-pointer flex-col gap-3 rounded-2xl p-4 transition-all focus-within:ring-2 focus-within:ring-ov-500", an ? "bg-navy-950 text-white shadow-[0_18px_36px_-20px_rgba(3,18,43,0.8)]" : "bg-sand-50 ring-1 ring-ink-200 hover:-translate-y-0.5 hover:bg-white")}>
+                        <input type="radio" name="gc-art" className="sr-only" checked={an} onChange={() => setArt(a.id)} />
+                        <span className={cn("flex h-11 w-11 items-center justify-center rounded-xl", an ? "bg-ov-500 text-white" : "bg-white text-ov-600 ring-1 ring-ink-200")}>
+                          <a.icon aria-hidden="true" className="h-5 w-5" />
+                        </span>
+                        <span>
+                          <span className={cn("block text-[15px] font-semibold leading-tight", an ? "text-white" : "text-ink-900")}>{a.label}</span>
+                          <span className={cn("mt-0.5 block text-[12.5px] leading-tight", an ? "text-white/60" : "text-ink-500")}>{a.sub}</span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
 
-          <Auswahl legend="Schutzzone, Altstadt- oder Ortsbildschutzgebiet?" name="schutz" optionen={[{ id: "nein", label: "Nein" }, { id: "ja", label: "Ja / weiß nicht" }]} wert={schutz} onChange={setSchutz} />
-          <Auswahl legend="Denkmalgeschütztes Gebäude?" name="denkmal" optionen={[{ id: "nein", label: "Nein" }, { id: "ja", label: "Ja" }]} wert={denkmal} onChange={setDenkmal} />
+            {schritt === 2 && (
+              <div className="space-y-7">
+                <div>
+                  <p className="font-display text-[clamp(1.35rem,1.1rem+0.8vw,1.75rem)] font-extrabold tracking-tight text-ink-900">Wie groß, und wo genau?</p>
+                  <p className="mt-1.5 text-[15px] text-ink-600">Die Schwellen der Länder hängen an Leistung oder Modulfläche.</p>
+                </div>
+                <label className="block">
+                  <span className="flex items-baseline justify-between text-[14.5px] font-semibold text-ink-800">
+                    Leistung
+                    <span className="ov-num font-display text-[24px] font-extrabold text-ink-900">{kw.toLocaleString("de-DE")} kWp</span>
+                  </span>
+                  <input type="range" min={5} max={2000} step={5} value={kw} onChange={(ev) => setKw(Number(ev.target.value))} className="mt-3 w-full accent-ov-600" aria-describedby="flaeche-hinweis" />
+                  <span id="flaeche-hinweis" className="mt-1 block text-[13px] text-ink-500">entspricht rund {e.m2.toLocaleString("de-DE")} m² Modulfläche (Annahme 5 m² je kWp)</span>
+                </label>
+                <Auswahl legend="Schutzzone, Altstadt- oder Ortsbildschutzgebiet?" name="schutz" optionen={[{ id: "nein", label: "Nein" }, { id: "ja", label: "Ja / weiß nicht" }]} wert={schutz} onChange={setSchutz} />
+                <Auswahl legend="Denkmalgeschütztes Gebäude?" name="denkmal" optionen={[{ id: "nein", label: "Nein" }, { id: "ja", label: "Ja" }]} wert={denkmal} onChange={setDenkmal} />
+              </div>
+            )}
+          </div>
+
+          <div className="mt-8 flex items-center justify-between gap-3 border-t border-ink-100 pt-6">
+            <button type="button" onClick={() => gehe(schritt - 1)} disabled={schritt === 0} className="inline-flex h-11 items-center gap-2 rounded-full px-4 text-[14.5px] font-semibold text-ink-700 transition-colors hover:bg-ink-100 disabled:invisible">
+              <ArrowLeft aria-hidden="true" className="h-4 w-4" /> Zurück
+            </button>
+            {schritt < SCHRITTE.length - 1 ? (
+              <button type="button" onClick={() => gehe(schritt + 1)} className="group inline-flex h-12 items-center gap-2 rounded-full bg-ov-600 px-6 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700">
+                Weiter: {SCHRITTE[schritt + 1].label}
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </button>
+            ) : (
+              <span className="text-[13.5px] font-semibold text-ov-700">Ergebnis steht rechts – live aktualisiert</span>
+            )}
+          </div>
         </div>
 
-        <div className="flex flex-col bg-sand-50/60 p-6 sm:p-8" aria-live="polite">
-          <p className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-500">Ergebnis – Orientierung</p>
-          <p className={`mt-3 inline-flex items-center gap-2 self-start rounded-full px-4 py-2 text-[15px] font-bold ${G.ton}`}>
+        {/* Ergebnis */}
+        <div className="ov-noise relative isolate flex flex-col overflow-hidden bg-navy-950 p-6 text-white sm:p-8 md:p-10" aria-live="polite">
+          <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10" />
+          <div aria-hidden="true" className="absolute -right-24 -top-24 -z-10 h-80 w-80 rounded-full bg-ov-500/25 blur-[100px]" />
+          <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Ergebnis – Orientierung</p>
+          <p className="mt-2 text-[14px] text-white/60">
+            {landName} · {artLabel} · <span className="ov-num">{kw.toLocaleString("de-DE")} kWp</span>
+          </p>
+          <p className={cn("mt-4 inline-flex items-center gap-2 self-start rounded-full px-4 py-2 text-[15px] font-bold", G.ton)}>
             <G.icon aria-hidden="true" className="h-4 w-4" />
             {e.gesamt === "frei" ? "Keine Verfahren nötig" : e.gesamt === "anzeige" ? "Anzeige nötig" : e.gesamt === "bewilligung" ? "Bewilligung oder Widmung nötig" : "Im Einzelfall klären"}
           </p>
@@ -235,26 +339,24 @@ export default function GenehmigungsCheck({ laenderPfade = {} }) {
             {e.zeilen.map((z) => {
               const S = STATUS[z.r[0]];
               return (
-                <li key={z.titel} className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
+                <li key={z.titel} className="rounded-2xl bg-white/[0.05] p-4 ring-1 ring-white/10 transition-colors">
                   <p className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-semibold text-ink-900">{z.titel}</span>
-                    <span className={`rounded-full px-2.5 py-0.5 text-[12px] font-semibold ${S.ton}`}>{S.label}</span>
+                    <span className="font-semibold text-white">{z.titel}</span>
+                    <span className={cn("rounded-full px-2.5 py-0.5 text-[12px] font-semibold", S.ton)}>{S.label}</span>
                   </p>
-                  <p className="mt-2 text-[14px] leading-relaxed text-ink-600">{z.r[1]}</p>
+                  <p className="mt-2 text-[14px] leading-relaxed text-white/65">{z.r[1]}</p>
                 </li>
               );
             })}
           </ul>
-          <p className="mt-4 text-[13.5px] leading-relaxed text-ink-600">
-            Für den EAG-Investitionszuschuss müssen alle Anzeigen und Genehmigungen schon beim Förderantrag vorliegen.
-          </p>
+          <p className="mt-4 text-[13.5px] leading-relaxed text-white/60">Für den EAG-Investitionszuschuss müssen alle Anzeigen und Genehmigungen schon beim Förderantrag vorliegen.</p>
           {laenderPfade[land] && (
-            <Link href={laenderPfade[land]} className="group mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-              Förderung und Recht in {LAENDER.find((l) => l.key === land)?.name}
+            <Link href={laenderPfade[land]} className="group mt-4 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-300 hover:text-white">
+              Förderung und Recht in {landName}
               <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           )}
-          <p className="mt-auto pt-6 text-[12.5px] leading-relaxed text-ink-500">
+          <p className="mt-auto pt-6 text-[12px] leading-relaxed text-white/45">
             Orientierung ohne Gewähr. Zusätzlich können Gewerbe-, Wasser-, Forst-, Straßen- und Luftfahrtrecht betroffen sein. Verbindlich ist die Auskunft der Behörde bzw. der Anlaufstelle für erneuerbare Energie Ihres Landes.
           </p>
         </div>

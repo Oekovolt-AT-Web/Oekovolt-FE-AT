@@ -36,7 +36,7 @@ const siteSchema = {
       logo: {
         "@type": "ImageObject",
         "@id": `${BASE_URL}/#logo`,
-        url: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
+        url: `${BASE_URL}/logo-oekovolt.png`,
         width: 400,
         height: 100,
         caption: "Ökovolt Österreich Logo",

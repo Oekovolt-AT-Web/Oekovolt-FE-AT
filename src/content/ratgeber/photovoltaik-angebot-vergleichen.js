@@ -23,7 +23,7 @@ const artikel = {
   veroeffentlicht: "2026-09-28",
   aktualisiert: "2026-09-28",
   kategorie: "Kosten & Wirtschaftlichkeit",
-  bild: "/Images/Jobs/jobs4.jpg",
+  bild: "/Images/AT/wissen/pv-ingenieur-tablet.jpg",
   bildAlt: "Photovoltaik-Montage auf einem Dach",
   badge: { wert: "€/kWh", text: "Preis je kWh prognostiziertem Jahresertrag – die fairere Vergleichszahl" },
 

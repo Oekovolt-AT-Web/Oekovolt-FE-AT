@@ -20,6 +20,7 @@ import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import HerstellerFilter from "@/components/Hersteller/HerstellerFilter";
 import { herstellerId } from "@/components/Hersteller/ids";
+import { PARTNER_KATEGORIEN } from "@/components/Hersteller/partner";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 
@@ -48,79 +49,8 @@ export const metadata = {
   twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [`${BASE_URL}/og-image.jpg`] },
 };
 
-const KATEGORIEN = [
-  {
-    name: "Wechselrichter",
-    hersteller: [
-      {
-        title: "Fronius",
-        tag: "Hersteller aus Österreich",
-        bild: "/Images/Dienstleistungen/Smartphone/Fronius-Primo-5.0-1-208-240.webp",
-        alt_banner_image: "Fronius-Wechselrichter",
-        main_description:
-          "Fronius entwickelt und fertigt Wechselrichter in Oberösterreich – vom Hybrid-Wechselrichter für Wohnhaus und Kleinbetrieb bis zu Geräten für Gewerbedächer und Freiflächen. Für uns zählen kurze Wege zum Hersteller, Service in Österreich und eine lange Ersatzteilversorgung.",
-        fakten: [
-          ["Sitz", "Pettenbach, Oberösterreich"],
-          ["Gegründet", "1945"],
-          ["Produktion", "u. a. Sattledt, Oberösterreich"],
-        ],
-      },
-      {
-        title: "Huawei",
-        bild: "/Images/Dienstleistungen/Smartphone/huawei.webp",
-        alt_banner_image: "Huawei-Wechselrichter und Speicher",
-        main_description:
-          "Huawei bietet String-Wechselrichter der Serie SUN2000 vom Wohnhaus bis zum Gewerbe- und Freiflächenbereich sowie die Speicherfamilie LUNA2000. Stark bei großen Dachflächen mit vielen MPP-Trackern und bei integrierter Überwachung.",
-        fakten: [
-          ["Einsatz", "Wohnhaus bis Freifläche"],
-          ["Speicher", "LUNA2000"],
-        ],
-      },
-      {
-        title: "Solis",
-        bild: "/Images/Dienstleistungen/Photovoltaik/welschelrichter.webp",
-        alt_banner_image: "String-Wechselrichter an einer Wand",
-        main_description:
-          "Solis (Ginlong Technologies) liefert String-Wechselrichter mit breitem Leistungsspektrum, darunter dreiphasige Geräte für Gewerbe- und Hallendächer. Gut geeignet, wenn viele Dachflächen mit unterschiedlicher Ausrichtung zusammenkommen.",
-        fakten: [["Einsatz", "Gewerbe- und Hallendächer"]],
-      },
-    ],
-  },
-  {
-    name: "Stromspeicher",
-    hersteller: [
-      {
-        title: "BYD",
-        bild: "/Images/Dienstleistungen/Photovoltaik/BYD.png",
-        alt_banner_image: "BYD-Batteriespeicher",
-        main_description:
-          "BYD fertigt Batteriespeicher mit Lithium-Eisenphosphat-Zellen (LFP). Die modularen Hochvoltspeicher der Battery-Box lassen sich mit zahlreichen Hybrid-Wechselrichtern kombinieren und später erweitern.",
-        fakten: [["Zellchemie", "Lithium-Eisenphosphat (LFP)"]],
-      },
-      {
-        title: "Sigenergy",
-        bild: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg",
-        alt_banner_image: "Batteriespeicher im Technikraum",
-        main_description:
-          "Sigenergy baut modulare Speichersysteme mit integriertem Hybrid-Wechselrichter und Energiemanagement – vom Wohnhaus bis zu Gewerbeanwendungen. Das System lässt sich stapelbar erweitern und bindet Ladeinfrastruktur mit ein.",
-        fakten: [["Aufbau", "Speicher und Wechselrichter integriert"]],
-      },
-    ],
-  },
-  {
-    name: "Monitoring",
-    hersteller: [
-      {
-        title: "meteocontrol",
-        bild: "/Images/Ratgeber/energiemanagementsystem.jpg",
-        alt_banner_image: "Monitoring-Oberfläche einer Photovoltaikanlage",
-        main_description:
-          "meteocontrol liefert Datenlogger und Monitoring-Portale für gewerbliche PV-Anlagen und Solarparks. Wir nutzen die Systeme zur herstellerübergreifenden Überwachung – ergänzend zu unseren eigenen Fernwartungs- und SCADA-Systemen.",
-        fakten: [["Einsatz", "Gewerbe, Freifläche, Portfolio"]],
-      },
-    ],
-  },
-];
+// Herstellerdaten zentral in @/components/Hersteller/partner (auch für Produktseiten und Detailseiten)
+const KATEGORIEN = PARTNER_KATEGORIEN;
 
 const FAQ = [
   {
@@ -175,15 +105,16 @@ export default function HerstellerPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Hersteller" }]}
         eyebrow="Hersteller & Marken"
         title={
           <>
-            Komponenten, die wir kennen – <span className="ov-text-gradient">geprüft im Einsatz</span>
+            Komponenten, die wir kennen – <span className="ov-text-gradient-light">geprüft im Einsatz</span>
           </>
         }
         lead="Wir verbauen Wechselrichter, Speicher und Monitoring von Herstellern, mit denen wir seit Jahren zusammenarbeiten – allen voran Fronius aus Oberösterreich. Die Auswahl folgt Langlebigkeit, Service in Österreich und Netzkonformität, nicht dem Datenblatt allein."
-        image={{ src: "/Images/Dienstleistungen/Photovoltaik/montage.png", alt: "Montage von Solarmodulen" }}
+        image={{ src: "/Images/AT/wissen/pv-ingenieur-tablet.jpg", alt: "Ingenieur prüft Anlagendaten auf einem Tablet vor Solarmodulen", position: "65% 35%" }}
         actions={[
           { label: "Angebot anfragen", href: "/angebot" },
           { label: "Marken ansehen", href: "#marken", icon: Layers },
@@ -207,14 +138,15 @@ export default function HerstellerPage() {
       />
 
       <nav aria-label="Marken-Schnellzugriff" className="border-b border-ink-100 bg-white">
-        <ul className="ov-container flex flex-wrap items-center justify-center gap-x-2 gap-y-2 py-6 md:justify-between">
-          {alle.map((h) => (
-            <li key={h.title}>
+        <ul className="ov-container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          {alle.map((h, i) => (
+            <li key={h.title} className={i > 0 ? "border-ink-100 lg:border-l" : ""}>
               <a
                 href={`#${herstellerId(h.title)}`}
-                className="flex h-14 min-w-[104px] items-center justify-center rounded-xl px-4 text-ink-600 transition-colors duration-300 hover:bg-ink-50 hover:text-ink-900 md:min-w-[120px]"
+                className="group flex h-full flex-col items-center justify-center gap-1.5 px-3 py-7 text-center transition-colors duration-300 hover:bg-sand-50 md:py-9"
               >
-                <span className="font-display text-[16px] font-bold">{h.title}</span>
+                <span className="font-display text-[24px] font-extrabold tracking-[-0.03em] text-ink-300 transition-colors duration-300 group-hover:text-ink-900 md:text-[28px]">{h.title}</span>
+                <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-ov-700/80">{h.rolle}</span>
               </a>
             </li>
           ))}

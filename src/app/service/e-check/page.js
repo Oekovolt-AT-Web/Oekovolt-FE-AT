@@ -1,22 +1,23 @@
 // service/e-check/page.js – Österreich: wiederkehrende Prüfung elektrischer Anlagen / PV (Ziel: Prüfauftrag)
 
-import { BookOpen, ClipboardCheck, ClipboardList, FileCheck2, FileSearch, Gauge, HardHat, Hourglass, ListChecks, ShieldCheck, UserCheck, Zap } from "lucide-react";
+import { BookOpen, ClipboardCheck, FileCheck2, FileSearch, Gauge, HardHat, Hourglass, ListChecks, Scale, ShieldCheck, UserCheck, Zap } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
+import SplitMedia from "@/components/ui/SplitMedia";
 import FeatureGrid from "@/components/ui/FeatureGrid";
-import Steps from "@/components/ui/Steps";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
 import Tabelle from "@/components/ServiceAT/Tabelle";
-import Hinweis from "@/components/ServiceAT/Hinweis";
-import Weiterlesen from "@/components/ServiceAT/Weiterlesen";
-import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
-import FaqSektion from "@/components/ServiceAT/FaqSektion";
-import Quellen from "@/components/ServiceAT/Quellen";
+import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
+import PruefFristenFinder from "@/components/ServiceAT/A/PruefFristenFinder";
+import Tabs from "@/components/ServiceAT/A/Tabs";
+import AnfragePremium from "@/components/ServiceAT/A/AnfragePremium";
+import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
+import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 
 const PFAD = "/service/e-check";
 const TITEL = "E-Check & Anlagenprüfung nach OVE E 8101 | Ökovolt";
@@ -93,123 +94,152 @@ export default function ECheckPage() {
       <JsonLd daten={serviceSchema({ pfad: PFAD, name: "E-Check und wiederkehrende Prüfung von PV- und Elektroanlagen", beschreibung: BESCHREIBUNG, serviceType: "Wiederkehrende Prüfung elektrischer Anlagen" })} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Service" }, { name: "E-Check & Anlagenprüfung" }]}
         eyebrow="E-Check · Wiederkehrende Prüfung"
-        title={<>E-Check für PV-Anlagen – <span className="ov-text-gradient">Prüfbefund nach OVE E 8101</span></>}
+        title={
+          <>
+            E-Check für PV-Anlagen – <span className="ov-text-gradient-light">Prüfbefund nach OVE E 8101</span>
+          </>
+        }
         lead="In Österreich heißt der E-Check „wiederkehrende Überprüfung“: Eine Elektrofachkraft besichtigt, erprobt und misst die Anlage und hält das Ergebnis im Prüfbefund fest. Für Arbeitgeber ist das Pflicht – für Versicherung, Garantie und Sicherheit ohnehin sinnvoll."
-        image={{ src: "/Images/Dienstleistungen/Service/solar-panel-7518786_1280.jpg", alt: "Elektrofachkraft mit Schutzhandschuhen prüft den Rahmen eines Solarmoduls" }}
+        image={{ src: "/Images/AT/technik-service/techniker-messung-schaltschrank.jpg", alt: "Elektrofachkraft prüft die Verdrahtung eines Schaltschranks mit Messgerät", position: "30% 40%" }}
         points={["Prüfung nach OVE E 8101 & OVE EN 62446-1", "Fristen nach ESV 2012", "Prüfbefund & Anlagenbuch", "Mängelbehebung aus einer Hand"]}
         actions={[
           { label: "Prüfung beauftragen", href: "#anfrage" },
-          { label: "Prüffristen ansehen", href: "#fristen", icon: Hourglass },
+          { label: "Prüffrist ermitteln", href: "#fristen", icon: Hourglass },
         ]}
       />
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
-          <div>
-            <SectionHeading eyebrow="Begriff" title="Was „E-Check“ in Österreich bedeutet" />
-            <Reveal delay={80} className="mt-6 space-y-4 text-[16.5px] leading-relaxed text-ink-600">
-              <p>
-                <strong className="text-ink-900">„E-Check“ ist ein Begriff aus Deutschland; in Österreich spricht man von der wiederkehrenden Überprüfung elektrischer Anlagen nach OVE E 8101.</strong>{" "}
-                Sie wird von einer Elektrofachkraft durchgeführt und mit einem Prüfbefund abgeschlossen.
-              </p>
-              <p>
-                Das <strong className="text-ink-900">Anlagenbuch</strong> ist die Dokumentation der Anlage: Schaltpläne, Stromlaufpläne, Datenblätter, Erstprüfung, alle wiederkehrenden Prüfbefunde und Änderungen.
-                Die OVE E 8101 beschreibt in Teil 6 die Mindestinhalte. Für PV-Anlagen gehören Stringplan, Modul- und Wechselrichterdaten sowie die Messprotokolle nach OVE EN 62446-1 dazu.
-              </p>
-              <p>
-                Die Prüfung vor Inbetriebnahme stellt fest, dass die Anlage richtig errichtet wurde. Die <strong className="text-ink-900">wiederkehrende Prüfung</strong> stellt fest, dass sie es noch ist –
-                trotz UV-Strahlung, Temperaturwechseln, Schnee, Marderbiss oder nachträglicher Umbauten.
-              </p>
-            </Reveal>
-          </div>
-          <div className="grid gap-4 self-start sm:grid-cols-2">
+      <AntwortBand
+        frage="Was ist ein E-Check in Österreich?"
+        zahlen={[
+          { value: 5, suffix: " Jahre", label: "längste Frist im Regelfall", text: "wiederkehrende Prüfung, § 9 Abs. 2 ESV 2012" },
+          { value: 10, suffix: " Jahre", label: "bei geringer Beanspruchung", text: "z. B. Büros ohne besondere Einflüsse" },
+          { value: 6, suffix: " Monate", label: "FI-Prüftaste spätestens", text: "sofern der Hersteller nichts anderes vorgibt (§ 7)" },
+          { value: 2, label: "letzte Prüfbefunde aufbewahren", text: "Erstprüfung bis zur Stilllegung (§ 11)" },
+        ]}
+      >
+        <p>
+          <strong>„E-Check“ ist ein Begriff aus Deutschland; in Österreich spricht man von der wiederkehrenden Überprüfung elektrischer Anlagen nach OVE E 8101.</strong> Sie wird von
+          einer Elektrofachkraft durchgeführt und mit einem Prüfbefund abgeschlossen, der im Anlagenbuch abgelegt wird. Für PV-Anlagen kommen die Prüfungen nach OVE EN 62446-1 dazu.
+        </p>
+      </AntwortBand>
+
+      {/* Prüffristen-Finder */}
+      <Section tone="sand" space="md" id="fristen" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Prüfintervalle" title="Prüffristen nach ESV 2012 – in zwei Klicks" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Arbeitgeber müssen elektrische Anlagen wiederkehrend prüfen lassen – im Regelfall längstens alle fünf Jahre. Kürzere Fristen können sich aus Beanspruchung, Bescheid,
+            Versicherung oder Herstellervorgaben ergeben.
+          </p>
+        </div>
+        <PruefFristenFinder />
+      </Section>
+
+      {/* Begriff mit Foto */}
+      <Section tone="white" space="md">
+        <SplitMedia
+          eyebrow="Begriff"
+          title="Was „E-Check“ in Österreich bedeutet"
+          image={{ src: "/Images/AT/technik-service/messung-isolation.jpg", alt: "Nahaufnahme: Digitalmultimeter in der Hand bei einer Messung" }}
+          text={[
+            "Das Anlagenbuch ist die Dokumentation der Anlage: Schaltpläne, Stromlaufpläne, Datenblätter, Erstprüfung, alle wiederkehrenden Prüfbefunde und Änderungen. Die OVE E 8101 beschreibt in Teil 6 die Mindestinhalte. Für PV-Anlagen gehören Stringplan, Modul- und Wechselrichterdaten sowie die Messprotokolle nach OVE EN 62446-1 dazu.",
+            "Die Prüfung vor Inbetriebnahme stellt fest, dass die Anlage richtig errichtet wurde. Die wiederkehrende Prüfung stellt fest, dass sie es noch ist – trotz UV-Strahlung, Temperaturwechseln, Schnee, Marderbiss oder nachträglicher Umbauten.",
+          ]}
+        >
+          <ul className="mt-7 grid gap-3 sm:grid-cols-2">
             {[
               { icon: FileCheck2, t: "Prüfbefund", x: "Datum, Prüfer, Unterschrift, Umfang und Ergebnis – plus Messwerte und Mängelliste." },
               { icon: BookOpen, t: "Anlagenbuch", x: "Alle Pläne und Befunde von der Errichtung bis zur Stilllegung an einem Ort." },
               { icon: Gauge, t: "Messungen", x: "Isolationswiderstand, Schutzleiter, Strangwerte, Abschaltbedingungen, FI-Schutz." },
               { icon: ShieldCheck, t: "Sicherheit", x: "Schutz vor elektrischem Schlag und Brand – für Beschäftigte und Einsatzkräfte." },
-            ].map((k, i) => (
-              <Reveal key={k.t} delay={i * 70} className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
-                <k.icon aria-hidden="true" className="h-6 w-6 text-ov-600" />
-                <h3 className="mt-4 font-display text-[17px] font-bold text-ink-900">{k.t}</h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{k.x}</p>
-              </Reveal>
+            ].map((k) => (
+              <li key={k.t} className="flex gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">
+                <k.icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
+                <span className="text-[14.5px] leading-snug text-ink-700">
+                  <strong className="block text-ink-900">{k.t}</strong>
+                  {k.x}
+                </span>
+              </li>
             ))}
-          </div>
-        </div>
+          </ul>
+        </SplitMedia>
       </Section>
 
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Rechtsgrundlagen"
-          title="Welche Regeln die Prüfung verlangen"
-          lead="Die Pflicht zur Prüfung ergibt sich in Österreich aus mehreren Regelwerken – für Unternehmen ist die Elektroschutzverordnung der wichtigste Hebel."
-          className="mb-10"
-        />
-        <Tabelle kopf={["Regelwerk", "Was es verlangt", "Adressat"]} zeilen={REGELN} kompakt quelle="Überblick, keine Rechtsberatung. Stand September 2026." />
-      </Section>
-
-      <Section tone="white" space="lg" id="fristen" className="scroll-mt-24">
-        <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-          <div>
-            <SectionHeading
-              eyebrow="Prüfintervalle"
-              title="Prüffristen nach ESV 2012"
-              lead="Arbeitgeber müssen elektrische Anlagen wiederkehrend prüfen lassen – im Regelfall längstens alle fünf Jahre. Kürzere Fristen können sich aus Beanspruchung, Bescheid, Versicherung oder Herstellervorgaben ergeben."
-            />
-            <Hinweis ton="info" titel="Unsere Empfehlung für PV-Anlagen" className="mt-8">
-              <p>
-                PV-Generatoren liegen dauerhaft im Freien. Wir empfehlen, das Prüfintervall mit Versicherer und Wartungsvertrag abzustimmen und zwischen den Prüfungen jährlich eine
-                Sichtprüfung mit Monitoring-Auswertung durchzuführen.
-              </p>
-            </Hinweis>
-          </div>
-          <Tabelle kopf={["Situation", "Frist", "Grundlage"]} zeilen={FRISTEN} kompakt quelle="Quelle: Elektroschutzverordnung 2012, BGBl. II Nr. 33/2012 in der geltenden Fassung (RIS)." />
-        </div>
-      </Section>
-
-      <Section tone="green" space="lg">
-        <SectionHeading eyebrow="Pflichten" title="Was Arbeitgeber konkret tun müssen" className="mb-12" />
-        <FeatureGrid
-          cols={3}
-          items={[
-            { icon: UserCheck, title: "Prüfen lassen", text: "Vor Inbetriebnahme, nach wesentlichen Änderungen oder Instandsetzung und wiederkehrend – durch eine fachkundige Elektrofachkraft." },
-            { icon: ListChecks, title: "Kontrollen organisieren", text: "Regelmäßige Kontrollen durch eine elektrotechnisch unterwiesene Person, z. B. Test der FI-Schutzschalter mindestens alle sechs Monate, mit Vormerk." },
-            { icon: HardHat, title: "Mängel beheben", text: "Festgestellte Mängel beseitigen lassen. Die Verantwortung bleibt beim Arbeitgeber, auch wenn extern geprüft wird." },
-            { icon: BookOpen, title: "Dokumente aufbewahren", text: "Pläne und Erstprüfbefund bis zur Stilllegung, wiederkehrende Befunde zumindest die letzten beiden." },
-            { icon: FileSearch, title: "Bei Kontrolle vorlegen", text: "Die Arbeitsinspektion kann Prüfbefunde verlangen – ebenso Versicherer im Schadenfall." },
-            { icon: Zap, title: "Änderungen melden", text: "Erweiterungen, Speicher oder Ladepunkte sind wesentliche Änderungen: neue Prüfung, aktualisiertes Anlagenbuch, ggf. Meldung an den Netzbetreiber." },
-          ]}
-        />
-      </Section>
-
-      <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Prüfumfang"
-          title="Was wir bei einer PV-Anlage prüfen und messen"
-          lead="Die Prüfung verbindet die allgemeinen Anforderungen der OVE E 8101 mit den PV-spezifischen Prüfungen der OVE EN 62446-1."
-          className="mb-10"
-        />
-        <Tabelle kopf={["Prüfschritt", "Inhalt", "Grundlage"]} zeilen={MESSUNGEN} kompakt />
-        <div className="mt-16">
-          <SectionHeading eyebrow="Ablauf" title="So läuft die Prüfung ab" align="center" className="mb-14" />
-          <Steps
+      {/* Pflichten dunkel */}
+      <section className="ov-noise relative overflow-hidden bg-navy-950 py-20 text-white md:py-24">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -left-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="ov-container relative">
+          <SectionHeading dark eyebrow="Pflichten" title="Was Arbeitgeber konkret tun müssen" className="mb-12" />
+          <FeatureGrid
+            cols={3}
+            tone="dark"
             items={[
-              { icon: ClipboardList, title: "Unterlagen", text: "Anlagenbuch, Schaltpläne, Stringplan und letzter Prüfbefund – fehlt etwas, rekonstruieren wir es." },
-              { icon: FileSearch, title: "Besichtigen", text: "Sichtprüfung von Generator, Kabelwegen, Verteilern, Wechselrichtern und Kennzeichnung." },
-              { icon: Gauge, title: "Erproben & Messen", text: "Messungen DC und AC mit kalibrierten Geräten, Funktionsprüfung der Schutzeinrichtungen." },
-              { icon: ClipboardCheck, title: "Prüfbefund", text: "Befund mit Messwerten, Mängelliste nach Dringlichkeit und empfohlener nächster Frist." },
+              { icon: UserCheck, title: "Prüfen lassen", text: "Vor Inbetriebnahme, nach wesentlichen Änderungen oder Instandsetzung und wiederkehrend – durch eine fachkundige Elektrofachkraft." },
+              { icon: ListChecks, title: "Kontrollen organisieren", text: "Regelmäßige Kontrollen durch eine elektrotechnisch unterwiesene Person, z. B. Test der FI-Schutzschalter mindestens alle sechs Monate, mit Vormerk." },
+              { icon: HardHat, title: "Mängel beheben", text: "Festgestellte Mängel beseitigen lassen. Die Verantwortung bleibt beim Arbeitgeber, auch wenn extern geprüft wird." },
+              { icon: BookOpen, title: "Dokumente aufbewahren", text: "Pläne und Erstprüfbefund bis zur Stilllegung, wiederkehrende Befunde zumindest die letzten beiden." },
+              { icon: FileSearch, title: "Bei Kontrolle vorlegen", text: "Die Arbeitsinspektion kann Prüfbefunde verlangen – ebenso Versicherer im Schadenfall." },
+              { icon: Zap, title: "Änderungen melden", text: "Erweiterungen, Speicher oder Ladepunkte sind wesentliche Änderungen: neue Prüfung, aktualisiertes Anlagenbuch, ggf. Meldung an den Netzbetreiber." },
             ]}
           />
         </div>
+      </section>
+
+      {/* Prüfumfang + Rechtsgrundlagen in Tabs */}
+      <Section tone="white" space="md" id="pruefumfang" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Prüfumfang & Rechtsgrundlagen" title="Was wir bei einer PV-Anlage prüfen und messen" />
+          <p className="ov-lead text-ink-600 lg:pb-1">Die Prüfung verbindet die allgemeinen Anforderungen der OVE E 8101 mit den PV-spezifischen Prüfungen der OVE EN 62446-1.</p>
+        </div>
+        <Tabs
+          label="Prüfumfang und Rechtsgrundlagen"
+          tabs={[
+            { label: "Prüfschritte & Messungen", icon: <Gauge /> },
+            { label: "Welche Regeln die Prüfung verlangen", icon: <Scale /> },
+            { label: "Alle Fristen als Tabelle", icon: <Hourglass /> },
+          ]}
+        >
+          <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {MESSUNGEN.map(([schritt, inhalt, grundlage], i) => (
+              <Reveal as="li" key={schritt} delay={(i % 3) * 70} className="ov-card-hover flex flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
+                <span className="font-display text-[13px] font-bold text-ov-700">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="mt-2 font-display text-[18px] font-bold text-ink-900">{schritt}</h3>
+                <p className="mt-2 flex-1 text-[14.5px] leading-relaxed text-ink-600">{inhalt}</p>
+                <p className="mt-4 inline-flex self-start rounded-full bg-white px-2.5 py-1 text-[11.5px] font-semibold text-ink-600 ring-1 ring-ink-200">{grundlage}</p>
+              </Reveal>
+            ))}
+          </ol>
+          <div>
+            <p className="mb-5 max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              Die Pflicht zur Prüfung ergibt sich in Österreich aus mehreren Regelwerken – für Unternehmen ist die Elektroschutzverordnung der wichtigste Hebel.
+            </p>
+            <Tabelle kopf={["Regelwerk", "Was es verlangt", "Adressat"]} zeilen={REGELN} kompakt quelle="Überblick, keine Rechtsberatung. Stand September 2026." />
+          </div>
+          <Tabelle
+            caption="Prüffristen nach ESV 2012"
+            kopf={["Situation", "Frist", "Grundlage"]}
+            zeilen={FRISTEN}
+            kompakt
+            quelle="Quelle: Elektroschutzverordnung 2012, BGBl. II Nr. 33/2012 in der geltenden Fassung (RIS). Unsere Empfehlung für PV-Anlagen: Intervall mit Versicherer und Wartungsvertrag abstimmen und zwischen den Prüfungen jährlich eine Sichtprüfung mit Monitoring-Auswertung."
+          />
+        </Tabs>
       </Section>
 
-      <AnfrageSektion
+      <AnfragePremium
+        eyebrow="Anfrage"
         titel="Prüfung für Ihre Anlage beauftragen"
         lead="Teilen Sie uns die Eckdaten mit – wir melden uns mit Prüfumfang, Termin und Angebot. Auf Wunsch kombinieren wir die Prüfung mit Thermografie oder einem Wartungsvertrag."
-        schritte={["Sie senden uns Anlagendaten und Anlass der Prüfung.", "Wir klären Unterlagen, Zugang und Abschaltzeiten.", "Prüfung vor Ort, Prüfbefund mit Messwerten und Mängelliste."]}
+        schritteTitel="So läuft die Prüfung ab"
+        schritte={[
+          { titel: "Unterlagen", text: "Anlagenbuch, Schaltpläne, Stringplan und letzter Prüfbefund – fehlt etwas, rekonstruieren wir es." },
+          { titel: "Besichtigen", text: "Sichtprüfung von Generator, Kabelwegen, Verteilern, Wechselrichtern und Kennzeichnung." },
+          { titel: "Erproben & Messen", text: "Messungen DC und AC mit kalibrierten Geräten, Funktionsprüfung der Schutzeinrichtungen." },
+          { titel: "Prüfbefund", text: "Befund mit Messwerten, Mängelliste nach Dringlichkeit und empfohlener nächster Frist." },
+        ]}
         formular={{
           betreff: "E-Check / wiederkehrende Prüfung",
           thema: "Service & Wartung",
@@ -226,26 +256,26 @@ export default function ECheckPage() {
         }}
       />
 
-      <Section tone="white" space="md">
-        <Weiterlesen
-          items={[
-            { href: "/service/wartung", art: "Service", titel: "Wartungsvertrag", text: "Prüfung, Monitoring und Störungsbehebung in einem Paket." },
-            { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie", text: "Kategorie-2-Prüfung großer Generatoren aus der Luft." },
-            { href: "/service/versicherung", art: "Service", titel: "PV-Versicherung", text: "Welche Nachweise Versicherer erwarten." },
-            { href: "/ratgeber/e-check-photovoltaik", art: "Ratgeber", titel: "E-Check Photovoltaik", text: "Prüfung, Anlagenbuch und Fristen ausführlich erklärt." },
-            { href: "/ratgeber/photovoltaik-brandschutz", art: "Ratgeber", titel: "Brandschutz bei PV-Anlagen", text: "OVE R 11-1, Feuerwehr und Versicherungsauflagen." },
-            { href: "/forderungen/richtlinien", art: "Recht", titel: "Richtlinien & Netzanschluss", text: "EAG, ElWG, TOR Erzeuger und OVE-Richtlinien im Überblick." },
-            { href: "/technik/fernwartung", art: "Technik", titel: "Fernwartung", text: "Isolationsfehler und Strangausfälle zwischen den Prüfungen erkennen." },
-            { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie", text: "Planung, Errichtung und Betrieb aus einer Hand." },
-          ]}
-        />
-      </Section>
-
-      <FaqSektion items={FAQ} titel="E-Check & Anlagenprüfung – häufige Fragen" tone="sand" />
+      <FaqPlus
+        items={FAQ}
+        titel="E-Check & Anlagenprüfung – häufige Fragen"
+        links={[
+          { href: "/service/wartung", art: "Service", titel: "Wartungsvertrag" },
+          { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie" },
+          { href: "/service/versicherung", art: "Service", titel: "PV-Versicherung" },
+          { href: "/ratgeber/e-check-photovoltaik", art: "Ratgeber", titel: "E-Check Photovoltaik" },
+          { href: "/ratgeber/photovoltaik-brandschutz", art: "Ratgeber", titel: "Brandschutz bei PV-Anlagen" },
+          { href: "/forderungen/richtlinien", art: "Recht", titel: "Richtlinien & Netzanschluss" },
+          { href: "/technik/fernwartung", art: "Technik", titel: "Fernwartung" },
+          { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie" },
+        ]}
+      />
 
       <Querverweise pfad={PFAD} ueberschrift="Mehr zu Prüfung, Sicherheit und Betrieb" />
 
-      <Quellen
+      <QuellenKompakt
+        titel="Quellen & Rechtsgrundlagen"
+        bildnachweis="Techniker am Schaltschrank: AndGra (Pixabay), CC0 · Multimeter: Lance Cpl. Trent A. Henry, U.S. Marine Corps, gemeinfrei – beide via Wikimedia Commons."
         items={[
           { titel: "Elektroschutzverordnung 2012 (ESV 2012), RIS", href: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007682", hinweis: "§ 7 Kontrollen, § 8 Prüfung vor Inbetriebnahme, § 9 wiederkehrende Prüfungen, § 11 Prüfbefunde" },
           { titel: "Kommentierte ESV 2012 – Arbeitsinspektion", href: "https://www.arbeitsinspektion.gv.at/Arbeitsstaetten-_Arbeitsplaetze/Elektrische_Anlagen/Kommentierte_Elektroschutzverordnung_2012.html" },

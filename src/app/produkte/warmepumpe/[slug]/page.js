@@ -16,7 +16,7 @@ async function fetchAllWaermepumpeItems() {
   const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.waermepumpe_page.api.get_waermepumpe_page_with_keywords`;
 
   if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    // Ohne API-Zugang (z. B. lokal ohne .env) still zurückfallen
     return [];
   }
 
@@ -52,7 +52,7 @@ async function fetchManufacturerByName(name) {
   const API_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.hersteller.api.get_hesteller_by_name?name=${encodeURIComponent(name)}`;
 
   if (!isApiConfigured()) {
-    console.error("API not configured: Missing API_KEY or API_SECRET in environment variables");
+    // Ohne API-Zugang (z. B. lokal ohne .env) still zurückfallen
     return null;
   }
 

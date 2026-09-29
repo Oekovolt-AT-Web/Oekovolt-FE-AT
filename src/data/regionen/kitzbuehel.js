@@ -7,6 +7,8 @@ const kitzbuehel = {
   bezirk: "Bezirk Kitzbühel",
   plz: "6370",
   alpin: true,
+  // Anzeige: Foto im Seitenkopf (Nachweis in public/Images/AT/QUELLEN-produkte-regionen.md)
+  bild: { src: "/Images/AT/produkte-regionen/region-tirol-wilder-kaiser.jpg", alt: "Wilder Kaiser im Winter über Going in den Kitzbüheler Alpen", position: "50% 45%" },
   beschreibung:
     "Photovoltaik in Kitzbühel: PV für Premium-Hotellerie, Bergbahnen und Chalets – Stadtwerke Kitzbühel als Netzbetreiber, Schneelast auf 760 m, TBO 2022.",
   titel: "Photovoltaik für Kitzbühel –",

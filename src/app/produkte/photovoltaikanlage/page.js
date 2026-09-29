@@ -10,11 +10,14 @@
 // Kommentaren). Keine Ökovolt-Preise: Die Kostentabelle zeigt Branchen-
 // Richtwerte aus @/data/solarrechner (Marktstatistik BMIMI, IEA PVPS).
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
   BadgeEuro,
+  Building2,
   CalendarCheck2,
+  Calculator,
   Car,
   Check,
   ClipboardCheck,
@@ -22,22 +25,23 @@ import {
   Cpu,
   FileCheck2,
   Gauge,
+  Home,
   LayoutGrid,
   LineChart,
   Mountain,
   Receipt,
   ShieldCheck,
-  SlidersHorizontal,
   Snowflake,
   Sun,
   Sunrise,
+  Table2,
   Tractor,
   Warehouse,
   Wind,
   Zap,
 } from "lucide-react";
-import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 import AnlagenExplorer from "@/components/photovoltaikanlage/AnlagenExplorer";
+import GewerbePvMini from "@/components/photovoltaikanlage/GewerbePvMini";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -48,9 +52,14 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
+import Umschalter from "@/components/Produktdetail/Umschalter";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
+import FotoBento from "@/components/Produktdetail/FotoBento";
+import FachAkkordeon, { FachTabelle } from "@/components/Produktdetail/FachAkkordeon";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
-import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
+import { regionenNachLand } from "@/lib/regionen";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { ANNAHMEN, PREISQUELLEN, preisProKwpNetto } from "@/data/solarrechner";
 
@@ -265,7 +274,23 @@ const FAQ = [
 
 /* ------------------------------------------------------------------ */
 
+// Fotos zu den Montagesystemen (Symbolbilder aus public/Images)
+const UK_BILDER = {
+  "Hallendach mit Ballast": { bild: "/Images/Home/download-2.jpg", alt: "Aufgeständerte PV-Module mit Ballastschienen auf einem Flachdach", position: "50% 60%" },
+  "Trapezblech & Sandwichpaneel": { bild: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur trägt ein Solarmodul über ein Trapezblechdach" },
+  "Ost-West-Aufständerung": { bild: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg", alt: "Luftaufnahme von Modulreihen auf einem Flachdach" },
+  "Freifläche mit Rammprofil": { bild: "/Images/AT/loesungen/freiflaeche-solarpark-duernrohr.jpg", alt: "Photovoltaik-Freiflächenanlage in Niederösterreich, Luftbild" },
+  "PV-Carport": { bild: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Solar-Carports über einem Parkplatz, Luftbild" },
+  "Schrägdach, Indach & alpin": { bild: "/Images/Home/download-1.jpg", alt: "Wohnhaus mit schwarzen Solarmodulen auf dem Satteldach" },
+};
+
 export default function PhotovoltaikanlagePage() {
+  // PVGIS-Werte der Landeshauptstädte für den Mini-Rechner
+  const standorte = regionenNachLand()
+    .map((g) => g.hauptstadt)
+    .filter(Boolean)
+    .map((h) => ({ slug: h.slug, name: `${h.kurzname || h.name} (${h.pvgis.sued35_kwh_kwp.toLocaleString("de-DE")} kWh/kWp)`, sued35: h.pvgis.sued35_kwh_kwp, ostwest15: h.pvgis.ostwest15_kwh_kwp, flach10: h.pvgis.flach10_kwh_kwp }));
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -306,92 +331,124 @@ export default function PhotovoltaikanlagePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte" }, { name: "Photovoltaikanlage" }]}
         eyebrow="Photovoltaikanlage · Gewerbe & Industrie"
         title={
           <>
-            Photovoltaikanlagen für <span className="ov-text-gradient">Betriebe in ganz Österreich</span>
+            Photovoltaikanlagen für <span className="ov-text-gradient-light">Betriebe in ganz Österreich</span>
           </>
         }
         lead="Eine Photovoltaikanlage für Gewerbe und Industrie ist ein Kraftwerk am eigenen Standort: geplant nach Ihrem Lastgang, statisch nachgewiesen für österreichische Schnee- und Windlasten und nach TOR Stromerzeugungsanlagen an das Netz angeschlossen. Wir liefern Planung, Errichtung und Netzanschluss aus einer Hand."
-        image={{ src: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg", alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
+        image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Luftaufnahme: Monteur zwischen Modulreihen auf einem großen Flachdach" }}
         points={["Seit 2012 in Österreich", "Hallendach, Freifläche, Carport", "Eigener Parkregler (EZA-Regler)", "Alle neun Bundesländer"]}
         actions={[
           { label: "Projekt anfragen", href: "/angebot" },
-          { label: "Beratungstermin buchen", href: "/termin", icon: CalendarCheck2 },
+          { label: "Hallendach berechnen", href: "#rechner", icon: Calculator },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <SlidersHorizontal aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">TOR-konform</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Netzanschluss mit eigenem Parkregler</p>
-            </div>
-          </div>
-        }
       />
 
-      <FeaturedLogos />
+      <HerstellerWortmarken />
+
+      <Kennzahlenband
+        items={[
+          { wert: "2012", label: "in Österreich tätig – aus Ostermiething (OÖ)" },
+          { value: 30, suffix: " MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
+          { wert: "TOP 3", label: "der IPC-Errichter Österreichs 2021" },
+          { value: 9, label: "Bundesländer – Planung, Bau und Betrieb" },
+        ]}
+      />
+
+      {/* Montagesysteme als Foto-Karten */}
+      <Section tone="white" space="lg" id="unterkonstruktion">
+        <div className="mb-12 grid items-end gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Unterkonstruktion"
+            title={
+              <>
+                Das richtige Montagesystem <span className="ov-text-gradient">für jede Fläche</span>
+              </>
+            }
+            lead="Die Unterkonstruktion entscheidet über Statik, Dichtheit und Lebensdauer der Anlage. Wir wählen das System nach Dachaufbau, Tragwerksreserve und Standortlasten – nicht nach Lagerbestand."
+          />
+          <p className="text-[14px] leading-relaxed text-ink-500 lg:pb-1">Symbolbilder. Welche Lösung für Ihr Dach passt, klären Statik-Vorprüfung und Begehung.</p>
+        </div>
+        <FotoBento
+          layout="reihe"
+          items={UNTERKONSTRUKTIONEN.map((u) => ({ ...UK_BILDER[u.title], titel: u.title, text: u.text, href: u.href }))}
+
+        />
+      </Section>
+
+      {/* Interaktiv */}
+      <Section tone="sand" space="lg" id="rechner" className="scroll-mt-20">
+        <SectionHeading
+          eyebrow="Selbst ausprobieren"
+          title={
+            <>
+              Was bringt <span className="ov-text-gradient">Ihr Dach?</span>
+            </>
+          }
+          lead="Für Betriebe rechnet der Hallendach-Rechner mit Standort, Dachart und Verbrauch; für Wohnhaus und Chalet zeigt der Anlagen-Explorer, wie Module, Speicher, Wallbox und Wärmepumpe zusammenspielen."
+          align="center"
+          className="mb-10"
+        />
+        <Umschalter
+          label="Betrieb oder Wohnhaus"
+          ansichten={[
+            { id: "betrieb", label: "Betrieb: Hallendach-Rechner", icon: <Building2 />, inhalt: <GewerbePvMini standorte={standorte} /> },
+            {
+              id: "privat",
+              label: "Wohnhaus & Chalet",
+              icon: <Home />,
+              inhalt: (
+                <>
+                  <p className="mx-auto mb-8 max-w-2xl text-center text-[16px] leading-relaxed text-ink-600">
+                    Auch für private Bauherren planen wir Photovoltaikanlagen – bevorzugt dort, wo Optik, Schneelast und Systemintegration besondere Sorgfalt verlangen: Premium-Wohnhäuser, Chalets und
+                    Landsitze.{" "}
+                    <Link href="/chalets" className="font-semibold text-ov-700 hover:text-ov-800">
+                      Luxus-Chalets &amp; Alpin
+                    </Link>
+                  </p>
+                  <AnlagenExplorer />
+                </>
+              ),
+            },
+          ]}
+        />
+      </Section>
 
       {/* Module */}
       <Section tone="white" space="lg" id="module">
-        <SectionHeading
+        <SplitMedia
           eyebrow="Solarmodule"
-          title={
-            <>
-              Welche Module passen auf <span className="ov-text-gradient">Gewerbedächer?</span>
-            </>
-          }
-          lead="Für Gewerbe, Landwirtschaft und alpine Standorte sind Glas-Glas-Module mit n-Typ-Zellen heute der Standard. Welche Zelltechnologie am besten passt, entscheiden Dachfläche, Temperatur, Aufständerung und Ertragsziel."
-          className="mb-12"
+          title="Welche Module passen auf Gewerbedächer?"
+          text={[
+            "Für Gewerbe, Landwirtschaft und alpine Standorte sind Glas-Glas-Module mit n-Typ-Zellen heute der Standard. Welche Zelltechnologie am besten passt, entscheiden Dachfläche, Temperatur, Aufständerung und Ertragsziel.",
+            "Datenblattwerte wie Wirkungsgrad, Temperaturkoeffizient und geprüfte Last vergleichen wir im Angebot je Modul.",
+          ]}
+          points={MODULE.slice(0, 4).map((m) => `${m.technik}: ${m.einsatz.split(",")[0].replace(/\.$/, "")}`)}
+          action={{ label: "Unsere Hersteller im Überblick", href: "/produkte/hersteller", variant: "secondary" }}
+          image={{ src: "/Images/AT/wissen/pv-modul-pruefung.jpg", alt: "Fachkraft prüft ein Solarmodul auf dem Dach" }}
         />
-        <Reveal>
-          <div tabIndex={0} role="region" aria-label="Modultechnologien im Vergleich" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-            <table className="w-full min-w-[720px] border-collapse text-left text-[15px]">
-              <caption className="sr-only">Modultechnologien für Photovoltaikanlagen im Vergleich</caption>
-              <thead>
-                <tr className="bg-navy-950 text-white">
-                  <th scope="col" className="px-5 py-4 font-semibold">Technologie</th>
-                  <th scope="col" className="px-5 py-4 font-semibold">Was sie auszeichnet</th>
-                  <th scope="col" className="px-5 py-4 font-semibold">Typischer Einsatz</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-ink-100 bg-white">
-                {MODULE.map((m) => (
-                  <tr key={m.technik}>
-                    <th scope="row" className="whitespace-nowrap px-5 py-4 align-top font-semibold text-ink-900">{m.technik}</th>
-                    <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{m.kern}</td>
-                    <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{m.einsatz}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-[13px] text-ink-500">
-            Datenblattwerte wie Wirkungsgrad, Temperaturkoeffizient und geprüfte Last vergleichen wir im Angebot je Modul.{" "}
-            <Link href="/produkte/hersteller" className="font-semibold text-ov-700 hover:text-ov-800">
-              Unsere Hersteller im Überblick
-            </Link>
-          </p>
-        </Reveal>
-      </Section>
-
-      {/* Unterkonstruktion */}
-      <Section tone="sand" space="lg" id="unterkonstruktion">
-        <SectionHeading
-          eyebrow="Unterkonstruktion"
-          title="Das richtige Montagesystem für jede Fläche"
-          lead="Die Unterkonstruktion entscheidet über Statik, Dichtheit und Lebensdauer der Anlage. Wir wählen das System nach Dachaufbau, Tragwerksreserve und Standortlasten – nicht nach Lagerbestand."
-          className="mb-12"
+        <FachAkkordeon
+          className="mt-12"
+          items={[
+            {
+              id: "modultechnologien",
+              icon: Table2,
+              titel: "Für Technik & Einkauf: Modultechnologien im Vergleich",
+              kurz: "Glas-Glas, bifazial, TOPCon, HJT, Back-Contact",
+              inhalt: <FachTabelle caption="Modultechnologien für Photovoltaikanlagen im Vergleich" minBreite={720} kopf={["Technologie", "Was sie auszeichnet", "Typischer Einsatz"]} zeilen={MODULE.map((m) => [m.technik, m.kern, m.einsatz])} />,
+            },
+          ]}
         />
-        <FeatureGrid items={UNTERKONSTRUKTIONEN} cols={3} />
       </Section>
 
       {/* Schnee, Wind, Hagel */}
-      <Section tone="white" space="lg" id="schneelast">
+      <Section tone="sand" space="lg" id="schneelast">
         <SplitMedia
+          reverse
           eyebrow="Schneelast, Wind & Hagel"
           title="Ausgelegt für österreichische Standorte"
           text={[
@@ -400,7 +457,7 @@ export default function PhotovoltaikanlagePage() {
           ]}
           points={["Schneelastzone und Seehöhe je Adresse", "Wind- und Sogkräfte an Dachrand und Ecken", "Module mit geprüfter Last und Hagelwiderstand", "Schneefang und Abrutschschutz bei Schrägdächern"]}
           action={{ label: "Standort-Check starten", href: "/standort-check" }}
-          image={{ src: "/Images/Ratgeber/photovoltaik-im-winter.jpg", alt: "Photovoltaikanlage auf einem verschneiten Dach" }}
+          image={{ src: "/Images/AT/ratgeber/schneelast-photovoltaik.jpg", alt: "Verschneite Photovoltaikanlage auf einem Hallendach" }}
         />
         <div className="mt-12 grid gap-4 sm:grid-cols-3">
           {[
@@ -411,7 +468,7 @@ export default function PhotovoltaikanlagePage() {
             const Icon = k.icon;
             return (
               <Reveal key={k.titel} delay={i * 80}>
-                <div className="flex h-full items-start gap-4 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
+                <div className="flex h-full items-start gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-200/60">
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
                     <Icon aria-hidden="true" className="h-5 w-5" />
                   </span>
@@ -426,96 +483,71 @@ export default function PhotovoltaikanlagePage() {
         </div>
       </Section>
 
-      {/* Wechselrichter & Netzanschluss */}
-      <Section tone="sand" space="lg" id="wechselrichter">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+      {/* Wechselrichter & Netzanschluss – dunkle Kontrast-Sektion */}
+      <Section tone="navy" space="lg" id="wechselrichter" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-40 top-10 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
           <div>
             <SectionHeading
+              dark
               eyebrow="Wechselrichter & Netzanschluss"
               title="Die richtige Topologie – und ein Regler, der mit dem Netz spricht"
               lead="Die Wechselrichter-Topologie folgt der Dachgeometrie, der Anlagengröße und dem Speicherkonzept. Am Netzanschlusspunkt gelten die TOR Stromerzeugungsanlagen: Anlagen ab 0,8 kW sind Typ A, ab 250 kW Typ B – mit Anforderungen an Blindleistung, Wirkleistungsbegrenzung und Fernsteuerbarkeit."
             />
-            <Reveal delay={100} className="mt-8 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
-              <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
-                  <Cpu aria-hidden="true" className="h-6 w-6" />
-                </span>
-                <div>
-                  <h3 className="font-display text-[17px] font-bold text-ink-900">Parkregler aus eigener Entwicklung</h3>
-                  <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">
-                    Unser EZA-Regler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam: Einspeiselimit, Blindleistung nach Q(U) oder cos φ, Fernsteuerbefehle des Netzbetreibers.
-                  </p>
-                  <Link href="/technik/parkregler" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-                    Parkregler im Detail
-                    <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-          <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Wechselrichter-Topologien" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
-                <caption className="sr-only">Wechselrichter-Topologien für Photovoltaikanlagen</caption>
-                <thead>
-                  <tr className="bg-navy-950 text-white">
-                    <th scope="col" className="px-5 py-4 font-semibold">Topologie</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Stärke</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Typisch für</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100 bg-white">
-                  {WECHSELRICHTER.map((w) => (
-                    <tr key={w.topologie}>
-                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{w.topologie}</th>
-                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{w.staerke}</td>
-                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{w.typisch}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-3 text-[13px] text-ink-500">
-              Typ A: ≥ 0,8 kW bis &lt; 250 kW · Typ B: ≥ 250 kW bis &lt; 35 MW (TOR Stromerzeugungsanlagen, E-Control).
-            </p>
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* Komplettpaket */}
-      <Section tone="navy" space="lg" className="overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <SectionHeading
-              dark
-              eyebrow="Komplettpaket"
-              title="Von der Lastganganalyse bis zur Fertigstellungsmeldung"
-              lead="Ein Ansprechpartner, ein Angebot, ein Team – mit eigenem Elektrotechnik-Gewerbe. Das ist im Komplettpaket enthalten:"
-            />
-            <div className="mt-10">
-              <Button href="/angebot" size="lg" pfeil>
-                Komplettangebot anfordern
-              </Button>
-            </div>
-          </div>
-          <Reveal delay={100}>
-            <ul className="grid gap-x-6 gap-y-3.5 sm:grid-cols-2">
-              {PAKET.map((p) => (
-                <li key={p} className="flex gap-3 text-[15.5px] leading-snug text-white/85">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500/20 text-ov-300">
-                    <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-                  </span>
-                  {p}
-                </li>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+              {WECHSELRICHTER.map((w, i) => (
+                <Reveal as="li" key={w.topologie} delay={i * 70} className="rounded-2xl bg-white/[0.05] p-4 ring-1 ring-white/10">
+                  <p className="font-display text-[15.5px] font-bold text-white">{w.topologie}</p>
+                  <p className="mt-1 text-[13px] leading-snug text-white/60">{w.typisch}</p>
+                </Reveal>
               ))}
             </ul>
+          </div>
+          <Reveal delay={100} dir="scale" className="flex">
+            <article className="flex w-full flex-col overflow-hidden rounded-[2rem] bg-white/[0.06] ring-1 ring-white/15 backdrop-blur">
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <Image src="/Images/AT/ratgeber/eza-regler-parkregler.jpg" alt="Regelungstechnik unter den Modulreihen einer Photovoltaikanlage" fill sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/20 to-transparent" />
+                <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-ov-500 px-3.5 py-1.5 text-[12.5px] font-bold text-white shadow-lg">
+                  <Cpu aria-hidden="true" className="h-4 w-4" />
+                  Eigene Entwicklung
+                </span>
+              </div>
+              <div className="flex flex-1 flex-col p-6 md:p-8">
+                <h3 className="font-display text-[24px] font-extrabold text-white">Parkregler (EZA-Regler)</h3>
+                <p className="mt-3 text-[15.5px] leading-relaxed text-white/75">
+                  Unser EZA-Regler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam: Einspeiselimit, Blindleistung nach Q(U) oder cos φ, Fernsteuerbefehle des Netzbetreibers.
+                </p>
+                <Link href="/technik/parkregler" className="group mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-[15px] font-semibold text-ov-300 hover:text-ov-200">
+                  Parkregler im Detail
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </article>
           </Reveal>
         </div>
+        <FachAkkordeon
+          dunkel
+          className="relative mt-12"
+          items={[
+            {
+              id: "wechselrichter-topologien",
+              icon: Table2,
+              titel: "Für Technik & Einkauf: Wechselrichter-Topologien und TOR-Typen",
+              kurz: "Stärken, typischer Einsatz, Grenzen Typ A/B",
+              inhalt: (
+                <>
+                  <FachTabelle caption="Wechselrichter-Topologien für Photovoltaikanlagen" minBreite={560} kopf={["Topologie", "Stärke", "Typisch für"]} zeilen={WECHSELRICHTER.map((w) => [w.topologie, w.staerke, w.typisch])} />
+                  <p className="mt-3 text-[13px] text-white/55">Typ A: ≥ 0,8 kW bis &lt; 250 kW · Typ B: ≥ 250 kW bis &lt; 35 MW (TOR Stromerzeugungsanlagen, E-Control).</p>
+                </>
+              ),
+            },
+          ]}
+        />
       </Section>
 
-      {/* Ablauf */}
+      {/* Komplettpaket & Ablauf */}
       <Section tone="white" space="lg">
         <SectionHeading
           eyebrow="Projektablauf"
@@ -525,55 +557,37 @@ export default function PhotovoltaikanlagePage() {
           className="mb-14"
         />
         <Steps items={ABLAUF} />
-        <Reveal className="mt-12 text-center">
-          <Link href="/dienstleistungen/photovoltaik" className="group inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-            Planung, Montage und Netzanschluss im Detail
-            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
+        <Reveal className="mt-14">
+          <div className="grid gap-8 rounded-[2rem] bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+            <div>
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Komplettpaket</p>
+              <h3 className="ov-h3 mt-3 text-ink-900">Von der Lastganganalyse bis zur Fertigstellungsmeldung</h3>
+              <p className="mt-3 text-[15.5px] leading-relaxed text-ink-600">Ein Ansprechpartner, ein Angebot, ein Team – mit eigenem Elektrotechnik-Gewerbe.</p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+                <Button href="/angebot" pfeil>
+                  Komplettangebot anfordern
+                </Button>
+                <Button href="/dienstleistungen/photovoltaik" variant="secondary">
+                  Leistungen im Detail
+                </Button>
+              </div>
+            </div>
+            <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              {PAKET.map((p) => (
+                <li key={p} className="flex gap-3 text-[15px] leading-snug text-ink-700">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500 text-white">
+                    <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
+                  </span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
         </Reveal>
       </Section>
 
-      {/* Kosten */}
+      {/* Rahmenbedingungen & Kosten */}
       <Section tone="sand" space="lg" id="kosten">
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Kosten"
-            title="Was kostet eine Gewerbeanlage je kWp?"
-            lead="Der Preis je kWp sinkt mit der Anlagengröße, weil Planung, Netzanschluss und Baustelleneinrichtung nur einmal anfallen. Die Tabelle zeigt Branchen-Richtwerte für schlüsselfertige Dachanlagen in Österreich – netto, ohne Speicher."
-          />
-          <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Richtwerte Kosten Gewerbeanlagen" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[560px] border-collapse text-left text-[15px]">
-                <caption className="sr-only">Richtwerte für Photovoltaik-Gewerbeanlagen nach Anlagengröße, netto, Stand 2026</caption>
-                <thead>
-                  <tr className="bg-navy-950 text-white">
-                    <th scope="col" className="px-5 py-4 font-semibold">Anlagengröße</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">€ je kWp netto</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Gesamt netto</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Ertrag / Jahr</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100 bg-white">
-                  {KOSTEN_GROESSEN.map((g) => (
-                    <tr key={g}>
-                      <th scope="row" className="whitespace-nowrap px-5 py-3.5 font-semibold text-ink-900">{g.toLocaleString("de-DE")} kWp</th>
-                      <td className="ov-num px-5 py-3.5 text-ink-600">ca. {(Math.round(preisProKwpNetto(g) / 10) * 10).toLocaleString("de-DE")} €</td>
-                      <td className="ov-num px-5 py-3.5 font-semibold text-ov-700">ca. {eur(g * preisProKwpNetto(g))}</td>
-                      <td className="ov-num px-5 py-3.5 text-ink-600">ca. {(Math.round((g * ANNAHMEN.ertragProKwpSued) / 1000) * 1000).toLocaleString("de-DE")} kWh</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <p className="mt-3 text-[13px] leading-relaxed text-ink-500">
-              Richtwerte, keine Angebotspreise. Quellen: {PREISQUELLEN.slice(0, 2).map((q) => q.name).join("; ")} – fortgeschrieben auf 2026. Ertrag mit {ANNAHMEN.ertragProKwpSued.toLocaleString("de-DE")} kWh je kWp (PVGIS, vorsichtig gerundet); Ost-West-Belegung liefert je kWp weniger.
-            </p>
-          </Reveal>
-        </div>
-      </Section>
-
-      {/* Rahmenbedingungen Österreich */}
-      <Section tone="white" space="lg">
         <SectionHeading
           eyebrow="Rahmenbedingungen 2026"
           title="Förderung, Steuern und Einspeisung in Österreich"
@@ -585,7 +599,7 @@ export default function PhotovoltaikanlagePage() {
             const Icon = k.icon;
             return (
               <Reveal key={k.titel} delay={i * 80}>
-                <div className="ov-card-hover flex h-full flex-col rounded-3xl bg-sand-50 p-7 ring-1 ring-ink-200/70">
+                <div className="ov-card-hover flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70">
                   <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
                     <Icon aria-hidden="true" className="h-5 w-5" />
                   </span>
@@ -601,16 +615,46 @@ export default function PhotovoltaikanlagePage() {
             );
           })}
         </div>
-        <p className="mt-8 text-[14px] text-ink-500">Stand September 2026. Keine Steuer- oder Rechtsberatung – die steuerliche Gestaltung klären Sie mit Ihrer Steuerberatung.</p>
+        <FachAkkordeon
+          className="mt-8"
+          items={[
+            {
+              id: "kosten-tabelle",
+              icon: BadgeEuro,
+              titel: "Für Technik & Einkauf: Was kostet eine Gewerbeanlage je kWp?",
+              kurz: "Branchen-Richtwerte netto, 30 bis 1.000 kWp",
+              inhalt: (
+                <>
+                  <p className="mb-4 max-w-3xl text-[15px] leading-relaxed text-ink-600">
+                    Der Preis je kWp sinkt mit der Anlagengröße, weil Planung, Netzanschluss und Baustelleneinrichtung nur einmal anfallen. Die Tabelle zeigt Branchen-Richtwerte für schlüsselfertige Dachanlagen in
+                    Österreich – netto, ohne Speicher.
+                  </p>
+                  <FachTabelle
+                    caption="Richtwerte für Photovoltaik-Gewerbeanlagen nach Anlagengröße, netto, Stand 2026"
+                    minBreite={560}
+                    kopf={["Anlagengröße", "€ je kWp netto", "Gesamt netto", "Ertrag / Jahr"]}
+                    zeilen={KOSTEN_GROESSEN.map((g) => [
+                      `${g.toLocaleString("de-DE")} kWp`,
+                      `ca. ${(Math.round(preisProKwpNetto(g) / 10) * 10).toLocaleString("de-DE")} €`,
+                      `ca. ${eur(g * preisProKwpNetto(g))}`,
+                      `ca. ${(Math.round((g * ANNAHMEN.ertragProKwpSued) / 1000) * 1000).toLocaleString("de-DE")} kWh`,
+                    ])}
+                  />
+                  <p className="mt-3 text-[13px] leading-relaxed text-ink-500">
+                    Richtwerte, keine Angebotspreise. Quellen: {PREISQUELLEN.slice(0, 2).map((q) => q.name).join("; ")} – fortgeschrieben auf 2026. Ertrag mit {ANNAHMEN.ertragProKwpSued.toLocaleString("de-DE")} kWh je kWp (PVGIS,
+                    vorsichtig gerundet); Ost-West-Belegung liefert je kWp weniger.
+                  </p>
+                </>
+              ),
+            },
+          ]}
+        />
+        <p className="mt-6 text-[14px] text-ink-500">Stand September 2026. Keine Steuer- oder Rechtsberatung – die steuerliche Gestaltung klären Sie mit Ihrer Steuerberatung.</p>
       </Section>
 
       {/* Zielgruppen */}
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Für wen wir bauen"
-          title="Gewerbe, Landwirtschaft und öffentliche Hand zuerst"
-          className="mb-12"
-        />
+      <Section tone="white" space="md">
+        <SectionHeading eyebrow="Für wen wir bauen" title="Gewerbe, Landwirtschaft und öffentliche Hand zuerst" className="mb-10" />
         <FeatureGrid
           cols={4}
           items={[
@@ -621,42 +665,6 @@ export default function PhotovoltaikanlagePage() {
           ]}
         />
       </Section>
-
-      {/* Privat */}
-      <Section tone="white" space="lg" id="privat">
-        <SplitMedia
-          eyebrow="Für Privat"
-          title="Premium-Wohnhaus und Chalet"
-          text={[
-            "Auch für private Bauherren planen wir Photovoltaikanlagen – bevorzugt dort, wo Optik, Schneelast und Systemintegration besondere Sorgfalt verlangen: Premium-Wohnhäuser, Chalets und Landsitze.",
-            "Speicher, Wallbox, Wärmepumpe und Energiemanagement werden dabei als ein System geplant. Den Aufbau zeigt der Anlagen-Explorer unten.",
-          ]}
-          action={{ label: "Luxus-Chalets & Alpin", href: "/chalets", variant: "navy" }}
-          image={{ src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Photovoltaikanlage auf einem Gebäude am Seeufer in Fuschl am See, Luftaufnahme" }}
-          reverse
-        />
-        <div className="mt-20">
-          <SectionHeading
-            eyebrow="Systembausteine"
-            title={
-              <>
-                Was gehört zu einer <span className="ov-text-gradient">Photovoltaikanlage?</span>
-              </>
-            }
-            lead="Solarmodule, Unterkonstruktion und Wechselrichter bilden die Anlage. Stromspeicher, Wallbox, Wärmepumpe und Energiemanagement machen daraus ein System, das den Solarstrom möglichst selbst nutzt."
-            align="center"
-            className="mb-12"
-          />
-          <Reveal dir="scale">
-            <AnlagenExplorer />
-          </Reveal>
-        </div>
-      </Section>
-
-      <SolarrechnerTeaser
-        titel="Was bringt die Anlage an Ihrem Standort?"
-        text="Anlagengröße, Verbrauch und Dach eingeben – Sie sehen eine erste Einschätzung zu Ertrag, Eigenverbrauch und Amortisation."
-      />
 
       <Section tone="sand" space="lg">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
@@ -688,7 +696,7 @@ export default function PhotovoltaikanlagePage() {
         title="Ihre Dachfläche ist ein Kraftwerk. Wir rechnen es durch."
         text={`Persönliche Beratung von ${FIRMA.name} aus ${FIRMA.ort} für Betriebe in ganz Österreich – mit Lastganganalyse, ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner bis zur Inbetriebnahme.`}
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
-        secondary={{ label: "Ertrag berechnen", href: "/solarrechner" }}
+        secondary={{ label: "Beratungstermin buchen", href: "/termin", icon: CalendarCheck2 }}
       />
     </div>
   );

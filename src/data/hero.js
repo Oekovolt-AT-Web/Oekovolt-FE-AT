@@ -15,16 +15,25 @@ export const HOME_HERO = {
   lead:
     "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich – geplant nach Ihrem Lastgang, gebaut vom eigenen Elektrotechnik-Fachbetrieb und betrieben mit eigener Regelungs- und Leittechnik.",
   punkte: ["Planung, Bau & Betrieb aus einer Hand", "Eigener Parkregler, Fernwartung & SCADA", "Gesellschafterin: Salzburg AG (49 %)"],
-  bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
-  alt: "Photovoltaikanlage auf den Dächern einer Freizeit- und Badeanlage am Fuschlsee (Salzburg), Luftaufnahme",
+  // Standbild aus dem Ökovolt-Imagevideo (Hallendach eines Industriekunden während der Montage),
+  // oben beschnitten – ohne Kundenlogo. Trägt das LCP; auf Desktop läuft darüber das Video.
+  bild: "/Images/AT/home/hero-gewerbedach-luftbild.jpg",
+  alt: "Luftaufnahme: Photovoltaik-Montage auf dem Flachdach einer Industriehalle, im Hintergrund Lkw-Rampen und Werksgelände",
+  // Hintergrundvideo (nur Desktop, nach dem Laden, pausierbar). Zeigt das Werk eines österreichischen
+  // Industriekunden aus der Referenzliste mit dessen Logo in der Ecke – vor dem Livegang die
+  // Logo-/Veröffentlichungsfreigabe bestätigen; `null` schaltet das Video ab.
+  video: "/Images/Navbar/intro.mp4",
 };
 
-/** Kennzahlenleiste unter dem Hero – bewusst als Text (keine hochzählenden Jahreszahlen). */
+/**
+ * Kennzahlenleiste unter dem Hero. `zahl` zählt beim Einblenden hoch (CountUp),
+ * `wert` ist der Klartext (SEO, Screenreader). Jahreszahlen zählen bewusst nicht hoch.
+ */
 export const KERNFAKTEN = [
   { wert: "2012", label: "in Österreich tätig – aus Ostermiething (OÖ)" },
-  { wert: "30 MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
-  { wert: "TOP 3", label: "der IPC-Errichter Österreichs 2021" },
-  { wert: "49 %", label: "hält die Salzburg AG an Ökovolt Österreich" },
+  { wert: "30 MWp", zahl: 30, suffix: " MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
+  { wert: "TOP 3", zahl: 3, prefix: "TOP ", label: "der IPC-Errichter Österreichs 2021" },
+  { wert: "49 %", zahl: 49, suffix: " %", label: "hält die Salzburg AG an Ökovolt Österreich" },
 ];
 
 /**

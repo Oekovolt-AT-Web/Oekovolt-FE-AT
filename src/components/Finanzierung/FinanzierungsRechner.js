@@ -21,7 +21,7 @@ const IFB_SAETZE = [
   { wert: 0, label: "Kein IFB (z. B. Leasing, Contracting)" },
 ];
 
-const eur = (n) => n.toLocaleString("de-AT", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+const eur = (n) => n.toLocaleString("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
 
 function annuitaet(betrag, zinsProzent, jahre) {
   const i = zinsProzent / 100;
@@ -84,8 +84,8 @@ export default function FinanzierungsRechner() {
   const positiv = r.cashflow >= 0;
 
   return (
-    <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-ink-200/70 lg:grid-cols-[1.1fr_1fr]">
-      <div className="p-6 md:p-10">
+    <div className="grid grid-cols-1 overflow-hidden rounded-[2rem] bg-white shadow-2xl ring-1 ring-ink-200/70 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <div className="min-w-0 p-6 md:p-10">
         <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-600">Beispielrechnung · Gewerbe</p>
         <h3 className="ov-h3 mt-2 text-ink-900">Trägt der Kredit sich aus der Anlage?</h3>
         <div className="mt-8 space-y-6">
@@ -106,7 +106,7 @@ export default function FinanzierungsRechner() {
             id="fr-zins"
             label="Zinssatz (Ihr Beispielwert)"
             wert={zins}
-            anzeige={`${zins.toLocaleString("de-AT", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`}
+            anzeige={`${zins.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`}
             min={0}
             max={10}
             step={0.1}
@@ -145,7 +145,7 @@ export default function FinanzierungsRechner() {
         </div>
       </div>
 
-      <div className="flex flex-col bg-navy-950 p-6 text-white md:p-10">
+      <div className="flex min-w-0 flex-col bg-navy-950 p-6 text-white md:p-10">
         <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Ergebnis pro Jahr</p>
         <div aria-live="polite" className="mt-6 space-y-4">
           <Zeile icon={Landmark} label="Kreditbetrag" wert={eur(r.kredit)} />

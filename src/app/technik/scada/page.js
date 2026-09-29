@@ -12,7 +12,10 @@ import {
   Layers,
   LayoutDashboard,
   Leaf,
+  Percent,
   Share2,
+  Sigma,
+  SlidersHorizontal,
   Thermometer,
   TrendingUp,
   Users,
@@ -24,12 +27,17 @@ import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
-import FeatureGrid from "@/components/ui/FeatureGrid";
-import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
-import { Hinweis, Kurzantwort, Punkte, Quellen, Tabelle, UnterlagenAufAnfrage, Verweise } from "@/components/Technik/Bausteine";
+import ScadaDashboard from "@/components/Technik/ScadaDashboard";
+import { Hinweis, Punkte, UnterlagenAufAnfrage } from "@/components/Technik/Bausteine";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
+import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
+import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
+import ThemenExplorer from "@/components/ServiceAT/A/ThemenExplorer";
+import Tabs from "@/components/ServiceAT/A/Tabs";
+import KompaktGrid from "@/components/ServiceAT/A/KompaktGrid";
+import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 
 const PFAD = "/technik/scada";
 const TITEL = "SCADA & Leitwarte für PV-Portfolios | Ökovolt";
@@ -40,41 +48,47 @@ export const metadata = seitenMeta({
   pfad: PFAD,
   titel: TITEL,
   beschreibung: BESCHREIBUNG,
-  bild: "/Images/AT/technik/leitwarte-netzbetrieb.jpg",
+  bild: "/Images/AT/technik-service/leitwarte-monitoring.jpg",
   keywords: ["SCADA Photovoltaik", "PV Monitoring Österreich", "Performance Ratio IEC 61724", "Leitwarte Solarpark", "Asset Management PV", "PV Reporting Bank"],
 });
 
+// Kennzahlen: Definition, Nutzen, Bezug (früher Tabelle, jetzt Explorer)
 const KPI = [
-  [
-    "Performance Ratio (PR)",
-    "PR = Yf / Yr mit Yf = E_AC / P0 (kWh/kWp) und Yr = H_POA / 1 kW/m²",
-    "Wie gut die Anlage die eingestrahlte Energie umsetzt – unabhängig vom Wetter. Temperaturkorrigierte PR für Vergleiche über Jahreszeiten.",
-    "IEC 61724-1",
-  ],
-  [
-    "Spezifischer Ertrag",
-    "Yf = eingespeiste bzw. erzeugte AC-Energie / installierte DC-Leistung (kWh/kWp)",
-    "Vergleich von Anlagen unterschiedlicher Größe; Grundlage für Soll-Ist-Abgleich und Prognose.",
-    "IEC 61724-1",
-  ],
-  [
-    "Technische Verfügbarkeit",
-    "zeitbasiert: verfügbare Zeit / Betriebszeit mit Einstrahlung; energiebasiert: erzeugte / (erzeugte + entgangene) Energie",
-    "Grundlage für Verfügbarkeitsgarantien in O&M-Verträgen. Wichtig: vorher festlegen, wie Netzabregelungen und höhere Gewalt zählen.",
-    "IEC TS 63019",
-  ],
-  [
-    "Soll-Ist-Ertrag (Energy Performance Index)",
-    "EPI = gemessene Energie / erwartete Energie aus Modell mit gemessener Einstrahlung und Temperatur",
-    "Zeigt Minderleistung, die in der PR untergeht – etwa Verschmutzung, Degradation oder Stringausfälle.",
-    "IEC 61724-3 (Konzept)",
-  ],
-  [
-    "Abregelung & Netzvorgaben",
-    "entgangene Energie durch Sollwerte von Netzbetreiber, Direktvermarkter oder Einspeiselimit",
-    "Trennt technische Verluste von vertraglich bzw. netzbedingt gewollten Einschränkungen – für faire Verfügbarkeits- und Erlösrechnung.",
-    "Parkregler-Ereignisse",
-  ],
+  {
+    icon: <Percent />,
+    titel: "Performance Ratio (PR)",
+    tag: "IEC 61724-1",
+    text: "Wie gut die Anlage die eingestrahlte Energie umsetzt – unabhängig vom Wetter. Temperaturkorrigierte PR für Vergleiche über Jahreszeiten.",
+    punkte: [{ titel: "Definition", text: "PR = Yf / Yr mit Yf = E_AC / P0 (kWh/kWp) und Yr = H_POA / 1 kW/m²" }],
+  },
+  {
+    icon: <Sigma />,
+    titel: "Spezifischer Ertrag",
+    tag: "IEC 61724-1",
+    text: "Vergleich von Anlagen unterschiedlicher Größe; Grundlage für Soll-Ist-Abgleich und Prognose.",
+    punkte: [{ titel: "Definition", text: "Yf = eingespeiste bzw. erzeugte AC-Energie / installierte DC-Leistung (kWh/kWp)" }],
+  },
+  {
+    icon: <Gauge />,
+    titel: "Technische Verfügbarkeit",
+    tag: "IEC TS 63019",
+    text: "Grundlage für Verfügbarkeitsgarantien in O&M-Verträgen. Wichtig: vorher festlegen, wie Netzabregelungen und höhere Gewalt zählen.",
+    punkte: [{ titel: "Definition", text: "zeitbasiert: verfügbare Zeit / Betriebszeit mit Einstrahlung; energiebasiert: erzeugte / (erzeugte + entgangene) Energie" }],
+  },
+  {
+    icon: <TrendingUp />,
+    titel: "Soll-Ist-Ertrag (Energy Performance Index)",
+    tag: "IEC 61724-3 (Konzept)",
+    text: "Zeigt Minderleistung, die in der PR untergeht – etwa Verschmutzung, Degradation oder Stringausfälle.",
+    punkte: [{ titel: "Definition", text: "EPI = gemessene Energie / erwartete Energie aus Modell mit gemessener Einstrahlung und Temperatur" }],
+  },
+  {
+    icon: <SlidersHorizontal />,
+    titel: "Abregelung & Netzvorgaben",
+    tag: "Parkregler-Ereignisse",
+    text: "Trennt technische Verluste von vertraglich bzw. netzbedingt gewollten Einschränkungen – für faire Verfügbarkeits- und Erlösrechnung.",
+    punkte: [{ titel: "Definition", text: "entgangene Energie durch Sollwerte von Netzbetreiber, Direktvermarkter oder Einspeiselimit" }],
+  },
 ];
 
 const FAQ = [
@@ -150,21 +164,68 @@ export default function ScadaPage() {
         image={{ src: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg", alt: "Luftaufnahme einer großen PV-Anlage mit zwei Technikern bei der Kontrolle" }}
         actions={[
           { label: "Leitwarte vorstellen lassen", href: "/termin?art=video" },
-          { label: "Anfrage senden", href: "/kontakt", icon: CalendarCheck2 },
+          { label: "Leitwarte ansehen", href: "#leitwarte-live", icon: LayoutDashboard },
         ]}
         points={["Performance Ratio & Verfügbarkeit", "Mandantenfähig", "API & Datenexport", "Integration Direktvermarkter"]}
       />
 
-      <Kurzantwort frage="Wofür braucht eine PV-Anlage ein SCADA-System?">
+      <AntwortBand
+        frage="Wofür braucht eine PV-Anlage ein SCADA-System?"
+        zahlen={[
+          { value: 5, label: "Kennzahlen sauber definiert", text: "PR, spezifischer Ertrag, Verfügbarkeit, EPI, Abregelung" },
+          { value: "A · B · C", label: "Monitoring-Klassen", text: "Messgenauigkeit nach IEC 61724-1" },
+          { value: "24/7", label: "Überwachung & Alarme", text: "priorisiert nach IEC 62682" },
+          { value: "API", label: "Datenexport", text: "Die Daten gehören Ihnen" },
+        ]}
+      >
         <p>
-          Ein SCADA-System macht aus vielen Einzeldaten eine Aussage: Liefert die Anlage, was sie bei der gemessenen Einstrahlung liefern müsste?
-          Es sammelt Messwerte von Wechselrichtern, Zählern, Wetterstation und Parkregler, berechnet Kennzahlen wie Performance Ratio und
-          Verfügbarkeit, meldet Abweichungen und dokumentiert, was Netzbetreiber und Direktvermarkter vorgegeben haben.
+          Ein SCADA-System macht aus vielen Einzeldaten eine Aussage: Liefert die Anlage, was sie bei der gemessenen Einstrahlung liefern müsste? Es sammelt Messwerte von
+          Wechselrichtern, Zählern, Wetterstation und Parkregler, berechnet Kennzahlen wie Performance Ratio und Verfügbarkeit, meldet Abweichungen und dokumentiert, was
+          Netzbetreiber und Direktvermarkter vorgegeben haben.
         </p>
-      </Kurzantwort>
+      </AntwortBand>
 
-      {/* Leitwarte */}
-      <Section tone="white" space="lg" id="leitwarte" className="scroll-mt-24">
+      {/* Leitwarte als Mockup + Alarmmanagement */}
+      <section id="leitwarte-live" className="ov-noise relative scroll-mt-24 overflow-hidden bg-navy-950 py-20 text-white md:py-24">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -left-40 top-20 h-[520px] w-[520px] rounded-full bg-ov-500/20 blur-[140px]" />
+        <div aria-hidden="true" className="absolute -right-32 bottom-10 h-[420px] w-[420px] rounded-full bg-navy-400/25 blur-[130px]" />
+        <div className="ov-container relative">
+          <SectionHeading
+            dark
+            align="center"
+            eyebrow="Leitwarte zum Anklicken"
+            title="Portfolio, Soll-Ist und Alarme auf einem Bildschirm"
+            lead="Wählen Sie eine Beispielanlage: Kennzahlen, Soll-Ist-Kurve und Ereignisse zeigen, wie die Leitwarte Handlungsbedarf sichtbar macht – sortiert nach Dringlichkeit, nicht nach Alphabet."
+            className="mb-12"
+          />
+          <ScadaDashboard />
+
+          <div id="alarme" className="mt-20 grid scroll-mt-24 gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+            <SectionHeading
+              dark
+              as="h3"
+              size="h2"
+              eyebrow="Alarmmanagement"
+              title="Weniger Alarme, die mehr bedeuten"
+              lead="Eine Leitwarte, die bei jeder Wolke blinkt, wird ignoriert. Wir arbeiten nach den Grundsätzen des Alarmmanagements aus IEC 62682: jeder Alarm hat eine Ursache, eine Priorität und eine erwartete Reaktion."
+            />
+            <Punkte
+              dunkel
+              spalten={2}
+              items={[
+                { titel: "Priorisierung", text: "Nach Ertragsverlust, Sicherheitsrelevanz und Netzvorgaben – nicht nach Gerätetyp." },
+                { titel: "Unterdrückung & Bündelung", text: "Nachts keine Ertragsalarme; ein Kommunikationsausfall erzeugt einen Alarm, nicht hundert Folgemeldungen." },
+                { titel: "Eskalation", text: "Festgelegte Kette von der Leitwarte über Technik bis zum Betreiber, mit Quittierung und Zeitstempel." },
+                { titel: "Auswertung", text: "Häufige Alarme werden regelmäßig analysiert – oft steckt ein Parametrier- oder Hardwareproblem dahinter." },
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Leitwarte & Portfolio */}
+      <Section tone="white" space="md" id="leitwarte" className="scroll-mt-24">
         <SplitMedia
           eyebrow="Leitwarte & Portfolio"
           title="Von der Einzelanlage bis zum Portfolio in einer Oberfläche"
@@ -177,149 +238,128 @@ export default function ScadaPage() {
             { title: "Anlagen-Ansicht", text: "Wechselrichter, Strings, Speicher, Ladepunkte, Parkregler und Wetterdaten im Zusammenhang." },
             { title: "Ereignis-Ansicht", text: "Alarme, Abregelungen und Eingriffe mit Zeitstempel – nachvollziehbar für Audit und Abrechnung." },
           ]}
-          image={{ src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Symbolbild: Arbeitsplatz in einer Netzleitwarte mit Bildschirmen und Großbildwand" }}
+          image={{ src: "/Images/AT/technik-service/leitwarte-monitoring.jpg", alt: "Symbolbild: Leitstand mit gebogener Monitorwand, Bedienpult und einem Operator" }}
         />
       </Section>
 
       {/* KPIs */}
-      <Section tone="sand" space="lg" id="kennzahlen" className="scroll-mt-24">
+      <Section tone="sand" space="md" id="kennzahlen" className="scroll-mt-24">
         <SectionHeading
           eyebrow="Kennzahlen"
           title="Performance Ratio, Verfügbarkeit, spezifischer Ertrag – sauber definiert"
           lead="Kennzahlen sind nur so gut wie ihre Definition. Wir rechnen nach den einschlägigen IEC-Normen und legen im Vertrag fest, wie Sonderfälle wie Netzabregelung oder Schneebedeckung zählen."
           className="mb-10"
         />
-        <Tabelle caption="Kennzahlen im PV-Monitoring" kopf={["Kennzahl", "Definition", "Wofür sie gut ist", "Bezug"]} zeilen={KPI} kompakt minBreite={900} />
+        <ThemenExplorer items={KPI} label="Kennzahlen im PV-Monitoring" />
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
           <Hinweis ton="info" titel="Soll-Ist mit Einstrahlung statt mit Vorjahr">
             <p>
-              Ein schwacher Mai ist kein Fehler, wenn die Sonne nicht geschienen hat. Deshalb vergleichen wir den gemessenen Ertrag mit dem
-              Ertrag, den ein Modell der Anlage bei der tatsächlich gemessenen Einstrahlung und Temperatur erwartet – und erst in zweiter Linie
-              mit Planwerten oder Vorjahr.
+              Ein schwacher Mai ist kein Fehler, wenn die Sonne nicht geschienen hat. Deshalb vergleichen wir den gemessenen Ertrag mit dem Ertrag, den ein Modell der Anlage bei der
+              tatsächlich gemessenen Einstrahlung und Temperatur erwartet – und erst in zweiter Linie mit Planwerten oder Vorjahr.
             </p>
           </Hinweis>
           <Hinweis ton="achtung" titel="Schnee und Nebel in Österreich">
             <p>
-              Schneebedeckte Module, Raureif und Inversionsnebel prägen den Winter in vielen Regionen. Die Leitwarte kennzeichnet solche Zeiträume,
-              damit Verfügbarkeit und PR nicht durch Wetterereignisse verzerrt werden, die keine technische Störung sind.
+              Schneebedeckte Module, Raureif und Inversionsnebel prägen den Winter in vielen Regionen. Die Leitwarte kennzeichnet solche Zeiträume, damit Verfügbarkeit und PR nicht durch
+              Wetterereignisse verzerrt werden, die keine technische Störung sind.
             </p>
           </Hinweis>
         </div>
       </Section>
 
-      {/* Datenerfassung */}
-      <Section tone="white" space="lg" id="datenerfassung" className="scroll-mt-24">
+      {/* Fachdetails in Tabs */}
+      <Section tone="white" space="md" id="details" className="scroll-mt-24">
         <SectionHeading
-          eyebrow="Datenerfassung"
-          title="Datenlogger, Wetterstation, Zähler: die Messkette hinter jeder Kennzahl"
-          lead="Die Aussagekraft einer Leitwarte hängt an der Messtechnik in der Anlage. IEC 61724-1 unterscheidet dafür die Monitoring-Klassen A (hohe Genauigkeit, typisch für große Kraftwerke), B (mittlere) und C (Basis)."
-          className="mb-12"
+          eyebrow="Für Technik, Controlling & Asset Management"
+          title="Messkette, Berichte, Rechte – im Detail"
+          lead="Die Aussagekraft einer Leitwarte hängt an der Messtechnik in der Anlage, am Reporting und an klar verteilten Rechten."
+          className="mb-10"
         />
-        <FeatureGrid
-          cols={3}
-          items={[
-            { icon: Database, title: "Datenlogger & Gateway", text: "Sammelt Daten von Wechselrichtern, Zählern und Sensoren, puffert bei Verbindungsausfall und überträgt verschlüsselt. Zeitsynchron, damit alle Werte zusammenpassen." },
-            { icon: CloudSun, title: "Einstrahlung in Modulebene", text: "Pyranometer oder Referenzzelle in Modulneigung; bei größeren Anlagen zusätzlich horizontal. Pyranometer-Güte nach ISO 9060, Reinigung und Kalibrierung im Wartungsplan." },
-            { icon: Thermometer, title: "Temperatur & Wind", text: "Modulrückseitentemperatur und Umgebungstemperatur für Temperaturkorrektur und Ertragsmodell; Wind für Kühlung und Sturmereignisse." },
-            { icon: Gauge, title: "Zähler & Netzanschluss", text: "Einspeise- und Bezugszähler bzw. Smart Meter sowie die Messung des Parkreglers am Netzanschlusspunkt – mit Plausibilisierung gegen die Wechselrichterdaten." },
-            { icon: Layers, title: "Datenqualität", text: "Lücken, eingefrorene Werte und Ausreißer werden erkannt und gekennzeichnet, nicht stillschweigend geglättet. Nachgeladene Daten werden neu berechnet." },
-            { icon: TrendingUp, title: "Auflösung & Historie", text: "Hochaufgelöste Rohdaten für Diagnose, verdichtete Werte für Berichte. Aufbewahrung nach Vereinbarung – typischerweise über die Lebensdauer der Anlage." },
+        <Tabs
+          label="Details zum SCADA-System"
+          tabs={[
+            { label: "Datenerfassung", icon: <Database /> },
+            { label: "Reporting & Schnittstellen", icon: <FileBarChart /> },
+            { label: "Energiegemeinschaften & Mandanten", icon: <Users /> },
           ]}
-        />
-      </Section>
-
-      {/* Alarmmanagement */}
-      <Section tone="navy" space="lg" className="overflow-hidden" id="alarme">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div aria-hidden="true" className="absolute -left-40 top-10 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            dark
-            eyebrow="Alarmmanagement"
-            title="Weniger Alarme, die mehr bedeuten"
-            lead="Eine Leitwarte, die bei jeder Wolke blinkt, wird ignoriert. Wir arbeiten nach den Grundsätzen des Alarmmanagements aus IEC 62682: jeder Alarm hat eine Ursache, eine Priorität und eine erwartete Reaktion."
-          />
-          <Punkte
-            dunkel
-            spalten={2}
-            items={[
-              { titel: "Priorisierung", text: "Nach Ertragsverlust, Sicherheitsrelevanz und Netzvorgaben – nicht nach Gerätetyp." },
-              { titel: "Unterdrückung & Bündelung", text: "Nachts keine Ertragsalarme; ein Kommunikationsausfall erzeugt einen Alarm, nicht hundert Folgemeldungen." },
-              { titel: "Eskalation", text: "Festgelegte Kette von der Leitwarte über Technik bis zum Betreiber, mit Quittierung und Zeitstempel." },
-              { titel: "Auswertung", text: "Häufige Alarme werden regelmäßig analysiert – oft steckt ein Parametrier- oder Hardwareproblem dahinter." },
-            ]}
-          />
-        </div>
-      </Section>
-
-      {/* Reporting & Schnittstellen */}
-      <Section tone="white" space="lg" id="reporting" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Reporting & Schnittstellen"
-          title="Berichte für Investoren, Banken und ESG – Daten für Ihre Systeme"
-          lead="Wer finanziert, will Zahlen in gleichbleibender Definition. Wer steuert, will Daten im eigenen System. Beides kommt aus derselben Datenbasis."
-          className="mb-12"
-        />
-        <FeatureGrid
-          cols={3}
-          items={[
-            { icon: FileBarChart, title: "Investoren & Banken", text: "Monats- und Jahresberichte mit Energie, PR, Verfügbarkeit, Soll-Ist gegen Planung (z. B. P50/P90) und Störungen mit Ursache – abgestimmt auf Kreditvertrag oder Fondsvorgaben." },
-            { icon: Leaf, title: "ESG & Nachhaltigkeitsbericht", text: "Erzeugte und selbst genutzte Energie sowie vermiedene Emissionen mit offengelegtem Emissionsfaktor – als Datengrundlage für CSRD/ESRS-Berichte." },
-            { icon: FileDown, title: "API & Export", text: "Programmierschnittstelle und Dateiexport für Controlling, Energiemanagement oder Data Warehouse. Die Daten gehören Ihnen." },
-            { icon: TrendingUp, title: "Direktvermarkter", text: "Ist-Einspeisung und Verfügbarkeit für Prognose und Bilanzierung; Abregelsignale laufen über den Parkregler und werden protokolliert." },
-            { icon: Building2, title: "Netzbetreiber", text: "Echtzeitdaten und Sollwertrückmeldung nach den Vorgaben im Netzanschlussvertrag, z. B. über IEC 60870-5-104." },
-            { icon: BarChart3, title: "Kundenportal", text: "Lesender Zugang für Geschäftsführung, Technik oder Gemeinde – mit den Kennzahlen, die für die jeweilige Rolle relevant sind." },
-          ]}
-        />
-      </Section>
-
-      {/* Energiegemeinschaften & Mandanten */}
-      <Section tone="sand" space="lg" id="mandanten" className="scroll-mt-24">
-        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
-            <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
-              <Share2 aria-hidden="true" className="h-4 w-4" />
-              Energiegemeinschaften
+        >
+          <div>
+            <p className="mb-6 max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              <strong className="text-ink-900">Datenlogger, Wetterstation, Zähler: die Messkette hinter jeder Kennzahl.</strong> IEC 61724-1 unterscheidet dafür die Monitoring-Klassen A
+              (hohe Genauigkeit, typisch für große Kraftwerke), B (mittlere) und C (Basis).
             </p>
-            <h2 className="ov-h2 mt-4 text-ink-900">EEG, BEG und gemeinsame Energienutzung</h2>
-            <p className="mt-5 text-[16.5px] leading-relaxed text-ink-600">
-              Bei Erneuerbare-Energie-Gemeinschaften, Bürgerenergiegemeinschaften und gemeinschaftlichen Erzeugungsanlagen zählt jede
-              Viertelstunde: Erzeugung und Verbrauch der Teilnehmer werden über Smart Meter und den Datenaustausch der Netzbetreiber zugeordnet.
-              Das ElWG erweitert die gemeinsame Energienutzung – die Bestimmungen dazu gelten großteils ab 1. Oktober 2026.
+            <KompaktGrid
+              items={[
+                { icon: Database, title: "Datenlogger & Gateway", text: "Sammelt Daten von Wechselrichtern, Zählern und Sensoren, puffert bei Verbindungsausfall und überträgt verschlüsselt. Zeitsynchron, damit alle Werte zusammenpassen." },
+                { icon: CloudSun, title: "Einstrahlung in Modulebene", text: "Pyranometer oder Referenzzelle in Modulneigung; bei größeren Anlagen zusätzlich horizontal. Pyranometer-Güte nach ISO 9060, Reinigung und Kalibrierung im Wartungsplan." },
+                { icon: Thermometer, title: "Temperatur & Wind", text: "Modulrückseitentemperatur und Umgebungstemperatur für Temperaturkorrektur und Ertragsmodell; Wind für Kühlung und Sturmereignisse." },
+                { icon: Gauge, title: "Zähler & Netzanschluss", text: "Einspeise- und Bezugszähler bzw. Smart Meter sowie die Messung des Parkreglers am Netzanschlusspunkt – mit Plausibilisierung gegen die Wechselrichterdaten." },
+                { icon: Layers, title: "Datenqualität", text: "Lücken, eingefrorene Werte und Ausreißer werden erkannt und gekennzeichnet, nicht stillschweigend geglättet. Nachgeladene Daten werden neu berechnet." },
+                { icon: TrendingUp, title: "Auflösung & Historie", text: "Hochaufgelöste Rohdaten für Diagnose, verdichtete Werte für Berichte. Aufbewahrung nach Vereinbarung – typischerweise über die Lebensdauer der Anlage." },
+              ]}
+            />
+          </div>
+          <div>
+            <p className="mb-6 max-w-3xl text-[16px] leading-relaxed text-ink-600">
+              <strong className="text-ink-900">Berichte für Investoren, Banken und ESG – Daten für Ihre Systeme.</strong> Wer finanziert, will Zahlen in gleichbleibender Definition. Wer
+              steuert, will Daten im eigenen System. Beides kommt aus derselben Datenbasis.
             </p>
-            <p className="mt-4 text-[16.5px] leading-relaxed text-ink-600">
-              Das SCADA zeigt Erzeugung, Einspeisung und Verfügbarkeit der Gemeinschaftsanlage und hilft, Aufteilung und Abrechnung zu
-              plausibilisieren. Mehr dazu auf unserer Seite zu{" "}
-              <Link href="/energiegemeinschaften" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
+            <KompaktGrid
+              items={[
+                { icon: FileBarChart, title: "Investoren & Banken", text: "Monats- und Jahresberichte mit Energie, PR, Verfügbarkeit, Soll-Ist gegen Planung (z. B. P50/P90) und Störungen mit Ursache – abgestimmt auf Kreditvertrag oder Fondsvorgaben." },
+                { icon: Leaf, title: "ESG & Nachhaltigkeitsbericht", text: "Erzeugte und selbst genutzte Energie sowie vermiedene Emissionen mit offengelegtem Emissionsfaktor – als Datengrundlage für CSRD/ESRS-Berichte." },
+                { icon: FileDown, title: "API & Export", text: "Programmierschnittstelle und Dateiexport für Controlling, Energiemanagement oder Data Warehouse. Die Daten gehören Ihnen." },
+                { icon: TrendingUp, title: "Direktvermarkter", text: "Ist-Einspeisung und Verfügbarkeit für Prognose und Bilanzierung; Abregelsignale laufen über den Parkregler und werden protokolliert." },
+                { icon: Building2, title: "Netzbetreiber", text: "Echtzeitdaten und Sollwertrückmeldung nach den Vorgaben im Netzanschlussvertrag, z. B. über IEC 60870-5-104." },
+                { icon: BarChart3, title: "Kundenportal", text: "Lesender Zugang für Geschäftsführung, Technik oder Gemeinde – mit den Kennzahlen, die für die jeweilige Rolle relevant sind." },
+              ]}
+            />
+          </div>
+          <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+            <Reveal>
+              <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
+                <Share2 aria-hidden="true" className="h-4 w-4" />
                 Energiegemeinschaften
-              </Link>
-              .
-            </p>
-          </Reveal>
-          <Reveal delay={120}>
-            <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
-              <Users aria-hidden="true" className="h-4 w-4" />
-              Mandantenfähigkeit
-            </p>
-            <h2 className="ov-h2 mt-4 text-ink-900">Viele Beteiligte, klare Rechte</h2>
-            <ul className="mt-6 space-y-3">
-              {[
-                { icon: Landmark, t: "Eigentümer & Investoren", x: "Portfolio-Kennzahlen und Berichte, ohne Eingriffsrechte." },
-                { icon: LayoutDashboard, t: "Betriebsführung & Wartung", x: "Anlagendetails, Alarme, Diagnose – schreibend nur mit begründeter Freigabe." },
-                { icon: Building2, t: "Gemeinden & Stadtwerke", x: "Mehrere Anlagen und Energiegemeinschaften getrennt, aber in einer Übersicht." },
-                { icon: Bell, t: "Dienstleister", x: "Zeitlich und auf Anlagen begrenzter Zugang, vollständig protokolliert." },
-              ].map((r) => (
-                <li key={r.t} className="flex gap-3 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                  <r.icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
-                  <span className="text-[15px] leading-snug text-ink-700">
-                    <strong className="block text-ink-900">{r.t}</strong>
-                    {r.x}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
+              </p>
+              <h3 className="ov-h3 mt-3 text-ink-900">EEG, BEG und gemeinsame Energienutzung</h3>
+              <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
+                Bei Erneuerbare-Energie-Gemeinschaften, Bürgerenergiegemeinschaften und gemeinschaftlichen Erzeugungsanlagen zählt jede Viertelstunde: Erzeugung und Verbrauch der
+                Teilnehmer werden über Smart Meter und den Datenaustausch der Netzbetreiber zugeordnet. Das ElWG erweitert die gemeinsame Energienutzung – die Bestimmungen dazu gelten
+                großteils ab 1. Oktober 2026.
+              </p>
+              <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
+                Das SCADA zeigt Erzeugung, Einspeisung und Verfügbarkeit der Gemeinschaftsanlage und hilft, Aufteilung und Abrechnung zu plausibilisieren. Mehr dazu auf unserer Seite zu{" "}
+                <Link href="/energiegemeinschaften" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
+                  Energiegemeinschaften
+                </Link>
+                .
+              </p>
+            </Reveal>
+            <Reveal delay={120}>
+              <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
+                <Users aria-hidden="true" className="h-4 w-4" />
+                Mandantenfähigkeit
+              </p>
+              <h3 className="ov-h3 mt-3 text-ink-900">Viele Beteiligte, klare Rechte</h3>
+              <ul className="mt-5 space-y-3">
+                {[
+                  { icon: Landmark, t: "Eigentümer & Investoren", x: "Portfolio-Kennzahlen und Berichte, ohne Eingriffsrechte." },
+                  { icon: LayoutDashboard, t: "Betriebsführung & Wartung", x: "Anlagendetails, Alarme, Diagnose – schreibend nur mit begründeter Freigabe." },
+                  { icon: Building2, t: "Gemeinden & Stadtwerke", x: "Mehrere Anlagen und Energiegemeinschaften getrennt, aber in einer Übersicht." },
+                  { icon: Bell, t: "Dienstleister", x: "Zeitlich und auf Anlagen begrenzter Zugang, vollständig protokolliert." },
+                ].map((r) => (
+                  <li key={r.t} className="flex gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/70">
+                    <r.icon aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-600" />
+                    <span className="text-[15px] leading-snug text-ink-700">
+                      <strong className="block text-ink-900">{r.t}</strong>
+                      {r.x}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </Tabs>
         <div className="mt-10">
           <UnterlagenAufAnfrage
             titel="Leistungsbeschreibung und Beispielbericht auf Anfrage"
@@ -328,31 +368,23 @@ export default function ScadaPage() {
         </div>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="SCADA und Monitoring – für Technik und Asset Management"
-            lead="Sie betreiben bereits ein Monitoring? Wir prüfen gern, ob es sich anbinden lässt, statt alles neu aufzubauen."
-          />
-          <Faq items={FAQ} />
-        </div>
-      </Section>
-
-      <Verweise
-        ueberschrift="Technik im Verbund"
-        items={[
-          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Die Regelung am Netzanschlusspunkt, deren Sollwerte und Ereignisse im SCADA landen." },
-          { href: "/technik/fernwartung", titel: "Fernwartung & IT-Security", text: "Wie aus einem Alarm in der Leitwarte eine schnelle, sichere Behebung wird." },
-          { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "OeMAG, Direktvermarkter und PPA – und welche Daten dafür gebraucht werden." },
-          { href: "/energie-live", titel: "Strommarkt Österreich live", text: "Day-Ahead-Preis der Gebotszone AT und Erzeugungsmix in Viertelstunden." },
+      <FaqPlus
+        tone="sand"
+        items={FAQ}
+        eyebrow="Häufige Fragen"
+        titel="SCADA und Monitoring – für Technik und Asset Management"
+        lead="Sie betreiben bereits ein Monitoring? Wir prüfen gern, ob es sich anbinden lässt, statt alles neu aufzubauen."
+        linkTitel="Technik im Verbund"
+        links={[
+          { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)" },
+          { href: "/technik/fernwartung", titel: "Fernwartung & IT-Security" },
+          { href: "/service/direktvermarktung", titel: "Reststromvermarktung" },
+          { href: "/energie-live", titel: "Strommarkt Österreich live" },
         ]}
       />
 
-      <Quellen
-        items={QUELLEN}
-        bildnachweis="Leitwarte (Symbolbild, Netzleitwarte in den USA): Dpysh w, CC BY 3.0, via Wikimedia Commons."
-      />
+
+      <QuellenKompakt items={QUELLEN} bildnachweis="Leitstand (Symbolbild): Larry D. Moore, CC BY 4.0, via Wikimedia Commons." />
 
       <CtaBand
         eyebrow="Für Asset Manager, Stadtwerke und Betriebe"

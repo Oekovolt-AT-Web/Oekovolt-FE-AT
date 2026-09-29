@@ -5,7 +5,7 @@
 // Modulebene = s · cos²α; Bemessungswert mit Teilsicherheitsbeiwert 1,5.
 
 const kn = (x) => x.toFixed(1).replace(".", ",");
-const pa = (x) => Math.round(x).toLocaleString("de-AT");
+const pa = (x) => Math.round(x).toLocaleString("de-DE");
 const alteFormel = (z, a) => (0.642 * z + 0.009) * (1 + (a / 728) ** 2);
 const normal = (sk, grad) => 0.8 * sk * Math.cos((grad * Math.PI) / 180) ** 2 * 1000; // Pa, charakteristisch
 
@@ -130,7 +130,7 @@ const artikel = {
           caption: "Historisch: sₖ in kN/m² nach der alten Zonenformel (ÖNORM B 1991-1-3, Ausgaben bis 2018) – nur zur Einordnung von Bestandsstatiken",
           kopf: ["Seehöhe", "Zone 2* (Z = 1,6)", "Zone 2 (Z = 2)", "Zone 3 (Z = 3)", "Zone 4 (Z = 4,5)"],
           zeilen: [200, 400, 600, 800, 1000, 1200, 1500].map((a) => [
-            `${a.toLocaleString("de-AT")} m`,
+            `${a.toLocaleString("de-DE")} m`,
             kn(alteFormel(1.6, a)),
             kn(alteFormel(2, a)),
             kn(alteFormel(3, a)),
@@ -156,7 +156,7 @@ const artikel = {
           kopf: ["Ort (Ortszentrum)", "Seehöhe", "sₖ laut eHORA (Beispielwert)", "Dachschneelast s = 0,8 · sₖ", "senkrecht aufs Modul bei 30°, Bemessung (×1,5)"],
           zeilen: ORTE.map((o) => [
             o.ort,
-            `${o.hoehe.toLocaleString("de-AT")} m`,
+            `${o.hoehe.toLocaleString("de-DE")} m`,
             `${kn(o.sk)} kN/m²`,
             `${kn(0.8 * o.sk)} kN/m² (≈ ${Math.round(0.8 * o.sk * 102)} kg/m²)`,
             `${pa(normal(o.sk, 30) * 1.5)} Pa`,
@@ -184,7 +184,7 @@ const artikel = {
           typ: "tabelle",
           caption: "Charakteristische Schneelast sₖ weiterer Orte laut HORA (Ortszentrum), Stand 09/2026",
           kopf: ["Ort (Ortszentrum)", "Seehöhe", "sₖ laut eHORA (Beispielwert)", "Dachschneelast (µ₁ = 0,8)"],
-          zeilen: WEITERE.map(([ort, h, sk]) => [ort, `${h.toLocaleString("de-AT")} m`, `${kn(sk)} kN/m²`, `${kn(0.8 * sk)} kN/m²`]),
+          zeilen: WEITERE.map(([ort, h, sk]) => [ort, `${h.toLocaleString("de-DE")} m`, `${kn(sk)} kN/m²`, `${kn(0.8 * sk)} kN/m²`]),
           fussnote: "Quelle: HORA, Schneelastkarte gemäß ÖNORM B 1991-1-3:2022-05-15, Einzelabfragen je Ortszentrum. Werte ändern sich mit Seehöhe und Lage oft schon innerhalb einer Gemeinde deutlich.",
         },
       ],

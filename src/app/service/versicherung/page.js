@@ -3,23 +3,28 @@
 // WICHTIG: Ökovolt tritt NICHT als Versicherungsvermittler auf (keine Berechtigung nach § 137 GewO
 // bekannt). Die Seite bietet technische Risikoberatung, Unterlagen und Schadensdokumentation.
 
-import { Bird, CloudHail, FileCheck2, FileText, Flame, Lock, PhoneCall, Search, ShieldCheck, Snowflake, Wind, Wrench, Zap } from "lucide-react";
+import { FileCheck2, FileText, Flame, Gavel, PhoneCall, Scale, Search, ShieldCheck, Sprout, Wrench } from "lucide-react";
 
-import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import FeatureGrid from "@/components/ui/FeatureGrid";
 import Steps from "@/components/ui/Steps";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
+import Button from "@/components/ui/Button";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
 import Tabelle from "@/components/ServiceAT/Tabelle";
-import Hinweis from "@/components/ServiceAT/Hinweis";
-import Weiterlesen from "@/components/ServiceAT/Weiterlesen";
 import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
 import FaqSektion from "@/components/ServiceAT/FaqSektion";
-import Quellen from "@/components/ServiceAT/Quellen";
+import Stil from "@/components/ServiceAT/B/Stil";
+import HeroBild from "@/components/ServiceAT/B/HeroBild";
+import Kennzahlen from "@/components/ServiceAT/B/Kennzahlen";
+import Dunkel from "@/components/ServiceAT/B/Dunkel";
+import FotoBento from "@/components/ServiceAT/B/FotoBento";
+import Fachdetails from "@/components/ServiceAT/B/Fachdetails";
+import Abschluss from "@/components/ServiceAT/B/Abschluss";
+import RisikoMatrix from "@/components/ServiceAT/B/RisikoMatrix";
+import { FIRMA } from "@/lib/site";
 
 const PFAD = "/service/versicherung";
 const TITEL = "PV-Versicherung: Beratung & Unterlagen | Ökovolt";
@@ -85,6 +90,7 @@ const FAQ = [
 export default function VersicherungPage() {
   return (
     <div>
+      <Stil />
       <JsonLd
         daten={serviceSchema({
           pfad: PFAD,
@@ -94,12 +100,16 @@ export default function VersicherungPage() {
         })}
       />
 
-      <PageHero
+      <HeroBild
         breadcrumbs={[{ name: "Service" }, { name: "PV-Versicherung" }]}
         eyebrow="PV-Versicherung · technische Beratung"
-        title={<>PV-Anlage richtig absichern – <span className="ov-text-gradient">mit den richtigen Nachweisen</span></>}
+        title={
+          <>
+            PV-Anlage richtig absichern – <span className="ov-text-gradient-light">mit den richtigen Nachweisen</span>
+          </>
+        }
         lead="Hagel, Schneedruck, Überspannung, Diebstahl, Marder: Eine Gewerbeanlage braucht passenden Versicherungsschutz. Wir sind kein Versicherer und kein Vermittler – aber wir wissen, welche Risiken technisch zählen, welche Unterlagen Versicherer sehen wollen und was im Schadenfall zu tun ist."
-        image={{ src: "/Images/Ratgeber/photovoltaik-im-winter.jpg", alt: "Photovoltaikmodule unter einer Schneedecke im Winter" }}
+        image={{ src: "/Images/AT/service-b/hagel-unwetter.jpg", alt: "Dunkle Gewitterfront mit Böenwalze über flachem Land" }}
         points={["Allgefahren, Ertragsausfall, Haftpflicht", "Hagel- und Schneelast-Check", "Unterlagen für Versicherer & Makler", "Begutachtung im Schadenfall"]}
         actions={[
           { label: "Beratung anfragen", href: "#anfrage" },
@@ -107,103 +117,180 @@ export default function VersicherungPage() {
         ]}
       />
 
+      <Kennzahlen
+        frage="Welche Versicherungen braucht eine Gewerbe-PV-Anlage?"
+        zahlen={[
+          { value: 3, label: "Standard-Deckungen: Allgefahren, Ertragsausfall, Haftpflicht", hinweis: "dazu Montage- und Gebäudeversicherung" },
+          { text: "HW 1–5", label: "Hagelwiderstandsklassen im Hagelregister", hinweis: "Hagelkörner von 1 bis 5 cm" },
+          { text: "§ 6", label: "VersVG: Obliegenheiten wie Wartung und Prüfung", hinweis: "Verletzung kann Leistungsfreiheit auslösen" },
+          { value: 4, label: "Schritte im Schadenfall: sichern, melden, dokumentieren, begutachten", hinweis: "Reihenfolge siehe unten" },
+        ]}
+      >
+        <p>
+          <strong>Für Gewerbeanlagen sind drei Deckungen Standard:</strong> eine Allgefahren- bzw. Elektronikversicherung für Sachschäden, eine Ertragsausfalldeckung und eine
+          Betreiberhaftpflicht. Dazu kommen Montage- und Gebäudeversicherung. Welche Deckung bei welchem Risiko greift, zeigt die Matrix unten.
+        </p>
+      </Kennzahlen>
+
+      {/* Risiko-Matrix */}
+      <Dunkel id="risiken">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading
+            dark
+            eyebrow="Risiko-Matrix Österreich"
+            title={
+              <>
+                Hagel, Schnee, Blitz, Brand: <span className="ov-text-gradient-light">welche Deckung greift?</span>
+              </>
+            }
+          />
+          <Reveal delay={100}>
+            <p className="ov-lead text-white/70">
+              Wählen Sie ein Risiko – die Matrix zeigt, welche Sparte typischerweise zuständig ist, wie Sie technisch vorbeugen und welche Nachweise Ihr Versicherer sehen will.
+            </p>
+          </Reveal>
+        </div>
+        <Reveal dir="scale" className="mt-12">
+          <RisikoMatrix />
+        </Reveal>
+      </Dunkel>
+
+      {/* Was Ökovolt tut */}
       <Section tone="white" space="lg">
         <SectionHeading
-          eyebrow="Versicherungsarten"
-          title="Welche Versicherungen eine Gewerbe-PV-Anlage braucht"
-          lead="Für eine Gewerbeanlage sind drei Deckungen Standard: eine Allgefahren- bzw. Elektronikversicherung für Sachschäden, eine Ertragsausfalldeckung und eine Betreiberhaftpflicht. Dazu kommen Montage- und Gebäudeversicherung."
-          className="mb-10"
-        />
-        <Tabelle kopf={["Sparte", "Was sie abdeckt", "Worauf achten"]} zeilen={SPARTEN} kompakt quelle="Allgemeine Übersicht. Umfang, Ausschlüsse und Selbstbehalte regeln ausschließlich die Bedingungen Ihres Vertrags." />
-      </Section>
-
-      <Section tone="sand" space="lg">
-        <SectionHeading
-          eyebrow="Risiken in Österreich"
-          title="Die Gefahren, gegen die sich PV-Betreiber absichern"
-          lead="Die meisten Schäden lassen sich technisch vorbeugen – und genau das senkt das Risiko für Versicherer und Betreiber."
+          eyebrow="Was Ökovolt tut"
+          title="Technische Beratung, Unterlagen und Schadenshilfe"
+          lead="Die meisten Schäden lassen sich technisch vorbeugen – und genau das senkt das Risiko für Versicherer und Betreiber. Mit Versicherern und Maklern arbeiten wir auf technischer Ebene zusammen."
           className="mb-12"
         />
-        <FeatureGrid
-          cols={3}
+        <FotoBento
           items={[
-            { icon: CloudHail, title: "Hagel", text: "Module mit geprüfter Hagelwiderstandsklasse (HW 1–5 im Hagelregister) und dickerem Frontglas halten mehr aus. Nach Hagel zeigt die EL-Aufnahme verdeckte Zellbrüche." },
-            { icon: Snowflake, title: "Schneedruck", text: "Modul und Unterkonstruktion müssen für die Schneelastzone nach ÖNORM B 1991-1-3 ausgelegt sein – besonders im alpinen Raum. eHORA zeigt die Zone Ihres Standorts." },
-            { icon: Zap, title: "Blitz & Überspannung", text: "Überspannungsschutz auf DC- und AC-Seite und Trennungsabstände zum Blitzschutz verhindern Folgeschäden an Wechselrichtern." },
-            { icon: Wind, title: "Sturm", text: "Ballast und Befestigung nach Windlast (ÖNORM B 1991-1-4), besonders an Rand- und Eckbereichen von Flachdächern." },
-            { icon: Lock, title: "Diebstahl & Vandalismus", text: "Freiflächen brauchen Zaun, Beleuchtung oder Videoüberwachung und diebstahlhemmende Schrauben – Versicherer fragen danach." },
-            { icon: Bird, title: "Marder & Tierbiss", text: "Geschützte Kabelführung in Rohren und geschlossenen Kanälen. Viele Allgefahrendeckungen schließen Tierbiss ein – Bedingungen prüfen." },
+            {
+              bild: { src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Drohnenaufnahme von Technikern auf einer Photovoltaikanlage" },
+              icon: Search,
+              tag: "Planung & Bestand",
+              titel: "Risikoberatung",
+              text: "Hagelklasse, Schnee- und Windlast, Blitz- und Brandschutz – bei Planung und Bestand, mit Blick auf den Standort.",
+            },
+            { bild: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker mit Absturzsicherung auf einem Dach" }, icon: FileCheck2, titel: "Obliegenheiten erfüllen", text: "Wartung und Prüfung im nötigen Intervall – dokumentiert und jederzeit vorlegbar." },
+            { bild: { src: "/Images/AT/ratgeber/photovoltaik-brandschutz.jpg", alt: "Photovoltaikanlage mit Brandschutzkennzeichnung" }, icon: Wrench, titel: "Schadenfall", text: "Begutachtung, Thermografie und EL, Kostenvoranschlag und Instandsetzung aus einer Hand." },
+            { icon: FileText, ton: "gruen", titel: "Unterlagen für Versicherer", text: "Anlagenpass, Datenblätter, Prüfbefund, Fotos und Schutzkonzepte gebündelt für Ihren Versicherer oder Makler." },
           ]}
         />
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
-          <div>
-            <SectionHeading eyebrow="Was Ökovolt tut" title="Technische Beratung, Unterlagen und Schadenshilfe" />
-            <Reveal delay={80}>
-              <ul className="mt-8 space-y-4">
-                {[
-                  { icon: Search, t: "Risikoberatung", x: "Hagelklasse, Schnee- und Windlast, Blitz- und Brandschutz – bei Planung und Bestand." },
-                  { icon: FileText, t: "Unterlagen für Versicherer", x: "Anlagenpass, Datenblätter, Prüfbefund, Fotos und Schutzkonzepte gebündelt für Ihren Versicherer oder Makler." },
-                  { icon: FileCheck2, t: "Obliegenheiten erfüllen", x: "Wartung und Prüfung im nötigen Intervall – dokumentiert und jederzeit vorlegbar." },
-                  { icon: Wrench, t: "Schadenfall", x: "Begutachtung, Thermografie und EL, Kostenvoranschlag und Instandsetzung aus einer Hand." },
-                ].map((k) => (
-                  <li key={k.t} className="flex gap-4 rounded-2xl bg-sand-50 p-5 ring-1 ring-ink-200/60">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-600 text-white">
-                      <k.icon aria-hidden="true" className="h-5 w-5" />
-                    </span>
-                    <span>
-                      <span className="block font-display text-[17px] font-bold text-ink-900">{k.t}</span>
-                      <span className="mt-1 block text-[15px] leading-relaxed text-ink-600">{k.x}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
-          <div className="space-y-5 self-start">
-            <Hinweis ton="recht" titel="Keine Versicherungsvermittlung">
-              <p>
-                Ökovolt ist ein Elektrotechnik-Fachbetrieb und kein Versicherungsvermittler im Sinne der Gewerbeordnung. Wir bieten keine Versicherungsprodukte an, beraten nicht zu Tarifen
-                und nehmen keine Anträge entgegen. Mit Versicherern und Maklern arbeiten wir auf technischer Ebene zusammen – bei Besichtigungen, Unterlagen und im Schadenfall.
-              </p>
-            </Hinweis>
-            <Reveal className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
-              <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-700">Checkliste</p>
-              <h3 className="mt-2 font-display text-[19px] font-bold text-ink-900">Diese Unterlagen wollen Versicherer sehen</h3>
-              <ul className="mt-5 space-y-2.5">
-                {UNTERLAGEN.map((u) => (
-                  <li key={u} className="flex gap-3 text-[15px] leading-relaxed text-ink-700">
-                    <ShieldCheck aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-600" />
-                    {u}
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
-          </div>
+      {/* Schadenfall */}
+      <Dunkel id="schadenfall" space="lg" glow="links">
+        <div className="mb-14 grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <SectionHeading dark eyebrow="Schadenfall" title="Nach Hagel, Sturm oder Brand: in dieser Reihenfolge" />
+          <Reveal delay={80} className="ov-glass rounded-3xl p-5 md:p-6">
+            <p className="text-[13px] text-white/60">Schaden an Ihrer Anlage? Rufen Sie uns an.</p>
+            <a href={FIRMA.telefonHref} className="mt-1 flex items-center gap-3 font-display text-[22px] font-extrabold tracking-tight text-white hover:text-ov-300">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ov-500">
+                <PhoneCall aria-hidden="true" className="h-4.5 w-4.5" />
+              </span>
+              {FIRMA.telefon}
+            </a>
+          </Reveal>
         </div>
-      </Section>
+        <Steps
+          tone="dark"
+          cols={4}
+          items={[
+            { icon: Flame, title: "Sichern", text: "Bei Brand oder Rauch Feuerwehr rufen. Nicht auf das Dach steigen; beschädigte Module können unter Spannung stehen." },
+            { icon: PhoneCall, title: "Melden", text: "Schaden unverzüglich dem Versicherer melden – das ist eine Obliegenheit. Uns parallel informieren." },
+            { icon: FileText, title: "Dokumentieren", text: "Fotos vom Boden aus, Monitoring-Daten und Wetterereignis sichern. Nichts entsorgen, bevor der Versicherer zustimmt." },
+            { icon: Search, title: "Begutachten & Instandsetzen", text: "Sichtprüfung, Thermografie, EL und Messungen, Kostenvoranschlag – nach Freigabe Reparatur und Nachprüfung." },
+          ]}
+        />
+      </Dunkel>
 
-      <Section tone="navy" space="lg" id="schadenfall" className="scroll-mt-24 overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
-        <div className="relative">
-          <SectionHeading dark eyebrow="Schadenfall" title="Nach Hagel, Sturm oder Brand: in dieser Reihenfolge" align="center" className="mb-14" />
-          <Steps
-            tone="dark"
-            cols={4}
+      {/* Fachdetails */}
+      <Section tone="white" space="lg">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrow="Für Technik & Einkauf"
+              title="Sparten, Obliegenheiten, Sonderfälle"
+              lead="Die Details für Ihren Makler, die Geschäftsführung und den Einkauf – kompakt und mit Quellen."
+            />
+            <Reveal delay={120} className="mt-8">
+              <Button href="/standort-check" variant="navy" icon={ShieldCheck}>
+                Standort-Check mit eHORA
+              </Button>
+            </Reveal>
+          </div>
+          <Fachdetails
             items={[
-              { icon: Flame, title: "Sichern", text: "Bei Brand oder Rauch Feuerwehr rufen. Nicht auf das Dach steigen; beschädigte Module können unter Spannung stehen." },
-              { icon: PhoneCall, title: "Melden", text: "Schaden unverzüglich dem Versicherer melden – das ist eine Obliegenheit. Uns parallel informieren." },
-              { icon: FileText, title: "Dokumentieren", text: "Fotos vom Boden aus, Monitoring-Daten und Wetterereignis sichern. Nichts entsorgen, bevor der Versicherer zustimmt." },
-              { icon: Search, title: "Begutachten & Instandsetzen", text: "Sichtprüfung, Thermografie, EL und Messungen, Kostenvoranschlag – nach Freigabe Reparatur und Nachprüfung." },
+              {
+                titel: "Diese Unterlagen wollen Versicherer sehen",
+                kurz: "Checkliste für Antrag und Schadenfall",
+                icon: FileCheck2,
+                inhalt: (
+                  <ul className="grid gap-2.5 sm:grid-cols-2">
+                    {UNTERLAGEN.map((u) => (
+                      <li key={u} className="flex gap-2.5 rounded-2xl bg-sand-50 p-3.5 text-[14.5px] leading-snug text-ink-700 ring-1 ring-ink-200/60">
+                        <ShieldCheck aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+                        {u}
+                      </li>
+                    ))}
+                  </ul>
+                ),
+              },
+              {
+                titel: "Welche Versicherungen eine Gewerbe-PV-Anlage braucht",
+                kurz: "Fünf Sparten im Überblick",
+                icon: ShieldCheck,
+                inhalt: (
+                  <Tabelle
+                    kopf={["Sparte", "Was sie abdeckt", "Worauf achten"]}
+                    zeilen={SPARTEN}
+                    kompakt
+                    quelle="Allgemeine Übersicht. Umfang, Ausschlüsse und Selbstbehalte regeln ausschließlich die Bedingungen Ihres Vertrags."
+                  />
+                ),
+              },
+              {
+                titel: "Obliegenheiten nach § 6 VersVG",
+                kurz: "Warum Wartung und Prüfbefund zählen",
+                icon: Gavel,
+                inhalt: (
+                  <p className="text-[15.5px] leading-relaxed text-ink-700">
+                    Versicherungsbedingungen enthalten Obliegenheiten: Die Anlage ist in ordnungsgemäßem Zustand zu halten, vorgeschriebene Prüfungen sind durchzuführen und Mängel zu
+                    beheben. Werden sie verletzt, kann der Versicherer nach § 6 VersVG – abhängig von Verschulden und Auswirkung – ganz oder teilweise leistungsfrei werden. Prüfbefund nach
+                    OVE E 8101 und Wartungsprotokoll sind Ihr Nachweis.
+                  </p>
+                ),
+              },
+              {
+                titel: "Landwirtschaft, Agri-PV und Hagelversicherung",
+                kurz: "Kultur und Anlage getrennt betrachten",
+                icon: Sprout,
+                inhalt: (
+                  <p className="text-[15.5px] leading-relaxed text-ink-700">
+                    Die Österreichische Hagelversicherung ist auf landwirtschaftliche Kulturen spezialisiert. PV-Anlagen – auch in der Landwirtschaft und bei Agri-PV – werden in der Regel
+                    über eine Sach- bzw. Photovoltaikversicherung abgesichert. Klären Sie bei Agri-PV zusätzlich, wie Kultur und Anlage getrennt versichert sind.
+                  </p>
+                ),
+              },
+              {
+                titel: "Abgrenzung: technische Beratung statt Vermittlung",
+                kurz: "Was wir tun – und was nicht",
+                icon: Scale,
+                inhalt: (
+                  <p className="text-[15.5px] leading-relaxed text-ink-700">
+                    Ökovolt ist ein Elektrotechnik-Fachbetrieb und kein Versicherungsvermittler im Sinne der Gewerbeordnung. Wir bieten keine Versicherungsprodukte an, beraten nicht zu
+                    Tarifen und nehmen keine Anträge entgegen. Mit Versicherern und Maklern arbeiten wir auf technischer Ebene zusammen – bei Besichtigungen, Unterlagen und im Schadenfall.
+                  </p>
+                ),
+              },
             ]}
           />
         </div>
       </Section>
 
       <AnfrageSektion
-        titel="Technische Beratung oder Schadensbegutachtung anfragen"
+        titel="Beratung oder Begutachtung anfragen"
         lead="Ob neue Anlage, Bestandsanlage oder akuter Schaden – beschreiben Sie Ihr Anliegen, wir melden uns mit den nächsten Schritten."
         schritte={["Sie beschreiben Anlage und Anliegen.", "Wir klären, welche Unterlagen, Prüfungen oder Begutachtungen nötig sind.", "Sie erhalten Nachweise für Ihren Versicherer oder Makler bzw. einen Termin zur Begutachtung."]}
         formular={{
@@ -220,27 +307,22 @@ export default function VersicherungPage() {
         }}
       />
 
-      <Section tone="white" space="md">
-        <Weiterlesen
-          items={[
-            { href: "/service/wartung", art: "Service", titel: "Wartungsvertrag", text: "Obliegenheiten erfüllen und nachweisen." },
-            { href: "/service/e-check", art: "Service", titel: "E-Check & Prüfbefund", text: "Wiederkehrende Prüfung nach OVE E 8101." },
-            { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie", text: "Schäden nach Hagel großflächig erfassen." },
-            { href: "/standort-check", art: "Tool", titel: "Standort-Check mit eHORA", text: "Schneelast, Wind und Hagel für Ihre Adresse." },
-            { href: "/ratgeber/photovoltaik-versicherung", art: "Ratgeber", titel: "Photovoltaik-Versicherung", text: "Deckungen, Ausschlüsse und Kosten in Österreich." },
-            { href: "/ratgeber/hagel-photovoltaik", art: "Ratgeber", titel: "Hagel & Photovoltaik", text: "Hagelwiderstandsklassen und Hagelregister." },
-            { href: "/ratgeber/schneelast-photovoltaik", art: "Ratgeber", titel: "Schneelast", text: "ÖNORM B 1991-1-3, Zonen und Prüflasten." },
-            { href: "/ratgeber/photovoltaik-brandschutz", art: "Ratgeber", titel: "Brandschutz", text: "OVE R 11-1 und Anforderungen der Feuerwehr." },
-          ]}
-        />
-      </Section>
-
-      <FaqSektion items={FAQ} titel="PV-Versicherung – häufige Fragen" lead="Allgemeine Informationen, keine Versicherungs- oder Rechtsberatung." tone="sand" />
+      <FaqSektion items={FAQ} titel="PV-Versicherung – häufige Fragen" lead="Allgemeine Informationen, keine Versicherungs- oder Rechtsberatung." tone="white" />
 
       <Querverweise pfad={PFAD} ueberschrift="Mehr zu Sicherheit und Absicherung" />
 
-      <Quellen
-        items={[
+      <Abschluss
+        links={[
+          { href: "/service/wartung", art: "Service", titel: "Wartungsvertrag" },
+          { href: "/service/e-check", art: "Service", titel: "E-Check & Prüfbefund" },
+          { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie" },
+          { href: "/standort-check", art: "Tool", titel: "Standort-Check mit eHORA" },
+          { href: "/ratgeber/photovoltaik-versicherung", art: "Ratgeber", titel: "Photovoltaik-Versicherung" },
+          { href: "/ratgeber/hagel-photovoltaik", art: "Ratgeber", titel: "Hagel & Photovoltaik" },
+          { href: "/ratgeber/schneelast-photovoltaik", art: "Ratgeber", titel: "Schneelast" },
+          { href: "/ratgeber/photovoltaik-brandschutz", art: "Ratgeber", titel: "Brandschutz" },
+        ]}
+        quellen={[
           { titel: "Versicherungsvertragsgesetz (VersVG) § 6 – Obliegenheiten", href: "https://www.jusline.at/gesetz/versvg/paragraf/6" },
           { titel: "Hagelregister – Hagelwiderstandsklassen HW 1–5", href: "https://www.hagelregister.at/" },
           { titel: "VVO – Photovoltaik-Sicherheitsleitfaden", href: "https://vvonet.vvo.at/vvo/vvonet_website.nsf/sysPages/Photovolatik_Sicherheitsleitfaden.html/$file/PV_Sicherheitsleitfaden.pdf" },

@@ -44,6 +44,7 @@ import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import UeberschussLaden from "@/components/Wallbox/UeberschussLaden";
 import Laderechner from "@/components/Wallbox/Laderechner";
 import { WALLBOX } from "@/data/wallbox";
@@ -178,15 +179,16 @@ export default function WallboxPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Wallbox" }]}
         eyebrow="Wallbox & E-Mobilität"
         title={
           <>
-            E-Auto laden mit <span className="ov-text-gradient">eigenem Solarstrom</span>
+            E-Auto laden mit <span className="ov-text-gradient-light">eigenem Solarstrom</span>
           </>
         }
         lead="Mit einer Wallbox laden Sie Ihr Elektroauto sicher und schnell – und mit PV-Überschussladen zu einem großen Teil mit Strom vom eigenen Dach. Wir planen, installieren und melden die Wallbox beim Netzbetreiber. Für Betriebe planen wir Ladeinfrastruktur mit Lastmanagement."
-        image={{ src: "/Images/Dienstleistungen/Smartphone/wallbox-scaled.jpg", alt: "Elektroauto lädt an einer Wallbox" }}
+        image={{ src: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Solar-Carports mit Ladepunkten über einem Parkplatz, Luftbild", position: "50% 55%" }}
         points={["Laden mit PV-Überschuss", "Meldung beim Netzbetreiber inklusive", "11 kW – ideal für zu Hause", "Einbindung ins Energiemanagement"]}
         actions={[
           { label: "Wallbox-Angebot anfragen", href: "/angebot" },
@@ -207,23 +209,16 @@ export default function WallboxPage() {
         }
       />
 
-      {/* Kennzahlen-Leiste */}
-      <div className="border-b border-ink-100 bg-white">
-        <dl className="ov-container grid grid-cols-2 gap-px py-2 md:grid-cols-4">
-          {[
-            { w: "11 kW", l: "Ladeleistung – 100 km in rund 2 Stunden" },
-            { w: `${WALLBOX.verbrauchProHundert} kWh`, l: "Strombedarf je 100 km (Kompaktklasse)" },
-            { w: "ab 1,4 kW", l: "Mindestleistung fürs Überschussladen" },
-            { w: `${kva(NB.schieflastKva)} kVA`, l: "Grenze für einphasiges Laden" },
-          ].map((k, i) => (
-            <Reveal key={k.l} delay={i * 70} className="px-2 py-6 md:px-6">
-              <dt className="sr-only">{k.l}</dt>
-              <dd className="ov-num font-display text-[clamp(1.4rem,1.1rem+1vw,2rem)] font-extrabold leading-none tracking-tight text-ink-900">{k.w}</dd>
-              <dd className="mt-2 text-[13px] leading-snug text-ink-500">{k.l}</dd>
-            </Reveal>
-          ))}
-        </dl>
-      </div>
+      {/* Kennzahlen */}
+      <Kennzahlenband
+        tone="light"
+        items={[
+          { value: 11, suffix: " kW", label: "Ladeleistung – 100 km in rund 2 Stunden" },
+          { value: WALLBOX.verbrauchProHundert, suffix: " kWh", label: "Strombedarf je 100 km (Kompaktklasse)" },
+          { value: 1.4, decimals: 1, prefix: "ab ", suffix: " kW", label: "Mindestleistung fürs Überschussladen" },
+          { wert: `${kva(NB.schieflastKva)} kVA`, label: "Grenze für einphasiges Laden" },
+        ]}
+      />
 
       {/* Gewerbe */}
       <Section tone="navy" space="lg" className="overflow-hidden">

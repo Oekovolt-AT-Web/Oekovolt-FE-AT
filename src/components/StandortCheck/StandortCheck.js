@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowUpRight,
   CalendarCheck2,
+  Check,
   CloudHail,
   Crosshair,
   ExternalLink,
@@ -345,10 +346,43 @@ export default function StandortCheck() {
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
+      {/* Kopfleiste mit Fortschritt (nur Anzeige) */}
+      <div className="flex flex-col gap-4 border-b border-ink-100 bg-white px-5 py-4 sm:px-6 md:flex-row md:items-center md:justify-between md:px-8 md:py-5">
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+            <Mountain aria-hidden="true" className="h-5 w-5" />
+          </span>
+          <div>
+            <p className="font-display text-[16.5px] font-bold leading-tight text-ink-900">Standort-Check Photovoltaik</p>
+            <p className="text-[12.5px] text-ink-500">Schneelast · Wind · Hagel · Ertrag</p>
+          </div>
+        </div>
+        <ol aria-label="Fortschritt" className="flex flex-wrap gap-2">
+          {[
+            { n: 1, l: "Standort", ok: !!punkt },
+            { n: 2, l: "Dach", ok: !!punkt },
+            { n: 3, l: "eHORA-Werte", ok: zahlAus(skText) != null },
+          ].map((st) => (
+            <li
+              key={st.n}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[12.5px] font-semibold ring-1 transition-colors duration-300",
+                st.ok ? "bg-ov-50 text-ov-800 ring-ov-200" : "bg-white text-ink-500 ring-ink-200"
+              )}
+            >
+              <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[11px]", st.ok ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-500")}>
+                {st.ok ? <Check aria-hidden="true" className="h-3 w-3" strokeWidth={3} /> : st.n}
+              </span>
+              {st.l}
+              <span className="sr-only">{st.ok ? "(erledigt)" : "(offen)"}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
       <div className="grid lg:grid-cols-[minmax(0,420px)_1fr]">
         {/* ================= Eingaben ================= */}
         <div className="relative border-b border-ink-100 bg-sand-50 p-5 sm:p-6 md:p-8 lg:border-b-0 lg:border-r">
-          <div className="space-y-8">
+          <div className="space-y-8 lg:sticky lg:top-24">
             <Gruppe titel="1 · Standort">
               <form onSubmit={suchen} role="search" aria-label="Adresse in Österreich suchen">
                 <label htmlFor="standort-suche" className="mb-2 block text-[14.5px] font-semibold text-ink-800">
@@ -431,12 +465,24 @@ export default function StandortCheck() {
           </p>
 
           {!punkt && (
-            <div className="mt-6 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/70">
+            <div className="mt-6">
               <p className="font-display text-[19px] font-bold text-ink-900">So funktioniert der Check</p>
-              <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-[15px] leading-relaxed text-ink-700">
-                <li>Adresse suchen oder Dach in der Karte anklicken.</li>
-                <li>Wir laden Seehöhe und Solarertrag (PVGIS) und öffnen für Sie die passende eHORA-Karte.</li>
-                <li>Sie übernehmen die Schneelast s<sub>k</sub> aus eHORA – der Check bewertet Dach, Module, Unterkonstruktion und Schneefang.</li>
+              <ol className="mt-4 grid gap-3 sm:grid-cols-3">
+                {[
+                  { icon: MapPin, t: <>Adresse suchen oder Dach in der Karte anklicken.</> },
+                  { icon: Sun, t: <>Wir laden Seehöhe und Solarertrag (PVGIS) und öffnen für Sie die passende eHORA-Karte.</> },
+                  { icon: Snowflake, t: <>Sie übernehmen die Schneelast s<sub>k</sub> aus eHORA – der Check bewertet Dach, Module, Unterkonstruktion und Schneefang.</> },
+                ].map((st, i) => (
+                  <li key={i} className="relative rounded-2xl bg-sand-50 p-5 ring-1 ring-ink-200/70">
+                    <div className="flex items-center justify-between">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200">
+                        <st.icon aria-hidden="true" className="h-5 w-5" />
+                      </span>
+                      <span className="font-display text-[13px] font-bold tracking-[0.18em] text-ink-300">0{i + 1}</span>
+                    </div>
+                    <p className="mt-4 text-[14.5px] leading-relaxed text-ink-700">{st.t}</p>
+                  </li>
+                ))}
               </ol>
             </div>
           )}

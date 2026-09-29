@@ -26,6 +26,7 @@ import {
   Zap,
 } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
@@ -152,15 +153,16 @@ export default function SmartmeterPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Smart Meter & EMS" }]}
         eyebrow="Smart Meter · Energiemanagement"
         title={
           <>
-            Smart Meter in Österreich – <span className="ov-text-gradient">und was Betriebe daraus machen</span>
+            Smart Meter in Österreich – <span className="ov-text-gradient-light">und was Betriebe daraus machen</span>
           </>
         }
         lead="Der Smart Meter des Netzbetreibers misst Verbrauch und Einspeisung in Viertelstundenwerten. Für Haushalte ist er Grundlage für dynamische Tarife und Energiegemeinschaften, für Betriebe die Datenbasis für PV-Planung, Peak Shaving und Energiemanagement."
-        image={{ src: "/Images/Dienstleistungen/Smartphone/smart-guard-scaled.jpg", alt: "Elektrotechniker arbeitet am Zählerschrank" }}
+        image={{ src: "/Images/Dienstleistungen/Smartphone/smart-guard-scaled.jpg", alt: "Elektrotechniker arbeitet am Zählerschrank", position: "30% 50%" }}
         points={["Opt-in oder Opt-out nach ElWG", "Viertelstundenwerte im Kundenportal", "Lastgang als Planungsgrundlage", "Energiemanagement für Gewerbe"]}
         actions={[
           { label: "Beratung anfragen", href: "/angebot" },
@@ -179,6 +181,15 @@ export default function SmartmeterPage() {
             </div>
           </div>
         }
+      />
+
+      <Kennzahlenband
+        items={[
+          { value: 96, label: "Messwerte am Tag – ein Wert je Viertelstunde" },
+          { value: 15, suffix: " min", label: "Messintervall der Viertelstundenwerte im Kundenportal" },
+          { wert: "§ 54", label: "ElWG: Opt-out – mit PV, Speicher oder Wärmepumpe nicht möglich" },
+          { value: 100, suffix: " MWh", label: "Jahresverbrauch (100.000 kWh), ab dem Betriebe meist einen Lastprofilzähler haben" },
+        ]}
       />
 
       <Section tone="white" space="lg">

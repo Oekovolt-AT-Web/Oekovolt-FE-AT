@@ -4,7 +4,8 @@
 // Elektrizitätsabgabe, Land- und Forstwirtschaft, Kleinunternehmer, Private.
 
 import Link from "next/link";
-import { Building2, Calculator, ClipboardCheck, FileText, Landmark, Percent, Receipt, Sun, Tractor } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, BadgeEuro, Building2, Calculator, ClipboardCheck, FileText, Home, Landmark, Percent, Receipt, Store, Sun, Tractor, TrendingDown, Zap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,7 +14,11 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import SteuerCheck from "@/components/Forderungen/Steuerlich/SteuerCheck";
-import { Checkliste, Hinweis, HowTo, Kennzahlen, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import Umschalter from "@/components/Forderungen/Shared/Umschalter";
+import Prozess from "@/components/Forderungen/Shared/Prozess";
+import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
+import { BILDER, nachweise } from "@/components/Forderungen/Shared/bildnachweise";
+import { Checkliste, Hinweis, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import { ENERGIEGEMEINSCHAFTEN, STAND, STEUER } from "@/components/Forderungen/Shared/bund";
 import { BASE_URL } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -81,6 +86,53 @@ const FAQ = [
   },
 ];
 
+const LINK = "font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800";
+
+const REGEL_ICONS = [<Percent key="p" />, <BadgeEuro key="b" />, <TrendingDown key="t" />, <Receipt key="r" />, <Zap key="z" />, <Home key="h" />, <Store key="s" />];
+
+const ZIELGRUPPEN = [
+  {
+    id: "unternehmen",
+    icon: <Building2 />,
+    titel: "Unternehmen",
+    bild: { src: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg", alt: "Luftbild von Gewerbehallen mit Photovoltaikanlagen auf den Dächern" },
+    punkte: ["IFB 22 % zusätzlich zur AfA (Anschaffung bis 31.12.2026)", "Vorsteuerabzug aus 20 % USt", "Elektrizitätsabgabe auf Eigenverbrauch entfällt", "IFB schließt den investitionsbedingten Gewinnfreibetrag für dasselbe Wirtschaftsgut aus", "Behaltefrist 4 Jahre, sonst Nachversteuerung"],
+    link: { href: "/gewerbe", label: "Photovoltaik für Gewerbe und Industrie" },
+  },
+  {
+    id: "landwirtschaft",
+    icon: <Tractor />,
+    titel: "Land- und Forstwirtschaft",
+    bild: { src: "/Images/Referenzen/projekteBanner.jpg", alt: "Aufgeständerte Photovoltaik-Freiflächenanlage unter blauem Himmel" },
+    punkte: ["Volleinspeisung = eigener Gewerbebetrieb", "Überschusseinspeisung mit überwiegend betrieblichem Verbrauch = Nebenbetrieb", "Nebenbetriebs-Einkünfte zählen nicht zur 55.000-€-Grenze der LuF-PauschVO 2015", "USt-Pauschalierung: Einspeisung 13 %, Privatentnahme 10 %", "Bei pauschaler Gewinnermittlung kein IFB"],
+    link: { href: "/landwirtschaft", label: "Photovoltaik für die Landwirtschaft" },
+  },
+  {
+    id: "gemeinden",
+    icon: <Landmark />,
+    titel: "Gemeinden",
+    bild: { src: BILDER.gemeinde.src, alt: "Photovoltaikanlage auf dem Dach eines Gemeindeamts in Kärnten" },
+    punkte: ["Einordnung: Hoheitsbereich oder Betrieb gewerblicher Art – entscheidet über den Vorsteuerabzug", "Eigenverbrauch in Gemeindegebäuden von der Elektrizitätsabgabe befreit", "Energiegemeinschaft mit Bürgern: Gewinnerzielung nicht im Vordergrund", "Vergabe nach Bundesvergabegesetz beachten"],
+    link: { href: "/kommunen", label: "Photovoltaik für Gemeinden" },
+  },
+  {
+    id: "private",
+    icon: <Sun />,
+    titel: "Private",
+    bild: { src: "/Images/Dienstleistungen/Photovoltaik/download-2.jpg", alt: "Reihenhäuser mit Photovoltaikmodulen auf dem Dach" },
+    punkte: ["20 % USt ohne Vorsteuerabzug", "Einspeiseerlöse bis 12.500 kWh je Person steuerfrei (Anlage bis 35 kWp)", "Eigenverbrauch abgabenfrei", "Keine AfA und kein IFB ohne betriebliche Nutzung"],
+    link: { href: "/forderungen/landesforderungen", label: "Landesförderungen für Private" },
+  },
+];
+
+const BEISPIEL = [
+  { pos: "Investitionsfreibetrag", rechnung: "200.000 € × 22 %", betrag: "44.000 €" },
+  { pos: "AfA 1. Jahr (Halbjahres-AfA)", rechnung: "200.000 € ÷ 20 Jahre × ½", betrag: "5.000 €" },
+  { pos: "Betriebsausgaben 1. Jahr", rechnung: "IFB + AfA", betrag: "49.000 €" },
+  { pos: "Steuerwirkung 1. Jahr", rechnung: "49.000 € × 23 % KöSt", betrag: "11.270 €" },
+  { pos: "Vergleich: Anschaffung 2027", rechnung: "200.000 € × 15 % IFB + 5.000 € AfA, × 23 %", betrag: "8.050 €" },
+];
+
 export default function Steuerlich() {
   const schema = {
     "@context": "https://schema.org",
@@ -95,188 +147,170 @@ export default function Steuerlich() {
     dateModified: STAND.iso,
   };
 
+  const regelPanels = UEBERSICHT.map((r, i) => (
+    <article key={r.art} className="relative overflow-hidden rounded-[2rem] bg-white p-6 ring-1 ring-ink-200/70 shadow-[0_30px_60px_-45px_rgba(3,18,43,0.45)] md:p-9">
+      <span aria-hidden="true" className="pointer-events-none absolute -right-3 -top-8 font-display text-[150px] font-extrabold leading-none text-ink-100">{String(i + 1).padStart(2, "0")}</span>
+      <div className="relative">
+        <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-700">{r.art}</p>
+        <h3 className="mt-3 max-w-2xl font-display text-[clamp(1.4rem,1.1rem+1vw,1.9rem)] font-extrabold leading-snug tracking-tight text-ink-900">{r.regel}</h3>
+        <dl className="mt-7 grid gap-4 md:grid-cols-3">
+          <div className="rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 md:col-span-3">
+            <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">Grenze / Voraussetzung</dt>
+            <dd className="mt-1.5 text-[15.5px] leading-relaxed text-ink-800">{r.grenze}</dd>
+          </div>
+          <div className="rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 md:col-span-2">
+            <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">Rechtsgrundlage</dt>
+            <dd className="mt-1.5 text-[14.5px] leading-relaxed text-ink-700">{r.norm}</dd>
+          </div>
+          <div className="rounded-2xl bg-ov-50 p-4 ring-1 ring-ov-100">
+            <dt className="text-[12px] font-semibold uppercase tracking-wider text-ov-700">Für wen</dt>
+            <dd className="mt-1.5 text-[14.5px] leading-relaxed text-ink-800">{r.fuer}</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+  ));
+
+  const zgPanels = ZIELGRUPPEN.map((z) => (
+    <div key={z.id} className="grid items-stretch gap-6 overflow-hidden rounded-[2rem] bg-white ring-1 ring-ink-200/70 lg:grid-cols-[0.9fr_1.1fr] lg:gap-0">
+      <div className="relative min-h-[240px] overflow-hidden">
+        <Image src={z.bild.src} alt={z.bild.alt} fill sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" />
+        <p className="absolute bottom-5 left-6 font-display text-[24px] font-extrabold text-white">{z.titel}</p>
+      </div>
+      <div className="flex flex-col p-6 md:p-9">
+        <Checkliste items={z.punkte} />
+        <Link href={z.link.href} className="group mt-auto inline-flex items-center gap-2 pt-6 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+          {z.link.label}
+          <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
+    </div>
+  ));
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Steuerliche Vorteile" }]}
         eyebrow={`Photovoltaik & Steuer · Rechtsstand ${STAND.kurz}`}
-        title={<>Photovoltaik und Steuer: <span className="ov-text-gradient">22 % Investitionsfreibetrag</span> bis Jahresende</>}
+        title={<>Photovoltaik und Steuer: <span className="ov-text-gradient-light">22 % Investitionsfreibetrag</span> bis Jahresende</>}
         lead="Für Unternehmen ist 2026 steuerlich ein Ausnahmejahr: Der Investitionsfreibetrag für PV, Speicher und Ladestationen liegt noch bis 31.12.2026 bei 22 %. Dazu kommen Abschreibung, Vorsteuerabzug und die Befreiung von der Elektrizitätsabgabe – hier mit Paragraph, Grenze und IFB-Rechner."
-        image={{ src: "/Images/Referenzen/Projekte-1.jpg", alt: "Photovoltaikanlage auf einem Betriebsgebäude" }}
+        image={{ src: "/Images/Referenzen/referenzkarte4.jpg", alt: "Projektteam mit Schutzhelmen vor einer Photovoltaik-Freiflächenanlage", position: "center 40%" }}
         points={["IFB 22 % bis 31.12.2026", "AfA 20 Jahre oder 30 % degressiv", "Elektrizitätsabgabe befreit", "Mit IFB-Rechner"]}
         actions={[
-          { label: "Projekt anfragen", href: "/angebot" },
           { label: "Zum IFB-Rechner", href: "#ifb-rechner", icon: Calculator },
+          { label: "Projekt anfragen", href: "/angebot" },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <Percent aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[22px] font-extrabold leading-none text-ink-900">22 %</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">IFB für Anschaffung bis 31.12.2026</p>
-            </div>
-          </div>
-        }
       />
 
-      <Kennzahlen
+      <KennzahlenBand
         items={[
-          { wert: "22 %", label: "IFB für PV, Speicher, Ladestationen" },
-          { wert: "20 Jahre", label: "Nutzungsdauer laut Finanzverwaltung" },
-          { wert: "0 €", label: "Elektrizitätsabgabe auf Eigenverbrauch" },
-          { wert: "20 %", label: "USt – der 0-%-Satz ist ausgelaufen" },
+          { value: 22, suffix: " %", label: "IFB für PV, Speicher, Ladestationen" },
+          { value: 20, suffix: " Jahre", label: "Nutzungsdauer laut Finanzverwaltung" },
+          { value: 0, suffix: " €", label: "Elektrizitätsabgabe auf Eigenverbrauch" },
+          { value: 20, suffix: " %", label: "USt – der 0-%-Satz ist ausgelaufen" },
         ]}
       />
 
-      <Section tone="sand" space="lg" id="ifb-rechner" className="scroll-mt-24">
+      <Section tone="sand" space="md" id="ifb-rechner" className="scroll-mt-24">
         <SectionHeading
           eyebrow="IFB-Rechner"
           title={<>Was bringt der <span className="ov-text-gradient">Investitionsfreibetrag</span> Ihrem Betrieb?</>}
-          lead="Anschaffungskosten, Förderung und Rechtsform eingeben – Sie sehen IFB, Abschreibung und Steuerwirkung im ersten Jahr."
+          lead="Anschaffungskosten, Förderung und Rechtsform eingeben – Sie sehen IFB, Abschreibung und Steuerwirkung im ersten Jahr, im direkten Vergleich zur Anschaffung ab 2027."
           align="center"
-          className="mb-12"
+          className="mb-10"
         />
         <Reveal dir="scale">
           <SteuerCheck />
         </Reveal>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading
-            eyebrow="Die Regeln auf einen Blick"
-            title="Photovoltaik-Steuerrecht 2026 in sieben Zeilen"
-            lead="Welche Regel gilt, mit welcher Grenze, auf welcher Rechtsgrundlage – und für wen."
-          />
+      <Section tone="white" space="md">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading eyebrow="Die Regeln auf einen Blick" title="Photovoltaik-Steuerrecht 2026 in sieben Punkten" lead="Welche Regel gilt, mit welcher Grenze, auf welcher Rechtsgrundlage – und für wen. Thema wählen." />
           <StandPille className="shrink-0 self-start md:self-auto">Rechtsstand {STAND.label}</StandPille>
         </div>
-        <Reveal>
-          <Tabelle
-            dicht
-            caption={`Steuerregeln für Photovoltaikanlagen in Österreich, Stand ${STAND.label}`}
-            spalten={[
-              { key: "art", label: "Thema", breite: "w-[15%]" },
-              { key: "regel", label: "Regel" },
-              { key: "grenze", label: "Grenze / Voraussetzung" },
-              { key: "norm", label: "Rechtsgrundlage", breite: "w-[17%]", className: "text-[14px]" },
-              { key: "fuer", label: "Für wen", breite: "w-[15%]" },
-            ]}
-            zeilen={UEBERSICHT}
-          />
-        </Reveal>
+        <Umschalter form="liste" label="Steuerthema wählen" tabs={UEBERSICHT.map((r, i) => ({ id: `r${i}`, label: r.art, icon: REGEL_ICONS[i] }))} panels={regelPanels} />
         <Hinweis titel="0 % Umsatzsteuer ist Geschichte" ton="warn" className="mt-8">
           {STEUER.ust} Angebote, die 2026 noch mit 0 % werben, sind falsch. Für Unternehmer ändert sich wenig, weil sie die Vorsteuer abziehen; für Private und Gemeinden im Hoheitsbereich ist die Umsatzsteuer ein echter Kostenfaktor.
         </Hinweis>
       </Section>
 
+      {/* Rechenbeispiel */}
+      <Section tone="navy" space="md" className="ov-noise overflow-hidden">
+        <Glow />
+        <div className="relative grid items-center gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
+          <div>
+            <SectionHeading dark eyebrow="Rechenbeispiel" title="GmbH, 200.000 € Anschaffungskosten, Inbetriebnahme November 2026" lead="Beispielwerte zur Veranschaulichung – ohne EAG-Zuschuss, lineare AfA, KöSt 23 %." />
+            <p className="mt-6 text-[15px] leading-relaxed text-white/65">
+              Entscheidend ist der Zeitpunkt der Anschaffung bzw. Fertigstellung. Wer 2026 noch profitieren will, braucht einen realistischen Bauzeitplan – mehr dazu im Ratgeber{" "}
+              <Link href="/ratgeber/investitionsfreibetrag-photovoltaik" className="font-semibold text-ov-300 underline decoration-ov-300/50 underline-offset-2 hover:text-white">Investitionsfreibetrag für Photovoltaik</Link>.
+            </p>
+          </div>
+          <Reveal dir="right" className="ov-glass rounded-3xl p-6 md:p-8">
+            <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-white/55">Steuerwirkung im 1. Jahr</p>
+            <div className="mt-6 space-y-5">
+              {[
+                { l: "Anschaffung 2026 (IFB 22 %)", w: 11270, t: "11.270 €", c: "from-ov-400 to-ov-600" },
+                { l: "Anschaffung 2027 (IFB 15 %)", w: 8050, t: "8.050 €", c: "from-white/40 to-white/20" },
+              ].map((b) => (
+                <div key={b.l}>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-[14.5px] text-white/75">{b.l}</span>
+                    <span className="ov-num whitespace-nowrap font-display text-[21px] font-extrabold text-white sm:text-[26px]">{b.t}</span>
+                  </div>
+                  <span aria-hidden="true" className="mt-2 block h-4 overflow-hidden rounded-full bg-white/10">
+                    <span className={`block h-full rounded-full bg-gradient-to-r ${b.c}`} style={{ width: `${(b.w / 11270) * 100}%` }} />
+                  </span>
+                </div>
+              ))}
+            </div>
+            <dl className="mt-7 divide-y divide-white/10 border-t border-white/10 text-[14px]">
+              {BEISPIEL.map((z) => (
+                <div key={z.pos} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 py-2.5">
+                  <dt className="text-white/85">{z.pos}<span className="block text-[12.5px] text-white/45">{z.rechnung}</span></dt>
+                  <dd className="ov-num self-center font-display font-bold text-ov-300">{z.betrag}</dd>
+                </div>
+              ))}
+            </dl>
+          </Reveal>
+        </div>
+      </Section>
+
       {/* Nach Zielgruppe */}
-      <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Nach Zielgruppe" title="Was für Unternehmen, Landwirtschaft, Gemeinden und Private gilt" className="mb-10" />
-        <div className="grid gap-4 md:grid-cols-2">
-          {[
-            {
-              icon: Building2,
-              titel: "Unternehmen",
-              punkte: ["IFB 22 % zusätzlich zur AfA (Anschaffung bis 31.12.2026)", "Vorsteuerabzug aus 20 % USt", "Elektrizitätsabgabe auf Eigenverbrauch entfällt", "IFB schließt den investitionsbedingten Gewinnfreibetrag für dasselbe Wirtschaftsgut aus", "Behaltefrist 4 Jahre, sonst Nachversteuerung"],
-              link: { href: "/gewerbe", label: "Photovoltaik für Gewerbe und Industrie" },
-            },
-            {
-              icon: Tractor,
-              titel: "Land- und Forstwirtschaft",
-              punkte: ["Volleinspeisung = eigener Gewerbebetrieb", "Überschusseinspeisung mit überwiegend betrieblichem Verbrauch = Nebenbetrieb", "Nebenbetriebs-Einkünfte zählen nicht zur 55.000-€-Grenze der LuF-PauschVO 2015", "USt-Pauschalierung: Einspeisung 13 %, Privatentnahme 10 %", "Bei pauschaler Gewinnermittlung kein IFB"],
-              link: { href: "/landwirtschaft", label: "Photovoltaik für die Landwirtschaft" },
-            },
-            {
-              icon: Landmark,
-              titel: "Gemeinden",
-              punkte: ["Einordnung: Hoheitsbereich oder Betrieb gewerblicher Art – entscheidet über den Vorsteuerabzug", "Eigenverbrauch in Gemeindegebäuden von der Elektrizitätsabgabe befreit", "Energiegemeinschaft mit Bürgern: Gewinnerzielung nicht im Vordergrund", "Vergabe nach Bundesvergabegesetz beachten"],
-              link: { href: "/kommunen", label: "Photovoltaik für Gemeinden" },
-            },
-            {
-              icon: Sun,
-              titel: "Private",
-              punkte: ["20 % USt ohne Vorsteuerabzug", "Einspeiseerlöse bis 12.500 kWh je Person steuerfrei (Anlage bis 35 kWp)", "Eigenverbrauch abgabenfrei", "Keine AfA und kein IFB ohne betriebliche Nutzung"],
-              link: { href: "/forderungen/landesforderungen", label: "Landesförderungen für Private" },
-            },
-          ].map((z, i) => (
-            <Reveal key={z.titel} delay={(i % 2) * 70} className="flex flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
-              <p className="flex items-center gap-2 font-display text-[20px] font-bold text-ink-900">
-                <z.icon aria-hidden="true" className="h-5 w-5 text-ov-600" /> {z.titel}
-              </p>
-              <Checkliste className="mt-5" items={z.punkte} />
-              <Link href={z.link.href} className="mt-auto pt-6 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">{z.link.label}</Link>
-            </Reveal>
-          ))}
-        </div>
+      <Section tone="sand" space="md">
+        <SectionHeading eyebrow="Nach Zielgruppe" title="Was für Unternehmen, Landwirtschaft, Gemeinden und Private gilt" className="mb-8" />
+        <Umschalter label="Zielgruppe wählen" tabs={ZIELGRUPPEN.map((z) => ({ id: z.id, label: z.titel, icon: z.icon }))} panels={zgPanels} />
       </Section>
 
-      {/* Beispiel */}
-      <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Rechenbeispiel"
-          title="GmbH, 200.000 € Anschaffungskosten, Inbetriebnahme November 2026"
-          lead="Beispielwerte zur Veranschaulichung – ohne EAG-Zuschuss, lineare AfA, KöSt 23 %."
-          className="mb-10"
+      <Section tone="white" space="md">
+        <SectionHeading eyebrow="Schritt für Schritt" title="Steuerlich richtig umsetzen" lead="Die fünf Punkte, die wir mit Ihrer Steuerberatung abstimmen – von der Bestellung bis zur Behaltefrist." className="mb-10" />
+        <Prozess
+          name="PV-Anlage im Betrieb steuerlich richtig umsetzen"
+          beschreibung={`Anleitung für Unternehmen in Österreich, Rechtsstand ${STAND.label}.`}
+          schritte={[
+            { icon: <ClipboardCheck />, name: "Anschaffungszeitpunkt planen", text: "Für 22 % IFB muss die Anlage bis 31.12.2026 angeschafft bzw. hergestellt sein. Bauzeit, Netzanschluss und Lieferzeiten realistisch einplanen." },
+            { icon: <Receipt />, name: "Förderung und Anschaffungskosten abstimmen", text: "EAG-Zuschuss und Landesförderung kürzen die Anschaffungskosten. Rechnungen getrennt nach PV, Speicher und Ladestation ausweisen lassen." },
+            { icon: <FileText />, name: "IFB und AfA in der Steuererklärung", text: "IFB im Jahr der Anschaffung geltend machen und im Anlagenverzeichnis ausweisen; lineare oder degressive AfA wählen." },
+            { icon: <Percent />, name: "Befreiung von der Elektrizitätsabgabe anzeigen", text: "Eigenerzeugung aus Erneuerbaren beim Finanzamt anzeigen und Erzeugung sowie Eigenverbrauch aufzeichnen." },
+            { icon: <Building2 />, name: "Behaltefrist dokumentieren", text: "Die Anlage 4 Jahre im inländischen Betrieb halten – bei Verkauf oder Verbringung ins Ausland wird der IFB nachversteuert." },
+          ]}
         />
-        <Reveal>
-          <Tabelle
-            dicht
-            caption="Beispielrechnung Investitionsfreibetrag und AfA"
-            spalten={[
-              { key: "pos", label: "Position", breite: "w-[34%]" },
-              { key: "rechnung", label: "Rechnung" },
-              { key: "betrag", label: "Betrag", className: "font-display font-bold text-ov-700" },
-            ]}
-            zeilen={[
-              { pos: "Investitionsfreibetrag", rechnung: "200.000 € × 22 %", betrag: "44.000 €" },
-              { pos: "AfA 1. Jahr (Halbjahres-AfA)", rechnung: "200.000 € ÷ 20 Jahre × ½", betrag: "5.000 €" },
-              { pos: "Betriebsausgaben 1. Jahr", rechnung: "IFB + AfA", betrag: "49.000 €" },
-              { pos: "Steuerwirkung 1. Jahr", rechnung: "49.000 € × 23 % KöSt", betrag: "11.270 €" },
-              { pos: "Vergleich: Anschaffung 2027", rechnung: "200.000 € × 15 % IFB + 5.000 € AfA, × 23 %", betrag: "8.050 €" },
-            ]}
-          />
-        </Reveal>
-        <p className="mt-5 max-w-3xl text-[14.5px] leading-relaxed text-ink-600">
-          Entscheidend ist der Zeitpunkt der Anschaffung bzw. Fertigstellung. Wer 2026 noch profitieren will, braucht einen realistischen Bauzeitplan – mehr dazu im Ratgeber{" "}
-          <Link href="/ratgeber/investitionsfreibetrag-photovoltaik" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Investitionsfreibetrag für Photovoltaik</Link>.
-        </p>
-      </Section>
-
-      <Section tone="sand" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Schritt für Schritt"
-            title="Steuerlich richtig umsetzen"
-            lead="Die fünf Punkte, die wir mit Ihrer Steuerberatung abstimmen – von der Bestellung bis zur Behaltefrist."
-            className="lg:sticky lg:top-28 lg:self-start"
-          />
-          <HowTo
-            name="PV-Anlage im Betrieb steuerlich richtig umsetzen"
-            beschreibung={`Anleitung für Unternehmen in Österreich, Rechtsstand ${STAND.label}.`}
-            schritte={[
-              { icon: ClipboardCheck, name: "Anschaffungszeitpunkt planen", text: "Für 22 % IFB muss die Anlage bis 31.12.2026 angeschafft bzw. hergestellt sein. Bauzeit, Netzanschluss und Lieferzeiten realistisch einplanen." },
-              { icon: Receipt, name: "Förderung und Anschaffungskosten abstimmen", text: "EAG-Zuschuss und Landesförderung kürzen die Anschaffungskosten. Rechnungen getrennt nach PV, Speicher und Ladestation ausweisen lassen." },
-              { icon: FileText, name: "IFB und AfA in der Steuererklärung", text: "IFB im Jahr der Anschaffung geltend machen und im Anlagenverzeichnis ausweisen; lineare oder degressive AfA wählen." },
-              { icon: Percent, name: "Befreiung von der Elektrizitätsabgabe anzeigen", text: "Eigenerzeugung aus Erneuerbaren beim Finanzamt anzeigen und Erzeugung sowie Eigenverbrauch aufzeichnen." },
-              { icon: Building2, name: "Behaltefrist dokumentieren", text: "Die Anlage 4 Jahre im inländischen Betrieb halten – bei Verkauf oder Verbringung ins Ausland wird der IFB nachversteuert." },
-            ]}
-          />
-        </div>
-      </Section>
-
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading eyebrow="Häufige Fragen" title="Photovoltaik und Steuer – kurz beantwortet" lead={`Allgemeine Information nach Rechtsstand ${STAND.label}. Verbindlich ist die Beratung durch Ihre Steuerberatung.`} />
-          <Faq items={FAQ} />
-        </div>
       </Section>
 
       <Section tone="sand" space="md">
-        <Quellen stand={STAND.label} quellen={[...STEUER.quellen, ENERGIEGEMEINSCHAFTEN.quellen[2]]} hinweis="Allgemeine Information, keine Steuerberatung. Für Vermietung, Landwirtschaft, Gemeinden und mehrere Anlagen empfehlen wir die Abstimmung mit Ihrer Steuerberatung." />
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Photovoltaik und Steuer – kurz beantwortet" lead={`Allgemeine Information nach Rechtsstand ${STAND.label}. Verbindlich ist die Beratung durch Ihre Steuerberatung.`}>
+            <p className="mt-5 text-[15px] leading-relaxed text-ink-600">
+              Förderungen, die den IFB ergänzen: <Link href="/forderungen/bundesfoerderung#rechner" className={LINK}>EAG-Zuschuss berechnen</Link>.
+            </p>
+          </SectionHeading>
+          <Faq items={FAQ} />
+        </div>
+        <Quellen klappbar className="mt-12" stand={STAND.label} quellen={[...STEUER.quellen, ENERGIEGEMEINSCHAFTEN.quellen[2]]} hinweis="Allgemeine Information, keine Steuerberatung. Für Vermietung, Landwirtschaft, Gemeinden und mehrere Anlagen empfehlen wir die Abstimmung mit Ihrer Steuerberatung." />
       </Section>
 
       <Querverweise pfad="/forderungen/steuerlich" />
@@ -287,6 +321,7 @@ export default function Steuerlich() {
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Bundesförderung ansehen", href: "/forderungen/bundesfoerderung" }}
       />
+      <Bildnachweis items={nachweise("gemeinde")} />
     </div>
   );
 }

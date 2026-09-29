@@ -4,12 +4,12 @@
 // Keine Imports – alle Werte hier definiert.
 
 // ---------------------------------------------------------------- Formatierung
-const n = (x) => Math.round(x).toLocaleString("de-AT");
+const n = (x) => Math.round(x).toLocaleString("de-DE");
 const eur = (x) => n(x) + " €";
 const kwhFmt = (x) => n(x) + " kWh";
-const z3 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
-const z2 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const z1 = (x) => x.toLocaleString("de-AT", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const z3 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+const z2 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const z1 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const pct = (x) => Math.round(x * 100) + " %";
 
 // ---------------------------------------------------------------- Marktdaten
@@ -82,7 +82,7 @@ const artikel = {
   veroeffentlicht: "2026-09-28",
   aktualisiert: "2026-09-28",
   kategorie: "Netz, Energiegemeinschaften & Markt",
-  bild: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg",
+  bild: "/Images/AT/wissen/reststromvermarktung-floating-pv.jpg",
   bildAlt: "Luftaufnahme einer großen Photovoltaikanlage mit zwei Technikern in Arbeitskleidung",
   badge: { wert: pct(MARKT[1].solar / MARKT[1].base), text: "Solar-Marktwert 2025 im Verhältnis zum Base-Preis" },
 

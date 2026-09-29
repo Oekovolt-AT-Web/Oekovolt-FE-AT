@@ -37,6 +37,9 @@ import {
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import Querverweise from "@/components/Reusable/Querverweise";
+import { ReferenzNamenBand, ReferenzWand } from "@/components/Project/ReferenzNamen";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
+import { KERNFAKTEN, REFERENZ_UNTERNEHMEN } from "@/data/hero";
 
 // Projekte aus der API (oekovolt_app). Seitentexte sind statisch: Die frühere
 // Backoffice-Seite (primary_page) lieferte Texte der deutschen Website.
@@ -222,7 +225,12 @@ export default async function ProjektePage() {
         },
         { value: k.orte, label: "Orte" },
       ]
-    : [];
+    : [
+        // Ohne Projektdaten: belegte Unternehmenszahlen (src/data/hero.js)
+        { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
+        { value: 30, suffix: " MWp", label: "errichtet allein im Jahr 2021" },
+        { value: 9, label: "Bundesländer im Einzugsgebiet" },
+      ];
 
   return (
     <div>
@@ -267,19 +275,34 @@ export default async function ProjektePage() {
         stats={heroStats}
       />
 
+      <ReferenzNamenBand />
+
       {/* Portfolio */}
       <Section tone="sand" space="lg" id="projekte">
         <div className="mb-10 grid items-end gap-6 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Projekte"
-            title={
-              <>
-                Echte Anlagen,{" "}
-                <span className="ov-text-gradient">echte Kennzahlen</span>
-              </>
-            }
-            lead="Filtern Sie nach Objektart, Leistung, Dach oder Ort und finden Sie Anlagen, die Ihrem Vorhaben ähneln."
-          />
+          {projekte.length > 0 ? (
+            <SectionHeading
+              eyebrow="Projekte"
+              title={
+                <>
+                  Echte Anlagen,{" "}
+                  <span className="ov-text-gradient">echte Kennzahlen</span>
+                </>
+              }
+              lead="Filtern Sie nach Objektart, Leistung, Dach oder Ort und finden Sie Anlagen, die Ihrem Vorhaben ähneln."
+            />
+          ) : (
+            <SectionHeading
+              eyebrow="Referenzen nach Branche"
+              title={
+                <>
+                  Unternehmen, die mit uns{" "}
+                  <span className="ov-text-gradient">Strom erzeugen</span>
+                </>
+              }
+              lead="Industrie, Holz, Handel, Logistik, Tourismus und Landwirtschaft – eine Auswahl unserer öffentlich gelisteten Referenzen in Österreich."
+            />
+          )}
           <p className="hidden text-[16px] leading-relaxed text-ink-600 lg:block lg:pb-1">
             Gezeigt werden Anlagen, die wir geplant und errichtet haben. Kundennamen nennen wir nur mit Zustimmung.
           </p>
@@ -287,26 +310,27 @@ export default async function ProjektePage() {
         {projekte.length > 0 ? (
           <ProjektPortfolio projekte={projekte} />
         ) : (
-          <div className="rounded-3xl bg-white p-10 text-center ring-1 ring-ink-200">
-            <p className="font-display text-[20px] font-bold text-ink-900">
-              Wir ergänzen die Projektübersicht laufend.
-            </p>
-            <p className="mt-2 text-ink-600">
-              Rufen Sie uns an – wir nennen Ihnen gern vergleichbare Referenzen in Ihrer Nähe:{" "}
-              <a href={FIRMA.telefonHref} className="font-semibold text-ov-700 hover:text-ov-800">
-                {FIRMA.telefon}
-              </a>
-              . Oder lesen Sie, wie wir{" "}
+          <>
+            <ReferenzWand vorhandeneSlugs={new Set(projekte.map((p) => p.slug))} telefon={FIRMA.telefon} telefonHref={FIRMA.telefonHref} />
+            <p className="mt-6 text-center text-[14.5px] text-ink-600">
+              Wie wir solche Anlagen planen, lesen Sie unter{" "}
               <Link href="/gewerbe" className="font-semibold text-ov-700 hover:text-ov-800">
                 Photovoltaik für Gewerbe &amp; Industrie
               </Link>{" "}
-              planen.
+              – oder sehen Sie sich die{" "}
+              <Link href="/referenzen/referenzkarte" className="font-semibold text-ov-700 hover:text-ov-800">
+                Referenzkarte
+              </Link>{" "}
+              an.
             </p>
-          </div>
+          </>
         )}
       </Section>
 
       {/* Kennzahlen */}
+      {projekte.length < 3 && (
+        <Kennzahlenband tone="light" items={KERNFAKTEN.map((f) => ({ wert: f.wert, label: f.label }))} />
+      )}
       {projekte.length >= 3 && (
         <Section tone="navy" space="lg" className="overflow-hidden">
           <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />

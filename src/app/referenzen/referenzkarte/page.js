@@ -23,6 +23,9 @@ import {
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import Querverweise from "@/components/Reusable/Querverweise";
+import { ReferenzNamenBand } from "@/components/Project/ReferenzNamen";
+import { REFERENZ_UNTERNEHMEN } from "@/data/hero";
+import { alleRegionen } from "@/lib/regionen";
 
 // Kartenorte + Projekte aus der API (oekovolt_app). Seitentexte sind statisch:
 // Die frühere Backoffice-Seite lieferte Texte der deutschen Website.
@@ -227,6 +230,23 @@ export default async function ReferenzkarteSeite() {
   const projekteJeOrt = Object.fromEntries(standorte.map((s) => [s.label, s.anzahl || 0]));
 
   const k = kennzahlen(projekte);
+
+  // Solange keine Referenzorte mit Koordinaten vorliegen: Einsatzgebiet (Standorte mit Regionalseite)
+  const einsatzOrte = alleRegionen()
+    .filter((r) => !r.heimat)
+    .map((r) => ({ id: `e-${r.slug}`, label: r.kurzname || r.name, lat: r.pvgis.lat, lng: r.pvgis.lon, km: r.km, land: r.bundesland, href: `/photovoltaik/${r.slug}` }));
+  const ohneReferenzorte = standorte.length === 0;
+  const heroStats = projektDaten.anzahl
+    ? [
+        { value: projektDaten.anzahl, label: "Projekte" },
+        { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
+        { value: Math.round(projektDaten.summeKwp), suffix: " kWp", label: "installierte Leistung" },
+      ]
+    : [
+        { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
+        { value: 30, suffix: " MWp", label: "errichtet allein 2021" },
+        { value: 9, label: "Bundesländer im Einzugsgebiet" },
+      ];
   const neueste = [...projekte]
     .sort((a, b) => (b.jahr || 0) - (a.jahr || 0) || (b.kwp || 0) - (a.kwp || 0))
     .slice(0, 3);
@@ -282,11 +302,7 @@ export default async function ReferenzkarteSeite() {
           { label: "Anlage in Ihrer Nähe anfragen", href: "/angebot" },
           { label: "Zur Karte", href: "#karte", icon: MapPin },
         ]}
-        stats={[
-          { value: projektDaten.anzahl, label: "Projekte" },
-          { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
-          { value: Math.round(projektDaten.summeKwp), suffix: " kWp", label: "installierte Leistung" },
-        ]}
+        stats={heroStats}
         badge={
           <div className="flex items-center gap-4">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-navy-700 text-white">
@@ -299,6 +315,8 @@ export default async function ReferenzkarteSeite() {
           </div>
         }
       />
+
+      <ReferenzNamenBand />
 
       {/* Karte */}
       <section id="karte" className="relative scroll-mt-20 overflow-hidden bg-navy-950 py-16 text-white md:py-24">
@@ -314,16 +332,24 @@ export default async function ReferenzkarteSeite() {
               <span aria-hidden="true" className="h-3.5 w-3.5 rounded-full border-2 border-white bg-navy-700" /> Firmensitz
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-3 w-3 rounded-full border-2 border-white bg-ov-500" /> Referenzstandort
+              {ohneReferenzorte ? (
+                <>
+                  <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-white/60" /> Standort mit eigener Seite
+                </>
+              ) : (
+                <>
+                  <span aria-hidden="true" className="h-3 w-3 rounded-full border-2 border-white bg-ov-500" /> Referenzstandort
+                </>
+              )}
             </li>
             <li className="flex items-center gap-2">
-              <span aria-hidden="true" className="h-3 w-5 rounded-full border border-dashed border-white/50" /> Umkreis ab {firmensitz.label}
+              <span aria-hidden="true" className="h-3 w-5 rounded-full border border-dashed border-ov-300/70 bg-ov-500/20" /> Einsatzzonen 80 / 200 km ab {firmensitz.label}
             </li>
           </ul>
         </div>
         <div className="relative mx-auto max-w-[92rem] px-3 md:px-6">
           <Reveal dir="scale">
-            <ReferenzKarte standorte={standorte} firmensitz={firmensitz} umkreisKm={umkreisKm} imUmkreis={imUmkreis} projekteJeOrt={projekteJeOrt} />
+            <ReferenzKarte standorte={standorte} firmensitz={firmensitz} umkreisKm={umkreisKm} imUmkreis={imUmkreis} projekteJeOrt={projekteJeOrt} einsatzOrte={einsatzOrte} />
           </Reveal>
         </div>
       </section>
@@ -333,10 +359,17 @@ export default async function ReferenzkarteSeite() {
         <SplitMedia
           eyebrow="Referenzen"
           title="Unsere Referenzkarte – Projekte auf einen Blick"
-          text={[
-            "Jeder Punkt auf der Karte steht für einen Ort, an dem wir Photovoltaikanlagen geplant und errichtet haben – vom Gewerbedach bis zur Landwirtschaft.",
-            "Klicken Sie auf einen Ort, um die Projekte dort mit Leistung und Baujahr zu sehen. Kundennamen und genaue Adressen zeigen wir nicht.",
-          ]}
+          text={
+            ohneReferenzorte
+              ? [
+                  "Die Karte zeigt unser Einsatzgebiet: Firmensitz Ostermiething, die Heimatregion bis 80 km und die Orte, für die wir Ertrag, Netzbetreiber, Baurecht und Förderung eigens aufbereitet haben.",
+                  "Referenzprojekte mit Ort ergänzen wir laufend. Vergleichbare Anlagen in Ihrer Nähe nennen wir Ihnen gern persönlich – Kundennamen und genaue Adressen nur mit Zustimmung.",
+                ]
+              : [
+                  "Jeder Punkt auf der Karte steht für einen Ort, an dem wir Photovoltaikanlagen geplant und errichtet haben – vom Gewerbedach bis zur Landwirtschaft.",
+                  "Klicken Sie auf einen Ort, um die Projekte dort mit Leistung und Baujahr zu sehen. Kundennamen und genaue Adressen zeigen wir nicht.",
+                ]
+          }
           image={{
             src: "/Images/Referenzen/referenzkarte2.jpg",
             alt: "Arbeiter überprüft Solarpanels auf Dach",

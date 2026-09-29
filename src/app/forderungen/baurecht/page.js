@@ -4,7 +4,8 @@
 // Bundesländern. Daten aus @/data/bundeslaender.
 
 import Link from "next/link";
-import { ClipboardCheck, FileSearch, Landmark, ListChecks, MapPinned, PlugZap, Scale } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, ClipboardCheck, FileSearch, Landmark, ListChecks, MapPinned, PlugZap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,7 +14,11 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import GenehmigungsCheck from "@/components/Forderungen/Baurecht/GenehmigungsCheck";
-import { AmpelChip, Checkliste, Hinweis, HowTo, Kennzahlen, PruefenMarke, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import Umschalter from "@/components/Forderungen/Shared/Umschalter";
+import Prozess from "@/components/Forderungen/Shared/Prozess";
+import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
+import { BILDER, nachweise } from "@/components/Forderungen/Shared/bildnachweise";
+import { AmpelChip, Hinweis, PruefenMarke, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import { alleBundeslaender, AMPEL, STAND } from "@/data/bundeslaender";
 import { BASE_URL } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -67,33 +72,25 @@ const FAQ = [
   },
 ];
 
+const LINK = "font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800";
+const AMPEL_BALKEN = { frei: "from-ov-500 to-ov-600", anzeige: "from-sun-300 to-sun-500", bewilligung: "from-navy-500 to-navy-700" };
+
+const ZONEN = [
+  { t: "Niederösterreich", x: "Sektorales Raumordnungsprogramm PV mit festen Zonen (bis 5 + 5 ha je Zone)" },
+  { t: "Steiermark", x: "Sachprogramm Solarenergie mit 36 Vorrangzonen" },
+  { t: "Burgenland", x: "Eignungszonenverordnung und Photovoltaikabgabe" },
+  { t: "Kärnten", x: "Photovoltaikanlagen-Verordnung 2024, max. 4 ha" },
+];
+
+const DENKMAL = [
+  { title: "Bundesdenkmalamt", text: "Jede Veränderung eines Denkmals braucht eine Bewilligung nach § 5 DMSG – vor der Bestellung." },
+  { title: "Schutzzonen Wien", text: "PV in Schutzzonen und im Grünland-Schutzgebiet ist nach § 60 Abs. 1 lit. j BO bewilligungspflichtig." },
+  { title: "Altstadt Salzburg und Graz", text: "Altstadterhaltungsgesetze schränken sichtbare Anlagen ein; die Freistellung gilt dort nicht." },
+  { title: "Gemeindeverordnungen", text: "In Vorarlberg können Gemeinden die Freistellung per Verordnung ausschließen, in Niederösterreich gilt in Schutzzonen die Anzeigepflicht." },
+];
+
 export default function Baurecht() {
   const laender = alleBundeslaender();
-  const zeilen = laender.map((l) => ({
-    land: <Link href={`/forderungen/landesforderungen/${l.slug}`} className="text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{l.name}</Link>,
-    bo: l.recht.bauordnung,
-    dach: (
-      <>
-        <AmpelChip wert={l.recht.ampel.dach} label={AMPEL[l.recht.ampel.dach].label} />
-        <span className="mt-1.5 block text-[14px]">{l.recht.dach}</span>
-        {l.recht.dachPruefen && <PruefenMarke stand={STAND.label} />}
-      </>
-    ),
-    frei: (
-      <>
-        <AmpelChip wert={l.recht.ampel.freiflaeche} label={AMPEL[l.recht.ampel.freiflaeche].label} />
-        <span className="mt-1.5 block text-[14px]">{l.recht.freiflaeche}</span>
-      </>
-    ),
-    el: (
-      <>
-        <AmpelChip wert={l.recht.ampel.elektrizitaet} label={AMPEL[l.recht.ampel.elektrizitaet].label} />
-        <span className="mt-1.5 block text-[14px]">{l.recht.elektrizitaet}</span>
-      </>
-    ),
-  }));
-  const raum = laender.map((l) => ({ land: l.name, regel: l.recht.raumordnung, ortsbild: l.recht.ortsbild }));
-  const pflicht = laender.map((l) => ({ land: l.name, pflicht: <>{l.recht.pvPflicht}{l.recht.pvPflichtPruefen && <span className="block"><PruefenMarke stand={STAND.label} /></span>}</> }));
   const pfade = Object.fromEntries(laender.map((l) => [l.key, `/forderungen/landesforderungen/${l.slug}`]));
 
   const schema = {
@@ -109,189 +106,198 @@ export default function Baurecht() {
     dateModified: STAND.iso,
   };
 
+  const landPanels = laender.map((l) => {
+    const r = l.recht;
+    const karten = [
+      { titel: "Dach & Fassade", ampel: r.ampel.dach, text: r.dach, pruefen: r.dachPruefen },
+      { titel: "Freifläche (Baurecht)", ampel: r.ampel.freiflaeche, text: r.freiflaeche, pruefen: r.freiflaechePruefen },
+      { titel: "Elektrizitätsrecht", ampel: r.ampel.elektrizitaet, text: r.elektrizitaet },
+    ];
+    const weitere = [
+      { titel: "Raumordnung / Widmung Freifläche", text: r.raumordnung },
+      { titel: "Ortsbild & Denkmal", text: r.ortsbild },
+      { titel: "PV-Pflicht", text: r.pvPflicht, pruefen: r.pvPflichtPruefen },
+    ];
+    return (
+      <div key={l.key} className="space-y-4">
+        <div className="flex flex-col justify-between gap-3 rounded-3xl bg-navy-950 px-6 py-5 text-white sm:flex-row sm:items-center">
+          <div>
+            <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">{l.name}</p>
+            <p className="mt-1 font-display text-[19px] font-bold">{r.bauordnung}</p>
+          </div>
+          <Link href={pfade[l.key]} className="group inline-flex shrink-0 items-center gap-2 text-[14.5px] font-semibold text-ov-300 hover:text-white">
+            Förderung & Netz in {l.name}
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+        <ul className="grid gap-4 md:grid-cols-3">
+          {karten.map((k) => (
+            <li key={k.titel} className="relative flex flex-col overflow-hidden rounded-3xl bg-white p-5 pl-6 ring-1 ring-ink-200/70">
+              <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b ${AMPEL_BALKEN[k.ampel]}`} />
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-display text-[16.5px] font-bold text-ink-900">{k.titel}</h3>
+                <AmpelChip wert={k.ampel} label={AMPEL[k.ampel].label} />
+              </div>
+              <p className="mt-3 text-[14.5px] leading-relaxed text-ink-700">{k.text}</p>
+              {k.pruefen && <PruefenMarke stand={STAND.label} className="self-start" />}
+            </li>
+          ))}
+        </ul>
+        <dl className="grid gap-px overflow-hidden rounded-3xl bg-ink-200/70 ring-1 ring-ink-200/70 md:grid-cols-3">
+          {weitere.map((w) => (
+            <div key={w.titel} className="bg-sand-50 p-5">
+              <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">{w.titel}</dt>
+              <dd className="mt-1.5 text-[14.5px] leading-relaxed text-ink-700">
+                {w.text}
+                {w.pruefen && <span className="block"><PruefenMarke stand={STAND.label} /></span>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    );
+  });
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Baurecht" }]}
         eyebrow={`Baurecht & Genehmigung · Stand ${STAND.kurz}`}
-        title={<>PV-Genehmigung in Österreich: <span className="ov-text-gradient">neun Länder, neun Regeln</span></>}
+        title={<>PV-Genehmigung in Österreich: <span className="ov-text-gradient-light">neun Länder, neun Regeln</span></>}
         lead="Ob eine PV-Anlage frei, anzeige- oder bewilligungspflichtig ist, entscheiden in Österreich Bauordnung, Landes-Elektrizitätsrecht und Raumordnung des jeweiligen Bundeslandes. Hier stehen die Schwellen aller neun Länder mit Paragraph – und ein Check für Ihr Projekt."
-        image={{ src: "/Images/Jobs/download.jpg", alt: "Montage von Photovoltaikmodulen auf einem Dach" }}
-        points={["Tabelle aller 9 Bauordnungen", "Elektrizitätsrecht mit Schwellen", "Widmung für Freiflächen", "Genehmigungs-Check"]}
+        image={{ src: "/Images/Jobs/download.jpg", alt: "Montageteam mit Schutzhelmen auf einem Dach mit Photovoltaikmodulen", position: "center 35%" }}
+        points={["Alle 9 Bauordnungen", "Elektrizitätsrecht mit Schwellen", "Widmung für Freiflächen", "Genehmigungs-Check"]}
         actions={[
-          { label: "Projekt anfragen", href: "/angebot" },
           { label: "Zum Genehmigungs-Check", href: "#genehmigungs-check", icon: ListChecks },
+          { label: "Projekt anfragen", href: "/angebot" },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <Scale aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">3 Rechtsgebiete</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Bau, Elektrizität, Raumordnung</p>
-            </div>
-          </div>
-        }
       />
 
-      <Kennzahlen
+      <KennzahlenBand
         items={[
-          { wert: "9", label: "Bauordnungen geprüft" },
-          { wert: "15 kW – 1 MW", label: "Spanne der elektrizitätsrechtlichen Schwellen" },
-          { wert: "50 kW", label: "Widmungsschwelle Grünland in Niederösterreich" },
-          { wert: "4 ha", label: "Freiflächen-Obergrenze in Kärnten" },
+          { value: 9, label: "Bauordnungen geprüft" },
+          { text: "15 kW – 1 MW", label: "Spanne der elektrizitätsrechtlichen Schwellen" },
+          { value: 50, suffix: " kW", label: "Widmungsschwelle Grünland in Niederösterreich" },
+          { value: 4, suffix: " ha", label: "Freiflächen-Obergrenze in Kärnten" },
         ]}
       />
 
-      <Section tone="sand" space="lg" id="genehmigungs-check" className="scroll-mt-24">
+      <Section tone="sand" space="md" id="genehmigungs-check" className="scroll-mt-24">
         <SectionHeading
           eyebrow="Genehmigungs-Check"
           title={<>Braucht Ihre Anlage eine <span className="ov-text-gradient">Bewilligung</span>?</>}
-          lead="Bundesland, Anlagenart und Leistung wählen – Sie sehen für Baurecht, Elektrizitätsrecht und Raumordnung, was voraussichtlich nötig ist."
+          lead="In drei Schritten: Bundesland, Anlagenart und Leistung wählen – Sie sehen für Baurecht, Elektrizitätsrecht und Raumordnung, was voraussichtlich nötig ist."
           align="center"
-          className="mb-12"
+          className="mb-10"
         />
         <Reveal dir="scale">
           <GenehmigungsCheck laenderPfade={pfade} />
         </Reveal>
       </Section>
 
-      <Section tone="white" space="lg" id="bundeslaender">
-        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+      <Section tone="white" space="md" id="bundeslaender" className="scroll-mt-24">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
             eyebrow="Alle neun Bundesländer"
             title="Bauordnung und Elektrizitätsrecht im Vergleich"
-            lead="Die Ampel zeigt den Regelfall: frei, ab einer Schwelle anzeigepflichtig oder ab einer Schwelle bewilligungs- bzw. widmungspflichtig. Die Details stehen im Text daneben."
+            lead="Die Ampel zeigt den Regelfall: frei, ab einer Schwelle anzeigepflichtig oder ab einer Schwelle bewilligungs- bzw. widmungspflichtig. Bundesland wählen – die Details stehen daneben."
           />
           <StandPille className="shrink-0 self-start md:self-auto">Rechtsstand {STAND.label}</StandPille>
         </div>
-        <Reveal>
-          <Tabelle
-            dicht
-            caption={`Genehmigungspflichten für Photovoltaikanlagen nach Bundesland, Stand ${STAND.label}`}
-            spalten={[
-              { key: "land", label: "Land", breite: "w-[10%]" },
-              { key: "bo", label: "Gesetz", breite: "w-[13%]", className: "text-[14px]" },
-              { key: "dach", label: "Dach & Fassade" },
-              { key: "frei", label: "Freifläche (Baurecht)" },
-              { key: "el", label: "Elektrizitätsrecht" },
-            ]}
-            zeilen={zeilen}
-          />
-        </Reveal>
+        <Umschalter
+          form="liste"
+          label="Bundesland wählen"
+          start="oberoesterreich"
+          tabs={laender.map((l) => ({
+            id: l.key,
+            label: l.name,
+            icon: (
+              <span className="flex gap-0.5" aria-hidden="true">
+                {[l.recht.ampel.dach, l.recht.ampel.freiflaeche, l.recht.ampel.elektrizitaet].map((a, i) => (
+                  <span key={i} className={`h-2 w-2 rounded-full ${a === "frei" ? "bg-ov-500" : a === "anzeige" ? "bg-sun-400" : "bg-navy-400"}`} />
+                ))}
+              </span>
+            ),
+          }))}
+          panels={landPanels}
+        />
         <Hinweis titel="Frei heißt nicht regelfrei" className="mt-8">
           Auch bewilligungsfreie Anlagen müssen Bebauungsplan, Orts- und Landschaftsbild, Statik und Brandschutz einhalten. Die Baubehörde kann sonst nachträglich einschreiten – in Oberösterreich ausdrücklich nach § 49 Abs. 6 Oö. BauO 1994.
         </Hinweis>
       </Section>
 
-      <Section tone="sand" space="lg" id="freiflaeche">
-        <div className="mb-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="Raumordnung"
-            title="Freiflächen und Agri-PV: Widmung und Zonenpläne je Land"
-            lead="Für Freiflächen entscheidet die Raumordnung. Mehrere Länder haben überörtliche Zonenpläne erlassen – wer dort plant, spart Zeit, wer daneben plant, braucht gute Argumente."
-          />
-          <div className="grid gap-3 self-end sm:grid-cols-2">
-            {[
-              { t: "Niederösterreich", x: "Sektorales Raumordnungsprogramm PV mit festen Zonen (bis 5 + 5 ha je Zone)" },
-              { t: "Steiermark", x: "Sachprogramm Solarenergie mit 36 Vorrangzonen" },
-              { t: "Burgenland", x: "Eignungszonenverordnung und Photovoltaikabgabe" },
-              { t: "Kärnten", x: "Photovoltaikanlagen-Verordnung 2024, max. 4 ha" },
-            ].map((z) => (
-              <div key={z.t} className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-                <p className="flex items-center gap-2 font-semibold text-ink-900"><MapPinned aria-hidden="true" className="h-4 w-4 text-ov-600" />{z.t}</p>
-                <p className="mt-1 text-[14px] leading-relaxed text-ink-600">{z.x}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-        <Reveal>
-          <Tabelle
-            dicht
-            caption="Raumordnung und Ortsbildschutz für Photovoltaik nach Bundesland"
-            spalten={[
-              { key: "land", label: "Land", breite: "w-[14%]" },
-              { key: "regel", label: "Widmung / Zonen Freifläche" },
-              { key: "ortsbild", label: "Ortsbild & Denkmal", breite: "w-[30%]" },
-            ]}
-            zeilen={raum}
-          />
-        </Reveal>
-        <p className="mt-6 max-w-3xl text-[15px] leading-relaxed text-ink-600">
-          Wie wir Flächen prüfen, pachten und entwickeln, zeigen{" "}
-          <Link href="/freiflaechen-photovoltaik" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Freiflächen-Photovoltaik</Link> und{" "}
-          <Link href="/agri-pv" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Agri-PV</Link>. Schneelast, Wind und Hagel am Standort prüft der{" "}
-          <Link href="/standort-check" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Standort-Check</Link>.
-        </p>
-      </Section>
-
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+      <Section tone="navy" space="md" id="freiflaeche" className="ov-noise overflow-hidden">
+        <Glow />
+        <div className="relative grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <Reveal dir="left" className="relative">
+            <div aria-hidden="true" className="absolute -inset-3 rounded-[2.25rem] bg-white/5 -rotate-2" />
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] shadow-2xl">
+              <Image src={BILDER.duernrohr.src} alt="Luftbild eines Photovoltaik-Freiflächenparks in Niederösterreich" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+            </div>
+          </Reveal>
           <div>
-            <SectionHeading eyebrow="Denkmal & Ortsbild" title="Was bei geschützten Gebäuden gilt" lead="Denkmalschutz ist Bundessache, Ortsbildschutz Landes- und Gemeindesache. Beides kann eine sonst freie Anlage bewilligungspflichtig machen." />
-            <Checkliste
-              className="mt-8"
-              items={[
-                { title: "Bundesdenkmalamt", text: "Jede Veränderung eines Denkmals braucht eine Bewilligung nach § 5 DMSG – vor der Bestellung." },
-                { title: "Schutzzonen Wien", text: "PV in Schutzzonen und im Grünland-Schutzgebiet ist nach § 60 Abs. 1 lit. j BO bewilligungspflichtig." },
-                { title: "Altstadt Salzburg und Graz", text: "Altstadterhaltungsgesetze schränken sichtbare Anlagen ein; die Freistellung gilt dort nicht." },
-                { title: "Gemeindeverordnungen", text: "In Vorarlberg können Gemeinden die Freistellung per Verordnung ausschließen, in Niederösterreich gilt in Schutzzonen die Anzeigepflicht." },
-              ]}
+            <SectionHeading
+              dark
+              eyebrow="Raumordnung"
+              title="Freiflächen und Agri-PV: Widmung und Zonenpläne je Land"
+              lead="Für Freiflächen entscheidet die Raumordnung. Mehrere Länder haben überörtliche Zonenpläne erlassen – wer dort plant, spart Zeit, wer daneben plant, braucht gute Argumente."
             />
-          </div>
-          <div>
-            <SectionHeading eyebrow="PV-Pflicht" title="Solarpflichten in den Bauordnungen" />
-            <Reveal className="mt-8">
-              <Tabelle
-                dicht
-                caption="PV-Pflichten im Baurecht der Bundesländer"
-                spalten={[
-                  { key: "land", label: "Land", breite: "w-[28%]" },
-                  { key: "pflicht", label: "Regel" },
-                ]}
-                zeilen={pflicht}
-              />
-            </Reveal>
+            <ul className="mt-8 grid gap-3 sm:grid-cols-2">
+              {ZONEN.map((z, i) => (
+                <Reveal as="li" key={z.t} delay={i * 70} className="ov-glass rounded-2xl p-4">
+                  <p className="flex items-center gap-2 font-semibold text-white"><MapPinned aria-hidden="true" className="h-4 w-4 text-ov-300" />{z.t}</p>
+                  <p className="mt-1 text-[14px] leading-relaxed text-white/65">{z.x}</p>
+                </Reveal>
+              ))}
+            </ul>
+            <p className="mt-6 text-[15px] leading-relaxed text-white/65">
+              Wie wir Flächen prüfen, pachten und entwickeln, zeigen <Link href="/freiflaechen-photovoltaik" className="font-semibold text-ov-300 underline decoration-ov-300/50 underline-offset-2 hover:text-white">Freiflächen-Photovoltaik</Link> und <Link href="/agri-pv" className="font-semibold text-ov-300 underline decoration-ov-300/50 underline-offset-2 hover:text-white">Agri-PV</Link>. Schneelast, Wind und Hagel am Standort prüft der <Link href="/standort-check" className="font-semibold text-ov-300 underline decoration-ov-300/50 underline-offset-2 hover:text-white">Standort-Check</Link>.
+            </p>
           </div>
         </div>
       </Section>
 
-      <Section tone="sand" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Genehmigungsweg"
-            title="In fünf Schritten zur genehmigten Anlage"
-            lead="So gehen wir bei Gewerbe- und Freiflächenprojekten vor – rechtzeitig vor dem EAG-Förderantrag."
-            className="lg:sticky lg:top-28 lg:self-start"
-          />
-          <HowTo
+      <Section tone="white" space="md">
+        <SectionHeading eyebrow="Denkmal & Ortsbild" title="Was bei geschützten Gebäuden gilt" lead="Denkmalschutz ist Bundessache, Ortsbildschutz Landes- und Gemeindesache. Beides kann eine sonst freie Anlage bewilligungspflichtig machen." className="mb-8" />
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {DENKMAL.map((d, i) => (
+            <Reveal as="li" key={d.title} delay={i * 70} className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-ov-600 ring-1 ring-ink-200"><Landmark aria-hidden="true" className="h-5 w-5" /></span>
+              <h3 className="mt-5 font-display text-[17px] font-bold text-ink-900">{d.title}</h3>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{d.text}</p>
+            </Reveal>
+          ))}
+        </ul>
+
+        <div className="mt-16">
+          <SectionHeading eyebrow="Genehmigungsweg" title="In fünf Schritten zur genehmigten Anlage" lead="So gehen wir bei Gewerbe- und Freiflächenprojekten vor – rechtzeitig vor dem EAG-Förderantrag." className="mb-10" />
+          <Prozess
             name="Genehmigung einer Photovoltaikanlage in Österreich klären"
             beschreibung={`Genehmigungsweg für PV-Anlagen nach Landesrecht, Stand ${STAND.label}.`}
             schritte={[
-              { icon: FileSearch, name: "Standort und Widmung prüfen", text: "Flächenwidmungs- und Bebauungsplan, Schutzzonen, Denkmalschutz, Naturschutz- und Wasserschutzgebiete sowie Abstände zu Straßen klären." },
-              { icon: Landmark, name: "Anlaufstelle des Landes einbinden", text: "Jedes Land hat eine Anlaufstelle für erneuerbare Energie. Bei Freiflächen früh mit Gemeinde und Land sprechen – die Widmung dauert oft Monate." },
-              { icon: ClipboardCheck, name: "Anzeigen und Bewilligungen einreichen", text: "Bauanzeige, elektrizitätsrechtliche Anzeige oder Bewilligung, Naturschutz – je nach Land und Größe. Bei gewerblichen Betriebsanlagen die GewO mitdenken." },
-              { icon: PlugZap, name: "Netzzugang parallel beantragen", text: "Der Netzbetreiber prüft Kapazität und Anschlusspunkt. In Tirol ist der Nachweis der Anschlusskapazität Teil der Bauanzeige." },
-              { icon: ListChecks, name: "Fertigstellung melden", text: "Fertigstellungsmeldung an den Netzbetreiber; in Tirol zusätzlich an die Baubehörde, die die Feuerwehr informiert." },
+              { icon: <FileSearch />, name: "Standort und Widmung prüfen", text: "Flächenwidmungs- und Bebauungsplan, Schutzzonen, Denkmalschutz, Naturschutz- und Wasserschutzgebiete sowie Abstände zu Straßen klären." },
+              { icon: <Landmark />, name: "Anlaufstelle des Landes einbinden", text: "Jedes Land hat eine Anlaufstelle für erneuerbare Energie. Bei Freiflächen früh mit Gemeinde und Land sprechen – die Widmung dauert oft Monate." },
+              { icon: <ClipboardCheck />, name: "Anzeigen und Bewilligungen einreichen", text: "Bauanzeige, elektrizitätsrechtliche Anzeige oder Bewilligung, Naturschutz – je nach Land und Größe. Bei gewerblichen Betriebsanlagen die GewO mitdenken." },
+              { icon: <PlugZap />, name: "Netzzugang parallel beantragen", text: "Der Netzbetreiber prüft Kapazität und Anschlusspunkt. In Tirol ist der Nachweis der Anschlusskapazität Teil der Bauanzeige." },
+              { icon: <ListChecks />, name: "Fertigstellung melden", text: "Fertigstellungsmeldung an den Netzbetreiber; in Tirol zusätzlich an die Baubehörde, die die Feuerwehr informiert." },
             ]}
           />
-        </div>
-      </Section>
-
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading eyebrow="Häufige Fragen" title="Genehmigung – kurz beantwortet" lead={`Allgemeine Information, keine Rechtsauskunft. Rechtsstand ${STAND.label}. Mehr im Ratgeber `}>
-            <Link href="/ratgeber/photovoltaik-genehmigung" className="mt-2 inline-block text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Photovoltaik-Genehmigung in Österreich</Link>
-          </SectionHeading>
-          <Faq items={FAQ} />
         </div>
       </Section>
 
       <Section tone="sand" space="md">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Genehmigung – kurz beantwortet" lead={`Allgemeine Information, keine Rechtsauskunft. Rechtsstand ${STAND.label}. Mehr im Ratgeber `}>
+            <Link href="/ratgeber/photovoltaik-genehmigung" className={`mt-2 inline-block text-[15px] ${LINK}`}>Photovoltaik-Genehmigung in Österreich</Link>
+          </SectionHeading>
+          <Faq items={FAQ} />
+        </div>
         <Quellen
+          klappbar
+          className="mt-12"
           stand={STAND.label}
           quellen={[
             ...laender.flatMap((l) => l.recht.quellen),
@@ -309,6 +315,7 @@ export default function Baurecht() {
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Normen & Netzanschluss", href: "/forderungen/richtlinien" }}
       />
+      <Bildnachweis items={nachweise("duernrohr")} />
     </div>
   );
 }

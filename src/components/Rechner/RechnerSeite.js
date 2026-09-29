@@ -29,9 +29,9 @@ export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
       siteName: SITE_NAME,
       title,
       description,
-      images: [{ url: `${BASE}/Logo-Oekovolt-Gruen-mit-Weiss.webp`, width: 1200, height: 630, alt: title }],
+      images: [{ url: `${BASE}/logo-oekovolt.png`, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: "summary_large_image", title, description, images: [`${BASE}/Logo-Oekovolt-Gruen-mit-Weiss.webp`] },
+    twitter: { card: "summary_large_image", title, description, images: [`${BASE}/logo-oekovolt.png`] },
   };
 }
 
@@ -152,8 +152,8 @@ export function AnnahmenBox({ punkte = [], quellen = [] }) {
       <dl className="mt-6 divide-y divide-ink-200/70">
         {punkte.map(([k, v]) => (
           <div key={k} className="flex items-baseline justify-between gap-4 py-2.5 text-[14px]">
-            <dt className="text-ink-600">{k}</dt>
-            <dd className="ov-num shrink-0 text-right font-semibold text-ink-900">{v}</dd>
+            <dt className="min-w-0 text-ink-600">{k}</dt>
+            <dd className="ov-num min-w-0 max-w-[60%] break-words text-right font-semibold text-ink-900">{v}</dd>
           </div>
         ))}
       </dl>

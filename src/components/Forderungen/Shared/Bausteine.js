@@ -216,15 +216,25 @@ export function AmpelChip({ wert, label, className }) {
  * Quellenblock mit Prüfdatum – am Ende jeder Förder- und Rechtsseite.
  * quellen: [{ label, url }]
  */
-export function Quellen({ quellen = [], stand, titel = "Quellen und Stand", hinweis, className }) {
+export function Quellen({ quellen = [], stand, titel = "Quellen und Stand", hinweis, className, klappbar = false }) {
   const eindeutig = quellen.filter((q, i, a) => q?.url && a.findIndex((x) => x.url === q.url) === i);
   if (!eindeutig.length) return null;
+  const Wrapper = klappbar ? "details" : "div";
+  const Kopf = klappbar ? "summary" : "div";
   return (
-    <div className={cn("rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8", className)}>
-      <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-        <h2 className="font-display text-[20px] font-bold text-ink-900">{titel}</h2>
-        {stand && <StandPille>Prüfdatum {stand}</StandPille>}
-      </div>
+    <Wrapper className={cn("group rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8", className)}>
+      <Kopf className={cn("flex flex-col justify-between gap-3 md:flex-row md:items-center", klappbar && "cursor-pointer list-none outline-none focus-visible:ring-2 focus-visible:ring-ov-500 [&::-webkit-details-marker]:hidden")}>
+        <h2 className="font-display text-[20px] font-bold text-ink-900">
+          {titel}
+          {klappbar && <span className="ml-2 align-middle text-[14px] font-semibold text-ink-500">({eindeutig.length} Primärquellen)</span>}
+        </h2>
+        <span className="flex items-center gap-3">
+          {stand && <StandPille>Prüfdatum {stand}</StandPille>}
+          {klappbar && (
+            <span aria-hidden="true" className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-100 text-[18px] text-ink-700 transition-transform duration-300 group-open:rotate-45">+</span>
+          )}
+        </span>
+      </Kopf>
       {hinweis && <p className="mt-3 max-w-3xl text-[14.5px] leading-relaxed text-ink-600">{hinweis}</p>}
       <ol className="mt-5 grid gap-x-8 gap-y-2.5 md:grid-cols-2">
         {eindeutig.map((q, i) => (
@@ -238,6 +248,6 @@ export function Quellen({ quellen = [], stand, titel = "Quellen und Stand", hinw
           </li>
         ))}
       </ol>
-    </div>
+    </Wrapper>
   );
 }

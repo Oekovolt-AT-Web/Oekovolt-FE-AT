@@ -30,7 +30,7 @@ import Reveal from "@/components/ui/Reveal";
 import Fliesstext from "@/components/Reusable/Fliesstext";
 import Querverweise from "@/components/Reusable/Querverweise";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
-import FeaturedLogos from "@/components/photovoltaikanlage/partners";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
 import EnergieflussHaus from "@/components/Smarthome/EnergieflussHaus";
 import BausteineTabs from "@/components/Smarthome/BausteineTabs";
 import Paragraf14a from "@/components/Smarthome/Paragraf14a";
@@ -204,7 +204,7 @@ export default function SmarthomePage() {
         }
       />
 
-      <FeaturedLogos />
+      <HerstellerWortmarken titel="Wechselrichter, Speicher und Monitoring unserer Partner" fokus={["speicher", "monitoring"]} />
 
       <Section tone="white" space="lg">
         <SplitMedia

@@ -95,6 +95,16 @@ export async function generateMetadata({ params }) {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Hero-Foto je Bereich (vorhandene Bilder, siehe /uber-uns/jobs). */
+const HERO_BILD = {
+  "Projekt & Planung": { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", position: "60% 30%" },
+  "Montage & Service": { src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" },
+  "Netz & Leittechnik": { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" },
+  "Vertrieb & Beratung": { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", position: "60% 40%" },
+  Ausbildung: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul", position: "50% 35%" },
+  standard: { src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen" },
+};
+
 export default async function JobDetailPage({ params }) {
   const { title } = await params;
 
@@ -135,7 +145,7 @@ export default async function JobDetailPage({ params }) {
       "@id": `${BASE_URL}/#organization`,
       name: FIRMA.name,
       sameAs: BASE_URL,
-      logo: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
+      logo: `${BASE_URL}/logo-oekovolt.png`,
     },
     jobLocation: {
       "@type": "Place",
@@ -187,6 +197,10 @@ export default async function JobDetailPage({ params }) {
     { titel: "Ihre Vorteile", icon: Star, items: j.vorteile },
   ].filter((l) => l.items.length);
 
+  // Langer Stellentitel: Hauptteil groß, Zusatz nach dem Gedankenstrich kleiner
+  const [titelHaupt, ...titelRest] = String(j.titel).split(" – ");
+  const titelZusatz = titelRest.join(" – ");
+
   return (
     <div>
       <script
@@ -195,10 +209,20 @@ export default async function JobDetailPage({ params }) {
       />
 
       <PageHero
-        variant="dark"
-        breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Jobs", href: "/uber-uns/jobs" }, { name: j.titel }]}
-        eyebrow="Stellenangebot · Ökovolt"
-        title={j.titel}
+        variant="immersive"
+        breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Jobs", href: "/uber-uns/jobs" }, { name: titelHaupt }]}
+        eyebrow={`Stellenangebot · ${j.bereich || "Ökovolt"}`}
+        title={
+          titelZusatz ? (
+            <>
+              {titelHaupt}
+              <span className="ov-text-gradient-light mt-3 block text-[0.52em] leading-[1.15]">{titelZusatz}</span>
+            </>
+          ) : (
+            j.titel
+          )
+        }
+        image={HERO_BILD[j.bereich] || HERO_BILD.standard}
         lead={`Werden Sie Teil der ${FIRMA.name} – Arbeitsort: ${j.arbeitsort || j.ort}.`}
         points={[j.ort, j.anstellung, j.gehalt].filter(Boolean)}
         actions={[

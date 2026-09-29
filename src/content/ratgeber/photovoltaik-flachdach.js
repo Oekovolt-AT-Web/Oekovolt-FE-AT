@@ -13,7 +13,7 @@ const ERTRAG = [
   ["Klagenfurt", 1133, 1031],
 ];
 
-const f0 = (x) => Math.round(x).toLocaleString("de-AT");
+const f0 = (x) => Math.round(x).toLocaleString("de-DE");
 
 const artikel = {
   slug: "photovoltaik-flachdach",

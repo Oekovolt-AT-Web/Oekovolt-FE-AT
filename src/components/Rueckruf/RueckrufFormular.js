@@ -190,7 +190,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
       </div>
 
       {/* Wunschzeit */}
-      <fieldset>
+      <fieldset className="min-w-0">
         <legend className={cn("mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-semibold", t.text)}>
           Wunschzeit
           {tage?.[tag]?.slots.some((s) => !s.frei) && (
@@ -291,7 +291,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
               value={telefon}
               onChange={(e) => setTelefon(e.target.value)}
               onBlur={() => setBeruehrt((b) => ({ ...b, telefon: true }))}
-              placeholder="z. B. 0171 1234567"
+              placeholder="z. B. 0664 1234567"
               aria-invalid={telefonFehler}
               aria-describedby={telefonFehler ? telefonFehlerId : undefined}
               className={cn("h-12 w-full rounded-2xl pl-11 pr-11 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, telefonFehler && "ring-red-400")}
@@ -315,7 +315,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setBeruehrt((b) => ({ ...b, email: true }))}
-            placeholder="name@beispiel.de"
+            placeholder="name@beispiel.at"
             aria-invalid={emailFehler}
             className={cn("h-12 w-full rounded-2xl px-4 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, emailFehler && "ring-red-400")}
           />
@@ -350,7 +350,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         </label>
       </div>
 
-      <fieldset>
+      <fieldset className="min-w-0">
         <legend className={cn("mb-2 text-[13px] font-semibold", t.text)}>
           Worum geht es? <span className={cn("font-normal", t.leise)}>(optional)</span>
         </legend>

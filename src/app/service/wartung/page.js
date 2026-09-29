@@ -1,23 +1,23 @@
 // service/wartung/page.js – Österreich: PV-Wartung und Wartungsvertrag (Ziel: Wartungsvertrag)
 
-import { Activity, BadgeCheck, ClipboardCheck, FileText, Gauge, HardHat, LineChart, PackageSearch, ShieldCheck, SlidersHorizontal, Wrench } from "lucide-react";
+import { BadgeCheck, ClipboardCheck, FileText, Gauge, HardHat, LineChart, SlidersHorizontal } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import SplitMedia from "@/components/ui/SplitMedia";
-import FeatureGrid from "@/components/ui/FeatureGrid";
-import Steps from "@/components/ui/Steps";
 import CtaBand from "@/components/ui/CtaBand";
-import Button from "@/components/ui/Button";
+import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
-import Tabelle from "@/components/ServiceAT/Tabelle";
 import Hinweis from "@/components/ServiceAT/Hinweis";
-import Weiterlesen from "@/components/ServiceAT/Weiterlesen";
-import AnfrageSektion from "@/components/ServiceAT/AnfrageSektion";
-import FaqSektion from "@/components/ServiceAT/FaqSektion";
-import Quellen from "@/components/ServiceAT/Quellen";
+import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
+import FotoBento from "@/components/ServiceAT/A/FotoBento";
+import PaketVergleich from "@/components/ServiceAT/A/PaketVergleich";
+import Akkordeon from "@/components/ServiceAT/A/Akkordeon";
+import AnfragePremium from "@/components/ServiceAT/A/AnfragePremium";
+import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
+import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 
 const PFAD = "/service/wartung";
 const TITEL = "PV-Wartung & Wartungsvertrag für Gewerbe | Ökovolt";
@@ -26,9 +26,17 @@ const BESCHREIBUNG =
 
 export const metadata = serviceMetadata({ pfad: PFAD, titel: TITEL, beschreibung: BESCHREIBUNG });
 
+const BILD = {
+  hero: { src: "/Images/Jobs/download.jpg", alt: "Drei Techniker mit Helm und Warnweste prüfen PV-Module auf einem Flachdach bei Abendlicht" },
+  sicherheit: { src: "/Images/Referenzen/referenzkarte3.jpg", alt: "Techniker mit Helm arbeitet mit Akkuschrauber an einer PV-Unterkonstruktion" },
+  werterhalt: { src: "/Images/Jobs/jobs4.jpg", alt: "Ingenieur mit Schutzhelm prüft Anlagendaten auf einem Tablet vor PV-Modulen" },
+  versicherung: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur mit Auffanggurt und Seilsicherung trägt ein Solarmodul über ein Blechdach" },
+};
+
 const PAKETE_KOPF = ["Leistung", "Basis", "Plus", "Premium"];
+const EIGNUNG = ["Dachanlagen mit einfacher Struktur", "Gewerbe- und Hallendächer", "Große Dach- und Freiflächenanlagen, Speicher, EZA-Regler"];
 const PAKETE = [
-  ["Geeignet für", "Dachanlagen mit einfacher Struktur", "Gewerbe- und Hallendächer", "Große Dach- und Freiflächenanlagen, Speicher, EZA-Regler"],
+  ["Geeignet für", ...EIGNUNG],
   ["Inspektionen vor Ort", "1× jährlich", "1× jährlich + Störungseinsätze", "2× jährlich (Frühjahr/Herbst) + Störungseinsätze"],
   ["Sichtprüfung Module, Unterkonstruktion, Kabelwege, Dachdurchdringungen", true, true, true],
   ["Wechselrichter: Fehlerspeicher, Lüfter/Filter, Firmware-Stand", true, true, true],
@@ -43,6 +51,8 @@ const PAKETE = [
   ["Berichte", "Kurzprotokoll", "Prüfbericht mit Fotodokumentation", "Jahresbericht mit KPIs und Maßnahmenplan"],
   ["Preis", "nach Anlagengröße", "nach Anlagengröße", "nach Anlagengröße"],
 ];
+// Vergleichsansicht: ohne „Geeignet für“ (steht im Paketkopf) und ohne „Preis“ (Fußzeile)
+const PAKETE_KARTEN = PAKETE.slice(1, -1);
 
 const WARTUNGSARTEN = [
   ["Präventiv (vorbeugend)", "Geplante Inspektionen, Prüfungen und Reinigungen in festen Intervallen", "Fehler finden, bevor sie Ertrag oder Sicherheit kosten; Nachweis für Versicherung und Garantie"],
@@ -99,11 +109,16 @@ export default function WartungPage() {
       <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Wartung und Wartungsvertrag für Photovoltaikanlagen", beschreibung: BESCHREIBUNG, serviceType: "Betriebsführung und Wartung (O&M) von PV-Anlagen" })} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Service" }, { name: "Wartung & Wartungsvertrag" }]}
         eyebrow="Wartung · Betriebsführung (O&M)"
-        title={<>PV-Wartung mit <span className="ov-text-gradient">Wartungsvertrag</span></>}
+        title={
+          <>
+            PV-Wartung mit <span className="ov-text-gradient-light">Wartungsvertrag</span>
+          </>
+        }
         lead="Eine Photovoltaikanlage ist wartungsarm, aber nicht wartungsfrei. Mit einem Wartungsvertrag sind Sicherheit, Ertrag, Garantie- und Versicherungsauflagen in einer Hand – geprüft nach österreichischen Normen und dokumentiert für Geschäftsführung, Versicherer und Netzbetreiber."
-        image={{ src: "/Images/Referenzen/referenzkarte1.jpg", alt: "Techniker mit Helm und Warnweste kontrolliert eine PV-Anlage auf einem Flachdach" }}
+        image={BILD.hero}
         points={["Prüfung nach OVE E 8101 & EN 62446", "Thermografie & Monitoring", "EZA-Regler-Check", "Berichte mit KPIs"]}
         actions={[
           { label: "Wartungsvertrag anfragen", href: "#anfrage" },
@@ -111,67 +126,139 @@ export default function WartungPage() {
         ]}
       />
 
-      <Section tone="white" space="lg">
-        <SectionHeading
-          eyebrow="Warum Wartung"
-          title="Sechs Gründe, warum Gewerbeanlagen einen Wartungsvertrag brauchen"
-          lead="Wartung ist bei einer Gewerbeanlage keine Kür: Sie sichert Personen, Ertrag und Ansprüche. Ein Ausfall eines Wechselrichters im Sommer kostet schnell mehr als ein Jahr Wartung."
-          className="mb-12"
-        />
-        <FeatureGrid
-          cols={3}
+      <AntwortBand
+        frage="Ist die Wartung einer PV-Anlage in Österreich Pflicht?"
+        zahlen={[
+          { value: 5, suffix: " Jahre", label: "längste Prüffrist im Regelfall", text: "wiederkehrende Prüfung nach § 9 ESV 2012" },
+          { value: 3, label: "Pakete", text: "Basis, Plus und Premium – kombinierbar" },
+          { value: "1–2×", label: "Inspektionen pro Jahr", text: "je nach Paket, dazu Störungseinsätze" },
+          { value: "PR", label: "Kennzahlen im Bericht", text: "Performance Ratio und Verfügbarkeit (IEC 61724-1, IEC TS 63019)" },
+        ]}
+      >
+        <p>
+          Eine eigene <strong>„Wartungspflicht“ gibt es nicht, wohl aber Prüfpflichten</strong>: Arbeitgeber müssen elektrische Anlagen nach der Elektroschutzverordnung 2012
+          wiederkehrend prüfen lassen – in der Regel längstens alle fünf Jahre. Dazu kommen Auflagen aus Versicherungsverträgen, Herstellergarantien und bei größeren Anlagen aus dem
+          Netzzugangsvertrag. Ein Wartungsvertrag bündelt diese Pflichten.
+        </p>
+      </AntwortBand>
+
+      {/* Sechs Gründe als Foto-Bento */}
+      <Section tone="white" space="md" id="gruende">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Warum Wartung" title="Sechs Gründe, warum Gewerbeanlagen einen Wartungsvertrag brauchen" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Wartung ist bei einer Gewerbeanlage keine Kür: Sie sichert Personen, Ertrag und Ansprüche. Ein Ausfall eines Wechselrichters im Sommer kostet schnell mehr als ein Jahr Wartung.
+          </p>
+        </div>
+        <FotoBento
+          spalten={4}
+          zeile={240}
           items={[
-            { icon: ShieldCheck, title: "Sicherheit & Prüfpflicht", text: "Arbeitgeber müssen elektrische Anlagen nach ESV 2012 wiederkehrend prüfen lassen. Die Prüfung nach OVE E 8101 mit Prüfbefund ist Teil der Pakete Plus und Premium." },
-            { icon: Gauge, title: "Ertrag & Verfügbarkeit", text: "Ausgefallene Strings, verschmutzte Module oder ein abgeregelter Wechselrichter fallen ohne Überwachung oft monatelang nicht auf." },
-            { icon: BadgeCheck, title: "Herstellergarantien", text: "Produkt- und Leistungsgarantien setzen Installation und Betrieb nach Herstellerhandbuch voraus. Dokumentierte Wartung erleichtert Garantiefälle deutlich." },
-            { icon: FileText, title: "Versicherungsauflagen", text: "Versicherer verlangen einen ordnungsgemäßen Zustand der Anlage. Wer Obliegenheiten verletzt, riskiert Leistungskürzungen im Schadenfall." },
-            { icon: SlidersHorizontal, title: "Netzkonformität", text: "Parkregler und Wechselrichter müssen die Vorgaben des Netzbetreibers nach TOR Erzeuger dauerhaft einhalten – auch nach Firmware-Updates." },
-            { icon: LineChart, title: "Werterhalt & Nachweise", text: "Anlagenbuch, Prüfbefunde und Ertragsberichte sind bei Verkauf, Refinanzierung, Förderprüfung oder Nachhaltigkeitsbericht gefragt." },
+            {
+              form: "hoch",
+              bild: BILD.sicherheit.src,
+              alt: BILD.sicherheit.alt,
+              tag: "Pflicht",
+              titel: "Sicherheit & Prüfpflicht",
+              text: "Arbeitgeber müssen elektrische Anlagen nach ESV 2012 wiederkehrend prüfen lassen. Die Prüfung nach OVE E 8101 mit Prüfbefund ist Teil der Pakete Plus und Premium.",
+            },
+            { ton: "sand", icon: <Gauge />, titel: "Ertrag & Verfügbarkeit", text: "Ausgefallene Strings, verschmutzte Module oder ein abgeregelter Wechselrichter fallen ohne Überwachung oft monatelang nicht auf." },
+            { ton: "sand", icon: <BadgeCheck />, titel: "Herstellergarantien", text: "Produkt- und Leistungsgarantien setzen Installation und Betrieb nach Herstellerhandbuch voraus. Dokumentierte Wartung erleichtert Garantiefälle deutlich." },
+            {
+              form: "hoch",
+              bild: BILD.werterhalt.src,
+              alt: BILD.werterhalt.alt,
+              tag: "Nachweise",
+              titel: "Werterhalt & Nachweise",
+              text: "Anlagenbuch, Prüfbefunde und Ertragsberichte sind bei Verkauf, Refinanzierung, Förderprüfung oder Nachhaltigkeitsbericht gefragt.",
+            },
+            { ton: "sand", icon: <FileText />, titel: "Versicherungsauflagen", text: "Versicherer verlangen einen ordnungsgemäßen Zustand der Anlage. Wer Obliegenheiten verletzt, riskiert Leistungskürzungen im Schadenfall." },
+            { ton: "navy", icon: <SlidersHorizontal />, titel: "Netzkonformität", text: "Parkregler und Wechselrichter müssen die Vorgaben des Netzbetreibers nach TOR Erzeuger dauerhaft einhalten – auch nach Firmware-Updates." },
           ]}
         />
       </Section>
 
-      <Section tone="sand" space="lg" id="pakete" className="scroll-mt-24">
+      {/* Pakete */}
+      <Section tone="sand" space="md" id="pakete" className="scroll-mt-24">
         <SectionHeading
+          align="center"
           eyebrow="Leistungspakete"
           title="Basis, Plus oder Premium – der Leistungsumfang im Vergleich"
           lead="Die Pakete sind eine Orientierung. Den genauen Umfang, Intervalle und Reaktionszeit-Ziele legen wir im Wartungsvertrag je Anlage fest. Der Preis richtet sich nach Anlagengröße, Anzahl der Wechselrichter und Zugänglichkeit."
           className="mb-10"
         />
-        <Tabelle
-          caption="Wartungspakete für PV-Anlagen im Vergleich"
-          kopf={PAKETE_KOPF}
-          zeilen={PAKETE}
-          hervor={2}
-          kompakt
-          quelle="Beispielhafte Paketstruktur, keine Preis- oder Reaktionszeitzusage. Preis nach Anlagengröße – Angebot anfordern. Die Pakete lassen sich kombinieren, z. B. Plus mit Drohnen-Thermografie."
-        />
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Button href="#anfrage" size="lg" pfeil>Angebot für Ihre Anlage anfordern</Button>
-          <Button href="/service/e-check" size="lg" variant="secondary" icon={ClipboardCheck}>Was die Anlagenprüfung umfasst</Button>
-        </div>
+        <PaketVergleich pakete={PAKETE_KOPF.slice(1)} eignung={EIGNUNG} zeilen={PAKETE_KARTEN} fuss="Preis nach Anlagengröße – Angebot anfordern" />
+        <p className="mt-6 text-center text-[13px] leading-relaxed text-ink-500">
+          Beispielhafte Paketstruktur, keine Preis- oder Reaktionszeitzusage. Die Pakete lassen sich kombinieren, z. B. Plus mit Drohnen-Thermografie.
+        </p>
       </Section>
 
-      <Section tone="white" space="lg">
-        <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-          <SectionHeading
-            eyebrow="O&M-Fachwissen"
-            title="Präventiv, korrektiv, zustandsbasiert"
-            lead="Betriebsführung und Wartung (Operation & Maintenance, O&M) kennt drei Arten von Eingriffen. Ein guter Wartungsvertrag kombiniert alle drei – die Norm OVE EN 62446-2 beschreibt dafür Mindestinhalte für Wartung und Instandhaltung netzgekoppelter PV-Anlagen."
+      {/* O&M-Fachwissen dunkel */}
+      <section className="ov-noise relative overflow-hidden bg-navy-950 py-20 text-white md:py-24">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -right-40 top-10 h-[480px] w-[480px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div className="ov-container relative">
+          <div className="mb-12 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+            <SectionHeading dark eyebrow="O&M-Fachwissen" title="Präventiv, korrektiv, zustandsbasiert" />
+            <p className="ov-lead text-white/70 lg:pb-1">
+              Betriebsführung und Wartung (Operation & Maintenance, O&M) kennt drei Arten von Eingriffen. Ein guter Wartungsvertrag kombiniert alle drei – die Norm OVE EN 62446-2
+              beschreibt dafür Mindestinhalte für Wartung und Instandhaltung netzgekoppelter PV-Anlagen.
+            </p>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {WARTUNGSARTEN.map(([art, bsp, nutzen], i) => (
+              <Reveal key={art} delay={i * 80} className="ov-card-hover rounded-3xl bg-white/[0.05] p-6 ring-1 ring-white/10 md:p-7">
+                <span className="font-display text-[13px] font-bold text-ov-300">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="mt-2 font-display text-[20px] font-extrabold tracking-tight">{art}</h3>
+                <p className="mt-3 text-[14.5px] leading-relaxed text-white/65">
+                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/45">Beispiele</strong>
+                  {bsp}
+                </p>
+                <p className="mt-3 text-[14.5px] leading-relaxed text-white/80">
+                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/45">Nutzen</strong>
+                  {nutzen}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+
+          <Akkordeon
+            dunkel
+            className="mt-12"
+            items={[
+              {
+                icon: <LineChart />,
+                titel: "Woran Sie gute Wartung messen",
+                kurz: "Fünf Kennzahlen für Bericht und SLA – angelehnt an IEC 61724-1 und IEC TS 63019",
+                inhalt: (
+                  <>
+                    <dl className="grid gap-px overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/10 md:grid-cols-2 lg:grid-cols-5">
+                    {KPIS.map(([k, d, w]) => (
+                      <div key={k} className="bg-navy-950/90 p-5">
+                        <dt className="flex items-center gap-2 font-display text-[15.5px] font-bold text-white">
+                          <LineChart aria-hidden="true" className="h-4 w-4 shrink-0 text-ov-300" />
+                          {k}
+                        </dt>
+                        <dd className="mt-2 text-[13.5px] leading-relaxed text-white/60">{d}</dd>
+                        <dd className="mt-2 text-[13px] font-medium leading-snug text-ov-200">{w}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                    <p className="mt-4 text-[12.5px] text-white/45">Definitionen angelehnt an IEC 61724-1 (Performance Monitoring) und IEC TS 63019 (Verfügbarkeit von PV-Systemen).</p>
+                  </>
+                ),
+              },
+            ]}
           />
-          <Tabelle kopf={["Art", "Beispiele", "Nutzen"]} zeilen={WARTUNGSARTEN} kompakt />
         </div>
-        <div className="mt-16">
-          <SectionHeading eyebrow="Kennzahlen" title="Woran Sie gute Wartung messen" as="h3" size="h3" className="mb-6" />
-          <Tabelle kopf={["Kennzahl", "Definition", "Wozu"]} zeilen={KPIS} kompakt quelle="Definitionen angelehnt an IEC 61724-1 (Performance Monitoring) und IEC TS 63019 (Verfügbarkeit von PV-Systemen)." />
-        </div>
-      </Section>
+      </section>
 
-      <Section tone="green" space="lg">
+      {/* Versicherung & Garantie */}
+      <Section tone="white" space="md">
         <SplitMedia
           eyebrow="Versicherung & Garantie"
           title="Warum Versicherer und Hersteller auf Wartung bestehen"
-          image={{ src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur mit Auffanggurt und Seilsicherung trägt ein Solarmodul über ein Blechdach" }}
+          image={BILD.versicherung}
           text={[
             "Versicherungsverträge enthalten Obliegenheiten: Der Betreiber muss die Anlage in ordnungsgemäßem Zustand halten, Mängel beheben lassen und gesetzliche Prüfungen durchführen. Werden Obliegenheiten verletzt, kann der Versicherer – abhängig von Verschulden und Auswirkung auf den Schaden – nach § 6 Versicherungsvertragsgesetz (VersVG) ganz oder teilweise leistungsfrei werden.",
             "Hersteller knüpfen Garantien an Installation und Betrieb nach Handbuch. Kommt es zum Garantiefall, fragen sie nach Seriennummern, Fehlerspeicher, Messwerten und Fotos – genau das liefert ein Wartungsprotokoll.",
@@ -182,32 +269,27 @@ export default function WartungPage() {
             { title: "Thermografie", text: "Nachweis thermischer Auffälligkeiten nach IEC TS 62446-3" },
             { title: "Anlagenbuch", text: "Alle Befunde, Pläne und Änderungen an einem Ort" },
           ]}
-        />
-        <Hinweis ton="achtung" titel="Arbeitssicherheit auf dem Dach" className="mt-12">
-          <p>
-            Arbeiten auf Hallendächern sind Arbeiten mit Absturzgefahr. Unsere Teams arbeiten mit Absturzsicherung nach Bauarbeiterschutzverordnung und ASchG und nur nach
-            Freischaltung bzw. mit geeigneten Schutzmaßnahmen an spannungsführenden DC-Teilen. Bitte informieren Sie uns vorab über Anschlagpunkte, Lichtkuppeln und
-            Zugangsregeln auf Ihrem Gelände.
-          </p>
-        </Hinweis>
+        >
+          <Hinweis ton="achtung" titel="Arbeitssicherheit auf dem Dach" className="mt-8">
+            <p>
+              Arbeiten auf Hallendächern sind Arbeiten mit Absturzgefahr. Unsere Teams arbeiten mit Absturzsicherung nach Bauarbeiterschutzverordnung und ASchG und nur nach Freischaltung
+              bzw. mit geeigneten Schutzmaßnahmen an spannungsführenden DC-Teilen. Bitte informieren Sie uns vorab über Anschlagpunkte, Lichtkuppeln und Zugangsregeln auf Ihrem Gelände.
+            </p>
+          </Hinweis>
+        </SplitMedia>
       </Section>
 
-      <Section tone="white" space="lg">
-        <SectionHeading eyebrow="Ablauf" title="In vier Schritten zum Wartungsvertrag" align="center" className="mb-14" />
-        <Steps
-          items={[
-            { icon: PackageSearch, title: "Anlagendaten", text: "Leistung, Baujahr, Wechselrichter, Pläne und vorhandene Prüfbefunde – über das Formular oder per E-Mail." },
-            { icon: Wrench, title: "Erstinspektion", text: "Bestandsaufnahme vor Ort als Ausgangswert: Zustand, Messwerte, offene Mängel, Monitoring-Zugang." },
-            { icon: FileText, title: "Vertrag & SLA", text: "Paket, Intervalle, Reaktionszeit-Ziel, Ersatzteile und Berichtswesen – schriftlich und nachvollziehbar." },
-            { icon: Activity, title: "Laufender Betrieb", text: "Überwachung, Inspektionen, Störungsbehebung und Berichte – mit festem Ansprechpartner." },
-          ]}
-        />
-      </Section>
-
-      <AnfrageSektion
-        titel="Wartungsvertrag anfragen"
-        lead="Mit wenigen Angaben zu Ihrer Anlage erstellen wir ein Angebot passend zu Größe und Paket. Unverbindlich und ohne Pauschalpreise aus der Schublade."
-        schritte={["Sie senden uns die Eckdaten Ihrer Anlage.", "Wir melden uns mit Rückfragen oder direkt mit einem Terminvorschlag für die Erstinspektion.", "Sie erhalten ein schriftliches Angebot mit Leistungsumfang und SLA."]}
+      <AnfragePremium
+        eyebrow="Wartungsvertrag anfragen"
+        titel="Angebot für Ihre Anlage – ohne Pauschalpreise aus der Schublade"
+        lead="Mit wenigen Angaben zu Ihrer Anlage erstellen wir ein Angebot passend zu Größe und Paket. Unverbindlich – für Anlagen von Ökovolt und anderen Errichtern."
+        schritteTitel="In vier Schritten zum Wartungsvertrag"
+        schritte={[
+          { titel: "Anlagendaten", text: "Leistung, Baujahr, Wechselrichter, Pläne und vorhandene Prüfbefunde – über das Formular oder per E-Mail." },
+          { titel: "Erstinspektion", text: "Bestandsaufnahme vor Ort als Ausgangswert: Zustand, Messwerte, offene Mängel, Monitoring-Zugang." },
+          { titel: "Vertrag & SLA", text: "Paket, Intervalle, Reaktionszeit-Ziel, Ersatzteile und Berichtswesen – schriftlich und nachvollziehbar." },
+          { titel: "Laufender Betrieb", text: "Überwachung, Inspektionen, Störungsbehebung und Berichte – mit festem Ansprechpartner." },
+        ]}
         formular={{
           betreff: "Wartungsvertrag",
           thema: "Service & Wartung",
@@ -225,26 +307,26 @@ export default function WartungPage() {
         }}
       />
 
-      <Section tone="white" space="md">
-        <Weiterlesen
-          items={[
-            { href: "/technik/fernwartung", art: "Technik", titel: "Fernwartung", text: "Sichere Fernzugriffe und Alarmierung – Grundlage der laufenden Überwachung." },
-            { href: "/technik/scada", art: "Technik", titel: "SCADA & Leitwarte", text: "Portfolio-Monitoring und KPI-Reporting für mehrere Standorte." },
-            { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)", text: "Blindleistung und Einspeiselimit nach TOR Erzeuger dauerhaft einhalten." },
-            { href: "/service/e-check", art: "Service", titel: "E-Check & Anlagenprüfung", text: "Wiederkehrende Prüfung nach OVE E 8101 mit Prüfbefund." },
-            { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie", text: "Hotspots und defekte Strings großflächig finden." },
-            { href: "/ratgeber/photovoltaik-wartungsvertrag", art: "Ratgeber", titel: "Wartungsvertrag: Leistungen, Kosten, SLA", text: "Worauf Sie beim Vertrag achten sollten." },
-            { href: "/ratgeber/photovoltaik-reinigung-wartung", art: "Ratgeber", titel: "Reinigung & Wartung im Überblick", text: "Was wirklich nötig ist – und was nicht." },
-            { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie", text: "Von der Planung nach Lastgang bis zum Betrieb." },
-          ]}
-        />
-      </Section>
-
-      <FaqSektion items={FAQ} titel="Wartung & Wartungsvertrag – gut zu wissen" lead="Fragen aus Geschäftsführung, Technik und Einkauf." tone="sand" />
+      <FaqPlus
+        items={FAQ}
+        titel="Wartung & Wartungsvertrag – gut zu wissen"
+        lead="Fragen aus Geschäftsführung, Technik und Einkauf."
+        links={[
+          { href: "/technik/fernwartung", art: "Technik", titel: "Fernwartung", text: "Sichere Fernzugriffe und Alarmierung – Grundlage der laufenden Überwachung." },
+          { href: "/technik/scada", art: "Technik", titel: "SCADA & Leitwarte", text: "Portfolio-Monitoring und KPI-Reporting für mehrere Standorte." },
+          { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)", text: "Blindleistung und Einspeiselimit nach TOR Erzeuger dauerhaft einhalten." },
+          { href: "/service/e-check", art: "Service", titel: "E-Check & Anlagenprüfung", text: "Wiederkehrende Prüfung nach OVE E 8101 mit Prüfbefund." },
+          { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie", text: "Hotspots und defekte Strings großflächig finden." },
+          { href: "/ratgeber/photovoltaik-wartungsvertrag", art: "Ratgeber", titel: "Wartungsvertrag: Leistungen, Kosten, SLA", text: "Worauf Sie beim Vertrag achten sollten." },
+          { href: "/ratgeber/photovoltaik-reinigung-wartung", art: "Ratgeber", titel: "Reinigung & Wartung im Überblick", text: "Was wirklich nötig ist – und was nicht." },
+          { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie", text: "Von der Planung nach Lastgang bis zum Betrieb." },
+        ]}
+      />
 
       <Querverweise pfad={PFAD} ueberschrift="Mehr zu Betrieb und Sicherheit" />
 
-      <Quellen
+      <QuellenKompakt
+        titel="Quellen & Rechtsgrundlagen"
         items={[
           { titel: "Elektroschutzverordnung 2012 (ESV 2012), RIS", href: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007682", hinweis: "§§ 7–11: Kontrollen, Prüfungen, Prüfbefunde" },
           { titel: "Kommentierte ESV 2012 – Arbeitsinspektion", href: "https://www.arbeitsinspektion.gv.at/Arbeitsstaetten-_Arbeitsplaetze/Elektrische_Anlagen/Kommentierte_Elektroschutzverordnung_2012.html" },

@@ -16,7 +16,7 @@ const STAEDTE = [
   ["Eisenstadt", "B", 179, 38, 1200, 1508, 1190, 1090, 993, 995, 837, 45],
 ];
 
-const f0 = (x) => Math.round(x).toLocaleString("de-AT");
+const f0 = (x) => Math.round(x).toLocaleString("de-DE");
 const p1 = (x) => String(Math.round(x * 1000) / 10).replace(".", ",") + " %";
 
 const LINZ = STAEDTE[2];

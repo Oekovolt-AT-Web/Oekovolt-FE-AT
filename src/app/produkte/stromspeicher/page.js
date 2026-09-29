@@ -13,23 +13,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowRight,
-  BatteryCharging,
-  Calculator,
-  Container,
-  Flame,
-  Gauge,
-  Home,
-  LineChart,
-  Moon,
-  PlugZap,
-  Share2,
-  ShieldAlert,
-  Sun,
-  TrendingDown,
-  Warehouse,
-} from "lucide-react";
+import { ArrowRight, BatteryCharging, Calculator, Factory, Flame, Gauge, Home, LineChart, Moon, PlugZap, Share2, ShieldAlert, Sun, Table2, TrendingDown } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -40,13 +24,19 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import SpeicherTagesverlauf from "@/components/stromspeicher/SpeicherTagesverlauf";
+import SpeicherMini from "@/components/stromspeicher/SpeicherMini";
+import PeakShavingDemo from "@/components/stromspeicher/PeakShavingDemo";
+import Umschalter from "@/components/Produktdetail/Umschalter";
+import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
+import FotoBento from "@/components/Produktdetail/FotoBento";
+import FachAkkordeon, { FachTabelle } from "@/components/Produktdetail/FachAkkordeon";
+import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
+import { partnerFuer } from "@/components/Hersteller/partner";
 import { generateSlug } from "@/lib/slugify";
 import { istBelegterPartner } from "@/components/Produktdetail/HerstellerDetail";
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
-import FeaturedLogos from "@/components/photovoltaikanlage/partners";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
-import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Querverweise from "@/components/Reusable/Querverweise";
 
 const DATA_URL = `${API_BASE_URL}oekovoltdeutchland.oekovoltdeutchland.doctype.stromspeicher_page.api.get_strom_page_with_keywords`;
@@ -157,7 +147,20 @@ const FAQ = [
 ];
 
 export default async function StromspeicherPage() {
-  const produkte = await fetchSpeicherHersteller();
+  const apiProdukte = await fetchSpeicherHersteller();
+  // Ohne Backoffice-Daten: belegte Speicher-Partner als statische Karten (Detailseiten existieren auch ohne API)
+  const produkte = apiProdukte.length
+    ? apiProdukte.map((item) => ({
+        title: item.title,
+        href: `${PFAD}/${generateSlug(item.title)}`,
+        bild: img(item.banner_image),
+        alt: item.alt_banner_image || item.title,
+        logo: item.logo_image ? img(item.logo_image) : null,
+        altLogo: item.alt_logo_image || "",
+        text: item.main_description,
+        rolle: null,
+      }))
+    : partnerFuer("stromspeicher").map((p) => ({ title: p.title, href: `${PFAD}/${p.slug}`, bild: p.bild, alt: p.alt_banner_image, logo: null, text: p.main_description, rolle: p.rolle }));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -190,34 +193,33 @@ export default async function StromspeicherPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Stromspeicher" }]}
         eyebrow="Stromspeicher · Gewerbe & Gebäude"
         title={
           <>
-            Stromspeicher, die <span className="ov-text-gradient">mehr als Eigenverbrauch</span> können
+            Stromspeicher, die <span className="ov-text-gradient-light">mehr als Eigenverbrauch</span> können
           </>
         }
         lead="Ein Gewerbespeicher kappt Lastspitzen, verschiebt Solarstrom in die Abendstunden und hält bei Netzausfall den Betrieb am Laufen. Wir planen Heim-, Gewerbe- und Containerspeicher nach Ihrem Lastgang – mit Brandschutzkonzept und sauberer Einbindung in PV-Anlage und Energiemanagement."
-        image={{ src: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg", alt: "Batteriespeicher im Technikraum" }}
+        image={{ src: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Batteriespeicher-Schränke im Freien neben einer Trafostation", position: "60% 50%" }}
         points={["Peak Shaving nach Lastgang", "Ersatzstrom & Blackout-Vorsorge", "Brandschutz nach OVE R 20", "Nachrüstbar für Bestandsanlagen"]}
         actions={[
           { label: "Speicherprojekt anfragen", href: "/angebot" },
-          { label: "Größe berechnen", href: "/rechner/stromspeicher", icon: Calculator },
+          { label: "Größe berechnen", href: "#schnellcheck", icon: Calculator },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <Gauge aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[18px] font-extrabold leading-tight text-ink-900">Viertelstunde für Viertelstunde</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">ausgelegt auf Ihren echten Lastgang</p>
-            </div>
-          </div>
-        }
       />
 
-      <FeaturedLogos />
+      <HerstellerWortmarken titel="Speicher- und Wechselrichtersysteme unserer Partner" fokus={["speicher"]} />
+
+      <Kennzahlenband
+        items={[
+          { value: 15, suffix: " min", label: "Messintervall, nach dem das Leistungsentgelt Ihre Spitze bewertet" },
+          { value: 50, suffix: " kWh", label: "max. Speicherkapazität im EAG-Investitionszuschuss" },
+          { wert: "LFP", label: "Lithium-Eisenphosphat als Zellchemie-Standard" },
+          { wert: "R 20", label: "OVE-Richtlinie – Grundlage unseres Brandschutzkonzepts" },
+        ]}
+      />
 
       {/* Nutzen */}
       <Section tone="white" space="lg">
@@ -236,54 +238,72 @@ export default async function StromspeicherPage() {
 
       {/* Speicherklassen */}
       <Section tone="sand" space="lg" id="speicherklassen">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+        <div className="mb-12 grid items-end gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
           <SectionHeading
             eyebrow="Heim, Gewerbe, Container"
             title="Welche Speicherklasse passt?"
-            lead="Die Größe folgt der Aufgabe: Für Peak Shaving zählt die Entladeleistung in kW, für Lastverschiebung die Kapazität in kWh. Die Größenordnungen sind typische Werte, keine festen Grenzen."
+            lead="Die Größe folgt der Aufgabe: Für Peak Shaving zählt die Entladeleistung in kW, für Lastverschiebung die Kapazität in kWh."
           />
-          <Reveal delay={100}>
-            <div tabIndex={0} role="region" aria-label="Speicherklassen im Vergleich" className="overflow-x-auto rounded-3xl ring-1 ring-ink-200/70">
-              <table className="w-full min-w-[620px] border-collapse text-left text-[15px]">
-                <caption className="sr-only">Speicherklassen für Heim, Gewerbe und Industrie</caption>
-                <thead>
-                  <tr className="bg-navy-950 text-white">
-                    <th scope="col" className="px-5 py-4 font-semibold">Klasse</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Typische Kapazität</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Aufstellung</th>
-                    <th scope="col" className="px-5 py-4 font-semibold">Einsatz</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-ink-100 bg-white">
-                  {KLASSEN.map((k) => (
-                    <tr key={k.klasse}>
-                      <th scope="row" className="px-5 py-4 align-top font-semibold text-ink-900">{k.klasse}</th>
-                      <td className="ov-num whitespace-nowrap px-5 py-4 align-top text-ink-600">{k.groesse}</td>
-                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{k.aufstellung}</td>
-                      <td className="px-5 py-4 align-top leading-relaxed text-ink-600">{k.einsatz}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {[
-                { icon: Home, text: "Heimspeicher" },
-                { icon: Warehouse, text: "C&I-Schrank" },
-                { icon: Container, text: "Container" },
-              ].map(({ icon: Icon, text }) => (
-                <p key={text} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-[14.5px] font-semibold text-ink-800 ring-1 ring-ink-200/70">
-                  <Icon aria-hidden="true" className="h-5 w-5 text-ov-600" />
-                  {text}
-                </p>
-              ))}
-            </div>
-          </Reveal>
+          <p className="text-[15px] leading-relaxed text-ink-600 lg:pb-1">Die Größenordnungen sind typische Werte, keine festen Grenzen – die Detailtabelle finden Sie unter den Bildern.</p>
         </div>
+        <FotoBento
+          items={[
+            {
+              bild: "/Images/AT/loesungen/gewerbespeicher-batteriecontainer.jpg",
+              alt: "Batteriespeicher-Container an einem Kraftwerksstandort in Niederösterreich",
+              eyebrow: KLASSEN[2].groesse,
+              titel: "Containerspeicher",
+              text: `${KLASSEN[2].einsatz}. ${KLASSEN[2].aufstellung}.`,
+              href: "/gewerbespeicher",
+            },
+            { bild: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Gewerbespeicher-Schränke im Außenbereich", eyebrow: KLASSEN[1].groesse, titel: "Gewerbespeicher (C&I-Schrank)", text: KLASSEN[1].einsatz },
+            { bild: "/Images/Dienstleistungen/Smartphone/Stronspeicher.jpg", alt: "Heimspeicher mit Wechselrichter im Technikraum", eyebrow: KLASSEN[0].groesse, titel: "Heimspeicher", text: KLASSEN[0].einsatz, position: "50% 70%" },
+          ]}
+        />
+        <FachAkkordeon
+          className="mt-8"
+          items={[
+            {
+              id: "speicherklassen-tabelle",
+              icon: Table2,
+              titel: "Für Technik & Einkauf: Speicherklassen im Vergleich",
+              kurz: "Kapazität, Aufstellung und typischer Einsatz",
+              inhalt: (
+                <FachTabelle
+                  caption="Speicherklassen für Heim, Gewerbe und Industrie"
+                  kopf={["Klasse", "Typische Kapazität", "Aufstellung", "Einsatz"]}
+                  zeilen={KLASSEN.map((k) => [k.klasse, k.groesse, k.aufstellung, k.einsatz])}
+                />
+              ),
+            },
+          ]}
+        />
+      </Section>
+
+      {/* Interaktiv: Betrieb / Wohnhaus */}
+      <Section tone="white" space="lg" id="schnellcheck" className="scroll-mt-20">
+        <SectionHeading
+          eyebrow="Selbst ausprobieren"
+          title={
+            <>
+              Lastspitze kappen oder <span className="ov-text-gradient">Abendstrom sichern?</span>
+            </>
+          }
+          lead="Im Betrieb entscheidet die Entladeleistung, im Wohnhaus der Eigenverbrauch. Wählen Sie Ihre Situation – die Werte ändern sich live."
+          align="center"
+          className="mb-10"
+        />
+        <Umschalter
+          label="Einsatz des Speichers"
+          ansichten={[
+            { id: "betrieb", label: "Betrieb: Peak Shaving", icon: <Factory />, inhalt: <PeakShavingDemo /> },
+            { id: "wohnhaus", label: "Wohnhaus: Eigenverbrauch", icon: <Home />, inhalt: <SpeicherMini /> },
+          ]}
+        />
       </Section>
 
       {/* Peak Shaving */}
-      <Section tone="white" space="lg" id="peak-shaving">
+      <Section tone="sand" space="lg" id="peak-shaving">
         <SplitMedia
           eyebrow="Peak Shaving"
           title="Lastspitzen kappen, Netzentgelt senken"
@@ -293,103 +313,126 @@ export default async function StromspeicherPage() {
           ]}
           points={["Auswertung der Viertelstundenwerte aus dem Netzbetreiber-Portal", "Schwellwert und Entladeleistung nach Lastgang", "Kombination mit PV-Eigenverbrauch und Ersatzstrom"]}
           action={{ label: "Gewerbespeicher im Detail", href: "/gewerbespeicher" }}
-          image={{ src: "/Images/Ratgeber/energiemanagementsystem.jpg", alt: "Energiemanagement mit Lastgangdarstellung" }}
+          image={{ src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Lastgang- und Netzdaten auf mehreren Bildschirmen" }}
         />
       </Section>
 
-      {/* Brandschutz & Förderung */}
-      <Section tone="sand" space="lg" id="brandschutz">
-        <div className="grid gap-5 lg:grid-cols-2">
-          <Reveal>
-            <article className="flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-9">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
-                <Flame aria-hidden="true" className="h-6 w-6" />
-              </span>
-              <h2 className="ov-h3 mt-6 text-ink-900">Brandschutz und Aufstellung</h2>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
-                Für stationäre Batteriespeicher gilt die OVE-Richtlinie R 20; baurechtlich greift die OIB-Richtlinie 2 in der Umsetzung des jeweiligen Bundeslandes, die Batterieräume als Räume mit erhöhter Brandgefahr einordnet. Wir planen Aufstellort, Abstände, Lüftung und Kennzeichnung und stimmen das Konzept mit Feuerwehr, Behörde und Versicherung ab.
-              </p>
-              <ul className="mt-5 space-y-2 text-[15px] text-ink-700">
-                <li>• LFP-Zellchemie (Lithium-Eisenphosphat) als Standard</li>
-                <li>• Eigener Aufstellraum oder Outdoor-Schrank je nach Größe</li>
-                <li>• Kennzeichnung und Abschaltung für Einsatzkräfte</li>
-              </ul>
-            </article>
+      {/* Dunkle Kontrast-Sektion: Tagesverlauf */}
+      <Section tone="navy" space="lg" id="heimspeicher" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
+        <div aria-hidden="true" className="absolute -left-40 top-24 h-[460px] w-[460px] rounded-full bg-ov-500/20 blur-[130px]" />
+        <div aria-hidden="true" className="absolute -right-32 bottom-0 h-[380px] w-[380px] rounded-full bg-sun-400/10 blur-[130px]" />
+        <div className="relative">
+          <SectionHeading
+            dark
+            eyebrow="Für Privat"
+            title={
+              <>
+                Heimspeicher: tagsüber laden, <span className="ov-text-gradient-light">abends nutzen</span>
+              </>
+            }
+            lead="Im Wohnhaus schließt der Speicher die Lücke zwischen Mittagsüberschuss und Abendverbrauch. Das Beispiel zeigt einen Frühlingstag mit 10-kWp-Anlage, 4.500 kWh Jahresverbrauch und 8-kWh-Speicher – vereinfacht zur Veranschaulichung."
+            align="center"
+            className="mb-12"
+          />
+          <Reveal dir="scale">
+            <SpeicherTagesverlauf />
           </Reveal>
-          <Reveal delay={100}>
-            <article className="flex h-full flex-col rounded-3xl bg-white p-7 ring-1 ring-ink-200/70 md:p-9">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-50 text-ov-600">
-                <BatteryCharging aria-hidden="true" className="h-6 w-6" />
-              </span>
-              <h2 className="ov-h3 mt-6 text-ink-900">Förderung für Speicher</h2>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
-                Der EAG-Investitionszuschuss fördert Speicher bis maximal 50 kWh Nettokapazität – und nur gemeinsam mit dem Antrag für die Photovoltaikanlage im OeMAG-Fördercall. Die Sätze werden je Call festgelegt. Mehrere Bundesländer haben eigene Programme. Das Förderansuchen muss vor der Bestellung gestellt werden.
-              </p>
-              <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
-                Wichtig für den Betrieb: Ein Speicher ist dem Netzbetreiber zu melden. Mit meldepflichtiger Anlage ist ein Smart-Meter-Opt-out nach § 54 ElWG nicht möglich – die Viertelstundenwerte stehen dann für Energiemanagement und Abrechnung zur Verfügung.
-              </p>
-              <Link href="/forderungen/bundesfoerderung" className="group mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-                Bundesförderung im Detail
-                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </article>
-          </Reveal>
+          <div className="mt-14">
+            <Steps
+              tone="dark"
+              items={[
+                { icon: Sun, title: "Mittags: Überschuss", text: "Die Anlage deckt den Verbrauch. Was übrig bleibt, fließt zuerst in den Speicher statt zum Marktpreis ins Netz." },
+                { icon: BatteryCharging, title: "Nachmittags: voll geladen", text: "Ist der Speicher voll, geht der restliche Überschuss an Ihren Stromabnehmer – Energielieferant oder OeMAG." },
+                { icon: Moon, title: "Abends: eigener Strom", text: "Kochen, Waschen, Licht: Der Speicher liefert Solarstrom bis in die Nacht, Netzbezug wird zur Ausnahme." },
+              ]}
+            />
+          </div>
         </div>
       </Section>
 
-      {/* Heimspeicher */}
-      <Section tone="white" space="lg" id="heimspeicher">
-        <SectionHeading
-          eyebrow="Für Privat"
-          title={
-            <>
-              Heimspeicher: tagsüber laden, <span className="ov-text-gradient">abends nutzen</span>
-            </>
-          }
-          lead="Im Wohnhaus schließt der Speicher die Lücke zwischen Mittagsüberschuss und Abendverbrauch. Das Beispiel zeigt einen Frühlingstag mit 10-kWp-Anlage, 4.500 kWh Jahresverbrauch und 8-kWh-Speicher – vereinfacht zur Veranschaulichung."
-          align="center"
-          className="mb-12"
-        />
-        <Reveal dir="scale">
-          <SpeicherTagesverlauf />
-        </Reveal>
-        <div className="mt-16">
-          <Steps
-            items={[
-              { icon: Sun, title: "Mittags: Überschuss", text: "Die Anlage deckt den Verbrauch. Was übrig bleibt, fließt zuerst in den Speicher statt zum Marktpreis ins Netz." },
-              { icon: BatteryCharging, title: "Nachmittags: voll geladen", text: "Ist der Speicher voll, geht der restliche Überschuss an Ihren Stromabnehmer – Energielieferant oder OeMAG." },
-              { icon: Moon, title: "Abends: eigener Strom", text: "Kochen, Waschen, Licht: Der Speicher liefert Solarstrom bis in die Nacht, Netzbezug wird zur Ausnahme." },
-            ]}
-          />
+      {/* Brandschutz & Förderung */}
+      <Section tone="white" space="lg" id="brandschutz">
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Reveal>
+            <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-sand-50 ring-1 ring-ink-200/70">
+              <div className="relative aspect-[16/7] overflow-hidden">
+                <Image src="/Images/AT/ratgeber/photovoltaik-brandschutz.jpg" alt="Feuerwehr-Schlüsselschalter zur Abschaltung einer Anlage" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" style={{ objectPosition: "50% 35%" }} />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-sand-50 via-transparent to-transparent" />
+              </div>
+              <div className="flex flex-1 flex-col p-7 pt-2 md:p-9 md:pt-2">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200">
+                  <Flame aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h2 className="ov-h3 mt-6 text-ink-900">Brandschutz und Aufstellung</h2>
+                <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                  Für stationäre Batteriespeicher gilt die OVE-Richtlinie R 20; baurechtlich greift die OIB-Richtlinie 2 in der Umsetzung des jeweiligen Bundeslandes, die Batterieräume als Räume mit erhöhter Brandgefahr einordnet. Wir planen Aufstellort, Abstände, Lüftung und Kennzeichnung und stimmen das Konzept mit Feuerwehr, Behörde und Versicherung ab.
+                </p>
+                <ul className="mt-5 space-y-2 text-[15px] text-ink-700">
+                  <li>• LFP-Zellchemie (Lithium-Eisenphosphat) als Standard</li>
+                  <li>• Eigener Aufstellraum oder Outdoor-Schrank je nach Größe</li>
+                  <li>• Kennzeichnung und Abschaltung für Einsatzkräfte</li>
+                </ul>
+              </div>
+            </article>
+          </Reveal>
+          <Reveal delay={100}>
+            <article className="flex h-full flex-col overflow-hidden rounded-3xl bg-sand-50 ring-1 ring-ink-200/70">
+              <div className="relative aspect-[16/7] overflow-hidden">
+                <Image src="/Images/AT/ratgeber/eag-investitionszuschuss.jpg" alt="Photovoltaikanlage – Symbolbild zur EAG-Förderung" fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-sand-50 via-transparent to-transparent" />
+              </div>
+              <div className="flex flex-1 flex-col p-7 pt-2 md:p-9 md:pt-2">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-ov-600 shadow-sm ring-1 ring-ov-200">
+                  <BatteryCharging aria-hidden="true" className="h-6 w-6" />
+                </span>
+                <h2 className="ov-h3 mt-6 text-ink-900">Förderung für Speicher</h2>
+                <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                  Der EAG-Investitionszuschuss fördert Speicher bis maximal 50 kWh Nettokapazität – und nur gemeinsam mit dem Antrag für die Photovoltaikanlage im OeMAG-Fördercall. Die Sätze werden je Call festgelegt. Mehrere Bundesländer haben eigene Programme. Das Förderansuchen muss vor der Bestellung gestellt werden.
+                </p>
+                <p className="mt-4 text-[15.5px] leading-relaxed text-ink-600">
+                  Wichtig für den Betrieb: Ein Speicher ist dem Netzbetreiber zu melden. Mit meldepflichtiger Anlage ist ein Smart-Meter-Opt-out nach § 54 ElWG nicht möglich – die Viertelstundenwerte stehen dann für Energiemanagement und Abrechnung zur Verfügung.
+                </p>
+                <Link href="/forderungen/bundesfoerderung" className="group mt-auto inline-flex min-h-11 items-center gap-2 pt-4 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                  Bundesförderung im Detail
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            </article>
+          </Reveal>
         </div>
       </Section>
 
       {produkte.length > 0 && (
         <Section tone="sand" space="lg">
-          <SectionHeading
-            eyebrow="Hersteller"
-            title="Speichersysteme, die wir verbauen"
-            lead="Markenhersteller mit Service in Österreich, sauber integriert in Wechselrichter, Ladeinfrastruktur und Energiemanagement."
-            className="mb-12"
-          />
-          <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionHeading
+              eyebrow="Hersteller"
+              title="Speichersysteme, die wir verbauen"
+              lead="Markenhersteller mit Service in Österreich, sauber integriert in Wechselrichter, Ladeinfrastruktur und Energiemanagement."
+            />
+            <Link href="/produkte/hersteller" className="group inline-flex min-h-11 shrink-0 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+              Alle Hersteller
+              <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+          <ul className={`grid gap-5 md:grid-cols-2 ${produkte.length % 3 === 0 ? "lg:grid-cols-3" : "lg:grid-cols-2"}`}>
             {produkte.map((item, i) => (
               <Reveal as="li" key={item.title} delay={i * 80} className="flex">
-                <Link
-                  href={`${PFAD}/${generateSlug(item.title)}`}
-                  className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-ink-100">
-                    <Image src={img(item.banner_image)} alt={item.alt_banner_image || item.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                    {item.logo_image && (
+                <Link href={item.href} className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70 hover:ring-ov-200">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-ink-50 to-ink-100">
+                    <Image src={item.bild} alt={item.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-contain p-6 transition-transform duration-700 group-hover:scale-105" />
+                    {item.logo ? (
                       <span className="absolute left-4 top-4 flex h-11 items-center rounded-full bg-white/95 px-3 shadow-md backdrop-blur">
-                        <Image src={img(item.logo_image)} alt={item.alt_logo_image || ""} width={80} height={28} className="h-6 w-auto object-contain" />
+                        <Image src={item.logo} alt={item.altLogo} width={80} height={28} className="h-6 w-auto object-contain" />
                       </span>
+                    ) : (
+                      item.rolle && <span className="absolute left-4 top-4 rounded-full bg-navy-950/80 px-3 py-1 text-[11.5px] font-semibold uppercase tracking-wider text-white backdrop-blur">{item.rolle}</span>
                     )}
                   </div>
                   <div className="flex flex-1 flex-col p-6 md:p-7">
-                    <h3 className="ov-h3 text-ink-900 transition-colors group-hover:text-ov-700">{item.title}</h3>
-                    <p className="mt-3 line-clamp-4 whitespace-pre-line text-[15px] leading-relaxed text-ink-600">{item.main_description}</p>
+                    <h3 className="font-display text-[26px] font-extrabold tracking-tight text-ink-900 transition-colors group-hover:text-ov-700">{item.title}</h3>
+                    <p className="mt-3 line-clamp-4 whitespace-pre-line text-[15px] leading-relaxed text-ink-600">{item.text}</p>
                     <span className="mt-auto inline-flex items-center gap-2 pt-6 text-[15px] font-semibold text-ov-700">
                       Details ansehen
                       <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -402,20 +445,23 @@ export default async function StromspeicherPage() {
         </Section>
       )}
 
-      <SolarrechnerTeaser
-        href="/rechner/stromspeicher"
-        cta="Zum Stromspeicher-Rechner"
-        titel="Welche Speichergröße passt?"
-        text="Verbrauch, Anlagengröße und E-Auto oder Wärmepumpe eingeben – der Rechner zeigt eine erste Einschätzung zu Autarkie und sinnvoller Kapazität. Für Gewerbe rechnen wir mit Ihrem Lastgang."
-      />
-
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading
-            eyebrow="Häufige Fragen"
-            title="Stromspeicher – fachlich beantwortet"
-            lead="Sie haben eine andere Frage? Rufen Sie uns an – wir beraten herstellerunabhängig."
-          />
+          <div>
+            <SectionHeading eyebrow="Häufige Fragen" title="Stromspeicher – fachlich beantwortet" lead="Sie haben eine andere Frage? Rufen Sie uns an – wir beraten herstellerunabhängig." />
+            <Reveal delay={100} className="mt-8 grid gap-3">
+              {[
+                { icon: Gauge, text: "Peak-Shaving-Rechner", href: "/rechner/peak-shaving" },
+                { icon: Calculator, text: "Stromspeicher-Rechner", href: "/rechner/stromspeicher" },
+              ].map(({ icon: Icon, text, href }) => (
+                <Link key={href} href={href} className="group flex min-h-14 items-center gap-3 rounded-2xl bg-sand-50 px-5 text-[15px] font-semibold text-ink-800 ring-1 ring-ink-200/70 transition hover:ring-ov-300">
+                  <Icon aria-hidden="true" className="h-5 w-5 text-ov-600" />
+                  <span className="flex-1">{text}</span>
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 text-ov-600 transition-transform group-hover:translate-x-1" />
+                </Link>
+              ))}
+            </Reveal>
+          </div>
           <Faq items={FAQ} />
         </div>
       </Section>

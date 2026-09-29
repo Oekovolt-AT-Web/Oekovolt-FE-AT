@@ -7,8 +7,8 @@
 // Sendet an /api/partner-registrierung (Validierung + Weiterleitung ans
 // Backoffice dort). Jeder Schritt wird vor dem Weitergehen geprüft.
 
-import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Building2, ClipboardCheck, UserRound } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, Building2, Check, ClipboardCheck, MapPin, UserRound } from "lucide-react";
 import {
   DatenschutzText,
   EMAIL_RE,
@@ -91,6 +91,21 @@ function pruefe(w) {
 export default function PartnerRegistrierung() {
   const { werte, setze, fehler, setFehler, zuruecksetzen } = useFormular(LEER);
   const [schritt, setSchritt] = useState(0);
+  const [richtung, setRichtung] = useState("vor");
+  const [ausKarte, setAusKarte] = useState(false);
+
+  // Einsatzgebiet aus der Karte (EinzugsKarte, modus "auswahl") übernehmen
+  useEffect(() => {
+    const aufKarte = (e) => {
+      if (!Array.isArray(e.detail)) return;
+      setze("einsatzgebiet", e.detail);
+      setAusKarte(e.detail.length > 0);
+    };
+    window.addEventListener("ov-einsatzgebiet", aufKarte);
+    return () => window.removeEventListener("ov-einsatzgebiet", aufKarte);
+    // setze ist stabil genug (setzt nur State) – bewusst nur beim Mount registrieren
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [status, setStatus] = useState("bereit"); // bereit | sendet | erfolg | fehler
   const [meldung, setMeldung] = useState("");
   const formRef = useRef(null);
@@ -100,8 +115,13 @@ export default function PartnerRegistrierung() {
   const fehlerIn = (idx, alle) => Object.fromEntries(SCHRITTE[idx].felder.filter((k) => alle[k]).map((k) => [k, alle[k]]));
 
   const geheZu = (idx) => {
+    setRichtung(idx > schritt ? "vor" : "zurueck");
     setSchritt(idx);
-    requestAnimationFrame(() => kopfRef.current?.focus());
+    requestAnimationFrame(() => {
+      kopfRef.current?.focus({ preventScroll: true });
+      const top = formRef.current?.getBoundingClientRect().top;
+      if (top != null && top < 80) window.scrollBy({ top: top - 110, behavior: "smooth" });
+    });
   };
 
   const weiter = () => {
@@ -169,6 +189,17 @@ export default function PartnerRegistrierung() {
   return (
     <form ref={formRef} onSubmit={absenden} noValidate className="relative space-y-8">
       {/* Fortschritt */}
+      <div>
+        <div className="flex items-center justify-between gap-4 text-[13px] font-semibold">
+          <span className="text-ink-500">
+            Schritt <span className="ov-num text-ink-900">{schritt + 1}</span> von {SCHRITTE.length}
+          </span>
+          <span className="ov-num text-ov-700">{Math.round(((schritt + 1) / SCHRITTE.length) * 100)} %</span>
+        </div>
+        <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-ink-100" aria-hidden="true">
+          <div className="h-full rounded-full bg-gradient-to-r from-ov-400 to-ov-600 transition-[width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" style={{ width: `${((schritt + 1) / SCHRITTE.length) * 100}%` }} />
+        </div>
+      </div>
       <ol className="grid grid-cols-3 gap-2" aria-label="Fortschritt der Registrierung">
         {SCHRITTE.map((s, i) => {
           const erledigt = i < schritt;
@@ -184,7 +215,7 @@ export default function PartnerRegistrierung() {
                 }`}
               >
                 <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${jetzt ? "bg-ov-500 text-white" : erledigt ? "bg-ov-500 text-white" : "bg-white text-ink-400 ring-1 ring-ink-200"}`}>
-                  <s.icon aria-hidden="true" className="h-4 w-4" />
+                  {erledigt ? <Check aria-hidden="true" className="h-4 w-4" strokeWidth={3} /> : <s.icon aria-hidden="true" className="h-4 w-4" />}
                 </span>
                 <span className="min-w-0">
                   <span className="block text-[11.5px] font-medium uppercase tracking-wider opacity-70">Schritt {i + 1}</span>
@@ -196,57 +227,65 @@ export default function PartnerRegistrierung() {
         })}
       </ol>
 
-      <h3 ref={kopfRef} tabIndex={-1} className="font-display text-[22px] font-extrabold tracking-tight text-ink-900 outline-none">
-        {schritt + 1}. {aktiv.titel === "Betrieb" ? "Ihr Betrieb" : aktiv.titel === "Leistungen" ? "Leistungen, Einsatzgebiet & Kapazität" : "Ansprechperson & Abschluss"}
-      </h3>
+      <div key={schritt} className={`space-y-8 ${richtung === "vor" ? "ov-step-vor" : "ov-step-zurueck"}`}>
+        <h3 ref={kopfRef} tabIndex={-1} className="font-display text-[22px] font-extrabold tracking-tight text-ink-900 outline-none">
+          {schritt + 1}. {aktiv.titel === "Betrieb" ? "Ihr Betrieb" : aktiv.titel === "Leistungen" ? "Leistungen, Einsatzgebiet & Kapazität" : "Ansprechperson & Abschluss"}
+        </h3>
 
-      {schritt === 0 && (
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Feld {...p} name="firma" label="Firmenname laut Firmenbuch bzw. GISA" wert={werte.firma} fehler={fehler.firma} pflicht autoComplete="organization" className="sm:col-span-2" />
-          <Feld {...p} name="rechtsform" label="Rechtsform" art="select" optionen={RECHTSFORMEN} wert={werte.rechtsform} fehler={fehler.rechtsform} />
-          <Feld {...p} name="uid" label="UID-Nummer" wert={werte.uid} fehler={fehler.uid} pflicht placeholder="ATU12345678" autoCapitalize="characters" />
-          <Feld {...p} name="gisa" label="GISA-Zahl" hinweis="Gewerbeinformationssystem Austria" wert={werte.gisa} fehler={fehler.gisa} pflicht inputMode="numeric" placeholder="12345678" />
-          <Feld {...p} name="firmenbuch" label="Firmenbuchnummer" wert={werte.firmenbuch} fehler={fehler.firmenbuch} placeholder="FN 123456a" />
-          <Feld {...p} name="strasse" label="Straße und Hausnummer" wert={werte.strasse} fehler={fehler.strasse} pflicht autoComplete="street-address" className="sm:col-span-2" />
-          <Feld {...p} name="plz" label="PLZ" wert={werte.plz} fehler={fehler.plz} pflicht inputMode="numeric" autoComplete="postal-code" placeholder="5121" />
-          <Feld {...p} name="ort" label="Ort" wert={werte.ort} fehler={fehler.ort} pflicht autoComplete="address-level2" />
-          <Feld {...p} name="bundesland" label="Bundesland des Firmensitzes" art="select" optionen={BUNDESLAENDER} wert={werte.bundesland} fehler={fehler.bundesland} pflicht />
-          <Feld {...p} name="webseite" label="Website" type="url" inputMode="url" wert={werte.webseite} fehler={fehler.webseite} placeholder="https://" />
-        </div>
-      )}
+        {schritt === 0 && (
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Feld {...p} name="firma" label="Firmenname laut Firmenbuch bzw. GISA" wert={werte.firma} fehler={fehler.firma} pflicht autoComplete="organization" className="sm:col-span-2" />
+            <Feld {...p} name="rechtsform" label="Rechtsform" art="select" optionen={RECHTSFORMEN} wert={werte.rechtsform} fehler={fehler.rechtsform} />
+            <Feld {...p} name="uid" label="UID-Nummer" wert={werte.uid} fehler={fehler.uid} pflicht placeholder="ATU12345678" autoCapitalize="characters" />
+            <Feld {...p} name="gisa" label="GISA-Zahl" hinweis="Gewerbeinformationssystem Austria" wert={werte.gisa} fehler={fehler.gisa} pflicht inputMode="numeric" placeholder="12345678" />
+            <Feld {...p} name="firmenbuch" label="Firmenbuchnummer" wert={werte.firmenbuch} fehler={fehler.firmenbuch} placeholder="FN 123456a" />
+            <Feld {...p} name="strasse" label="Straße und Hausnummer" wert={werte.strasse} fehler={fehler.strasse} pflicht autoComplete="street-address" className="sm:col-span-2" />
+            <Feld {...p} name="plz" label="PLZ" wert={werte.plz} fehler={fehler.plz} pflicht inputMode="numeric" autoComplete="postal-code" placeholder="5121" />
+            <Feld {...p} name="ort" label="Ort" wert={werte.ort} fehler={fehler.ort} pflicht autoComplete="address-level2" />
+            <Feld {...p} name="bundesland" label="Bundesland des Firmensitzes" art="select" optionen={BUNDESLAENDER} wert={werte.bundesland} fehler={fehler.bundesland} pflicht />
+            <Feld {...p} name="webseite" label="Website" type="url" inputMode="url" wert={werte.webseite} fehler={fehler.webseite} placeholder="https://" />
+          </div>
+        )}
 
-      {schritt === 1 && (
-        <div className="space-y-7">
+        {schritt === 1 && (
+          <div className="space-y-7">
+            {ausKarte && (
+            <p className="flex items-center gap-2 rounded-2xl bg-ov-50 px-4 py-3 text-[13.5px] font-medium text-ov-800 ring-1 ring-ov-200">
+              <MapPin aria-hidden="true" className="h-4 w-4" />
+              Einsatzgebiet aus der Karte übernommen – hier können Sie es anpassen.
+            </p>
+          )}
           <Mehrfachauswahl {...p} name="einsatzgebiet" legende="Einsatzgebiet (Bundesländer)" optionen={BUNDESLAENDER} werte={werte.einsatzgebiet} fehler={fehler.einsatzgebiet} pflicht />
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Feld {...p} name="teamgroesse" label="Teamgröße (Montage & Elektro)" art="select" optionen={TEAMGROESSEN} wert={werte.teamgroesse} fehler={fehler.teamgroesse} pflicht />
-            <Feld {...p} name="kapazitaet" label="Kapazität pro Monat" hinweis="installierbare PV-Leistung" art="select" optionen={KAPAZITAETEN} wert={werte.kapazitaet} fehler={fehler.kapazitaet} pflicht />
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Feld {...p} name="teamgroesse" label="Teamgröße (Montage & Elektro)" art="select" optionen={TEAMGROESSEN} wert={werte.teamgroesse} fehler={fehler.teamgroesse} pflicht />
+              <Feld {...p} name="kapazitaet" label="Kapazität pro Monat" hinweis="installierbare PV-Leistung" art="select" optionen={KAPAZITAETEN} wert={werte.kapazitaet} fehler={fehler.kapazitaet} pflicht />
+            </div>
+            <Mehrfachauswahl {...p} name="leistungen" legende="Leistungen" optionen={LEISTUNGEN} werte={werte.leistungen} fehler={fehler.leistungen} pflicht />
+            <Mehrfachauswahl {...p} name="nachweise" legende="Nachweise & Befähigungen" hinweis="Nachweise fordern wir bei der Prüfung an." optionen={NACHWEISE} werte={werte.nachweise} fehler={fehler.nachweise} />
+            <Feld {...p} name="zertifikate" label="Weitere Zertifikate & Schulungen" wert={werte.zertifikate} fehler={fehler.zertifikate} placeholder="z. B. Herstellerschulungen, Blitzschutz, Prüftechnik" />
+            <Feld {...p} name="referenzen" label="Referenzen" art="textarea" wert={werte.referenzen} fehler={fehler.referenzen} placeholder="z. B. 2025: 420 kWp Hallendach, AC-Anschluss inkl. Übergabe; 2024: Ladeinfrastruktur für einen Fuhrpark …" />
           </div>
-          <Mehrfachauswahl {...p} name="leistungen" legende="Leistungen" optionen={LEISTUNGEN} werte={werte.leistungen} fehler={fehler.leistungen} pflicht />
-          <Mehrfachauswahl {...p} name="nachweise" legende="Nachweise & Befähigungen" hinweis="Nachweise fordern wir bei der Prüfung an." optionen={NACHWEISE} werte={werte.nachweise} fehler={fehler.nachweise} />
-          <Feld {...p} name="zertifikate" label="Weitere Zertifikate & Schulungen" wert={werte.zertifikate} fehler={fehler.zertifikate} placeholder="z. B. Herstellerschulungen, Blitzschutz, Prüftechnik" />
-          <Feld {...p} name="referenzen" label="Referenzen" art="textarea" wert={werte.referenzen} fehler={fehler.referenzen} placeholder="z. B. 2025: 420 kWp Hallendach, AC-Anschluss inkl. Übergabe; 2024: Ladeinfrastruktur für einen Fuhrpark …" />
-        </div>
-      )}
+        )}
 
-      {schritt === 2 && (
-        <div className="space-y-6">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Feld {...p} name="vorname" label="Vorname" wert={werte.vorname} fehler={fehler.vorname} pflicht autoComplete="given-name" />
-            <Feld {...p} name="nachname" label="Nachname" wert={werte.nachname} fehler={fehler.nachname} pflicht autoComplete="family-name" />
-            <Feld {...p} name="funktion" label="Funktion" wert={werte.funktion} fehler={fehler.funktion} placeholder="z. B. Geschäftsführung" autoComplete="organization-title" />
-            <Feld {...p} name="email" label="E-Mail-Adresse" type="email" inputMode="email" wert={werte.email} fehler={fehler.email} pflicht autoComplete="email" />
-            <Feld {...p} name="telefon" label="Telefonnummer" type="tel" inputMode="tel" wert={werte.telefon} fehler={fehler.telefon} pflicht autoComplete="tel" />
+        {schritt === 2 && (
+          <div className="space-y-6">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Feld {...p} name="vorname" label="Vorname" wert={werte.vorname} fehler={fehler.vorname} pflicht autoComplete="given-name" />
+              <Feld {...p} name="nachname" label="Nachname" wert={werte.nachname} fehler={fehler.nachname} pflicht autoComplete="family-name" />
+              <Feld {...p} name="funktion" label="Funktion" wert={werte.funktion} fehler={fehler.funktion} placeholder="z. B. Geschäftsführung" autoComplete="organization-title" />
+              <Feld {...p} name="email" label="E-Mail-Adresse" type="email" inputMode="email" wert={werte.email} fehler={fehler.email} pflicht autoComplete="email" />
+              <Feld {...p} name="telefon" label="Telefonnummer" type="tel" inputMode="tel" wert={werte.telefon} fehler={fehler.telefon} pflicht autoComplete="tel" />
+            </div>
+            <Feld {...p} name="nachricht" label="Nachricht" art="textarea" wert={werte.nachricht} fehler={fehler.nachricht} placeholder="Was sollten wir noch über Ihren Betrieb wissen?" />
+            <Haken {...p} name="gewerbe" wert={werte.gewerbe} fehler={fehler.gewerbe}>
+              Unser Betrieb verfügt über eine aufrechte Gewerbeberechtigung für Elektrotechnik und eine Betriebshaftpflichtversicherung. <span className="text-ov-600" aria-hidden="true">*</span>
+            </Haken>
+            <Haken {...p} name="datenschutz" wert={werte.datenschutz} fehler={fehler.datenschutz}>
+              <DatenschutzText zweck="zur Prüfung der Registrierung und zur Kontaktaufnahme im Rahmen des Elektro-Partnerprogramms" />
+            </Haken>
           </div>
-          <Feld {...p} name="nachricht" label="Nachricht" art="textarea" wert={werte.nachricht} fehler={fehler.nachricht} placeholder="Was sollten wir noch über Ihren Betrieb wissen?" />
-          <Haken {...p} name="gewerbe" wert={werte.gewerbe} fehler={fehler.gewerbe}>
-            Unser Betrieb verfügt über eine aufrechte Gewerbeberechtigung für Elektrotechnik und eine Betriebshaftpflichtversicherung. <span className="text-ov-600" aria-hidden="true">*</span>
-          </Haken>
-          <Haken {...p} name="datenschutz" wert={werte.datenschutz} fehler={fehler.datenschutz}>
-            <DatenschutzText zweck="zur Prüfung der Registrierung und zur Kontaktaufnahme im Rahmen des Elektro-Partnerprogramms" />
-          </Haken>
-        </div>
-      )}
+        )}
+      </div>
 
       <Honeypot refObj={website} />
 
@@ -271,7 +310,7 @@ export default function PartnerRegistrierung() {
             onClick={weiter}
             className="group inline-flex h-14 items-center justify-center gap-2.5 rounded-full bg-ov-600 px-8 text-[16px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition-all hover:bg-ov-700"
           >
-            Weiter zu Schritt {schritt + 2}
+            Weiter: {SCHRITTE[schritt + 1].titel}
             <ArrowRight aria-hidden="true" className="h-5 w-5 transition-transform group-hover:translate-x-1" />
           </button>
         ) : (

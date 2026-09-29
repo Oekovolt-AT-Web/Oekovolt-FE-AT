@@ -12,7 +12,7 @@ const HORIZONT = [
 ];
 
 const verlust = (mit, ohne) => (ohne - mit <= 0.5 ? "0 %" : "−" + String(Math.round(((ohne - mit) / ohne) * 100)) + " %");
-const f0 = (x) => Math.round(x).toLocaleString("de-AT");
+const f0 = (x) => Math.round(x).toLocaleString("de-DE");
 
 const artikel = {
   slug: "photovoltaik-verschattung",

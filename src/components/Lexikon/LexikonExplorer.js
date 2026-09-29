@@ -1,8 +1,8 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Search, X } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Rows3, Search, StretchHorizontal, X } from "lucide-react";
 import { KONTAKT } from "@/data/navigation";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -24,7 +24,8 @@ const norm = (s) =>
 /**
  * Photovoltaik-Lexikon mit Live-Suche, Themenfilter und klebender A–Z-Leiste.
  * Alle Begriffe werden serverseitig vollständig gerendert (SEO, Anker-IDs);
- * Filter blenden nur aus.
+ * Filter blenden nur aus. Die ausführliche Erklärung steht in einem
+ * aufklappbaren Bereich (im HTML enthalten) – „Alle aufklappen“ zeigt alles.
  *
  * props:
  *  gruppen    [[buchstabe, [begriff, ...]], ...]
@@ -34,7 +35,17 @@ const norm = (s) =>
 export default function LexikonExplorer({ gruppen, kategorien, namen }) {
   const [suche, setSuche] = useState("");
   const [kategorie, setKategorie] = useState("alle");
+  const [ausfuehrlich, setAusfuehrlich] = useState(false);
+  const [ziel, setZiel] = useState("");
   const q = useDeferredValue(suche);
+
+  // Sprungziel (#begriff) aufklappen – beim Laden und bei Klicks auf verwandte Begriffe
+  useEffect(() => {
+    const lies = () => setZiel(decodeURIComponent(window.location.hash.slice(1)));
+    lies();
+    window.addEventListener("hashchange", lies);
+    return () => window.removeEventListener("hashchange", lies);
+  }, []);
 
   const index = useMemo(
     () =>
@@ -42,30 +53,44 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
         gruppen.flatMap(([, liste]) =>
           liste.map((b) => [
             b.id,
-            { titel: norm(`${b.begriff} ${(b.synonyme || []).join(" ")}`), voll: norm(`${b.kurz} ${b.text}`) },
+            { titel: norm(`${b.begriff} ${(b.synonyme || []).join(" ")}`), kurz: norm(b.kurz), text: norm(b.text) },
           ])
         )
       ),
     [gruppen]
   );
 
-  const gefiltert = useMemo(() => {
+  const zaehler = useMemo(() => {
+    // Eindeutig zählen: ein Begriff kann unter mehreren Buchstaben stehen
+    const einzeln = new Map(gruppen.flatMap(([, liste]) => liste.map((b) => [b.id, b])));
+    const z = { alle: einzeln.size };
+    for (const b of einzeln.values()) z[b.kategorie] = (z[b.kategorie] || 0) + 1;
+    return z;
+  }, [gruppen]);
+
+  const { gefiltert, imText } = useMemo(() => {
     const nq = norm(q);
     const woerter = nq ? nq.split(" ") : [];
-    return gruppen
-      .map(([l, liste]) => {
-        const treffer = liste
+    const nurText = new Set();
+    const liste = gruppen
+      .map(([l, begriffe]) => {
+        const treffer = begriffe
           .filter((b) => kategorie === "alle" || b.kategorie === kategorie)
           .map((b) => {
             if (!woerter.length) return { b, score: 0 };
             const i = index.get(b.id);
             let score = 0;
+            let text = false;
             for (const w of woerter) {
               if (i.titel.startsWith(w)) score += 5;
               else if (i.titel.includes(w)) score += 3;
-              else if (i.voll.includes(w)) score += 1;
-              else return null;
+              else if (i.kurz.includes(w)) score += 1;
+              else if (i.text.includes(w)) {
+                score += 1;
+                text = true;
+              } else return null;
             }
+            if (text) nurText.add(b.id);
             return { b, score };
           })
           .filter(Boolean)
@@ -74,6 +99,7 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
         return [l, treffer];
       })
       .filter(([, t]) => t.length > 0);
+    return { gefiltert: liste, imText: nurText };
   }, [gruppen, index, q, kategorie]);
 
   const anzahl = gefiltert.reduce((a, [, t]) => a + t.length, 0);
@@ -98,11 +124,12 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
               type="button"
               aria-pressed={aktiv}
               onClick={() => setKategorie(k.id)}
-              className={`h-11 rounded-full px-4 text-[14px] font-semibold transition-all ${
-                aktiv ? "bg-ink-900 text-white shadow-md" : "bg-white text-ink-600 ring-1 ring-ink-200 hover:text-ink-900 hover:ring-ink-300"
+              className={`inline-flex h-11 items-center gap-2 rounded-full px-4 text-[14px] font-semibold transition-all duration-300 ${
+                aktiv ? "bg-ink-900 text-white shadow-[0_8px_20px_-10px_rgba(21,26,36,0.8)]" : "bg-white text-ink-600 ring-1 ring-ink-200 hover:text-ink-900 hover:ring-ink-300"
               }`}
             >
               {k.label}
+              <span className={`ov-num rounded-full px-1.5 text-[11.5px] ${aktiv ? "bg-white/15 text-white" : "bg-ink-100 text-ink-500"}`}>{zaehler[k.id] || 0}</span>
             </button>
           );
         })}
@@ -160,27 +187,46 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
         </div>
       </div>
 
-      <p className="mt-6 text-[14px] text-ink-500" aria-live="polite">
-        {aktivFilter ? (
-          <>
-            <span className="ov-num font-semibold text-ink-900">{anzahl}</span> {anzahl === 1 ? "Begriff" : "Begriffe"} gefunden
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[14px] text-ink-500" aria-live="polite">
+          {aktivFilter ? (
+            <>
+              <span className="ov-num font-semibold text-ink-900">{anzahl}</span> {anzahl === 1 ? "Begriff" : "Begriffe"} gefunden
+              <button
+                type="button"
+                onClick={() => {
+                  setSuche("");
+                  setKategorie("alle");
+                }}
+                className="ml-3 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current"
+              >
+                Filter zurücksetzen
+              </button>
+            </>
+          ) : (
+            <>
+              <span className="ov-num font-semibold text-ink-900">{anzahl}</span> Fachbegriffe von A bis Z
+            </>
+          )}
+        </p>
+        <div role="group" aria-label="Darstellung" className="flex rounded-full bg-white p-1 ring-1 ring-ink-200">
+          {[
+            { an: false, icon: Rows3, label: "Kompakt" },
+            { an: true, icon: StretchHorizontal, label: "Alle aufklappen" },
+          ].map((v) => (
             <button
+              key={v.label}
               type="button"
-              onClick={() => {
-                setSuche("");
-                setKategorie("alle");
-              }}
-              className="ml-3 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current"
+              aria-pressed={ausfuehrlich === v.an}
+              onClick={() => setAusfuehrlich(v.an)}
+              className={`inline-flex h-9 items-center gap-2 rounded-full px-3.5 text-[13px] font-semibold transition-colors ${ausfuehrlich === v.an ? "bg-ink-900 text-white" : "text-ink-600 hover:text-ink-900"}`}
             >
-              Filter zurücksetzen
+              <v.icon aria-hidden="true" className="h-4 w-4" />
+              {v.label}
             </button>
-          </>
-        ) : (
-          <>
-            <span className="ov-num font-semibold text-ink-900">{anzahl}</span> Fachbegriffe von A bis Z
-          </>
-        )}
-      </p>
+          ))}
+        </div>
+      </div>
 
       {/* ---------- Begriffe ---------- */}
       {gefiltert.length === 0 ? (
@@ -202,13 +248,17 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
         <div className="mt-4">
           {gefiltert.map(([l, liste]) => (
             <section key={l} id={`buchstabe-${l}`} aria-labelledby={`buchstabe-${l}-titel`} className="scroll-mt-[220px] border-t border-ink-200 pt-8 first:border-t-0 lg:scroll-mt-[160px]">
-              <div className="grid gap-6 pb-10 lg:grid-cols-[88px_minmax(0,1fr)] lg:gap-10">
-                <h2 id={`buchstabe-${l}-titel`} className="font-display text-[44px] font-extrabold leading-none tracking-tight text-ov-500 lg:sticky lg:top-[160px] lg:self-start lg:text-[64px]">
+              <div className="grid gap-5 pb-10 lg:grid-cols-[80px_minmax(0,1fr)] lg:gap-10">
+                <h2
+                  id={`buchstabe-${l}-titel`}
+                  className="flex items-baseline gap-3 font-display text-[44px] font-extrabold leading-none tracking-tight text-ov-500 lg:sticky lg:top-[170px] lg:block lg:self-start lg:text-[64px]"
+                >
                   {l}
+                  <span className="ov-num text-[13px] font-semibold tracking-normal text-ink-400 lg:mt-2 lg:block">{liste.length} {liste.length === 1 ? "Begriff" : "Begriffe"}</span>
                 </h2>
-                <dl className="grid gap-4 md:grid-cols-2">
+                <dl className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   {liste.map((b) => (
-                    <Eintrag key={b.id} b={b} namen={namen} kategorien={kategorien} />
+                    <Eintrag key={b.id} b={b} namen={namen} kategorien={kategorien} offen={ausfuehrlich || imText.has(b.id) || ziel === b.id || b.alias?.includes(ziel)} />
                   ))}
                 </dl>
               </div>
@@ -220,15 +270,15 @@ export default function LexikonExplorer({ gruppen, kategorien, namen }) {
   );
 }
 
-function Eintrag({ b, namen, kategorien }) {
+function Eintrag({ b, namen, kategorien, offen }) {
   const kat = kategorien.find((k) => k.id === b.kategorie)?.label;
   return (
     <div
       id={b.id}
-      className="group relative flex scroll-mt-[220px] flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 transition-shadow duration-300 target:ring-2 target:ring-ov-500 target:shadow-[0_0_0_6px_rgba(102,153,51,0.15)] hover:ring-ov-200 lg:scroll-mt-[170px] md:p-7"
+      className="group relative flex scroll-mt-[220px] flex-col rounded-3xl bg-white p-5 md:p-6 ring-1 ring-ink-200/70 transition-shadow duration-300 target:ring-2 target:ring-ov-500 target:shadow-[0_0_0_6px_rgba(102,153,51,0.15)] hover:shadow-[0_18px_40px_-26px_rgba(15,23,42,0.35)] hover:ring-ov-200 lg:scroll-mt-[170px]"
     >
       {/* dl-Gruppe enthält nur dt/dd – Themen-Chip steckt mit im dt */}
-      <dt className="flex flex-col-reverse items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
+      <dt className="flex flex-col-reverse items-start gap-2">
         {/* Alias-Anker (z. B. IDs der deutschen Fassung) – landen auf diesem Eintrag */}
         {b.alias?.map((a) => (
           <span key={a} id={a} aria-hidden="true" className="absolute left-0 top-0 scroll-mt-[220px] lg:scroll-mt-[170px]" />
@@ -237,35 +287,45 @@ function Eintrag({ b, namen, kategorien }) {
           {b.begriff}
         </a>
         {kat && (
-          <span className="mt-0.5 shrink-0 rounded-full bg-sand-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-600">
+          <span className="hidden rounded-full bg-sand-100 md:inline-block px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-wider text-ink-600">
             <span className="sr-only">Thema: </span>
             {kat}
           </span>
         )}
       </dt>
       <dd className="mt-3 flex flex-1 flex-col">
-        <p className="text-[15.5px] font-medium leading-relaxed text-ink-800">{b.kurz}</p>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-600">{b.text}</p>
-        {b.synonyme?.length > 0 && (
-          <p className="mt-3 text-[13px] leading-relaxed text-ink-500">
-            <span className="font-semibold text-ink-600">Auch:</span> {b.synonyme.join(", ")}
-          </p>
+        <p className="text-[15px] font-medium leading-relaxed text-ink-800 max-md:line-clamp-3 max-md:group-has-[details[open]]:line-clamp-none md:text-[15.5px]">{b.kurz}</p>
+        {/* key: bei Wechsel der Darstellung neu aufbauen, damit „open“ sicher übernommen wird */}
+        <div className="mt-auto pt-4">
+        <details key={offen ? "auf" : "zu"} open={offen} className="group/d border-t border-ink-100 pt-3">
+          <summary className="flex min-h-[36px] cursor-pointer list-none items-center justify-between gap-2 text-[13.5px] font-semibold text-ov-700 hover:text-ov-800 [&::-webkit-details-marker]:hidden">
+            <span className="group-open/d:hidden">Erklärung & verwandte Begriffe</span>
+            <span className="hidden group-open/d:inline">Weniger anzeigen</span>
+            <ChevronDown aria-hidden="true" className="h-4 w-4 transition-transform group-open/d:rotate-180" />
+          </summary>
+          <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{b.text}</p>
+          {b.synonyme?.length > 0 && (
+            <p className="mt-3 text-[13px] leading-relaxed text-ink-500">
+              <span className="font-semibold text-ink-600">Auch:</span> {b.synonyme.join(", ")}
+            </p>
+          )}
+          {b.verwandt?.length > 0 && (
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {b.verwandt.map((v) => (
+                <a key={v} href={`#${v}`} className="inline-flex min-h-[32px] items-center rounded-full bg-ink-50 px-3 text-[12.5px] font-medium text-ink-600 ring-1 ring-ink-100 transition-colors hover:bg-ov-50 hover:text-ov-800 hover:ring-ov-200">
+                  {namen[v] || v}
+                </a>
+              ))}
+            </div>
+          )}
+        </details>
+        {b.link && (
+          <Link href={b.link.href} className="inline-flex min-h-[36px] items-center gap-1 pt-2 text-[13.5px] font-semibold text-ink-800 hover:text-ov-700">
+            {b.link.label}
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4 text-ov-600 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </Link>
         )}
-        {(b.verwandt?.length > 0 || b.link) && (
-          <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
-            {b.verwandt?.map((v) => (
-              <a key={v} href={`#${v}`} className="inline-flex min-h-[32px] items-center rounded-full bg-ink-50 px-3 text-[12.5px] font-medium text-ink-600 ring-1 ring-ink-100 transition-colors hover:bg-ov-50 hover:text-ov-800 hover:ring-ov-200">
-                {namen[v] || v}
-              </a>
-            ))}
-            {b.link && (
-              <Link href={b.link.href} className="ml-auto inline-flex min-h-[32px] items-center gap-1 text-[13.5px] font-semibold text-ov-700 hover:text-ov-800">
-                {b.link.label}
-                <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </Link>
-            )}
-          </div>
-        )}
+        </div>
       </dd>
     </div>
   );

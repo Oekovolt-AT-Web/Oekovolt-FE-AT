@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ChevronDown, MonitorCog } from "lucide-react";
 import { herstellerId } from "./ids";
 
 /**
@@ -53,6 +54,12 @@ function Karte({ h, kategorie, index }) {
               </div>
             ))}
           </dl>
+        )}
+        {h.kontexte?.includes("stromspeicher") && (
+          <Link href={`/produkte/stromspeicher/${h.slug}`} className="group/l mt-4 inline-flex min-h-11 items-center gap-2 self-start text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+            {h.title}-Speicher im Detail
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/l:translate-x-1" />
+          </Link>
         )}
         {lang && (
           <button
@@ -108,12 +115,31 @@ export default function HerstellerFilter({ kategorien = [] }) {
               </h3>
               <span className="ov-num text-[14px] text-ink-500">{k.hersteller.length} Marken</span>
             </div>
-            <ul className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <ul className={`grid gap-5 md:grid-cols-2 ${k.hersteller.length >= 3 ? "xl:grid-cols-3" : ""}`}>
               {k.hersteller.map((h, i) => (
                 <li key={h.title} className="flex">
                   <Karte h={h} kategorie={k.name} index={i} />
                 </li>
               ))}
+              {k.hersteller.length === 1 && (
+                <li className="flex">
+                  <div className="ov-noise relative isolate flex w-full flex-col justify-end overflow-hidden rounded-3xl bg-navy-950 p-7 text-white md:p-9">
+                    <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10 opacity-60" />
+                    <div aria-hidden="true" className="absolute -right-16 -top-16 -z-10 h-64 w-64 rounded-full bg-ov-500/25 blur-[100px]" />
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500/20 text-ov-300">
+                      <MonitorCog aria-hidden="true" className="h-6 w-6" />
+                    </span>
+                    <p className="mt-6 font-display text-[22px] font-extrabold leading-tight">Plus eigene Fernwartung und SCADA</p>
+                    <p className="mt-3 text-[15px] leading-relaxed text-white/70">
+                      Herstellerübergreifend überwachen wir Anlagen zusätzlich mit eigenen Fernwartungs- und SCADA-Systemen – und regeln sie am Netzanschlusspunkt mit unserem Parkregler.
+                    </p>
+                    <Link href="/technik" className="group/l mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[15px] font-semibold text-ov-300 hover:text-ov-200">
+                      Unsere Technik
+                      <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/l:translate-x-1" />
+                    </Link>
+                  </div>
+                </li>
+              )}
             </ul>
           </section>
         ))}

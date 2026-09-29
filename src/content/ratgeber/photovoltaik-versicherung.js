@@ -26,7 +26,7 @@ const artikel = {
   veroeffentlicht: "2026-09-28",
   aktualisiert: "2026-09-28",
   kategorie: "Kosten & Wirtschaftlichkeit",
-  bild: "/Images/Jobs/jobs2.jpg",
+  bild: "/Images/AT/wissen/pv-modul-pruefung.jpg",
   bildAlt: "Techniker in Warnjacke zeigt bei einer Kontrolle auf ein Solarmodul",
   badge: { wert: "> 1 Mrd. €", text: "versicherte Extremwetterschäden in Österreich 2023 (VVO)" },
 

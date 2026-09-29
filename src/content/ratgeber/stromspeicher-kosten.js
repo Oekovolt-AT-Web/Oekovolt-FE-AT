@@ -3,7 +3,7 @@
 // Einspeiseerlös: OeMAG-Monatsmarktpreise PV 2026. Netzentgelte 2026: SNE-V 2018 idF BGBl. II Nr. 305/2025.
 // Preismodell 2026, Zyklen, Wirkungsgrade und Bezugspreise sind offengelegte Annahmen.
 
-const fmt = (n, d = 0) => n.toLocaleString("de-AT", { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmt = (n, d = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d });
 const eur = (n) => `${fmt(Math.round(n))} €`;
 const eur100 = (n) => `${fmt(Math.round(n / 100) * 100)} €`;
 const ctF = (n, d = 1) => `${fmt(n, d)} ct`;

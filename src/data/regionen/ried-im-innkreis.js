@@ -8,6 +8,8 @@ const riedImInnkreis = {
   bezirk: "Bezirk Ried im Innkreis",
   plz: "4910",
   alpin: false,
+  // Anzeige: Foto im Seitenkopf (Nachweis in public/Images/AT/QUELLEN-produkte-regionen.md)
+  bild: { src: "/Images/AT/produkte-regionen/region-innviertel.jpg", alt: "Hügellandschaft im Innviertel mit Einzelhöfen und Wiesen", position: "50% 60%" },
   beschreibung:
     "Photovoltaik in Ried im Innkreis: PV für Luftfahrt-Zulieferer, Sportartikel-, Möbel- und Anlagenbau – Netzanschluss bei Energie Ried, OÖ-Baurecht, PVGIS-Ertrag.",
   titel: "Photovoltaik für Ried –",

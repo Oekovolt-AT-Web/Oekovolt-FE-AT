@@ -16,7 +16,7 @@ const rfc822 = (d) => new Date(d || Date.now()).toUTCString();
 /**
  * Einträge: [{ titel, url, datum, aktualisiert, teaser, inhalt (HTML), kategorie, bildAbsolut, bildAlt, autor }]
  */
-export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-AT", bild = `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp` }) {
+export function rss({ titel, beschreibung, pfad, eintraege, sprache = "de-AT", bild = `${BASE_URL}/logo-oekovolt.png` }) {
   const selbst = `${BASE_URL}${pfad}`;
   const letzte = eintraege.reduce((m, e) => Math.max(m, new Date(e.aktualisiert || e.datum || 0).getTime()), 0);
   const items = eintraege
@@ -62,7 +62,7 @@ export function jsonFeed({ titel, beschreibung, pfad, homePfad = "/", eintraege,
     feed_url: `${BASE_URL}${pfad}`,
     description: beschreibung,
     language: "de-AT",
-    icon: `${BASE_URL}/Logo-Oekovolt-Gruen-mit-Weiss.webp`,
+    icon: `${BASE_URL}/logo-oekovolt.png`,
     authors: [{ name: "Ökovolt Österreich", url: BASE_URL }],
     items: eintraege.map((e) => ({
       id: e.url,

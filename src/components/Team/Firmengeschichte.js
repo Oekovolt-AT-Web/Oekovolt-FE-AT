@@ -152,9 +152,10 @@ function Person({ p, delay }) {
       <div className="flex items-center gap-4">
         <span
           aria-hidden="true"
-          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-ov-500 font-display text-[18px] font-extrabold text-white"
+          className="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-ov-400 via-ov-600 to-navy-700 font-display text-[20px] font-extrabold tracking-tight text-white shadow-[0_12px_30px_-12px_rgba(102,153,51,0.8)]"
         >
-          {p.initialen}
+          <span className="absolute -right-3 -top-3 h-8 w-8 rounded-full bg-sun-300/40 blur-md" />
+          <span className="relative">{p.initialen}</span>
         </span>
         <div className="min-w-0">
           <p className="font-display text-[18px] font-bold leading-snug text-white">{p.name}</p>
@@ -166,16 +167,16 @@ function Person({ p, delay }) {
       <p className="mt-2 text-[15px] leading-relaxed text-white/65">{p.text}</p>
 
       {p.kompetenzen && (
-        <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+        <ul className="mt-auto flex flex-wrap gap-2 pt-6">
           {p.kompetenzen.map((k) => {
             const Icon = ICONS[k.icon];
             return (
-              <li key={k.titel} className="rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-ov-500/20 text-ov-300">
-                  {Icon && <Icon aria-hidden="true" className="h-[18px] w-[18px]" />}
+              <li key={k.titel} title={k.text} className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] py-1.5 pl-1.5 pr-3.5 text-[13px] font-semibold text-white/85 ring-1 ring-white/10">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ov-500/25 text-ov-300">
+                  {Icon && <Icon aria-hidden="true" className="h-3.5 w-3.5" />}
                 </span>
-                <p className="mt-3 font-display text-[14.5px] font-bold text-white">{k.titel}</p>
-                <p className="mt-1 text-[13.5px] leading-snug text-white/55">{k.text}</p>
+                {k.titel}
+                <span className="sr-only">: {k.text}</span>
               </li>
             );
           })}

@@ -4,7 +4,8 @@
 // aus @/data/bundeslaender – keine Backend-Abfrage.
 
 import Link from "next/link";
-import { ArrowRight, BadgeEuro, CalendarClock, Landmark, Map, Percent, Receipt, Sun } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, BadgeEuro, BatteryCharging, Building2, Home, Landmark, Map, Percent, Receipt, Sun, Tractor } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -13,9 +14,11 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
-import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import Foerderkarte from "@/components/Forderungen/Landes/Foerderkarte";
-import { Hinweis, Kennzahlen, Quellen, StandPille, Tabelle } from "@/components/Forderungen/Shared/Bausteine";
+import Umschalter from "@/components/Forderungen/Shared/Umschalter";
+import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
+import { BILDER, nachweise } from "@/components/Forderungen/Shared/bildnachweise";
+import { Hinweis, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import { EAG_IZ, STEUER } from "@/components/Forderungen/Shared/bund";
 import { alleBundeslaender, FOERDERARTEN, STAND } from "@/data/bundeslaender";
 import { BASE_URL } from "@/lib/site";
@@ -70,6 +73,17 @@ const FAQ = [
   },
 ];
 
+const AMPEL_PUNKT = { zuschuss: "bg-ov-500", gezielt: "bg-sun-400", bund: "bg-ink-400" };
+const AMPEL_CHIP = { zuschuss: "bg-ov-500 text-white", gezielt: "bg-sun-400 text-navy-950", bund: "bg-white/90 text-ink-800" };
+
+const ZIELGRUPPEN_VERGLEICH = [
+  { id: "unternehmen", label: "Unternehmen", icon: <Building2 /> },
+  { id: "landwirtschaft", label: "Landwirtschaft", icon: <Tractor /> },
+  { id: "gemeinde", label: "Gemeinden", icon: <Landmark /> },
+  { id: "privat", label: "Private", icon: <Home /> },
+  { id: "speicher", label: "Speicher", icon: <BatteryCharging /> },
+];
+
 export default function Page() {
   const liste = alleBundeslaender();
   const laender = liste.map((l) => ({
@@ -85,18 +99,10 @@ export default function Page() {
     netz: l.netzbetreiber.map((n) => n.name).join(", "),
     stand: STAND.kurz,
     href: `/forderungen/landesforderungen/${l.slug}`,
+    bild: l.bild ? { src: l.bild.src, alt: l.bild.alt, position: l.bild.position } : null,
   }));
   const programmeGesamt = liste.reduce((s, l) => s + l.programme.length, 0);
   const mitBetrieb = liste.filter((l) => l.programme.some((p) => p.zielgruppen.includes("unternehmen"))).length;
-
-  const vergleich = liste.map((l) => ({
-    land: <Link href={`/forderungen/landesforderungen/${l.slug}`} className="text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{l.name}</Link>,
-    unternehmen: l.ueberblick.unternehmen,
-    landwirtschaft: l.ueberblick.landwirtschaft,
-    gemeinde: l.ueberblick.gemeinde,
-    privat: l.ueberblick.privat,
-    speicher: l.ueberblick.speicher,
-  }));
 
   const schema = {
     "@context": "https://schema.org",
@@ -119,62 +125,141 @@ export default function Page() {
 
   const quellen = [...liste.flatMap((l) => l.quellen.slice(0, 1)), ...EAG_IZ.quellen.slice(0, 2)];
 
+  const vergleichPanels = ZIELGRUPPEN_VERGLEICH.map((z) => (
+    <ul key={z.id} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {liste.map((l) => (
+        <li key={l.key}>
+          <Link href={`/forderungen/landesforderungen/${l.slug}`} className="group flex h-full gap-3.5 rounded-2xl bg-white p-4 ring-1 ring-ink-200/70 transition-all hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-26px_rgba(3,18,43,0.5)] hover:ring-ov-200">
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sand-50 font-display text-[13px] font-extrabold text-ink-800 ring-1 ring-ink-200">
+              {l.kuerzel}
+              <span aria-hidden="true" className={`absolute -right-1 -top-1 h-3 w-3 rounded-full ring-2 ring-white ${AMPEL_PUNKT[l.foerderart]}`} />
+            </span>
+            <span className="min-w-0">
+              <span className="block font-semibold text-ink-900 transition-colors group-hover:text-ov-700">{l.name}</span>
+              <span className="mt-0.5 block text-[14px] leading-relaxed text-ink-600">{l.ueberblick[z.id]}</span>
+            </span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  ));
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <PageHero
+        variant="immersive"
         breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Landesförderungen" }]}
         eyebrow={`Förderung nach Bundesland · Stand ${STAND.kurz}`}
-        title={<>Photovoltaik-Förderung 2026 <span className="ov-text-gradient">in allen neun Bundesländern</span></>}
+        title={<>Photovoltaik-Förderung 2026 <span className="ov-text-gradient-light">in allen neun Bundesländern</span></>}
         lead="Welche Landesprogramme gibt es für Betriebe, Landwirtschaft, Gemeinden und Private – und was kommt vom Bund dazu? Alle neun Länder auf einer Karte, geprüft, datiert und mit Quellen."
-        image={{ src: "/Images/Referenzen/Projekte-2.jpg", alt: "Photovoltaikanlage auf einem Gewerbedach in Österreich" }}
+        image={{ src: BILDER.wildkogel.src, alt: "Photovoltaik-Freiflächenanlage im Skigebiet Wildkogel in Salzburg im Winter", position: "center 55%" }}
         points={["Alle 9 Länder mit Prüfdatum", "Programme nach Zielgruppe", "Solarertrag nach PVGIS", "Kombination mit EAG-Zuschuss"]}
         actions={[
-          { label: "Förder-Check starten", href: "/foerdercheck" },
           { label: "Zur Förderkarte", href: "#foerderkarte", icon: Map },
+          { label: "Förder-Check starten", href: "/foerdercheck" },
         ]}
-        badge={
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-ov-500 text-white">
-              <CalendarClock aria-hidden="true" className="h-6 w-6" />
-            </span>
-            <div>
-              <p className="font-display text-[20px] font-extrabold leading-none text-ink-900">Geprüft</p>
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-500">Stand {STAND.label}</p>
-            </div>
-          </div>
-        }
       />
 
-      <Kennzahlen
+      <KennzahlenBand
         items={[
-          { wert: "9", label: "Bundesländer geprüft" },
-          { wert: String(programmeGesamt), label: "offene Landesprogramme erfasst" },
-          { wert: String(mitBetrieb), label: "Länder mit Programmen für Unternehmen" },
-          { wert: EAG_IZ.naechsterCall.zeitraum.replace(".2026", ""), label: "nächster EAG-Fördercall 2026" },
+          { value: 9, label: "Bundesländer geprüft" },
+          { value: programmeGesamt, label: "offene Landesprogramme erfasst" },
+          { value: mitBetrieb, label: "Länder mit Programmen für Unternehmen" },
+          { text: EAG_IZ.naechsterCall.zeitraum.replace(".2026", ""), label: "nächster EAG-Fördercall 2026" },
         ]}
       />
 
       {/* Karte */}
-      <Section tone="sand" space="lg" id="foerderkarte" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Interaktive Förderkarte"
-          title={<>Wo es 2026 <span className="ov-text-gradient">zusätzlich Landesgeld</span> gibt</>}
-          lead="Wählen Sie Ihr Bundesland. Die Karte zeigt, ob das Land breit, gezielt oder gar nicht zusätzlich zum Bund fördert – und mit einem Klick, wie viel Sonne Ihre Region liefert."
-          align="center"
-          className="mb-12"
-        />
-        <Reveal dir="scale">
-          <Foerderkarte laender={laender} startKey="oberoesterreich" />
-        </Reveal>
-        <p className="mx-auto mt-6 max-w-3xl text-center text-[13.5px] leading-relaxed text-ink-500">
-          Einordnung aus Sicht von Unternehmen, Landwirtschaft und Gemeinden. Landesprogramme können bei ausgeschöpftem Budget kurzfristig enden – maßgeblich ist immer die aktuelle Richtlinie der Förderstelle.
-        </p>
+      <Section tone="navy" space="md" id="foerderkarte" className="ov-noise scroll-mt-24 overflow-hidden">
+        <Glow />
+        <div className="relative">
+          <SectionHeading
+            dark
+            eyebrow="Interaktive Förderkarte"
+            title={<>Wo es 2026 <span className="ov-text-gradient-light">zusätzlich Landesgeld</span> gibt</>}
+            lead="Fahren Sie über die Karte oder wählen Sie Ihr Bundesland. Die Förder-Ampel zeigt, ob das Land breit, gezielt oder gar nicht zusätzlich zum Bund fördert – und die zweite Ebene, wie viel Sonne Ihre Region liefert."
+            className="mb-10"
+          />
+          <Reveal dir="scale">
+            <Foerderkarte laender={laender} startKey="oberoesterreich" />
+          </Reveal>
+          <p className="mt-8 max-w-3xl text-[13.5px] leading-relaxed text-white/50">
+            Einordnung aus Sicht von Unternehmen, Landwirtschaft und Gemeinden. Landesprogramme können bei ausgeschöpftem Budget kurzfristig enden – maßgeblich ist immer die aktuelle Richtlinie der Förderstelle.
+          </p>
+        </div>
+      </Section>
+
+      {/* Alle Länder */}
+      <Section tone="white" space="md" id="bundeslaender" className="scroll-mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading eyebrow="Alle neun Bundesländer" title="Förderung in Ihrem Bundesland im Detail" lead="Landesprogramme mit Status, Energiegemeinschaften, Bauordnung in Kurzform, Netzbetreiber und Solarertrag – je Land auf einer eigenen Seite." />
+          <ul className="flex flex-wrap gap-2 md:justify-end" aria-label="Legende Förder-Ampel">
+            {Object.entries(FOERDERARTEN).map(([k, v]) => (
+              <li key={k} className="inline-flex items-center gap-2 rounded-full bg-sand-50 px-3 py-1.5 text-[12.5px] font-medium text-ink-600 ring-1 ring-ink-200">
+                <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${AMPEL_PUNKT[k]}`} />
+                {v.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {liste.map((l, i) => (
+            <Reveal as="li" key={l.key} delay={(i % 3) * 70} className="flex">
+              <Link href={`/forderungen/landesforderungen/${l.slug}`} className="group relative flex min-h-[340px] w-full flex-col justify-end overflow-hidden rounded-[1.75rem] bg-navy-950 text-white shadow-[0_30px_60px_-40px_rgba(3,18,43,0.7)] outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-2">
+                {l.bild && (
+                  <Image src={l.bild.src} alt={l.bild.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]" style={{ objectPosition: l.bild.position }} />
+                )}
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/55 to-navy-950/0" />
+                <div className="absolute left-5 right-5 top-5 flex items-start justify-between gap-3">
+                  <span className="ov-glass flex h-11 min-w-11 items-center justify-center rounded-xl px-2 font-display text-[14px] font-extrabold">{l.kuerzel}</span>
+                  <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${AMPEL_CHIP[l.foerderart]}`}>{FOERDERARTEN[l.foerderart].kurz}</span>
+                </div>
+                <div className="relative p-6">
+                  <h3 className="font-display text-[21px] font-extrabold leading-snug tracking-tight">Förderung in {l.name}</h3>
+                  <p className="mt-2 line-clamp-3 text-[14px] leading-relaxed text-white/75">{l.kurz}</p>
+                  <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/15 pt-4 text-[13px] text-white/70">
+                    <span className="inline-flex items-center gap-1.5">
+                      <Sun aria-hidden="true" className="h-3.5 w-3.5 text-sun-400" />
+                      <span className="ov-num">{l.ertrag[0].toLocaleString("de-DE")}–{l.ertrag[1].toLocaleString("de-DE")} kWh/kWp</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1 font-semibold text-ov-300">
+                      {l.programme.length} {l.programme.length === 1 ? "Programm" : "Programme"}
+                      <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
+        </ul>
+      </Section>
+
+      {/* Vergleich nach Zielgruppe */}
+      <Section tone="sand" space="md">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Vergleich"
+            title="Landesförderung 2026 nach Zielgruppe"
+            lead="Die Kurzfassung für Geschäftsführung und Einkauf: Was das Land zusätzlich zum Bund bietet – oder eben nicht. Zielgruppe wählen, alle neun Länder vergleichen."
+          />
+          <StandPille className="shrink-0 self-start md:self-auto">Stand {STAND.label}</StandPille>
+        </div>
+        <Umschalter label="Zielgruppe wählen" tabs={ZIELGRUPPEN_VERGLEICH} panels={vergleichPanels} />
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <Hinweis titel="Kombination mit dem EAG-Zuschuss">
+            In den Kategorien A–C ist eine Landesförderung zusätzlich erlaubt, in Kategorie D (über 100 kWp) nicht. Bei größeren Betriebsanlagen rechnen wir deshalb beide Wege durch: EAG-Zuschuss allein oder Landesförderung ohne EAG.
+          </Hinweis>
+          <Hinweis titel="Gemeindeförderungen nicht vergessen" ton="warn">
+            Viele Gemeinden fördern zusätzlich – oft mit kleinem Budget und ohne große Ankündigung. Vorarlberg (Förderkompass) und Oberösterreich (Förder-Assistent) bieten Suchwerkzeuge; sonst hilft ein Anruf beim Gemeindeamt vor der Bestellung.
+          </Hinweis>
+        </div>
       </Section>
 
       {/* Bund */}
-      <Section tone="white" space="lg">
+      <Section tone="white" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           <SectionHeading
             eyebrow="Gilt in allen Bundesländern"
@@ -183,7 +268,7 @@ export default function Page() {
           >
             <div className="mt-8 flex flex-col gap-3">
               <Link href="/forderungen/bundesfoerderung" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-                Bundesförderung (EAG & KPC) im Detail
+                Bundesförderung (EAG & KPC) im Detail – mit Zuschuss-Rechner
                 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link href="/forderungen/steuerlich" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
@@ -204,107 +289,39 @@ export default function Page() {
         </div>
       </Section>
 
-      {/* Alle Länder */}
-      <Section tone="sand" space="lg" id="bundeslaender">
-        <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading eyebrow="Alle neun Bundesländer" title="Förderung in Ihrem Bundesland im Detail" lead="Landesprogramme mit Status, Energiegemeinschaften, Bauordnung in Kurzform, Netzbetreiber und Solarertrag – je Land auf einer eigenen Seite." />
-          <ul className="flex flex-wrap gap-2 md:justify-end" aria-label="Legende Förderart">
-            {Object.entries(FOERDERARTEN).map(([k, v]) => (
-              <li key={k} className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[12.5px] font-medium text-ink-600 ring-1 ring-ink-200">
-                <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${PUNKT[k]}`} />
-                {v.label}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {liste.map((l, i) => (
-            <Reveal as="li" key={l.key} delay={(i % 3) * 60} className="flex">
-              <Link href={`/forderungen/landesforderungen/${l.slug}`} className="group ov-card-hover flex w-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 hover:ring-ov-200">
-                <div className="flex items-start justify-between gap-3">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-ov-50 font-display text-[14px] font-extrabold text-ov-700 ring-1 ring-ov-100">{l.kuerzel}</span>
-                  <span className={`rounded-full px-2.5 py-1 text-[11.5px] font-semibold ${CHIP[l.foerderart]}`}>{FOERDERARTEN[l.foerderart].kurz}</span>
-                </div>
-                <h3 className="mt-5 font-display text-[19px] font-bold leading-snug text-ink-900 transition-colors group-hover:text-ov-700">Förderung in {l.name}</h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{l.kurz}</p>
-                <div className="mt-auto flex items-center justify-between gap-3 pt-5 text-[13px] text-ink-500">
-                  <span className="inline-flex items-center gap-1.5">
-                    <Sun aria-hidden="true" className="h-3.5 w-3.5 text-sun-500" />
-                    <span className="ov-num">{l.ertrag[0].toLocaleString("de-AT")}–{l.ertrag[1].toLocaleString("de-AT")} kWh/kWp</span>
+      {/* Nach Vorhaben */}
+      <Section tone="sand" space="md">
+        <SectionHeading eyebrow="Nach Vorhaben" title="Förderung passend zum Projekt" className="mb-10" />
+        <ul className="grid gap-4 md:grid-cols-3">
+          {[
+            { bild: BILDER.gemeinde, alt: "Photovoltaikanlage auf dem Dach eines Gemeindeamts in Kärnten", titel: "Gemeinden und öffentliche Hand", text: "PV auf Schule, Bauhof und Kläranlage – mit Vergabe, Energiegemeinschaft und Bürgerbeteiligung.", href: "/kommunen" },
+            { bild: BILDER.duernrohr, alt: "Luftbild eines Photovoltaik-Freiflächenparks in Niederösterreich", titel: "Freiflächen-Photovoltaik", text: "Widmung, Zonenpläne und Abschlag im EAG-Zuschuss – was je Bundesland gilt.", href: "/freiflaechen-photovoltaik" },
+            { bild: BILDER.agriObst, alt: "Hoch aufgeständerte Agri-PV-Anlage über einer Apfelanlage", titel: "Agri-PV", text: "Doppelnutzung mit Landwirtschaft: 30 % Innovationszuschlag und kein Freiflächen-Abschlag.", href: "/agri-pv" },
+          ].map((v, i) => (
+            <Reveal as="li" key={v.href} delay={i * 80} className="flex">
+              <Link href={v.href} className="group ov-card-hover flex w-full flex-col overflow-hidden rounded-[1.75rem] bg-white ring-1 ring-ink-200/70 hover:ring-ov-200">
+                <span className="relative block aspect-[16/10] overflow-hidden">
+                  <Image src={v.bild.src} alt={v.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.05]" />
+                </span>
+                <span className="flex flex-1 flex-col p-6">
+                  <span className="font-display text-[19px] font-bold leading-snug text-ink-900 transition-colors group-hover:text-ov-700">{v.titel}</span>
+                  <span className="mt-2 text-[14.5px] leading-relaxed text-ink-600">{v.text}</span>
+                  <span className="mt-auto inline-flex items-center gap-1.5 pt-5 text-[14.5px] font-semibold text-ov-700">
+                    Mehr erfahren <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>
-                  <ArrowRight aria-hidden="true" className="h-4 w-4 text-ov-600 transition-transform group-hover:translate-x-1" />
-                </div>
+                </span>
               </Link>
             </Reveal>
           ))}
         </ul>
       </Section>
 
-      {/* Vergleichstabelle */}
-      <Section tone="white" space="lg">
-        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading
-            eyebrow="Vergleich"
-            title="Landesförderung 2026 nach Zielgruppe"
-            lead="Die Kurzfassung für Geschäftsführung und Einkauf: Was das Land zusätzlich zum Bund bietet – oder eben nicht."
-          />
-          <StandPille className="shrink-0 self-start md:self-auto">Stand {STAND.label}</StandPille>
-        </div>
-        <Reveal>
-          <Tabelle
-            dicht
-            caption={`Landesförderungen für Photovoltaik nach Zielgruppe, Stand ${STAND.label}`}
-            spalten={[
-              { key: "land", label: "Bundesland", breite: "w-[13%]" },
-              { key: "unternehmen", label: "Unternehmen" },
-              { key: "landwirtschaft", label: "Landwirtschaft" },
-              { key: "gemeinde", label: "Gemeinden" },
-              { key: "privat", label: "Private" },
-              { key: "speicher", label: "Speicher" },
-            ]}
-            zeilen={vergleich}
-          />
-        </Reveal>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          <Hinweis titel="Kombination mit dem EAG-Zuschuss">
-            In den Kategorien A–C ist eine Landesförderung zusätzlich erlaubt, in Kategorie D (über 100 kWp) nicht. Bei größeren Betriebsanlagen rechnen wir deshalb beide Wege durch: EAG-Zuschuss allein oder Landesförderung ohne EAG.
-          </Hinweis>
-          <Hinweis titel="Gemeindeförderungen nicht vergessen" ton="warn">
-            Viele Gemeinden fördern zusätzlich – oft mit kleinem Budget und ohne große Ankündigung. Vorarlberg (Förderkompass) und Oberösterreich (Förder-Assistent) bieten Suchwerkzeuge; sonst hilft ein Anruf beim Gemeindeamt vor der Bestellung.
-          </Hinweis>
-        </div>
-      </Section>
-
-      {/* Weiterführend */}
-      <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Nach Vorhaben" title="Förderung passend zum Projekt" className="mb-10" />
-        <FeatureGrid
-          cols={3}
-          items={[
-            { icon: Landmark, title: "Gemeinden und öffentliche Hand", text: "PV auf Schule, Bauhof und Kläranlage – mit Vergabe, Energiegemeinschaft und Bürgerbeteiligung.", href: "/kommunen" },
-            { icon: Sun, title: "Freiflächen-Photovoltaik", text: "Widmung, Zonenpläne und Abschlag im EAG-Zuschuss – was je Bundesland gilt.", href: "/freiflaechen-photovoltaik" },
-            { icon: BadgeEuro, title: "Agri-PV", text: "Doppelnutzung mit Landwirtschaft: 30 % Innovationszuschlag und kein Freiflächen-Abschlag.", href: "/agri-pv" },
-          ]}
-        />
-      </Section>
-
-      <SolarrechnerTeaser
-        href="/foerdercheck"
-        cta="Förder-Check starten"
-        titel="Welche Programme passen genau zu Ihrem Vorhaben?"
-        text="Bundesland, Zielgruppe und Vorhaben wählen – der Förder-Check zeigt Bundes- und Landesprogramme für PV, Freifläche, Agri-PV, Speicher, Ladeinfrastruktur und Wärmepumpe."
-      />
-
-      <Section tone="white" space="lg">
+      <Section tone="white" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Förderung nach Bundesland – kurz beantwortet" lead={`Stand ${STAND.label}. Für Ihr Projekt prüfen wir die Förderlage am konkreten Standort.`} />
           <Faq items={FAQ} />
         </div>
-      </Section>
-
-      <Section tone="sand" space="md">
-        <Quellen stand={STAND.label} quellen={quellen} hinweis="Je Bundesland die wichtigste Förderstelle; alle weiteren Quellen stehen auf den Landesseiten." />
+        <Quellen klappbar className="mt-12" stand={STAND.label} quellen={quellen} hinweis="Je Bundesland die wichtigste Förderstelle; alle weiteren Quellen stehen auf den Landesseiten." />
       </Section>
 
       <Querverweise pfad="/forderungen/landesforderungen" />
@@ -315,9 +332,12 @@ export default function Page() {
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Förder-Check starten", href: "/foerdercheck" }}
       />
+      <Bildnachweis
+        items={[
+          ...nachweise("wildkogel", "gemeinde", "duernrohr", "agriObst"),
+          ...liste.filter((l) => l.bild).map((l) => ({ motiv: l.bild.motiv, urheber: l.bild.urheber, lizenz: l.bild.lizenz, href: l.bild.href })),
+        ]}
+      />
     </div>
   );
 }
-
-const PUNKT = { zuschuss: "bg-ov-600", gezielt: "bg-ov-200 ring-1 ring-ov-300", bund: "bg-ink-200 ring-1 ring-ink-300" };
-const CHIP = { zuschuss: "bg-ov-600 text-white", gezielt: "bg-ov-100 text-ov-800", bund: "bg-ink-100 text-ink-700" };
