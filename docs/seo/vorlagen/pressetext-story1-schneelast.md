@@ -44,7 +44,7 @@ Alle Zahlen stammen von `/schneelast` (lokal geprüft am 30.09.2026). Vor dem Ve
 
 **Bildmaterial:** Karte der Schneelast-Richtwerte: https://www.oekovolt.com/schneelast/karte.png. Quellenangabe: „Karte: Ökovolt, Daten: GeoSphere Austria (SNOWGRID-CL v2.1, CC BY 4.0)“. Eine höher aufgelöste Fassung gibt es auf Anfrage.
 
-**Pressekontakt:** **[Name, Funktion]** · Ökovolt Solartechnik GmbH · Gewerbegebiet 10 · 5121 Ostermiething · +43 6278 71030 · office@oekovolt.com
+**Pressekontakt:** **[Name, Funktion]** · Ökovolt Solartechnik GmbH · Gewerbegebiet 10 · 5121 Ostermiething · +43 6278 71030 · office@oekovolt.at
 
 ---
 

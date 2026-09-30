@@ -22,7 +22,7 @@ import { BudgetErschoepft, DATENSATZ, QUELLENANGABE, vorhersageFuerZelle } from 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const KONTAKT = "Bei Fragen erreichen Sie uns unter office@oekovolt.com oder +43 6278 71030.";
+const KONTAKT = "Bei Fragen erreichen Sie uns unter office@oekovolt.at oder +43 6278 71030.";
 
 /* ------------------------------------------------------------------ einfache Ratenbegrenzung je IP */
 const FENSTER_MS = 10 * 60 * 1000;

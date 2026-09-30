@@ -92,7 +92,7 @@ const FAQ = [
   },
   {
     q: "Wie kann ich mich bewerben?",
-    a: "Über die offenen Stellen unter Jobs & Karriere oder initiativ per E-Mail an office@oekovolt.com – ein Lebenslauf als PDF reicht für den ersten Schritt.",
+    a: "Über die offenen Stellen unter Jobs & Karriere oder initiativ per E-Mail an office@oekovolt.at – ein Lebenslauf als PDF reicht für den ersten Schritt.",
   },
 ];
 

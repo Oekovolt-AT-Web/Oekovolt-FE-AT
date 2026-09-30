@@ -153,7 +153,7 @@ Manuell statt Skript: App-Ordner nach `apps/` kopieren, `./env/bin/pip install -
 
 - Domain/Links: `www.oekovolt.de` → `www.oekovolt.com` (Termin-Link in der PV-Analyse-Mail,
   Fortsetzen-Link-Standard, Push-Link-Prüfung, Webhook-Beispiel, Fediverse-Handle `@oekovolt@oekovolt.com`,
-  .ics-UID `@oekovolt.com`), E-Mail `office@oekovolt.com`, Telefon `+43 6278 71030`.
+  .ics-UID `@oekovolt.com`), E-Mail `office@oekovolt.at`, Telefon `+43 6278 71030`.
 - Zeitzone: Code nutzt die System-Zeitzone → **Europe/Vienna** (site_config.sh, Hinweis beim Installieren).
 - Veröffentlichung: Dateline-Standard „Ostermiething“ statt „Türkheim“, Slug-Beispiel „…-salzburg“.
 - Push: Beispiel-Link `/ratgeber/elwg-elektrizitaetswirtschaftsgesetz` statt Solarspitzengesetz.

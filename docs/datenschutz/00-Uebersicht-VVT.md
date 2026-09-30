@@ -23,7 +23,7 @@ in den Dateien dieses Ordners.
 | Firmenbuch | FN 375708m, Landesgericht Ried im Innkreis |
 | UID | ATU67027148 |
 | Geschäftsführer | Andreas Wegscheider |
-| Telefon / E-Mail | +43 6278 71030 · office@oekovolt.com (Betreff „Datenschutz“) |
+| Telefon / E-Mail | +43 6278 71030 · office@oekovolt.at (Betreff „Datenschutz“) |
 | Website | https://www.oekovolt.com |
 | Vertreter in der Union (Art. 27) | entfällt (Sitz in der EU) |
 | Datenschutzbeauftragte/r | `[OFFEN: Benennungspflicht nach Art. 37 DSGVO prüfen. Das DSG sieht keine eigene Schwelle wie § 38 BDSG vor; Pflicht nur bei Kerntätigkeit mit umfangreicher, regelmäßiger und systematischer Überwachung oder umfangreicher Verarbeitung von Art.-9/10-Daten. Wenn benannt: Name und Kontakt eintragen.]` |

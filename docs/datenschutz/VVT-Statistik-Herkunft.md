@@ -27,7 +27,7 @@ nur bei gesetzten Variablen ein. `[OFFEN: Welche der beiden Messungen wird beim 
 | **Drittland** | Nein, sofern Hosting in der EU `[OFFEN: bestätigen]` |
 | **Löschung** | `[OFFEN: Aufbewahrung der Rohdaten in Umami festlegen (z. B. 14 oder 25 Monate) und technisch einstellen; die Datenschutzerklärung sagt nur „sobald nicht mehr erforderlich“]` |
 | **TOM** | selbst gehostet, TLS, Admin-Zugang nur Marketing/Geschäftsführung `[OFFEN: 2FA, Telemetrie der Umami-Instanz deaktivieren]` |
-| **Widerspruch** | Art. 21 DSGVO; technisch über „Do Not Track“ oder per E-Mail an office@oekovolt.com (Datenschutzerklärung Punkt 5 a) |
+| **Widerspruch** | Art. 21 DSGVO; technisch über „Do Not Track“ oder per E-Mail an office@oekovolt.at (Datenschutzerklärung Punkt 5 a) |
 
 ## B. Google Analytics 4 (nur mit Einwilligung)
 

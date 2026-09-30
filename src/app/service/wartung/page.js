@@ -37,7 +37,7 @@ const PAKETE_KOPF = ["Leistung", "Basis", "Plus", "Premium"];
 const EIGNUNG = ["Dachanlagen mit einfacher Struktur", "Gewerbe- und Hallendächer", "Große Dach- und Freiflächenanlagen, Speicher, EZA-Regler"];
 const PAKETE = [
   ["Geeignet für", ...EIGNUNG],
-  ["Inspektionen vor Ort", "1× jährlich", "1× jährlich + Störungseinsätze", "2× jährlich (Frühjahr/Herbst) + Störungseinsätze"],
+  ["Inspektionen vor Ort", "1× jährlich", "1× jährlich + Störungseinsätze", "1× jährlich (Frühjahr/Herbst) + Störungseinsätze"],
   ["Sichtprüfung Module, Unterkonstruktion, Kabelwege, Dachdurchdringungen", true, true, true],
   ["Wechselrichter: Fehlerspeicher, Lüfter/Filter, Firmware-Stand", true, true, true],
   ["Elektrische Prüfung DC/AC (Isolationswiderstand, Leerlaufspannung, Strangströme) nach OVE EN 62446-1", "auf Anfrage", true, true],

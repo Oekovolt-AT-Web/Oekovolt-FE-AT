@@ -5,7 +5,7 @@ import { Info, Mail } from "lucide-react";
 import { FIRMA } from "@/lib/site";
 
 /**
- * Kurzbewerbung: bereitet eine E-Mail an office@oekovolt.com vor (Betreff,
+ * Kurzbewerbung: bereitet eine E-Mail an office@oekovolt.at vor (Betreff,
  * Name, Kontakt, Nachricht). Es wird nichts an einen Server gesendet – den
  * Lebenslauf hängen Bewerbende in ihrem E-Mail-Programm an.
  */

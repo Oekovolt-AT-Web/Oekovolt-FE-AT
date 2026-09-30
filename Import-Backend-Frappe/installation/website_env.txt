@@ -55,8 +55,8 @@ AP_PUBLIC_KEY=
 AP_PRIVATE_KEY=
 VAPID_PUBLIC_KEY=
 VAPID_PRIVATE_KEY=
-# Kontakt für Push-Dienste, z. B. mailto:office@oekovolt.com (Standard, wenn leer)
-VAPID_SUBJECT=mailto:office@oekovolt.com
+# Kontakt für Push-Dienste, z. B. mailto:office@oekovolt.at (Standard, wenn leer)
+VAPID_SUBJECT=mailto:office@oekovolt.at
 
 # ─────────────────────────────── CloudTalk (automatischer Sofort-Rückruf, optional)
 CLOUDTALK_KEY_ID=

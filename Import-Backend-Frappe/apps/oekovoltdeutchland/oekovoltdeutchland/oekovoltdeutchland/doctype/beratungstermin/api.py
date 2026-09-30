@@ -97,7 +97,7 @@ def _ics(doc):
 		f"DTEND;TZID={tz}:{fmt(doc.ende)}",
 		f"SUMMARY:Ökovolt: {doc.art}",
 		f"LOCATION:{ort}",
-		"DESCRIPTION:Fragen oder Terminänderung: +43 6278 71030 · office@oekovolt.com",
+		"DESCRIPTION:Fragen oder Terminänderung: +43 6278 71030 · office@oekovolt.at",
 		f"STATUS:{'CANCELLED' if doc.status == 'Abgesagt' else 'CONFIRMED'}",
 		"END:VEVENT", "END:VCALENDAR",
 	])

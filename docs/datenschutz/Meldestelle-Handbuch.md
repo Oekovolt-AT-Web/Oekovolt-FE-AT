@@ -186,7 +186,7 @@ Platzhalter in `‹…›` ersetzen. Im Postfach ist keine Anrede mit Namen nöt
 > wurden bzw. werden. Anlass ist ein Hinweis zu ‹allgemeine Beschreibung des Themas, ohne Rückschluss auf die
 > hinweisgebende Person›.
 >
-> **Verantwortlicher:** Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething, office@oekovolt.com.
+> **Verantwortlicher:** Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething, office@oekovolt.at.
 > **Zweck und Rechtsgrundlage:** Prüfung des Hinweises und Folgemaßnahmen nach dem HinweisgeberInnenschutzgesetz
 > (Art. 6 Abs. 1 lit. c DSGVO i. V. m. § 8 HSchG).
 > **Kategorien der Daten:** ‹z. B. Name, Funktion, Beschreibung des Verhaltens›.

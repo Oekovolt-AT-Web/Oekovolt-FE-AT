@@ -317,7 +317,7 @@ export default function TerminBuchung({ kalender = null }) {
         <div className="mx-auto mt-10 grid max-w-2xl gap-3 border-t border-ink-100 pt-8 text-left sm:grid-cols-3">
           {[
             { t: "Vorbereiten", x: "Strom- bzw. Netzrechnung, falls vorhanden Lastgang (15-Minuten-Werte) sowie Fotos oder Pläne von Dach und Trafo/Zählerplatz bereitlegen." },
-            { t: "Ändern", x: "Termin passt nicht mehr? Kurze Nachricht an office@oekovolt.com genügt." },
+            { t: "Ändern", x: "Termin passt nicht mehr? Kurze Nachricht an office@oekovolt.at genügt." },
             { t: "Vorab rechnen", x: <>Mit dem <Link href="/solarrechner" className="font-semibold text-ov-700 underline underline-offset-2">Solarrechner</Link> schon Ertrag und Ersparnis prüfen.</> },
           ].map((k) => (
             <div key={k.t} className="rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60">

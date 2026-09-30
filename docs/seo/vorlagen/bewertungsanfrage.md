@@ -21,7 +21,7 @@ Zum [Offpage-Fahrplan, Abschnitt 13](../Offpage-Fahrplan.md#13-bewertungen-ohne-
 > **[Link zum Bewertungsformular des Google-Unternehmensprofils]**
 >
 > Die Bewertung ist freiwillig. Sie hat keinen Einfluss auf Garantie, Wartung oder Service.
-> Haben Sie ein Anliegen, das wir noch lösen sollen? Dann melden Sie sich bitte direkt bei **[Name, Telefon]** oder unter office@oekovolt.com.
+> Haben Sie ein Anliegen, das wir noch lösen sollen? Dann melden Sie sich bitte direkt bei **[Name, Telefon]** oder unter office@oekovolt.at.
 >
 > Freundliche Grüße
 > **[Name, Funktion]**
@@ -32,4 +32,4 @@ Zum [Offpage-Fahrplan, Abschnitt 13](../Offpage-Fahrplan.md#13-bewertungen-ohne-
 **Antworten auf Bewertungen** (innerhalb einer Woche, ohne Projekt- oder Personendetails):
 
 - *positiv:* „Danke für Ihre Bewertung, **[Vorname/Firma]**. Es freut uns, dass die Anlage läuft. Bei Fragen zur Wartung erreichen Sie uns jederzeit.“
-- *kritisch:* „Danke für Ihre offene Rückmeldung. Das tut uns leid. Wir möchten die Sache klären – bitte melden Sie sich unter +43 6278 71030 oder office@oekovolt.com, Stichwort ‚Bewertung‘.“
+- *kritisch:* „Danke für Ihre offene Rückmeldung. Das tut uns leid. Wir möchten die Sache klären – bitte melden Sie sich unter +43 6278 71030 oder office@oekovolt.at, Stichwort ‚Bewertung‘.“

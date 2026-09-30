@@ -30,7 +30,7 @@ FN, UID, GISA, Gesellschafter …), `SCHWESTER` (deutsche Schwester, Markeninhab
 ## Unternehmensfakten (verifiziert 09/2026)
 
 - **Ökovolt Solartechnik GmbH**, Gewerbegebiet 10, 5121 Ostermiething, Oberösterreich (Innviertel,
-  an der Grenze zu Salzburg). Tel. +43 6278 71030, office@oekovolt.com.
+  an der Grenze zu Salzburg). Tel. +43 6278 71030, office@oekovolt.at.
 - FN 375708m, Landesgericht Ried im Innkreis, UID ATU67027148, GISA 17864251, Gewerbe
   Elektrotechnik, Mitglied WKO Oberösterreich. Stammkapital 35.000 €. Gegründet 16.02.2012.
 - Geschäftsführer: Andreas Wegscheider. **Gesellschafter: Andreas Wegscheider 51 %, Salzburg AG für

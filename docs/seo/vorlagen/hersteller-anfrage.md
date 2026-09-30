@@ -21,7 +21,7 @@ Bis zur Antwort gilt auf der Website nur „bei Ökovolt verbaut“ – nicht �
 >
 > Vielen Dank und freundliche Grüße
 > **[Name, Funktion]**
-> Ökovolt Solartechnik GmbH · Gewerbegebiet 10 · 5121 Ostermiething · +43 6278 71030 · office@oekovolt.com
+> Ökovolt Solartechnik GmbH · Gewerbegebiet 10 · 5121 Ostermiething · +43 6278 71030 · office@oekovolt.at
 
 ---
 

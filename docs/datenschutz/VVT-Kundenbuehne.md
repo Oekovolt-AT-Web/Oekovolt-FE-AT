@@ -55,4 +55,4 @@
 > Zitate und Logos zeigen wir nur mit Freigabe. Soweit dabei personenbezogene Daten betroffen sind, etwa Namen im
 > Firmenwortlaut, stützen wir uns auf unser berechtigtes Interesse an der Darstellung unserer Referenzen (Art. 6 Abs. 1
 > lit. f DSGVO), bei Zitaten auf Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Sie können jederzeit widersprechen bzw.
-> Ihre Freigabe widerrufen; eine Nachricht an office@oekovolt.com genügt.
+> Ihre Freigabe widerrufen; eine Nachricht an office@oekovolt.at genügt.

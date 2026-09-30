@@ -1,7 +1,7 @@
 [project]
 name = "oekovoltdeutchland"
 authors = [
-    { name = "Ökovolt Solartechnik GmbH", email = "office@oekovolt.com" },
+    { name = "Ökovolt Solartechnik GmbH", email = "office@oekovolt.at" },
 ]
 description = "Backoffice-Erweiterungen für oekovolt.com (Österreich): Produktseiten, Hersteller, Heatmap, Rückruf/Solar Lead, Hinweisgebersystem, Veröffentlichungen"
 requires-python = ">=3.10"

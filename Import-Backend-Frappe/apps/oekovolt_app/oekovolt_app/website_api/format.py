@@ -733,7 +733,7 @@ FIRMA = {
 	"adresse": "Gewerbegebiet 10, 5121 Ostermiething",
 	"telefon": "+43 6278 71030",
 	"telefon_href": "tel:+43627871030",
-	"email": "office@oekovolt.com",
+	"email": "office@oekovolt.at",
 	"website": "https://www.oekovolt.com",
 }
 

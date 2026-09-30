@@ -2,7 +2,7 @@ app_name = "oekovolt_app"
 app_title = "Oekovolt App"
 app_publisher = "ÖKOVOLT"
 app_description = "Backoffice-Schnittstelle für www.oekovolt.com (Österreich): Referenzprojekte, Formulare, Termine"
-app_email = "office@oekovolt.com"
+app_email = "office@oekovolt.at"
 app_license = "Proprietary"
 
 required_apps = ["frappe"]

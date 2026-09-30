@@ -1,7 +1,7 @@
 [project]
 name = "oekovolt_app"
 authors = [
-    { name = "ÖKOVOLT", email = "office@oekovolt.com" },
+    { name = "ÖKOVOLT", email = "office@oekovolt.at" },
 ]
 description = "Backoffice-Schnittstelle für www.oekovolt.com (Österreich): Referenzprojekte, Formulare, Termine"
 requires-python = ">=3.10"

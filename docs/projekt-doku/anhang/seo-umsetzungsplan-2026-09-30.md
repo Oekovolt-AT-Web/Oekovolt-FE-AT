@@ -218,7 +218,7 @@ Rollen: T = Technik, C = Content/Keywords, H = Hersteller, K = KI/GEO, L = Lokal
 - **E5 Autoren und Fachprüfer:** Welche reale Person, zum Beispiel die Geschäftsführung oder eine Elektrotechnik-Fachkraft, prüft Ratgeber-Artikel fachlich? Nötig sind schriftliche Einwilligung, Foto, LinkedIn-Profil und Qualifikation.
 - **E6 Firmendaten:**
   - Gilt die Kennzahl 340 MWp oder 510 MW? Welcher Zeitraum gilt für die CO₂-Zahl?
-  - Offizielle E-Mail office@oekovolt.com oder .at? Beide Postfächer bleiben erreichbar.
+  - Offizielle E-Mail office@oekovolt.at oder .at? Beide Postfächer bleiben erreichbar.
   - Welche Öffnungszeiten gelten verbindlich? Herold weicht ab.
   - Wie hängt „ÖKOVOLT Energietechnik GmbH“ in Lochau mit Ökovolt zusammen?
   - Gehört der X-Handle der AT-GmbH?

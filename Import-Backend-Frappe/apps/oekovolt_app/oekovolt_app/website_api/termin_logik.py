@@ -47,7 +47,7 @@ FIRMA = {
 	"name": "Ökovolt Solartechnik GmbH",
 	"kurz": "Ökovolt",
 	"telefon": "+43 6278 71030",
-	"email": "office@oekovolt.com",
+	"email": "office@oekovolt.at",
 	"web": "https://www.oekovolt.com",
 	"domain": "oekovolt.com",
 }

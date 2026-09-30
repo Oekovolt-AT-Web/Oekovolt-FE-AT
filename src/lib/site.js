@@ -25,7 +25,7 @@ export const FIRMA = {
   land: "Österreich",
   telefon: "+43 6278 71030",
   telefonHref: "tel:+43627871030",
-  email: "office@oekovolt.com",
+  email: "office@oekovolt.at",
   web: BASE_URL,
   firmenbuch: "FN 375708m",
   firmenbuchgericht: "Landesgericht Ried im Innkreis",

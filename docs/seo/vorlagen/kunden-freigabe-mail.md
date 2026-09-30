@@ -28,7 +28,7 @@ Nach der Antwort in `src/data/kunden.js` bzw. im Backoffice nur das eintragen, w
 > - Zitat: ☐ ja, Wortlaut: „…“ – Name, Funktion: … ☐ nein
 > - Logo: ☐ ja (bitte als Datei mitschicken) ☐ nein
 >
-> **Freiwillig und widerrufbar:** Die Freigabe ist freiwillig. Sie können sie jederzeit per E-Mail an office@oekovolt.com widerrufen; wir entfernen Zitat bzw. Logo dann umgehend. Ohne Ihre Zustimmung erscheinen weder Zitat noch Logo. Den Namen der zitierten Person verarbeiten wir nur zu diesem Zweck (Datenschutzerklärung: https://www.oekovolt.com/datenschutz).
+> **Freiwillig und widerrufbar:** Die Freigabe ist freiwillig. Sie können sie jederzeit per E-Mail an office@oekovolt.at widerrufen; wir entfernen Zitat bzw. Logo dann umgehend. Ohne Ihre Zustimmung erscheinen weder Zitat noch Logo. Den Namen der zitierten Person verarbeiten wir nur zu diesem Zweck (Datenschutzerklärung: https://www.oekovolt.com/datenschutz).
 >
 > **Nur wenn Sie möchten:** Zu jeder Referenz gibt es ein Solar-Siegel mit den Kennzahlen Ihrer Anlage und einen ESG-Kurzbericht. Das Siegel können Sie auf Ihrer Website einbinden. Das ist keine Bedingung, und der Code verlinkt bewusst mit `rel="nofollow"`:
 > https://www.oekovolt.com/referenzen/projekte/[slug]/siegel

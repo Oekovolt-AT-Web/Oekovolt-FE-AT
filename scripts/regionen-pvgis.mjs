@@ -80,7 +80,7 @@ const warte = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
 async function holeJson(url) {
   for (let versuch = 0; versuch < 4; versuch++) {
-    const r = await fetch(url, { headers: { "User-Agent": "oekovolt.com Regionalseiten (office@oekovolt.com)" } });
+    const r = await fetch(url, { headers: { "User-Agent": "oekovolt.com Regionalseiten (office@oekovolt.at)" } });
     if (r.ok) return r.json();
     await warte(1500 * (versuch + 1));
   }

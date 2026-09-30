@@ -17,7 +17,7 @@ async function ortSuchen(ort) {
     `&viewbox=9.5,49.05,17.2,46.35&bounded=0&q=${encodeURIComponent(ort)}`;
   try {
     const res = await fetch(url, {
-      headers: { "User-Agent": "oekovolt.com Referenzkarte (office@oekovolt.com)", "Accept-Language": "de" },
+      headers: { "User-Agent": "oekovolt.com Referenzkarte (office@oekovolt.at)", "Accept-Language": "de" },
       next: { revalidate: DREISSIG_TAGE },
       signal: AbortSignal.timeout(5000),
     });

@@ -79,7 +79,7 @@ Canonical/H1/JSON-LD überall gültig. Grundlagen: `docs/AT-BRIEFING.md`, `docs/
 
 ## Vor dem Livegang – fachlich/rechtlich bestätigen
 
-- **E-Mail:** Live-Seite nennt office@oekovolt.at, WKO/FirmenABC office@oekovolt.com (verwendet: .com).
+- **E-Mail:** Live-Seite nennt office@oekovolt.at, WKO/FirmenABC office@oekovolt.at (verwendet: .com).
 - **Offenlegung:** Aufsichtsrat? Beteiligung an Medienunternehmen?
 - **Datenschutz:** Hosting-Anbieter, E-Mail-Dienstleister, Datenschutzbeauftragter, Vertrag
   Art. 26/28 DSGVO mit der DE-Schwester (gemeinsames Backoffice), AV-Vertrag IntegrityLine.

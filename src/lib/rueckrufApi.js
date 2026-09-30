@@ -70,7 +70,7 @@ export async function alsKontaktanfrage({ name = "", email, telefon, plzOrt = ""
     body: JSON.stringify({
       vorname: vorname || "Rückruf",
       nachname: rest.join(" ") || "(Website)",
-      e_mail_adressee: email || "office@oekovolt.com",
+      e_mail_adressee: email || "office@oekovolt.at",
       telefonnummer: telefon,
       ihre_nachricht: nachricht,
       strasse_und_hausnummer: strasse,

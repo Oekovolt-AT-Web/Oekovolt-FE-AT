@@ -2,7 +2,7 @@ app_name = "oekovoltdeutchland"
 app_title = "Oekovoltdeutchland"
 app_publisher = "Ökovolt Solartechnik GmbH"
 app_description = "Backoffice-Erweiterungen für oekovolt.com (Österreich)"
-app_email = "office@oekovolt.com"
+app_email = "office@oekovolt.at"
 app_license = "unlicense"
 required_apps = ["frappe"]
 

@@ -12,7 +12,7 @@ Erst senden, wenn **E6** (Öffnungszeiten, Lochau) entschieden ist.
 Firmenwortlaut:   Ökovolt Solartechnik GmbH
 Adresse:          Gewerbegebiet 10, 5121 Ostermiething, Oberösterreich
 Telefon:          +43 6278 71030
-E-Mail:           office@oekovolt.com
+E-Mail:           office@oekovolt.at
 Website:          https://www.oekovolt.com
 Firmenbuch:       FN 375708m, Landesgericht Ried im Innkreis
 UID:              ATU67027148
@@ -46,7 +46,7 @@ Wenn möglich über die Inhaber-Funktion am Eintrag ändern. Sonst per E-Mail bz
 > - Firmenwortlaut: Ökovolt Solartechnik GmbH
 > - Ort: 5121 Ostermiething (Oberösterreich) **[bei Herold: statt „Braunau am Inn“ im Seitentitel]**
 > - Öffnungszeiten: **[nach E6]**
-> - E-Mail: office@oekovolt.com
+> - E-Mail: office@oekovolt.at
 > - Website: https://www.oekovolt.com
 > - **[bei Cylex: Kennzahlen bitte durch den Wortlaut „5.000 PV-Kraftwerke errichtet, 510.000 kWp installierte Leistung (Angaben des Unternehmens, Stand 30.09.2026)“ ersetzen oder entfernen]**
 > - **[bei Herold: Der Eintrag ist in Suchergebnissen auch unter einem Pfad mit „kramsach“ zu finden – bitte nur eine URL mit Ostermiething verwenden]**
@@ -67,7 +67,7 @@ Wenn möglich über die Inhaber-Funktion am Eintrag ändern. Sonst per E-Mail bz
 
 > Sehr geehrte Damen und Herren,
 >
-> im Eintrag **[URL]** der ÖKOVOLT Energietechnik GmbH (FN 261840 i, 6911 Lochau) stehen die E-Mail-Adresse office@oekovolt.com und die Website oekovolt.com. Beide gehören zur **Ökovolt Solartechnik GmbH** (FN 375708m, Ostermiething), einer anderen Gesellschaft. Wir bitten, diese Angaben aus dem Lochauer Eintrag zu entfernen bzw. durch **[richtige Kontaktdaten der Lochauer Gesellschaft]** zu ersetzen, damit es nicht zu Verwechslungen kommt.
+> im Eintrag **[URL]** der ÖKOVOLT Energietechnik GmbH (FN 261840 i, 6911 Lochau) stehen die E-Mail-Adresse office@oekovolt.at und die Website oekovolt.com. Beide gehören zur **Ökovolt Solartechnik GmbH** (FN 375708m, Ostermiething), einer anderen Gesellschaft. Wir bitten, diese Angaben aus dem Lochauer Eintrag zu entfernen bzw. durch **[richtige Kontaktdaten der Lochauer Gesellschaft]** zu ersetzen, damit es nicht zu Verwechslungen kommt.
 
 **Variante B2 – Gesellschaft nicht mehr aktiv:**
 
@@ -84,7 +84,7 @@ Wenn möglich über die Inhaber-Funktion am Eintrag ändern. Sonst per E-Mail bz
 >
 > danke für den Eintrag unseres Unternehmens im Branchenverzeichnis der Gemeinde (https://www.ostermiething.at/SUN_VALUE_GmbH). Wir bitten um zwei kleine Aktualisierungen:
 >
-> 1. E-Mail: bitte **office@oekovolt.com** statt office@oekovolt.at
+> 1. E-Mail: bitte **office@oekovolt.at** statt office@oekovolt.at
 > 2. Die Adresse der Seite enthält noch den früheren Namen „SUN_VALUE_GmbH“. Wenn möglich, bitte eine Adresse mit „Oekovolt_Solartechnik_GmbH“ verwenden und die alte Adresse darauf weiterleiten.
 >
 > Falls es ein Feld dafür gibt, freuen wir uns über einen Link auf https://www.oekovolt.com.

@@ -27,7 +27,7 @@ Arbeitsbaum). Werte gehören **nie** ins Repository (`.gitignore`: `.env*`).
 | `CRON_SECRET` | optional | Bearer für Cron-Aufruf von `/api/kanaele/verteilen` | `src/app/api/kanaele/verteilen/route.js:20` |
 | `KANAL_DEMO` | nur lokal | `1` = Demo-Einträge ohne Backoffice (nie in Produktion wirksam) | `src/lib/kanaele/demo.js:5` |
 | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | für Web-Push | VAPID-Schlüsselpaar (einmalig erzeugen, danach nicht ändern) | `src/app/push/actions.js:8-9`, `src/lib/kanaele/push.js:10,41` |
-| `VAPID_SUBJECT` | optional | Kontakt für Push-Dienste (Standard `mailto:office@oekovolt.com`) | `src/lib/kanaele/push.js:41` |
+| `VAPID_SUBJECT` | optional | Kontakt für Push-Dienste (Standard `mailto:office@oekovolt.at`) | `src/lib/kanaele/push.js:41` |
 | `AP_PUBLIC_KEY`, `AP_PRIVATE_KEY` | für Fediverse | RSA-Schlüssel für HTTP-Signaturen (einmalig, nicht ändern) | `src/lib/kanaele/activitypub.js:24,74,131` |
 | `HINWEIS_INTERN` | optional | `1` = eigenes Hinweisgebersystem (Formular, Postfach, API, Texte, Sitemap); leer/`0` = IntegrityLine (Redirect 307, API 503). **Build-Zeit-Schalter** – nach Änderung neu bauen; Ablauf in `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` | `src/data/hinweisgeber.js:8`, `next.config.mjs:32-39`, `src/lib/hinweisApi.js` |
 | `HINWEIS_API_KEY`, `HINWEIS_API_SECRET` | bei `HINWEIS_INTERN=1` | User „Hinweis Webformular“ (Rückfall `API_KEY`) | `src/lib/hinweisApi.js:14-15` |

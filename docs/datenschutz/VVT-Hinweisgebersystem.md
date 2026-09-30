@@ -20,7 +20,7 @@
 ## 1. Verantwortlicher (Art. 30 Abs. 1 lit. a DSGVO; § 8 Abs. 4 Z 2 und Abs. 8 HSchG)
 
 Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething, Österreich · FN 375708m, Landesgericht Ried im Innkreis ·
-Geschäftsführer Andreas Wegscheider · +43 6278 71030 · office@oekovolt.com (Quelle: `src/lib/site.js`).
+Geschäftsführer Andreas Wegscheider · +43 6278 71030 · office@oekovolt.at (Quelle: `src/lib/site.js`).
 Nach § 8 Abs. 4 Z 2 HSchG ist der Rechtsträger, dem die interne Stelle angehört, Verantwortlicher.
 
 **Datenschutzbeauftragte/r:** `[OFFEN: siehe Deckblatt 00-Uebersicht-VVT.md]`

@@ -68,7 +68,7 @@ Die **einzige Quelle** ist `src/lib/site.js` (FIRMA). Registerdaten wurden am 28
 | Name | **Ökovolt Solartechnik GmbH** | ohne Zusatzwörter wie „Photovoltaik“, „Oberösterreich“ oder „Solaranlagen“ |
 | Adresse | Gewerbegebiet 10, 5121 Ostermiething, Oberösterreich | Bezirk Braunau am Inn |
 | Telefon | +43 6278 71030 | |
-| E-Mail | office@oekovolt.com | Entscheidung E6: .com; das .at-Postfach bleibt erreichbar |
+| E-Mail | office@oekovolt.at | Entscheidung E6: .com; das .at-Postfach bleibt erreichbar |
 | Website | https://www.oekovolt.com | immer mit `www` und `https` |
 | Firmenbuch | FN 375708m, Landesgericht Ried im Innkreis | |
 | UID | ATU67027148 | |
@@ -190,11 +190,11 @@ Laut Apple-Support ist Business Connect in **Apple Business** aufgegangen. Anmel
 | Verzeichnis | Befund | Soll | Vorlage |
 |---|---|---|---|
 | **Herold** – [Eintrag Ostermiething](https://www.herold.at/gelbe-seiten/ostermiething/RhvF4/oekovolt-solartechnik-gmbh/) | Adresse, Telefon, E-Mail und FN stimmen. Der Seitentitel lautet „in 5121 Braunau am Inn“. Öffnungszeiten **Mo–Do 08–17, Fr 08–12**. In Suchergebnissen erscheint dieselbe Kennung (`RhvF4`) auch unter einem Pfad mit „kramsach“; Herold um eine eindeutige URL bitten | Öffnungszeiten nach E6. Ort „Ostermiething“. Website `https://www.oekovolt.com` | [verzeichnis-korrektur.md](vorlagen/verzeichnis-korrektur.md) A |
-| **Herold** – [ÖKOVOLT Energietechnik GmbH, Lochau](https://www.herold.at/gelbe-seiten/lochau/fsQdR/oekovolt-energietechnik-gmbh-oesterreich/) | **Andere Gesellschaft** (FN 261840 i, gegründet 1998, Grünegger 10, 6911 Lochau), aber mit **office@oekovolt.com** und Website **oekovolt.com** | Klären, wie die Lochauer Gesellschaft zu Ökovolt steht (E6). Bis dahin nicht auf die AT-GmbH verweisen lassen: E-Mail und Website ändern oder den Eintrag löschen lassen, falls die Gesellschaft nicht mehr aktiv ist | B |
+| **Herold** – [ÖKOVOLT Energietechnik GmbH, Lochau](https://www.herold.at/gelbe-seiten/lochau/fsQdR/oekovolt-energietechnik-gmbh-oesterreich/) | **Andere Gesellschaft** (FN 261840 i, gegründet 1998, Grünegger 10, 6911 Lochau), aber mit **office@oekovolt.at** und Website **oekovolt.com** | Klären, wie die Lochauer Gesellschaft zu Ökovolt steht (E6). Bis dahin nicht auf die AT-GmbH verweisen lassen: E-Mail und Website ändern oder den Eintrag löschen lassen, falls die Gesellschaft nicht mehr aktiv ist | B |
 | **Cylex** – [Eintrag](https://www.cylex.at/ostermiething/%c3%b6kovolt-solartechnik-gmbh-8228401.html) ✱ | Öffnungszeiten laut Ausschnitt Mo–Fr 08–12 und 13–17. Kennzahlen „über 5.000 Anlagen und 510 MW“ | Öffnungszeiten nach E6. Kennzahlen im Wortlaut der Website mit Stand oder weglassen | A |
-| **Gemeinde Ostermiething** – [Branchenverzeichnis](https://www.ostermiething.at/SUN_VALUE_GmbH) | E-Mail **office@oekovolt.at**. Die Seiten-URL enthält den alten Namen „SUN_VALUE_GmbH“ | E-Mail `office@oekovolt.com`. Eine URL mit dem aktuellen Namen erbitten; Website-Link ergänzen | C |
+| **Gemeinde Ostermiething** – [Branchenverzeichnis](https://www.ostermiething.at/SUN_VALUE_GmbH) | E-Mail **office@oekovolt.at**. Die Seiten-URL enthält den alten Namen „SUN_VALUE_GmbH“ | E-Mail `office@oekovolt.at`. Eine URL mit dem aktuellen Namen erbitten; Website-Link ergänzen | C |
 | **voltalux** – [Profil](https://voltalux.at/p/bfc887f3/) | „Ökovolt Solartechnik GmbH“ unter **„PV Anbieter Bregenz“** mit Adresse **Landstraße 11, 6911 Lochau**. Laut voltalux kein Vertragspartner | Adresse Ostermiething und Region Oberösterreich, oder Profil entfernen. Die AT-GmbH hat keinen Sitz in Lochau | D |
-| **WKO Firmen A–Z** – [Eintrag](https://firmen.wko.at/%C3%96kovolt-solartechnik-gmbh-%C3%96kovolt-solartechnik-gmbh/ober%C3%B6sterreich/?firmaid=683331b8-cc78-405b-983d-55acaee1a686) | Grundlage der Registerdaten. Laut `docs/AT-UEBERGABE.md` mit office@oekovolt.com | Nur prüfen: Website mit `www`, Öffnungszeiten nach E6, Tätigkeitsbeschreibung | A (Kurztext) |
+| **WKO Firmen A–Z** – [Eintrag](https://firmen.wko.at/%C3%96kovolt-solartechnik-gmbh-%C3%96kovolt-solartechnik-gmbh/ober%C3%B6sterreich/?firmaid=683331b8-cc78-405b-983d-55acaee1a686) | Grundlage der Registerdaten. Laut `docs/AT-UEBERGABE.md` mit office@oekovolt.at | Nur prüfen: Website mit `www`, Öffnungszeiten nach E6, Tätigkeitsbeschreibung | A (Kurztext) |
 | **FirmenABC** – [Eintrag](https://www.firmenabc.at/oekovolt-solartechnik-gmbh_OvcS) | Grundlage der Registerdaten. Die Lochauer Gesellschaft hat einen eigenen Eintrag (`oekovolt-energietechnik-gmbh_qGI`) | Website und Beschreibung prüfen; beim Lochauer Eintrag wie Herold B vorgehen | A, B |
 | **eigenverbrauch.at** | Die Domain zeigt auf denselben Server wie www.oekovolt.com (178.105.80.143). Das Zertifikat gilt nur für oekovolt.com, deshalb schlägt der Abruf fehl. In Suchergebnissen erscheint `eigenverbrauch.at/kontakt` | 301 auf `https://www.oekovolt.com/` mit gültigem Zertifikat (Abschnitt 8) | – |
 
@@ -397,7 +397,7 @@ Nach dem Anlegen die Wikidata-URL in `site.js` → `FIRMA.profile` (`sameAs`) au
 
 ## 16. Offene Punkte beim Auftraggeber
 
-- **E6:** verbindliche Öffnungszeiten, Verhältnis zur ÖKOVOLT Energietechnik GmbH in Lochau (FN 261840 i; Herold führt sie mit office@oekovolt.com und oekovolt.com), X-Handle, Büro Salzburg, CO₂-Zeitraum, Einheit MW oder MWp.
+- **E6:** verbindliche Öffnungszeiten, Verhältnis zur ÖKOVOLT Energietechnik GmbH in Lochau (FN 261840 i; Herold führt sie mit office@oekovolt.at und oekovolt.com), X-Handle, Büro Salzburg, CO₂-Zeitraum, Einheit MW oder MWp.
 - **E10:** Wer pflegt Google-Profil, Bing und Apple und fragt Bewertungen an? Freigabe für Wikidata. Budget für APA-OTS.
 - **E11:** SISTRIX-Connector autorisieren.
 - **E12:** rechtliche Prüfung der Presse-Mails (TKG/DSGVO) und von Story 3.

@@ -23,7 +23,7 @@ import { inOesterreichRahmen, ortZuKoordinate, pvgisErtrag, seehoehe, sucheAdres
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const FEHLER_KONTAKT = "Bitte versuchen Sie es in einigen Minuten erneut oder schreiben Sie uns an office@oekovolt.com bzw. rufen Sie +43 6278 71030 an.";
+const FEHLER_KONTAKT = "Bitte versuchen Sie es in einigen Minuten erneut oder schreiben Sie uns an office@oekovolt.at bzw. rufen Sie +43 6278 71030 an.";
 
 /* ------------------------------------------------------------------ einfache Ratenbegrenzung je IP */
 

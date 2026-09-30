@@ -89,7 +89,7 @@ abgelegt), Code-Durchsicht dieser Welle (C). Stand: Version 0.5, 30.09.2026 (Nac
 | F-08 | Hero-Video und Partnerbilder | R-13 | vor Livegang | offen |
 | F-09 | GA4-Property für oekovolt.com (`NEXT_PUBLIC_GA_ID`) | REQ-MES-02, Ü:67 | vor Livegang | offen |
 | F-10 | Eigenes Hinweisgebersystem statt IntegrityLine (`HINWEIS_INTERN=1`) | REQ-HIN-01 | offen | offen |
-| F-11 | E-Mail-Adresse office@oekovolt.com vs. office@oekovolt.at | Ü:82 | vor Livegang | offen |
+| F-11 | E-Mail-Adresse office@oekovolt.at vs. office@oekovolt.at | Ü:82 | vor Livegang | offen |
 | F-12 | Richtwerte Unterkonstruktions-Stufen im Standort-Check; HORA-Links im Browser testen | Ü:97 | vor Livegang | offen |
 | F-13 | Neue Abhängigkeit `heatmap.js` | R-24 | – | **erledigt** (vom Auftraggeber gewünscht) |
 | F-14 | Umgang mit Code-Befunden S1–S7 (Kapitel 05) | R-14–R-16, R-18, R-19 | vor Livegang | S1–S4 **erledigt**; CSP, Drosselung je Instanz/`X-Forwarded-For`, `baseUrl.js` offen |
