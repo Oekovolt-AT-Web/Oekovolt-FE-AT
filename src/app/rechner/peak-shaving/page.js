@@ -15,7 +15,7 @@ export const metadata = rechnerMetadata({
   pfad: PFAD,
   title: "Peak-Shaving-Rechner: Leistungspreis senken | Ökovolt",
   description:
-    "Peak-Shaving- und Gewerbespeicher-Rechner für Österreich: Leistungspreis 2026 je Netzebene, Speichergröße, PV-Eigenverbrauch und Amortisation – mit ElWG-Ausblick 2027.",
+    "Peak-Shaving- und Gewerbespeicher-Rechner Österreich: Leistungspreis 2026 je Netzebene, Speichergröße, PV-Eigenverbrauch, Amortisation – mit ElWG-Ausblick 2027.",
   keywords: ["Peak Shaving Rechner", "Leistungspreis senken", "Gewerbespeicher Rechner", "Lastspitzen kappen", "Leistungspreis Netzebene 6", "Batteriespeicher Gewerbe Amortisation"],
 });
 

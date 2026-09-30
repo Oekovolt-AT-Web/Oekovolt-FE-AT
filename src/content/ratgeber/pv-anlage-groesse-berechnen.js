@@ -228,7 +228,7 @@ const artikel = {
           typ: "karten",
           cols: 2,
           items: [
-            { titel: "Vermarktung", text: "Einspeisung zum Marktpreis über einen Stromhändler, OeMAG-Marktpreis oder Direktvermarktung – siehe [Reststromvermarktung](/ratgeber/reststromvermarktung)." },
+            { titel: "Vermarktung", text: "Einspeisung zum Marktpreis über einen Stromhändler, OeMAG-Marktpreis oder Direktvermarktung – siehe [Einspeisung für Betriebe](/einspeisung-gewerbe)." },
             { titel: "Energiegemeinschaft", text: "Überschuss an Mitglieder in der Region liefern und reduzierte Netzentgelte nutzen – siehe [Energiegemeinschaft für Unternehmen](/ratgeber/energiegemeinschaft-gewerbe)." },
             { titel: "Neue Verbraucher", text: "E-Flotte tagsüber laden, Wärmepumpe oder Prozesswärme in die Mittagsstunden legen – das erhöht den Eigenverbrauch ohne Speicher." },
             { titel: "Speicher", text: "Mittagsüberschuss in Abend- und Nachtstunden verschieben, zusätzlich Lastspitzen kappen. Wirtschaftlich meist erst bei Kombination beider Effekte." },

@@ -178,7 +178,8 @@ export const LAENDER = [
   {
     slug: "salzburg",
     name: "Salzburg",
-    im: "in Salzburg",
+    titelName: "Land Salzburg", // Abgrenzung zur Stadt Salzburg im Seitentitel (SEO-Plan M26)
+    im: "im Land Salzburg",
     gesetz: "Salzburger Raumordnungsgesetz 2009 (ROG 2009) und Photovoltaik-Kennzeichnungsverordnung (LGBl. Nr. 73/2023)",
     kurz: "Frei stehende Solaranlagen über 200 m² Kollektorfläche sind im Grünland nur mit einer Kennzeichnung im Flächenwidmungsplan zulässig – vergeben nach einem Punkteschema.",
     schwelle: "über 200 m² Kollektorfläche",

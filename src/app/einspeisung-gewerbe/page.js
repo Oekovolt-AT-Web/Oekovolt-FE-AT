@@ -7,6 +7,8 @@
 //
 // Daten: src/data/oemag.js (jede Zahl mit Quelle, geprüft am 30.09.2026) · Logik: src/lib/einspeisung.js
 // Neutral: keine Versorger-Namen, kein Ranking; Tarife nur über den E-Control-Tarifkalkulator (Link).
+// SEO-Plan (30.09.2026): Title ohne „OeMAG-Marktpreis“ (Zielseite dafür ist /ratgeber/oemag-marktpreis),
+// Dataset mit license und Methodik (M12), Presse-Grafik „Einspeise-Verlauf“ (public/presse/grafiken).
 
 import Link from "next/link";
 import { ArrowUpRight, Calculator, Scale, TrendingUp } from "lucide-react";
@@ -55,25 +57,23 @@ export const revalidate = 3600;
 
 const PFAD = "/einspeisung-gewerbe";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITLE = "Einspeisung für Gewerbe: OeMAG-Marktpreis & Erlös | Ökovolt";
+const TITLE = "PV-Überschuss verkaufen: Einspeisung für Betriebe | Ökovolt";
 const DESCRIPTION =
-  "Wohin mit dem PV-Überschuss? OeMAG-Marktpreis seit 2024 mit Quelle, Direktvermarktung, PPA und Marktprämie im Vergleich plus Rechner für den Jahreserlös.";
+  "Wohin mit dem PV-Überschuss im Betrieb? OeMAG, Direktvermarktung, PPA und Marktprämie im Vergleich – plus Rechner für den Jahreserlös Ihrer Einspeisung.";
+const GRAFIK = { png: "/presse/grafiken/oemag-einspeise-verlauf.png", svg: "/presse/grafiken/oemag-einspeise-verlauf.svg" };
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
   keywords: [
-    "OeMAG Marktpreis",
-    "OeMAG Marktpreis 2026",
-    "Einspeisung Gewerbe",
     "PV Überschuss verkaufen Gewerbe",
+    "Einspeisung Gewerbe",
     "Direktvermarktung Photovoltaik Österreich",
     "PPA Photovoltaik Österreich",
     "EAG Marktprämie",
     "Einspeisetarif Gewerbe",
   ],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,
@@ -242,7 +242,7 @@ export default function EinspeisungGewerbe() {
         "@type": "WebPage",
         "@id": `${PAGE_URL}/#webpage`,
         url: PAGE_URL,
-        name: "Einspeisung für Gewerbe: OeMAG-Marktpreis, Direktvermarktung, PPA und Marktprämie",
+        name: "PV-Überschuss verkaufen: Einspeisung für Betriebe – OeMAG, Direktvermarktung, PPA und Marktprämie",
         description: DESCRIPTION,
         inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE_URL}/#website` },
@@ -253,14 +253,23 @@ export default function EinspeisungGewerbe() {
       {
         "@type": "Dataset",
         "@id": `${PAGE_URL}/#oemag-marktpreis`,
-        name: "OeMAG-Marktpreis Photovoltaik – Monatswerte seit Jänner 2024",
-        description: `Vergütete Monatswerte der OeMAG für Photovoltaik-Überschussstrom nach § 13 Abs. 3 iVm § 41 ÖSG 2012 von ${monatLabel(OEMAG_MONATE[0].monat)} bis ${monatLabel(LETZTER.monat)} in ct/kWh, mit Grundlage (Day-Ahead-Mittel, Unter- oder Obergrenze), Quartalsmarktpreisen der E-Control und Referenzmarktwert PV.`,
+        name: "OeMAG-Marktpreis Photovoltaik – Monatswerte seit Jänner 2024 (Zusammenstellung Ökovolt)",
+        description: `Vergütete Monatswerte der OeMAG für Photovoltaik-Überschussstrom nach § 13 Abs. 3 iVm § 41 ÖSG 2012 von ${monatLabel(OEMAG_MONATE[0].monat)} bis ${monatLabel(LETZTER.monat)} in ct/kWh, mit Grundlage (Day-Ahead-Mittel, Unter- oder Obergrenze), Quartalsmarktpreisen der E-Control und Referenzmarktwert PV. Die Monatswerte sind amtliche Veröffentlichungen der OeMAG; Zusammenstellung, Einordnung und Jahresmittel von Ökovolt.`,
         url: `${PAGE_URL}#verlauf`,
         inLanguage: "de-AT",
         temporalCoverage: `${OEMAG_MONATE[0].monat}/${LETZTER.monat}`,
         spatialCoverage: { "@type": "Country", name: "Österreich" },
-        creator: { "@type": "Organization", name: "OeMAG Abwicklungsstelle für Ökostrom AG", url: "https://www.oem-ag.at" },
-        isBasedOn: [QUELLEN.oemag.url, QUELLEN.oemag2025.url, QUELLEN.oemag2024.url, QUELLEN.ecArchiv.url, QUELLEN.ecRmw.url],
+        creator: { "@id": `${BASE_URL}/#organization` },
+        publisher: { "@id": `${BASE_URL}/#organization` },
+        license: "https://creativecommons.org/licenses/by/4.0/",
+        creditText: "Ökovolt Solartechnik GmbH; Monatswerte: OeMAG Abwicklungsstelle für Ökostrom AG; Quartalspreise und Referenzmarktwert: E-Control",
+        isAccessibleForFree: true,
+        measurementTechnique: `Monatswerte unverändert aus den Veröffentlichungen der OeMAG übernommen (Marktpreis-Seite 2026, Marktpreise_2024.pdf, Marktpreise_2025.pdf), Grundlage je Monat aus der Kommentarspalte der OeMAG und mit dem Korridor 60–100 % des E-Control-Quartalspreises abgeglichen (ab 2026 abzüglich ${ctText(AE_2026)} ct/kWh Ausgleichsenergie). Jahresmittel gewichtet mit dem monatlichen PV-Ertrag laut PVGIS (Ostermiething, Süd 35°). Geprüft am ${STAND.label}.`,
+        isBasedOn: [QUELLEN.oemag, QUELLEN.oemag2025, QUELLEN.oemag2024, QUELLEN.ecArchiv, QUELLEN.ecRmw].map((q) => ({ "@type": "CreativeWork", name: q.label, url: q.url })),
+        distribution: [
+          { "@type": "DataDownload", name: "Grafik OeMAG-Marktpreis und Marktwert Solar (PNG)", contentUrl: `${BASE_URL}${GRAFIK.png}`, encodingFormat: "image/png" },
+          { "@type": "DataDownload", name: "Grafik OeMAG-Marktpreis und Marktwert Solar (SVG)", contentUrl: `${BASE_URL}${GRAFIK.svg}`, encodingFormat: "image/svg+xml" },
+        ],
         variableMeasured: [
           { "@type": "PropertyValue", name: "Marktpreis Photovoltaik (OeMAG)", unitText: "ct/kWh" },
           { "@type": "PropertyValue", name: "Referenzmarktwert Photovoltaik (E-Control, § 13 EAG)", unitText: "ct/kWh" },
@@ -278,7 +287,7 @@ export default function EinspeisungGewerbe() {
         variant="immersive"
         breadcrumbs={[{ name: "Gewerbe", href: "/gewerbe" }, { name: "Einspeisung für Gewerbe" }]}
         eyebrow="Einspeisung für Gewerbe"
-        title={<>Wohin mit dem <span className="ov-text-gradient-light">Überschuss?</span></>}
+        title={<>Wohin mit dem PV-Überschuss? <span className="ov-text-gradient-light">Einspeisung für Betriebe</span></>}
         lead="Was Ihr Betrieb nicht selbst verbraucht, wird verkauft – an die OeMAG zum Marktpreis, an einen Energieversorger, über einen Direktvermarkter oder per PPA. Hier finden Sie alle OeMAG-Monatswerte seit 2024 mit Quelle, die Wege im neutralen Vergleich und einen Rechner für Ihren Jahreserlös."
         image={{ src: "/Images/AT/loesungen-b/speicher-industriedach-pv.jpg", alt: "Luftbild eines Industriedachs mit großer Photovoltaikanlage", position: "center 45%" }}
         points={["OeMAG-Marktpreis Monat für Monat", "Direktvermarktung, PPA, Marktprämie", "Erlös-Rechner für Ihre Menge", "Neutral, ohne Versorger-Ranking"]}
@@ -340,7 +349,16 @@ export default function EinspeisungGewerbe() {
           ))}
         </ul>
         <p className="mt-4 text-[13px] leading-relaxed text-ink-500">
-          Gewichtet mit dem monatlichen PV-Ertrag (PVGIS, Ostermiething, Süd 35°), weil im Sommer mehr eingespeist wird. Marktwert Solar = Referenzmarktwert PV der E-Control (§ 13 EAG).
+          Gewichtet mit dem monatlichen PV-Ertrag (PVGIS, Ostermiething, Süd 35°), weil im Sommer mehr eingespeist wird. Marktwert Solar = Referenzmarktwert PV der E-Control (§ 13 EAG). Verlauf als Grafik zur
+          Weiterverwendung (CC BY 4.0, Quelle „Ökovolt, Daten: OeMAG, E-Control“):{" "}
+          <a href={GRAFIK.png} download className={LINK}>
+            PNG
+          </a>{" "}
+          ·{" "}
+          <a href={GRAFIK.svg} download className={LINK}>
+            SVG
+          </a>
+          .
         </p>
 
         <Fachdetails className="mt-8" titel="Alle Monatswerte als Tabelle" untertitel="Mit Korridor, Grundlage laut OeMAG, Referenzmarktwert und Quelle je Monat">
@@ -487,8 +505,8 @@ export default function EinspeisungGewerbe() {
       <Section tone="white" space="md" id="faq" className="scroll-mt-24">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Einspeisung im Gewerbe – kurz beantwortet" lead={`Stand ${STAND.label}. Verbindlich sind die Veröffentlichungen von OeMAG, E-Control und EAG-Abwicklungsstelle.`}>
-            <Link href="/ratgeber/reststromvermarktung" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
-              Ratgeber: Reststromvermarktung mit Rechenbeispiel
+            <Link href="/ratgeber/oemag-marktpreis#beispiel" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+              Ratgeber: OeMAG-Marktpreis mit Rechenbeispiel
               <TrendingUp aria-hidden="true" className="h-4 w-4" />
             </Link>
           </SectionHeading>

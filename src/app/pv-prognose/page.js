@@ -4,6 +4,7 @@
 // Vorhersagedaten von GeoSphere Austria (C-LAEF AlpeAdria, nwp-v2 und ensemble-v2, CC BY 4.0),
 // kombiniert mit den Day-Ahead-Preisen der Gebotszone AT („Goldene Stunden“).
 // Werkzeug: src/components/Prognose/PvPrognose.js · Daten: /api/pv-prognose · Modell: src/lib/prognose/*
+// SEO-Plan M12 (30.09.2026): Datensätze im Schema mit description, license und Methodik.
 
 import Link from "next/link";
 import { ArrowUpRight, BatteryCharging, Calculator, CloudSun, Cpu, Database, Info, PlugZap, Snowflake, Sun, Thermometer, Wind } from "lucide-react";
@@ -26,7 +27,7 @@ const PFAD = "/pv-prognose";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "PV-Prognose Österreich: Solarertrag stündlich | Ökovolt";
 const BESCHREIBUNG =
-  "Stündliche PV-Ertragsprognose für die nächsten rund 60 Stunden an Ihrer Adresse in Österreich – mit Wetterdaten von GeoSphere Austria, Unsicherheitsband und Goldenen Stunden nach Börsenpreis.";
+  "Stündliche PV-Prognose für rund 60 Stunden an Ihrer Adresse in Österreich: Wetterdaten von GeoSphere Austria, Unsicherheitsband und günstigste Börsenstunden.";
 const BILD = "/Images/AT/loesungen-b/speicher-industriedach-pv.jpg";
 
 export const metadata = {
@@ -34,7 +35,6 @@ export const metadata = {
   description: BESCHREIBUNG,
   keywords: ["PV-Prognose", "Photovoltaik Ertragsprognose", "Solarprognose Österreich", "PV Vorhersage morgen", "Solarstrom Prognose", "GeoSphere Austria Globalstrahlung"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -51,11 +51,13 @@ const DATENSAETZE = [
     name: "C-LAEF AlpeAdria deterministisch (nwp-v2-1h-1km)",
     url: "https://data.hub.geosphere.at/dataset/nwp-v2-1h-1km",
     doi: "https://doi.org/10.60669/rv80-9d61",
+    beschreibung: "Deterministische Wettervorhersage des Modells C-LAEF AlpeAdria von GeoSphere Austria im 1-km-Raster, stündlich, rund 60 Stunden voraus, alle drei Stunden neu gerechnet – u. a. Globalstrahlung und Lufttemperatur.",
   },
   {
     name: "C-LAEF AlpeAdria Ensemble (ensemble-v2-1h-1km)",
     url: "https://data.hub.geosphere.at/dataset/ensemble-v2-1h-1km",
     doi: "https://doi.org/10.60669/f21y-5007",
+    beschreibung: "Ensemblevorhersage C-LAEF AlpeAdria von GeoSphere Austria (16 Member und ein Kontrolllauf) im 1-km-Raster, stündlich; verwendet als Perzentile 10, 50 und 90 für das Unsicherheitsband.",
   },
 ];
 
@@ -131,6 +133,7 @@ const schema = {
       isBasedOn: DATENSAETZE.map((d) => ({
         "@type": "Dataset",
         name: d.name,
+        description: d.beschreibung,
         url: d.url,
         identifier: d.doi,
         license: "https://creativecommons.org/licenses/by/4.0/",

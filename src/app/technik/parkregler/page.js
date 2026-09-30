@@ -34,6 +34,7 @@ import ThemenExplorer from "@/components/ServiceAT/A/ThemenExplorer";
 import Tabs from "@/components/ServiceAT/A/Tabs";
 import Bildband from "@/components/ServiceAT/A/Bildband";
 import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
+import { begriff, definedTerm } from "@/data/lexikon";
 
 const PFAD = "/technik/parkregler";
 const TITEL = "EZA-Regler & Parkregler nach TOR Erzeuger | Ökovolt";
@@ -47,6 +48,9 @@ export const metadata = seitenMeta({
   bild: "/Images/AT/technik/umspannwerk-obersielach.jpg",
   keywords: ["Parkregler", "EZA-Regler Österreich", "TOR Erzeuger Typ B", "Q(U)-Regelung", "Blindleistungsregelung PV", "Einspeisebegrenzung", "Spitzenkappung ElWG", "Fernwirktechnik PV"],
 });
+
+// Definitionssatz aus dem Lexikon (eine Quelle, SEO-Plan M23): „Ein EZA-Regler ist …“
+const DEFINITION = begriff("eza-regler").kurz;
 
 // Übersichtstabelle (Fachdetails) aus denselben Daten wie der Typ-Finder
 const TYPEN_TABELLE = Object.entries(TYPEN).map(([k, t]) => [`Typ ${k}`, t.grenze, t.netz, t.regelwerk, `${t.anforderungen.join("; ")}.`]);
@@ -198,21 +202,26 @@ const QUELLEN = [
 ];
 
 export default function ParkreglerPage() {
+  const schema = seitenSchema({
+    pfad: PFAD,
+    name: "Parkregler (EZA-Regler) für PV-Anlagen in Österreich",
+    beschreibung: BESCHREIBUNG,
+    stand: "2026-09-30",
+    service: {
+      name: "Parkregler / EZA-Regler: Planung, Parametrierung und Inbetriebnahme",
+      serviceType: "Regelung von Erzeugungsanlagen am Netzanschlusspunkt",
+      beschreibung: "Herstellerunabhängige Regelung von Wirk- und Blindleistung am Netzanschlusspunkt nach TOR Stromerzeugungsanlagen, mit Fernwirkanbindung an Netzbetreiber und Direktvermarkter.",
+      audience: "Anlagenbetreiber, Planer, Asset Manager, Netzbetreiber",
+    },
+  });
+  // Begriff aus dem Lexikon (gleiche @id wie im DefinedTermSet auf /wissen/lexikon)
+  const term = definedTerm("eza-regler");
+  schema["@graph"][0].mentions = { "@id": term["@id"] };
+  schema["@graph"].push(term);
+
   return (
     <div>
-      <JsonLd
-        daten={seitenSchema({
-          pfad: PFAD,
-          name: "Parkregler (EZA-Regler) für PV-Anlagen in Österreich",
-          beschreibung: BESCHREIBUNG,
-          service: {
-            name: "Parkregler / EZA-Regler: Planung, Parametrierung und Inbetriebnahme",
-            serviceType: "Regelung von Erzeugungsanlagen am Netzanschlusspunkt",
-            beschreibung: "Herstellerunabhängige Regelung von Wirk- und Blindleistung am Netzanschlusspunkt nach TOR Stromerzeugungsanlagen, mit Fernwirkanbindung an Netzbetreiber und Direktvermarkter.",
-            audience: "Anlagenbetreiber, Planer, Asset Manager, Netzbetreiber",
-          },
-        })}
-      />
+      <JsonLd daten={schema} />
 
       <PageHero
         variant="immersive"
@@ -223,7 +232,7 @@ export default function ParkreglerPage() {
             Parkregler für den Netzanschlusspunkt – <span className="ov-text-gradient-light">nach TOR Erzeuger</span>
           </>
         }
-        lead="Unser eigener Parkregler (EZA-Regler) misst am Netzanschlusspunkt und führt Wechselrichter, Speicher und Ladepunkte so, dass Wirkleistung, Blindleistung und Einspeiselimit die Vorgaben Ihres Netzbetreibers einhalten – herstellerunabhängig und dokumentiert."
+        lead={`${DEFINITION} Ökovolt setzt dafür einen selbst entwickelten Parkregler ein – herstellerunabhängig und dokumentiert.`}
         image={{ src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "Freiluft-Schaltanlage eines Umspannwerks in Kärnten unter blauem Himmel" }}
         actions={[
           { label: "Projekt besprechen", href: "/termin?art=video" },
@@ -242,9 +251,8 @@ export default function ParkreglerPage() {
         ]}
       >
         <p>
-          Ein Parkregler ist die übergeordnete Regelung einer PV-Anlage: Er misst Spannung, Strom, Wirk- und Blindleistung am Netzanschlusspunkt und gibt den einzelnen
-          Wechselrichtern, Speichern und Ladepunkten laufend Sollwerte vor. So hält die gesamte Anlage dort ein, was der Netzbetreiber verlangt – Einspeiselimit,
-          Blindleistungsverfahren und Fernabschaltung.
+          Der Parkregler misst Spannung, Strom, Wirk- und Blindleistung am Netzanschlusspunkt und gibt den einzelnen Wechselrichtern, Speichern und Ladepunkten
+          laufend Sollwerte vor. So hält die gesamte Anlage dort ein, was der Netzbetreiber verlangt – Einspeiselimit, Blindleistungsverfahren und Fernabschaltung.
         </p>
         <p>
           In Österreich stehen die Anforderungen in den TOR Stromerzeugungsanlagen der E-Control (Typ A bis D) und im Netzanschlussvertrag. Wechselrichter allein können das

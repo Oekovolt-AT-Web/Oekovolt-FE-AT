@@ -1,7 +1,12 @@
 // service/finanzierung/page.js – Österreich: Finanzierung von Gewerbe-PV (Kauf, Kredit, Leasing, Mietkauf, Contracting/PPA)
 //
 // Keine konkreten Konditionen, Zinssätze oder Partnernamen – nur Strukturen und Ablauf.
+// Neutral (R-37/F-26, offene Leasing-Entscheidung, Gewerberecht Leasingvermittlung R-20):
+// „Modelle am Markt“ – Ökovolt BERÄT zu Finanzierungsmodellen und liefert die technischen
+// Unterlagen; keine Aussage, dass Ökovolt Leasing organisiert, vermittelt oder Partner hat.
+// Belegt die GF später Partnerschaften, Texte hier bewusst erweitern.
 
+import Link from "next/link";
 import { Banknote, Building2, Calculator, FileSignature, FileText, Landmark, Receipt, Scale, Wrench } from "lucide-react";
 
 import Section from "@/components/ui/Section";
@@ -56,8 +61,17 @@ const UNTERLAGEN = [
 
 const FAQ = [
   {
-    q: "Organisiert Ökovolt das Leasing?",
-    a: "Ja, wir organisieren die Finanzierung gemeinsam mit Leasing- und Bankpartnern: Wir liefern technische und wirtschaftliche Unterlagen, stimmen Lieferung und Abnahme mit dem Leasinggeber ab und begleiten Sie bis zur Übernahmebestätigung. Den Leasing- oder Kreditvertrag schließen Sie direkt mit dem Finanzierungspartner; Konditionen legt ausschließlich dieser fest.",
+    q: "Bietet Ökovolt Leasing oder Finanzierungen an?",
+    a: (
+      <>
+        Leasing, Kredit, Mietkauf, Contracting und PPA sind Modelle, die Banken, Leasinggesellschaften und Contractoren am Markt anbieten. Wir beraten Sie zu diesen
+        Finanzierungsmodellen, rechnen die Varianten für Ihre Anlage durch und stellen die technischen Unterlagen und die Wirtschaftlichkeitsrechnung für Ihren
+        Finanzierungspartner zusammen. Den Leasing- oder Kreditvertrag schließen Sie direkt mit dem Finanzierungspartner Ihrer Wahl; Konditionen legt ausschließlich dieser
+        fest. Einen ersten Vergleich rechnen Sie im <Link href="/rechner/finanzierung" className="font-semibold text-ov-700 underline underline-offset-2 hover:text-ov-800">Finanzierungsrechner für Kauf, Leasing, Contracting und PPA</Link>.
+      </>
+    ),
+    aText:
+      "Leasing, Kredit, Mietkauf, Contracting und PPA sind Modelle, die Banken, Leasinggesellschaften und Contractoren am Markt anbieten. Wir beraten Sie zu diesen Finanzierungsmodellen, rechnen die Varianten für Ihre Anlage durch und stellen die technischen Unterlagen und die Wirtschaftlichkeitsrechnung für Ihren Finanzierungspartner zusammen. Den Leasing- oder Kreditvertrag schließen Sie direkt mit dem Finanzierungspartner Ihrer Wahl; Konditionen legt ausschließlich dieser fest. Einen ersten Vergleich rechnen Sie im Finanzierungsrechner für Kauf, Leasing, Contracting und PPA.",
   },
   {
     q: "Welche Finanzierung ist steuerlich am günstigsten?",
@@ -73,7 +87,7 @@ const FAQ = [
   },
   {
     q: "Nennen Sie uns Zinssätze oder Leasingraten?",
-    a: "Nein, nicht auf der Website. Zinssätze und Leasingfaktoren hängen von Bonität, Laufzeit, Sicherheiten, Restwert und Marktzins ab und werden vom Finanzierungspartner festgelegt. Sie erhalten ein konkretes Angebot auf Basis Ihrer Unterlagen.",
+    a: "Nein, nicht auf der Website. Zinssätze und Leasingfaktoren hängen von Bonität, Laufzeit, Sicherheiten, Restwert und Marktzins ab und werden vom Finanzierungspartner festgelegt. Ein konkretes Angebot erhalten Sie von Ihrer Bank oder Ihrem Leasinggeber auf Basis Ihrer Unterlagen.",
   },
   {
     q: "Welche Unterlagen braucht die Bank oder der Leasinggeber?",
@@ -85,7 +99,7 @@ const FAQ = [
   },
   {
     q: "Gibt es Förderkredite für Photovoltaik im Betrieb?",
-    a: "Neben Hausbank-Krediten bieten Förderbanken wie die aws Haftungen und Kredite für Investitionen an, für Tourismusbetriebe die ÖHT. Ob und zu welchen Bedingungen PV-Investitionen aktuell gefördert werden, ändert sich laufend – wir prüfen das im Einzelfall gemeinsam mit Ihrer Bank.",
+    a: "Neben Hausbank-Krediten bieten Förderbanken wie die aws Haftungen und Kredite für Investitionen an, für Tourismusbetriebe die ÖHT. Ob und zu welchen Bedingungen PV-Investitionen aktuell gefördert werden, ändert sich laufend – klären Sie das im Einzelfall mit Ihrer Hausbank oder der Förderbank; die technischen Unterlagen dafür stellen wir zusammen.",
   },
 ];
 
@@ -103,7 +117,7 @@ export default function FinanzierungPage() {
   return (
     <div>
       <Stil />
-      <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Finanzierung von Photovoltaikanlagen für Unternehmen", beschreibung: BESCHREIBUNG, serviceType: "Organisation von PV-Finanzierung, Leasing und Contracting" })} />
+      <JsonLd daten={serviceSchema({ pfad: PFAD, name: "Finanzierung von Photovoltaikanlagen für Unternehmen", beschreibung: BESCHREIBUNG, serviceType: "Beratung zu Finanzierungsmodellen für Photovoltaik (Kauf, Kredit, Leasing, Contracting, PPA)" })} />
       <JsonLd daten={rechnerSchema} />
 
       <HeroBild
@@ -114,9 +128,9 @@ export default function FinanzierungPage() {
             PV-Anlage finanzieren – <span className="ov-text-gradient-light">passend zu Bilanz und Liquidität</span>
           </>
         }
-        lead="Kauf, Bankkredit, Leasing, Mietkauf oder Contracting: Jede Form wirkt anders auf Bilanz, Liquidität und Steuer. Wir rechnen die Varianten für Ihre Anlage durch und organisieren die Finanzierung gemeinsam mit Leasing- und Bankpartnern."
+        lead="Kauf, Bankkredit, Leasing, Mietkauf oder Contracting: Jede Form wirkt anders auf Bilanz, Liquidität und Steuer. Wir beraten zu den Finanzierungsmodellen am Markt, rechnen die Varianten für Ihre Anlage durch und liefern die technischen Unterlagen für Bank oder Leasinggeber."
         image={{ src: "/Images/AT/service-b/besprechung-vertrag.jpg", alt: "Handschlag über einem unterschriebenen Finanzierungsvertrag" }}
-        points={["Sechs Finanzierungswege im Vergleich", "Leasing organisiert durch Ökovolt", "IFB, AfA und EAG-Förderung berücksichtigt", "Unterlagen aus einer Hand"]}
+        points={["Sechs Finanzierungswege im Vergleich", "Beratung zu allen Finanzierungsmodellen", "IFB, AfA und EAG-Förderung berücksichtigt", "Unterlagen aus einer Hand"]}
         actions={[
           { label: "Finanzierung anfragen", href: "#anfrage" },
           { label: "Rate berechnen", href: "#rechner", icon: Calculator },
@@ -176,7 +190,12 @@ export default function FinanzierungPage() {
         <Hinweis ton="recht" titel="Keine Konditionen auf der Website" className="mt-6">
           <p>
             Zinssätze, Leasingfaktoren und Restwerte hängen von Bonität, Laufzeit, Sicherheiten und Marktzins ab und werden ausschließlich vom Finanzierungspartner festgelegt. Wir nennen
-            deshalb hier keine Konditionen, sondern holen für Sie konkrete Angebote ein.
+            deshalb hier keine Konditionen; konkrete Angebote holen Sie bei Bank, Leasinggesellschaft oder Contractor ein. Einen ersten Vergleich mit eigenen Beispielwerten
+            rechnen Sie im{" "}
+            <Link href="/rechner/finanzierung" className="font-semibold underline underline-offset-2">
+              Finanzierungsrechner
+            </Link>
+            .
           </p>
         </Hinweis>
       </Section>
@@ -186,7 +205,7 @@ export default function FinanzierungPage() {
         bild={{ src: "/Images/AT/service-b/drohne-solarpark-2.jpg", alt: "Gewerbedach voller Photovoltaikmodule von oben" }}
         eyebrow="Steuer & Förderung"
         titel="Drei Punkte, die vor der Entscheidung geklärt sein sollten"
-        text="Förderung und Steuer wirken je nach Finanzierungsform unterschiedlich. Leasing organisieren wir mit Partnern – die technischen Unterlagen und die Wirtschaftlichkeitsrechnung kommen von uns."
+        text="Förderung und Steuer wirken je nach Finanzierungsform unterschiedlich. Den Finanzierungsvertrag schließen Sie mit Bank oder Leasinggeber – die technischen Unterlagen und die Wirtschaftlichkeitsrechnung kommen von uns."
         punkte={[
           { icon: Receipt, titel: "Investitionsfreibetrag", text: "PV ist eine ökologische Investition: befristet 22 % (11/2025–12/2026, sonst 15 %), Bemessung höchstens 1 Mio. € pro Wirtschaftsjahr, Behaltefrist vier Jahre." },
           { icon: Banknote, titel: "EAG-Investitionszuschuss", text: "Über die OeMAG-Fördercalls; das Förderansuchen muss vor Inbetriebnahme gestellt werden. Die Kategorie richtet sich nach der Engpassleistung." },
@@ -200,9 +219,9 @@ export default function FinanzierungPage() {
         <Steps
           items={[
             { icon: Calculator, title: "Wirtschaftlichkeit", text: "Anlagenplanung nach Lastgang und Variantenrechnung für Kauf, Kredit, Leasing und Contracting." },
-            { icon: Building2, title: "Finanzierungsweg", text: "Entscheidung mit Geschäftsführung und Steuerberatung; wir holen Angebote der Partner ein." },
-            { icon: FileSignature, title: "Förderung & Vertrag", text: "Förderansuchen rechtzeitig vor Inbetriebnahme, Finanzierungsvertrag direkt mit dem Partner." },
-            { icon: Wrench, title: "Errichtung & Übergabe", text: "Montage, Inbetriebnahme, Übernahmebestätigung für den Leasinggeber und laufende Wartung." },
+            { icon: Building2, title: "Finanzierungsweg", text: "Entscheidung mit Geschäftsführung und Steuerberatung; Angebote holen Sie bei Bank, Leasinggeber oder Contractor ein." },
+            { icon: FileSignature, title: "Förderung & Vertrag", text: "Förderansuchen rechtzeitig vor Inbetriebnahme, Finanzierungsvertrag direkt mit dem Finanzierungspartner." },
+            { icon: Wrench, title: "Errichtung & Übergabe", text: "Montage, Inbetriebnahme, bei Leasing die Übernahmebestätigung für den Leasinggeber, danach laufende Wartung." },
           ]}
         />
       </Section>
@@ -263,8 +282,8 @@ export default function FinanzierungPage() {
       <AnfrageSektion
         tone="white"
         titel="Finanzierung anfragen"
-        lead="Nennen Sie uns Projekt und bevorzugte Finanzierungsform. Wir melden uns mit einer Variantenrechnung und holen Angebote unserer Partner ein."
-        schritte={["Sie beschreiben Projekt und Wunsch.", "Wir rechnen Varianten und sagen, welche Unterlagen nötig sind.", "Sie erhalten Angebote der Finanzierungspartner zum Vergleich."]}
+        lead="Nennen Sie uns Projekt und bevorzugte Finanzierungsform. Wir melden uns mit einer Variantenrechnung und sagen, welche Unterlagen Bank oder Leasinggeber brauchen."
+        schritte={["Sie beschreiben Projekt und Wunsch.", "Wir rechnen Varianten und sagen, welche Unterlagen nötig sind.", "Sie holen mit unseren Unterlagen Angebote bei Finanzierungspartnern Ihrer Wahl ein."]}
         formular={{
           betreff: "Finanzierung / Leasing",
           thema: "Photovoltaik",
@@ -286,6 +305,7 @@ export default function FinanzierungPage() {
 
       <Abschluss
         links={[
+          { href: "/rechner/finanzierung", art: "Rechner", titel: "Finanzierungsrechner: Kauf, Leasing, Contracting, PPA" },
           { href: "/ratgeber/photovoltaik-leasing", art: "Ratgeber", titel: "Photovoltaik-Leasing" },
           { href: "/ratgeber/investitionsfreibetrag-photovoltaik", art: "Ratgeber", titel: "Investitionsfreibetrag für PV" },
           { href: "/ratgeber/eag-investitionszuschuss", art: "Ratgeber", titel: "EAG-Investitionszuschuss" },
@@ -306,7 +326,7 @@ export default function FinanzierungPage() {
       <CtaBand
         eyebrow="Finanzierung"
         title="Die beste Anlage ist die, die sich auch finanzieren lässt."
-        text="Wir rechnen Kauf, Kredit, Leasing und Contracting für Ihr Projekt durch und organisieren die Finanzierung mit unseren Partnern – transparent und ohne Konditionen aus der Werbung."
+        text="Wir beraten zu Kauf, Kredit, Leasing und Contracting und rechnen die Varianten für Ihr Projekt durch – transparent und ohne Konditionen aus der Werbung."
         primary={{ label: "Finanzierung anfragen", href: "#anfrage" }}
         secondary={{ label: "Rechner öffnen", href: "#rechner", icon: Calculator }}
       />

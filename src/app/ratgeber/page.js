@@ -44,7 +44,6 @@ export const metadata = {
     },
   },
   other: { "fediverse:creator": "@ratgeber@oekovolt.com" },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,

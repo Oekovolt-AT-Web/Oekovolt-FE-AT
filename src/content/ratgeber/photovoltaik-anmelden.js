@@ -5,14 +5,14 @@
 
 const artikel = {
   slug: "photovoltaik-anmelden",
-  title: "PV-Anlage anmelden in Österreich: Netzbetreiber, Zählpunkt, Fristen",
-  seoTitle: "PV-Anlage anmelden Österreich 2026 | Ökovolt",
+  title: "PV-Anlage im Betrieb anmelden: Typ A und B, Unterlagen, Kosten ab 2027",
+  seoTitle: "PV-Anlage im Betrieb anmelden: Typ A, B & Kosten | Ökovolt",
   kurzTitel: "PV-Anlage anmelden",
   description:
-    "PV-Anlage anmelden in Österreich: Netzzugangsantrag, Anschlusskonzept, Fertigstellungsmeldung, Zählpunkt und Stromabnahme – Ablauf und ElWG-Neuerungen 2027.",
+    "PV-Anlage im Betrieb anmelden: Typ A und B nach TOR, Unterlagen für den Netzbetreiber, Netzanschlussentgelt ab 2027 und typische Fehler bei Gewerbe-PV.",
   excerpt:
     "Wer in Österreich eine PV-Anlage ans Netz bringt, braucht vor der Montage einen Netzzugangsantrag und danach eine Fertigstellungsmeldung. Was Betriebe dabei beachten müssen – inklusive der ElWG-Änderungen ab 2027.",
-  hauptKeyword: "pv anlage anmelden österreich",
+  hauptKeyword: "pv anlage anmelden gewerbe",
   keywords: [
     "PV-Anlage anmelden Österreich",
     "Netzzugangsantrag Photovoltaik",
@@ -23,7 +23,7 @@ const artikel = {
     "Netzanschlussentgelt PV 2027",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Netz, Energiegemeinschaften & Markt",
   bild: "/Images/Dienstleistungen/Service/solar-panel-7518786_1280.jpg",
   bildAlt: "Photovoltaikmodule auf einem Dach vor blauem Himmel",
@@ -34,6 +34,7 @@ const artikel = {
     "Ab einer Maximalkapazität von **0,8 kW** gilt eine Anlage als Stromerzeugungsanlage **Typ A** nach den TOR, ab **250 kW** als **Typ B** – mit deutlich mehr Technik- und Nachweispflichten.",
     "Mit dem **ElWG** gilt ab 1. Jänner 2027: Einspeiser bis **15 kW** netzwirksamer Leistung zahlen kein Netzanschlussentgelt, bis **20 kW** keinen Versorgungsinfrastrukturbeitrag (darüber höchstens 0,05 ct/kWh). Neue PV-Anlagen über 7 kW können auf **70 %** der Modulleistung begrenzt werden.",
     "Den Überschuss nimmt ein Stromhändler oder die **OeMAG** zum Marktpreis ab – im August 2026 lag dieser für Photovoltaik bei **8,997 ct/kWh**.",
+    "Den Ablauf Schritt für Schritt samt Hinweisen zu einzelnen Netzbetreibern finden Sie auf [PV-Anlage beim Netzbetreiber anmelden](/netzanmeldung); dieser Ratgeber vertieft die Regeln für Gewerbeanlagen.",
   ],
 
   abschnitte: [
@@ -218,7 +219,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Welche Variante sich rechnet, hängt von Menge, Einspeiseprofil und Risikobereitschaft ab. Einen Überblick geben die Ratgeber [Reststromvermarktung](/ratgeber/reststromvermarktung), [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden).",
+          text: "Welche Variante sich rechnet, hängt von Menge, Einspeiseprofil und Risikobereitschaft ab. Einen Überblick geben die Ratgeber [Reststromvermarktung](/service/direktvermarktung), [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden).",
         },
       ],
     },
@@ -285,7 +286,7 @@ const artikel = {
 
   passend: [
     { href: "/ratgeber/tor-erzeuger-netzanschluss", titel: "TOR Erzeuger & Netzanschluss", text: "Typ A bis D, Netzebenen und Netzprüfung." },
-    { href: "/ratgeber/photovoltaik-genehmigung", titel: "Photovoltaik-Genehmigung", text: "Bau- und Elektrizitätsrecht in den neun Ländern." },
+    { href: "/netzanmeldung", titel: "PV-Anlage anmelden", text: "Ablauf, Unterlagen und Netzbetreiber im Überblick." },
     { href: "/technik/parkregler", titel: "Ökovolt Parkregler", text: "EZA-Regler für Anlagen im Mittelspannungsnetz." },
     { href: "/gewerbe", titel: "Photovoltaik für Betriebe", text: "Planung, Anmeldung und Bau aus einer Hand." },
   ],

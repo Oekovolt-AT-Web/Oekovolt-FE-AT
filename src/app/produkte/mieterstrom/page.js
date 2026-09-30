@@ -15,6 +15,7 @@
 // Keine Backoffice-Texte mehr: Die bisherige API lieferte das deutsche
 // Mieterstrom-Modell (EnWG/EEG), das in Österreich nicht gilt.
 
+import Link from "next/link";
 import {
   BadgeEuro,
   Building,
@@ -52,16 +53,15 @@ import { BASE_URL, FIRMA } from "@/lib/site";
 const PFAD = "/produkte/mieterstrom";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-const TITLE = "Gemeinschaftliche Erzeugungsanlage (GEA) | Ökovolt";
+const TITLE = "Mieterstrom mit GEA: PV im Mehrparteienhaus | Ökovolt";
 const DESCRIPTION =
-  "Gemeinschaftliche Erzeugungsanlage nach ElWG: PV-Strom im Mehrparteienhaus und Gewerbepark teilen – Anlage, Messung, Schlüssel und Vertrag aus einer Hand.";
+  "Mieterstrom in Österreich mit gemeinschaftlicher Erzeugungsanlage: PV-Strom in Wohnanlage und Gewerbepark teilen – Anlage, Messung und Vertrag aus einer Hand.";
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ["Gemeinschaftliche Erzeugungsanlage", "GEA Photovoltaik", "PV Mehrparteienhaus", "Photovoltaik Wohnanlage", "Gewerbepark Photovoltaik", "ElWG"],
+  keywords: ["Mieterstrom Österreich", "Gemeinschaftliche Erzeugungsanlage", "GEA Photovoltaik", "PV Mehrparteienhaus", "Photovoltaik Wohnanlage", "Gewerbepark Photovoltaik", "ElWG"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -146,14 +146,27 @@ export default function GemeinschaftlicheErzeugungsanlagePage() {
 
       <PageHero
         variant="immersive"
-        breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Gemeinschaftliche Erzeugungsanlage" }]}
+        breadcrumbs={[{ name: "Produkte", href: "/produkte/photovoltaikanlage" }, { name: "Mieterstrom (GEA)" }]}
         eyebrow="GEA · Mehrparteienhaus & Gewerbepark"
         title={
           <>
-            Solarstrom vom Dach – <span className="ov-text-gradient-light">gemeinsam im Gebäude genutzt</span>
+            Mieterstrom mit <span className="ov-text-gradient-light">gemeinschaftlicher Erzeugungsanlage</span>
           </>
         }
-        lead="Mit einer gemeinschaftlichen Erzeugungsanlage teilen Bewohner eines Mehrparteienhauses oder Mieter eines Gewerbeparks den Strom einer Photovoltaikanlage – über die eigene Hauptleitung, ohne Netzentgelte für den intern verteilten Strom. Wir planen Anlage, Messung und Aufteilung nach österreichischem Recht."
+        lead={
+          <>
+            <span className="block font-display text-[1.15em] font-bold leading-snug text-white">Solarstrom vom Dach – gemeinsam im Gebäude genutzt</span>
+            <span className="mt-3 block">
+              Mit einer gemeinschaftlichen Erzeugungsanlage teilen Bewohner eines Mehrparteienhauses oder Mieter eines Gewerbeparks den Strom einer Photovoltaikanlage – über die
+              eigene Hauptleitung, ohne Netzentgelte für den intern verteilten Strom. Wir planen Anlage, Messung und Aufteilung nach österreichischem Recht. Recht und Verträge im
+              Detail erklärt der Ratgeber{" "}
+              <Link href="/ratgeber/gemeinschaftliche-erzeugungsanlage" className="font-semibold text-white underline decoration-white/40 underline-offset-2 hover:decoration-current">
+                Gemeinschaftliche Erzeugungsanlage
+              </Link>
+              .
+            </span>
+          </>
+        }
         image={{ src: "/Images/AT/produkte-regionen/mieterstrom-mehrfamilienhaus-pv.jpg", alt: "Mehrfamilienhaus mit Photovoltaikanlage auf dem Flachdach (Symbolbild)", position: "50% 35%" }}
         points={["Nach ElWG ab 1. Oktober 2026", "Wohnanlage, WEG, Gewerbepark", "Statischer oder dynamischer Schlüssel", "Anlage, Messung & Vertrag aus einer Hand"]}
         actions={[

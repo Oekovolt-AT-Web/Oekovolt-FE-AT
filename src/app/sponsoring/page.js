@@ -18,6 +18,7 @@ import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import SponsoringAnfrage from "@/components/Sponsoring/SponsoringAnfrage";
 import SponsoringCheck from "@/components/Sponsoring/SponsoringCheck";
+import { GEFOERDERTE_SICHTBAR, SPONSORING_REL } from "@/components/Sponsoring/sponsoringDaten";
 import FotoKachel from "@/components/Team/FotoKachel";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 
@@ -104,6 +105,10 @@ const FAQ = [
   {
     q: "Wie früh sollten wir anfragen?",
     a: "So früh wie möglich. Sponsoring planen wir mit einem Jahresbudget; kurzfristige Anfragen können wir nur berücksichtigen, wenn noch Mittel frei sind.",
+  },
+  {
+    q: "Wie werden Links im Rahmen eines Sponsorings gekennzeichnet?",
+    a: "Als bezahlte Links: Verlinken wir auf eine geförderte Organisation, trägt der Link das Attribut rel=\"sponsored\". Um dasselbe bitten wir, wenn Sie Ökovolt als Sponsor auf Ihrer Website verlinken. So entspricht die Nennung den Richtlinien der Suchmaschinen zu bezahlten Links.",
   },
   {
     q: "Gibt es einen Anspruch auf Unterstützung?",
@@ -221,6 +226,23 @@ export default function SponsoringPage() {
           </p>
         </Reveal>
       </Section>
+
+      {/* Aktuell unterstützt – nur freigegebene Einträge, Links als rel="sponsored" */}
+      {GEFOERDERTE_SICHTBAR.length > 0 && (
+        <Section tone="white" space="md" id="aktuell">
+          <SectionHeading eyebrow="Aktuell unterstützt" title="Organisationen, die wir fördern" className="mb-8" />
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {GEFOERDERTE_SICHTBAR.map((g) => (
+              <li key={g.url} className="rounded-2xl bg-sand-50 p-5 ring-1 ring-ink-200/60">
+                <a href={g.url} target="_blank" rel={SPONSORING_REL} className="font-display text-[16.5px] font-bold text-ink-900 hover:text-ov-700">
+                  {g.name}
+                </a>
+                <p className="mt-1 text-[14px] text-ink-600">{[g.bereich, g.ort, g.zeitraum].filter(Boolean).join(" · ")}</p>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       {/* Ablauf */}
       <Section tone="sand" space="lg">

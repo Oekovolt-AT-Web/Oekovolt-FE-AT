@@ -30,9 +30,9 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/flaechen-check";
 const SEITE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Flächen-Check: Fläche für Solarpark verpachten? | Ökovolt";
+const TITEL = "Fläche für Photovoltaik verpachten: Pacht-Check | Ökovolt";
 const BESCHREIBUNG =
-  "Eignet sich Ihre Fläche für einen Solarpark? Ampel für Widmung, Größe, Netz und Hang, belegte Pachtspanne der Landwirtschaftskammer und Checkliste zum Pachtvertrag.";
+  "Fläche für einen Solarpark verpachten? Ampel für Widmung, Größe, Netz und Hang, belegte Pachtspanne der Landwirtschaftskammer und Checkliste zum Pachtvertrag.";
 const HERO_BILD = "/Images/AT/loesungen/freiflaeche-spitalberg-kaernten.jpg";
 
 export const metadata = {
@@ -40,7 +40,6 @@ export const metadata = {
   description: BESCHREIBUNG,
   keywords: ["Fläche für Solarpark verpachten", "Freiflächen PV Pacht pro Hektar", "Solarpark Pachtvertrag Checkliste", "PV Freifläche Eignung prüfen", "Photovoltaik Pacht Landwirtschaftskammer", "Freiflächen Photovoltaik Widmung"],
   alternates: { canonical: SEITE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -145,10 +144,10 @@ export default async function FlaechenCheckPage({ searchParams }) {
         eyebrow="Flächen-Check für Grundeigentümer"
         title={
           <>
-            Taugt Ihre Fläche <span className="ov-text-gradient-light">für einen Solarpark?</span>
+            Fläche für Photovoltaik verpachten – <span className="ov-text-gradient-light">erst prüfen, dann unterschreiben</span>
           </>
         }
-        lead="Widmung, Größe, Netz und Gelände in einer Ampel – dazu die belegte Pachtspanne der Landwirtschaftskammer und eine Checkliste, bevor Sie einen Pachtvertrag unterschreiben."
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Taugt Ihre Fläche für einen Solarpark?</span><span className="mt-3 block">Widmung, Größe, Netz und Gelände in einer Ampel – dazu die belegte Pachtspanne der Landwirtschaftskammer und eine Checkliste, bevor Sie einen Pachtvertrag unterschreiben.</span></>}
         image={{ src: HERO_BILD, alt: "Photovoltaik-Freiflächenanlage auf einer Wiese am Spitalberg in Kärnten" }}
         points={["Alle 9 Bundesländer", "Rechtsstand " + STAND.label, "Pacht nur mit Quelle", "Kostenlos, ohne Anmeldung"]}
       />

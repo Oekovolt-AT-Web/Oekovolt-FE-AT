@@ -44,6 +44,7 @@ export const QUERVERWEISE = {
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "EEG, BEG und GEA richtig aufsetzen." },
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Rechtsform, Nahbereich und Registrierung." },
     { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Betriebe & Gemeinden", text: "Teilnahme-Check, Pflichten und Netzentgelt je Nahebereich." },
+    { href: "/produkte/mieterstrom", titel: "Mieterstrom mit GEA", text: "Wenn alle Parteien im selben Gebäude sitzen." },
   ],
   "/rechner/blackout": [
     { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Ersatzstrom-Konzept für Ihren Betrieb." },
@@ -58,7 +59,7 @@ export const QUERVERWEISE = {
   "/rechner/freiflaeche-pacht": [
     { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Solarparks planen, bauen, betreiben." },
     { href: "/agri-pv", titel: "Agri-PV", text: "Strom und Ernte auf derselben Fläche." },
-    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung je Bundesland", text: "Zonen und Sonderwidmung." },
+    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Solarpark-Genehmigung", text: "Ablauf von der Fläche zur Genehmigung, EABG ab 2027." },
     { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignet sich Ihre Fläche? Ampel, Pacht, Checkliste." },
   ],
   "/gewerbe": [
@@ -76,17 +77,17 @@ export const QUERVERWEISE = {
   "/kommunen": [
     { href: "/kommunen/vergabe-foerderung", titel: "Vergabe & Förderung für Gemeinden", text: "Schwellenwerte 2026, Wegweiser, Checkliste für den Gemeinderat." },
     { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft der Gemeinde", text: "Rolle, 10-%-Regel, Vergabe und Checkliste für Gemeinden." },
-    { href: "/ratgeber/photovoltaik-gemeinde", titel: "Photovoltaik für Gemeinden", text: "Vergabe nach BVergG 2026 und Bürgerbeteiligung." },
+    { href: "/ratgeber/photovoltaik-gemeinde", titel: "PV auf Gemeindegebäuden", text: "Kläranlage, Schule, Bauhof – wo es sich rechnet, mit Beispielen." },
     { href: "/freiflaechen-photovoltaik", titel: "Solarparks auf Gemeindegrund", text: "Widmung, Netzanschluss und Pacht." },
   ],
   "/freiflaechen-photovoltaik": [
-    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung je Bundesland", text: "Zonen, Sonderwidmung und Beschleunigungsgebiete." },
+    { href: "/freiflaechen-photovoltaik/widmung", titel: "Widmung je Bundesland", text: "Zonen, Schwellen und Sonderwidmung der neun Länder." },
     { href: "/ratgeber/ppa-oesterreich", titel: "PPA in Österreich", text: "Stromliefervertrag statt Marktprämie." },
     { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignet sich Ihre Fläche? Ampel, Pacht, Checkliste." },
     { href: "/agri-pv", titel: "Agri-PV statt Freifläche", text: "30 % Zuschlag statt 25 % Abschlag auf Agrarflächen." },
   ],
   "/agri-pv": [
-    { href: "/ratgeber/agri-pv-oesterreich", titel: "Ratgeber Agri-PV", text: "Konzepte, Förderkriterien und Kulturen im Detail." },
+    { href: "/ratgeber/agri-pv-oesterreich", titel: "Agri-PV-Kulturen", text: "Obst, Wein, Acker und Grünland – was unter den Modulen wächst." },
     { href: "/landwirtschaft", titel: "PV für die Landwirtschaft", text: "Stall, Scheune, Speicher und Pauschalierung." },
     { href: "/ratgeber/hagel-photovoltaik", titel: "Hagel und Photovoltaik", text: "Hagelwiderstand, Netze und Versicherung." },
     { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Wenn Stromerzeugung im Vordergrund steht." },
@@ -111,8 +112,8 @@ export const QUERVERWEISE = {
   ],
   "/energiegemeinschaften": [
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Rechtsform, Nahbereich und Registrierung." },
-    { href: "/ratgeber/energiegemeinschaft-gewerbe", titel: "Energiegemeinschaften für Gewerbe", text: "Unternehmen als Erzeuger und Abnehmer." },
-    { href: "/ratgeber/elwg-elektrizitaetswirtschaftsgesetz", titel: "ElWG im Überblick", text: "Was sich für Betreiber ändert." },
+    { href: "/ratgeber/energiegemeinschaft-gewerbe", titel: "Energiegemeinschaft im Betrieb", text: "Abrechnung, Steuern und Verträge für Unternehmen." },
+    { href: "/produkte/mieterstrom", titel: "Mieterstrom mit GEA", text: "Solarstrom im Mehrparteienhaus und Gewerbepark teilen – ohne Verein." },
     { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Betriebe & Gemeinden", text: "Wer in EEG, BEG und P2P darf – 6-MW- und 10-%-Regel." },
   ],
   "/technik": [
@@ -139,7 +140,7 @@ export const QUERVERWEISE = {
     { href: "/energie-live", titel: "Strompreis Österreich live", text: "Spotpreis AT und negative Preise." },
     { href: "/ratgeber/ppa-oesterreich", titel: "PPA in Österreich", text: "On-site, Off-site, Laufzeiten." },
     { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Überschüsse speichern statt verschenken." },
-    { href: "/einspeisung-gewerbe", titel: "OeMAG-Marktpreis & Erlös-Rechner", text: "Alle Monatswerte seit 2024 und Erlös pro Jahr." },
+    { href: "/einspeisung-gewerbe", titel: "Einspeisung für Betriebe", text: "OeMAG, Direktvermarktung und PPA im Vergleich – mit Erlös-Rechner." },
   ],
   "/service/stromtarif": [
     { href: "/energie-live", titel: "Börsenstrompreis Österreich live", text: "Die Preise, nach denen dynamische Tarife abrechnen." },
@@ -211,7 +212,7 @@ export const QUERVERWEISE = {
   "/dienstleistungen/photovoltaik": [
     { href: "/ratgeber/solaranlage-kosten", titel: "Photovoltaik Kosten 2026", text: "Preise je kWp von 5 kWp bis zum Solarpark." },
     { href: "/ratgeber/tor-erzeuger-netzanschluss", titel: "Netzanschluss nach TOR Erzeuger", text: "Netzebenen, Anlagentypen und Nachweise." },
-    { href: "/referenzen/projekte", titel: "Referenzen in Österreich", text: "Anlagen für Industrie, Handel, Holz und Tourismus." },
+    { href: "/ratgeber/photovoltaik-ablauf", titel: "Ablauf einer PV-Errichtung", text: "Vom Erstgespräch bis zur Fertigstellungsmeldung – Schritt für Schritt." },
     { href: "/service/wartung", titel: "Wartungsvertrag", text: "Betrieb und Prüfung über die ganze Lebensdauer." },
   ],
   "/dienstleistungen/smarthome": [
@@ -229,6 +230,7 @@ export const QUERVERWEISE = {
     { href: "/gewerbespeicher", titel: "Gewerbespeicher & Peak Shaving", text: "Leistungspreis senken, Eigenverbrauch erhöhen." },
     { href: "/ratgeber/stromspeicher-kosten", titel: "Stromspeicher Kosten 2026", text: "Preise pro kWh in Österreich." },
     { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Ersatzstrom aus dem Speicher." },
+    { href: "/dienstleistungen/smarthome", titel: "Speicher im Smarthome", text: "Speicher, Wallbox und Notstrom im Wohnhaus als ein System." },
   ],
   "/produkte/warmepumpe": [
     { href: "/ratgeber/waermepumpe-mit-photovoltaik", titel: "Wärmepumpe mit PV", text: "Wie viel Heizstrom die Sonne liefert." },
@@ -244,16 +246,19 @@ export const QUERVERWEISE = {
     { href: "/ratgeber/smart-meter-pflicht", titel: "Smart Meter in Österreich", text: "Rollout, Opt-out und Viertelstundenwerte." },
     { href: "/energie-live", titel: "Strompreis live", text: "Day-Ahead-Preis der Gebotszone AT." },
     { href: "/ratgeber/energiemanagementsystem", titel: "Energiemanagementsystem", text: "Messen, steuern, optimieren." },
+    { href: "/dienstleistungen/smarthome", titel: "Smarthome mit Photovoltaik", text: "Energiemanagement für Wohnhaus und Chalet." },
   ],
   "/produkte/smartenergyhome": [
     { href: "/produkte/stromspeicher", titel: "Stromspeicher", text: "Die Komponente, die den Eigenverbrauch am stärksten hebt." },
     { href: "/produkte/smartmeter", titel: "Smart Meter & EMS", text: "Die Messtechnik hinter Tarif und Steuerung." },
     { href: "/solarrechner", titel: "Solarrechner", text: "Autarkie und Amortisation durchrechnen." },
+    { href: "/dienstleistungen/smarthome", titel: "Smarthome & Energiemanagement", text: "Speicher, Wallbox, Notstrom und Smart Meter als ein System." },
   ],
   "/produkte/mieterstrom": [
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "EEG, BEG und GEA im Vergleich." },
     { href: "/ratgeber/gemeinschaftliche-erzeugungsanlage", titel: "Gemeinschaftliche Erzeugungsanlage", text: "Solarstrom im Mehrparteienhaus und Gewerbepark teilen." },
     { href: "/produkte/smartmeter", titel: "Smart Meter", text: "Viertelstundenwerte als Grundlage der Aufteilung." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft für Betriebe", text: "Wenn Strom über das öffentliche Netz geteilt wird." },
   ],
   "/produkte/stromspeicher/[slug]": [
     { href: "/produkte/hersteller", titel: "Hersteller im Überblick", text: "Alle Marken, die wir verbauen." },
@@ -423,7 +428,7 @@ export const QUERVERWEISE = {
     { href: "/chalets", titel: "Photovoltaik für alpine Chalets", text: "Hochlastmodule, Schneefang und Indach-Lösungen." },
   ],
   "/einspeisung-gewerbe": [
-    { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "Überschuss über Direktvermarktung oder PPA verkaufen." },
+    { href: "/service/direktvermarktung", titel: "Direktvermarktung & PPA", text: "Überschuss über Direktvermarkter, Marktprämie oder PPA verkaufen." },
     { href: "/ratgeber/oemag-marktpreis", titel: "OeMAG-Marktpreis erklärt", text: "§ 41 ÖSG, Korridor und Rechenweg." },
     { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Überschüsse speichern statt billig einspeisen." },
   ],
@@ -431,7 +436,7 @@ export const QUERVERWEISE = {
     { href: "/kommunen", titel: "Photovoltaik für Gemeinden", text: "Schulen, Bauhöfe, Kläranlagen und Freibäder." },
     { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Ticketziehung 08.10., Checkliste und Rechner." },
     { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft der Gemeinde", text: "EEG, BEG und die 10-%-Regel ab 01.10.2026." },
-    { href: "/ratgeber/photovoltaik-gemeinde", titel: "Ratgeber PV für Gemeinden", text: "Vergabe, Finanzierung, Bürgerbeteiligung." },
+    { href: "/ratgeber/photovoltaik-gemeinde", titel: "PV auf Gemeindegebäuden", text: "Welche Gebäude sich rechnen – zwei Beispiele und Notstrom." },
   ],
   "/flaechen-check": [
     { href: "/rechner/freiflaeche-pacht", titel: "Freiflächen- & Pacht-Rechner", text: "Leistung, Ertrag und Pacht über die Laufzeit." },
@@ -441,7 +446,7 @@ export const QUERVERWEISE = {
   ],
   "/freiflaechen-photovoltaik/widmung": [
     { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignungsampel und belegte Pachtspanne für Ihre Fläche." },
-    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Ratgeber Widmung", text: "EABG, EAG-Abschlag und Ablauf im Detail." },
+    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Solarpark-Genehmigung", text: "Ablauf, EABG-Beschleunigung und EAG-Abschlag im Detail." },
     { href: "/rechner/freiflaeche-pacht", titel: "Pacht-Rechner", text: "Ertrag und Pacht über die Laufzeit." },
   ],
   "/rechner/finanzierung": [
@@ -465,7 +470,7 @@ export const QUERVERWEISE = {
     [
       { href: "/netzanmeldung", titel: "Netzanmeldung im Überblick", text: "Alle fünf großen Netzbetreiber und die Checkliste." },
       { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Was bis zur Ticketziehung am 08.10. fertig sein muss." },
-      { href: "/ratgeber/photovoltaik-anmelden", titel: "PV-Anlage anmelden", text: "Ratgeber: Ablauf, Zählpunkt und ElWG-Neuerungen." },
+      { href: "/ratgeber/photovoltaik-anmelden", titel: "PV-Anlage im Betrieb anmelden", text: "Ratgeber: Typ A und B, Unterlagen, Kosten ab 2027." },
     ],
   ])),
 };

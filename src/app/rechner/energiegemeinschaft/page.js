@@ -15,7 +15,7 @@ export const metadata = rechnerMetadata({
   pfad: PFAD,
   title: "Energiegemeinschafts-Rechner Österreich | Ökovolt",
   description:
-    "Energiegemeinschafts-Rechner für Gemeinden, Betriebe und Haushalte: geteilter Solarstrom, Netzentgelt-Ersparnis 2026, Erlös vs. OeMAG-Marktpreis und Win-win-Preis.",
+    "Energiegemeinschafts-Rechner für Gemeinden, Betriebe, Haushalte: geteilter Solarstrom, Netzentgelt-Ersparnis 2026, Erlös vs. OeMAG-Marktpreis, Win-win-Preis.",
   keywords: ["Energiegemeinschaft Rechner", "EEG Rechner Österreich", "Energiegemeinschaft Ersparnis", "Netzentgelt Energiegemeinschaft 2026", "Energiegemeinschaft Gemeinde", "Energiegemeinschaft Preis"],
 });
 

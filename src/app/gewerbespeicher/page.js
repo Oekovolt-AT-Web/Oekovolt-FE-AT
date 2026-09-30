@@ -22,9 +22,9 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/gewerbespeicher";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Gewerbespeicher & Peak Shaving in Österreich | Ökovolt";
+const TITEL = "Gewerbespeicher: Batteriespeicher für Betriebe | Ökovolt";
 const BESCHREIBUNG =
-  "Gewerbespeicher in Österreich: Peak Shaving gegen den Leistungspreis, Eigenverbrauch, Notstrom und Spotpreis – aus Ihrem Lastgang dimensioniert.";
+  "Batteriespeicher für Betriebe in Österreich: Peak Shaving gegen den Leistungspreis, Eigenverbrauch, Notstrom und Spotpreis – aus Ihrem Lastgang dimensioniert.";
 const HERO_BILD = "/Images/AT/loesungen-b/speicher-produktionshalle.jpg";
 
 export const metadata = {
@@ -134,8 +134,8 @@ export default async function GewerbespeicherPage({ searchParams }) {
         variant="immersive"
         breadcrumbs={[{ name: "Gewerbe & Industrie", href: "/gewerbe" }, { name: "Gewerbespeicher" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Gewerbespeicher für <span className="ov-text-gradient-light">Peak Shaving, Eigenverbrauch und Notstrom</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Helle Produktionshalle mit Maschinen und Lagerregalen", position: "center 60%" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=speicher" },

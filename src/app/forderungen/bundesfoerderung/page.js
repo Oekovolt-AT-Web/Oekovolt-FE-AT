@@ -25,14 +25,13 @@ import { BASE_URL } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/forderungen/bundesfoerderung`;
 const TITLE = "EAG-Investitionszuschuss 2026: PV & Speicher | Ökovolt";
-const DESCRIPTION = "EAG-Investitionszuschuss 2026: Kategorien A–D, Fördersätze, Speicher 150 €/kWh, Fördercalls, Fristen und Fehler – plus Marktprämie, KPC, Energiegemeinschaften.";
+const DESCRIPTION = "EAG-Investitionszuschuss 2026 für PV und Speicher: Kategorien A–D, Fördersätze, Speicher 150 €/kWh, Fördercalls und Zuschussrechner – plus Marktprämie und KPC.";
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
   keywords: ["EAG-Investitionszuschuss 2026", "OeMAG Fördercall 2026", "Photovoltaik Förderung Österreich", "PV Förderung Unternehmen", "Stromspeicher Förderung 2026", "EAG Marktprämie", "Förderung Energiegemeinschaft"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,
@@ -269,8 +268,8 @@ export default function Bundesfoerderung() {
         variant="immersive"
         breadcrumbs={[{ name: "Förderungen", href: "/forderungen/bundesfoerderung" }, { name: "Bundesförderung" }]}
         eyebrow={`EAG · OeMAG · KPC · Stand ${STAND.kurz}`}
-        title={<>Bundesförderung für Photovoltaik: <span className="ov-text-gradient-light">EAG-Zuschuss 2026</span></>}
-        lead="Der EAG-Investitionszuschuss ist die wichtigste Förderung für PV-Anlagen bis 1.000 kWp in ganz Österreich. Rechnen Sie Ihren Zuschuss aus – mit Kategorien, Sätzen, Fördercalls, Fristen und den Fehlern, an denen Anträge scheitern."
+        title={<>EAG-Investitionszuschuss 2026 <span className="ov-text-gradient-light">für PV und Speicher</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Bundesförderung für Photovoltaik – kompakt erklärt</span><span className="mt-3 block">Der EAG-Investitionszuschuss ist die wichtigste Förderung für PV-Anlagen bis 1.000 kWp in ganz Österreich. Rechnen Sie Ihren Zuschuss aus – mit Kategorien, Sätzen, Fördercalls, Fristen und den Fehlern, an denen Anträge scheitern.</span></>}
         image={{ src: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", alt: "Große Photovoltaikanlage auf dem Flachdach eines Betriebsgebäudes", position: "center 60%" }}
         points={["Kategorien A–D mit Sätzen", "Speicher 150 €/kWh", "Ablauf und Fristen", "Kombination mit Land"]}
         actions={[

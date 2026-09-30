@@ -24,6 +24,7 @@ import Dunkel from "@/components/ServiceAT/B/Dunkel";
 import FotoBento from "@/components/ServiceAT/B/FotoBento";
 import Abschluss from "@/components/ServiceAT/B/Abschluss";
 import Fachdetails from "@/components/ServiceAT/B/Fachdetails";
+import { SERVICE_FREMDMARKEN } from "@/components/Hersteller/partner";
 
 const PFAD = "/service/repowering";
 const TITEL = "Repowering: PV-Bestandsanlagen modernisieren | Ökovolt";
@@ -283,6 +284,13 @@ export default function RepoweringPage() {
                         </li>
                       ))}
                     </ul>
+                    <p className="mt-4 text-[15px] leading-relaxed text-ink-600">
+                      Welche Wechselrichter wir bei Erweiterung und Erneuerung einsetzen und wie wir sie auslegen, zeigt die Seite{" "}
+                      <Link href="/produkte/wechselrichter" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+                        Wechselrichter
+                      </Link>
+                      .
+                    </p>
                   </>
                 ),
               },
@@ -290,6 +298,16 @@ export default function RepoweringPage() {
           />
         </div>
       </Section>
+
+      {/* Service für Wechselrichter anderer Hersteller: nur nach Entscheidung E4 (partner.js, derzeit nicht freigegeben) */}
+      {SERVICE_FREMDMARKEN.freigegeben && (
+        <Section tone="sand" space="md" id="alle-hersteller" className="scroll-mt-24">
+          <div className="mx-auto max-w-3xl">
+            <SectionHeading eyebrow="Hersteller" title={SERVICE_FREMDMARKEN.titel} />
+            <p className="mt-5 text-[16px] leading-relaxed text-ink-600">{SERVICE_FREMDMARKEN.text}</p>
+          </div>
+        </Section>
+      )}
 
       {/* Ablauf */}
       <Dunkel space="md" glow="rechts">
@@ -317,7 +335,7 @@ export default function RepoweringPage() {
           felder: [
             { name: "anlagengroesse", label: "Bestehende Leistung", typ: "zahl", einheit: "kWp", pflicht: true, placeholder: "z. B. 150" },
             { name: "baujahr", label: "Baujahr / Inbetriebnahme", typ: "zahl", pflicht: true, placeholder: "z. B. 2012" },
-            { name: "wechselrichter", label: "Wechselrichter (Hersteller, Anzahl)", placeholder: "z. B. 6× SMA SMC 10000TL", breit: true },
+            { name: "wechselrichter", label: "Wechselrichter (Hersteller, Anzahl)", placeholder: "z. B. 6 Geräte, Hersteller und Typ laut Typenschild", breit: true },
             { name: "vertrag", label: "Vermarktung heute", typ: "auswahl", optionen: ["OeMAG-Tarif läuft noch", "OeMAG-Tarif ausgelaufen / Marktpreis", "Stromhändler", "Überschusseinspeisung mit Eigenverbrauch", "Unbekannt"] },
             { name: "ziel", label: "Ziel", typ: "auswahl", optionen: ["Mehr Ertrag auf gleicher Fläche", "Erweiterung", "Speicher nachrüsten", "Wechselrichter defekt", "Dachsanierung geplant", "Bitte beraten"] },
           ],
@@ -338,6 +356,8 @@ export default function RepoweringPage() {
           { href: "/service/finanzierung", art: "Service", titel: "Finanzierung & Leasing" },
           { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)" },
           { href: "/gewerbespeicher", art: "Lösung", titel: "Gewerbespeicher" },
+          { href: "/produkte/wechselrichter", art: "Produkt", titel: "Wechselrichter" },
+          { href: "/ratgeber/photovoltaik-angebot-vergleichen#pv-firma-pruefen", art: "Ratgeber", titel: "Checkliste „PV-Firma prüfen“" },
         ]}
         quellen={[
           { titel: "Erneuerbaren-Ausbau-Gesetz § 56 – Investitionszuschüsse Photovoltaik", href: "https://www.jusline.at/gesetz/eag/paragraf/56" },

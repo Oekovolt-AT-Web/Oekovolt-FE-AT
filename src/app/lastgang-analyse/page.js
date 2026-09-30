@@ -36,7 +36,7 @@ export const metadata = rechnerMetadata({
   pfad: PFAD,
   title: "Lastgang-Analyse: 15-Minuten-Werte auswerten | Ökovolt",
   description:
-    "Lastgang-CSV aus dem Netzbetreiber-Portal kostenlos auswerten – nur im Browser, ohne Upload: Jahresverbrauch, Lastprofil, Grundlast, Spitzen, PV-Größe und Peak-Shaving-Speicher.",
+    "Lastgang-CSV vom Netzbetreiber kostenlos im Browser auswerten, ohne Upload: Jahresverbrauch, Lastprofil, Grundlast, Spitzen, PV-Größe und Peak-Shaving-Speicher.",
   keywords: ["Lastgang Analyse", "Lastgang auswerten", "Viertelstundenwerte auswerten", "Lastprofil Gewerbe", "Smart Meter CSV auswerten", "Peak Shaving Lastgang", "PV Eigenverbrauch Lastgang"],
 });
 

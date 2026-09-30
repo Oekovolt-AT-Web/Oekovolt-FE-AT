@@ -109,14 +109,7 @@ export default async function RegionSeite({ params }) {
                 description: r.beschreibung,
               },
               { "@type": "FAQPage", mainEntity: r.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) },
-              {
-                "@type": "BreadcrumbList",
-                itemListElement: [
-                  { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-                  { "@type": "ListItem", position: 2, name: HUB, item: `${BASE_URL}/photovoltaik` },
-                  { "@type": "ListItem", position: 3, name: r.name, item: url },
-                ],
-              },
+              // BreadcrumbList kommt aus der sichtbaren Brotkrumen-Navigation (src/components/ui/Breadcrumbs.js) – hier nicht doppelt (QA N3)
             ],
           }),
         }}

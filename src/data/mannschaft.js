@@ -22,6 +22,9 @@
 //          (public/Images/AT/siegel/wko-gutesiegel-meisterbetrieb.png). „Meisterbetrieb
 //          seit 2012“ steht NICHT im Repo – deshalb ohne Jahresangabe.
 //
+// PERSONEN: Namentliche Fachprüfer der Ratgeber stehen NICHT hier, sondern in
+// src/data/fachpruefer.js (sichtbar nur mit schriftlicher Einwilligung, SEO-Plan M22/E5).
+//
 // PFLEGE: Neue Maschinen/Fähigkeiten hier eintragen. Im UI erscheinen NUR Einträge
 // mit `bestaetigt: true`. Kandidaten mit `bestaetigt: false` sind vorbereitet und
 // werden erst sichtbar, wenn der Auftraggeber sie bestätigt hat (Feld umstellen,

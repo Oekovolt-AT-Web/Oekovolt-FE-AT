@@ -2,6 +2,8 @@
 //
 // Übersicht: Widmung und Zonierung für Freiflächen-Photovoltaik in allen neun
 // Bundesländern. Daten aus src/lib/flaeche/laender.js (RIS, Stand 30.09.2026).
+// Hub der Widmungsseiten (SEO-Plan M26): Ablauf (#ablauf), Ländervergleich und allgemeine Hinweise
+// stehen nur hier; die Landesseiten tragen nur Landesinhalt (Kriterien-Tabelle, Quelle, Stand).
 
 import Link from "next/link";
 import { ClipboardCheck, SearchCheck } from "lucide-react";
@@ -30,7 +32,6 @@ export const metadata = {
   description: BESCHREIBUNG,
   keywords: ["Freiflächen Photovoltaik Widmung", "PV Freifläche Raumordnung Bundesland", "Grünland Photovoltaik Widmung", "PV-Zonen Österreich", "Sonderausweisung Photovoltaik"],
   alternates: { canonical: SEITE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     locale: "de_AT",
@@ -110,7 +111,7 @@ export default function WidmungUebersichtPage() {
         </ul>
       </Section>
 
-      <Section tone="sand" space="lg">
+      <Section tone="sand" space="lg" id="ablauf" className="scroll-mt-24">
         <SectionHeading eyebrow="Ablauf" title="Von der Fläche zur Widmung" />
         <Steps items={ABLAUF} className="mt-12" />
       </Section>

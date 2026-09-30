@@ -28,7 +28,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Förder-Check Photovoltaik", "PV Förderung Österreich 2026", "EAG Investitionszuschuss Rechner", "Förderung Stromspeicher Österreich", "Förderung Agri-PV", "Förderung Energiegemeinschaft", "PV Förderung Unternehmen"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,

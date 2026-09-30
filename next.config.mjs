@@ -1,3 +1,33 @@
+// Crawler, die Metadaten nur im <head> lesen und kein JavaScript ausführen
+// (SEO-Plan M02). Für sie rendert Next die Metadaten blockierend in den <head>,
+// statt sie nachzustreamen. Next ERSETZT mit `htmlLimitedBots` seine eigene
+// Liste – deshalb steht die Standardliste aus Next 15.5
+// (next/dist/shared/lib/router/utils/html-bots.js) hier vollständig mit drin.
+// Bei Next-Updates die Standardliste abgleichen. Googlebot fehlt bewusst: Er
+// führt JavaScript aus und bekommt von Next die gestreamte Variante.
+const NEXT_HTML_LIMITED_BOTS =
+  /[\w-]+-Google|Google-[\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight/;
+// KI-Such- und Abruf-Crawler sowie kleinere Suchmaschinen. GPTBot und ClaudeBot
+// sind per robots.txt gesperrt (E1); falls sie trotzdem abrufen, bekommen sie
+// dieselbe Fassung wie alle anderen.
+const WEITERE_HTML_LIMITED_BOTS = [
+  "GPTBot",
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "ClaudeBot",
+  "Claude-SearchBot",
+  "Claude-User",
+  "PerplexityBot",
+  "Perplexity-User",
+  "DuckAssistBot",
+  "SeznamBot",
+  "Qwantbot",
+  "MojeekBot",
+  "Amazonbot",
+];
+// Next wertet das Muster ohnehin ohne Groß-/Kleinschreibung aus ("i").
+const HTML_LIMITED_BOTS = new RegExp([NEXT_HTML_LIMITED_BOTS.source, ...WEITERE_HTML_LIMITED_BOTS].join("|"), "i");
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Ausgabeverzeichnis umschaltbar: Der Produktionsserver (next start) liest
@@ -23,6 +53,7 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
+  htmlLimitedBots: HTML_LIMITED_BOTS,
 
   async redirects() {
     return [
@@ -58,6 +89,17 @@ const nextConfig = {
 
       // --- Alte URLs der bisherigen oekovolt.com (Linkkraft erhalten) ---
       { source: "/dienstleistungen/agri-photovoltaik", destination: "/agri-pv", permanent: true },
+      // Alte WordPress-Seiten (SEO-Plan M05). Ziele nach Thema und Keyword-Map
+      // (genau eine Zielseite je Suchbegriff), nicht pauschal auf die Startseite:
+      //   Unternehmen -> Firmenseite; Leasing -> Ratgeber „photovoltaik leasing“;
+      //   Contracting -> Ratgeber „Mieten oder kaufen“ (Contracting/Pacht/Kauf im
+      //   Vergleich); Lösungen -> Gewerbe-Hauptseite (erster Punkt im Menü „Lösungen“).
+      // statusCode 301 statt permanent (308): Abnahme M05 fordert 301; für
+      // Suchmaschinen sind beide gleichwertig.
+      { source: "/unternehmen", destination: "/uber-uns", statusCode: 301 },
+      { source: "/photovoltaik-leasing", destination: "/ratgeber/photovoltaik-leasing", statusCode: 301 },
+      { source: "/photovoltaik-contracting", destination: "/ratgeber/photovoltaik-mieten-oder-kaufen", statusCode: 301 },
+      { source: "/photovoltaik-loesungen", destination: "/gewerbe", statusCode: 301 },
 
       // --- Ratgeber: entfernte bzw. umbenannte Artikel ---
       { source: "/ratgeber/photovoltaik-mehrfamilienhaus", destination: "/ratgeber/gemeinschaftliche-erzeugungsanlage", permanent: true },
@@ -66,6 +108,9 @@ const nextConfig = {
       { source: "/ratgeber/solarspitzengesetz", destination: "/ratgeber/elwg-elektrizitaetswirtschaftsgesetz", permanent: true },
       { source: "/ratgeber/balkonkraftwerk", destination: "/ratgeber/solaranlage-kosten", permanent: true },
       { source: "/ratgeber/heizstab-photovoltaik", destination: "/ratgeber/eigenverbrauch-erhoehen", permanent: true },
+      // Dublette zur Service-Seite (Entscheidung E7, sofort freigegeben): gleiche
+      // Suchabsicht „Reststrom-/Direktvermarktung“ -> eine Zielseite.
+      { source: "/ratgeber/reststromvermarktung", destination: "/service/direktvermarktung", statusCode: 301 },
 
       // --- Kurz-URLs und Synonyme ---
       { source: "/agri-photovoltaik", destination: "/agri-pv", permanent: true },

@@ -52,7 +52,10 @@ export async function generateMetadata({ params }) {
     const j = job;
     const canonical = `${BASE_URL}/uber-uns/jobs/${title}`;
     const ortKurz = j.ort === FIRMA.ort ? FIRMA.ort : "Österreich";
-    const seitenTitel = `${j.kurz || j.titel} (m/w/d) – Job ${ortKurz} | Ökovolt`;
+    // Höchstens 60 Zeichen (QA N1): erste passende Variante
+    const stelle = `${j.kurz || j.titel} (m/w/d)`;
+    const seitenTitel =
+      [`${stelle} – Job ${ortKurz} | Ökovolt`, `${stelle}, ${ortKurz} | Ökovolt`].find((t) => t.length <= 60) || `Job: ${stelle} | Ökovolt`;
     const description = kuerzen(`${j.kurz || j.titel} (m/w/d) bei Ökovolt – ${j.arbeitsort || j.ort}. ${j.gehalt ? `${j.gehalt}. ` : ""}Aufgaben, Profil, Kollektivvertrag und Bewerbung.`, 160);
     // Die Vorschaubilder unter /og/jobs gehören zu den deutschen Stellen –
     // für die österreichischen Stellen gilt das Standardbild.
@@ -62,7 +65,6 @@ export async function generateMetadata({ params }) {
       title: seitenTitel,
       description,
       alternates: { canonical },
-      robots: { index: true, follow: true },
       openGraph: {
         type: "website",
         url: canonical,

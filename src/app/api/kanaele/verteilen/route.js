@@ -5,6 +5,7 @@ import { eintraegeFuer } from "@/lib/kanaele/apEintraege";
 import { kanal, kanalKonfiguriert } from "@/lib/kanaele/frappe";
 import { pushBereit, sendePushNachricht } from "@/lib/kanaele/push";
 import { FEDIVERSE_KONTEN } from "@/lib/kanaele/fediverseKonten";
+import { veroeffentlichungenMelden } from "@/lib/kanaele/veroeffentlichungen";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -24,6 +25,8 @@ function berechtigt(request) {
  * Verteilt fällige Inhalte:
  *  1. Push-Nachrichten (DocType „Push Nachricht“, Status „Geplant“/„Jetzt senden“)
  *  2. Neue Beiträge an Fediverse-Follower (Veröffentlichungen mit Haken „Fediverse“, neue Ratgeber-Artikel)
+ *  3. IndexNow: neue/geänderte Pressemeldungen (/presse/<slug> und /presse) an Bing & Co. melden
+ *     (src/lib/kanaele/veroeffentlichungen.js → veroeffentlichungenMelden; ohne INDEXNOW_AKTIV=1 nur Trockenlauf)
  *
  * Aufruf: Frappe-Webhook (POST, Header X-Kanal-Secret) beim Veröffentlichen
  *         und/oder Cron (GET, Authorization: Bearer CRON_SECRET) als Sicherheitsnetz.
@@ -70,14 +73,29 @@ async function verteilen() {
   return bericht;
 }
 
+/**
+ * IndexNow für Pressemeldungen – fehlertolerant: Ein Fehler (Backend, IndexNow, Zeitlimit) landet nur im
+ * Bericht und hält Push/Fediverse nie auf. Jede Änderung wird je Server-Instanz nur einmal gemeldet
+ * (Webhook und Cron-Sicherheitsnetz teilen sich die Merkliste in veroeffentlichungenMelden).
+ */
+async function presseMelden() {
+  try {
+    return await veroeffentlichungenMelden();
+  } catch (e) {
+    return { fehler: String(e?.message || e).slice(0, 200) };
+  }
+}
+
 export async function GET(request) {
   if (!berechtigt(request)) return new Response("Unauthorized", { status: 401 });
-  return Response.json(await verteilen());
+  const bericht = await verteilen();
+  return Response.json({ ...bericht, indexnow: await presseMelden() });
 }
 
 export async function POST(request) {
   if (!berechtigt(request)) return new Response("Unauthorized", { status: 401 });
   // Geänderte Veröffentlichungen sofort auf Website, Feeds und Info-Bildschirmen sichtbar machen
   revalidateTag("veroeffentlichungen");
-  return Response.json(await verteilen());
+  const bericht = await verteilen();
+  return Response.json({ ...bericht, indexnow: await presseMelden() });
 }

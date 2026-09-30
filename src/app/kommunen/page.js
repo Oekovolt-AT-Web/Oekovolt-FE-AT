@@ -47,7 +47,7 @@ export const revalidate = 300;
 
 const PFAD = "/kommunen";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Photovoltaik für Gemeinden, Länder & Stadtwerke | Ökovolt";
+const TITEL = "Photovoltaik für Gemeinden: Planung bis Betrieb | Ökovolt";
 const BESCHREIBUNG =
   "PV für Gemeinden: Schulen, Bauhöfe, Kläranlagen, Freibäder, Energiegemeinschaft und Vergabe nach BVergG 2026 – vom PV-Errichter der Salzburg AG.";
 const HERO_BILD = "/Images/AT/loesungen-a/gem-schule-luftbild.jpg";
@@ -181,8 +181,8 @@ export default async function KommunenPage() {
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Gemeinden, Länder & Stadtwerke" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Photovoltaik für Gemeinden, <span className="ov-text-gradient-light">Länder und Stadtwerke</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Luftbild eines Schulzentrums in Klagenfurt mit Photovoltaikanlage auf dem Flachdach" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=gemeinde" },
@@ -260,7 +260,7 @@ export default async function KommunenPage() {
           text="Gemeinden kombinieren in Österreich meist Bundesförderung nach EAG, Mittel aus dem Kommunalinvestitionsgesetz, Programme der Modellregionen und Landesförderungen – ergänzt um Bürgerbeteiligung."
           points={[
             { title: "EAG-Investitionszuschuss", text: "PV bis 1.000 kWp und Speicher bis 50 kWh, letzter Call 2026: 8.–22. Oktober." },
-            { title: "Kommunalinvestitionsgesetz", text: "KIG 2025 mit 500 Mio. € für kommunale Investitionen – Energieprojekte zählen dazu." },
+            { title: "Kommunalinvestitionsgesetz", text: "KIG 2025: 620 Mio. € Finanzzuweisung des Bundes an die Gemeinden, ohne Antrag – Investitionen in die Energiewende sind im Bericht besonders zu berücksichtigen (§§ 2, 3 KIG 2025)." },
             { title: "KEM & KLAR!", text: "Modellregionen des Klima- und Energiefonds bündeln Beratung und Projekte." },
             { title: "Bürgerbeteiligung", text: "Energiegemeinschaft, Genossenschaft, Sale-and-lease-back oder Nachrangdarlehen." },
           ]}
@@ -362,11 +362,22 @@ export default async function KommunenPage() {
               cols={2}
               items={[
                 { icon: HandCoins, titel: "EAG-Investitionszuschuss", text: "PV bis 1.000 kWp und Speicher bis 50 kWh; 30 % Zuschlag für Parkplatzüberdachungen ab 10 Stellplätzen und gebäudeintegrierte PV. Letzter Call 2026: 8.–22. Oktober." },
-                { icon: Landmark, titel: "Kommunalinvestitionsgesetz", text: "Das KIG 2025 stellt 500 Mio. € zweckgebunden für kommunale Investitionen bereit, nach der Novelle in Tranchen bis 2028 ohne gesonderten Antrag – Energieprojekte zählen dazu." },
+                { icon: Landmark, titel: "Kommunalinvestitionsgesetz", text: "Der Bund stellt nach § 2 KIG 2025 insgesamt 620 Mio. € als Finanzzuweisung an die Gemeinden bereit – seit dem Budgetbegleitgesetz 2025 (BGBl. I Nr. 25/2025) ohne Antrag und ohne Eigenanteil, ausgezahlt in Tranchen von 2025 bis 2028. Im Bericht an den Gemeinderat sind Investitionen in die Energiewende besonders zu berücksichtigen (§ 3)." },
                 { icon: Sprout, titel: "KEM & KLAR!", text: "Klima- und Energie-Modellregionen sowie Klimawandel-Anpassungsregionen des Klima- und Energiefonds bündeln Beratung und Projekte über Gemeindegrenzen hinweg." },
                 { icon: Users, titel: "Bürgerbeteiligung", text: "Energiegemeinschaft, Genossenschaft, Sale-and-lease-back oder Nachrangdarlehen – mit Blick auf Kapitalmarkt- und Gemeinderecht." },
               ]}
             />
+            <p className="mt-4 text-[13px] leading-relaxed text-ink-500">
+              Quelle KIG: §§ 2 und 3 Kommunalinvestitionsgesetz 2025 idF Budgetbegleitgesetz 2025, BGBl. I Nr. 25/2025 (
+              <a href="https://www.jusline.at/gesetz/kig_2025/gesamt" target="_blank" rel="noopener noreferrer" className="underline">
+                konsolidierter Gesetzestext
+              </a>
+              , Stand 13.08.2026; abgerufen 30.09.2026). Details zu KIG und Bürgerbeteiligung:{" "}
+              <Link href="/kommunen/vergabe-foerderung#foerderung" className="text-ov-700 underline">
+                Vergabe & Förderung für Gemeinden
+              </Link>
+              .
+            </p>
           </div>
         </FachTabs>
       </Section>

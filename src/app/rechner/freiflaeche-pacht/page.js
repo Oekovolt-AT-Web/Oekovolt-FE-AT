@@ -13,10 +13,10 @@ const PFAD = "/rechner/freiflaeche-pacht";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "Freiflächen- & Pacht-Rechner PV Österreich | Ökovolt",
+  title: "Solarpark-Rechner: Leistung & Ertrag je Hektar | Ökovolt",
   description:
-    "Für Grundeigentümer: Wie viel PV-Leistung passt auf Ihre Fläche – Freifläche oder Agri-PV –, wie viel Strom entsteht und was bringt die Pacht? Mit Widmungshinweisen.",
-  keywords: ["Freiflächen PV Pacht Rechner", "Solarpark Pacht pro Hektar", "Agri-PV Rechner", "PV Fläche verpachten Österreich", "MWp pro Hektar", "Freiflächen Photovoltaik Widmung"],
+    "Solarpark-Rechner: PV-Leistung und Jahresertrag je Hektar für Freifläche oder Agri-PV – mit PVGIS-Standortdaten, Pacht über die Laufzeit und Widmungshinweis.",
+  keywords: ["Solarpark Rechner", "Solarpark Leistung pro Hektar", "Freiflächen PV Ertrag Rechner", "Agri-PV Rechner", "MWp pro Hektar", "Freiflächen PV Pacht Rechner"],
 });
 
 const FAQ = [
@@ -55,8 +55,8 @@ export default function Page() {
       toolId="freiflaeche-pacht"
       breadcrumb="Freiflächen- & Pacht-Rechner"
       eyebrow="Freiflächen- & Pacht-Rechner"
-      title={<>Was Ihre Fläche <span className="ov-text-gradient-light">leisten kann.</span></>}
-      lead="Für Grundeigentümer, Landwirte und Gemeinden: Leistung, Jahresertrag und versorgbare Haushalte je Konzept – dazu Ihre Pacht über die Laufzeit und Hinweise zu Widmung und Netz."
+      title={<>Solarpark-Rechner: <span className="ov-text-gradient-light">Leistung und Ertrag Ihrer Fläche</span></>}
+      lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Was Ihre Fläche leisten kann.</span><span className="mt-3 block">Für Grundeigentümer, Landwirte und Gemeinden: Leistung, Jahresertrag und versorgbare Haushalte je Konzept – dazu Ihre Pacht über die Laufzeit und Hinweise zu Widmung und Netz. Ob sich die Fläche überhaupt eignet, zeigt vorab der <Link href="/flaechen-check" className="font-semibold text-white underline decoration-white/40 underline-offset-2">Flächen-Check</Link>.</span></>}
       chips={["Freifläche oder Agri-PV", "PVGIS für Ihren Standort", "Widmung je Bundesland", "Pacht als Ihre Annahme"]}
       app={{
         name: "Ökovolt Freiflächen- & Pacht-Rechner",

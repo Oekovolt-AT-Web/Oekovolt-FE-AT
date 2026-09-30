@@ -108,7 +108,12 @@ export function berechne({
     const sim = simuliere(reihen, speicher, hatSpeicher ? { leistungKw: Math.max(speicher * A.gewerbeSpeicherCRate, 5) } : {});
     eigenverbrauch = Math.min(sim.autark, verbrauch); // aus eigener Anlage gedeckte Last
     eingespeist = Math.max(sim.einspeisung, 0);
-    speicherverlust = Math.max(jahresertrag - eigenverbrauch - eingespeist, 0);
+    // Speicherverluste direkt aus der Simulation: in den Speicher geladene minus
+    // entladene Energie (Wirkungsgrad, Standby, Rest-Ladestand am Jahresende).
+    // Früher als Differenz Jahresertrag − Eigenverbrauch − Einspeisung gerechnet –
+    // das wies auch OHNE Speicher einen „Verlust“ aus (Befund tests-01: PV_MONAT
+    // summierte sich auf 0,995; danach blieb Gleitkomma-Rest ~1e-10 kWh).
+    speicherverlust = hatSpeicher ? Math.max(sim.laden - sim.entladen, 0) : 0;
   } else {
     // Haushalt: Autarkie in Abhaengigkeit von Erzeugung/Verbrauch und
     // Speicher/Verbrauch (Saettigungskurven, siehe src/data/solarrechner.js).

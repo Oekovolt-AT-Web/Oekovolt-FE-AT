@@ -65,7 +65,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Wallbox", "Wallbox Österreich", "PV-Überschussladen", "Wallbox Photovoltaik", "Wallbox Netzbetreiber Meldung", "Ladestation Betrieb"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

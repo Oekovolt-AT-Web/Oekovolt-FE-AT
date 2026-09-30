@@ -70,7 +70,7 @@ const siteSchema = {
         addressCountry: "AT",
       },
       geo: { "@type": "GeoCoordinates", latitude: FIRMA.geo.lat, longitude: FIRMA.geo.lng },
-      hasMap: "https://www.google.com/maps?q=%C3%96kovolt+Solartechnik+GmbH,+Gewerbegebiet+10,+5121+Ostermiething",
+      hasMap: FIRMA.karte,
       openingHoursSpecification: [
         { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "08:00", closes: "16:00" },
         { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday"], opens: "08:00", closes: "13:00" },
@@ -92,14 +92,18 @@ const siteSchema = {
         { "@type": "Country", name: "Österreich" },
         ...["Wien", "Niederösterreich", "Oberösterreich", "Salzburg", "Tirol", "Vorarlberg", "Kärnten", "Steiermark", "Burgenland"].map((n) => ({ "@type": "State", name: n })),
       ],
-      memberOf: [{ "@type": "Organization", name: FIRMA.kammer, url: "https://www.wko.at/ooe" }],
+      // Kammer (gesetzliche Mitgliedschaft) und Verbände mit Beleg aus @/lib/site (FIRMA.verbaende)
+      memberOf: [
+        { "@type": "Organization", name: FIRMA.kammer, url: "https://www.wko.at/ooe" },
+        ...FIRMA.verbaende.map((v) => ({ "@type": "Organization", name: v.name, alternateName: v.alternateName, url: v.url })),
+      ],
       // Bewusst KEINE parentOrganization: Gesellschafter sind A. Wegscheider (51 %)
       // und die Salzburg AG (49 %); die deutsche ÖKOVOLT GmbH Solartechnik ist
       // Schwester-, nicht Muttergesellschaft. Markenbezug nur über "brand".
       brand: { "@type": "Brand", name: "ÖKOVOLT" },
-      // Nur verifizierte Profile: Facebook/LinkedIn werden von der bisherigen
-      // oekovolt.com verlinkt (die .de nutzt eigene Profile), dazu WKO und FirmenABC.
-      sameAs: [FIRMA.social.facebook, FIRMA.social.linkedin, FIRMA.social.instagram, FIRMA.wko, FIRMA.firmenabc],
+      // Nur verifizierte Profile der AT-GmbH (FIRMA.profile): Facebook/LinkedIn/Instagram werden
+      // von der bisherigen oekovolt.com verlinkt (die .de nutzt eigene Profile), dazu WKO und FirmenABC.
+      sameAs: FIRMA.profile,
       knowsAbout: [
         "Photovoltaik Gewerbe", "Photovoltaik Industrie", "Freiflächen-Photovoltaik", "Agri-Photovoltaik",
         "Gewerbespeicher", "Batteriespeicher", "Peak Shaving", "Ladeinfrastruktur", "Energiegemeinschaften",
@@ -133,6 +137,11 @@ const siteSchema = {
       copyrightHolder: { "@type": "Organization", name: SCHWESTER.name, url: SCHWESTER.web },
     },
   ],
+};
+
+const VERIFIZIERUNG = {
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION } : {}),
+  ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } } : {}),
 };
 
 export const viewport = {
@@ -196,10 +205,9 @@ export const metadata = {
       },
     ],
   },
+  // Ohne site/creator: Ein X-Handle der AT-GmbH ist nicht belegt (SEO-Plan M24, E6).
   twitter: {
     card: "summary_large_image",
-    site: "@oekovolt",
-    creator: "@oekovolt",
     title: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
     description:
       "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich.",
@@ -209,6 +217,10 @@ export const metadata = {
     index: true,
     follow: true,
     nocache: false,
+    // Snippet- und Vorschau-Freigaben auch für alle anderen Suchmaschinen (Bing, Yandex …), nicht nur Googlebot
+    "max-video-preview": -1,
+    "max-image-preview": "large",
+    "max-snippet": -1,
     googleBot: {
       index: true,
       follow: true,
@@ -218,9 +230,9 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
-  //  verification: {
-  //   google: "GTM-WR8PDT7V",
-  // },
+  // Site-Verifizierung nur aus Umgebungsvariablen (Werte aus Search Console bzw. Bing Webmaster
+  // Tools). Ohne Variable wird kein Meta-Tag ausgegeben; empfohlen ist ohnehin die DNS-Verifizierung (M29).
+  ...(Object.keys(VERIFIZIERUNG).length ? { verification: VERIFIZIERUNG } : {}),
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,

@@ -14,6 +14,7 @@ import {
   BAK,
   DATENSCHUTZ,
   FAQ_INFO,
+  FRISTEN_TEXT,
   HINWEIS_INTERN,
   MELDEKANAL_EXTERN,
   MELDEKANAL_LABEL,
@@ -38,7 +39,6 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: LOCALE,
@@ -80,11 +80,11 @@ const ABLAUF_INFO = [
   },
   {
     title: "Eingangsbestätigung",
-    text: "Spätestens nach sieben Kalendertagen bestätigt die interne Stelle den Eingang Ihres Hinweises.",
+    text: "Spätestens nach sieben Kalendertagen bestätigt die interne Stelle den Eingang Ihres Hinweises (§ 9 Abs. 1 HSchG).",
   },
   {
     title: "Rückmeldung",
-    text: "Spätestens drei Monate nach der Eingangsbestätigung erfahren Sie, welche Folgemaßnahmen ergriffen wurden oder geplant sind.",
+    text: "Spätestens drei Monate nach Eingang Ihres Hinweises erfahren Sie, welche Folgemaßnahmen ergriffen wurden oder geplant sind (§ 13 Abs. 9 HSchG).",
   },
 ];
 
@@ -278,7 +278,7 @@ export default function HinweisgeberschutzPage() {
               {
                 icon: Timer,
                 title: "Gesetzliche Fristen",
-                text: "Eingangsbestätigung spätestens nach sieben Kalendertagen, Rückmeldung zu Folgemaßnahmen spätestens drei Monate danach (§ 13 HSchG).",
+                text: FRISTEN_TEXT,
               },
               {
                 icon: UserCheck,

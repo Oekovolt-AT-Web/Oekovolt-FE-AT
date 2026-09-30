@@ -72,7 +72,7 @@ Bei einer neuen Meldung, einer neuen Postfach-Nachricht und nach 10 Fehlversuche
 - [ ] In `site_config.json` steht **nicht** `"mute_emails": 1`.
 - [ ] Die Testmeldung aus Punkt 4 kommt innerhalb weniger Minuten bei der Meldestelle an.
       Ohne E-Mail bleibt eine Meldung womöglich unbemerkt, und die Fristen werden versäumt:
-      **7 Tage** Eingangsbestätigung, **3 Monate** Rückmeldung (§ 13 HSchG).
+      **7 Tage** Eingangsbestätigung (§ 9 Abs. 1 HSchG), **3 Monate ab Eingang des Hinweises** Rückmeldung (§ 13 Abs. 9 HSchG).
 
 ### 2.3 Eigener API-User für die Website
 - [ ] Im AT-Backoffice den User `hinweis-web@oekovolt.com` anlegen, **nur** mit der Rolle **„Hinweis Webformular“**
@@ -204,8 +204,8 @@ Den Fehler im eigenen System beheben, statt umzuschalten: Ohne IntegrityLine zei
 
 ## 6. Laufender Betrieb (Meldestelle)
 
-- **Innerhalb von 7 Tagen:** Eingangsbestätigung, als Nachricht an die meldende Person plus Status „Eingang bestätigt“ (§ 13 HSchG).
-- **Spätestens 3 Monate danach:** Rückmeldung zu den ergriffenen oder geplanten Folgemaßnahmen (§ 13 HSchG).
+- **Innerhalb von 7 Kalendertagen ab Eingang:** Eingangsbestätigung, als Nachricht an die meldende Person plus Status „Eingang bestätigt“ (§ 9 Abs. 1 HSchG).
+- **Spätestens 3 Monate nach Eingang des Hinweises** (nicht ab der Bestätigung): Rückmeldung zu den ergriffenen oder geplanten Folgemaßnahmen (§ 13 Abs. 9 HSchG).
 - Mündliche Meldungen und persönliche Gespräche ebenfalls als Fall im Backoffice dokumentieren.
 - Nach Abschluss: Status „Abgeschlossen“. Die Löschung erfolgt automatisch 5 Jahre später (⚖️ siehe 2.5), außer bei
   „Aufbewahrung verlängert“ mit Grund, z. B. wegen eines laufenden Verfahrens.

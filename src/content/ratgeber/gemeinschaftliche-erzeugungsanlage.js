@@ -23,7 +23,7 @@ const VORTEIL_NETZ = eur((GETEILT * NETZ) / 100);
 const artikel = {
   slug: "gemeinschaftliche-erzeugungsanlage",
   title: "Gemeinschaftliche Erzeugungsanlage: PV für Mehrparteienhaus & Gewerbe",
-  seoTitle: "Gemeinschaftliche Erzeugungsanlage (GEA) | Ökovolt",
+  seoTitle: "Gemeinschaftliche Erzeugungsanlage nach ElWG | Ökovolt",
   kurzTitel: "Gemeinschaftliche Erzeugungsanlage",
   description:
     "Gemeinschaftliche Erzeugungsanlage (GEA): PV-Strom im Mehrparteienhaus oder Gewerbeobjekt teilen – Voraussetzungen, ElWG-Neuerungen 2026, Verträge und Kosten.",
@@ -40,7 +40,7 @@ const artikel = {
     "Standortbereich ElWG",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Netz, Energiegemeinschaften & Markt",
   bild: "/Images/AT/ratgeber/gemeinschaftliche-erzeugungsanlage.jpg",
   bildAlt: "Wiener Gemeindebau mit Photovoltaik-Elementen an der Fassade",
@@ -51,6 +51,7 @@ const artikel = {
     "Seit **1. Oktober 2026** erlaubt das ElWG die Durchleitung über gemeinschaftliche Hauptleitungen und die **Sammelschiene im Hausanschlusskasten** – Häuser mit mehreren Stiegen brauchen keine zweite GEA oder EEG mehr. Praktisch umsetzbar ist der erweiterte Standortbereich voraussichtlich ab **April 2027**.",
     "Für den GEA-Strom entfällt die **Elektrizitätsabgabe**; ab 2027 wird im Standortbereich die Leistung saldiert und der Netznutzungs-Arbeitspreis laut Verordnungsentwurf um bis zu **90–100 %** reduziert.",
     "Voraussetzungen: **Smart Meter** mit Viertelstundenwerten bei allen Teilnehmern, ein **Vertrag** zwischen den Teilnehmern und eine Vereinbarung mit dem Netzbetreiber – eine Vereinsgründung ist nicht nötig.",
+    "Wie Ökovolt eine GEA als Mieterstrom-Modell plant, errichtet und betreibt, steht auf [Mieterstrom mit GEA](/produkte/mieterstrom); dieser Ratgeber erklärt Recht, Verträge und Netzentgelte.",
   ],
 
   abschnitte: [
@@ -289,7 +290,7 @@ const artikel = {
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "GEA, EEG und BEG mit Ökovolt umsetzen." },
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Wenn das öffentliche Netz genutzt wird." },
     { href: "/ratgeber/energiegemeinschaft-gewerbe", titel: "Energiegemeinschaft für Unternehmen", text: "Überschuss an Nachbarbetriebe liefern." },
-    { href: "/gewerbe", titel: "Photovoltaik für Betriebe", text: "Auch für Gewerbeimmobilien mit mehreren Mietern." },
+    { href: "/produkte/mieterstrom", titel: "Mieterstrom mit GEA", text: "Anlage, Messung, Schlüssel und Vertrag aus einer Hand." },
   ],
 
   quellen: [

@@ -7,6 +7,7 @@
 import sanitizeHtml from "sanitize-html";
 import { kanal, kanalKonfiguriert } from "./frappe";
 import { DEMO, demoAktiv } from "./demo";
+import { melde, pruefeSchluessel } from "../indexnow";
 
 export const BASE_URL = "https://www.oekovolt.com";
 
@@ -108,6 +109,42 @@ export async function veroeffentlichung(slug, { revalidate = 300 } = {}) {
     return normalisiere(await kanal("detail", { slug }, { revalidate, tags: ["veroeffentlichungen", `v:${slug}`] }));
   } catch {
     return null;
+  }
+}
+
+/* ------------------------------------------------------------------ IndexNow */
+
+// Pro Server-Instanz schon gemeldete Stände (slug → aktualisiert): Webhook und Cron-Sicherheitsnetz
+// melden dieselbe Änderung so nur einmal. Nach einem Neustart hilft das Zeitfenster `seit`.
+const indexNowGemeldet = new Map();
+
+/** IndexNow vom Server nur, wenn ausdrücklich eingeschaltet (Produktion: INDEXNOW_AKTIV=1). */
+export const indexNowAktiv = () => process.env.INDEXNOW_AKTIV === "1";
+
+/**
+ * Presse-Veröffentlichung → IndexNow: meldet /presse/<slug> (und die Übersicht /presse) aller
+ * Website-Veröffentlichungen, die seit `seit` neu oder geändert sind – nur Änderungen, jede nur einmal.
+ * Aufruf beim Veröffentlichen (Frappe-Webhook → src/app/api/kanaele/verteilen/route.js, POST).
+ * Ohne INDEXNOW_AKTIV=1 (Entwicklung, Vorschau) läuft alles als Trockenlauf.
+ * Rückgabe: { urls, gemeldet, trocken, fehler? } – wirft nie.
+ */
+export async function veroeffentlichungenMelden({ seit = Date.now() - 30 * 60_000, trocken = !indexNowAktiv(), fetchFn } = {}) {
+  const grenze = typeof seit === "number" ? seit : new Date(seit).getTime();
+  const liste = await veroeffentlichungen({ kanal: "website", limit: 50, revalidate: false });
+  const frisch = liste.filter((v) => {
+    const t = new Date(v.aktualisiert || v.datum).getTime();
+    return Number.isFinite(t) && t >= grenze && indexNowGemeldet.get(v.slug) !== String(v.aktualisiert);
+  });
+  if (!frisch.length) return { urls: [], gemeldet: 0, trocken };
+  const urls = [...frisch.map((v) => v.url), `${BASE_URL}/presse`];
+  try {
+    if (trocken) return { urls, gemeldet: 0, trocken };
+    await pruefeSchluessel({ fetchFn });
+    const { gemeldet } = await melde(urls, { fetchFn, maxVersuche: 1 });
+    frisch.forEach((v) => indexNowGemeldet.set(v.slug, String(v.aktualisiert)));
+    return { urls, gemeldet: gemeldet.length, trocken };
+  } catch (e) {
+    return { urls, gemeldet: e?.gemeldet?.length || 0, trocken, fehler: e?.message || String(e) };
   }
 }
 

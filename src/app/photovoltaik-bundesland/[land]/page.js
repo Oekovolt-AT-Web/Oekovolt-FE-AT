@@ -7,11 +7,17 @@
 // src/lib/bundesland/daten.js, Rechenlogik in src/lib/bundesland/auswertung.js.
 //
 // URL bewusst NICHT unter /photovoltaik/[stadt]: „wien“ und „salzburg“ sind dort Ortsslugs.
+//
+// SEO-Plan M26 (Stand 30.09.2026): Titel ohne „Förderung“ (Förderung → /forderungen/<land>),
+// Salzburg als „Land Salzburg“ gegen die Stadtseite abgegrenzt, Hauptseite je Land aus
+// hauptseite() – für Wien ist das /photovoltaik/wien. Schneelast verlinkt auf die Sprungmarke
+// im Hub /schneelast#<land>, weil die Landesvarianten dort zusammengeführt sind (5-Wort-
+// Überschneidung 0,64 ≥ 0,35). Messung der Hubseiten untereinander: max. 0,31 < 0,35.
 
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Building2, CalendarCheck2, Compass, Factory, Gauge, HandCoins, Landmark, MapPin, Mountain, PlugZap, Snowflake, Sun, Users } from "lucide-react";
+import { ArrowRight, Building2, CalendarCheck2, ClipboardCheck, Compass, Factory, Gauge, HandCoins, Landmark, MapPin, Mountain, PlugZap, Snowflake, Sun, Users } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -29,7 +35,7 @@ import MonatsProfil from "@/components/Bundesland/MonatsProfil";
 import { Etikett, ExternerLink, PfeilLink } from "@/components/Bundesland/Bausteine";
 import { ZIELGRUPPEN, PRUEFEN_HINWEIS } from "@/data/bundeslaender";
 import { bundeslandDaten } from "@/lib/bundesland/daten";
-import { LAENDER, datumText, jahresertrag, landPfad, seoTitel, zahl } from "@/lib/bundesland/auswertung";
+import { LAENDER, datumText, hauptseite, istHauptseite, jahresertrag, landPfad, schneelastAnker, seoTitel, zahl } from "@/lib/bundesland/auswertung";
 import { BASE_URL, LOCALE, SITE_NAME } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -38,6 +44,7 @@ export const dynamicParams = false;
 const HUB = "Photovoltaik Österreich";
 const EG_PFAD = "/energiegemeinschaften";
 const EG_BETRIEBE_PFAD = "/energiegemeinschaften/betriebe-gemeinden";
+const PV_FIRMA_PRUEFEN = "/ratgeber/photovoltaik-angebot-vergleichen#pv-firma-pruefen";
 
 export function generateStaticParams() {
   return LAENDER.map((l) => ({ land: l.slug }));
@@ -61,9 +68,13 @@ const ortName = (o) => o.kurzname || o.name;
 
 function beschreibung(d) {
   const e = d.ertrag;
+  if (!istHauptseite(d.slug)) {
+    const bez = d.schneelast.anzahlBezirksorte ? ` der ${d.schneelast.anzahlBezirksorte} Bezirke` : "";
+    return `Bundesland ${d.name} in Daten: Verteilnetzbetreiber, Schneelast-Richtwerte${bez}, Landesprogramme und Referenzkunden – für Betriebe und Immobilien.`;
+  }
   const teile = [
     `Photovoltaik ${d.imLand}: ${d.orte.length} ${d.orte.length === 1 ? "Standort" : "Standorte"} mit PVGIS-Ertrag${e ? ` (Ø ${zahl(e.mittel.sued35)} kWh/kWp)` : ""}`,
-    "Netzbetreiber, Schneelast-Richtwerte, Landesförderung",
+    "Netzbetreiber, Schneelast-Richtwerte, Baurecht",
   ];
   const text = `${teile.join(", ")}${d.referenzen.liste.length ? " und Referenzen" : ""} – für Gewerbe und Industrie.`;
   return text.length <= 160 ? text : `${teile.join(", ")} – für Gewerbe und Industrie.`;
@@ -160,14 +171,7 @@ export default async function BundeslandSeite({ params }) {
                 itemListElement: d.orte.map((o, i) => ({ "@type": "ListItem", position: i + 1, name: `Photovoltaik ${o.name}`, url: `${BASE_URL}/photovoltaik/${o.slug}` })),
               },
               ...(faq.length ? [{ "@type": "FAQPage", mainEntity: faq.map((x) => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.a } })) }] : []),
-              {
-                "@type": "BreadcrumbList",
-                itemListElement: [
-                  { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-                  { "@type": "ListItem", position: 2, name: HUB, item: `${BASE_URL}/photovoltaik` },
-                  { "@type": "ListItem", position: 3, name: d.name, item: url },
-                ],
-              },
+              // BreadcrumbList kommt aus der sichtbaren Brotkrumen-Navigation (src/components/ui/Breadcrumbs.js) – hier nicht doppelt (QA N3)
             ],
           }),
         }}
@@ -179,7 +183,8 @@ export default async function BundeslandSeite({ params }) {
         eyebrow={`Photovoltaik ${d.imLand}`}
         title={
           <>
-            {`Photovoltaik ${d.name} –`} <span className="ov-text-gradient-light">{d.orte.length === 1 ? "Ertrag, Netz und Förderung." : `${d.orte.length} Standorte im Überblick.`}</span>
+            {istHauptseite(d.slug) ? `Photovoltaik ${d.imLand}` : `Bundesland ${d.name} –`}{" "}
+            <span className="ov-text-gradient-light">{istHauptseite(d.slug) ? "für Betriebe und Gemeinden." : "Netz, Schneelast und Referenzen."}</span>
           </>
         }
         lead={
@@ -208,6 +213,34 @@ export default async function BundeslandSeite({ params }) {
           refs.length ? { value: refs.length, label: `Referenzkunden mit Unternehmenssitz ${d.imLand}` } : e?.winteranteil != null ? { value: e.winteranteil, suffix: " %", label: "des Jahresertrags entfallen im Mittel auf November bis Februar" } : null,
         ].filter(Boolean)}
       />
+
+      {/* Abgrenzung Stadt/Land bzw. Hauptseite (nur Wien und Salzburg) */}
+      {(!istHauptseite(d.slug) || (hauptstadt && hauptstadt.slug === d.slug)) && (
+        <Section tone="white" space="sm" className="pb-0 md:pb-0">
+          <p className="flex max-w-4xl gap-3 rounded-2xl bg-sand-50 p-5 text-[15px] leading-relaxed text-ink-700 ring-1 ring-ink-200/60">
+            <MapPin aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-600" />
+            <span>
+              {istHauptseite(d.slug) ? (
+                <>
+                  Diese Seite behandelt das <strong className="text-ink-900">Land {d.name}</strong> mit allen Bezirken. Für die{" "}
+                  <Link href={`/photovoltaik/${hauptstadt.slug}`} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    Stadt {ortName(hauptstadt)}
+                  </Link>{" "}
+                  mit Altstadtschutz und Gewerbegebieten gibt es eine eigene Standortseite.
+                </>
+              ) : (
+                <>
+                  Hauptseite für Photovoltaik-Projekte in {d.name} ist{" "}
+                  <Link href={hauptseite(d.slug)} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    Photovoltaik {d.name}
+                  </Link>{" "}
+                  mit Bauordnung, Solarpflicht und Ablauf. Hier stehen die Daten des Bundeslands: Netzbetreiber, Schneelast-Richtwerte {d.schneelast.anzahlBezirksorte ? `der ${d.schneelast.anzahlBezirksorte} Bezirke` : ""}, Landesprogramme und Referenzkunden.
+                </>
+              )}
+            </span>
+          </p>
+        </Section>
+      )}
 
       {/* Standortseiten */}
       <Section tone="white" space="lg" id="standorte">
@@ -458,7 +491,7 @@ export default async function BundeslandSeite({ params }) {
               Richtwert, kein Normwert: Für Statik und Modulwahl gilt die charakteristische Schneelast nach ÖNORM B 1991-1-3 aus eHORA für die genaue Adresse. Wir prüfen sie vor jedem Angebot.
             </p>
             <div className="mt-5 flex flex-wrap gap-x-6">
-              <PfeilLink href={d.schneelast.pfad} icon={Snowflake}>
+              <PfeilLink href={schneelastAnker(d.slug)} icon={Snowflake}>
                 Alle Richtwerte {d.name}
               </PfeilLink>
               <PfeilLink href="/standort-check" icon={Mountain}>
@@ -616,9 +649,12 @@ export default async function BundeslandSeite({ params }) {
           </PfeilLink>
           {hauptstadt && (
             <PfeilLink href={`/photovoltaik/${hauptstadt.slug}`} icon={MapPin}>
-              Photovoltaik {ortName(hauptstadt)}
+              Photovoltaik {hauptstadt.slug === "salzburg" ? "Stadt Salzburg" : ortName(hauptstadt)}
             </PfeilLink>
           )}
+          <PfeilLink href={PV_FIRMA_PRUEFEN} icon={ClipboardCheck}>
+            PV-Firma {d.imLand} prüfen: Checkliste
+          </PfeilLink>
         </div>
         <p className="mt-8 max-w-4xl text-[12.5px] leading-relaxed text-ink-500">
           Quellen: Ertrag {pvgisQuelle}; Schneelast eigene Auswertung GeoSphere Austria SNOWGRID-CL (CC BY 4.0); Verteilnetzbetreiber laut E-Control-Tarifkalkulator je Postleitzahl (Recherche auf den

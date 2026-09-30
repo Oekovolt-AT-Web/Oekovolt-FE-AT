@@ -260,7 +260,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Mittags drückt der hohe PV-Anteil die Börsenpreise: Am 1. Mai 2026 fielen sie bis −500 €/MWh, im heißen Sommer 2026 gab es dagegen keine negativen Preise. Wer mehr als den Marktpreis erzielen oder Preisrisiken absichern will, nutzt die [Direktvermarktung](/service/direktvermarktung) oder einen Liefervertrag an einen Abnehmer ([PPA](/ratgeber/ppa-oesterreich)). Die Optionen vergleicht [Reststromvermarktung](/ratgeber/reststromvermarktung), die Preisbildung erklärt [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis).",
+          text: "Mittags drückt der hohe PV-Anteil die Börsenpreise: Am 1. Mai 2026 fielen sie bis −500 €/MWh, im heißen Sommer 2026 gab es dagegen keine negativen Preise. Wer mehr als den Marktpreis erzielen oder Preisrisiken absichern will, nutzt die [Direktvermarktung](/service/direktvermarktung) oder einen Liefervertrag an einen Abnehmer ([PPA](/ratgeber/ppa-oesterreich)). Die Optionen vergleicht [Einspeisung für Betriebe](/einspeisung-gewerbe), die Preisbildung erklärt [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis).",
         },
       ],
     },

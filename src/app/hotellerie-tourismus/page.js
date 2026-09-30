@@ -31,6 +31,13 @@ const BESCHREIBUNG =
   "PV für Hotels, Thermen, Bergbahnen und Skigebiete in Österreich – alpin geplant, mit Speicher, Gäste-Ladestationen und Nachhaltigkeitsmarketing.";
 const HERO_BILD = "/Images/AT/loesungen-b/tourismus-berghotel-abendrot.jpg";
 
+// Seilbahn-Abschnitt (P3, E12): erscheint NUR mit RIS-Beleg. Stand 30.09.2026: Die Novelle der
+// Verordnung über genehmigungsfreie Bauvorhaben bei Seilbahnen (VgBSeil 2006) ist NICHT in Kraft –
+// Begutachtung endete am 15.09.2026 (tirol.ORF.at, 16.09.2026; BMIMI-OTS 23.04.2026). Nach der Kundmachung
+// hier eintragen und rechtlich prüfen lassen, z. B.:
+// { kurz: "VgBSeil-Novelle 2026", bgbl: "BGBl. II Nr. …/2026", ris: "https://www.ris.bka.gv.at/…", text: "…" }
+const SEILBAHN_VERORDNUNG = null;
+
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
@@ -151,8 +158,8 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         variant="immersive"
         breadcrumbs={[{ name: "Hotellerie & Tourismus" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Photovoltaik für Hotels, <span className="ov-text-gradient-light">Thermen und Bergbahnen</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Berghotel mit Schindeldächern vor verschneiten Gipfeln im Abendrot", position: "60% 60%" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=gewerbe" },
@@ -235,6 +242,15 @@ export default async function HotellerieTourismusPage({ searchParams }) {
             action={{ label: "Standort prüfen", href: "/standort-check", variant: "secondary" }}
           />
         </div>
+        {SEILBAHN_VERORDNUNG && (
+          <Hinweis className="mt-10" titel={`Neu: PV an Seilbahnanlagen – ${SEILBAHN_VERORDNUNG.kurz}`}>
+            {SEILBAHN_VERORDNUNG.text}{" "}
+            <a href={SEILBAHN_VERORDNUNG.ris} target="_blank" rel="noopener noreferrer" className="font-semibold text-ov-700 underline">
+              Kundmachung im RIS ({SEILBAHN_VERORDNUNG.bgbl})
+            </a>
+            .
+          </Hinweis>
+        )}
       </Section>
 
       <DunkelSektion

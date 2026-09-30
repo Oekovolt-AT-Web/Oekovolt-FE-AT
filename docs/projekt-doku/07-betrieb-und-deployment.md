@@ -1,7 +1,7 @@
 # 07 – Betrieb und Deployment (Betriebsanleitung)
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 26514 (Informationen für Betreiber: Voraussetzungen, Konfiguration,
-Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 ## 1. Voraussetzungen
 
@@ -33,6 +33,9 @@ Arbeitsbaum). Werte gehören **nie** ins Repository (`.gitignore`: `.env*`).
 | `HINWEIS_API_KEY`, `HINWEIS_API_SECRET` | bei `HINWEIS_INTERN=1` | User „Hinweis Webformular“ (Rückfall `API_KEY`) | `src/lib/hinweisApi.js:14-15` |
 | `CLOUDTALK_KEY_ID`, `CLOUDTALK_KEY_SECRET`, `CLOUDTALK_AGENT_IDS` | optional | Sofort-Rückruf über CloudTalk; Agent-IDs kommagetrennt (Reihenfolge = Priorität) | `src/lib/rueckrufApi.js:21-26` |
 | `NEXT_PUBLIC_GA_ID` | optional | GA4-Mess-ID der **AT**-Property; ohne ID kein Analytics (kein Rückfall auf DE) | `src/components/Statistik/GoogleAnalytics.js:73` |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | optional | Google-Search-Console-Verifizierung als Meta-Tag (Alternative: DNS) | `src/app/layout.js` |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | optional | Bing-Webmaster-Verifizierung (`msvalidate.01`) | `src/app/layout.js` |
+| `INDEXNOW_AKTIV` | optional | `1` = Presse-Veröffentlichungen werden beim Kanal-Webhook per IndexNow gemeldet; sonst Trockenlauf | `src/lib/kanaele/veroeffentlichungen.js` |
 | `UMAMI_SCRIPT_URL`, `UMAMI_WEBSITE_ID` | optional | Umami-Skript und Website-ID; beide nötig. Wirkt auch auf den Datenschutztext (zur Build-Zeit) | `src/components/Statistik/Umami.js:15-16`, Arbeitsbaum `src/components/Datenschutz/datenschutz.js` |
 | `HEATMAP_TOKEN` | für Heatmap-Ansicht | Zugangstoken (≥ 16 Zeichen) für `…?heatmap=<TOKEN>`; gleicher Wert wie `oekovolt_heatmap_token` in Frappe; erzeugen z. B. `openssl rand -hex 24` | `src/app/api/heatmap/route.js:13,75`, `Import-Backend-Frappe/installation/website_env.txt` |
 | `ALLOWED_LOCAL` | optional | erlaubter Origin für `/api/image` (Standard `https://www.oekovolt.com`) | `src/app/api/image/route.js:96` |
@@ -89,8 +92,10 @@ arbeitende Agenten gilt zusätzlich: kein `npm run build`/`dev` (`docs/AT-BRIEFI
 2. Tests ausführen (Kapitel 06, Abschnitt 2).
 3. Produktions-Build (bei laufendem Server in getrenntes Verzeichnis, 3.2).
 4. Deploy auf das Hosting (**Verfahren offen**, keine Deploy-Konfiguration im Repo).
-5. Nach dem Deploy: Search Console und Bing Webmaster für oekovolt.com, Sitemap einreichen,
-   `node scripts/indexnow.mjs` ausführen (`docs/AT-UEBERGABE.md:71-72`).
+5. Nach dem Deploy: Search Console und Bing Webmaster (per DNS, siehe `docs/seo/Offpage-Fahrplan.md`), Sitemap einreichen,
+   `node scripts/indexnow.mjs --trocken`, dann `node scripts/indexnow.mjs` (erster Lauf ohne Zustandsdatei meldet alle ca. 310 URLs;
+   bricht ab, solange die Schlüsseldatei live 404 liefert). Zusätzlich `curl -A GPTBot https://www.oekovolt.com/kontakt` (Title vor `</head>`)
+   und Rich-Results-Test. `docs/AT-UEBERGABE.md:71-72` beschreibt noch den alten Aufruf.
 6. Kanal-Takt: Das Backoffice ruft den Webhook alle 5 Minuten selbst auf (`website_anstossen`); ein zusätzlicher Cron (`GET /api/kanaele/verteilen` mit `Authorization: Bearer $CRON_SECRET`) ist optional.
    Scheduler **offen**.
 
@@ -130,6 +135,10 @@ Aus `docs/AT-UEBERGABE.md:101-106`, ergänzt um Belege aus dem Code.
 | Vergabe-/Förderkarten Gemeinden | nach 22.10.2026 (EAG-Call) und bei neuer Klimafonds-Ausschreibung | `src/app/kommunen/vergabe-foerderung/page.js`, `src/lib/kommunen/*` | `node scripts/kommunen-vergabe.test.mjs` |
 | Lastgang-Beispieldatei | bei Änderung von `beispielCsv()` | `public/beispiele/lastgang-beispiel.csv` | Test meldet veraltete Datei |
 | Alle Node-Tests | vor jedem Commit/Deploy | `scripts/*.test.mjs` | `node scripts/alle-tests.mjs` |
+| Sitemap-Änderungsdaten | bei sichtbaren Inhaltsänderungen | `GEAENDERT` in `src/app/sitemap.js`; Listen `NICHT_INDEXIERT` (`src/lib/llms.js`) und `WEITERGELEITETE_HERSTELLER` (`src/app/sitemap.js`) mit `next.config.mjs` synchron halten | danach IndexNow |
+| IndexNow-Zustand | automatisch | `scripts/indexnow-zustand.json` (in `.gitignore`, liegt nur auf dem ausführenden Rechner) | bei Rechnerwechsel `--nur-zustand` für eine Ausgangsbasis |
+| Fachprüfer freischalten | nach Einwilligung | `src/data/fachpruefer.js` (`einwilligung`, Rolle, Qualifikation) | – |
+| Offpage-Maßnahmen | laut Fahrplan | `docs/seo/Offpage-Fahrplan.md` (Go/No-Go 05.10., Story 1 bis 06.10.) | außerhalb des Repos |
 | Mannschaft & Maschinenpark | bei Änderungen | `src/data/mannschaft.js` | neue Einträge mit Quelle, `bestaetigt` erst nach Freigabe |
 | Fotos nachreichen | einmalig | `public/Images/AT/unternehmen/oekovolt-lkw.jpg` (optional `…-traktor.jpg`), `public/Images/AT/team/` (Pressekontakt) | Formatvorgaben im Kopfkommentar von `src/data/mannschaft.js` bzw. `PresseKontakt.js`; Bildquelle dokumentieren |
 | Backoffice-Korrekturen | laufend | Frappe | `docs/Backoffice-Korrekturen.md` (Sichtbarkeit nach ≤ 10 min, `revalidate: 600`) |
@@ -162,6 +171,12 @@ Erinnerungsmails Solar Lead.
 | GeoSphere Data Hub | 5/s, 240/h je ausgehender IP | `/api/pv-prognose` | eigener Deckel 200/h; v1-Datensätze enden am 04.11.2026 (verwendet wird v2) |
 | Nominatim | 1/s | Adresssuche | unverändert |
 | **In-Memory-Caches und -Zähler** | je Serverprozess/Instanz, gehen beim Neustart verloren | Standort-Dienste, PV-Prognose (auf `globalThis`), Drosselungen aller Routen | bei mehreren Instanzen (z. B. Serverless) gelten Budgets und Drosselungen je Instanz – für zentrale Zähler wäre ein gemeinsamer Speicher (Redis/KV) nötig |
+
+### 5b. Entwicklungsumgebung
+
+`next dev` belegte bei parallelen Abrufen bis zu ca. **15,8 GB RAM** und ist dabei abgestürzt (QA-Bericht, 30.09.2026;
+Neustart unter neuer Prozess-ID). Bei Prüfläufen gegen den Dev-Server Abrufe nicht parallelisieren und Speicherverbrauch
+beobachten; für Crawls besser einen Produktions-Build in eigenem Verzeichnis nutzen (`NEXT_DIST_DIR`, siehe 3.2). R-52.
 
 ## 6. Störungen – Erstmaßnahmen
 

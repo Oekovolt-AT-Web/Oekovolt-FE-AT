@@ -44,7 +44,7 @@ import { PV_FAQ } from "@/data/photovoltaik-seite";
 const PFAD = "/dienstleistungen/photovoltaik";
 const PV_PAGE_URL = `${BASE_URL}${PFAD}`;
 
-const META_TITLE = "Photovoltaik planen, errichten, anschließen | Ökovolt";
+const META_TITLE = "PV-Errichtung: Planung, Montage & Netzanschluss | Ökovolt";
 const META_DESCRIPTION =
   "PV-Anlagen für Betriebe in Österreich: Lastganganalyse, Planung, Montage, Netzzugangsantrag, TOR-konformer Anschluss und Wartung – aus einer Hand.";
 
@@ -53,7 +53,6 @@ export const metadata = {
   description: META_DESCRIPTION,
   keywords: ["Photovoltaik Österreich", "PV-Anlage Gewerbe", "Netzzugangsantrag Photovoltaik", "Fertigstellungsmeldung", "TOR Stromerzeugungsanlagen", "Photovoltaik Montage"],
   alternates: { canonical: PV_PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -137,10 +136,10 @@ export default function PhotovoltaikPage() {
         eyebrow={`Photovoltaik vom Elektrotechnik-Fachbetrieb aus ${FIRMA.ort}`}
         title={
           <>
-            Photovoltaik aus einer Hand – <span className="ov-text-gradient-light">geplant, errichtet, am Netz</span>
+            Planung, Montage und Netzanschluss <span className="ov-text-gradient-light">Ihrer PV-Anlage aus einer Hand</span>
           </>
         }
-        lead="Wir planen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden nach Lastgang, errichten sie mit eigenem Elektrotechnik-Gewerbe und übernehmen den Netzanschluss vom Netzzugangsantrag bis zur Fertigstellungsmeldung. Ein Ansprechpartner, vom ersten Gespräch bis zum laufenden Betrieb."
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Photovoltaik – geplant, errichtet, am Netz</span><span className="mt-3 block">Wir planen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden nach Lastgang, errichten sie mit eigenem Elektrotechnik-Gewerbe und übernehmen den Netzanschluss vom Netzzugangsantrag bis zur Fertigstellungsmeldung. Ein Ansprechpartner, vom ersten Gespräch bis zum laufenden Betrieb.</span></>}
         image={{ src: "/Images/Referenzen/referenzkarte4.jpg", alt: "Projektteam mit Planunterlagen zwischen den Modulreihen einer Freiflächenanlage", position: "22% 45%" }}
         points={["Planung nach Lastgang", "Netzzugangsantrag & TOR", "Fertigstellungsmeldung inklusive", "Monitoring & Wartung"]}
         actions={[

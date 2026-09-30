@@ -1,15 +1,16 @@
 // src/app/produkte/hersteller/page.js
 //
 // Herstellerübersicht Österreich. Bewusst statisch: Die Backoffice-Liste der
-// deutschen Seite enthielt Marken, mit denen die österreichische Gesellschaft
-// keine belegte Partnerschaft hat. Aufgeführt sind nur die Hersteller, deren
-// Zusammenarbeit belegt ist (Stand 09/2026): Fronius, Huawei, Solis, BYD,
-// Sigenergy, meteocontrol. Keine Markenlogos Dritter (keine Freigabe).
+// deutschen Seite enthielt Marken, deren Einsatz bei der österreichischen
+// Gesellschaft nicht belegt ist. Aufgeführt sind nur Marken mit `belegt` in
+// @/components/Hersteller/partner (E3, Stand 30.09.2026). Keine Markenlogos
+// Dritter (keine Freigabe), kein „Partner“-Status ohne Urkunde.
 //
 // Fronius: Firmensitz Pettenbach (OÖ), gegründet 1945, Hauptproduktion
 // Sattledt (OÖ) – Quelle: https://de.wikipedia.org/wiki/Fronius_International
 
-import { BatteryCharging, Car, Cpu, Gauge, Headphones, HousePlug, Layers, Leaf, MapPin, ShieldCheck, Sun, Timer } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BatteryCharging, Car, Cpu, Gauge, Headphones, HousePlug, Layers, Leaf, MapPin, ShieldCheck, Sun, Timer } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -20,14 +21,14 @@ import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import HerstellerFilter from "@/components/Hersteller/HerstellerFilter";
 import { herstellerId } from "@/components/Hersteller/ids";
-import { PARTNER_KATEGORIEN } from "@/components/Hersteller/partner";
+import { BELEGT, PARTNER_KATEGORIEN, detailPfad } from "@/components/Hersteller/partner";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 
 const PFAD = "/produkte/hersteller";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-const TITLE = "PV-Hersteller: Fronius, Huawei, BYD & mehr | Ökovolt";
+const TITLE = "PV-Hersteller im Einsatz: Fronius, Huawei, BYD | Ökovolt";
 const DESCRIPTION =
   "Hersteller, die wir in Österreich verbauen: Wechselrichter von Fronius, Huawei und Solis, Speicher von BYD und Sigenergy, Monitoring von meteocontrol.";
 
@@ -36,7 +37,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Photovoltaik Hersteller", "Fronius Wechselrichter", "Huawei SUN2000", "BYD Battery-Box", "Sigenergy", "Solis Wechselrichter", "meteocontrol"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -77,6 +77,8 @@ const FAQ = [
 
 export default function HerstellerPage() {
   const alle = KATEGORIEN.flatMap((k) => k.hersteller);
+  // Ziel je Marke: eigene Detailseite, sonst die Karte auf dieser Seite
+  const ziel = (h) => detailPfad(BELEGT.find((p) => p.slug === h.slug)) || `#${herstellerId(h.title)}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -92,11 +94,15 @@ export default function HerstellerPage() {
       "@type": "ItemList",
       name: "Hersteller, die Ökovolt in Österreich verbaut",
       numberOfItems: alle.length,
-      itemListElement: alle.map((h, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: { "@type": "Brand", name: h.title, url: `${PAGE_URL}#${herstellerId(h.title)}` },
-      })),
+      itemListElement: BELEGT.map((h, i) => {
+        const seite = detailPfad(h);
+        return {
+          "@type": "ListItem",
+          position: i + 1,
+          url: seite ? `${BASE_URL}${seite}` : `${PAGE_URL}#${herstellerId(h.title)}`,
+          item: { "@type": "Brand", name: h.title, url: h.website, ...(h.sameAs?.length ? { sameAs: h.sameAs } : {}) },
+        };
+      }),
     },
   };
 
@@ -110,10 +116,10 @@ export default function HerstellerPage() {
         eyebrow="Hersteller & Marken"
         title={
           <>
-            Komponenten, die wir kennen – <span className="ov-text-gradient-light">geprüft im Einsatz</span>
+            Hersteller, die wir <span className="ov-text-gradient-light">in Österreich verbauen</span>
           </>
         }
-        lead="Wir verbauen Wechselrichter, Speicher und Monitoring von Herstellern, mit denen wir seit Jahren zusammenarbeiten – allen voran Fronius aus Oberösterreich. Die Auswahl folgt Langlebigkeit, Service in Österreich und Netzkonformität, nicht dem Datenblatt allein."
+        lead="Wechselrichter, Speicher und Monitoring von Marken, die wir nachweislich einsetzen – allen voran Fronius aus Oberösterreich. Die Auswahl folgt Langlebigkeit, Service in Österreich und Netzkonformität, nicht dem Datenblatt allein."
         image={{ src: "/Images/AT/wissen/pv-ingenieur-tablet.jpg", alt: "Ingenieur prüft Anlagendaten auf einem Tablet vor Solarmodulen", position: "65% 35%" }}
         actions={[
           { label: "Angebot anfragen", href: "/angebot" },
@@ -141,13 +147,13 @@ export default function HerstellerPage() {
         <ul className="ov-container grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
           {alle.map((h, i) => (
             <li key={h.title} className={i > 0 ? "border-ink-100 lg:border-l" : ""}>
-              <a
-                href={`#${herstellerId(h.title)}`}
+              <Link
+                href={ziel(h)}
                 className="group flex h-full flex-col items-center justify-center gap-1.5 px-3 py-7 text-center transition-colors duration-300 hover:bg-sand-50 md:py-9"
               >
                 <span className="font-display text-[24px] font-extrabold tracking-[-0.03em] text-ink-300 transition-colors duration-300 group-hover:text-ink-900 md:text-[28px]">{h.title}</span>
                 <span className="text-[10.5px] font-semibold uppercase tracking-[0.18em] text-ov-700/80">{h.rolle}</span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -169,6 +175,10 @@ export default function HerstellerPage() {
             <MapPin aria-hidden="true" className="h-4 w-4 text-ov-600" />
             Pettenbach · Sattledt · Oberösterreich
           </p>
+          <Link href="/produkte/wechselrichter/fronius" className="group mt-4 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+            Fronius-Wechselrichter im Detail
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </SplitMedia>
       </Section>
 
@@ -180,10 +190,25 @@ export default function HerstellerPage() {
               Hersteller, die wir <span className="ov-text-gradient">selbst verbauen</span>
             </>
           }
-          lead="Module wählen wir projektbezogen nach Technologie, Schneelast und Garantie; bei Wechselrichtern, Speichern und Monitoring setzen wir auf diese Partner."
+          lead="Module wählen wir projektbezogen nach Technologie, Schneelast und Garantie; bei Wechselrichtern, Speichern und Monitoring setzen wir auf diese Hersteller."
           className="mb-10"
         />
         <HerstellerFilter kategorien={KATEGORIEN} />
+        <p className="mt-10 max-w-3xl text-[15px] leading-relaxed text-ink-600">
+          Weitere verbreitete Marken vergleichen wir neutral nach Datenblatt – ohne Aussage, ob wir sie verbauen:{" "}
+          <Link href="/ratgeber/wechselrichter-photovoltaik#hersteller-vergleich" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+            Wechselrichter und Speicher
+          </Link>{" "}
+          sowie{" "}
+          <Link href="/ratgeber/solarmodule-vergleich#hersteller-vergleich" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+            Solarmodule
+          </Link>
+          . Wie Sie einen Errichter prüfen, zeigt unsere{" "}
+          <Link href="/ratgeber/photovoltaik-angebot-vergleichen#pv-firma-pruefen" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+            Checkliste „PV-Firma prüfen“
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section tone="navy" space="lg" className="overflow-hidden">

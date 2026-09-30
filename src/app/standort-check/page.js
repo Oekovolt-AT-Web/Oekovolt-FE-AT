@@ -4,6 +4,10 @@
 // Normwert in eHORA), Wind, Hagel und Ertrag (PVGIS) für einen Punkt in Österreich. HORA wird
 // nicht automatisch abgefragt. Das Werkzeug ist eine Client-Komponente; diese Seite liefert Rahmen,
 // Erklärtexte (SEO/GEO), FAQ und strukturierte Daten.
+//
+// SEO-Plan M01/M12 (30.09.2026): Titel und Description klar von /schneelast getrennt – diese Seite
+// ist der Adress-Check (Ertrag, Hagel, Wind, Schnee), /schneelast die Karte mit Richtwerten je Ort.
+// Der Schneelast-Richtwert verweist im Schema auf das Dataset von /schneelast.
 
 import Link from "next/link";
 import { ArrowUpRight, Calculator, Info, MapPin, Mountain, Snowflake, Wind } from "lucide-react";
@@ -25,15 +29,14 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/standort-check";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Standort-Check PV: Schneelast, Hagel & Ertrag | Ökovolt";
+const TITEL = "PV-Standort-Check: Ertrag, Hagel, Wind & Schnee | Ökovolt";
 const BESCHREIBUNG =
-  "Schneelast-Richtwert automatisch, Normwert nach ÖNORM B 1991-1-3 in eHORA, Wind, Hagel und PV-Ertrag (PVGIS) für Ihre Adresse in Österreich – mit Modul- und Unterkonstruktions-Check.";
+  "Kostenloser PV-Standort-Check für Ihre Adresse: Solarertrag mit PVGIS, Hagelklasse, Wind und Schnee – mit Empfehlung für Module und Unterkonstruktion.";
 
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -119,14 +122,18 @@ const schema = {
         "Hagelwiderstandsklasse",
         "Spezifischer Ertrag mit PVGIS",
       ],
-      isBasedOn: {
-        "@type": "Dataset",
-        name: "SNOWGRID Klima v2.1 (SNOWGRID-CL), 1 km, täglich",
-        url: "https://data.hub.geosphere.at/dataset/snowgrid_cl-v2-1d-1km",
-        identifier: "https://doi.org/10.60669/fsxx-6977",
-        license: "https://creativecommons.org/licenses/by/4.0/",
-        creator: { "@type": "Organization", name: "GeoSphere Austria", url: "https://www.geosphere.at/" },
-      },
+      isBasedOn: [
+        // eigenes Dataset (vollständig beschrieben auf /schneelast)
+        { "@id": `${BASE_URL}/schneelast/#dataset` },
+        {
+          "@type": "Dataset",
+          name: "PVGIS 5.3 – Photovoltaic Geographical Information System",
+          description: "Solarstrahlungsdaten und Ertragssimulation für Photovoltaikanlagen des Joint Research Centre der Europäischen Kommission (Strahlungsdaten SARAH-3, 2005–2023).",
+          url: "https://re.jrc.ec.europa.eu/pvg_tools/de/",
+          creator: { "@type": "Organization", name: "Joint Research Centre der Europäischen Kommission" },
+          license: "https://joint-research-centre.ec.europa.eu/photovoltaic-geographical-information-system-pvgis/general-information/usage-conditions-data-protection_en",
+        },
+      ],
       offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
       publisher: { "@id": `${BASE_URL}/#organization` },
     },
@@ -221,7 +228,7 @@ export default function StandortCheckPage() {
         eyebrow="Standort-Check mit eHORA"
         title={
           <>
-            Standort-Check Photovoltaik: <span className="ov-text-gradient-light">Schneelast, Wind, Hagel & Ertrag</span>
+            PV-Standort-Check: <span className="ov-text-gradient-light">Ertrag, Hagel, Wind & Schnee</span>
           </>
         }
         lead="Für jede Adresse in Österreich: Seehöhe, Solarertrag und ein Schneelast-Richtwert automatisch, die Normwerte aus eHORA per Direktlink – und eine klare Bewertung, welche Module, welche Unterkonstruktion und welcher Schneefang zu Ihrem Dach passen."

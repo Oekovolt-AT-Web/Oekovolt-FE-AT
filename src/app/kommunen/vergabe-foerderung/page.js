@@ -2,7 +2,7 @@
 //
 // Vergabe & Förderung für Gemeinden: Schwellenwerte nach BVergG 2018 idF Vergaberechtsgesetz 2026
 // (BGBl. I Nr. 8/2026), interaktiver Vergabe-Wegweiser, Ablauf bis zum Gemeinderatsbeschluss,
-// Förderungen und Mittel (EAG, KIG 2025, Klimafonds, KPC), Energiegemeinschaft der Gemeinde,
+// Förderungen und Mittel (EAG, KIG 2025, Klimafonds, KPC), Energiegemeinschaft der Gemeinde, Bürgerbeteiligung,
 // Checkliste „Unterlagen für den Gemeinderat“, FAQ, Quellen. Stand 30.09.2026.
 //
 // Zahlen: src/lib/kommunen/vergabe.js (Schwellenwerte) und src/components/KommunenVergabe/inhalte.js.
@@ -33,7 +33,7 @@ const PFAD = "/kommunen/vergabe-foerderung";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "PV-Vergabe & Förderung für Gemeinden 2026 | Ökovolt";
 const BESCHREIBUNG =
-  "Photovoltaik für Gemeinden: Schwellenwerte nach Vergaberechtsgesetz 2026, Direktvergabe bis 200.000 €, Weg zum Gemeinderatsbeschluss, EAG, KIG 2025 und Energiegemeinschaft.";
+  "PV-Vergabe für Gemeinden: Schwellenwerte 2026, Direktvergabe bis 200.000 €, Weg zum Gemeinderatsbeschluss, EAG, KIG 2025 und Bürgerbeteiligung.";
 const HERO_BILD = "/Images/AT/ratgeber/photovoltaik-gemeinde.jpg";
 const STAND = VERGABE_STAND;
 
@@ -50,7 +50,6 @@ export const metadata = {
     "Energiegemeinschaft Gemeinde 10 Prozent",
   ],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     locale: "de_AT",
@@ -114,10 +113,10 @@ export default function KommunenVergabeFoerderung() {
         eyebrow={`Für Bürgermeister, Amtsleitung & Bauamt · Stand ${STAND.label}`}
         title={
           <>
-            PV für die Gemeinde: <span className="ov-text-gradient-light">richtig vergeben, gezielt fördern</span>
+            Photovoltaik für Gemeinden: <span className="ov-text-gradient-light">Vergabe und Förderung 2026</span>
           </>
         }
-        lead="Welche Vergabe seit dem Vergaberechtsgesetz 2026 zulässig ist, was der Gemeinderat für seinen Beschluss braucht und welche Mittel von Bund und Klimafonds Gemeinden nutzen können – kompakt, mit Quellen und einem Wegweiser für Ihren Auftragswert."
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">PV für die Gemeinde: richtig vergeben, gezielt fördern</span><span className="mt-3 block">Welche Vergabe seit dem Vergaberechtsgesetz 2026 zulässig ist, was der Gemeinderat für seinen Beschluss braucht und welche Mittel von Bund und Klimafonds Gemeinden nutzen können – kompakt, mit Quellen und einem Wegweiser für Ihren Auftragswert.</span></>}
         image={{ src: HERO_BILD, alt: "Gemeindeamt in Fresach in Kärnten mit Photovoltaikanlage auf dem Dach" }}
         actions={[
           { label: "Vergabeweg prüfen", href: "#wegweiser" },
@@ -357,6 +356,71 @@ export default function KommunenVergabeFoerderung() {
         </div>
       </Section>
 
+      {/* Bürgerbeteiligung – nur belegte, qualitative Aussagen, keine Schwellenwerte ohne geprüfte Quelle */}
+      <Section tone="white" space="md" id="buergerbeteiligung" className="scroll-mt-24">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+          <SectionHeading
+            eyebrow="Bürgerbeteiligung"
+            title="Wie Bürgerinnen und Bürger an der Gemeinde-PV teilhaben"
+            lead="Zwei Wege: Strom teilen oder Kapital beteiligen. Das Teilen regelt das ElWG, die finanzielle Beteiligung das Bank- und Kapitalmarktrecht – sie gehört vor dem Beschluss rechtlich geprüft."
+          />
+          <Hinweis ton="warn" titel="Geld von Bürgern ist kein Formular">
+            Nimmt eine Gemeinde oder ihre Gesellschaft gewerblich Geld mit unbedingtem Rückzahlungsanspruch an, kann das nach Ansicht der FMA ein konzessionspflichtiges
+            Einlagengeschäft sein. Öffentliche Angebote können zudem Prospekt- oder Informationspflichten auslösen. Lassen Sie das Modell von einer Rechtsberatung prüfen.
+          </Hinweis>
+        </div>
+        <Tabelle
+          dicht
+          caption="Modelle der Bürgerbeteiligung an Photovoltaik der Gemeinde"
+          spalten={[
+            { key: "modell", label: "Modell", breite: "w-[26%]" },
+            { key: "wie", label: "So funktioniert es" },
+            { key: "achten", label: "Worauf achten", breite: "w-[34%]" },
+          ]}
+          zeilen={[
+            {
+              modell: "Energiegemeinschaft (EEG oder BEG)",
+              wie: "Die Gemeinde liefert Überschuss von Schule, Bauhof oder Kläranlage an Haushalte und Betriebe im Ort.",
+              achten: "Rechtsträger (z. B. Verein, Genossenschaft), Verträge, Abrechnung; ab 01.10.2026 mind. 10 % für schutzbedürftige Haushalte (§ 68 Abs. 6 ElWG).",
+            },
+            {
+              modell: "Genossenschaft",
+              wie: "Bürgerinnen und Bürger zeichnen Anteile; die Genossenschaft errichtet und betreibt die Anlagen.",
+              achten: "Gründung, Revisionsverband, Organe – demokratische Mitbestimmung, dafür mehr Verwaltungsaufwand.",
+            },
+            {
+              modell: "Modul-Beteiligung (Sale-and-lease-back)",
+              wie: "Bürger kaufen einzelne Module und vermieten sie an den Betreiber zurück; sie erhalten Miete und am Ende den Kaufpreis zurück.",
+              achten: "Eigentum am Modul, Laufzeit, Rückkauf und Versicherung klar regeln; kapitalmarktrechtlich prüfen lassen.",
+            },
+            {
+              modell: "Nachrangdarlehen oder Anleihe",
+              wie: "Bürger leihen der Projektgesellschaft Geld gegen Verzinsung.",
+              achten: "Bankwesen- und Kapitalmarktrecht, Alternativfinanzierungsgesetz (AltFG); Risiko- und Informationspflichten gegenüber Anlegern.",
+            },
+          ]}
+        />
+        <p className="mt-4 max-w-4xl text-[13px] leading-relaxed text-ink-500">
+          Quellen: Österreichische Koordinationsstelle für Energiegemeinschaften –{" "}
+          <a href="https://energiegemeinschaften.gv.at/gemeinsame-energienutzung/" target="_blank" rel="noopener noreferrer" className="underline">
+            Modelle der gemeinsamen Energienutzung
+          </a>{" "}
+          und{" "}
+          <a href="https://energiegemeinschaften.gv.at/gebietskoerperschaften-und-schutzbeduerftige-haushalte/" target="_blank" rel="noopener noreferrer" className="underline">
+            Gebietskörperschaften und schutzbedürftige Haushalte
+          </a>{" "}
+          (Abruf 30.09.2026); FMA –{" "}
+          <a href="https://www.fma.gv.at/kapitalmaerkte/emittentenaufsicht/aufsicht-ueber-kapitalmarktprospekte/alternativfinanzierungsgesetz/" target="_blank" rel="noopener noreferrer" className="underline">
+            Alternativfinanzierungsgesetz
+          </a>
+          ; Rericha/Wieser,{" "}
+          <a href="https://www.wirtschaftsanwaelte.at/burgerbeteiligung-bei-erneuerbarer-energie/" target="_blank" rel="noopener noreferrer" className="underline">
+            Bürgerbeteiligung bei erneuerbarer Energie
+          </a>{" "}
+          (02.04.2013; FMA-Sicht zum Einlagengeschäft, Sale-and-lease-back). Keine Rechtsberatung.
+        </p>
+      </Section>
+
       {/* Checkliste Gemeinderat */}
       <Section tone="sand" space="md" id="checkliste" className="scroll-mt-24">
         <div className="mb-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
@@ -390,8 +454,8 @@ export default function KommunenVergabeFoerderung() {
               </Link>
               <Link href="/ratgeber/photovoltaik-gemeinde" className="group flex items-center justify-between gap-4 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/70 transition hover:bg-white hover:ring-ov-300">
                 <span>
-                  <span className="block font-display text-[17px] font-bold text-ink-900">Ratgeber PV für Gemeinden</span>
-                  <span className="mt-0.5 block text-[14px] text-ink-600">Vergabe, Finanzierung, Bürgerbeteiligung</span>
+                  <span className="block font-display text-[17px] font-bold text-ink-900">PV auf Gemeindegebäuden</span>
+                  <span className="mt-0.5 block text-[14px] text-ink-600">Kläranlage, Schule, Bauhof – wo es sich rechnet</span>
                 </span>
                 <ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0 text-ov-600 transition-transform group-hover:translate-x-1" />
               </Link>

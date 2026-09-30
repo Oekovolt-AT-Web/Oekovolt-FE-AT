@@ -1,7 +1,7 @@
 # 02 – Architekturbeschreibung
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 42010 (Stakeholder und Belange, Sichten, Architekturentscheidungen).
-Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 ## 1. Stakeholder-Belange (Auszug)
 
@@ -241,5 +241,12 @@ flowchart LR
 | ADR-026 | **Marktdaten (OeMAG, E-Control) manuell pflegen**, keine automatisierten Abrufe; Frische-Warnung nach 35 Tagen | Quellen ohne API, Nutzungsbedingungen, Prüfbarkeit jeder Zahl | `src/data/oemag.js:6-12,26` | gültig (unveröff.) |
 | ADR-027 | **Schneelast-Karte beim Build erzeugen** (PNG, eigener Kodierer), Punktabfrage zur Laufzeit aus dem lokalen Raster | keine Kartenbibliothek, kein Abruf bei HORA; Raster per `outputFileTracingIncludes` ausgeliefert | `src/app/schneelast/karte.png/route.js`, `src/app/schneelast/richtwert/route.js:1-17` | gültig (unveröff.) |
 | ADR-028 | **Test-Sammellauf** `scripts/alle-tests.mjs` für alle `scripts/*.test.mjs`; bekannte Befunde als `todo` | ein Befehl für lokale Prüfung und spätere CI, Befunde sichtbar ohne Abbruch | `scripts/alle-tests.mjs` | gültig (unveröff.) |
-| ADR-029 | **KI-Training sperren, Such-/Antwort-Crawler erlauben** (E1, Variante B) | Auftraggeber-Entscheidung 30.09.2026 | `public/robots.txt` | beschlossen; robots.txt noch unvollständig (R-44) |
-| ADR-030 | **Eigene Herstellerseiten nur für belegte Marken** (Fronius, Huawei, BYD, Sigenergy, Solis, meteocontrol) | MSchG/UWG-Risiko minimieren | SEO-Plan E3/M17 | beschlossen; Umsetzung offen |
+| ADR-029 | **KI-Training sperren, Such-/Antwort-Crawler erlauben** (E1, Variante B) | Auftraggeber-Entscheidung 30.09.2026 | `public/robots.txt` | umgesetzt (unveröff.) – `public/robots.txt` in vier Gruppen |
+| ADR-030 | **Eigene Herstellerseiten nur für belegte Marken** (Fronius, Huawei, BYD, Sigenergy, Solis, meteocontrol) | MSchG/UWG-Risiko minimieren | SEO-Plan E3/M17 | umgesetzt (unveröff.) – `partner.js` mit `belegt`, `/produkte/wechselrichter/**` |
+| ADR-031 | **`htmlLimitedBots`** um KI-Such- und Abruf-Crawler erweitert (vollständige Next-Standardliste + Ergänzungen) | Metadaten stehen für diese Crawler vor dem Streaming im `<head>`; Googlebot bewusst nicht (führt JS aus) | `next.config.mjs` | gültig (unveröff.); bei Next-Updates Standardliste abgleichen |
+| ADR-032 | **Robots-Angaben zentral im Layout**, seitenweise nur `nurNoindex()` per Spread | schon `robots: undefined` überschreibt die Layout-Werte | `src/lib/seo/robots.js`, `src/app/layout.js` | gültig (unveröff.) |
+| ADR-033 | **IndexNow zustandsbasiert** (nur Änderungen, Zustandsdatei nicht versioniert), Presse-Meldung über Webhook nur mit `INDEXNOW_AKTIV=1` | keine Massenmeldungen, nachvollziehbar, Schutz vor Fehlmeldungen aus Test/Vorschau | `scripts/indexnow.mjs`, `src/lib/indexnow.js`, `.gitignore` | gültig (unveröff.) |
+| ADR-034 | **Sitemap und `llms.txt` teilen eine Indexierbarkeits-Regel** (`indexierbar()`), Datum aus der Datenquelle | keine Weiterleitungen/noindex-Seiten in Sitemap oder `llms.txt` | `src/lib/llms.js:34-62`, `src/app/sitemap.js` | gültig (unveröff.); Listen teils von Hand gepflegt |
+| ADR-035 | **Freigabe-Tor für Personen** (`einwilligung`, Rolle, Qualifikation) vor jeder Namens-/Schema-Ausgabe von Fachprüfern | DSGVO, E-E-A-T nur mit echten Angaben | `src/data/fachpruefer.js` | gültig (unveröff.) |
+| ADR-036 | **Doorway-Vermeidung messbar**: 5-Wort-Überschneidung < 0,35 je Vorlage; sonst Zusammenführen (Schneelast-Länder → Sprungmarken, 308) | Suchmaschinen-Richtlinien | `src/app/schneelast/[bundesland]/page.js`, `src/lib/bundesland/auswertung.js` | gültig (unveröff.) |
+| ADR-037 | **Kennzahl ausblenden statt unbelegt zeigen** (CO₂ ohne Zeitraum) | UWG | `src/data/kennzahlen.js` | gültig (unveröff.) |

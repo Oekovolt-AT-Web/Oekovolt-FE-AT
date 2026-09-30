@@ -5,6 +5,10 @@
 // Fachlicher Stand: September 2026. Jede Antwort beginnt mit der direkten
 // Antwort (zitierfähig); Zahlen tragen Stand bzw. Quelle.
 //
+// PRINZIP „ANTWORT ZUERST“ (SEO-Plan M21): Wo es eine belegte Zahl gibt, steht sie
+// im ERSTEN Satz – mit Einheit und „(Stand: …)“. Keine Zahl ohne Quelle unten.
+// Bei Änderungen der Rechtslage FAQ_STAND und die betroffenen ersten Sätze anpassen.
+//
 // Quellen (Auswahl, abgerufen 09/2026):
 // - EAG-Abwicklungsstelle/OeMAG: Investitionszuschuss PV & Speicher, Kategorien A–D,
 //   Fördersätze 2026, max. 30 % der förderfähigen Kosten, Inbetriebnahmefristen
@@ -16,8 +20,19 @@
 //   Mehrfachteilnahme seit 2024
 // - EY Österreich: Elektrizitätsabgabe bei PV (Eigenverbrauch ohne Mengengrenze befreit)
 // - PVGIS (EU-Kommission, JRC): spezifische Erträge Österreich
+// - EAG-Abwicklungsstelle, FAQs Investitionszuschuss PV 2026 (Fragen 19/20, 26, 27, 32) – Werte
+//   identisch mit src/lib/foerdercall.js (geprüft 30.09.2026)
+// - ElWG (BGBl. I Nr. 91/2025) § 101 und BMWET „Spitzenkappung – Infos zum ElWG“: bis 70 %,
+//   ausgenommen bis 7 kW netzwirksam (wie /technik/parkregler)
+// - PV&B Austria „ElWG: Das Wichtigste im Überblick“, WKO „Information zum finalen ElWG“:
+//   Beitrag der Einspeiser ab 1.1.2027 höchstens 0,05 Cent/kWh, befreit bis 20 kW netzwirksam
+// - SNE-V 2018 idF 2026 (Netzentgeltreduktion EEG bis 31.12.2026, wie src/lib/rechner/energiegemeinschaft.js)
+// - E-Control TOR Erzeuger Typ A–D (wie src/components/Technik/torTypen.js)
+// - ESV 2012 § 9 (wiederkehrende Prüfung, wie src/content/ratgeber/e-check-photovoltaik.js)
+// - Leistungsmessung ab > 100.000 kWh/Jahr oder > 50 kW (wie src/lib/rechner/peakshaving.js)
 
 export const FAQ_STAND = "September 2026";
+const STAND = `Stand: ${FAQ_STAND}`;
 
 export const FAQ_KATEGORIEN = [
   {
@@ -30,7 +45,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Wie viel Strom erzeugt eine Photovoltaikanlage in Österreich?",
-        a: "Gut ausgerichtete Anlagen erzeugen in Österreich rund 1.000 bis 1.200 kWh je kWp und Jahr; Ost-West-Belegungen auf Flachdächern liegen etwas darunter, alpine Lagen durch Höhe und Schneereflexion teils darüber (Quelle: PVGIS der EU-Kommission). Eine 500-kWp-Hallendachanlage liefert damit grob 500.000 bis 550.000 kWh pro Jahr. Den Wert für Ihre Adresse zeigt unser Standort-Check.",
+        a: `Rund 1.000 bis 1.200 kWh je kWp und Jahr erzeugen gut ausgerichtete PV-Anlagen in Österreich (${STAND}, Quelle: PVGIS der EU-Kommission). Ost-West-Belegungen auf Flachdächern liegen etwas darunter, alpine Lagen durch Höhe und Schneereflexion teils darüber. Eine 500-kWp-Hallendachanlage liefert damit grob 500.000 bis 600.000 kWh pro Jahr. Den Wert für Ihre Adresse zeigt unser Standort-Check.`,
       },
       {
         q: "Was kostet eine Photovoltaikanlage für einen Betrieb?",
@@ -60,23 +75,23 @@ export const FAQ_KATEGORIEN = [
     items: [
       {
         q: "Welche Förderung gibt es 2026 für Photovoltaik in Österreich?",
-        a: "Die wichtigste Bundesförderung ist der EAG-Investitionszuschuss der OeMAG (EAG-Abwicklungsstelle). Er wird 2026 in mehreren Fördercalls von jeweils rund zwei Wochen vergeben, die Reihung erfolgt über ein Ticketsystem. Dazu kommen je nach Bundesland Landesförderungen sowie für Betriebe steuerliche Vorteile wie der Investitionsfreibetrag. Unser Förder-Check zeigt die passenden Programme für Ihr Vorhaben.",
+        a: `Bis zu 30 % der förderfähigen Investitionskosten deckt der EAG-Investitionszuschuss der OeMAG (EAG-Abwicklungsstelle), die wichtigste Bundesförderung für Photovoltaik (${STAND}). Er wird 2026 in mehreren Fördercalls von jeweils rund zwei Wochen vergeben, die Reihung erfolgt über ein Ticketsystem. Dazu kommen je nach Bundesland Landesförderungen sowie für Betriebe steuerliche Vorteile wie der Investitionsfreibetrag. Unser Förder-Check zeigt die passenden Programme für Ihr Vorhaben.`,
       },
       {
         q: "Wie hoch ist der EAG-Investitionszuschuss für Photovoltaik 2026?",
-        a: "Die Fördersätze 2026 betragen laut EAG-Abwicklungsstelle: Kategorie A (bis 10 kWp) 150 €/kWp, Kategorie B (über 10 bis 20 kWp) 140 €/kWp, Kategorie C (über 20 bis 100 kWp) höchstens 130 €/kWp und Kategorie D (über 100 kWp) höchstens 120 €/kWp. In den Kategorien C und D wird im Wettbewerb gereiht. Gefördert werden höchstens 30 % der förderfähigen Investitionskosten (Stand: September 2026).",
+        a: `150 €/kWp in Kategorie A (bis 10 kWp), 140 €/kWp in Kategorie B (über 10 bis 20 kWp), höchstens 130 €/kWp in Kategorie C (über 20 bis 100 kWp) und höchstens 120 €/kWp in Kategorie D (über 100 kWp) – so lauten die Fördersätze 2026 laut EAG-Abwicklungsstelle (${STAND}). In den Kategorien C und D wird im Wettbewerb nach dem niedrigsten Förderbedarf gereiht. Gefördert werden höchstens 30 % der förderfähigen Investitionskosten.`,
       },
       {
         q: "Wird ein Stromspeicher in Österreich gefördert?",
-        a: "Ja, gemeinsam mit einer PV-Anlage kann im EAG-Investitionszuschuss auch ein Stromspeicher gefördert werden. Laut EAG-Abwicklungsstelle beträgt der Satz 150 €/kWh bei mindestens 0,5 kWh Speicherkapazität je kWp und höchstens 50 kWh geförderter Kapazität; auch hier gilt die Grenze von 30 % der förderfähigen Kosten (Stand: September 2026). Einzelne Bundesländer fördern Speicher zusätzlich.",
+        a: `Ja, mit 150 €/kWh nutzbarer Kapazität für höchstens 50 kWh – gemeinsam mit einer PV-Anlage im EAG-Investitionszuschuss (${STAND}). Laut EAG-Abwicklungsstelle muss der Speicher mindestens 0,5 kWh je kWp Modulleistung haben; auch hier gilt die Grenze von 30 % der förderfähigen Kosten. Einzelne Bundesländer fördern Speicher zusätzlich.`,
       },
       {
         q: "Was ist beim Förderansuchen zu beachten?",
-        a: "Das Förderansuchen muss im offenen Fördercall über das EAG-Portal gestellt werden, bevor die Anlage verbindlich umgesetzt wird. Nach Vertragsabschluss mit der OeMAG gilt eine Frist für die Inbetriebnahme: laut EAG-Abwicklungsstelle 6 Monate für Anlagen bis 100 kWp und 12 Monate für größere Anlagen. Wir planen Angebot, Bestellung und Montage so, dass diese Fristen halten.",
+        a: `6 Monate (bis 100 kWp) bzw. 12 Monate (über 100 kWp) ab Abschluss des Fördervertrags bleiben laut EAG-Abwicklungsstelle für die Inbetriebnahme (${STAND}). Das Förderansuchen muss im offenen Fördercall über das EAG-Portal gestellt werden, bevor die Anlage verbindlich umgesetzt wird. Eine Fristverlängerung gibt es nur, wenn die Verzögerung nachweislich nicht in Ihrem Einflussbereich liegt. Wir planen Angebot, Bestellung und Montage so, dass diese Fristen halten.`,
       },
       {
         q: "Was bringt der Investitionsfreibetrag (IFB) für eine PV-Anlage?",
-        a: "Der Investitionsfreibetrag nach § 11 EStG ist ein zusätzlicher Betriebsausgabenabzug neben der Abschreibung. Für Anschaffungen vom 1. November 2025 bis 31. Dezember 2026 beträgt er befristet 20 %, für ökologische Investitionen wie Photovoltaik 22 % der Anschaffungskosten (sonst 10 % bzw. 15 %). Die Bemessungsgrundlage ist mit 1 Mio. € je Wirtschaftsjahr gedeckelt. Details und die Kombination mit Förderungen klären Sie bitte mit Ihrer Steuerberatung.",
+        a: `22 % der Anschaffungskosten zusätzlich als Betriebsausgabe – so hoch ist der Investitionsfreibetrag nach § 11 EStG für Photovoltaik bei Anschaffungen vom 1. November 2025 bis 31. Dezember 2026 (${STAND}). Er kommt neben der Abschreibung dazu; für nicht ökologische Investitionen gelten befristet 20 % (sonst 10 % bzw. 15 %). Die Bemessungsgrundlage ist mit 1 Mio. € je Wirtschaftsjahr gedeckelt. Details und die Kombination mit Förderungen klären Sie bitte mit Ihrer Steuerberatung.`,
       },
       {
         q: "Können IFB und Gewinnfreibetrag gemeinsam genutzt werden?",
@@ -84,7 +99,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Muss auf selbst verbrauchten Solarstrom Elektrizitätsabgabe bezahlt werden?",
-        a: "Nein. Selbst erzeugter und selbst verbrauchter Strom aus Photovoltaik ist von der Elektrizitätsabgabe befreit – für Private und Unternehmen und ohne die früher geltende Grenze von 25.000 kWh pro Jahr. Eingespeister, an einen Stromhändler verkaufter Strom unterliegt beim Erzeuger ebenfalls nicht der Abgabe.",
+        a: `Nein – für selbst erzeugten und selbst verbrauchten Photovoltaik-Strom fallen 0 Cent Elektrizitätsabgabe je kWh an, ohne die früher geltende Grenze von 25.000 kWh pro Jahr (${STAND}). Das gilt für Private und Unternehmen. Eingespeister, an einen Stromhändler verkaufter Strom unterliegt beim Erzeuger ebenfalls nicht der Abgabe.`,
       },
       {
         q: "Gibt es Förderungen für landwirtschaftliche Betriebe und Gemeinden?",
@@ -102,15 +117,15 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was ändert das neue Elektrizitätswirtschaftsgesetz (ElWG) für Photovoltaik?",
-        a: "Das ElWG ersetzt das ElWOG und ist seit 24. Dezember 2025 in Kraft; einzelne Teile gelten gestaffelt ab 2026 und 2027. Für PV relevant sind unter anderem die Spitzenkappung durch den Netzbetreiber, Anforderungen an die Steuerbarkeit neuer Anlagen, erleichterte Netzanschlüsse für kleine Anlagen, neue Formen der gemeinsamen Energienutzung sowie ab 1. Jänner 2027 eine neue Netzentgeltstruktur mit einem Beitrag für Einspeiser (Stand: September 2026).",
+        a: `Seit 24. Dezember 2025 gilt das ElWG, und ab 1. Jänner 2027 zahlen Einspeiser höchstens 0,05 Cent je eingespeister kWh für die Netzinfrastruktur (${STAND}). Das ElWG ersetzt das ElWOG; einzelne Teile gelten gestaffelt ab 2026 und 2027. Für PV relevant sind außerdem die Spitzenkappung auf bis zu 70 % der Modulspitzenleistung, Anforderungen an die Steuerbarkeit neuer Anlagen, erleichterte Netzanschlüsse für kleine Anlagen und neue Formen der gemeinsamen Energienutzung.`,
       },
       {
         q: "Was bedeutet die Spitzenkappung nach ElWG?",
-        a: "Netzbetreiber dürfen die Einspeiseleistung neuer PV-Anlagen bei drohender Netzüberlastung begrenzen – auf nicht weniger als 70 % der Modulspitzenleistung; sehr kleine Anlagen sind laut klimaaktiv ausgenommen. Weil die Mittagsspitze nur wenige Stunden im Jahr erreicht wird, kostet das typischerweise nur wenige Prozent des Jahresertrags. Mit Eigenverbrauch, Speicher und passender Wechselrichterauslegung lässt sich der Verlust weiter senken.",
+        a: `Auf bis zu 70 % der Modulspitzenleistung darf der Netzbetreiber die Einspeiseleistung neu angeschlossener oder erweiterter PV-Anlagen begrenzen; Anlagen bis 7 kW netzwirksamer Leistung sind ausgenommen (§ 101 ElWG, ${STAND}). Laut Wirtschaftsministerium gilt die Begrenzung zunächst statisch, ab 2028 ist eine dynamische Variante nach Netzzustand vorgesehen. Weil die Mittagsspitze nur wenige Stunden im Jahr erreicht wird, betrifft das meist nur einen kleinen Teil des Jahresertrags. Mit Eigenverbrauch, Speicher und passender Wechselrichterauslegung lässt sich der Verlust weiter senken.`,
       },
       {
         q: "Müssen Einspeiser künftig Netzentgelte bezahlen?",
-        a: "Ab 1. Jänner 2027 sieht das ElWG für Einspeiser einen Beitrag zur Netzinfrastruktur von höchstens 0,05 Cent je eingespeister kWh vor; kleine Anlagen bis 20 kW bleiben laut aktueller Rechtslage beitragsfrei (Stand: September 2026). Die genaue Ausgestaltung legt die Regulierungsbehörde E-Control in den Systemnutzungsentgelten fest.",
+        a: `Ja, höchstens 0,05 Cent je eingespeister kWh ab 1. Jänner 2027; Anlagen bis 20 kW netzwirksamer Leistung sind befreit (ElWG, ${STAND}). Der Beitrag zur Versorgungsinfrastruktur wird jährlich per Verordnung festgelegt und gilt auch für bestehende Anlagen.`,
       },
       {
         q: "Was sind Netzebene 7, 6 und 5?",
@@ -118,7 +133,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was regeln die TOR Erzeuger und welcher Anlagentyp betrifft uns?",
-        a: "Die Technischen und Organisatorischen Regeln (TOR) Erzeuger der E-Control legen fest, welche Anforderungen Erzeugungsanlagen am Netz erfüllen müssen. Sie unterscheiden Typ A (ab 0,8 kW bis unter 250 kW), Typ B (250 kW bis unter 35 MW), Typ C (35 bis unter 50 MW) und Typ D (ab 50 MW oder Anschluss ab 110 kV). Ab Typ B steigen die Anforderungen an Blindleistung, Wirkleistungsregelung und Fernsteuerbarkeit deutlich – hier setzen wir unseren eigenen Parkregler ein.",
+        a: `Vier Anlagentypen nach Maximalkapazität: Typ A ab 0,8 kW bis unter 250 kW, Typ B 250 kW bis unter 35 MW, Typ C 35 bis unter 50 MW und Typ D ab 50 MW oder mit Anschluss ab 110 kV (TOR Erzeuger der E-Control, ${STAND}). Die Technischen und Organisatorischen Regeln (TOR) legen fest, welche Anforderungen Erzeugungsanlagen am Netz erfüllen müssen. Ab Typ B steigen die Anforderungen an Blindleistung, Wirkleistungsregelung und Fernsteuerbarkeit deutlich – hier setzen wir unseren eigenen Parkregler ein.`,
       },
       {
         q: "Braucht eine PV-Anlage eine Baubewilligung?",
@@ -170,7 +185,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Welche finanziellen Vorteile hat eine EEG?",
-        a: "Für Strom, den Mitglieder aus der EEG beziehen, entfallen die Elektrizitätsabgabe und der Erneuerbaren-Förderbeitrag; zusätzlich ist das arbeitsbezogene Netznutzungsentgelt reduziert – im Lokalbereich um 57 %, im Regionalbereich um 28 % (Netzebenen 6 und 7, Stand 2026). Mit der neuen Netzentgeltstruktur ab 2027 können sich diese Werte ändern.",
+        a: `Um 57 % (lokal) bzw. 28 % (regional) ist das arbeitsbezogene Netznutzungsentgelt auf den Netzebenen 6 und 7 für Strom aus einer EEG reduziert, gültig bis 31. Dezember 2026 (${STAND}). Zusätzlich entfallen für diesen Strom die Elektrizitätsabgabe und der Erneuerbaren-Förderbeitrag. Ab 2027 gilt eine neue Netzentgeltstruktur; die Abschläge dafür legt die Tarifverordnung fest.`,
       },
       {
         q: "Was ist der Unterschied zwischen EEG, BEG und GEA?",
@@ -200,7 +215,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was ist Peak Shaving?",
-        a: "Peak Shaving bedeutet, kurze Lastspitzen mit einem Speicher abzufangen, damit die gemessene Höchstleistung sinkt. Betriebe, die leistungsgemessen abgerechnet werden – in der Regel ab 100.000 kWh Jahresverbrauch oder 50 kW Anschlussleistung –, zahlen einen Leistungspreis für diese Spitze. Wie viel sich sparen lässt, zeigt eine Auswertung Ihres Lastgangs.",
+        a: `Peak Shaving kappt kurze Lastspitzen mit einem Speicher, damit die gemessene Höchstleistung in kW sinkt – relevant für Betriebe mit Leistungsmessung, in der Regel ab mehr als 100.000 kWh Jahresverbrauch oder mehr als 50 kW (${STAND}). Diese Betriebe zahlen einen Leistungspreis für ihre Spitze. Wie viel sich sparen lässt, zeigt eine Auswertung Ihres Lastgangs.`,
       },
       {
         q: "Funktioniert eine PV-Anlage bei Stromausfall?",
@@ -212,7 +227,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was passiert mit dem Überschussstrom?",
-        a: "Überschuss wird ins Netz eingespeist und vermarktet: über einen Stromhändler bzw. Direktvermarkter, über die OeMAG zum Marktpreis oder über eine Energiegemeinschaft. Die OeMAG nimmt Strom aus Anlagen unter 500 kWp zum monatlich im Nachhinein ermittelten Marktpreis ab (Verträge laut OeMAG bis längstens 31.12.2030). Größere Anlagen vermarkten wir über Direktvermarktung oder PPA.",
+        a: `Bei Anlagen unter 500 kWp nimmt die OeMAG den Überschuss zum monatlich im Nachhinein ermittelten Marktpreis ab, mit Verträgen bis längstens 31.12.2030 (${STAND}). Alternativ wird Überschuss über einen Stromhändler bzw. Direktvermarkter oder eine Energiegemeinschaft vermarktet. Größere Anlagen vermarkten wir über Direktvermarktung oder PPA.`,
       },
     ],
   },
@@ -226,7 +241,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Wie oft muss eine PV-Anlage elektrisch geprüft werden?",
-        a: "Nach der Errichtung ist eine Erstprüfung nach ÖVE/ÖNORM E 8101 und ÖVE/ÖNORM EN 62446 mit Prüfbefund vorgeschrieben. In Arbeitsstätten verlangt die Elektroschutzverordnung (ESV 2012) wiederkehrende Prüfungen elektrischer Anlagen, als Richtwert längstens alle fünf Jahre; Versicherer fordern oft kürzere Intervalle. Unser E-Check dokumentiert alles prüffähig.",
+        a: `Längstens alle 5 Jahre verlangt die Elektroschutzverordnung (§ 9 ESV 2012) in Arbeitsstätten eine wiederkehrende Prüfung elektrischer Anlagen (${STAND}). Davor steht nach der Errichtung eine Erstprüfung nach ÖVE/ÖNORM E 8101 und ÖVE/ÖNORM EN 62446 mit Prüfbefund. Versicherer fordern oft kürzere Intervalle. Unser E-Check dokumentiert alles prüffähig.`,
       },
       {
         q: "Was bringt eine Drohnen-Thermografie?",
@@ -260,15 +275,15 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Gibt es für private PV-Anlagen noch den Nullsteuersatz?",
-        a: "Nein. Der Umsatzsteuer-Nullsteuersatz für private PV-Anlagen bis 35 kWp galt vom 1. Jänner 2024 bis 31. März 2025 und ist ausgelaufen. Seither gilt wieder der Normalsteuersatz; im Gegenzug wurde der EAG-Investitionszuschuss auch für kleine Anlagen wieder geöffnet.",
+        a: `Nein – der Umsatzsteuersatz von 0 % für private PV-Anlagen bis 35 kWp galt nur vom 1. Jänner 2024 bis 31. März 2025 (${STAND}). Seither gilt wieder der Normalsteuersatz; im Gegenzug wurde der EAG-Investitionszuschuss auch für kleine Anlagen wieder geöffnet.`,
       },
       {
         q: "Müssen Private Einnahmen aus der Einspeisung versteuern?",
-        a: "In vielen Fällen nicht: Einkünfte natürlicher Personen aus der Einspeisung sind nach § 3 EStG bis zu 12.500 kWh pro Jahr steuerfrei, wenn die Anlage die gesetzliche Leistungsgrenze (derzeit 35 kWp Engpassleistung) nicht überschreitet (Stand: September 2026). Bei größeren Anlagen oder Vermietung sprechen Sie bitte mit Ihrer Steuerberatung.",
+        a: `Bis 12.500 kWh eingespeisten Stroms pro Jahr sind für natürliche Personen steuerfrei, wenn die Anlage höchstens 35 kWp Engpassleistung hat (§ 3 EStG, ${STAND}). Bei größeren Anlagen oder Vermietung sprechen Sie bitte mit Ihrer Steuerberatung.`,
       },
       {
         q: "Welche Förderung bekommen Private für PV und Speicher?",
-        a: "Private nutzen denselben EAG-Investitionszuschuss wie Betriebe, meist in Kategorie A (bis 10 kWp, 150 €/kWp) oder B (bis 20 kWp, 140 €/kWp), dazu die Speicherförderung (Stand 2026). Viele Bundesländer und Gemeinden fördern zusätzlich. Den Überblick liefert unser Förder-Check.",
+        a: `150 €/kWp (Kategorie A, bis 10 kWp) bzw. 140 €/kWp (Kategorie B, über 10 bis 20 kWp) aus dem EAG-Investitionszuschuss, dazu 150 €/kWh für einen Speicher (${STAND}). Private nutzen damit dieselbe Bundesförderung wie Betriebe. Viele Bundesländer und Gemeinden fördern zusätzlich. Den Überblick liefert unser Förder-Check.`,
       },
     ],
   },

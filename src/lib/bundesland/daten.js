@@ -19,7 +19,6 @@ import { NETZBETREIBER, PFAD as NETZ_PFAD, betreiberPfad } from "@/data/netzbetr
 import { KUNDEN, KUNDEN_STAND } from "@/data/kunden";
 import { REGIONEN } from "@/data/regionen";
 import { rasterMeta, richtwertFuerPunkt, richtwerteFuerLand } from "@/lib/schneelast/richtwerte";
-import { schneelastPfad } from "@/lib/schneelast/laender";
 import { LAENDER, ertragStatistik, landFuerSlug, landPfad, netzbetreiberGruppen, referenzenFuerLand, skSpanne, winteranteil } from "./auswertung";
 
 /** Ortsname (Name, Kurzname) der Regionalseiten → Landslug, für Projekte mit Ortsangabe. */
@@ -77,7 +76,6 @@ export function bundeslandDaten(slug, projekte = []) {
       orte: skSpanne(orte),
       bezirksorte: skSpanne(bezirksorte),
       anzahlBezirksorte: bezirksorte.length,
-      pfad: schneelastPfad(slug),
       meta: rasterMeta(),
     },
     foerderung: {

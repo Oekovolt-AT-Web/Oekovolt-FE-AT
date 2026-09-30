@@ -3,6 +3,8 @@
 // Zentrale Angaben zur österreichischen Website (www.oekovolt.com).
 // Registerdaten verifiziert am 2026-09-28 über WKO Firmen A–Z, FirmenABC und
 // das österreichische Firmenbuch (FN 375708m, Landesgericht Ried im Innkreis).
+// Verbandsmitgliedschaft (PV&B Austria) verifiziert am 2026-09-30 über das
+// Mitgliederverzeichnis des Verbands.
 //
 // Wer eine dieser Angaben ändert, ändert sie hier – nicht in einzelnen Seiten.
 
@@ -55,7 +57,44 @@ export const FIRMA = {
   },
   wko: "https://firmen.wko.at/%C3%96kovolt-solartechnik-gmbh-%C3%96kovolt-solartechnik-gmbh/ober%C3%B6sterreich/?firmaid=683331b8-cc78-405b-983d-55acaee1a686",
   firmenabc: "https://www.firmenabc.at/oekovolt-solartechnik-gmbh_OvcS",
+  // Kartenlink für schema.org `hasMap` (Suche nach Firmenname und Adresse).
+  karte: "https://www.google.com/maps?q=%C3%96kovolt+Solartechnik+GmbH,+Gewerbegebiet+10,+5121+Ostermiething",
+  // Kein X-/Twitter-Handle: Es ist nicht belegt, dass ein Konto der österreichischen GmbH gehört
+  // (SEO-Plan E6/M24). Erst mit Nachweis hier eintragen und in layout.js (twitter.site) ergänzen.
+  // Google-Unternehmensprofil, Bing Places, Apple Business Connect: Links erst nach Prüfung
+  // eintragen (SEO-Plan M29) – leere Werte werden nicht ausgegeben.
+  googleUnternehmensprofil: "",
+  bingPlaces: "",
+  // Verbände mit Mitgliedschaftsnachweis (schema.org `memberOf`).
+  verbaende: [
+    {
+      name: "Bundesverband Photovoltaic & Battery Austria",
+      kurz: "PV&B Austria",
+      // früher „Bundesverband Photovoltaic Austria (PV Austria)“; pvaustria.at leitet auf pvbaustria.at weiter (geprüft 2026-09-30)
+      alternateName: ["PV&B Austria", "PV Austria", "Bundesverband Photovoltaic Austria"],
+      url: "https://pvbaustria.at",
+      status: "ordentliches Mitglied",
+      // Beleg: Mitgliederverzeichnis, Abschnitt „Ordentliche Mitglieder“, Logo „Oekovolt Solartechnik GmbH“
+      // mit Link auf oekovolt.com – abgerufen am 2026-09-30.
+      beleg: "https://pvbaustria.at/mitglieder/",
+      geprueft: "2026-09-30",
+    },
+  ],
 };
+
+/**
+ * Profile derselben Firma (schema.org `sameAs`): nur Einträge, die eindeutig die
+ * österreichische GmbH zeigen. Leere Werte (noch nicht geprüft) fallen heraus.
+ */
+FIRMA.profile = [
+  FIRMA.social.facebook,
+  FIRMA.social.linkedin,
+  FIRMA.social.instagram,
+  FIRMA.wko,
+  FIRMA.firmenabc,
+  FIRMA.googleUnternehmensprofil,
+  FIRMA.bingPlaces,
+].filter(Boolean);
 
 /** Deutsche Schwestergesellschaft – Inhaberin der Marken- und Websiterechte. */
 export const SCHWESTER = {

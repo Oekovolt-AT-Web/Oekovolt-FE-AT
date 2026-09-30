@@ -11,16 +11,32 @@ export const LAENDER = [
   { slug: "kaernten", name: "Kärnten", imLand: "in Kärnten", kuerzel: "Ktn." },
   { slug: "niederoesterreich", name: "Niederösterreich", imLand: "in Niederösterreich", kuerzel: "NÖ" },
   { slug: "oberoesterreich", name: "Oberösterreich", imLand: "in Oberösterreich", kuerzel: "OÖ" },
-  { slug: "salzburg", name: "Salzburg", imLand: "im Land Salzburg", kuerzel: "Sbg." },
+  { slug: "salzburg", name: "Salzburg", titelName: "Land Salzburg", imLand: "im Land Salzburg", kuerzel: "Sbg." },
   { slug: "steiermark", name: "Steiermark", imLand: "in der Steiermark", kuerzel: "Stmk." },
   { slug: "tirol", name: "Tirol", imLand: "in Tirol", kuerzel: "T" },
   { slug: "vorarlberg", name: "Vorarlberg", imLand: "in Vorarlberg", kuerzel: "Vbg." },
-  { slug: "wien", name: "Wien", imLand: "in Wien", kuerzel: "W" },
+  { slug: "wien", name: "Wien", titelName: "Bundesland Wien", imLand: "in Wien", kuerzel: "W" },
 ];
 
 export const PFAD = "/photovoltaik-bundesland";
 export const landPfad = (slug) => `${PFAD}/${slug}`;
 export const landFuerSlug = (slug) => LAENDER.find((l) => l.slug === slug) ?? null;
+
+/**
+ * Hauptseite je Bundesland für die Suchanfrage „Photovoltaik <Land>“ (SEO-Plan M26, E9).
+ * Regel: Die Landes-Hubseite ist die Hauptseite. Ausnahme Wien – Stadt und Land sind identisch,
+ * die Standortseite /photovoltaik/wien ist die gewachsene Hauptseite (keyword-map.tsv); die
+ * Landes-Hubseite Wien bleibt als Datenseite (Bezirke, Netz, Referenzen) mit eigenem Titel
+ * bestehen, weil sie laut 5-Wort-Messung nicht ähnlich ist (0,07 < 0,35) – kein 301.
+ * Schneelast und Widmung sind KEINE Hauptseiten: Schneelast je Land steht als Sprungmarke im
+ * Hub /schneelast#<land>, Widmung je Land unter /freiflaechen-photovoltaik/widmung/<land>.
+ */
+export const HAUPTSEITE_AUSNAHMEN = { wien: "/photovoltaik/wien" };
+export const hauptseite = (slug) => HAUPTSEITE_AUSNAHMEN[slug] || landPfad(slug);
+export const istHauptseite = (slug) => hauptseite(slug) === landPfad(slug);
+
+/** Sprungmarke des Bundeslands im Schneelast-Hub (die Landesvarianten sind dort zusammengeführt). */
+export const schneelastAnker = (slug) => `/schneelast#${slug}`;
 
 /* ------------------------------------------------------------------ Zahlformat */
 
@@ -207,13 +223,23 @@ export function referenzenFuerLand(land, projekte, kunden = {}, ortZuLand = new 
 
 /* ------------------------------------------------------------------ SEO */
 
-/** Seitentitel ≤ 60 Zeichen: längste passende Variante. */
+/**
+ * Seitentitel ≤ 60 Zeichen: längste passende Variante. Bewusst OHNE „Förderung“ (SEO-Plan M26):
+ * Förderanfragen gehören auf /forderungen/<land>. Salzburg heißt im Titel „Land Salzburg“
+ * (Abgrenzung zur Stadtseite /photovoltaik/salzburg); Wien ist keine Hauptseite (siehe
+ * hauptseite()) und bekommt einen Datenseiten-Titel statt „Photovoltaik Wien“.
+ */
 export function seoTitel(name) {
+  const land = LAENDER.find((l) => l.name === name || l.slug === name);
+  const titelName = land?.titelName || name;
+  if (land && !istHauptseite(land.slug)) {
+    const varianten = [`${titelName}: PV-Daten, Netz & Referenzen | Ökovolt`, `${titelName}: PV-Daten & Netz | Ökovolt`];
+    return varianten.find((t) => t.length <= 60) || varianten[varianten.length - 1];
+  }
   const varianten = [
-    `Photovoltaik ${name}: Standorte, Ertrag & Förderung | Ökovolt`,
-    `Photovoltaik ${name}: Ertrag, Förderung, Netz | Ökovolt`,
-    `Photovoltaik ${name}: Ertrag & Förderung | Ökovolt`,
-    `PV ${name}: Ertrag & Förderung | Ökovolt`,
+    `Photovoltaik ${titelName}: PV für Betriebe | Ökovolt`,
+    `Photovoltaik ${titelName} für Betriebe | Ökovolt`,
+    `PV ${titelName} für Betriebe | Ökovolt`,
   ];
   return varianten.find((t) => t.length <= 60) || varianten[varianten.length - 1];
 }

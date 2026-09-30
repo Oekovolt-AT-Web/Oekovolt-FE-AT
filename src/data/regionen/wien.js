@@ -1,4 +1,8 @@
 // Recherche: 29.09.2026 – Quellen je Angabe (url). Netzbetreiber: E-Control-Tarifkalkulator, PLZ 1010/1100/1210/1230.
+// SEO-Plan M26/E9 (30.09.2026): /photovoltaik/wien ist die HAUPTSEITE für „Photovoltaik Wien“
+// (src/lib/bundesland/auswertung.js → hauptseite("wien")). /photovoltaik-bundesland/wien bleibt als
+// Datenseite „Bundesland Wien“ mit eigenem Titel bestehen – 5-Wort-Überschneidung zu dieser Seite
+// 0,07 (< 0,35), daher kein 301. Titel hier bewusst unverändert.
 
 const wien = {
   name: "Wien",

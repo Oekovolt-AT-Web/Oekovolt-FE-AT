@@ -5,14 +5,14 @@
 
 const artikel = {
   slug: "photovoltaik-gemeinde",
-  title: "Photovoltaik für Gemeinden: Vergabe, Finanzierung, Bürgerbeteiligung",
-  seoTitle: "Photovoltaik für Gemeinden: Vergabe & Förderung | Ökovolt",
+  title: "Photovoltaik auf Gemeindegebäuden: Wo sie sich rechnet – mit Beispielen",
+  seoTitle: "PV auf Gemeindegebäuden: Wo es sich rechnet | Ökovolt",
   kurzTitel: "Photovoltaik für Gemeinden",
   description:
-    "Photovoltaik für Gemeinden in Österreich: geeignete Objekte, Vergaberecht 2026 mit neuen Schwellenwerten, Förderung, Energiegemeinschaft und Bürgerbeteiligung.",
+    "Photovoltaik auf Gemeindegebäuden: Kläranlage, Schule, Bauhof und Amtsgebäude im Vergleich, zwei Rechenbeispiele, Notstrom und Nutzen für die Bevölkerung.",
   excerpt:
     "Kläranlage, Schule, Bauhof: Wo sich Photovoltaik für Gemeinden am schnellsten rechnet, wie Sie nach dem Vergaberechtsgesetz 2026 beschaffen und wie Bürgerinnen und Bürger mitprofitieren.",
-  hauptKeyword: "photovoltaik gemeinde",
+  hauptKeyword: "photovoltaik gemeindegebäude",
   keywords: [
     "Photovoltaik Gemeinde",
     "PV-Anlage Gemeinde Österreich",
@@ -23,7 +23,7 @@ const artikel = {
     "Photovoltaik Kläranlage",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Kosten & Wirtschaftlichkeit",
   bild: "/Images/AT/ratgeber/photovoltaik-gemeinde.jpg",
   bildAlt: "Photovoltaikanlage auf dem Dach des Gemeindeamts Fresach in Kärnten",
@@ -35,6 +35,7 @@ const artikel = {
     "Seit dem **Vergaberechtsgesetz 2026** (in Kraft ab 1. März 2026) dürfen Gemeinden Bauaufträge bis **200.000 €** und Liefer-/Dienstleistungsaufträge bis **140.000 €** netto direkt vergeben; ab 50.000 € sind grundsätzlich drei Angebote oder Preisauskünfte einzuholen. EU-weit auszuschreiben ist ab 5.404.000 € (Bau) bzw. 216.000 € (Lieferung).",
     "Der **EAG-Investitionszuschuss** steht auch Gemeinden offen (bis 130 €/kWp in Kategorie C); das Vergaberecht einzuhalten ist Fördervoraussetzung.",
     "Bürgerinnen und Bürger profitieren am einfachsten über eine **Erneuerbare-Energie-Gemeinschaft**; finanzielle Beteiligungsmodelle brauchen eine rechtliche Prüfung.",
+    "Schwellenwerte, Vergabeweg und Förderprogramme im Detail stehen auf [Vergabe & Förderung für Gemeinden](/kommunen/vergabe-foerderung); das Angebot von Ökovolt für Gemeinden auf [Photovoltaik für Gemeinden](/kommunen).",
   ],
 
   abschnitte: [
@@ -292,7 +293,7 @@ const artikel = {
   passend: [
     { href: "/kommunen", titel: "Photovoltaik für Gemeinden", text: "Planung, Vergabeunterlagen und Umsetzung aus einer Hand." },
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "Gemeindestrom im Ort teilen." },
-    { href: "/ratgeber/eag-investitionszuschuss", titel: "EAG-Investitionszuschuss 2026", text: "Fördercalls, Sätze und Fristen." },
+    { href: "/kommunen/vergabe-foerderung", titel: "Vergabe & Förderung für Gemeinden", text: "Schwellenwerte 2026, Gemeinderatsbeschluss, EAG und KIG." },
     { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Krisenrelevante Infrastruktur absichern." },
   ],
 

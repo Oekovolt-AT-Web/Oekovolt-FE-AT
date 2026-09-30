@@ -2,6 +2,9 @@
 // Recherchestand 28.09.2026. TOR Stromerzeugungsanlagen Typ A–D Version 1.4 (E-Control; Typ A V1.4 gilt seit 01.06.2026,
 // Kapitel 5.4 Ansteuerbarkeit gemäß § 76 ElWG); Wechselrichterliste.at (Oesterreichs Energie);
 // Clipping-Werte: eigene Auswertung PVGIS-5.3-Stundenreihen Linz 2019–2023; EAG-IZ-VO Strom § 6 (EU-Wertschöpfung).
+// Hersteller-Vergleich (P4/M20, 30.09.2026): neutrale Datenblattwerte, alphabetisch, ohne Verbau- oder
+// Partner-Aussage; jede Zeile mit Herstellerdokument, Version und Abrufdatum. Vor Veröffentlichung
+// rechtlich prüfen lassen (E12). Belegte Marken (E3) stehen in src/components/Hersteller/partner.js.
 
 const artikel = {
   slug: "wechselrichter-photovoltaik",
@@ -23,7 +26,7 @@ const artikel = {
     "Wechselrichter Lebensdauer",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Technik & Planung",
   bild: "/Images/Dienstleistungen/Photovoltaik/welschelrichter.webp",
   bildAlt: "Wechselrichter einer Photovoltaikanlage an einer Wand montiert",
@@ -243,6 +246,56 @@ const artikel = {
       ],
     },
     {
+      id: "hersteller-vergleich",
+      titel: "Wechselrichter und Speicher verbreiteter Hersteller im Datenblattvergleich",
+      tocLabel: "Hersteller-Vergleich",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die Tabellen stellen Datenblattwerte verbreiteter Hersteller neutral gegenüber – alphabetisch sortiert, nach technischen Kriterien und ohne Rangfolge.** Die Aufnahme bedeutet nicht, dass Ökovolt ein Gerät verbaut oder empfiehlt, und sagt nichts über eine Geschäftsbeziehung zum Hersteller aus. Welche Marken wir einsetzen, zeigt die Seite [Wechselrichter bei Ökovolt](/produkte/wechselrichter).",
+        },
+        {
+          typ: "tabelle",
+          caption: "Gewerbe-String-Wechselrichter der Klasse 100 bis 150 kW laut Herstellerdokument",
+          kopf: ["Hersteller und Gerät", "AC-Nennleistung", "Max. / europ. Wirkungsgrad", "MPP-Tracker", "Max. DC-Spannung", "Schutzart", "Gewicht", "Quelle (Version, Abruf)"],
+          zeilen: [
+            ["Fronius Tauro ECO 100-3-D", "100 kW", "98,5 % / 98,2 %", "1", "1.000 V", "IP65", "103 kg", "[Datenblatt](https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Tauro_D_EN.pdf), EN V08 Sep 2026, abgerufen 30.09.2026"],
+            ["GoodWe GW100K-GT", "100 kW", "98,8 % / 98,4 %", "8", "1.100 V", "IP66", "85 kg", "[Datenblatt](https://en.goodwe.com/Public/Uploads/uploadfile/files/20250609/GW_GT_Datasheet-EN.pdf), 20250219-EN-V2.1, abgerufen 30.09.2026"],
+            ["Growatt MAX 100KTL3-X2 LV", "100 kW", "98,8 % / 98,4 %", "8", "1.100 V", "IP66", "84 kg", "[Datenblatt](https://en.growatt.com/upload/file/MAX100~125KTL3-X2%20LV%202026.5%20Update.pdf), Stand 2026.5, abgerufen 30.09.2026"],
+            ["Huawei SUN2000-100KTL-M2", "100 kW", "98,6 % / 98,4 %", "10", "1.100 V", "IP66", "93 kg", "[Datenblatt](https://solar.huawei.com/admin/asset/v1/pro/view/c5056ea20b95424fad3c62f0a5e64a84.pdf), ohne Versionsangabe (PDF vom 26.06.2025), abgerufen 30.09.2026"],
+            ["SMA Sunny Tripower CORE2 (STP 110-60)", "110 kW", "98,6 % / 98,4 %", "12", "1.100 V", "IP66", "93,5 kg", "[Datenblatt](https://files.sma.de/downloads/STP110-60-AFCI-DS-en-21.pdf), STP110-60-AFCI-DS-en-21 (Status 11/2023), abgerufen 30.09.2026"],
+            ["Solis-100K-5G-PRO", "100 kW", "98,5 % / 98,0 %", "8", "1.100 V", "IP66", "98 kg", "[Handbuch, Kap. 10](https://www.solisinverters.com/uploads/file/Solis_Manual_3P%2875-110%29K-40A-5G-PRO_EUR_V1,2%2820240311%29.pdf), EUR V1.2 vom 11.03.2024, abgerufen 30.09.2026"],
+            ["Sungrow SG150CX", "150 kW", "98,8 % / 98,2 %", "7", "1.100 V", "IP66", "100 kg", "[Datenblatt](https://info-support.sungrowpower.com/datasheet-materials/a33f2659-00b8-4301-b514-9c3b19937a3d.pdf), Version 7 (© 2025), abgerufen 30.09.2026"],
+          ],
+          minBreite: 980,
+          fussnote: "Herstellerangaben aus den verlinkten Dokumenten, abgerufen am 30.09.2026. Europäischer Wirkungsgrad bei 400 V Netzspannung, wo das Dokument mehrere Werte nennt. Für Solis war kein Datenblatt direkt abrufbar; die Werte stammen aus dem Kapitel „Specifications“ der Installations- und Betriebsanleitung. Die Geräte haben unterschiedliche Nennleistungen (100 bis 150 kW) – Tracker-Zahl und Gewicht sind deshalb nur bedingt vergleichbar. Änderungen durch die Hersteller vorbehalten; die Marken gehören ihren jeweiligen Inhabern.",
+        },
+        {
+          typ: "p",
+          text: "Der Wirkungsgrad liegt bei allen Geräten dicht beisammen. Für die Auswahl wichtiger sind die Zahl der MPP-Tracker im Verhältnis zu den Dachflächen, die maximale DC-Spannung für die Stringlänge bei Frost (1.000 oder 1.100 V), die Schutzart für die Außenmontage sowie Service, Ersatzteile und Garantiebedingungen in Österreich. Ob ein Gerät die TOR Stromerzeugungsanlagen erfüllt, zeigt die Wechselrichterliste – siehe Abschnitt [TOR & Netz](#netz).",
+        },
+        {
+          typ: "tabelle",
+          caption: "Hochvolt-Batteriespeicher für Hybrid-Wechselrichter laut Herstellerdatenblatt",
+          kopf: ["Hersteller und Serie", "Nutzbare Energie", "Aufbau", "Zellchemie", "Spannung", "Schutzart", "Garantie laut Datenblatt", "Quelle (Version, Abruf)"],
+          zeilen: [
+            ["BYD Battery-Box Premium HVS", "5,12–12,8 kWh", "2–5 Module à 2,56 kWh in Reihe", "LFP, kobaltfrei", "204,8–512 V (Nennspannung)", "IP55", "10 Jahre, Bedingungen laut Garantieerklärung", "[Datenblatt](https://www.bydbatterybox.com/uploads/downloads/230530_BYD_Battery-Box_Premium_HVS&HVM_Datasheet_V1.7_EN-647eedf90f9c3.pdf), V1.7 EN, abgerufen 30.09.2026"],
+            ["Fronius Reserva", "6,31–15,79 kWh", "2–5 Module à 3,15 kWh", "LFP (Pouch-Zellen)", "204,8–512 V (Nennspannung)", "IP65", "10 Jahre", "[Datenblatt](https://www.fronius.com/en/~/downloads/Solar%20Energy/Datasheets/SE_DS_Fronius_Reserva_EN.pdf), EN V09 Sep 2026, abgerufen 30.09.2026"],
+            ["Huawei LUNA2000-S1", "5–20,7 kWh", "1–3 Batteriemodule (5 oder 6,9 kWh) je Leistungsmodul", "LiFePO4", "350–560 V einphasig, 600–980 V dreiphasig", "IP66", "k. A.", "[Datenblatt](https://solar.huawei.com/admin/asset/v1/pro/view/36414e3c762a4e508d6fde579866c4c0.pdf), Version 01-202509, abgerufen 30.09.2026"],
+            ["Pylontech Force-H3", "5,12–35,84 kWh (ein Strang)", "1–7 Module à 5,12 kWh", "LFP", "102,4–716,8 V (Systemspannung)", "IP65", "k. A. (Auslegungslebensdauer 15+ Jahre)", "[Datenblatt](https://global-site.oss-eu-central-1.aliyuncs.com/upload_au/2025/10/14/Datasheet%20V.02_20251014183118A302.pdf), Information Version 0.2, abgerufen 30.09.2026"],
+            ["Sigenergy SigenStor BAT 5.0 / 8.0", "5,2 bzw. 7,8 kWh je Modul", "1–6 Module je Stapel", "LiFePO4", "300–600 V einphasig, 600–900 V dreiphasig", "IP66", "k. A.", "[Datenblatt](https://www.sigenergy.com/uploads/en_download/1693548782125366.pdf), ohne Versionsangabe (PDF vom 03.07.2024), abgerufen 30.09.2026"],
+            ["Sungrow SBS050", "5,12 kWh je Modul, bis 20,48 kWh", "1–4 Module parallel", "LiFePO4 (prismatisch)", "102,4 V (Nennspannung)", "IP65", "k. A.", "[Datenblatt](https://info-support.sungrowpower.com/datasheet-materials/42d44310-9504-4921-8aeb-c8e52ac6c1a5.pdf), Version 6 (© 2025), abgerufen 30.09.2026"],
+          ],
+          minBreite: 1040,
+          fussnote: "Herstellerangaben aus den verlinkten Dokumenten, abgerufen am 30.09.2026; nutzbare Energie unter den Testbedingungen des jeweiligen Datenblatts (meist 100 % Entladetiefe, 0,2 C, 25 °C, Lebensbeginn). „k. A.“: Das Datenblatt nennt keine Garantie – maßgeblich sind die Garantiebedingungen des Herstellers. Ob ein Speicher an einem bestimmten Wechselrichter betrieben werden darf, regelt die Kompatibilitätsliste des Herstellers.",
+        },
+        {
+          typ: "p",
+          text: "Wie Sie ein Angebot mit diesen Komponenten insgesamt prüfen – vom Datenblatt bis zur Gewerbeberechtigung des Errichters –, zeigt die [Checkliste „PV-Firma prüfen“](/ratgeber/photovoltaik-angebot-vergleichen#pv-firma-pruefen). Speicher für Betriebe mit Peak Shaving behandelt die Seite [Gewerbespeicher](/gewerbespeicher).",
+        },
+      ],
+    },
+    {
       id: "foerderung",
       titel: "Förderung: 10 % Zuschlag für europäische Wechselrichter",
       tocLabel: "Förderung",
@@ -253,7 +306,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Ob sich ein europäischer Wechselrichter rechnet, hängt vom Preisunterschied und der Anlagengröße ab – bei großen Anlagen kann der Zuschlag einen spürbaren Teil der Mehrkosten decken. Die Förderung im Detail erklärt der Ratgeber [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss). Welche Hersteller wir einsetzen, zeigt die Seite [Hersteller](/produkte/hersteller).",
+          text: "Ob sich ein europäischer Wechselrichter rechnet, hängt vom Preisunterschied und der Anlagengröße ab – bei großen Anlagen kann der Zuschlag einen spürbaren Teil der Mehrkosten decken. Die Förderung im Detail erklärt der Ratgeber [EAG-Investitionszuschuss](/ratgeber/eag-investitionszuschuss). Welche Wechselrichter wir einsetzen, zeigt die Seite [Wechselrichter bei Ökovolt](/produkte/wechselrichter).",
         },
       ],
     },
@@ -289,7 +342,7 @@ const artikel = {
   passend: [
     { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "TOR-konform, Blindleistung & Einspeiselimit." },
     { href: "/technik/fernwartung", titel: "Fernwartung", text: "Sichere Fernzugriffe, 24/7-Überwachung." },
-    { href: "/produkte/photovoltaikanlage", titel: "Photovoltaikanlage", text: "Module, Wechselrichter, Unterkonstruktion." },
+    { href: "/produkte/wechselrichter", titel: "Wechselrichter bei Ökovolt", text: "Fronius, Huawei, Solis – mit Datenblattwerten." },
     { href: "/ratgeber/tor-erzeuger-netzanschluss", titel: "TOR Erzeuger & Netzanschluss", text: "Typ A bis D, Netzebenen, Nachweise." },
   ],
 

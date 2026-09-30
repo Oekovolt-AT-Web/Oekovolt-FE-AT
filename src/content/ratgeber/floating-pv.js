@@ -187,7 +187,7 @@ const artikel = {
           items: [
             { titel: "Kosten", text: "Schwimmkörper, Verankerung, Kabel und Montage vom Wasser aus machen Floating-PV teurer als eine Freiflächenanlage an Land. Der Förderzuschlag und die Flächenverfügbarkeit gleichen einen Teil aus." },
             { titel: "Ertrag", text: "Grafenwörth rechnet mit rund 1.090 kWh/kWp, etwas über dem PVGIS-Wert einer vergleichbaren Landanlage. Planen Sie konservativ mit dem Landwert und betrachten Sie Kühlung als Reserve." },
-            { titel: "Vermarktung", text: "Über 1 MWp erfolgt die Förderung über die Marktprämie; alternativ Eigenverbrauch des Kieswerks, [Reststromvermarktung](/ratgeber/reststromvermarktung) oder ein PPA mit Unternehmen der Region." },
+            { titel: "Vermarktung", text: "Über 1 MWp erfolgt die Förderung über die Marktprämie; alternativ Eigenverbrauch des Kieswerks, [Direktvermarktung](/service/direktvermarktung) oder ein PPA mit Unternehmen der Region." },
           ],
         },
         {

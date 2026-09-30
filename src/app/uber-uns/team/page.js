@@ -21,6 +21,7 @@ import RollenPfad from "@/components/Team/RollenPfad";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import FotoKachel from "@/components/Team/FotoKachel";
 import { GENERATIONEN, STAND } from "@/data/unternehmen";
+import { FACHPRUEFER_SICHTBAR, fachprueferSchema } from "@/data/fachpruefer";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -28,7 +29,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 const PAGE_URL = `${BASE_URL}/uber-uns/team`;
 const TITEL = "Team – Menschen hinter Ökovolt Österreich | Ökovolt";
 const BESCHREIBUNG =
-  "Das Team der Ökovolt Solartechnik GmbH in Ostermiething: Gründer, zweite Generation und die Fachleute für Projektleitung, Elektrotechnik, Netzanschluss und Service.";
+  "Das Team der Ökovolt Solartechnik GmbH in Ostermiething: Gründer, zweite Generation und Fachleute für Projektleitung, Elektrotechnik, Netzanschluss und Service.";
 
 // Teamprofile aus dem Backoffice (doctype "Team"). Derzeit statisch leer –
 // die Website liest nichts aus dem Backoffice, dort werden nur Formulare
@@ -41,7 +42,6 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -117,16 +117,16 @@ export default async function TeamPage() {
     dateModified: STAND,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: personen.map((pp, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
+      itemListElement: [
+        ...personen.map((pp) => ({
           "@type": "Person",
           name: pp.name,
           ...(pp.jobTitle && { jobTitle: pp.jobTitle }),
           worksFor: { "@id": `${BASE_URL}/#organization` },
-        },
-      })),
+        })),
+        // Fachprüfer nur mit schriftlicher Einwilligung (src/data/fachpruefer.js)
+        ...FACHPRUEFER_SICHTBAR.map(fachprueferSchema),
+      ].map((item, i) => ({ "@type": "ListItem", position: i + 1, item })),
     },
   };
 
@@ -226,6 +226,33 @@ export default async function TeamPage() {
           </Button>
         </div>
       </Section>
+
+      {/* Fachprüfer der Ratgeber – erscheint erst, wenn mindestens eine Person schriftlich eingewilligt hat */}
+      {FACHPRUEFER_SICHTBAR.length > 0 && (
+        <Section tone="sand" space="lg" id="fachpruefer" className="scroll-mt-20">
+          <SectionHeading
+            eyebrow="Fachliche Prüfung"
+            title="Wer unsere Ratgeber fachlich prüft"
+            lead="Artikel zu Technik, Netzanschluss und Förderung prüfen Fachleute aus unserem Team, bevor sie erscheinen. Name und Datum der Prüfung stehen am jeweiligen Artikel."
+            className="mb-10 max-w-3xl"
+          />
+          <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {FACHPRUEFER_SICHTBAR.map((p) => (
+              <li key={p.id} id={p.id} className="scroll-mt-24 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                <p className="font-display text-[18px] font-bold text-ink-900">{p.name}</p>
+                <p className="mt-1 text-[14.5px] font-semibold text-ov-700">{p.rolle}</p>
+                <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">{p.qualifikation}</p>
+                {p.themen?.length > 0 && <p className="mt-3 text-[13.5px] text-ink-500">Prüft: {p.themen.join(", ")}</p>}
+                {p.profil && (
+                  <a href={p.profil} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-[14px] font-semibold text-ov-700 hover:text-ov-800">
+                    Profil ansehen
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       {/* Wer wir sind */}
       <Section tone="white" space="lg">

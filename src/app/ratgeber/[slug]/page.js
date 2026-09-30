@@ -5,13 +5,15 @@
 // Die drei handgebauten Artikel haben eigene Ordner und haben Vorrang.
 
 import { notFound } from "next/navigation";
-import { BookOpen } from "lucide-react";
+import Link from "next/link";
+import { BookOpen, ShieldCheck } from "lucide-react";
 
 import ArtikelLayout from "@/components/Ratgeber/ArtikelLayout";
 import ArtikelInhalt from "@/components/Ratgeber/ArtikelInhalt";
 import { klartext } from "@/components/Ratgeber/InlineText";
 import { INHALTS_ARTIKEL, artikelPfad } from "@/lib/ratgeber";
 import { BASE_URL, SITE_NAME, LOCALE } from "@/lib/site";
+import { fachprueferFuerArtikel, fachprueferPfad, fachprueferSchema } from "@/data/fachpruefer";
 
 export const dynamicParams = false;
 
@@ -31,7 +33,6 @@ export async function generateMetadata({ params }) {
     description: a.description,
     keywords: a.keywords,
     alternates: { canonical: url },
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
     openGraph: {
       type: "article",
       url,
@@ -56,6 +57,8 @@ export default async function RatgeberArtikelPage({ params }) {
   if (!a) notFound();
 
   const url = `${BASE_URL}${artikelPfad(a.slug)}`;
+  // Fachprüfer nur mit schriftlicher Einwilligung (src/data/fachpruefer.js) – sonst weder Zeile noch Schema
+  const pruefer = fachprueferFuerArtikel(a);
 
   const toc = [
     ...(a.kurzFazit?.length ? [{ id: "kurz", label: "Das Wichtigste in Kürze" }] : []),
@@ -74,7 +77,11 @@ export default async function RatgeberArtikelPage({ params }) {
       dateModified: a.aktualisiert,
       author: { "@id": `${BASE_URL}/#organization` },
       publisher: { "@id": `${BASE_URL}/#organization` },
-      mainEntityOfPage: { "@type": "WebPage", "@id": url },
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": url,
+        ...(pruefer ? { reviewedBy: fachprueferSchema(pruefer), lastReviewed: a.aktualisiert } : {}),
+      },
       image: [`${BASE_URL}${a.bild}`, `${BASE_URL}/og/ratgeber/${a.slug}.jpg`],
       articleSection: a.kategorie,
       keywords: (a.keywords || []).join(", "),
@@ -117,6 +124,18 @@ export default async function RatgeberArtikelPage({ params }) {
         seitenCta={a.seitenCta}
         cta={a.cta}
       >
+        {pruefer && (
+          <p className="mb-8 flex items-start gap-2.5 rounded-2xl bg-sand-50 px-4 py-3 text-[14px] leading-snug text-ink-600 ring-1 ring-ink-200/70">
+            <ShieldCheck aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />
+            <span>
+              Fachlich geprüft von{" "}
+              <Link href={fachprueferPfad(pruefer)} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+                {pruefer.name}
+              </Link>
+              , {pruefer.rolle}
+            </span>
+          </p>
+        )}
         <ArtikelInhalt artikel={a} />
       </ArtikelLayout>
     </>

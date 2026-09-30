@@ -1,3 +1,6 @@
+// ENTWURF / STILLGELEGT (30.09.2026, Entscheidung E7): /ratgeber/reststromvermarktung leitet per 301 auf
+// /service/direktvermarktung um (next.config.mjs, Paket P1). Der Unterstrich nimmt die Datei aus
+// src/content/ratgeber/index.js. Inhalte bei Bedarf in die Direktvermarktungs-Seite übernehmen.
 // Ratgeber (AT): Reststromvermarktung – PV-Überschuss in Österreich verkaufen
 // Zahlenbasis: OeMAG/E-Control (Marktpreis), Energy-Charts (eigene Auswertung Day-Ahead AT),
 // Tarifvergleiche (Spannen, ohne Anbieternamen), ElWG (BGBl. I Nr. 91/2025). Stand 28.09.2026.

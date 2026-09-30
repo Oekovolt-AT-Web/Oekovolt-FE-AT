@@ -12,14 +12,14 @@ const BASIS = KWP * GEBOT;
 
 const artikel = {
   slug: "agri-pv-oesterreich",
-  title: "Agri-PV in Österreich: Konzepte, Kulturen, Förderung und Recht",
-  seoTitle: "Agri-PV Österreich: Förderung, Kulturen | Ökovolt",
+  title: "Welche Kulturen unter Agri-PV funktionieren – Obst, Wein, Acker, Grünland",
+  seoTitle: "Agri-PV-Kulturen: Obst, Wein, Acker & Grünland | Ökovolt",
   kurzTitel: "Agri-PV in Österreich",
   description:
-    "Agri-PV in Österreich: vertikale, hoch aufgeständerte und Weide-Systeme, geeignete Kulturen, 75-%-Regel, EAG-Zuschlag von 30 % und Raumordnung der Länder.",
+    "Welche Kulturen unter Agri-PV funktionieren: Obst, Beeren, Wein, Acker und Grünland, passende Konzepte, 75-%-Regel, Raumordnung und Eigenbetrieb oder Pacht.",
   excerpt:
     "Strom und Ernte auf derselben Fläche: Welche Agri-PV-Konzepte es gibt, welche Kulturen profitieren, wie die 75-%-Regel funktioniert und warum innovative Agri-PV 30 % mehr Investitionszuschuss bekommt.",
-  hauptKeyword: "agri pv österreich",
+  hauptKeyword: "agri pv kulturen",
   keywords: [
     "Agri-PV Österreich",
     "Agri-Photovoltaik Förderung",
@@ -30,7 +30,7 @@ const artikel = {
     "Agri-PV Raumordnung",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Technik & Planung",
   bild: "/Images/AT/ratgeber/agri-pv-oesterreich.jpg",
   bildAlt: "Hoch aufgeständerte Agri-PV-Forschungsanlage über einem Acker am Hofgut Heggelbach in Süddeutschland",
@@ -41,6 +41,7 @@ const artikel = {
     "Wer diese Kriterien erfüllt, entgeht dem **25-%-Abschlag** für Freiflächen. **Vertikale Agri-PV und Anlagen mit mindestens 2 m hoher Modulunterkante** gelten als innovativ und erhalten **30 % Zuschlag** auf den Investitionszuschuss.",
     "Unterkonstruktion und Anlageninfrastruktur dürfen höchstens **7 % der Gesamtfläche** beanspruchen; verlangt wird ein landwirtschaftliches Nutzungskonzept für **zehn Jahre** nach Inbetriebnahme.",
     "Am besten passen **Beeren, Kern- und Steinobst, Blattgemüse und Grünland**; Mais und Körnerleguminosen reagieren empfindlich auf Schatten. In trockenen Jahren kann Agri-PV Erträge sogar stabilisieren.",
+    "Planung, Förderung und Umsetzung einer Agri-PV-Anlage mit Ökovolt stehen auf [Agri-PV in Österreich](/agri-pv); dieser Ratgeber vertieft die Kulturen und die Bewirtschaftung.",
   ],
 
   abschnitte: [
@@ -207,7 +208,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Wer den Strom nicht selbst braucht, kann ihn über die [Reststromvermarktung](/ratgeber/reststromvermarktung), einen [Power Purchase Agreement](/ratgeber/ppa-oesterreich) mit einem Unternehmen in der Region oder eine Energiegemeinschaft verwerten. Leasing- und Finanzierungsmodelle für Investitionen im landwirtschaftlichen Betrieb vermitteln wir über unsere [Finanzierungspartner](/service/finanzierung).",
+          text: "Wer den Strom nicht selbst braucht, kann ihn über die [Reststromvermarktung](/service/direktvermarktung), einen [Power Purchase Agreement](/ratgeber/ppa-oesterreich) mit einem Unternehmen in der Region oder eine Energiegemeinschaft verwerten. Leasing- und Finanzierungsmodelle für Investitionen im landwirtschaftlichen Betrieb vermitteln wir über unsere [Finanzierungspartner](/service/finanzierung).",
         },
       ],
     },

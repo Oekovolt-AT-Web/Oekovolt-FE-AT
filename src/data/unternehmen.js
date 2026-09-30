@@ -18,8 +18,9 @@
 //
 // GESELLSCHAFTSRECHTLICH: Die Ökovolt Solartechnik GmbH ist keine
 // Tochtergesellschaft der deutschen GmbH (die Anteile halten Andreas
-// Wegscheider und die Salzburg AG). „Muttergesellschaft“ wird hier deshalb nur
-// im Sinn von Stammhaus der Gruppe verwendet – Ursprung, Standards, Marke.
+// Wegscheider und die Salzburg AG). Die deutsche GmbH heißt deshalb überall
+// „Schwestergesellschaft“ und „Stammhaus der Gruppe“ (Ursprung, Standards, Marke) –
+// nie „Muttergesellschaft“ (gleiche Sprachregelung wie Schema in layout.js, llms.txt, /presse).
 //
 // PFLEGE: `STAND` dokumentiert den Redaktionsstand und wird ausgewiesen.
 
@@ -86,7 +87,7 @@ export const URSPRUNG = {
   kopf: "Österreich und Deutschland",
   titel: "Ein Stammhaus, eine Schwester – ein Verbund",
   absaetze: [
-    `Die ${SCHWESTER.name} in ${SCHWESTER.ort} (Deutschland, seit 2010) ist das Stammhaus und die Muttergesellschaft der Gruppe: Dort werden die technischen Standards gesetzt, nach denen gebaut wird, und dort liegen die Rechte an der Marke Ökovolt und an dieser Website.`,
+    `Die ${SCHWESTER.name} in ${SCHWESTER.ort} (Deutschland, seit 2010) ist das Stammhaus der Gruppe und rechtlich eine Schwestergesellschaft: Dort werden die technischen Standards gesetzt, nach denen gebaut wird, und dort liegen die Rechte an der Marke Ökovolt und an dieser Website.`,
     `Mit diesem Know-how entstand 2012 die österreichische Gesellschaft, die ${FIRMA.name} in ${FIRMA.ort} – mit denselben Prozessen und derselben Qualitätslatte. Gesellschaftsrechtlich ist sie eigenständig: Gesellschafter sind Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer} und die Salzburg AG.`,
     "Beide Gesellschaften arbeiten eng verzahnt: Zentraleinkauf, gemeinsame Planungsdienstleistungen und eine gemeinsame EDV-Infrastruktur. In Österreich kommen eigene Systeme für den Netzanschluss dazu – Parkregler, Fernwartung und SCADA.",
   ],

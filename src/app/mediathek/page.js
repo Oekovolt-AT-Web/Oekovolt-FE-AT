@@ -13,14 +13,17 @@ const TITEL = "Mediathek – Videos von Baustellen & Projekten | Ökovolt";
 const BESCHREIBUNG =
   "Kurzvideos von Ökovolt Österreich: Photovoltaik-Montage, Inbetriebnahmen, Technik und Team – Einblicke in Projekte für Gewerbe, Landwirtschaft und Gemeinden.";
 
+// Einheitliche Behandlung (SEO-Plan M28/P2): Solange keine Videos vorhanden sind, ist /mediathek
+// noindex (Links werden verfolgt), fehlt in der Sitemap (mediathekSitemap() liefert dann nichts) und in
+// llms.txt (indexierbar()/mediathekBefuellt() in src/lib/llms.js). Mit dem ersten Video gelten überall
+// die Standardwerte aus dem Layout (index, max-image-preview, max-video-preview) – ohne eigene robots-Zeile.
 export function generateMetadata() {
   const leer = reelsSortiert().length === 0;
   return {
     title: TITEL,
     description: BESCHREIBUNG,
     alternates: { canonical: PAGE_URL },
-    // Solange keine Videos vorhanden sind: nicht indexieren, Links aber verfolgen
-    robots: leer ? { index: false, follow: true } : { index: true, follow: true },
+    ...(leer ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       type: "website",
       locale: "de_AT",

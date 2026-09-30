@@ -22,7 +22,6 @@ export const metadata = {
   description: BESCHREIBUNG,
   keywords: ["Photovoltaik FAQ Österreich", "PV Gewerbe Österreich", "EAG Investitionszuschuss", "Investitionsfreibetrag Photovoltaik", "ElWG Photovoltaik", "Energiegemeinschaft", "TOR Erzeuger"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

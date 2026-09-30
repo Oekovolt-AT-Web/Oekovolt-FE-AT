@@ -17,9 +17,9 @@ const PFAD = "/rechner/finanzierung";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "PV-Finanzierung vergleichen: Kauf, Leasing, PPA | Ökovolt",
+  title: "PV-Finanzierungsrechner: Kauf, Leasing, PPA | Ökovolt",
   description:
-    "Neutraler Finanzierungsvergleich für Gewerbe-PV in Österreich: Kauf mit Eigenkapital oder Kredit, Leasing, Contracting und Dach-PPA über 20 Jahre – Barwert, Cashflow, Amortisation.",
+    "Finanzierungsrechner für Gewerbe-PV in Österreich: Kauf mit Eigenkapital oder Kredit, Leasing, Contracting und Dach-PPA über 20 Jahre – Barwert und Cashflow.",
   keywords: [
     "PV Finanzierung Vergleich",
     "Photovoltaik Leasing oder Kauf",
@@ -73,10 +73,18 @@ export default function Page() {
       eyebrow="Finanzierungsvergleich"
       title={
         <>
-          Kaufen, leasen oder <span className="ov-text-gradient-light">Strom kaufen?</span>
+          PV-Finanzierung vergleichen: <span className="ov-text-gradient-light">fünf Modelle, eine Rechnung</span>
         </>
       }
-      lead="Dieselbe Anlage, fünf Modelle am Markt: Kauf mit Eigenkapital oder Kredit, Leasing, Contracting und Dach-PPA – über 20 Jahre mit Barwert, Cashflow und Amortisation. Alle Annahmen offen und änderbar."
+      lead={
+        <>
+          <span className="block font-display text-[1.15em] font-bold leading-snug text-white">Kaufen, leasen oder Strom kaufen?</span>
+          <span className="mt-3 block">
+            Dieselbe Anlage, fünf Modelle am Markt: Kauf mit Eigenkapital oder Kredit, Leasing, Contracting und Dach-PPA – über 20 Jahre mit Barwert, Cashflow und Amortisation. Alle
+            Annahmen offen und änderbar.
+          </span>
+        </>
+      }
       chips={["Barwert & Cashflow-Kurven", "Leasingfaktor → Effektivzins", "IFB und EAG-Zuschuss", "Neutral, ohne Anbieterkonditionen"]}
       app={{
         name: "Ökovolt Finanzierungsvergleich für Gewerbe-PV",

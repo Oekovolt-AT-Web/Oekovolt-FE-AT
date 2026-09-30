@@ -3,7 +3,7 @@
 Gliederung **nur als Ordnungsraster** in Anlehnung an die Themenbereiche von ISO/IEC 27001 Anhang A
 (organisatorisch, personenbezogen, physisch, technologisch). Es besteht **kein ISMS** nach ISO/IEC 27001
 und keine Zertifizierung; die Tabelle ist eine Bestandsaufnahme belegter Maßnahmen und Lücken.
-Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 Ausführliche Datenschutz-Dokumente (nur verlinkt). **Welle 4:** Verzeichnis für AT überarbeitet und erweitert – Deckblatt `docs/datenschutz/00-Uebersicht-VVT.md` (Verantwortlicher, Aufsichtsbehörde, Systeme, Auftragsverarbeiter, Abweichungstabelle A1–A8) und neue Einträge `VVT-Anfragen.md`, `VVT-Heatmap.md`, `VVT-Kundenbuehne.md`, `VVT-Lastgang-Analyse.md`, `VVT-Mediathek.md`; bestehende Einträge angepasst. Status: Entwurf, rechtlich prüfen. Die folgende Tabelle beschreibt den Stand vor Welle 4:
 
@@ -177,4 +177,17 @@ Rechtliche Bewertung (TKG § 165 Abs. 3 für Umami ohne Einwilligung, Heatmap, b
 | D10 | A/B-Test K1, Variante B: Rechtsgrundlage Art. 6 Abs. 1 lit. b ohne Einwilligungs-Checkbox und ohne AGB-Akzeptanz; Transparenzhinweis in der Datenschutzerklärung fehlt noch | `src/lib/experimente.js`, Agentenbericht Welle 4 |
 | D11 | Kundenbühne und Lastgang-Analyse sind in der Datenschutzerklärung noch nicht beschrieben (Textvorschläge in den VVT-Einträgen) | `docs/datenschutz/VVT-Kundenbuehne.md`, `VVT-Lastgang-Analyse.md` |
 | D12 | Offene Organisationspunkte: Beschäftigtenzahl (Pflicht zur internen Stelle nach § 11 HSchG ab 50), DSB-Benennung (Art. 37), Hosting (www.oekovolt.com liefert am 30.09.2026 noch die alte Seite aus), AV-Verträge (Hetzner, Microsoft 365, IntegrityLine …), 2FA für Desk-Konten, verschlüsselte Backups | `docs/datenschutz/00-Uebersicht-VVT.md` |
+
+**Stand nach der SEO-Welle (Paket P8):**
+
+| ID | Stand | Beleg |
+|---|---|---|
+| D7 | **erledigt** – Datenschutzerklärung an Code angeglichen: Anfragen 24 Monate Anonymisierung (auch PDF-Analyse, Partner, Sponsoring, Award), Rückruf/Termine 24 Monate, CloudTalk entfernt, IP/UTM-Beschreibung, Heatmap 14 Monate, Übersicht „Speicherdauer“ | `src/components/Datenschutz/datenschutz.js` |
+| D8 | **teilweise** – Fristen ab Eingang (`fristen_ab_eingang()`), Website-Texte über `FRISTEN_TEXT`; **Fehler behoben:** Löschjob behielt „Deleted Document“-Kopien, jetzt `delete_permanently=True`; offen: inhaltsfreies Zugriffsprotokoll (§ 8 Abs. 12, § 9 Abs. 6 HSchG), Lesezugriffe nicht protokolliert | `…/doctype/hinweis/hinweis.py`, `…/hinweis/api.py`, `src/data/hinweisgeber.js` |
+| D9 | offen – `buche_termin` weiter Gastmethode | – |
+| D10 | **erledigt** – Unterpunkt „Varianten-Tests“ in der Datenschutzerklärung, laufende Tests werden zur Build-Zeit genannt (derzeit keiner) | `src/components/Datenschutz/datenschutz.js` |
+| D11 | **erledigt** – Abschnitte Lastgang-Analyse, Referenzprojekte/Kundenporträts, Standort-Check/Schneelast/PV-Prognose | ebd. |
+| D12 | offen (Organisation) | – |
+| D13 | **neu, rechtlich prüfen:** Anonymisierung statt Löschung nach 24 Monaten; IP-Adresse 24 Monate bzw. unbefristet bei „Angebot erstellt“/„Gewonnen“; Löschkonzept E-Mail-Postfächer; GA-Aufbewahrung 14 Monate nur als GA-Einstellung; Partner/Sponsoring/Award-Frist nicht im Backend; Eingangszeitpunkt manuell erfasster Hinweise | Bericht P8 |
+| D14 | **neu:** Verifizierungs-Tags nur aus `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` / `NEXT_PUBLIC_BING_SITE_VERIFICATION`, keine GTM-ID im HTML (auskommentierte GTM-Zeile in `src/components/Reusable/LayoutWrapper.js:33`) | `src/app/layout.js` |
 | D3 | Datenschutzerklärung nennt Umami nur, wenn die Env-Variablen **zur Build-Zeit** gesetzt sind | Arbeitsbaum `src/components/Datenschutz/datenschutz.js` (Funktion `umamiAktiv`) |

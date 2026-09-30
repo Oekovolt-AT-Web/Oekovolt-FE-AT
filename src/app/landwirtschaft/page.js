@@ -41,7 +41,7 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/landwirtschaft";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Photovoltaik für die Landwirtschaft in Österreich | Ökovolt";
+const TITEL = "PV Landwirtschaft: Stall, Halle & Förderung | Ökovolt";
 const BESCHREIBUNG =
   "PV auf Stall, Scheune und Maschinenhalle in Österreich: Speicher fürs Melken, Notstrom, Pauschalierung, EAG-Förderung und Agri-PV aus einer Hand.";
 const HERO_BILD = "/Images/AT/loesungen-a/lw-hof-stalldaecher.jpg";
@@ -180,8 +180,8 @@ export default async function LandwirtschaftPage({ searchParams }) {
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Landwirtschaft" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Photovoltaik für die Landwirtschaft – <span className="ov-text-gradient-light">Stall, Scheune, Maschinenhalle</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Bauernhof mit Photovoltaikanlagen auf den Dächern von Stall und Scheune vor Wald und Wiese", position: "center 60%" }}
         actions={[
           { label: v.cta, href: "/termin?art=vor-ort&thema=landwirtschaft" },

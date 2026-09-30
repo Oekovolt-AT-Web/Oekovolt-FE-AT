@@ -52,7 +52,6 @@ import a_pv_anlage_groesse_berechnen from "./pv-anlage-groesse-berechnen";
 import a_pv_thermografie_drohne from "./pv-thermografie-drohne";
 import a_pv_ueberschussladen from "./pv-ueberschussladen";
 import a_regelenergie_flexibilitaet from "./regelenergie-flexibilitaet";
-import a_reststromvermarktung from "./reststromvermarktung";
 import a_schneelast_photovoltaik from "./schneelast-photovoltaik";
 import a_smart_meter_pflicht from "./smart-meter-pflicht";
 import a_solarcarport from "./solarcarport";
@@ -120,7 +119,6 @@ export const INHALTE = [
   a_pv_thermografie_drohne,
   a_pv_ueberschussladen,
   a_regelenergie_flexibilitaet,
-  a_reststromvermarktung,
   a_schneelast_photovoltaik,
   a_smart_meter_pflicht,
   a_solarcarport,

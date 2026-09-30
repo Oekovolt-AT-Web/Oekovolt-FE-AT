@@ -48,7 +48,6 @@ export async function generateMetadata({ params }) {
     description,
     keywords: [`Photovoltaik Förderung ${land.name}`, `PV Förderung ${land.name} 2026`, `Stromspeicher Förderung ${land.name}`, `Photovoltaik Unternehmen ${land.name}`, "EAG-Investitionszuschuss", "Landesförderung Photovoltaik"],
     alternates: { canonical: url },
-    robots: { index: true, follow: true },
     openGraph: {
       type: "article",
       url,

@@ -32,7 +32,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Photovoltaik Genehmigung Österreich", "PV Anlage Bewilligung Bundesland", "Photovoltaik Bauordnung", "Grünland Photovoltaik Widmung", "Photovoltaik Denkmalschutz", "Freiflächen Photovoltaik Genehmigung", "Solarpflicht Österreich"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

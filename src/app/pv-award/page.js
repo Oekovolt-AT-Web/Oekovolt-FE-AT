@@ -33,7 +33,7 @@ import { BASE_URL, FIRMA, SITE_NAME, SOLENSA } from "@/lib/site";
 const PAGE_URL = `${BASE_URL}/pv-award`;
 const TITEL = "Ökovolt PV Award – die besten PV-Anlagen | Ökovolt";
 const BESCHREIBUNG =
-  "Der Ökovolt PV Award zeichnet jährlich die besten Photovoltaikanlagen und Nachhaltigkeitsinvestitionen unserer Kunden aus: 7 Kategorien, Kriterien, Jury, Einreichung.";
+  "Der Ökovolt PV Award zeichnet jährlich die besten PV-Anlagen und Nachhaltigkeitsinvestitionen unserer Kunden aus: 7 Kategorien, Kriterien, Jury, Einreichung.";
 
 export const metadata = {
   title: TITEL,

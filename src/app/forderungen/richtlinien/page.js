@@ -30,7 +30,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["TOR Erzeuger", "Netzanschluss Photovoltaik Österreich", "ElWG Photovoltaik", "OVE R 11-1", "ÖVE/ÖNORM E 8101", "ÖNORM B 1991-1-3 Schneelast", "Netzzugangsantrag PV"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

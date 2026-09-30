@@ -3,9 +3,9 @@
 | Dokumentenlenkung | |
 |---|---|
 | Dokument | Projektdokumentation Website oekovolt.com + Frappe-Backoffice |
-| Version | 0.4 (Nachführung Welle 4) |
+| Version | 0.5 (Nachführung SEO-Welle P1–P9 und QA) |
 | Datum | 30.09.2026 |
-| Stand des Codes | Branch `at-launch`, Commit `add3074` (30.09.2026, enthält Wellen 2 und 3 samt Doku 0.3) zzgl. unveröffentlichter Arbeitsbaum-Änderungen der Welle 4 (siehe [08](08-konfiguration-und-aenderungen.md)) |
+| Stand des Codes | Branch `at-launch`, Commit `ffd5c00` (30.09.2026, Welle 4 samt Doku 0.4) zzgl. unveröffentlichter Arbeitsbaum-Änderungen der SEO-Welle (siehe [08](08-konfiguration-und-aenderungen.md)) |
 | Autor | Claude (KI-Assistent) im Auftrag der Geschäftsführung |
 | Prüfung | offen |
 | Freigabe | offen |
@@ -71,6 +71,7 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | `docs/datenschutz/00-Uebersicht-VVT.md` + `VVT-*.md` (14 Dateien) | Verzeichnis von Verarbeitungstätigkeiten für AT (Entwurf, rechtlich prüfen), Abweichungstabelle Datenschutzerklärung ↔ Code (A1–A8) | 05 |
 | `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` | Umstellung IntegrityLine → eigenes Hinweisgebersystem | 05, 07 |
 | `anhang/seo-umsetzungsplan-2026-09-30.md` | vollständiger SEO-Umsetzungsplan (Kopie) | 11 |
+| `docs/seo/Offpage-Fahrplan.md` + `docs/seo/vorlagen/*` (6 Vorlagen) | Maßnahmen außerhalb der Website (M29, M30): Search Console/Bing, Unternehmensprofile, Verzeichnisse, Wikidata, Datenstorys, Hersteller, Kundenfreigaben, Bewertungen | 11 |
 
 ## 5. Pflegeprozess (Nachführen)
 
@@ -95,33 +96,33 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | 0.2 | 30.09.2026 | Nachführung Welle 2: Heatmap fertig, `Import-Backend-Frappe/` vollständig, SEO, Netzanmeldung, Kundenbühne, Konfetti, Sicherheitsbefunde S1–S4 behoben, Schneelast-Erzeugungsskript, AT-Logo im PDF, WKO-Siegel (neu erfasst); Tests erneut ausgeführt (inkl. neu T-HEAT, T-VERTRAG); P1–P12 abgearbeitet; `docs/FRAPPE-AT-API-SPEZIFIKATION.md` um Kundenbühne-Felder (#1/#2) und Heatmap (#15/#16) ergänzt | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.3 | 30.09.2026 | Nachführung Welle 3: zentrale Kennzahlen, Mannschaft & Maschinenpark, Pressekontakt, selbst gehostete Mediathek (Reels), Schalter `HINWEIS_INTERN` + Go-live-Anleitung, WKO-Siegel mit Quellendatei, Drosselung ohne IP geändert; Tests und Lint erneut ausgeführt | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.4 | 30.09.2026 | Nachführung Welle 4: PV-Prognose, Schneelast-Karte, Einspeisung Gewerbe, EG für Betriebe/Gemeinden, Vergabe für Gemeinden, Flächen-Check/Widmung, Finanzierungsvergleich, Teilen & PDF, Lastgang-Analyse, A/B-Infrastruktur, Performance/A11y, Test-Sammellauf (21 Dateien), Datenschutz-Doku AT, Bundesland-Hubs; Auftraggeber-Entscheidungen (KI-Training sperren, Marken, 510 MW, Fachprüfer); neues Kapitel 11 (SEO) | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
+| 0.5 | 30.09.2026 | Nachführung SEO-Welle P1–P9 und QA-Nacharbeit: robots.txt nach E1, `htmlLimitedBots`, Breadcrumbs, 301 alter URLs, robots zentral, Sitemap mit echten Daten, `llms.txt`, IndexNow nur Änderungen, Onpage/Kannibalisierung, Wechselrichter-Seiten, Entität/Fachprüfer/FAQ/DefinedTerm, Datasets, Bundesland ohne Doorway, OeMAG korrigiert, Presse-Grafiken, Offpage-Fahrplan, Datenschutzerklärung an Code angeglichen, HSchG-Fristen ab Eingang, Rechenkorrekturen; Kapitel 11 mit Status M01–M30 | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 
 ## 7. Beim nächsten Nachführen prüfen
 
-### 7.1 Stand der Liste aus Version 0.3
+### 7.1 Stand der Liste aus Version 0.4
 
-| # | Bereich | Stand nach Welle 4 |
+| # | Bereich | Stand nach der SEO-Welle |
 |---|---|---|
-| P9 | Build-Status | macht der Koordinator (parallel) – Ergebnis in 06 eintragen |
-| P10 | Sichtprüfung 1440/390 | offen, jetzt zusätzlich alle Welle-4-Seiten (siehe 06, Abschnitt 4) |
-| P13 | Commit | Wellen 2 und 3 committet (`add3074`); Welle 4 offen |
-| P14 | Rechtliche Freigaben | weiter offen; ergänzt um Welle-4-Punkte (09, F-24 bis F-33) |
-| P15 | Datenschutz-Doku | **erledigt in Welle 4** (`docs/datenschutz/00-Uebersicht-VVT.md` + VVT je Verarbeitung); Restbezüge auf DE-Recht in 4 Dateien, teils als Abgrenzung – prüfen |
-| P16 | Tests | **weitgehend erledigt**: Sammellauf `scripts/alle-tests.mjs` mit 21 Dateien inkl. Rechner- und Kundenbühne-Tests; offen: Befund tests-04, Folgetest zu tests-01 |
-| P17 | CO₂-Faktoren | offen (F-07) |
-| P19 | WKO-Siegel | Berechtigung weiter zu bestätigen |
-| P21 | Kennzahlen zentral | Leistung auf 510 MW (Code: 510.000 kWp) umgestellt; CO₂-Zeitraum offen; Textduplikate prüfen |
-| P22–P25 | Fotos, Mediathek, Hinweisgeber-Go-live, `mannschaft.js` | unverändert offen |
-| P7, P8, P18, P20 | Datenschutzerklärung, Umami, `Import-Frappe/`, Heatmap-/Siegel-Funktionstest | unverändert offen |
+| P9 | Build-Status | macht der Koordinator – Ergebnis in 06 eintragen |
+| P10 | Sichtprüfung 1440/390 | teilweise durch Paket-Screenshots (P3–P6, QA) belegt; vollständige Prüfung offen |
+| P26 | Commit | Welle 4 committet (`ffd5c00`); SEO-Welle offen |
+| P27 | SEO-Pakete | **P1–P6, P8, P9 umgesetzt**, P7 als Fahrplan vorbereitet (Stand je Maßnahme in 11) |
+| P28 | Snippets Welle 4 | **erledigt** (`npm test`, HSchG-Fristen, Datenschutzerklärung, Links auf Bundesland-Hubs); `expFuerEreignis` in `statistik.js` nicht geprüft |
+| P29 | Inhaltliche Korrekturen | **erledigt**: OeMAG-Werte, KIG 620 Mio. €, Leasing-FAQ neutral; Link Investitionsfreibetrag nicht erneut geprüft |
+| P30 | RIS-Abgleich | teilweise: HSchG über RIS-OGD geprüft, KIG über JUSLINE; übrige weiter offen |
+| P31 | OeMAG monatlich | offen (Anfang Oktober; Zuständigkeit ungeklärt) |
+| P32 | Kalender-gebundene Inhalte | offen |
+| P7, P8, P14, P17–P25 | Datenschutz-Freigaben, Umami, Rechtliche Freigaben, CO₂-Faktoren, `Import-Frappe/`, WKO-Siegel, Heatmap-/Siegel-Test, Kennzahlen, Fotos, Mediathek, Hinweisgeber-Go-live, `mannschaft.js` | unverändert offen (CO₂-Kennzahl bleibt laut Auftraggeber ausgeblendet) |
 
 ### 7.2 Neu für die nächste Nachführung
 
 | # | Bereich | Prüfen |
 |---|---|---|
-| P26 | Commit der Welle 4 | danach Abschnitt „Unveröffentlicht“ in 08 datieren |
-| P27 | SEO-Pakete P1–P7 | Stand in 11 gegen Code abgleichen (insbesondere M02 `htmlLimitedBots`, M07 robots.txt nach E1, M09 `llms.txt` ohne Welle-4-Seiten) |
-| P28 | Snippets der Welle-4-Agenten | nicht übernommene Snippets: `npm test` in `package.json`, `expFuerEreignis` in `src/lib/statistik.js`, A/B-Hinweis in der Datenschutzerklärung, HSchG-Fristen (`hinweis.py`, `hinweisgeber.js`), Kundenbühne-Abschnitt Datenschutzerklärung, Links von `/photovoltaik` auf Bundesland-Hubs |
-| P29 | Inhaltliche Korrekturen außerhalb der Welle-4-Dateien | OeMAG-Werte im Ratgeber (Sep 2024, Q4/2026, Aug–Dez 2025), KIG 500 vs. 620 Mio. auf `/kommunen`, FAQ Leasing auf `/service/finanzierung`, Link `/ratgeber/investitionsfreibetrag-photovoltaik` |
-| P30 | RIS-Abgleich | alle Rechtsquellen, die wegen RIS-Ausfall (HTTP 503) über Sekundärquellen belegt wurden (R-35) |
-| P31 | Monatliche Pflege OeMAG | Anfang Oktober Wert September 2026 eintragen (`src/data/oemag.js`), sonst Warnhinweis ab 05.11.2026 |
-| P32 | Kalender-gebundene Inhalte | nach 22.10.2026 EAG-Karte auf `/kommunen/vergabe-foerderung` umstellen; Klimafonds-Modellregionen-Ausschreibung; Abschläge SNE-V ab 01.01.2027 in `src/lib/egBetriebe.js` |
+| P33 | Commit der SEO-Welle | danach Abschnitt „Unveröffentlicht“ in 08 datieren |
+| P34 | Deploy und Nachprüfungen | nach dem Deploy: `curl -A GPTBot/PerplexityBot` (Metadaten vor `</head>` im Produktions-Build), Rich-Results-Test für Breadcrumbs, `node scripts/indexnow.mjs` (erster Lauf meldet alle ca. 310 URLs), Search Console/Bing; `/schneelast` und EAG-Fördercall vor dem 08.10. live |
+| P35 | Hand gepflegte Listen | `NICHT_INDEXIERT` (`src/lib/llms.js`) und `WEITERGELEITETE_HERSTELLER` (`src/app/sitemap.js`) gegen `next.config.mjs` abgleichen; `GEAENDERT` in `src/app/sitemap.js` bei sichtbaren Inhaltsänderungen pflegen |
+| P36 | Offene Entscheidungen der SEO-Welle | E4 (Service Fremdmarken), E5 (Fachprüfer-Einwilligungen), E6 (CO₂-Zeitraum, MW/MWp, Öffnungszeiten, Lochau), E9 (Wien), E10/E11, E12 (Vergleichstabellen, Bürgerbeteiligung), Amazonbot-Sperre, CC-BY-Lizenz für eigene Auswertungen, Schweiz-Aussage auf „Über uns“ |
+| P37 | Dev-Server | Speicherverbrauch von `next dev` (Absturz bei ca. 15,8 GB RAM) beobachten (R-52) |
+| P38 | `docs/AT-UEBERGABE.md` | beschreibt noch den alten IndexNow-Aufruf – vom Eigentümer der Datei nachziehen lassen |
+| P39 | HSchG-Protokoll | inhaltsfreies Zugriffs-/Änderungsprotokoll (§ 8 Abs. 12, § 9 Abs. 6) vor `HINWEIS_INTERN=1` |

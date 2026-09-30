@@ -1,6 +1,15 @@
 // Ratgeber (AT): OeMAG-Marktpreis erklärt – § 41 ÖSG 2012, Quartalsmarktpreis vs. Monatswert PV
-// Zahlenbasis: E-Control Marktpreis-Archiv, OeMAG (Marktpreis-Seite), Energy-Charts (eigene
-// Auswertung Day-Ahead AT). Stand 28.09.2026. Keine Imports – alle Werte hier definiert.
+//
+// Zahlenbasis (SEO-Plan M27, geprüft am 30.09.2026 an den Primärquellen):
+//   - Monatswerte PV 2024–2026, Ausgleichsenergie, Quartalspreise ab 2024: src/data/oemag.js
+//     (OeMAG Marktpreise_2024.pdf, Marktpreise_2025.pdf, oem-ag.at/marktpreis; E-Control „Aktueller
+//     Marktpreis“ Q4/2026 = 152,82 €/MWh). Eine Datenquelle für diesen Ratgeber und /einspeisung-gewerbe.
+//   - Quartalspreise 2020–2023: E-Control Marktpreis-Archiv (hier lokal, zwei Nachkommastellen).
+//   - Solar-Marktwert 2026: eigene Auswertung Energy-Charts (nur Vergleichsspalte).
+// PFLEGE monatlich: nur src/data/oemag.js ergänzen – Seitentitel, Kurzfazit, Tabellen und FAQ nennen den
+// jüngsten Monat automatisch. `title` bleibt ein fester Text (scripts/og-bilder.mjs liest ihn per Regex).
+
+import { AUSGLEICHSENERGIE_PV, AUSGLEICHSENERGIE_WIND_2026, NAECHSTE_VEROEFFENTLICHUNG, OEMAG_MONATE, QUARTALSPREISE, QUELLEN as OQ, STAND } from "@/data/oemag";
 
 // ---------------------------------------------------------------- Formatierung
 const n = (x) => Math.round(x).toLocaleString("de-DE");
@@ -12,46 +21,37 @@ const z1 = (x) => x.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumF
 const pct = (x) => Math.round(x * 100) + " %";
 
 // ---------------------------------------------------------------- Daten
-// Quartalsmarktpreise E-Control nach § 41 Abs. 1 ÖSG 2012 (ct/kWh)
+// Quartalsmarktpreise E-Control nach § 41 Abs. 1 ÖSG 2012 (ct/kWh); ab 2024 aus src/data/oemag.js
 const QUARTAL = {
   2020: [4.51, 3.23, 4.0, 4.23],
   2021: [4.96, 5.73, 7.84, 12.66],
   2022: [25.86, 25.69, 30.73, 51.45],
   2023: [26.86, 14.46, 13.69, 12.46],
-  2024: [9.626, 7.758, 8.899, 8.7],
-  2025: [9.73, 9.759, 9.82, 9.167],
-  2026: [9.25, 11.967, 10.923, null],
 };
+for (const { quartal, ct } of QUARTALSPREISE) {
+  const [jahr, q] = quartal.split("-Q").map(Number);
+  QUARTAL[jahr] = QUARTAL[jahr] || [null, null, null, null];
+  QUARTAL[jahr][q - 1] = ct;
+}
+const Q_LETZT = QUARTALSPREISE[QUARTALSPREISE.length - 1];
+const [Q_LETZT_JAHR, Q_LETZT_NR] = Q_LETZT.quartal.split("-Q").map(Number);
 
-// OeMAG-Monatsmarktpreis PV nach § 41 Abs. 2a ÖSG 2012 (ct/kWh), nur belegte Monate
+// OeMAG-Monatsmarktpreis PV nach § 41 Abs. 2a ÖSG 2012 (ct/kWh), alle Monate seit Jänner 2024
 const MONATE = ["Jänner", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-const MONAT_PV = [
-  [2024, 7, 5.339],
-  [2024, 8, 5.827],
-  [2024, 9, 6.083],
-  [2024, 10, 6.867],
-  [2024, 11, 8.7],
-  [2024, 12, 8.7],
-  [2025, 1, 9.73],
-  [2025, 2, 9.73],
-  [2025, 3, 6.007],
-  [2025, 4, 5.855],
-  [2025, 5, 5.855],
-  [2025, 6, 5.855],
-  [2025, 7, 5.965],
-  [2026, 1, 8.842],
-  [2026, 2, 8.457],
-  [2026, 3, 5.72],
-  [2026, 4, 6.772],
-  [2026, 5, 6.772],
-  [2026, 6, 6.772],
-  [2026, 7, 6.146],
-  [2026, 8, 8.997],
-];
+const MONAT_PV = OEMAG_MONATE.map(({ monat, ct }) => {
+  const [j, m] = monat.split("-").map(Number);
+  return [j, m, ct];
+});
+const [LETZT_JAHR, LETZT_MONAT, LETZT_WERT] = MONAT_PV[MONAT_PV.length - 1];
+const LETZT_LABEL = `${MONATE[LETZT_MONAT - 1]} ${LETZT_JAHR}`;
+const wertVon = (jahr, monat) => MONAT_PV.find(([j, m]) => j === jahr && m === monat)?.[2] ?? null;
+const MIN_PV = MONAT_PV.reduce((a, b) => (b[2] < a[2] ? b : a));
+const MAX_PV = MONAT_PV.reduce((a, b) => (b[2] > a[2] ? b : a));
+const mLabel = ([j, m]) => `${MONATE[m - 1]} ${j}`;
 
 // Ausgleichsenergie-Abzug PV ab 2026 (Basis: Durchschnitt 2025)
-const AE = { 2024: 0, 2025: 0, 2026: 0.408 };
-const AE_WIND_2026 = 0.454;
+const AE = AUSGLEICHSENERGIE_PV;
+const AE_WIND_2026 = AUSGLEICHSENERGIE_WIND_2026;
 
 // Solar-Marktwert AT 2026 (eigene Auswertung Energy-Charts, €/MWh) – nur zum Vergleich
 const SOLAR_MW_2026 = { 3: 59, 4: 16, 5: 36, 6: 55, 7: 67, 8: 94 };
@@ -74,8 +74,14 @@ function lage(jahr, monat, wert) {
 // Beispiel Rechenweg
 const Q2 = QUARTAL[2026][1];
 const Q3 = QUARTAL[2026][2];
-const AUG_WERT = 8.997;
+const Q4 = QUARTAL[2026][3];
+const AUG_WERT = wertVon(2026, 8);
+const JUL_WERT = wertVon(2026, 7);
+const APR_WERT = wertVon(2026, 4);
 const AUG_DA = AUG_WERT + AE[2026]; // rückgerechneter mengengewichteter Day-Ahead-Wert
+// Höchster Quartalswert vor dem jüngsten, der darüber lag (für die Einordnung des jüngsten Quartals)
+const QUARTAL_LISTE = Object.entries(QUARTAL).flatMap(([j, qs]) => qs.map((ct, i) => ({ j: Number(j), q: i + 1, ct })).filter((x) => x.ct != null));
+const HOEHER_ZULETZT = QUARTAL_LISTE.filter((x) => x.j * 10 + x.q < Q_LETZT_JAHR * 10 + Q_LETZT_NR && x.ct > Q_LETZT.ct).pop();
 
 // Beispiel Jahreserlös 50 kWp
 const KWP = 50;
@@ -85,6 +91,8 @@ const UEBERSCHUSS = KWP * ERTRAG_KWP * (1 - EV_QUOTE);
 // Annahme: Verteilung der Überschusseinspeisung über das Jahr (Summe 1)
 const PROFIL = [0.02, 0.04, 0.08, 0.11, 0.13, 0.14, 0.14, 0.12, 0.09, 0.06, 0.04, 0.03];
 const WERTE_2026 = MONAT_PV.filter(([j]) => j === 2026).map(([, m, v]) => ({ m, v }));
+const LETZT_2026 = WERTE_2026[WERTE_2026.length - 1].m;
+const BIS = MONATE[LETZT_2026 - 1];
 const BSP = WERTE_2026.map(({ m, v }) => {
   const kwh = UEBERSCHUSS * PROFIL[m - 1];
   const mw = SOLAR_MW_2026[m];
@@ -104,11 +112,11 @@ const SIMPEL_MITTEL = WERTE_2026.reduce((s, x) => s + x.v, 0) / WERTE_2026.lengt
 
 const artikel = {
   slug: "oemag-marktpreis",
-  title: "OeMAG-Marktpreis erklärt: Berechnung, Historie und Erlös 2026",
-  seoTitle: "OeMAG-Marktpreis 2026: Berechnung & Historie | Ökovolt",
+  title: "OeMAG-Marktpreis aktuell: Monatswerte seit 2024, Berechnung und Erlös",
+  // Monat im Titel (SEO-Plan M27) – wird aus dem jüngsten Wert in src/data/oemag.js gebildet
+  seoTitle: `OeMAG-Marktpreis ${LETZT_LABEL}: ${z3(LETZT_WERT)} ct/kWh | Ökovolt`,
   kurzTitel: "OeMAG-Marktpreis",
-  description:
-    "OeMAG-Marktpreis 2026 erklärt: § 41 ÖSG, Korridor 60–100 %, Ausgleichsenergie-Abzug, alle Quartals- und Monatswerte seit 2020 und ein Erlösbeispiel.",
+  description: `OeMAG-Marktpreis ${LETZT_LABEL}: ${z3(LETZT_WERT)} ct/kWh für PV. Korridor ab Oktober 2026, Berechnung nach § 41 ÖSG und alle Monatswerte seit 2024 mit Quelle.`,
   excerpt:
     "Wie die OeMAG den Monatswert für PV-Überschussstrom berechnet, warum im Frühjahr oft die Untergrenze greift und was eine 50-kWp-Anlage 2026 damit erlöst – mit allen belegten Werten.",
   hauptKeyword: "oemag marktpreis",
@@ -122,18 +130,18 @@ const artikel = {
     "OeMAG Monatswert PV",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: STAND.geprueftAm,
   kategorie: "Netz, Energiegemeinschaften & Markt",
   bild: "/Images/Home/download.jpg",
   bildAlt: "Photovoltaikanlage auf einem Blechdach, Luftaufnahme von oben",
-  badge: { wert: `${z3(AUG_WERT)} ct`, text: "OeMAG-Marktpreis PV August 2026" },
+  badge: { wert: `${z3(LETZT_WERT)} ct`, text: `OeMAG-Marktpreis PV ${LETZT_LABEL}` },
 
   kurzFazit: [
     `**Der OeMAG-Marktpreis für Photovoltaik wird seit 2024 monatlich und rückwirkend festgelegt:** mengengewichteter Day-Ahead-Preis, begrenzt auf 60 bis 100 % des Quartalsmarktpreises der E-Control, seit 2026 abzüglich ${z3(AE[2026])} ct/kWh Ausgleichsenergie.`,
-    `**2026 lagen die Monatswerte zwischen ${z3(5.72)} ct (März) und ${z3(AUG_WERT)} ct (August);** der einfache Durchschnitt Jänner bis August beträgt rund ${z1(SIMPEL_MITTEL)} ct/kWh. Von April bis Juli griff durchgehend die Untergrenze.`,
-    `**Die Untergrenze wirkt als Schutz:** Im April 2026 war Solarstrom am Day-Ahead-Markt im Mittel nur ${z1(SOLAR_MW_2026[4] / 10)} ct/kWh wert, die OeMAG vergütete ${z3(6.772)} ct.`,
+    `**Aktuell: ${z3(LETZT_WERT)} ct/kWh für ${LETZT_LABEL}.** 2026 lagen die Monatswerte zwischen ${z3(wertVon(2026, 3))} ct (März) und ${z3(AUG_WERT)} ct (August); der einfache Durchschnitt Jänner bis ${BIS} beträgt rund ${z1(SIMPEL_MITTEL)} ct/kWh. Von April bis Juli griff durchgehend die Untergrenze.`,
+    `**Die Untergrenze wirkt als Schutz:** Im April 2026 war Solarstrom am Day-Ahead-Markt im Mittel nur ${z1(SOLAR_MW_2026[4] / 10)} ct/kWh wert, die OeMAG vergütete ${z3(APR_WERT)} ct.`,
     `**Anspruch haben Anlagen unter 500 kWp mit Einspeisezählpunkt,** ohne Strombezugsvertrag; die Verträge laufen längstens bis 31.12.2030. Eine 50-kWp-Anlage mit ${kwhFmt(UEBERSCHUSS)} Überschuss erlöst 2026 hochgerechnet rund ${eur(ERL_JAHR)}.`,
-    `**Der Quartalsmarktpreis für Q4/2026 wird von der E-Control Ende September veröffentlicht** – zum Stand dieses Artikels (28.09.2026) lag er noch nicht vor.`,
+    `**Für Oktober bis Dezember 2026 gilt ein Quartalsmarktpreis von ${z3(Q4)} ct/kWh** (E-Control, veröffentlicht am 29.09.2026) – der Monatswert PV liegt damit rechnerisch zwischen ${z3(boden(2026, 3))} und ${z3(deckel(2026, 3))} ct/kWh.`,
   ],
 
   abschnitte: [
@@ -182,12 +190,12 @@ const artikel = {
             ["Korridor bilden", `Untergrenze 60 % × ${z3(Q3)} = ${z3(0.6 * Q3)} ct; Obergrenze 100 % = ${z3(Q3)} ct.`],
             ["Ausgleichsenergie abziehen", `Beide Grenzen minus ${z3(AE[2026])} ct: Untergrenze ${z3(boden(2026, 2))} ct, Obergrenze ${z3(deckel(2026, 2))} ct/kWh.`],
             ["Monatlichen PV-Marktwert ermitteln", "Die OeMAG bildet nach Monatsende den Durchschnitt der Day-Ahead-Preise, gewichtet mit den eingespeisten PV-Mengen je Stunde bzw. Viertelstunde."],
-            ["Begrenzen und vergüten", `Liegt der Wert nach Abzug unter der Untergrenze, gilt die Untergrenze (Juli 2026: ${z3(6.146)} ct). Liegt er darüber, gilt er selbst (August 2026: ${z3(AUG_WERT)} ct). Über der Obergrenze wird gekappt.`],
+            ["Begrenzen und vergüten", `Liegt der Wert nach Abzug unter der Untergrenze, gilt die Untergrenze (Juli 2026: ${z3(JUL_WERT)} ct). Liegt er darüber, gilt er selbst (August 2026: ${z3(AUG_WERT)} ct). Über der Obergrenze wird gekappt.`],
           ],
         },
         {
           typ: "tabelle",
-          caption: "Rechenbeispiele 2026: Korridor und vergüteter Monatswert, Stand September 2026",
+          caption: `Rechenbeispiele 2026: Korridor und vergüteter Monatswert, Stand ${STAND.label}`,
           kopf: ["Monat", "Quartalspreis", "Untergrenze", "Obergrenze", "Monatswert PV", "Ergebnis"],
           zeilen: [4, 7, 8].map((m) => {
             const q = quartalVon(m);
@@ -213,11 +221,11 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: `**Der Quartalsmarktpreis schwankte seit 2020 zwischen ${z2(3.23)} ct (Q2/2020) und ${z2(51.45)} ct/kWh (Q4/2022).** 2026 liegen die Werte mit ${z3(QUARTAL[2026][0])} bis ${z3(QUARTAL[2026][1])} ct wieder über dem Niveau von 2024; Q2/2026 war der höchste Quartalswert seit dem vierten Quartal 2023.`,
+          text: `**Der Quartalsmarktpreis schwankte seit 2020 zwischen ${z2(3.23)} ct (Q2/2020) und ${z2(51.45)} ct/kWh (Q4/2022).** 2026 liegen die Werte mit ${z3(Math.min(...QUARTAL[2026]))} bis ${z3(Math.max(...QUARTAL[2026]))} ct über dem Niveau von 2024; Q${Q_LETZT_NR}/${Q_LETZT_JAHR} ist mit ${z3(Q_LETZT.ct)} ct der höchste Quartalswert seit Q${HOEHER_ZULETZT.q}/${HOEHER_ZULETZT.j} (${z2(HOEHER_ZULETZT.ct)} ct).`,
         },
         {
           typ: "tabelle",
-          caption: "Quartalsmarktpreise nach § 41 Abs. 1 ÖSG 2012 in ct/kWh, Stand September 2026",
+          caption: `Quartalsmarktpreise nach § 41 Abs. 1 ÖSG 2012 in ct/kWh, Stand ${STAND.label}`,
           kopf: ["Jahr", "Q1", "Q2", "Q3", "Q4", "Mittel"],
           zeilen: Object.keys(QUARTAL).map((j) => [
             j,
@@ -227,7 +235,7 @@ const artikel = {
           hervorheben: 5,
           markierteZeile: 6,
           minBreite: 640,
-          fussnote: "Quelle: E-Control Marktpreis-Archiv; Werte 2020–2023 auf zwei Nachkommastellen veröffentlicht. Mittel = einfacher Durchschnitt der Quartale. Q4/2026 wird Ende September 2026 veröffentlicht und war zum Redaktionsschluss noch nicht bekannt.",
+          fussnote: "Quelle: E-Control Marktpreis-Archiv und „Aktueller Marktpreis“ (Q4/2026: 152,82 €/MWh, veröffentlicht am 29.09.2026); Werte 2020–2023 auf zwei Nachkommastellen veröffentlicht. Mittel = einfacher Durchschnitt der Quartale.",
         },
         { typ: "h3", text: "Einordnung: Energiekrise 2022, Normalisierung, Anstieg 2026" },
         {
@@ -236,7 +244,7 @@ const artikel = {
             `**2020/2021:** niedrige Großhandelspreise; ab Herbst 2021 steigen die Futures stark (Q4/2021: ${z2(12.66)} ct).`,
             `**2022:** Gaskrise – der Quartalspreis erreicht im vierten Quartal ${z2(51.45)} ct/kWh. Bis Ende 2023 galt für PV der Quartalspreis direkt als Vergütung, Überschusseinspeiser profitierten daher stark.`,
             `**2023/2024:** Normalisierung bis auf ${z3(7.758)} ct in Q2/2024. Mit der monatlichen Berechnung ab 2024 bildet die Vergütung nun ab, dass Solarstrom zu Mittag weniger wert ist.`,
-            `**2025/2026:** Quartalspreise um 9 bis 12 ct; die Monatswerte im Sommer liegen trotzdem meist an der Untergrenze, weil der Solar-Marktwert nur rund die Hälfte des Base-Preises erreicht (2025: rund 50 %, laut eigener Auswertung auf Basis Energy-Charts).`,
+            `**2025/2026:** Quartalspreise um 9 bis 12 ct; die Monatswerte im Sommer liegen trotzdem meist an der Untergrenze, weil der Solar-Marktwert nur rund die Hälfte des Base-Preises erreicht (2025: rund 50 %, laut eigener Auswertung auf Basis Energy-Charts). Für das vierte Quartal 2026 steigt der Quartalspreis auf ${z3(Q4)} ct/kWh.`,
           ],
         },
       ],
@@ -248,20 +256,20 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: "**Die belegten OeMAG-Monatswerte für Photovoltaik liegen seit Juli 2024 zwischen rund 5,3 und 9,7 ct/kWh.** Die Tabelle zeigt nur Monate, deren Werte in den Quellen veröffentlicht sind; die Monate August bis Dezember 2025 sind hier bewusst nicht angeführt. Die Spalte „Lage“ zeigt, ob der Wert an einer Korridorgrenze liegt.",
+          text: `**Die OeMAG-Monatswerte für Photovoltaik lagen von Jänner 2024 bis ${LETZT_LABEL} zwischen ${z3(MIN_PV[2])} ct (${mLabel(MIN_PV)}) und ${z3(MAX_PV[2])} ct/kWh (${mLabel(MAX_PV)}).** Die Tabelle zeigt alle ${MONAT_PV.length} Monate aus den Veröffentlichungen der OeMAG; die Spalte „Lage“ zeigt, ob der Wert an einer Korridorgrenze liegt.`,
         },
         {
           typ: "tabelle",
-          caption: "OeMAG-Monatsmarktpreis Photovoltaik in ct/kWh (rückwirkend), Stand September 2026",
+          caption: `OeMAG-Monatsmarktpreis Photovoltaik in ct/kWh (rückwirkend), Jänner 2024 bis ${LETZT_LABEL}, Stand ${STAND.label}`,
           kopf: ["Monat", "Monatswert PV", "Quartalspreis", "Lage im Korridor"],
           zeilen: MONAT_PV.map(([j, m, v]) => [`${MONATE[m - 1]} ${j}`, `${z3(v)} ct`, `${z3(QUARTAL[j][quartalVon(m)])} ct`, lage(j, m, v)]),
           hervorheben: 1,
           minBreite: 560,
-          fussnote: `Quellen: OeMAG, photovoltaik-service.at, energyfamily.at. 2024 und 2025 Korridor ohne Ausgleichsenergie-Abzug, ab 2026 mit ${z3(AE[2026])} ct/kWh. Einfacher Durchschnitt Jänner–August 2026: ${z2(SIMPEL_MITTEL)} ct/kWh.`,
+          fussnote: `Quellen: OeMAG, Marktpreise 2024 und 2025 (PDF) und Marktpreis-Seite 2026, geprüft am ${STAND.label}. 2024 und 2025 Korridor ohne Ausgleichsenergie-Abzug, ab 2026 mit ${z3(AE[2026])} ct/kWh. Einfacher Durchschnitt Jänner–${BIS} 2026: ${z2(SIMPEL_MITTEL)} ct/kWh. ${NAECHSTE_VEROEFFENTLICHUNG.hinweis}`,
         },
         {
           typ: "p",
-          text: "Aktuelle Großhandelspreise und den Tagesverlauf der Gebotszone Österreich sehen Sie auf [Energie live](/energie-live). Wer den Monatswert nicht abwarten will, kann den Überschuss auch selbst vermarkten lassen – welche Alternativen es gibt, beschreibt der Ratgeber [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+          text: "Aktuelle Großhandelspreise und den Tagesverlauf der Gebotszone Österreich sehen Sie auf [Energie live](/energie-live). Wer den Monatswert nicht abwarten will, kann den Überschuss auch selbst vermarkten lassen – welche Wege es für Betriebe gibt, vergleicht die Seite [Einspeisung für Gewerbe](/einspeisung-gewerbe#vergleich).",
         },
       ],
     },
@@ -326,22 +334,22 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: `**Eine 50-kWp-Anlage mit ${kwhFmt(UEBERSCHUSS)} Überschuss erlöst mit den OeMAG-Monatswerten 2026 hochgerechnet rund ${eur(ERL_JAHR)} im Jahr – das sind im Mittel ${z2((ERL_JAHR / UEBERSCHUSS) * 100)} ct/kWh.** Annahmen: spezifischer Ertrag ${n(ERTRAG_KWP)} kWh/kWp, ${pct(EV_QUOTE)} Eigenverbrauch, Verteilung des Überschusses über das Jahr nach einem typischen Einspeiseprofil. Für Jänner bis August gelten die veröffentlichten Monatswerte, September bis Dezember werden mit deren mengengewichtetem Mittel hochgerechnet.`,
+          text: `**Eine 50-kWp-Anlage mit ${kwhFmt(UEBERSCHUSS)} Überschuss erlöst mit den OeMAG-Monatswerten 2026 hochgerechnet rund ${eur(ERL_JAHR)} im Jahr – das sind im Mittel ${z2((ERL_JAHR / UEBERSCHUSS) * 100)} ct/kWh.** Annahmen: spezifischer Ertrag ${n(ERTRAG_KWP)} kWh/kWp, ${pct(EV_QUOTE)} Eigenverbrauch, Verteilung des Überschusses über das Jahr nach einem typischen Einspeiseprofil. Für Jänner bis ${BIS} gelten die veröffentlichten Monatswerte, die übrigen Monate werden mit deren mengengewichtetem Mittel hochgerechnet.`,
         },
         {
           typ: "tabelle",
-          caption: "50-kWp-Anlage: Erlös aus Überschusseinspeisung mit OeMAG-Monatswerten 2026, Stand September 2026",
+          caption: `50-kWp-Anlage: Erlös aus Überschusseinspeisung mit OeMAG-Monatswerten 2026, Stand ${STAND.label}`,
           kopf: ["Monat", "Überschuss", "Monatswert PV", "Erlös OeMAG", "Zum Vergleich: Solar-Marktwert"],
           zeilen: [
             ...BSP.map((x) => [MONATE[x.m - 1], kwhFmt(x.kwh), `${z3(x.v)} ct`, eur(x.erloes), x.marktwert != null ? eur(x.marktwert) : "–"]),
-            ["Jänner–August", kwhFmt(KWH_JA), `${z2(MITTEL_JA)} ct (Mittel)`, eur(ERL_JA), "–"],
-            ["September–Dezember (Hochrechnung)", kwhFmt(KWH_REST), `${z2(MITTEL_JA)} ct (Annahme)`, eur(ERL_REST), "–"],
+            [`Jänner–${BIS}`, kwhFmt(KWH_JA), `${z2(MITTEL_JA)} ct (Mittel)`, eur(ERL_JA), "–"],
+            [`${MONATE[LETZT_2026] || "–"}–Dezember (Hochrechnung)`, kwhFmt(KWH_REST), `${z2(MITTEL_JA)} ct (Annahme)`, eur(ERL_REST), "–"],
             ["Jahr 2026 (hochgerechnet)", kwhFmt(UEBERSCHUSS), `${z2((ERL_JAHR / UEBERSCHUSS) * 100)} ct`, eur(ERL_JAHR), "–"],
           ],
           hervorheben: 3,
           markierteZeile: BSP.length + 2,
           minBreite: 720,
-          fussnote: `Annahmen offengelegt: ${KWP} kWp × ${n(ERTRAG_KWP)} kWh/kWp, ${pct(EV_QUOTE)} Eigenverbrauch; Monatsanteile des Überschusses (Jän–Dez) ${PROFIL.map((p) => Math.round(p * 100)).join("/")} %. Solar-Marktwert = eigene Auswertung auf Basis Energy-Charts (erzeugungsgewichteter Day-Ahead-Preis AT, ohne Ausgleichsenergie), nur für März–August angegeben; einzelne Monate können über dem OeMAG-Wert liegen, weil die OeMAG mit ihren eigenen Einspeisemengen gewichtet und Ausgleichsenergie abzieht. Hochrechnung September–Dezember ist keine Prognose.`,
+          fussnote: `Annahmen offengelegt: ${KWP} kWp × ${n(ERTRAG_KWP)} kWh/kWp, ${pct(EV_QUOTE)} Eigenverbrauch; Monatsanteile des Überschusses (Jän–Dez) ${PROFIL.map((p) => Math.round(p * 100)).join("/")} %. Solar-Marktwert = eigene Auswertung auf Basis Energy-Charts (erzeugungsgewichteter Day-Ahead-Preis AT, ohne Ausgleichsenergie), nur für März–August angegeben; einzelne Monate können über dem OeMAG-Wert liegen, weil die OeMAG mit ihren eigenen Einspeisemengen gewichtet und Ausgleichsenergie abzieht. Die Hochrechnung der übrigen Monate ist keine Prognose.`,
         },
         {
           typ: "p",
@@ -384,12 +392,12 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: "**Der Quartalsmarktpreis für Q4/2026 wird von der E-Control Ende September 2026 veröffentlicht und war am 28.09.2026 noch nicht bekannt – wir nennen deshalb keinen Wert.** Er ergibt sich aus den Futures der letzten fünf Handelstage im September und bestimmt Ober- und Untergrenze für Oktober bis Dezember.",
+          text: `**Für Oktober bis Dezember 2026 hat die E-Control am 29.09.2026 einen Quartalsmarktpreis von 152,82 €/MWh (${z3(Q4)} ct/kWh) veröffentlicht, nach ${z3(Q3)} ct im dritten Quartal.** Er stammt aus den Futures der letzten fünf Handelstage im September (22. bis 28.09.2026). Für Photovoltaik ergibt sich daraus ein Korridor von ${z3(boden(2026, 3))} ct (60 % minus ${z3(AE[2026])} ct Ausgleichsenergie) bis ${z3(deckel(2026, 3))} ct/kWh; verbindlich ist der Monatswert, den die OeMAG jeweils Anfang des Folgemonats veröffentlicht.`,
         },
         {
           typ: "liste",
           punkte: [
-            "**Herbst und Winter:** Die PV-Einspeisung ist gering, die Day-Ahead-Preise zu Mittag liegen näher am Tagesdurchschnitt. In diesen Monaten lag der Monatswert zuletzt häufig im Korridor oder an der Obergrenze (Nov./Dez. 2024, Jän./Feb. 2025, Jänner 2026).",
+            "**Herbst und Winter:** Die PV-Einspeisung ist gering, die Day-Ahead-Preise zu Mittag liegen näher am Tagesdurchschnitt. In diesen Monaten lag der Monatswert zuletzt häufig im Korridor oder an der Obergrenze (Nov./Dez. 2024, Jän./Feb. 2025, Nov./Dez. 2025, Jänner 2026).",
             "**Frühjahr und Sommer:** Solange viele Anlagen gleichzeitig einspeisen, ist mit Werten an der Untergrenze zu rechnen.",
             "**Vertragsende 2030:** Nach geltender Rechtslage enden die Marktpreisverträge spätestens am 31.12.2030. Prüfen Sie rechtzeitig vor diesem Datum, welche Abnahmeform dann gilt.",
             "**Ab 2027:** Einspeiser zahlen laut ElWG einen Versorgungsinfrastrukturbeitrag von höchstens 0,05 ct/kWh; Anlagen bis 20 kW sind befreit.",
@@ -408,7 +416,7 @@ const artikel = {
   faq: [
     {
       q: "Wie hoch ist der OeMAG-Marktpreis aktuell?",
-      a: `Der zuletzt veröffentlichte Monatswert für Photovoltaik beträgt ${z3(AUG_WERT)} ct/kWh für August 2026. Im Juli 2026 lag er an der Untergrenze bei ${z3(6.146)} ct. Der einfache Durchschnitt Jänner bis August 2026 beträgt rund ${z1(SIMPEL_MITTEL)} ct/kWh.`,
+      a: `${z3(LETZT_WERT)} ct/kWh für ${LETZT_LABEL} (Stand ${STAND.label}) – das ist der zuletzt veröffentlichte Monatswert der OeMAG für Photovoltaik. Im Juli 2026 lag er an der Untergrenze bei ${z3(JUL_WERT)} ct. Der einfache Durchschnitt Jänner bis ${BIS} 2026 beträgt rund ${z1(SIMPEL_MITTEL)} ct/kWh. Der ${NAECHSTE_VEROEFFENTLICHUNG.was} folgt ${NAECHSTE_VEROEFFENTLICHUNG.wann}.`,
     },
     {
       q: "Wie wird der OeMAG-Marktpreis berechnet?",
@@ -432,7 +440,7 @@ const artikel = {
     },
     {
       q: "Wie hoch wird der Marktpreis im vierten Quartal 2026?",
-      a: "Das ist zum Stand 28.09.2026 noch nicht bekannt. Die E-Control veröffentlicht den Quartalsmarktpreis für Q4 Ende September; daraus ergeben sich Ober- und Untergrenze für Oktober bis Dezember, die Monatswerte selbst folgen jeweils rückwirkend.",
+      a: `Zwischen ${z3(boden(2026, 3))} und ${z3(deckel(2026, 3))} ct/kWh – so weit reicht der Korridor, der sich aus dem Quartalsmarktpreis von ${z3(Q4)} ct/kWh (E-Control, veröffentlicht am 29.09.2026) und dem Ausgleichsenergie-Abzug von ${z3(AE[2026])} ct ergibt. Die Monatswerte selbst stehen jeweils erst Anfang des Folgemonats fest.`,
     },
     {
       q: "Ist ein Einspeisetarif eines Stromhändlers besser als die OeMAG?",
@@ -442,7 +450,7 @@ const artikel = {
 
   passend: [
     { href: "/ratgeber/einspeiseverguetung-2026", titel: "Einspeisevergütung 2026", text: "Alle Vergütungsmodelle für Überschussstrom." },
-    { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "OeMAG, Händler, Direktvermarktung, PPA im Vergleich." },
+    { href: "/einspeisung-gewerbe", titel: "Einspeisung für Betriebe", text: "OeMAG, Direktvermarktung, PPA und Marktprämie im Vergleich, mit Erlös-Rechner." },
     { href: "/service/direktvermarktung", titel: "Direktvermarktung", text: "Überschuss am Markt vermarkten lassen." },
     { href: "/energie-live", titel: "Energie live", text: "Aktuelle Day-Ahead-Preise der Gebotszone Österreich." },
   ],
@@ -451,9 +459,9 @@ const artikel = {
     { titel: "OeMAG – Marktpreis (Berechnung, Voraussetzungen, Kündigung, Gutschrift)", url: "https://www.oem-ag.at/marktpreis", stand: "09/2026" },
     { titel: "E-Control – Marktpreis-Archiv nach § 41 ÖSG 2012", url: "https://www.e-control.at/marktteilnehmer/oeko-energie/marktpreis-archiv", stand: "09/2026" },
     { titel: "Ökostromgesetz 2012 (ÖSG 2012), § 41 – RIS", url: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007386", stand: "09/2026" },
-    { titel: "photovoltaik-service.at – Wie hoch ist der Einspeisetarif bei der OeMAG?", url: "https://photovoltaik-service.at/wie-hoch-ist-der-einspeisetarif-bei-der-oemag", stand: "09/2026" },
-    { titel: "energyfamily.at – OeMAG-Marktpreis", url: "https://www.energyfamily.at/oemag-marktpreis", stand: "09/2026" },
-    { titel: "smartmeter-portal.at – Marktpreis E-Control aktuell", url: "https://www.smartmeter-portal.at/marktpreis-e-control-aktuell/", stand: "07/2026" },
+    { titel: OQ.oemag2024.label, url: OQ.oemag2024.url, stand: "09/2026" },
+    { titel: OQ.oemag2025.label, url: OQ.oemag2025.url, stand: "09/2026" },
+    { titel: OQ.ecAktuell.label, url: OQ.ecAktuell.url, stand: "09/2026" },
     { titel: "Fraunhofer ISE – Energy-Charts, Day-Ahead-Preise und Erzeugung Österreich (eigene Auswertung)", url: "https://www.energy-charts.info", stand: "09/2026" },
   ],
 

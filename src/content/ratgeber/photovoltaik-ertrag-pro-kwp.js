@@ -194,7 +194,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Das Ost-West-System liefert trotz niedrigerem spezifischem Ertrag rund 35 % mehr Strom, braucht aber mehr Modulfläche, mehr Wechselrichterleistung und einen stärkeren Netzanschluss. Ob sich das rechnet, entscheidet der Lastgang: Wie viel davon kann der Betrieb selbst nutzen, wie viel wird zum Marktpreis eingespeist? Die Methode dazu erklärt der Ratgeber [PV-Anlage Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen); für die Vermarktung des Überschusses siehe [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+          text: "Das Ost-West-System liefert trotz niedrigerem spezifischem Ertrag rund 35 % mehr Strom, braucht aber mehr Modulfläche, mehr Wechselrichterleistung und einen stärkeren Netzanschluss. Ob sich das rechnet, entscheidet der Lastgang: Wie viel davon kann der Betrieb selbst nutzen, wie viel wird zum Marktpreis eingespeist? Die Methode dazu erklärt der Ratgeber [PV-Anlage Größe berechnen](/ratgeber/pv-anlage-groesse-berechnen); für die Vermarktung des Überschusses siehe [Einspeisung für Betriebe](/einspeisung-gewerbe).",
         },
         {
           typ: "tool",

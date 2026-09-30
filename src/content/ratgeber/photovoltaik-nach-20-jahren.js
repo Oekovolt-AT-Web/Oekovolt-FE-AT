@@ -92,7 +92,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Auffällig ist das Sommerloch: In den ertragsstarken Monaten April bis Juli lag der Marktpreis 2026 zwischen rund 6,1 und 6,8 ct/kWh, weil zur Mittagszeit viel Solarstrom am Markt ist. Genau dann liefert die Anlage die meiste Energie. Stromhändler bieten teils Festpreise oder Spotpreis-Modelle; Energiegemeinschaften ermöglichen den Verkauf an Mitglieder in der Nähe mit reduzierten Netzentgelten. Die Details vergleichen die Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis), [Reststromvermarktung](/ratgeber/reststromvermarktung) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden).",
+          text: "Auffällig ist das Sommerloch: In den ertragsstarken Monaten April bis Juli lag der Marktpreis 2026 zwischen rund 6,1 und 6,8 ct/kWh, weil zur Mittagszeit viel Solarstrom am Markt ist. Genau dann liefert die Anlage die meiste Energie. Stromhändler bieten teils Festpreise oder Spotpreis-Modelle; Energiegemeinschaften ermöglichen den Verkauf an Mitglieder in der Nähe mit reduzierten Netzentgelten. Die Details vergleichen die Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis) und [Energiegemeinschaft gründen](/ratgeber/energiegemeinschaft-gruenden) sowie die Übersicht [Einspeisung für Betriebe](/einspeisung-gewerbe).",
         },
         {
           typ: "tabelle",
@@ -298,7 +298,7 @@ const artikel = {
 
   passend: [
     { href: "/service/repowering", titel: "Repowering", text: "Alte Anlagen modernisieren und erweitern." },
-    { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "Überschuss nach Tarifende verkaufen." },
+    { href: "/einspeisung-gewerbe", titel: "PV-Überschuss verkaufen", text: "Überschuss nach Tarifende verkaufen." },
     { href: "/ratgeber/oemag-marktpreis", titel: "OeMAG-Marktpreis", text: "Berechnung und Historie." },
     { href: "/ratgeber/eigenverbrauch-erhoehen", titel: "Eigenverbrauch erhöhen", text: "Mehr Solarstrom selbst nutzen." },
   ],

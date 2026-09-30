@@ -20,7 +20,6 @@ export function serviceMetadata({ pfad, titel, beschreibung, keywords }) {
     description: beschreibung,
     ...(keywords ? { keywords } : {}),
     alternates: { canonical: url, languages: hreflangLanguages(pfad) },
-    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       locale: LOCALE,

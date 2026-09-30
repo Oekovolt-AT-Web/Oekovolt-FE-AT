@@ -27,3 +27,25 @@ export const GEGENLEISTUNGEN = [
   "Präsenz bei Veranstaltungen",
   "Bericht über die Mittelverwendung",
 ];
+
+// ---------------------------------------------------------------------------
+// Links zu geförderten Organisationen (SEO-Plan M28)
+//
+// Ein Link, der im Rahmen eines Sponsorings gesetzt wird, ist eine Gegenleistung
+// und wird nach den Google-Richtlinien zu bezahlten Links als rel="sponsored"
+// gekennzeichnet – auf unserer Seite wie auf der Seite des Partners.
+// Einträge erscheinen auf /sponsoring nur mit `freigabe: true` (schriftliche
+// Zustimmung der Organisation zur Nennung) und nur mit laufender Vereinbarung.
+// ---------------------------------------------------------------------------
+
+/** rel-Attribut für jeden Link auf eine geförderte Organisation. */
+export const SPONSORING_REL = "sponsored noopener noreferrer";
+
+/**
+ * Geförderte Organisationen: { name, bereich (aus BEREICHE), ort, url, zeitraum, freigabe }.
+ * Derzeit keine freigegebenen Einträge.
+ */
+export const GEFOERDERTE = [];
+
+/** Nur freigegebene Einträge mit Link. */
+export const GEFOERDERTE_SICHTBAR = GEFOERDERTE.filter((g) => g.freigabe === true && g.name && /^https:\/\//.test(g.url || ""));

@@ -52,7 +52,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Stromspeicher", "Gewerbespeicher", "Batteriespeicher Gewerbe", "Peak Shaving", "Stromspeicher Österreich", "Ersatzstrom"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

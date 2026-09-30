@@ -5,14 +5,14 @@
 
 const artikel = {
   slug: "eza-regler-parkregler",
-  title: "EZA-Regler und Parkregler: Wirk- und Blindleistung am Netzanschluss",
-  seoTitle: "EZA-Regler & Parkregler für PV in Österreich | Ökovolt",
+  title: "EZA-Regler erklärt: Wirkleistungsstufen, cos φ(P) und Q(U) am Netzanschluss",
+  seoTitle: "EZA-Regler erklärt: Q(U), cos φ(P), Wirkleistung | Ökovolt",
   kurzTitel: "EZA-Regler & Parkregler",
   description:
-    "EZA-Regler und Parkregler für PV in Österreich: wann sie Pflicht sind, Q(U), cos φ(P), Wirkleistungsstufen, Fernwirktechnik, Spitzenkappung und Nachweise.",
+    "EZA-Regler erklärt: wann der Netzbetreiber ihn verlangt, Wirkleistungsstufen, cos φ(P) und Q(U), Fernwirktechnik, Auswahl und Nachweise zur Inbetriebnahme.",
   excerpt:
     "Ab einer bestimmten Größe reicht es nicht, jeden Wechselrichter einzeln einzustellen: Ein Park- bzw. EZA-Regler führt Wirk- und Blindleistung am Netzanschlusspunkt. Wann er Pflicht ist, welche Funktionen er braucht und wie der Nachweis läuft.",
-  hauptKeyword: "parkregler photovoltaik",
+  hauptKeyword: "eza regler",
   keywords: [
     "Parkregler Photovoltaik",
     "EZA-Regler",
@@ -23,7 +23,7 @@ const artikel = {
     "Fernwirktechnik IEC 60870-5-104",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Technik & Planung",
   bild: "/Images/AT/ratgeber/eza-regler-parkregler.jpg",
   bildAlt: "Wechselrichter und DC-Überspannungsschutz einer PV-Anlage an einer Schule in Vorarlberg",
@@ -34,6 +34,7 @@ const artikel = {
     "Laut TOR kann der Netzbetreiber im Mittelspannungsnetz einen **Park- und Anlagenregler** verlangen: mit Mittelspannungsmessung ab einer Summe der Engpassleistungen von **über 100 kVA**, ohne Mittelspannungsmessung ab **über 400 kVA**.",
     "Kernfunktionen: Wirkleistungsbegrenzung in Stufen (z. B. **100/60/30/0 %**) innerhalb **einer Minute**, Blindleistung nach **cos φ fix, cos φ(P), Q(U) oder Q fix**, Einspeisebegrenzung auf die netzwirksame Leistung und ab **1 MW** Online-Sollwerte über **IEC 60870-5-104** oder Modbus mit **30 Minuten** Notstromversorgung der Kommunikation.",
     "Mit dem ElWG wird der Regler noch wichtiger: Ab 2027 dürfen Netzbetreiber neue PV-Anlagen auf **70 %** der Modulspitzenleistung begrenzen, und flexible Netzanschlüsse setzen eine zuverlässige Leistungsbegrenzung voraus.",
+    "Den eigenen Parkregler von Ökovolt – Funktionen, Schnittstellen und Einsatz – stellt die Seite [Ökovolt Parkregler](/technik/parkregler) vor; dieser Ratgeber erklärt die Regelungstechnik herstellerneutral.",
   ],
 
   abschnitte: [

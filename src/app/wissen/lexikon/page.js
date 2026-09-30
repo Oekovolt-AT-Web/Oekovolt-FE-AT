@@ -25,7 +25,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Photovoltaik Lexikon", "PV Glossar Österreich", "Erneuerbare-Energie-Gemeinschaft", "OeMAG Marktpreis", "TOR Erzeuger", "EZA-Regler", "Leistungspreis", "Investitionsfreibetrag Photovoltaik"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,

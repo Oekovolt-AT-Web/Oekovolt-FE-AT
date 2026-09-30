@@ -6,6 +6,7 @@ import HerstellerDetail, { istBelegterPartner, kuerzen } from "@/components/Prod
 import { generateSlug } from "@/lib/slugify";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL } from "@/lib/site";
+import { nurNoindex } from "@/lib/seo/robots";
 
 
 // Use the single shared slug function so URLs match the sitemap exactly.
@@ -138,7 +139,7 @@ export async function generateMetadata({ params }) {
     description,
     alternates: { canonical: url, languages: hreflangLanguages(url) },
     // Nur Marken mit belegter Zusammenarbeit in Österreich indexieren
-    robots: { index: istBelegterPartner(name), follow: true },
+    ...nurNoindex(istBelegterPartner(name)),
     openGraph: {
       type: "website",
       locale: "de_AT",

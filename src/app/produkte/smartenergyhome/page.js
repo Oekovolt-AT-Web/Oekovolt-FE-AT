@@ -54,7 +54,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Smart Energy Home", "Energiemanagementsystem", "HEMS Österreich", "Photovoltaik Chalet", "Notstrom Photovoltaik", "Eigenverbrauch optimieren"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

@@ -67,7 +67,6 @@ export const metadata = {
   description: artikel.description,
   keywords: artikel.keywords,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,
@@ -197,14 +196,7 @@ export default function WallboxInstallationPage() {
           "Einweisung und Dokumentation",
         ].map((name, i) => ({ "@type": "HowToStep", position: i + 1, name, url: `${PAGE_URL}#ablauf` })),
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-          { "@type": "ListItem", position: 2, name: "Ratgeber", item: `${BASE_URL}/ratgeber` },
-          { "@type": "ListItem", position: 3, name: artikel.kurzTitel, item: PAGE_URL },
-        ],
-      },
+      // BreadcrumbList kommt aus der sichtbaren Brotkrumen-Navigation (src/components/ui/Breadcrumbs.js) – hier nicht doppelt (QA N3)
     ],
   };
 

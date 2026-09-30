@@ -32,7 +32,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Investitionsfreibetrag Photovoltaik", "IFB 22 Prozent", "Photovoltaik Steuer Österreich", "PV Abschreibung Nutzungsdauer", "Elektrizitätsabgabe Eigenverbrauch", "Umsatzsteuer Photovoltaik 2026", "Photovoltaik Landwirtschaft Steuer"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

@@ -37,7 +37,7 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/ladeinfrastruktur";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Ladeinfrastruktur für Unternehmen in Österreich | Ökovolt";
+const TITEL = "Ladeinfrastruktur für Unternehmen & E-Flotte | Ökovolt";
 const BESCHREIBUNG =
   "Ladeinfrastruktur für Flotte, Mitarbeiter- und Kundenparkplatz in Österreich: AC/DC, Lastmanagement, PV-Überschussladen, Eichrecht und Förderung.";
 const HERO_BILD = "/Images/AT/loesungen-b/laden-dc-ladesaeule.jpg";
@@ -131,8 +131,8 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
         variant="immersive"
         breadcrumbs={[{ name: "Gewerbe & Industrie", href: "/gewerbe" }, { name: "Ladeinfrastruktur" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Ladeinfrastruktur für Unternehmen – <span className="ov-text-gradient-light">Flotte, Belegschaft und Kunden</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "DC-Schnellladesäule mit drei Ladekabeln auf einem Parkplatz mit Ladeplätzen für Elektrofahrzeuge", position: "62% 50%" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=speicher" },

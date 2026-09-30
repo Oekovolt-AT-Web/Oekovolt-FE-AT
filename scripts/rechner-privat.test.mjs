@@ -59,7 +59,8 @@ describe("profile – Last- und Erzeugungsprofile", () => {
     for (let m = 0; m < 12; m++) nahe(summe(pvTagesform(m)), 1, 1e-12, `Monat ${m}`);
     assert.equal(pvTagesform(0)[0], 0); // Mitternacht im Jänner
   });
-  test("Befund: PV-Monatsanteile summieren sich auf 1", { todo: "Befund tests-01: PV_MONAT (src/lib/rechner/profile.js Z. 27) summiert sich auf 0,995 – alle Simulationen erzeugen 0,5 % weniger PV-Strom als kWp × Ertrag" }, () => {
+  // Befund tests-01 behoben: PV_MONAT in profile.js ist auf 1 normiert
+  test("PV-Monatsanteile summieren sich auf 1", () => {
     nahe(summe(PV_MONAT), 1, 1e-9);
   });
   test("betriebsTagesform: Schichtzeiten mit Rampe, betriebsfreie Tage Grundlast", () => {
@@ -268,7 +269,8 @@ describe("wallbox", () => {
     assert.equal(n.solar.je100, 0);
     assert.equal(n.ersparnisNetz, 0);
   });
-  test("Befund: unbekannter Kraftstoff wirft TypeError statt Fallback", { todo: "Befund tests-05: src/lib/rechner/wallbox.js Z. 27, 28 und 32 – W.kraftstoffe[kraftstoff] ohne Fallback (z. B. kraftstoff: \"lpg\" aus einem manipulierten Link)" }, () => {
+  // Befund tests-05 behoben: wallbox.js fällt bei unbekanntem Kraftstoff zurück
+  test("Unbekannter Kraftstoff (z. B. aus manipuliertem Link) wirft nicht", () => {
     assert.doesNotThrow(() => rechneWallbox({ ...E, kraftstoff: "lpg" }));
   });
 });
@@ -385,9 +387,22 @@ describe("solarrechner – berechne()", () => {
     nahe(g.strompreisCt, 100 * (0.2 - (0.2 - 0.17) * Math.log10(2.5)), 1e-9);
     assert.equal(g.benoetigteFlaeche, 700);
   });
-  test("Befund: Gewerbe ohne Speicher weist einen „Speicherverlust“ aus", { todo: "Befund tests-01 (Folge): src/lib/solarrechner.js – speicherverlust (Z. 111) = Jahresertrag − Eigenverbrauch − Einspeisung = 0,5 % des Ertrags, weil PV_MONAT nur 0,995 ergibt" }, () => {
-    const g = berechne({ kwp: 100, ausrichtung: "sued", neigung: "flach", verbrauch: 250000, speicherKwh: 0, zielgruppe: "gewerbe" });
-    assert.equal(g.speicherverlust, 0);
+  // Befund tests-01 (Folge), behoben 30.09.2026: speicherverlust kommt jetzt aus der
+  // Simulation (geladen − entladen) statt als Restgröße aus dem Jahresertrag.
+  test("Gewerbe/Landwirtschaft ohne Speicher: kein „Speicherverlust“, Energiebilanz geschlossen", () => {
+    for (const zielgruppe of ["gewerbe", "landwirtschaft"]) {
+      for (const kwp of [10, 100, 500]) {
+        const g = berechne({ kwp, ausrichtung: "sued", neigung: "flach", verbrauch: 250000, speicherKwh: 0, zielgruppe });
+        assert.equal(g.speicherverlust, 0, `${zielgruppe} ${kwp} kWp`);
+        nahe(g.eigenverbrauch + g.eingespeist, g.jahresertrag, g.jahresertrag * 1e-9, `${zielgruppe} ${kwp} kWp`);
+      }
+    }
+  });
+  test("Gewerbe mit Speicher: Verlust > 0 und Bilanz Ertrag = Eigenverbrauch + Einspeisung + Verlust", () => {
+    const g = berechne({ kwp: 100, ausrichtung: "sued", neigung: "flach", verbrauch: 250000, speicherKwh: 50, zielgruppe: "gewerbe" });
+    assert.ok(g.speicherverlust > 0);
+    assert.ok(g.speicherverlust < g.jahresertrag * 0.05);
+    nahe(g.eigenverbrauch + g.eingespeist + g.speicherverlust, g.jahresertrag, g.jahresertrag * 1e-9);
   });
   test("Randfälle: 0 kWp / 0 Verbrauch / unbekannte Zielgruppe", () => {
     const n = berechne({ ...P, kwp: 0, speicherKwh: 0 });

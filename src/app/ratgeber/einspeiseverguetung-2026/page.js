@@ -46,7 +46,7 @@ const ARTIKEL = {
   excerpt:
     "Was bringt eingespeister Solarstrom 2026 in Österreich? OeMAG-Marktpreis mit allen Monats- und Quartalswerten, Modelle der Energieversorger und was für Gewerbeanlagen gilt.",
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   lesezeit: 12,
   kategorie: "Netz, Energiegemeinschaften & Markt",
   bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg",
@@ -67,7 +67,6 @@ export const metadata = {
   description: ARTIKEL.description,
   keywords: ARTIKEL.keywords,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,
@@ -89,7 +88,8 @@ export const metadata = {
 };
 
 // ---------------------------------------------------------------------------
-// Daten (Stand 28.09.2026)
+// Daten (Stand 28.09.2026; Q4/2026 ergänzt am 30.09.2026 nach E-Control „Aktueller Marktpreis“,
+// 152,82 €/MWh, veröffentlicht 29.09.2026 – SEO-Plan P6/M27)
 // ---------------------------------------------------------------------------
 
 /** OeMAG-Marktpreis PV (und alle Technologien außer Wind), ct/kWh, rückwirkend je Monat. Quelle: OeMAG. */
@@ -108,7 +108,7 @@ const OEMAG_2026 = [
 const QUARTALE = [
   ["2024", 9.626, 7.758, 8.899, 8.7],
   ["2025", 9.73, 9.759, 9.82, 9.167],
-  ["2026", 9.25, 11.967, 10.923, null],
+  ["2026", 9.25, 11.967, 10.923, 15.282],
 ];
 
 /** Abzug für Ausgleichsenergie PV seit 2026, ct/kWh (§ 41 Abs. 2a ÖSG 2012). */
@@ -116,6 +116,9 @@ const AE_ABZUG_PV = 0.408;
 const Q3_2026 = 10.923;
 const q3Boden = Q3_2026 * 0.6 - AE_ABZUG_PV;
 const q3Deckel = Q3_2026 - AE_ABZUG_PV;
+const Q4_2026 = 15.282;
+const q4Boden = Q4_2026 * 0.6 - AE_ABZUG_PV;
+const q4Deckel = Q4_2026 - AE_ABZUG_PV;
 
 /** Day-Ahead Gebotszone AT – eigene Auswertung Energy-Charts (Fraunhofer ISE). €/MWh bzw. Stunden. */
 const MARKT = {
@@ -197,8 +200,8 @@ const FAQ = [
     a: "Beim OeMAG-Marktpreis wirken negative Stunden nur über den Monatsdurchschnitt, nach unten begrenzt durch die 60-Prozent-Untergrenze. Bei Händlertarifen entscheidet der Vertrag; in der Direktvermarktung sollte die Anlage in negativen Viertelstunden abgeregelt werden. Die EAG-Marktprämie entfällt, wenn der Day-Ahead-Preis sechs Stunden in Folge negativ ist.",
   },
   {
-    q: "Wann wird der Marktpreis für das vierte Quartal 2026 veröffentlicht?",
-    a: "Die E-Control berechnet den Quartalsmarktpreis aus den letzten fünf Handelstagen des laufenden Quartals und veröffentlicht ihn zum Quartalsende. Zum Redaktionsschluss am 28. September 2026 war der Wert für Oktober bis Dezember 2026 noch nicht bekannt – wir ergänzen ihn nach Veröffentlichung.",
+    q: "Wie hoch ist der Marktpreis für das vierte Quartal 2026?",
+    a: `${ct(Q4_2026, 3)} ct/kWh (152,82 €/MWh) – so hat die E-Control am 29.09.2026 den Quartalsmarktpreis für Oktober bis Dezember 2026 veröffentlicht, berechnet aus den letzten fünf Handelstagen im September. Für Photovoltaik liegt der OeMAG-Monatswert damit rechnerisch zwischen ${ct(q4Boden, 3)} und ${ct(q4Deckel, 3)} ct/kWh; verbindlich ist der Wert, den die OeMAG jeweils Anfang des Folgemonats veröffentlicht.`,
   },
 ];
 
@@ -223,14 +226,7 @@ export default function EinspeisetarifPage() {
         timeRequired: `PT${ARTIKEL.lesezeit}M`,
         citation: QUELLEN.map((q) => ({ "@type": "CreativeWork", name: q.titel, url: q.url })),
       },
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-          { "@type": "ListItem", position: 2, name: "Ratgeber", item: `${BASE_URL}/ratgeber` },
-          { "@type": "ListItem", position: 3, name: ARTIKEL.kurzTitel, item: PAGE_URL },
-        ],
-      },
+      // BreadcrumbList kommt aus der sichtbaren Brotkrumen-Navigation (src/components/ui/Breadcrumbs.js) – hier nicht doppelt (QA N3)
     ],
   };
 
@@ -276,7 +272,7 @@ export default function EinspeisetarifPage() {
           punkte={[
             "In Österreich gibt es für neue PV-Anlagen keinen gesetzlich fixen Einspeisetarif. Eingespeister Strom wird zum Marktwert verkauft – an die OeMAG, einen Energieversorger oder einen Direktvermarkter.",
             `Der OeMAG-Marktpreis für PV lag 2026 zwischen ${ct(5.72, 3)} ct/kWh (März) und ${ct(8.997, 3)} ct/kWh (August); von April bis Juli griff die Untergrenze von 60 % des Quartalsmarktpreises.`,
-            `Der Quartalsmarktpreis der E-Control beträgt für Juli bis September 2026 ${ct(Q3_2026, 3)} ct/kWh; daraus ergibt sich für PV ein Korridor von ${ct(q3Boden, 3)} bis ${ct(q3Deckel, 3)} ct/kWh.`,
+            `Der Quartalsmarktpreis der E-Control beträgt für Oktober bis Dezember 2026 ${ct(Q4_2026, 3)} ct/kWh (Juli bis September: ${ct(Q3_2026, 3)} ct); daraus ergibt sich für PV ein Korridor von ${ct(q4Boden, 3)} bis ${ct(q4Deckel, 3)} ct/kWh.`,
             `Eigenverbrauch schlägt Einspeisung deutlich: Im Beispiel spart eine selbst genutzte Kilowattstunde rund ${ct(ersparnisCt, 1)} ct netto, eine eingespeiste bringt 2026 etwa ${ct(oemagGewichtet, 1)} ct (OeMAG, ertragsgewichtet).`,
             "Ab 1. Jänner 2027 zahlen Einspeiser über 20 kW einen Versorgungsinfrastrukturbeitrag von höchstens 0,05 ct/kWh (§ 75a ElWG).",
           ]}
@@ -294,7 +290,7 @@ export default function EinspeisetarifPage() {
             </p>
             <p>
               Für Betreiberinnen und Betreiber stehen fünf Wege offen. Welcher passt, hängt von Anlagengröße, Überschussmenge und Risikobereitschaft ab.
-              Einen ausführlichen Vergleich finden Sie im Ratgeber <TextLink href="/ratgeber/reststromvermarktung">Reststromvermarktung</TextLink>;
+              Einen ausführlichen Vergleich für Betriebe finden Sie auf der Seite <TextLink href="/einspeisung-gewerbe">Einspeisung für Gewerbe</TextLink>;
               die Förderseite erklärt der Ratgeber <TextLink href="/ratgeber/eag-investitionszuschuss">EAG-Investitionszuschuss</TextLink>.
             </p>
           </Prosa>
@@ -346,13 +342,13 @@ export default function EinspeisetarifPage() {
             zeilen={QUARTALE.map(([j, ...q]) => [j, ...q.map(ct3)])}
             markierteZeile={2}
             minBreite={480}
-            fussnote="Quelle: E-Control, Marktpreis-Archiv. Zum Vergleich: 2022 lagen die Quartalswerte wegen der Energiekrise bei 25,69 bis 51,45 ct/kWh, 2020 bei 3,23 bis 4,51 ct/kWh. Q4/2026 war zu Redaktionsschluss (28.09.2026) noch nicht veröffentlicht."
+            fussnote="Quelle: E-Control, Marktpreis-Archiv und „Aktueller Marktpreis“ (Q4/2026: 152,82 €/MWh, veröffentlicht am 29.09.2026). Zum Vergleich: 2022 lagen die Quartalswerte wegen der Energiekrise bei 25,69 bis 51,45 ct/kWh, 2020 bei 3,23 bis 4,51 ct/kWh."
           />
           <Kennzahlband
             icon={Gauge}
-            wert={`${ct(q3Boden, 2)}–${ct(q3Deckel, 2)}`}
-            titel="Korridor für PV im dritten Quartal 2026 (ct/kWh)"
-            text={`Liegt das mengengewichtete Day-Ahead-Mittel eines Monats unter ${ct(q3Boden, 3)} ct, zahlt die OeMAG die Untergrenze; liegt es darüber, den tatsächlichen Wert bis maximal ${ct(q3Deckel, 3)} ct/kWh.`}
+            wert={`${ct(q4Boden, 2)}–${ct(q4Deckel, 2)}`}
+            titel="Korridor für PV im vierten Quartal 2026 (ct/kWh)"
+            text={`Liegt das mengengewichtete Day-Ahead-Mittel eines Monats von Oktober bis Dezember unter ${ct(q4Boden, 3)} ct, zahlt die OeMAG die Untergrenze; liegt es darüber, den tatsächlichen Wert bis maximal ${ct(q4Deckel, 3)} ct/kWh. Im dritten Quartal lag der Korridor bei ${ct(q3Boden, 3)} bis ${ct(q3Deckel, 3)} ct/kWh.`}
           />
         </Abschnitt>
 
@@ -559,7 +555,7 @@ export default function EinspeisetarifPage() {
               "Versorgungsinfrastrukturbeitrag (§ 75a ElWG) ab 1. Jänner 2027: jährlich per Verordnung festgelegt, gedeckelt auf 0,05 ct je eingespeister kWh; Einspeiser bis 20 kW sind befreit.",
               "Spitzenkappung: Netzbetreiber dürfen die Einspeisung begrenzen, jedoch nicht unter 70 % der Modulspitzenleistung.",
               "Netzentgelte für den Strombezug werden ab 2027 stärker leistungsabhängig – laut Entwurf der E-Control mit monatlichem Leistungspreis auch auf Netzebene 7.",
-              "Der Quartalsmarktpreis für Q4/2026 und die OeMAG-Werte ab September 2026 stehen noch aus; wir aktualisieren die Tabellen nach Veröffentlichung.",
+              `Der Quartalsmarktpreis für Q4/2026 beträgt ${ct(Q4_2026, 3)} ct/kWh (Korridor PV ${ct(q4Boden, 3)} bis ${ct(q4Deckel, 3)} ct/kWh); die OeMAG-Werte ab September 2026 stehen noch aus – wir ergänzen sie nach Veröffentlichung.`,
             ]}
           />
           <Merkkasten variant="recht" titel="Rechtsstand">
@@ -578,7 +574,7 @@ export default function EinspeisetarifPage() {
             links={[
               { href: "/service/direktvermarktung", titel: "Direktvermarktung", text: "Überschuss professionell vermarkten – ab etwa 100 kWp." },
               { href: "/ratgeber/oemag-marktpreis", titel: "OeMAG-Marktpreis erklärt", text: "Rechenweg, Historie und Quartalswerte im Detail." },
-              { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "Alle Wege, PV-Überschuss zu verkaufen, im Vergleich." },
+              { href: "/einspeisung-gewerbe", titel: "Einspeisung für Betriebe", text: "Alle Wege, PV-Überschuss zu verkaufen, im Vergleich." },
               { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Eigenverbrauch erhöhen statt billig einspeisen." },
             ]}
           />

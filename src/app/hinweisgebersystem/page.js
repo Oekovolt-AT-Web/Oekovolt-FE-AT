@@ -9,8 +9,9 @@ import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import Reveal from "@/components/ui/Reveal";
 import MeldeFormular from "@/components/Hinweisgeber/MeldeFormular";
-import { ABLAUF, FAQ, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL, HINWEIS_INTERN } from "@/data/hinweisgeber";
+import { ABLAUF, FAQ, FRISTEN_TEXT, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL, HINWEIS_INTERN } from "@/data/hinweisgeber";
 import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
+import { nurNoindex, NOINDEX_NOFOLLOW } from "@/lib/seo/robots";
 
 const PAGE_URL = `${BASE_URL}/hinweisgebersystem`;
 const TITEL = "Hinweisgebersystem – vertraulich melden | Ökovolt";
@@ -25,7 +26,8 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  robots: HINWEIS_INTERN ? { index: true, follow: true } : { index: false, follow: false },
+  // AN: keine robots-Angabe -> Layout-Werte (max-snippet usw.) gelten; AUS: noindex, nofollow
+  ...nurNoindex(HINWEIS_INTERN, NOINDEX_NOFOLLOW),
   openGraph: {
     type: "website",
     locale: LOCALE,
@@ -93,7 +95,7 @@ export default function HinweisgebersystemPage() {
               { icon: UserCheck, title: "Unabhängige Meldestelle", text: "Nur die benannten, zur Vertraulichkeit verpflichteten Personen der internen Stelle haben Zugriff. Sie sind unparteiisch und bei der Bearbeitung nicht weisungsgebunden." },
               { icon: Scale, title: "Schutz vor Repressalien", text: "Vergeltungsmaßnahmen wegen eines berechtigten Hinweises sind nach § 20 HSchG rechtsunwirksam und begründen Schadenersatzansprüche." },
               { icon: FileLock2, title: "Sichere Übertragung", text: "Die Verbindung ist durchgängig verschlüsselt. Ihr Zugangsschlüssel wird nur als Hash gespeichert." },
-              { icon: ShieldCheck, title: "Gesetzliche Fristen", text: "Eingangsbestätigung spätestens nach 7 Kalendertagen, Rückmeldung spätestens 3 Monate danach (§ 13 HSchG)." },
+              { icon: ShieldCheck, title: "Gesetzliche Fristen", text: FRISTEN_TEXT },
               { icon: KeyRound, title: "Ihr Postfach", text: "Beantworten Sie Rückfragen und verfolgen Sie den Stand – ohne Ihre Identität preiszugeben." },
             ]}
           />

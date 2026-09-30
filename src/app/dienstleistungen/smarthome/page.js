@@ -52,7 +52,6 @@ export const metadata = {
   description: META_DESCRIPTION,
   keywords: ["Smarthome Photovoltaik", "Energiemanagement", "Stromspeicher", "Wallbox", "Notstrom", "Smart Meter Österreich"],
   alternates: { canonical: SMARTHOME_PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -183,8 +182,8 @@ export default function SmarthomePage() {
       <PageHero
         breadcrumbs={[{ name: "Dienstleistungen" }, { name: "Smarthome" }]}
         eyebrow="Smarthome & Energiemanagement"
-        title={<>Ein Haus, ein System: Solarstrom <span className="ov-text-gradient">intelligent</span> nutzen</>}
-        lead="Photovoltaik, Speicher, Wallbox, Wärmepumpe und Messung arbeiten zusammen – gesteuert von einem Energiemanagement, das jede Kilowattstunde dorthin schickt, wo sie gerade am meisten wert ist. Für Wohnhaus und Chalet in ganz Österreich."
+        title={<>Smarthome und Energiemanagement <span className="ov-text-gradient">mit Photovoltaik</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-ink-900">Ein Haus, ein System: Solarstrom intelligent nutzen</span><span className="mt-3 block">Photovoltaik, Speicher, Wallbox, Wärmepumpe und Messung arbeiten zusammen – gesteuert von einem Energiemanagement, das jede Kilowattstunde dorthin schickt, wo sie gerade am meisten wert ist. Für Wohnhaus und Chalet in ganz Österreich.</span></>}
         image={{ src: `${BILD}smart-home-3920905_1280.jpg`, alt: "Smarthome-Steuerung für Stromspeicher und Solaranlage per Smart Device" }}
         points={["Mehr Eigenverbrauch mit Speicher & EMS", "Nachrüstbar für bestehende PV-Anlagen", "Notstrom bei Netzausfall möglich", "Meldung beim Netzbetreiber inklusive"]}
         actions={[

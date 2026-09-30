@@ -1,7 +1,7 @@
 # 08 – Konfigurationsmanagement und Änderungsprotokoll
 
 Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE 12207 (Identifikation,
-Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 ## 1. Konfigurationseinheiten
 
@@ -13,7 +13,7 @@ Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE
 | Frappe-Pakete | `Import-Backend-Frappe/` (maßgeblich für AT, in `add3074` committet), `Import-Frappe/` (DE-Stand, für AT nicht mehr nötig) | Git |
 | Laufzeitkonfiguration | Umgebungsvariablen (Hosting), Frappe `site_config.json` | **nicht** in Git (bewusst); Stand je Umgebung offen |
 | Backoffice-Inhalte | Frappe-Datenbank | außerhalb Git |
-| Projektdokumentation | `docs/projekt-doku/` (Version 0.4, Version 0.3 in `add3074` committet) | Git (noch nicht committet) |
+| Projektdokumentation | `docs/projekt-doku/` (Version 0.5; 0.3 in `add3074`, 0.4 in `ffd5c00` committet) | Git (noch nicht committet) |
 
 ## 2. Branch-Modell (Ist, aus `git log`/`git branch -a` abgeleitet)
 
@@ -47,10 +47,45 @@ Verweis auf Anforderungs-IDs (`REQ-…`) aus Kapitel 01, damit die Matrix in Kap
 Format in Anlehnung an „Keep a Changelog“. Kategorien: Hinzugefügt · Geändert · Behoben · Entfernt · Sicherheit.
 Einträge werden beim Nachführen aus `git log` und `git diff --stat` gebildet.
 
-### [Unveröffentlicht] – Arbeitsbaum am 30.09.2026 nach Welle 4 (nicht committet)
+### [Unveröffentlicht] – Arbeitsbaum am 30.09.2026 nach der SEO-Welle P1–P9 und QA (nicht committet)
 
-Umfang gegenüber `add3074` laut `git status` / `git diff --shortstat`: 58 geänderte versionierte Dateien
-(+2.422/−699 Zeilen, einschließlich dieser Dokumentation), dazu 62 neue, nicht versionierte Pfade.
+Umfang gegenüber `ffd5c00` laut `git diff --shortstat HEAD`: 161 geänderte versionierte Dateien (+3.449/−1.916 Zeilen,
+einschließlich dieser Dokumentation), dazu 5 neue Pfade (`docs/seo/`, `public/presse/`, `src/app/produkte/wechselrichter/`,
+`src/data/fachpruefer.js`, `src/lib/seo/`).
+
+**Hinzugefügt**
+- `src/lib/seo/robots.js` (`nurNoindex()`), `/produkte/wechselrichter` + Detailseiten Fronius, Huawei, Solis,
+  `src/data/fachpruefer.js` (alle `einwilligung: false`), Presse-Grafiken `public/presse/grafiken/*` (SVG/PNG),
+  `docs/seo/Offpage-Fahrplan.md` mit 6 Vorlagen, Bild-Sitemap, neue Datenschutz-Abschnitte (Lastgang, Kundenbühne,
+  Standort/Schneelast/PV-Prognose, Varianten-Tests), neue FAQ (Leasing/Finanzierung, Sponsoring-Kennzeichnung, AT/DE/CH).
+
+**Geändert**
+- P1: robots.txt in vier Gruppen nach E1; `htmlLimitedBots`; Breadcrumb-Schema; `robots`-Zeilen aus 35+ Seiten und 3 Bausteinen
+  entfernt; 301 für `/unternehmen`, `/photovoltaik-leasing`, `/photovoltaik-contracting`, `/photovoltaik-loesungen`,
+  `/ratgeber/reststromvermarktung`; hreflang in `seitenMeta`.
+- P2: Sitemap mit echten `lastModified` und `GEAENDERT`, gemeinsame Indexierbarkeits-Regel mit `llms.txt`; `llms.txt` mit neuen
+  Blöcken, stündlich neu; IndexNow nur Änderungen (Zustandsdatei in `.gitignore`), Presse-Anbindung im Kanal-Webhook.
+- P3: Titles/Descriptions/H1 der Hauptseiten, Trennung überschneidender Themen, 10 Ratgeber mit eigenem Blickwinkel,
+  `reststromvermarktung` → `_reststromvermarktung.js` (aus dem Index), Projektseiten mit festen Daten, Waisenseiten verlinkt,
+  KIG 620 Mio. € mit Quelle, Bürgerbeteiligung auf `/kommunen/vergabe-foerderung`.
+- P4: `partner.js` einzige Quelle (`belegt`), Brand-Schema, Huawei LUNA2000-Seite, neutrale Vergleichstabellen (18 Marken),
+  Checkliste `#pv-firma-pruefen`, Service-Abschnitt Fremdmarken vorbereitet (aus).
+- P5: `memberOf` PV&B Austria, Verifizierung per Umgebungsvariable, AT/DE/CH-Abschnitt, CO₂-Kennzahl ausgeblendet,
+  18 FAQ „Antwort zuerst“, `DefinedTerm` EZA-Regler, `rel="sponsored"`; `googlereview.js`, `reviews.js` gelöscht.
+- P6: eigene Titles `/standort-check` vs. `/schneelast`, Datasets, Schneelast-Länderseiten als Sprungmarken (308),
+  Widmungsseiten entflochten, Titelmuster Bundesland ohne „Förderung“, OeMAG-Werte korrigiert und zentralisiert.
+- P8: Datenschutzerklärung an Code angeglichen, HSchG-Fristen ab Eingang, Löschjob Hinweise mit `delete_permanently=True`,
+  `npm test` in `package.json`.
+- P9: `speicherverlust` ohne Speicher exakt 0, TOR-Typ im Pacht-Rechner über `torTyp()`, Finanzierungsseite neutral;
+  todo-Tests in echte Tests umgewandelt.
+- QA-Nacharbeit H1–H3, M1–M7, N1–N8 (u. a. Schneelast-Länder aus Sitemap/`llms.txt`, 404-Link in Datenschutzerklärung,
+  einheitliche HSchG-Fristen, Links auf Weiterleitungen, „Schwestergesellschaft“, Kennzahlen-Raster, `max-*` für Bing,
+  Presse-Grafiken auf `/presse`, überlange Titles).
+
+**Entfernt**
+- `src/components/photovoltaikanlage/googlereview.js`, `reviews.js` (ungenutzt).
+
+### [ffd5c00] – 30.09.2026 (Welle 4)
 
 **Hinzugefügt**
 - PV-Prognose `/pv-prognose` mit `/api/pv-prognose` (GeoSphere NWP v2 und Ensemble v2, Cache je Zelle/Lauf, Budget 200/h),
@@ -204,12 +239,12 @@ ISO-Doku, Sicherheitsfixes“. Inhalt wie bis Version 0.3 unter „Unveröffentl
 GA statt Umami (`889295d`), UI-Korrekturen (`7dd016d`), Hinweisgebersystem vorerst über IntegrityLine (`922a0a1`).
 Details: `git log main`.
 
-## 5. Statusbericht Konfiguration (30.09.2026, nach Welle 4)
+## 5. Statusbericht Konfiguration (30.09.2026, nach der SEO-Welle)
 
 | Punkt | Stand |
 |---|---|
-| HEAD | `add3074` auf `at-launch` (enthält Wellen 2 und 3) |
+| HEAD | `ffd5c00` auf `at-launch` (enthält Welle 4) |
 | Remote | nicht erneut geprüft (Stand 0.3: `origin/at-launch` einen Commit zurück) |
-| Arbeitsbaum | 58 versionierte Dateien geändert, 62 neue Pfade (Welle 4, siehe „Unveröffentlicht“) |
+| Arbeitsbaum | 161 versionierte Dateien geändert, 5 neue Pfade (SEO-Welle, siehe „Unveröffentlicht“) |
 | Zeilenenden | Git meldet LF→CRLF-Umwandlung für mehrere Dateien (`.gitattributes` vorhanden) – unkritisch, beim Commit beachten |
-| Nächster Schritt | Commit der Welle 4 durch den Koordinator; danach „Unveröffentlicht“ datieren |
+| Nächster Schritt | Commit der SEO-Welle, Deploy vor 05.10.2026 (R-53) |

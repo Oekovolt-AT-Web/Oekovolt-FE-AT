@@ -38,7 +38,7 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/agri-pv";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Agri-PV in Österreich: Konzepte & Förderung | Ökovolt";
+const TITEL = "Agri-PV Österreich: Planung, Förderung & Widmung | Ökovolt";
 const BESCHREIBUNG =
   "Agri-PV in Österreich: vertikal bifazial, hoch aufgeständert oder nachgeführt – für Obst, Wein, Beeren, Acker und Weide. 30 % EAG-Zuschlag, Widmung und Planung.";
 const HERO_BILD = "/Images/AT/loesungen/agri-pv-vertikal-bifazial.jpg";
@@ -171,8 +171,8 @@ export default async function AgriPvPage({ searchParams }) {
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Landwirtschaft", href: "/landwirtschaft" }, { name: "Agri-PV" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Agri-PV in Österreich: <span className="ov-text-gradient-light">Strom und Ernte auf derselben Fläche</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Luftbild einer Agri-PV-Anlage mit vertikalen bifazialen Modulreihen auf Grünland" }}
         actions={[
           { label: v.cta, href: "/termin?art=vor-ort&thema=freiflaeche" },

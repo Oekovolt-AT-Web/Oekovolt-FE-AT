@@ -3,22 +3,25 @@
 // Rechtslage für Freiflächen-Photovoltaik je Bundesland (9 statische Seiten).
 // Daten: src/lib/flaeche/laender.js – konsolidiertes Landesrecht im RIS,
 // Stand 30.09.2026; Unsicheres steht unter „Noch offen oder unsicher“.
+//
+// SEO-Plan M26/E9 (30.09.2026): Die Landesseiten bleiben eigenständig, weil sich die Rechtslage je Land
+// tatsächlich unterscheidet. Damit sie nicht als Doorway-Varianten gelten, trägt jede Seite nur noch
+// landesspezifischen Inhalt (Kriterien-Tabelle mit Norm, Quelle und Stand, offene Punkte, FAQ aus den
+// Landesdaten); Ablauf, Länderkacheln und allgemeine Texte stehen nur im Hub
+// /freiflaechen-photovoltaik/widmung. Messung 5-Wort-Überschneidung: vorher max. 0,55, Ziel < 0,35.
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calculator, Map as KarteIcon, Rocket, SearchCheck } from "lucide-react";
+import { ArrowRight, Calculator, SearchCheck } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
-import Querverweise from "@/components/Reusable/Querverweise";
 import Reveal from "@/components/ui/Reveal";
 import { Hinweis, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import { Bildnachweis } from "@/components/Loesungen/Bausteine";
-import { LaenderKacheln, OffenePunkte, Regeln } from "@/components/FlaechenCheck/Widmung";
-import { ABLAUF } from "@/components/FlaechenCheck/ablauf";
+import { OffenePunkte } from "@/components/FlaechenCheck/Widmung";
 import { BUNDESLAENDER } from "@/data/bundeslaender";
 import { BUND_QUELLEN, LAENDER, STAND, landFuerSlug, widmungsPfad } from "@/lib/flaeche/laender";
 import { BASE_URL } from "@/lib/site";
@@ -29,7 +32,8 @@ export function generateStaticParams() {
   return LAENDER.map((l) => ({ bundesland: l.slug }));
 }
 
-const titelFuer = (name) => {
+const titelFuer = (land) => {
+  const name = land.titelName || land.name;
   const lang = `Freiflächen-PV Widmung ${name} 2026 | Ökovolt`;
   return lang.length <= 60 ? lang : `PV-Freifläche Widmung ${name} | Ökovolt`;
 };
@@ -44,7 +48,7 @@ export async function generateMetadata({ params }) {
   const land = landFuerSlug(bundesland);
   if (!land) notFound();
   const url = `${BASE_URL}${widmungsPfad(land.slug)}`;
-  const title = titelFuer(land.name);
+  const title = titelFuer(land);
   const description = beschreibungFuer(land);
   const bild = BUNDESLAENDER[land.slug]?.bild;
   const ogBild = bild ? `${BASE_URL}${bild.src}` : `${BASE_URL}/og-image.jpg`;
@@ -53,31 +57,51 @@ export async function generateMetadata({ params }) {
     description,
     keywords: [`Freiflächen Photovoltaik Widmung ${land.name}`, `Solarpark ${land.name}`, `PV Freifläche ${land.name}`, `Photovoltaik Grünland ${land.name}`, "Flächenwidmung Photovoltaik", "Beschleunigungsgebiete Photovoltaik"],
     alternates: { canonical: url },
-    robots: { index: true, follow: true },
     openGraph: { type: "article", url, siteName: "Ökovolt Österreich", locale: "de_AT", title, description, images: [{ url: ogBild, width: 1920, height: 1080, alt: bild?.alt || `Freiflächen-Photovoltaik ${land.im}` }] },
     twitter: { card: "summary_large_image", title, description, images: [ogBild] },
   };
 }
 
-function faqFuer(land) {
+/** Quelle zu einer Norm: erste Landesquelle, deren Bezeichnung den ersten Paragrafen der Norm enthält. */
+function quelleFuer(land, norm) {
+  const para = /§\s*\d+[a-z]?/.exec(norm || "")?.[0]?.replace(/\s+/, " ");
+  const passt = (label) => para && new RegExp(`${para.replace(" ", "\\s*")}(?![0-9a-z])`).test(label);
+  return land.quellen.find((q) => passt(q.label)) || land.quellen[0];
+}
+
+/** Kriterien-Tabelle: Eckdaten des Landes plus jede Regel mit Norm und Quelle – nur Landesdaten. */
+function kriterienFuer(land) {
+  const gross = (t) => `${t.charAt(0).toUpperCase()}${t.slice(1)}`;
   return [
+    { kriterium: "Rechtsgrundlage", regel: land.gesetz, norm: null, quelle: land.quellen[0] },
+    { kriterium: "Ab welcher Größe", regel: gross(land.schwelle), norm: null, quelle: land.quellen[0] },
+    { kriterium: "Instrument", regel: gross(land.instrument), norm: null, quelle: land.quellen[0] },
+    { kriterium: "Zonen und Kulissen", regel: gross(land.zonen), norm: null, quelle: land.quellen[0] },
+    ...land.regeln.map((r) => ({ kriterium: r.titel, regel: r.text, norm: r.norm, quelle: quelleFuer(land, r.norm) })),
+    { kriterium: "Beschleunigungsgebiete (EABG)", regel: land.beschleunigung, norm: "EABG, BGBl. I Nr. 47/2026", quelle: BUND_QUELLEN[0] },
+  ];
+}
+
+/** FAQ ausschließlich aus den Landesdaten. */
+function faqFuer(land) {
+  const f = [
     {
       q: `Brauche ich ${land.im} für einen Solarpark eine Umwidmung?`,
-      a: `${land.kurz} Maßgeblich ist ${land.gesetz}. Zusätzlich können naturschutz-, elektrizitäts- und baurechtliche Bewilligungen nötig sein.`,
+      a: `${land.kurz} Maßgeblich ist ${land.gesetz}.`,
+    },
+    {
+      q: `Ab welcher Größe gilt ${land.im} eine eigene Regel für Freiflächen-PV?`,
+      a: `${land.schwelle.charAt(0).toUpperCase()}${land.schwelle.slice(1)}. Instrument: ${land.instrument}.`,
     },
     {
       q: `Gibt es ${land.im} Zonen für Freiflächen-Photovoltaik?`,
       a: `${land.zonen.charAt(0).toUpperCase()}${land.zonen.slice(1)}. ${land.beschleunigung}`,
     },
-    {
-      q: "Wer entscheidet über die Widmung meiner Fläche?",
-      a: "Der Gemeinderat ändert den Flächenwidmungsplan, die Landesregierung genehmigt die Änderung aufsichtsbehördlich; überörtliche Zonen legt das Land per Verordnung fest. Ohne Zustimmung der Gemeinde entsteht in der Praxis kein Solarpark.",
-    },
-    {
-      q: "Ist diese Übersicht verbindlich?",
-      a: `Nein. Sie fasst das konsolidierte Landesrecht im RIS mit Stand ${STAND.label} vereinfacht zusammen und ist keine Rechtsberatung. Offene oder unsichere Punkte sind auf der Seite markiert. Vor Projektstart klären Sie die Details mit Gemeinde und Landesregierung.`,
-    },
   ];
+  if (land.offen?.length) {
+    f.push({ q: `Was ist ${land.im} noch offen?`, a: `Stand ${STAND.label}: ${land.offen.join(" ")}` });
+  }
+  return f;
 }
 
 export default async function WidmungLandPage({ params }) {
@@ -89,6 +113,8 @@ export default async function WidmungLandPage({ params }) {
   const bild = BUNDESLAENDER[land.slug]?.bild;
   const faq = faqFuer(land);
   const quellen = [...land.quellen, ...BUND_QUELLEN];
+  const kriterien = kriterienFuer(land);
+  const andere = LAENDER.filter((l) => l.slug !== land.slug);
 
   const schema = {
     "@context": "https://schema.org",
@@ -131,87 +157,62 @@ export default async function WidmungLandPage({ params }) {
         }
         lead={land.kurz}
         image={bild ? { src: bild.src, alt: bild.alt, position: bild.position } : undefined}
-        points={[`Schwelle: ${land.schwelle.split(" (")[0]}`, "Normen aus dem RIS", "Offenes markiert"]}
+        points={[`Schwelle: ${land.schwelle.split(" (")[0]}`, `${land.regeln.length} Regeln mit Norm`, `Stand ${STAND.label}`]}
         actions={[
           { label: "Fläche prüfen", href: `/flaechen-check?land=${land.slug}`, icon: SearchCheck },
           { label: "Pacht-Rechner", href: "/rechner/freiflaeche-pacht", icon: Calculator },
         ]}
       />
 
-      <Section tone="sand" space="lg">
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <div>
-            <SectionHeading eyebrow="Kurz gesagt" title={`Was ${land.im} gilt`} />
-            <StandPille className="mt-6">Geprüft im RIS am {STAND.label}</StandPille>
-            <dl className="mt-8 space-y-5">
-              {[
-                ["Rechtsgrundlage", land.gesetz],
-                ["Schwelle", land.schwelle],
-                ["Instrument", land.instrument],
-                ["Zonen", land.zonen],
-              ].map(([k, v]) => (
-                <div key={k} className="border-l-2 border-ov-300 pl-4">
-                  <dt className="text-[12px] font-semibold uppercase tracking-[0.14em] text-ink-500">{k}</dt>
-                  <dd className="mt-1 text-[15.5px] leading-relaxed text-ink-800">{v}</dd>
-                </div>
-              ))}
-            </dl>
+      <Section tone="sand" space="lg" id="kriterien">
+        <SectionHeading eyebrow="Kriterien" title={`Was ${land.im} für Solarparks gilt`} lead={land.kurz} />
+        <StandPille className="mt-6">Geprüft im RIS am {STAND.label}</StandPille>
+        <Reveal className="mt-8 overflow-hidden rounded-3xl bg-white ring-1 ring-ink-200/70">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left text-[14.5px] md:min-w-[720px]">
+              <caption className="px-5 pt-5 text-left font-display text-[17px] font-bold text-ink-900">
+                Kriterien für Freiflächen-Photovoltaik {land.im}, Stand {STAND.label}
+              </caption>
+              <thead>
+                <tr className="border-b border-ink-200 text-[12px] uppercase tracking-wider text-ink-500 max-md:hidden">
+                  <th scope="col" className="w-[20%] px-5 py-3 font-semibold">Kriterium</th>
+                  <th scope="col" className="px-5 py-3 font-semibold">Regel</th>
+                  <th scope="col" className="w-[26%] px-5 py-3 font-semibold">Norm und Quelle</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-ink-100 max-md:block">
+                {kriterien.map((k) => (
+                  <tr key={k.kriterium} className="align-top max-md:block max-md:py-3">
+                    <th scope="row" className="px-5 py-4 font-semibold text-ink-900 max-md:block max-md:py-1">{k.kriterium}</th>
+                    <td className="px-5 py-4 leading-relaxed text-ink-700 max-md:block max-md:py-1">{k.regel}</td>
+                    <td className="px-5 py-4 text-[13.5px] leading-relaxed text-ink-600 max-md:block max-md:py-1">
+                      {k.norm && <span className="block font-semibold text-ink-800">{k.norm}</span>}
+                      {k.quelle && (
+                        <a href={k.quelle.url} target="_blank" rel="noopener noreferrer" className="underline decoration-ink-300 underline-offset-2 hover:text-ink-900">
+                          {k.quelle.label.replace(/^RIS – /, "RIS: ")}
+                        </a>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <Regeln land={land} />
+        </Reveal>
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <OffenePunkte punkte={land.offen} />
+          <Hinweis titel="Keine Rechtsberatung" className="self-start">
+            Vereinfachte Zusammenfassung mit Stand {STAND.label}. Verbindlich sind die Gesetze in der geltenden Fassung und die Auskunft von Gemeinde und Landesregierung.
+          </Hinweis>
         </div>
       </Section>
 
-      {/* Dunkle Kontrast-Sektion: Beschleunigung und Offenes */}
-      <section className="ov-noise relative overflow-hidden bg-navy-950 py-20 text-white md:py-28">
-        <div aria-hidden="true" className="ov-grid-bg pointer-events-none absolute inset-0" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-32 -top-24 h-[420px] w-[420px] rounded-full bg-ov-500/25 blur-[120px]" />
-        <div className="ov-container relative grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
-            <SectionHeading
-              dark
-              eyebrow="EABG & Beschleunigungsgebiete"
-              title="Schneller genehmigen – wo das Land Gebiete ausweist."
-              lead="Das Erneuerbaren-Ausbau-Beschleunigungsgesetz (BGBl. I Nr. 47/2026) bringt in Beschleunigungsgebieten eine Grobprüfung statt einer vollen Einzelfallprüfung. Die Gebiete legen die Länder fest."
-            />
-          </Reveal>
-          <Reveal delay={120} className="space-y-4">
-            <div className="ov-glass rounded-3xl p-6">
-              <p className="flex items-center gap-2 font-display text-[18px] font-bold">
-                <Rocket aria-hidden="true" className="h-5 w-5 text-ov-300" />
-                Stand {land.im}
-              </p>
-              <p className="mt-2 text-[15.5px] leading-relaxed text-white/75">{land.beschleunigung}</p>
-            </div>
-            <div className="ov-glass rounded-3xl p-6">
-              <p className="flex items-center gap-2 font-display text-[18px] font-bold">
-                <KarteIcon aria-hidden="true" className="h-5 w-5 text-sun-300" />
-                Zonen und Kulissen
-              </p>
-              <p className="mt-2 text-[15.5px] leading-relaxed text-white/75">
-                {land.zonen.charAt(0).toUpperCase()}
-                {land.zonen.slice(1)}.
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <Section tone="white" space="lg">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
-          <OffenePunkte punkte={land.offen} />
-          <Hinweis titel="Keine Rechtsberatung" className="self-start">
-            Vereinfachte Zusammenfassung des Landesrechts. Naturschutz, Elektrizitätsrecht, Baurecht, Wasserrecht und Ortsbild können zusätzliche Verfahren auslösen. Verbindlich sind die Gesetze in der geltenden Fassung und die Auskunft von Gemeinde und Landesregierung.
-          </Hinweis>
-        </div>
-        <div className="mt-16">
-          <SectionHeading eyebrow="Ablauf" title="Von der Fläche zur Widmung" />
-          <Steps items={ABLAUF} className="mt-12" />
-        </div>
-        <div className="mt-14 flex flex-col gap-4 rounded-3xl bg-ov-50 p-6 ring-1 ring-ov-100 md:flex-row md:items-center md:justify-between md:p-8">
+      <Section tone="white" space="md">
+        <div className="flex flex-col gap-4 rounded-3xl bg-ov-50 p-6 ring-1 ring-ov-100 md:flex-row md:items-center md:justify-between md:p-8">
           <p className="max-w-2xl text-[15.5px] leading-relaxed text-ink-700">
-            <strong className="text-ink-900">Eigene Fläche {land.im}?</strong> Der Flächen-Check bewertet Widmung, Größe, Netz und Gelände und zeigt die belegte Pachtspanne; Ertrag und Pacht über die Laufzeit rechnet der{" "}
-            <Link href="/rechner/freiflaeche-pacht" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
-              Freiflächen- &amp; Pacht-Rechner
+            <strong className="text-ink-900">Eigene Fläche {land.im}?</strong> Der Flächen-Check bewertet sie mit der Regel {land.im}; wie es von der Fläche zur Widmung geht, zeigt der{" "}
+            <Link href="/freiflaechen-photovoltaik/widmung#ablauf" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+              Ablauf in der Übersicht
             </Link>
             .
           </p>
@@ -223,11 +224,23 @@ export default async function WidmungLandPage({ params }) {
             Flächen-Check {land.name}
           </Link>
         </div>
-      </Section>
-
-      <Section tone="sand" space="lg">
-        <SectionHeading eyebrow="Andere Bundesländer" title="Die Regeln der Nachbarn im Vergleich" lead={<>Alle neun Länder in einer Tabelle finden Sie in der <Link href="/freiflaechen-photovoltaik/widmung" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Übersicht zur Widmung</Link>.</>} />
-        <LaenderKacheln aktiv={land.slug} className="mt-10" />
+        <nav aria-label="Widmung in anderen Bundesländern" className="mt-10">
+          <h2 className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ink-500">Andere Bundesländer</h2>
+          <ul className="mt-4 flex flex-wrap gap-2.5">
+            <li>
+              <Link href="/freiflaechen-photovoltaik/widmung" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-navy-950 px-4 text-[14px] font-semibold text-white">
+                Alle neun im Vergleich <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            </li>
+            {andere.map((l) => (
+              <li key={l.slug}>
+                <Link href={widmungsPfad(l.slug)} className="inline-flex min-h-11 items-center rounded-full bg-sand-50 px-4 text-[14px] font-semibold text-ink-900 ring-1 ring-ink-200 hover:bg-ov-50 hover:ring-ov-300">
+                  {l.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </Section>
 
       <Section tone="white" space="md">
@@ -240,15 +253,14 @@ export default async function WidmungLandPage({ params }) {
           className="mt-12"
           stand={STAND.label}
           quellen={quellen}
-          hinweis="Konsolidiertes Landesrecht im RIS (Open Government Data, CC BY 4.0) in der Fassung zum Prüfdatum, ergänzt um Unterlagen der Landesverwaltung. Paragrafenangaben beziehen sich auf die jeweils verlinkte Fassung."
+          hinweis={`Landesrecht im RIS (CC BY 4.0), Fassung vom ${STAND.label}.`}
         />
       </Section>
 
-      <Querverweise pfad="/freiflaechen-photovoltaik/widmung" />
       <CtaBand
-        eyebrow="Widmung, Netz, Bau"
+        eyebrow={`Solarpark ${land.name}`}
         title={`Ihre Fläche ${land.im} – geprüft, bevor Sie unterschreiben.`}
-        text="Wir prüfen Widmungschancen, Netzanschluss und Wirtschaftlichkeit und begleiten Gemeinde, Bewilligungen und Bau – in ganz Österreich."
+        text={`Wir klären Widmung nach ${land.gesetz}, Netzanschluss und Wirtschaftlichkeit.`}
         primary={{ label: "Fläche prüfen lassen", href: "/kontakt" }}
         secondary={{ label: "Freiflächenanlagen", href: "/freiflaechen-photovoltaik" }}
       />

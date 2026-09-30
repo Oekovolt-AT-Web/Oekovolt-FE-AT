@@ -2,7 +2,7 @@
 
 Testdokumentation in Anlehnung an ISO/IEC/IEEE 29119-3 (Testfälle, Testprotokoll, Testbericht) und
 Qualitätsmerkmale in Anlehnung an ISO/IEC 25010. Keine Normkonformität behauptet.
-Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 ## 1. Testumgebung
 
@@ -40,6 +40,24 @@ Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 - Kein Test für das Erzeugungsskript `scripts/schneelast-raster-erzeugen.py` (braucht ca. 0,9 GB Eingangsdaten); geprüft wird nur das Ergebnis (T-SNOW).
 
 ## 3. Testprotokoll
+
+### 3.000 SEO-Welle P1–P9 und QA (30.09.2026)
+
+| Test | Ergebnis | Exit-Code | Bemerkung |
+|---|---|---|---|
+| `npm test` bzw. `node scripts/alle-tests.mjs` | **21 von 21 Dateien bestanden**, 0 fehlgeschlagen | 0 | **keine `todo`-Befunde mehr** (tests-01 Folgebefund und tests-04 durch P9 behoben, als echte Tests umgestellt; `rechner-privat` jetzt 44 Tests) |
+| T-TERMIN | **bestanden** – 37 OK | 0 | – |
+| T-HEAT | **bestanden** – 18 OK | 0 | – |
+| T-VERTRAG | **bestanden** – 186/186 | 0 | – |
+| ESLint `src` + `scripts` | 977 Dateien, 0 Fehler, 0 Warnungen | – | – |
+
+**QA-Crawl (Bericht QA, Dev-Server):** Sitemap 314 Adressen, davon 305 mit 200 und 9 Weiterleitungen (`/schneelast/<land>`, danach aus
+Sitemap/`llms.txt` entfernt – H1). Alle 305 Seiten: genau eine H1, Title, Description, Canonical auf sich selbst, gültiges JSON-LD,
+keine doppelten Titles/Descriptions, kein noindex in der Sitemap. robots.txt erfüllt E1. KI-Crawler erhalten Title/Canonical vor
+`</head>` (nur Dev-Modus belegt). Mängel H1–H3, M1–M7, N1–N8 laut Koordinator nachgearbeitet; im Code stichprobenartig bestätigt:
+`GEAENDERT` gefüllt, Schneelast-Länder aus `indexierbar()` ausgeschlossen, IndexNow-Aufruf im Kanal-Webhook, „Schwestergesellschaft“
+in `unternehmen.js`, `max-*` auch außerhalb `googleBot`, Presse-Grafiken auf `/presse`, keine Links mehr auf `/ratgeber/reststromvermarktung`
+außer Kommentaren. Rund 150 Unterseiten `/referenzen/projekte/*/esg|siegel|teilen` blieben wegen Dev-Server-Absturz ungeprüft (R-52).
 
 ### 3.00 Welle 4 (30.09.2026, Nachführung)
 
@@ -101,7 +119,8 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 
 | Welle | Aufruf | Ergebnis |
 |---|---|---|
-| 4 | `npx eslint src scripts -f json` (ohne Cache) | 976 Dateien, **0 Fehler, 0 Warnungen** |
+| 5 | `npx eslint src scripts -f json` (ohne Cache) | 977 Dateien, **0 Fehler, 0 Warnungen** |
+| 4 | wie oben | 976 Dateien, 0 Fehler, 0 Warnungen |
 | 3 | `npx eslint src -f json` | 865 Dateien, 0 Fehler, 0 Warnungen |
 | 2 | wie oben | 848 Dateien, 0 Fehler, 0 Warnungen |
 | 1 | wie oben | 824 Dateien, 0 Fehler, 1 Warnung (`src/lib/heatmap.js`, überflüssige `eslint-disable`-Direktive – in Welle 2 behoben) |
@@ -150,8 +169,11 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | Q-07 | Test für den Kundenbühne-Rechenweg (`src/lib/kundenbuehne.js`) | mittel |
 | Q-08 | Tests für `src/data/reels.js` (`mediathekSitemap`, Sortierung) und `scripts/reels-optimieren.mjs` (Eintrag zwischen den Markierungen) | niedrig |
 | Q-09 | Prüfung, dass Kennzahlen nur aus `src/data/kennzahlen.js` stammen (Duplikate finden) | niedrig |
-| Q-10 | Folgebefund tests-01 (`speicherverlust` ohne Speicher) in `src/lib/solarrechner.js` klären | mittel |
-| Q-11 | Befund tests-04 (TOR-Staffel in `pacht.js`, `torTyp()` aus `gewerbepv.js` wiederverwenden) | niedrig |
+| Q-10 | Folgebefund tests-01 (`speicherverlust` ohne Speicher) in `src/lib/solarrechner.js` klären | **erledigt** (P9) |
+| Q-11 | Befund tests-04 (TOR-Staffel in `pacht.js`, `torTyp()` aus `gewerbepv.js` wiederverwenden) | **erledigt** (P9) |
 | Q-12 | Lastgang-Parser mit je einem echten, anonymisierten Export aus 2–3 Netzbetreiber-Portalen prüfen | mittel |
 | Q-13 | PV-Prognose gegen Monitoringdaten einer Ökovolt-Anlage validieren | mittel |
 | Q-14 | Seitenlängen über der Richtschnur 8–11 Bildschirmhöhen kürzen (Schneelast, EG Betriebe, Vergabe, Flächen-Check, Bundesland-Hubs) | niedrig |
+| Q-15 | Crawler-Test (`curl -A`), Rich-Results-Test und IndexNow-Lauf im Produktions-Build nach dem Deploy | hoch |
+| Q-16 | `scratchpad/indexnow-statuscodes.test.mjs` (12 Prüfungen) als `scripts/indexnow.test.mjs` übernehmen | niedrig |
+| Q-17 | Restliche ca. 150 Kundenbühne-Unterseiten nachcrawlen | niedrig |

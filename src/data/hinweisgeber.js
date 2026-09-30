@@ -170,11 +170,22 @@ export const KATEGORIEN = [
 
 export const BEZIEHUNG = ["Mitarbeiter/in", "Ehemalige/r Mitarbeiter/in", "Bewerber/in", "Leiharbeitskraft / Praktikant/in", "Selbständige/r Auftragnehmer/in", "Lieferant / Geschäftspartner", "Kunde/Kundin", "Sonstiges", "Keine Angabe"];
 
+// ── Fristen (HSchG, BGBl. I Nr. 6/2023; im RIS geprüft am 30.09.2026, §§ 9 und 13 seit 25.02.2023 unverändert) ──
+// § 9 Abs. 1: Eingang schriftlicher Hinweise unverzüglich, spätestens nach sieben Kalendertagen bestätigen.
+// § 13 Abs. 9: Rückmeldung spätestens drei Monate nach ENTGEGENNAHME des Hinweises – nicht ab der Bestätigung.
+// Das Backend rechnet genauso (Frappe hinweis.py → fristen_ab_eingang). Andere Seiten sollen FRISTEN_TEXT
+// übernehmen, statt die Fristen selbst zu formulieren. RECHTLICH PRÜFEN (Befund D8).
+export const FRISTEN = { bestaetigungTage: 7, rueckmeldungMonate: 3 };
+
+/** Ein Satz für Hinweiskästen und Aufzählungen (Quelle: § 9 Abs. 1 und § 13 Abs. 9 HSchG). */
+export const FRISTEN_TEXT =
+  "Eingangsbestätigung spätestens nach sieben Kalendertagen (§ 9 Abs. 1 HSchG), Rückmeldung zu den Folgemaßnahmen spätestens drei Monate nach Eingang des Hinweises (§ 13 Abs. 9 HSchG).";
+
 export const ABLAUF = [
   { title: "Hinweis abgeben", text: "Sie schildern den Sachverhalt – auf Wunsch vollständig anonym. Sie erhalten eine Fall-Nummer und einen persönlichen Zugangsschlüssel." },
-  { title: "Eingangsbestätigung", text: "Spätestens nach sieben Kalendertagen bestätigt die interne Stelle den Eingang (§ 13 HSchG)." },
+  { title: "Eingangsbestätigung", text: "Spätestens nach sieben Kalendertagen bestätigt die interne Stelle den Eingang (§ 9 Abs. 1 HSchG)." },
   { title: "Prüfung & Rückfragen", text: "Die interne Stelle prüft den Hinweis vertraulich und kann Ihnen über das Postfach Rückfragen stellen." },
-  { title: "Rückmeldung", text: "Spätestens drei Monate nach der Eingangsbestätigung erfahren Sie, welche Folgemaßnahmen ergriffen wurden oder geplant sind." },
+  { title: "Rückmeldung", text: "Spätestens drei Monate nach Eingang Ihres Hinweises erfahren Sie, welche Folgemaßnahmen ergriffen wurden oder geplant sind – oder aus welchen Gründen der Hinweis nicht weiterverfolgt wird (§ 13 Abs. 9 HSchG)." },
 ];
 
 // FAQ des eigenen Systems (Seite /hinweisgebersystem; im AUS-Zustand per Redirect nicht erreichbar)
@@ -230,7 +241,7 @@ export const FAQ_INFO = [
   },
   {
     q: "Welche Fristen gelten?",
-    a: "Wir bestätigen den Eingang Ihres Hinweises spätestens nach sieben Kalendertagen. Spätestens drei Monate nach der Eingangsbestätigung erhalten Sie eine Rückmeldung, welche Folgemaßnahmen ergriffen wurden oder geplant sind und aus welchen Gründen (§ 13 HSchG).",
+    a: "Wir bestätigen den Eingang Ihres Hinweises spätestens nach sieben Kalendertagen, sofern Sie nicht ausdrücklich darauf verzichten oder die Bestätigung Ihre Identität gefährden würde (§ 9 Abs. 1 HSchG). Spätestens drei Monate nach Eingang des Hinweises erhalten Sie eine Rückmeldung, welche Folgemaßnahmen ergriffen wurden oder geplant sind oder aus welchen Gründen der Hinweis nicht weiterverfolgt wird (§ 13 Abs. 9 HSchG).",
   },
   {
     q: "Bin ich vor Nachteilen geschützt?",

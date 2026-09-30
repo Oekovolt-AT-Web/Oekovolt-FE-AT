@@ -46,10 +46,13 @@ import { kz } from "@/data/kennzahlen";
 // API, sonst statischer Stand src/data/projekte.js
 const getProjekte = cache(() => ladeProjekteRoh());
 
+// Title bewusst getrennt von /gewerbe (M13): Startseite = Firma/Anbieter für alle Zielgruppen,
+// /gewerbe = Gewerbe & Industrie. Stand der Seite (fest, kein new Date()): bei Inhaltsänderung anpassen.
 const META = {
-  title: "Photovoltaik für Gewerbe & Industrie in Österreich | Ökovolt",
+  title: "PV-Anlagen für Unternehmen in ganz Österreich | Ökovolt",
   description:
-    "Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich: Planung, Bau und Betrieb mit eigenem Parkregler und SCADA. Seit 2012, Ostermiething.",
+    "Ökovolt plant, baut und betreibt Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in allen neun Bundesländern – eigener Parkregler und SCADA, seit 2012.",
+  stand: "2026-09-30",
 };
 
 export function generateMetadata() {
@@ -62,7 +65,6 @@ export function generateMetadata() {
       "Photovoltaik Landwirtschaft", "Photovoltaik Gemeinde", "Parkregler EZA-Regler", "EAG Investitionszuschuss", "Ökovolt",
     ],
     alternates: { canonical: BASE_URL, languages: hreflangLanguages(BASE_URL) },
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
     openGraph: { type: "website", locale: "de_AT", url: BASE_URL, siteName: "Ökovolt Österreich", title: META.title, description: META.description, images: [bild] },
     twitter: { card: "summary_large_image", title: META.title, description: META.description, images: [bild.url] },
   };
@@ -115,6 +117,10 @@ const MEHR = [
   { gruppe: "Gemeinsam", titel: "Elektro-Partner werden", text: "Elektrotechnik-Betriebe registrieren sich als Partner – Ökovolt ist die zentrale Plattform für Planung, Material und Projekte.", href: "/partner", icon: Handshake },
   { gruppe: "Gemeinsam", titel: "Sponsoring", text: "Wir unterstützen Vereine, Kultur und Nachwuchs in den Regionen, in denen wir bauen.", href: "/sponsoring", icon: HeartHandshake },
 ];
+
+// Kennzahlenband: Spaltenzahl ab md je Anzahl der Kennzahlen. Vollständige Klassennamen,
+// damit Tailwind sie beim Scannen findet (keine zusammengesetzten Klassen).
+const KERNFAKTEN_SPALTEN = { 1: "md:grid-cols-1", 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-4", 5: "md:grid-cols-5" };
 
 const BILDNACHWEIS = [
   "Hotellerie & Tourismus: C.Stadler/Bwag, CC BY-SA 4.0 (Symbolbild)",
@@ -192,7 +198,7 @@ export default async function HomePage() {
     isPartOf: { "@id": `${BASE_URL}/#website` },
     about: { "@id": `${BASE_URL}/#organization` },
     primaryImageOfPage: `${BASE_URL}${HOME_HERO.bild}`,
-    dateModified: new Date().toISOString().split("T")[0],
+    dateModified: META.stand,
   };
 
   const zielgruppenSchema = {
@@ -244,11 +250,15 @@ export default async function HomePage() {
                 ))}
               </span>
             </div>
-            <h1 className="ov-display ov-hero-in mt-7" style={{ "--ov-delay": "100ms" }}>
+            {/* H1 mit Suchbegriff (M13); der Werbespruch bleibt als große Unterzeile sichtbar */}
+            <h1 className="ov-hero-in mt-7 max-w-xl font-display text-[clamp(1.05rem,0.95rem+0.5vw,1.3rem)] font-semibold leading-snug text-ov-200" style={{ "--ov-delay": "80ms" }}>
+              Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in Österreich
+            </h1>
+            <p className="ov-display ov-hero-in mt-4" style={{ "--ov-delay": "100ms" }}>
               Ihr Betrieb.
               <br />
               Ihr <span className="ov-text-gradient-light">Kraftwerk.</span>
-            </h1>
+            </p>
             <p className="ov-lead ov-hero-in mt-7 max-w-xl text-white/75" style={{ "--ov-delay": "180ms" }}>
               {HOME_HERO.lead}
             </p>
@@ -273,9 +283,15 @@ export default async function HomePage() {
 
         {/* Kernfakten */}
         <div className="relative border-t border-white/10 bg-navy-950/65 backdrop-blur-md">
-          <dl className="ov-container grid grid-cols-2 gap-y-6 py-8 md:grid-cols-4 md:py-10">
+          {/* Raster folgt der Anzahl der Kennzahlen (3 ohne, 4 mit CO₂-Kennzahl) – keine leere Spalte.
+              Mobil 2 Spalten; bei ungerader Anzahl nimmt die letzte Kennzahl die ganze Zeile ein. */}
+          <dl className={`ov-container grid grid-cols-2 gap-y-6 py-8 md:py-10 ${KERNFAKTEN_SPALTEN[KERNFAKTEN.length] || "md:grid-cols-4"}`}>
             {KERNFAKTEN.map((k, i) => (
-              <Reveal key={k.label} delay={i * 90} className={`flex flex-col-reverse px-2 md:px-6 ${i > 0 ? "md:border-l md:border-white/10" : ""}`}>
+              <Reveal
+                key={k.label}
+                delay={i * 90}
+                className={`flex flex-col-reverse px-2 md:px-6 ${i > 0 ? "md:border-l md:border-white/10" : ""} ${KERNFAKTEN.length % 2 === 1 && i === KERNFAKTEN.length - 1 ? "col-span-2 md:col-span-1" : ""}`}
+              >
                 <dt className="mt-2 text-[13.5px] leading-snug text-white/55">{k.label}</dt>
                 <dd className="font-display text-[clamp(1.6rem,1.2rem+1.5vw,2.5rem)] font-extrabold leading-none tracking-tight">
                   {k.zahl ? <CountUp value={k.zahl} prefix={k.prefix} suffix={k.suffix} className={i === 1 ? "ov-text-gradient-light" : ""} /> : k.wert}

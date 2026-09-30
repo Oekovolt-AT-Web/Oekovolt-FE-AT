@@ -6,7 +6,7 @@
 //
 // Rhythmus: Hero (Salzach) → Eigene Mannschaft (#mannschaft) → Kennzahlen → Foto-Bento „Was wir machen“ →
 // Zeitreise (scroll-gebunden, dunkel) → Gesellschafter (Ring) → Organigramm →
-// Haltung (Fotoband) → Einzugsgebiet (Karte) → Register (Akkordeon) →
+// Abgrenzung AT/DE/CH (#laender) → Haltung (Fotoband) → Einzugsgebiet (Karte) → Register (Akkordeon) →
 // Gemeinsam (Fotokacheln) → FAQ → Querverweise → CtaBand.
 
 import Image from "next/image";
@@ -67,6 +67,34 @@ const FAKTEN = [
   ["Geschäftsführer", FIRMA.geschaeftsfuehrer],
   ["Gesellschafter", gesellschafterText],
   ["Stammkapital", FIRMA.stammkapital],
+  ["Verband", FIRMA.verbaende.map((v) => `${v.status[0].toUpperCase()}${v.status.slice(1)} im ${v.name} (${v.kurz})`).join("; ")],
+];
+
+// Abgrenzung nach Ländern (SEO-Plan M24): Wer ist wofür Vertragspartner? Nur Registerdaten,
+// keine Aussagen über Beteiligungen an Schweizer Gesellschaften (nicht belegt).
+const LAENDER = [
+  {
+    land: "Österreich",
+    firma: FIRMA.name,
+    sitz: `${FIRMA.plz} ${FIRMA.ort}, ${FIRMA.bundesland}`,
+    register: `${FIRMA.firmenbuch}, ${FIRMA.firmenbuchgericht}`,
+    web: "oekovolt.com",
+    text: "Betreiberin dieser Website und Ihre Vertragspartnerin für Projekte in allen neun Bundesländern – Planung, Bau, Netzanschluss und Service.",
+  },
+  {
+    land: "Deutschland",
+    firma: SCHWESTER.name,
+    sitz: `${SCHWESTER.plz} ${SCHWESTER.ort}`,
+    register: SCHWESTER.register,
+    web: "oekovolt.de",
+    href: SCHWESTER.web,
+    text: "Schwestergesellschaft und Stammhaus der Gruppe, zuständig für Projekte in Deutschland einschließlich Bayern. Inhaberin der Marken- und Websiterechte.",
+  },
+  {
+    land: "Schweiz",
+    firma: "Keine Tätigkeit der österreichischen GmbH",
+    text: `Die ${FIRMA.name} führt keine Projekte in der Schweiz aus. Unternehmen mit „Ökovolt“ im Namen in der Schweiz sind eigenständige Rechtsträger; für deren Verträge, Garantien und Service ist die ${FIRMA.name} nicht zuständig. Angaben zu Schweizer Firmen stehen im Handelsregister (zefix.ch).`,
+  },
 ];
 
 const KENNZAHLEN = [
@@ -105,6 +133,14 @@ const FAQ = [
   {
     q: "Wie hängen oekovolt.com und oekovolt.de zusammen?",
     a: `Beide gehören zur Ökovolt Gruppe. Das Stammhaus ist die ${SCHWESTER.name} in ${SCHWESTER.ort} (Deutschland, gegründet 2010); sie setzt die technischen Standards und ist Inhaberin der Marken- und Websiterechte. Die österreichische ${FIRMA.name} ist eine eigenständige GmbH, die mit denselben Prozessen arbeitet und das Geschäft in Österreich verantwortet.`,
+  },
+  {
+    q: "Ist Ökovolt Österreich auch in Deutschland oder der Schweiz tätig?",
+    a: `Nein. Die ${FIRMA.name} ist für Projekte in Österreich zuständig. Projekte in Deutschland betreut die ${SCHWESTER.name} in ${SCHWESTER.ort} (oekovolt.de). In der Schweiz ist die ${FIRMA.name} nicht tätig; Unternehmen mit „Ökovolt“ im Namen in der Schweiz sind eigenständige Rechtsträger.`,
+  },
+  {
+    q: "Ist Ökovolt Mitglied im Bundesverband Photovoltaic & Battery Austria?",
+    a: `Ja. Die ${FIRMA.name} ist ordentliches Mitglied im Bundesverband Photovoltaic & Battery Austria (PV&B Austria, früher PV Austria), der Interessenvertretung der Photovoltaik- und Speicherbranche in Österreich. Die Mitgliedschaft ist im Mitgliederverzeichnis des Verbands öffentlich einsehbar.`,
   },
   {
     q: "In welchen Bundesländern errichtet Ökovolt Photovoltaikanlagen?",
@@ -275,6 +311,39 @@ export default function UberUnsPage() {
         <Organigramm />
       </Section>
 
+      {/* Abgrenzung Österreich / Deutschland / Schweiz */}
+      <Section tone="white" space="md" id="laender" className="scroll-mt-20">
+        <SectionHeading
+          eyebrow="Österreich · Deutschland · Schweiz"
+          title="Wer wofür zuständig ist"
+          lead={`Unter dem Namen Ökovolt treten in mehreren Ländern verschiedene Gesellschaften auf. Für Projekte in Österreich ist ausschließlich die ${FIRMA.name} Ihre Vertragspartnerin.`}
+          className="mb-10 max-w-3xl"
+        />
+        <ul className="grid gap-4 md:grid-cols-3">
+          {LAENDER.map((l, i) => (
+            <Reveal as="li" key={l.land} delay={i * 80} className="h-full rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-7">
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">{l.land}</p>
+              <p className="mt-2 font-display text-[18px] font-bold leading-snug text-ink-900">{l.firma}</p>
+              {(l.sitz || l.register) && (
+                <p className="mt-2 text-[13.5px] leading-snug text-ink-500">{[l.sitz, l.register].filter(Boolean).join(" · ")}</p>
+              )}
+              <p className="mt-4 text-[15px] leading-relaxed text-ink-700">{l.text}</p>
+              {l.web && (
+                <p className="mt-4 text-[14px] font-semibold text-ink-800">
+                  {l.href ? (
+                    <a href={l.href} className="inline-flex items-center gap-1.5 text-ov-700 hover:text-ov-800" target="_blank" rel="noopener">
+                      {l.web} <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+                    </a>
+                  ) : (
+                    l.web
+                  )}
+                </p>
+              )}
+            </Reveal>
+          ))}
+        </ul>
+      </Section>
+
       {/* Haltung – Fotoband */}
       <section className="relative isolate overflow-hidden bg-navy-950 py-24 text-white md:py-36">
         <Image src="/Images/Referenzen/referenzkarte3.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover object-[50%_35%]" />
@@ -340,6 +409,11 @@ export default function UberUnsPage() {
               <a href={FIRMA.firmenabc} className="inline-flex items-center gap-1.5 text-ov-700 hover:text-ov-800" target="_blank" rel="noopener noreferrer">
                 FirmenABC <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
               </a>
+              {FIRMA.verbaende.map((v) => (
+                <a key={v.beleg} href={v.beleg} className="inline-flex items-center gap-1.5 text-ov-700 hover:text-ov-800" target="_blank" rel="noopener noreferrer">
+                  Mitgliederliste {v.kurz} <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+                </a>
+              ))}
             </p>
           </SectionHeading>
           <div className="space-y-3">

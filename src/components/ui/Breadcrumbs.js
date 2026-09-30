@@ -10,10 +10,14 @@ const BASE = "https://www.oekovolt.com";
  */
 export default function Breadcrumbs({ items = [], dark = false, className, schema = true }) {
   const alle = [{ name: "Startseite", href: "/" }, ...items];
+  // Schema: Google verlangt `item` für jeden Eintrag außer dem letzten. Reine
+  // Gliederungsstufen ohne eigene Seite (z. B. „Service“) bleiben deshalb nur
+  // sichtbar und fehlen im Schema; die Positionen werden fortlaufend neu gezählt.
+  const imSchema = alle.filter((it, i) => it.href || i === alle.length - 1);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: alle.map((it, i) => ({
+    itemListElement: imSchema.map((it, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: it.name,

@@ -31,8 +31,13 @@
 // österreichischen Begriff erhalten, damit alte Links nicht ins Leere laufen.
 
 import { VERGUETUNG } from "./einspeiseverguetung.js";
+import { BASE_URL } from "../lib/site.js";
 
-export const LEXIKON_STAND = "2026-09-29";
+export const LEXIKON_STAND = "2026-09-30";
+
+/** Adresse des Lexikons – Anker je Begriff: `${LEXIKON_URL}#<id>`. */
+export const LEXIKON_PFAD = "/wissen/lexikon";
+export const LEXIKON_URL = `${BASE_URL}${LEXIKON_PFAD}`;
 
 const MARKTPREIS = `${VERGUETUNG.marktpreis.aktuell.ct.toFixed(3).replace(".", ",")} ct/kWh (${VERGUETUNG.marktpreis.aktuell.zeitraum})`;
 
@@ -509,7 +514,8 @@ export const BEGRIFFE = [
     id: "eza-regler",
     alias: ["parkregler"],
     begriff: "EZA-Regler (Parkregler)",
-    kurz: "Ein EZA-Regler (Erzeugungsanlagen-Regler, auch Parkregler) ist die zentrale Regelung einer PV-Anlage, die am Netzanschlusspunkt misst und Wirk- und Blindleistung aller Wechselrichter nach den Vorgaben des Netzbetreibers steuert.",
+    // Definitionssatz – wörtlich auch oben auf /technik/parkregler (SEO-Plan M23)
+    kurz: "Ein EZA-Regler ist die übergeordnete Regelung einer Erzeugungsanlage (EZA), die am Netzanschlusspunkt misst und Wirk- und Blindleistung aller Wechselrichter, Speicher und Ladepunkte so steuert, dass dort die Vorgaben des Netzbetreibers eingehalten werden; die österreichischen TOR Erzeuger nennen ihn Park- und Anlagenregler.",
     text: "Er setzt Wirkleistungsbegrenzungen, Blindleistungsverfahren wie Q(U) oder cos φ(P) und Fernsteuerbefehle des Netzbetreibers oder Direktvermarkters um und dokumentiert das Verhalten. Ab mittleren Anlagengrößen verlangen die TOR Erzeuger eine solche Regelung am Netzanschlusspunkt. Ökovolt setzt dafür einen selbst entwickelten Parkregler für Österreich ein.",
     kategorie: "netz",
     synonyme: ["Parkregler", "Power Plant Controller", "PPC", "Erzeugungsanlagen-Regler"],
@@ -1161,7 +1167,7 @@ export const BEGRIFFE = [
     kategorie: "markt",
     synonyme: ["Überschussvermarktung", "Stromverkauf", "Einspeisevertrag"],
     verwandt: ["marktpreis-oemag", "direktvermarktung", "einspeiseverguetung"],
-    link: { href: "/ratgeber/reststromvermarktung", label: "Reststromvermarktung" },
+    link: { href: "/einspeisung-gewerbe", label: "PV-Überschuss verkaufen: Wege im Vergleich" },
   },
   // ---------------------------------------------------------------- S
   {
@@ -1490,3 +1496,26 @@ export function begriffeNachBuchstabe() {
 
 /** Alias-ID -> Haupt-ID (für Anker aus älteren Links). */
 export const ALIAS = Object.fromEntries(BEGRIFFE.flatMap((b) => (b.alias || []).map((a) => [a, b.id])));
+
+/** Begriff nach id oder Alias-ID – undefined, wenn unbekannt. */
+export const begriff = (id) => BEGRIFFE.find((b) => b.id === (ALIAS[id] || id));
+
+/**
+ * schema.org DefinedTerm für einen Lexikon-Begriff – dieselbe @id wie im
+ * DefinedTermSet auf /wissen/lexikon, damit Fachseiten auf den Eintrag verweisen
+ * können (z. B. /technik/parkregler). null, wenn der Begriff fehlt.
+ */
+export function definedTerm(id) {
+  const b = begriff(id);
+  if (!b) return null;
+  return {
+    "@type": "DefinedTerm",
+    "@id": `${LEXIKON_URL}#${b.id}`,
+    name: b.begriff,
+    description: b.kurz,
+    url: `${LEXIKON_URL}#${b.id}`,
+    termCode: b.id,
+    ...(b.synonyme?.length ? { alternateName: b.synonyme } : {}),
+    inDefinedTermSet: { "@id": `${LEXIKON_URL}/#termset` },
+  };
+}

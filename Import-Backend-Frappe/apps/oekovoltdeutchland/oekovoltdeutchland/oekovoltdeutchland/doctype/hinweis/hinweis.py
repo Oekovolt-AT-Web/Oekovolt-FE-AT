@@ -1,9 +1,27 @@
 # Copyright (c) 2026, ÖKOVOLT GmbH Solartechnik
 # Controller des DocTypes "Hinweis" – setzt die Fristen des österreichischen HSchG automatisch.
+#
+# Fristen laut HSchG, BGBl. I Nr. 6/2023 (RIS, Fassung vom 30.09.2026; §§ 8, 9 und 13 seit 25.02.2023 unverändert):
+#  - § 9 Abs. 1: Eingang schriftlicher Hinweise „unverzüglich, spätestens jedoch nach sieben Kalendertagen“ bestätigen
+#    (außer bei ausdrücklichem Verzicht oder wenn die Bestätigung die Identität gefährden würde).
+#  - § 13 Abs. 9: Rückmeldung „spätestens drei Monate nach Entgegennahme eines Hinweises“ – die Frist läuft also ab
+#    EINGANG, nicht ab der Eingangsbestätigung (anders als Art. 9 Abs. 1 lit. f der Richtlinie (EU) 2019/1937).
+#  - § 8 Abs. 11: Aufbewahrung fünf Jahre ab letztmaliger Verarbeitung oder Übermittlung (hier: Abschluss).
+# Website-Texte dazu: src/data/hinweisgeber.js (ABLAUF, FAQ_INFO, FRISTEN_TEXT) – bei Änderungen beide anpassen.
 
 import frappe
 from frappe.model.document import Document
 from frappe.utils import add_days, add_months, add_years, getdate, now_datetime
+
+
+def fristen_ab_eingang(eingang):
+	"""(Eingangsbestätigung fällig, Rückmeldung fällig) als Datum – beide ab Eingang des Hinweises.
+
+	§ 9 Abs. 1 HSchG: Bestätigung spätestens nach 7 Kalendertagen.
+	§ 13 Abs. 9 HSchG: Rückmeldung spätestens 3 Monate nach Entgegennahme (Monatsende wird von add_months begrenzt,
+	z. B. 30.11. + 3 Monate = 28./29.02.)."""
+	tag = getdate(eingang)
+	return add_days(tag, 7), add_months(tag, 3)
 
 
 class Hinweis(Document):
@@ -20,18 +38,18 @@ class Hinweis(Document):
 		jetzt = now_datetime()
 		self.eingegangen_am = jetzt
 		self.status = self.status or "Eingegangen"
-		# § 13 HSchG: Eingangsbestätigung spätestens nach 7 Kalendertagen
-		self.bestaetigung_faellig = add_days(getdate(jetzt), 7)
-		# § 13 HSchG: Rückmeldung spätestens 3 Monate nach Bestätigung,
-		# ohne Bestätigung 3 Monate und 7 Tage nach Eingang
-		self.rueckmeldung_faellig = add_days(add_months(getdate(jetzt), 3), 7)
+		self.bestaetigung_faellig, self.rueckmeldung_faellig = fristen_ab_eingang(jetzt)
 
 	def validate(self):
 		jetzt = now_datetime()
 
 		if self.status != "Eingegangen" and not self.eingang_bestaetigt_am:
 			self.eingang_bestaetigt_am = jetzt
-			self.rueckmeldung_faellig = add_months(getdate(jetzt), 3)
+
+		# Fristen immer aus dem Eingang ableiten (§ 9 Abs. 1, § 13 Abs. 9 HSchG). Korrigiert auch Fälle, bei denen
+		# eine frühere Version die Rückmeldefrist ab der Bestätigung (bzw. Eingang + 3 Monate + 7 Tage) gesetzt hat.
+		if self.eingegangen_am:
+			self.bestaetigung_faellig, self.rueckmeldung_faellig = fristen_ab_eingang(self.eingegangen_am)
 
 		if self.status == "Abgeschlossen":
 			if not self.abgeschlossen_am:

@@ -29,14 +29,13 @@ import Querverweise from "@/components/Reusable/Querverweise";
 const JOBS_PAGE_URL = `${BASE_URL}/uber-uns/jobs`;
 const TITEL = "Jobs Photovoltaik Österreich – Karriere | Ökovolt";
 const BESCHREIBUNG =
-  "Jobs bei Ökovolt in Ostermiething: Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Lehre Elektrotechnik – mit KV-Mindestentgelt je Stelle.";
+  "Jobs bei Ökovolt in Ostermiething: Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Elektro-Lehre – mit KV-Mindestentgelt je Stelle.";
 
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   keywords: ["Photovoltaik Jobs Österreich", "Elektrotechniker Job Oberösterreich", "PV Monteur Job", "Lehre Elektrotechnik Innviertel", "Ökovolt Karriere"],
   alternates: { canonical: JOBS_PAGE_URL, languages: hreflangLanguages(JOBS_PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

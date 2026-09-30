@@ -5,14 +5,14 @@
 
 const artikel = {
   slug: "eag-investitionszuschuss",
-  title: "EAG-Investitionszuschuss 2026: Fördercalls, Sätze, Ablauf",
-  seoTitle: "EAG-Investitionszuschuss 2026: PV & Speicher | Ökovolt",
+  title: "EAG-Zuschuss beantragen: Förderbedarf bieten, Fristen, Rechenbeispiele",
+  seoTitle: "EAG-Zuschuss beantragen: Schritte & Fehler | Ökovolt",
   kurzTitel: "EAG-Investitionszuschuss",
   description:
-    "EAG-Investitionszuschuss 2026: Kategorien A–D, Fördersätze, letzter Fördercall 8.–22. Oktober, Förderbedarf bieten, Zuschläge, Fristen und Rechenbeispiele.",
+    "EAG-Zuschuss beantragen 2026: Förderbedarf in Kategorie C und D richtig bieten, Fristen, nicht förderfähige Kosten und Rechenbeispiele für 30 bis 500 kWp.",
   excerpt:
     "Die Bundesförderung für PV-Anlagen und Speicher in Österreich: welche Sätze 2026 gelten, wie Kategorie C und D gereiht werden, welche Zuschläge es gibt und warum Ihr Projekt auch ohne Zuschuss rechnen sollte.",
-  hauptKeyword: "eag investitionszuschuss 2026",
+  hauptKeyword: "eag zuschuss beantragen",
   keywords: [
     "EAG Investitionszuschuss 2026",
     "OeMAG Fördercall Oktober 2026",
@@ -24,7 +24,7 @@ const artikel = {
     "Förderbedarf pro kWp",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Förderung, Steuern & Recht",
   bild: "/Images/AT/ratgeber/eag-investitionszuschuss.jpg",
   bildAlt: "Photovoltaikanlage am Spitalberg in Klagenfurt, Kärnten",
@@ -35,6 +35,7 @@ const artikel = {
     "**Der letzte Fördercall 2026 läuft vom 8. bis 22. Oktober** – mit nur je 2 Mio. € pro Kategorie. In Kategorie C und D gewinnt, wer den niedrigsten Förderbedarf in €/kWp bietet.",
     "**Der Zuschuss ist auf 30 % der förderfähigen Nettokosten gedeckelt;** Made-in-Europe-Komponenten bringen bis zu +20 %, innovative Anlagen wie Parkplatzüberdachungen ab 10 Stellplätzen +30 %.",
     "**Planen Sie ohne Zuschuss:** Im Juni-Call entschieden 33 Sekunden über Zu- oder Absage. Eine 100-kWp-Anlage mit 60 % Eigenverbrauch amortisiert sich in unserem Beispiel auch ohne Förderung in rund 6 Jahren, mit 13.000 € Zuschuss in rund 5 Jahren.",
+    "Kategorien, Sätze und alle Bundesprogramme im Überblick stehen auf der Seite [Bundesförderung für Photovoltaik](/forderungen/bundesfoerderung); dieser Ratgeber vertieft Antrag, Gebot und Fristen.",
   ],
 
   abschnitte: [

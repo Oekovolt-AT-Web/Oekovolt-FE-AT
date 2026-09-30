@@ -7,14 +7,14 @@
 
 const artikel = {
   slug: "pv-thermografie-drohne",
-  title: "PV-Thermografie mit Drohne: Fehler finden, bevor sie Ertrag kosten",
-  seoTitle: "PV-Thermografie mit Drohne in Österreich | Ökovolt",
+  title: "PV-Thermografie mit Drohne: Norm, Drohnenrecht und guter Prüfbericht",
+  seoTitle: "PV-Thermografie: IEC TS 62446-3 & Drohnenrecht | Ökovolt",
   kurzTitel: "PV-Thermografie Drohne",
   description:
-    "PV-Thermografie mit Drohne: was Wärmebilder finden, Anforderungen nach IEC TS 62446-3, Drohnenrecht in Österreich (Austro Control), Ablauf, Bericht und Nutzen.",
+    "PV-Thermografie mit Drohne: Messbedingungen nach IEC TS 62446-3, Drohnenrecht in Österreich, Drohne oder Handkamera, Inhalt eines guten Berichts und Grenzen.",
   excerpt:
     "Hotspots, defekte Bypassdioden, ausgefallene Strings: Wie eine Drohnen-Thermografie Fehler auf großen Dach- und Freiflächenanlagen in Stunden statt Tagen findet – und was dabei rechtlich und fachlich zu beachten ist.",
-  hauptKeyword: "pv thermografie drohne",
+  hauptKeyword: "pv thermografie iec 62446-3",
   keywords: [
     "PV Thermografie Drohne",
     "Photovoltaik Wärmebild",
@@ -25,7 +25,7 @@ const artikel = {
     "Drohne Austro Control Photovoltaik",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Technik & Planung",
   bild: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg",
   bildAlt: "Luftaufnahme eines Gewerbegebiets mit großen Photovoltaikanlagen auf Hallendächern",
@@ -36,6 +36,7 @@ const artikel = {
     "**Die Drohne ist ab mittleren Dachanlagen die effizienteste Methode:** Laut IEA-PVPS dauert die Infrarot-Befliegung einer 4-MWp-Anlage unter guten Bedingungen etwa 5 bis 10 Stunden – ohne Dachbegehung und ohne Abschaltung.",
     "**Aussagekräftig sind Wärmebilder nur unter Last:** Die IEC TS 62446-3 verlangt unter anderem mindestens 600 W/m² Einstrahlung in Modulebene und stabile, weitgehend wolkenfreie Bedingungen.",
     "**In Österreich gilt das EU-Drohnenrecht:** Betreiber müssen sich bei Austro Control registrieren (46,80 € für drei Jahre), Piloten brauchen einen Kompetenznachweis, eine Haftpflichtversicherung ist Pflicht, Flugbeschränkungsgebiete sind zu beachten.",
+    "Eine Drohnen-Thermografie für Ihre Anlage beauftragen Sie über die [Drohneninspektion](/service/drohneninspektion); dieser Ratgeber erklärt Norm, Recht und Bericht.",
   ],
 
   abschnitte: [

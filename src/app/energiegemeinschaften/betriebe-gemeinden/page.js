@@ -26,9 +26,9 @@ import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/energiegemeinschaften/betriebe-gemeinden";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
-const TITEL = "Energiegemeinschaft für Betriebe & Gemeinden | Ökovolt";
+const TITEL = "Energiegemeinschaft für Unternehmen & Gemeinden | Ökovolt";
 const BESCHREIBUNG =
-  "Energiegemeinschaften für Betriebe und Gemeinden nach ElWG: wer in EEG, BEG und P2P darf, 6-MW- und 10-%-Regel, Netzentgelt lokal/regional, Ablauf und Checkliste.";
+  "Energiegemeinschaft für Unternehmen und Gemeinden nach ElWG: wer in EEG, BEG und P2P darf, 6-MW- und 10-%-Regel, Netzentgelt lokal/regional und Checkliste.";
 const HERO_BILD = "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg";
 const ABRUF = "30.09.2026";
 
@@ -149,7 +149,7 @@ export default function BetriebeGemeindenPage() {
         eyebrow="Energiegemeinschaften · ElWG"
         title={
           <>
-            Energiegemeinschaft für <span className="ov-text-gradient-light">Betriebe und Gemeinden</span>
+            Energiegemeinschaft für <span className="ov-text-gradient-light">Unternehmen und Gemeinden</span>
           </>
         }
         lead="Hallendach als Kraftwerk, Gemeinde als Initiatorin: Wer seit 1. Oktober 2026 in welchem Modell mitmachen darf, welche Grenzen gelten und wie viel Netzentgelt der Nahebereich spart."

@@ -1,9 +1,11 @@
-// service/direktvermarktung/page.js – Reststromvermarktung & Direktvermarktung in Österreich
+// service/direktvermarktung/page.js – Direktvermarktung & Reststromvermarktung in Österreich
+// Ziel der 301 von /ratgeber/reststromvermarktung (E7, 30.09.2026).
 //
 // Österreich-Fassung: statischer, belegter Inhalt (EAG, ÖSG-Marktpreis, ElWG,
 // Gebotszone AT). Die frühere Backend-Anbindung (deutsche Inhalte zu EEG und
 // Marktprämienmodell nach deutschem Recht) wird hier bewusst nicht mehr genutzt.
 
+import Link from "next/link";
 import { Ban, Building2, Cable, Calculator, CalendarCheck2, FileSignature, Gauge, Landmark, LineChart, Receipt, Scale, Share2, SlidersHorizontal, Sun, TrendingUp } from "lucide-react";
 
 import Section from "@/components/ui/Section";
@@ -31,15 +33,15 @@ import { getEnergySnapshot } from "@/lib/energy";
 export const revalidate = 900;
 
 const PFAD = "/service/direktvermarktung";
-const TITEL = "Reststromvermarktung & Direktvermarktung AT | Ökovolt";
+const TITEL = "Direktvermarktung PV Österreich: Marktprämie & PPA | Ökovolt";
 const BESCHREIBUNG =
-  "Reststromvermarktung in Österreich: OeMAG-Marktpreis, Einspeisetarif, Direktvermarkter, EAG-Marktprämie und PPA im Vergleich – mit Spotpreis AT und Parkregler.";
+  "Direktvermarktung für PV-Anlagen in Österreich: Direktvermarkter, EAG-Marktprämie und PPA im Vergleich zur OeMAG – mit Spotpreis AT live und Parkregler.";
 
 export const metadata = seitenMeta({
   pfad: PFAD,
   titel: TITEL,
   beschreibung: BESCHREIBUNG,
-  keywords: ["Reststromvermarktung", "Überschusseinspeisung Österreich", "OeMAG Marktpreis", "Direktvermarktung Österreich", "EAG Marktprämie", "PPA Photovoltaik Österreich", "Einspeisetarif Gewerbe"],
+  keywords: ["Direktvermarktung Photovoltaik", "Reststromvermarktung", "Überschusseinspeisung Österreich", "OeMAG Marktpreis", "Direktvermarktung Österreich", "EAG Marktprämie", "PPA Photovoltaik Österreich", "Einspeisetarif Gewerbe"],
 });
 
 const OPTIONEN = [
@@ -181,14 +183,22 @@ export default async function ReststromvermarktungPage() {
       />
 
       <HeroBild
-        breadcrumbs={[{ name: "Service" }, { name: "Reststromvermarktung" }]}
+        breadcrumbs={[{ name: "Service" }, { name: "Direktvermarktung" }]}
         eyebrow="Reststromvermarktung & Direktvermarktung · Österreich"
         title={
           <>
-            Reststromvermarktung: <span className="ov-text-gradient-light">mehr aus jedem Überschuss</span>
+            Direktvermarktung für PV-Anlagen <span className="ov-text-gradient-light">in Österreich</span>
           </>
         }
-        lead="Was Ihr Betrieb nicht selbst verbraucht, lässt sich in Österreich auf mehreren Wegen verkaufen – an die OeMAG, an Energieversorger, über Direktvermarkter, per PPA oder in einer Energiegemeinschaft. Wir vergleichen die Optionen und bauen die Technik, die sie verlangen."
+        lead={
+          <>
+            <span className="block font-display text-[1.15em] font-bold leading-snug text-white">Reststromvermarktung: mehr aus jedem Überschuss</span>
+            <span className="mt-3 block">
+              Was Ihr Betrieb nicht selbst verbraucht, lässt sich in Österreich auf mehreren Wegen verkaufen – an die OeMAG, an Energieversorger, über Direktvermarkter, per PPA oder in
+              einer Energiegemeinschaft. Wir vergleichen die Optionen und bauen die Technik, die sie verlangen.
+            </span>
+          </>
+        }
         image={{ src: "/Images/AT/service-b/hochspannung-abendrot.jpg", alt: "Hochspannungsmasten im Abendrot" }}
         ton="tief"
         points={["OeMAG, Energieversorger, Direktvermarkter", "EAG-Marktprämie & PPA", "Spotpreis AT live", "Parkregler für Abregelung"]}
@@ -216,6 +226,17 @@ export default async function ReststromvermarktungPage() {
         <p>
           <strong>Entscheidend ist fast immer dasselbe:</strong> möglichst viel selbst nutzen, in Stunden mit negativen Preisen nicht einspeisen – und dafür die Technik haben, die das
           automatisch regelt.
+        </p>
+        <p>
+          Den Jahreserlös Ihrer Einspeisung rechnen Sie mit dem Rechner auf{" "}
+          <Link href="/einspeisung-gewerbe" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+            Einspeisung für Betriebe
+          </Link>{" "}
+          nach; die Monatswerte der OeMAG stehen im Ratgeber{" "}
+          <Link href="/ratgeber/oemag-marktpreis" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+            OeMAG-Marktpreis
+          </Link>
+          .
         </p>
       </Kennzahlen>
 

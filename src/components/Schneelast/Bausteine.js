@@ -1,12 +1,10 @@
-// Server-Bausteine der Schneelast-Seiten (/schneelast, /schneelast/[bundesland]).
+// Server-Bausteine der Schneelast-Seite /schneelast (die Landesseiten leiten seit M26 per 308 auf /schneelast#<land>).
 // Alle Werte kommen fertig gerechnet aus src/lib/schneelast/* (Build-Zeit) – hier nur Darstellung.
 
 import Link from "next/link";
-import { ArrowUpRight, Info, MapPin } from "lucide-react";
-import Reveal from "@/components/ui/Reveal";
+import { Info, MapPin } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { KLASSEN, klasseFuer, modulGrenzen, zahl } from "@/lib/schneelast/einordnung";
-import { schneelastPfad } from "@/lib/schneelast/laender";
 
 export const SCHNEELAST_QUELLEN = [
   { name: "GeoSphere Austria: SNOWGRID Klima v2.1, 1 km, täglich (CC BY 4.0)", url: "https://data.hub.geosphere.at/dataset/snowgrid_cl-v2-1d-1km" },
@@ -18,67 +16,7 @@ export const SCHNEELAST_QUELLEN = [
   { name: "Open Topo Data, EU-DEM 25 m (Copernicus) – Seehöhe", url: "https://www.opentopodata.org/datasets/eudem/" },
 ];
 
-const SKALA_MAX = 4; // kN/m² – Balkenskala der Länderkarten
-
 const farbe = (sk) => KLASSEN[klasseFuer(sk) ?? 0].farbe;
-
-/** Neun Länderkarten mit Spanne der Richtwerte, verlinkt auf /schneelast/[bundesland]. */
-export function LaenderKarten({ laender, aktiv }) {
-  return (
-    <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {laender.map((l, i) => {
-        const s = l.spanne;
-        const links = s ? Math.min(100, (s.min.sk / SKALA_MAX) * 100) : 0;
-        const rechts = s ? Math.min(100, (s.max.sk / SKALA_MAX) * 100) : 0;
-        const istAktiv = aktiv === l.slug;
-        return (
-          <Reveal as="li" key={l.slug} delay={(i % 3) * 70} className="flex">
-            <article
-              className={cn(
-                "group ov-card-hover relative flex w-full flex-col rounded-3xl p-6 ring-1 focus-within:ring-2 focus-within:ring-ov-500",
-                istAktiv ? "bg-ov-50 ring-ov-300" : "bg-sand-50 ring-ink-200/60 hover:bg-white"
-              )}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900">
-                  <Link href={schneelastPfad(l.slug)} aria-current={istAktiv ? "page" : undefined} className="outline-none after:absolute after:inset-0 after:rounded-3xl after:content-['']">
-                    Schneelast {l.name}
-                  </Link>
-                </h3>
-                <ArrowUpRight aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-300 transition-all duration-300 group-hover:rotate-45 group-hover:text-ov-600" />
-              </div>
-              {s ? (
-                <>
-                  <p className="mt-3 font-display text-[26px] font-extrabold leading-none tracking-tight text-ink-900">
-                    <span className="ov-num">
-                      {zahl(s.min.sk, 1)} – {zahl(s.max.sk, 1)}
-                    </span>{" "}
-                    <span className="text-[14px] font-bold text-ink-500">kN/m²</span>
-                  </p>
-                  <div className="relative mt-4 h-2.5 rounded-full bg-ink-100" aria-hidden="true">
-                    <div
-                      className="absolute inset-y-0 rounded-full ring-1 ring-ink-300/60"
-                      style={{ left: `${links}%`, width: `${Math.max(2, rechts - links)}%`, background: `linear-gradient(90deg, ${farbe(s.min.sk)}, ${farbe(s.max.sk)})` }}
-                    />
-                  </div>
-                  <div className="mt-1 flex justify-between text-[11px] text-ink-400" aria-hidden="true">
-                    <span>0</span>
-                    <span>{SKALA_MAX}+ kN/m²</span>
-                  </div>
-                  <p className="mt-3 text-[13.5px] leading-relaxed text-ink-600">
-                    Niedrigster Wert {s.min.ort}, höchster {s.max.ort} · Median {zahl(s.median, 1)} kN/m² · {l.anzahl} {l.slug === "wien" ? "Bezirke" : "Orte"}
-                  </p>
-                </>
-              ) : (
-                <p className="mt-3 text-[14px] text-ink-500">Keine Richtwerte verfügbar.</p>
-              )}
-            </article>
-          </Reveal>
-        );
-      })}
-    </ul>
-  );
-}
 
 /** Modulklassen mit Grenzwerten (30° Satteldach und 10° flach geneigtes Hallendach, jeweils ohne Schneefang). */
 export function ModulTabelle({ hell = false }) {

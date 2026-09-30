@@ -188,8 +188,8 @@ export default async function GewerbePage({ searchParams }) {
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Gewerbe & Industrie" }]}
         eyebrow={v.eyebrow}
-        title={<>{v.titel} <span className="ov-text-gradient-light">{v.akzent}</span></>}
-        lead={v.lead}
+        title={<>Photovoltaik für Gewerbe und Industrie <span className="ov-text-gradient-light">in Österreich</span></>}
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
         image={{ src: HERO_BILD, alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=gewerbe" },

@@ -179,6 +179,82 @@ export function zaehle(projekte, feld) {
   return [...m.entries()].sort((a, b) => b[1] - a[1]);
 }
 
+// ---------------------------------------------------------------------------
+// SEO der Projektseiten (M15): feste Daten, Title/Description mit Branche und Ort.
+// Branche und Ort kommen nur aus belegten Feldern (Backoffice bzw. src/data/kunden.js);
+// fehlen sie, fällt der Title auf Firma und Leistung zurück – nichts wird geraten.
+// ---------------------------------------------------------------------------
+
+/** "Tragwein, Oberösterreich (Firmensitz)" -> "Tragwein" */
+export function ortKurz(ort = "") {
+  return String(ort || "")
+    .replace(/\s*\(.*?\)\s*/g, " ")
+    .split(",")[0]
+    .trim();
+}
+
+/** "2026-09-30 14:03:11.123" oder "2026-09-30" -> "2026-09-30"; sonst null (kein new Date()) */
+export function isoDatum(wert) {
+  const m = String(wert || "").match(/^\d{4}-\d{2}-\d{2}/);
+  return m ? m[0] : null;
+}
+
+const TITEL_ENDE = " | Ökovolt";
+
+/**
+ * Title einer Projektseite, höchstens 60 Zeichen: der erste Kandidat, der passt.
+ * Branche und Ort beschreiben das Unternehmen (Sitz bzw. Werk laut Quelle), deshalb neutral in Klammern.
+ */
+export function projektSeitenTitel({ titel, leistungText, branche, ort }) {
+  const o = ortKurz(ort);
+  const b = brancheKurz(branche);
+  const l = String(leistungText || "").trim();
+  const kandidaten = [
+    l && b && o && `PV ${l}: ${titel} (${b}, ${o})`,
+    b && o && `PV-Anlage ${titel} (${b}, ${o})`,
+    l && b && `PV ${l}: ${titel} (${b})`,
+    b && `PV-Anlage ${titel} (${b})`,
+    l && o && `PV ${l}: ${titel}, ${o}`,
+    o && `PV-Anlage ${titel}, ${o}`,
+    l && `${titel}: ${l} Photovoltaik`,
+    l && `${titel}: ${l} PV`,
+    `PV-Anlage ${titel}`,
+  ].filter(Boolean);
+  const passend = kandidaten.find((k) => (k + TITEL_ENDE).length <= 60);
+  if (passend) return passend + TITEL_ENDE;
+  if ((titel + TITEL_ENDE).length <= 60) return titel + TITEL_ENDE;
+  // Sehr lange Firmennamen an einer Wortgrenze kürzen, damit der Title nicht abgeschnitten wird
+  const max = 60 - TITEL_ENDE.length - 1;
+  const kurz = titel.slice(0, max);
+  return `${kurz.slice(0, Math.max(kurz.lastIndexOf(" "), 1)).replace(/[,:;.–-]+$/, "").trim()}…${TITEL_ENDE}`;
+}
+
+/** Branche ohne Klammerzusätze: "Autohaus und Werkstätte (Ford-Partner)" -> "Autohaus und Werkstätte" */
+export function brancheKurz(branche = "") {
+  return String(branche || "")
+    .replace(/s*(.*?)/g, "")
+    .trim();
+}
+
+/**
+ * Description einer Projektseite, höchstens 160 Zeichen: Zusatzsätze fallen weg, bevor gekürzt wird
+ * (dann an einer Wortgrenze mit „…“).
+ */
+export function projektBeschreibung({ titel, leistungText, branche, ort, jahr, modul }) {
+  const zusatz = [brancheKurz(branche), ortKurz(ort)].filter(Boolean).join(", ");
+  const kern = `${titel}${zusatz ? ` (${zusatz})` : ""}: Photovoltaikanlage${leistungText ? ` mit ${leistungText}` : ""} von Ökovolt${jahr ? `, realisiert ${jahr}` : ""}.`;
+  const varianten = [
+    [kern, modul && `Module: ${modul}.`, "Bilder und Kennzahlen der Referenz."],
+    [kern, "Bilder und Kennzahlen der Referenz."],
+    [kern, modul && `Module: ${modul}.`],
+    [kern],
+  ].map((teile) => teile.filter(Boolean).join(" "));
+  const passend = varianten.find((t) => t.length <= 160);
+  if (passend) return passend;
+  const kurz = kern.slice(0, 159);
+  return `${kurz.slice(0, kurz.lastIndexOf(" ")).replace(/[,:;.–-]+$/, "")}…`;
+}
+
 /**
  * Überschlägiger Jahresertrag – Orientierung Österreich. PVGIS (EU JRC) liefert
  * für Süd 35° in den Landeshauptstädten 1.112–1.352 kWh je kWp; bei gemischter

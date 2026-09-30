@@ -18,6 +18,7 @@ import Tabs from "@/components/ServiceAT/A/Tabs";
 import AnfragePremium from "@/components/ServiceAT/A/AnfragePremium";
 import FaqPlus from "@/components/ServiceAT/A/FaqPlus";
 import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
+import { SERVICE_FREMDMARKEN } from "@/components/Hersteller/partner";
 
 const PFAD = "/service/e-check";
 const TITEL = "E-Check & Anlagenprüfung nach OVE E 8101 | Ökovolt";
@@ -229,6 +230,16 @@ export default function ECheckPage() {
         </Tabs>
       </Section>
 
+      {/* Service für Wechselrichter anderer Hersteller: nur nach Entscheidung E4 (partner.js, derzeit nicht freigegeben) */}
+      {SERVICE_FREMDMARKEN.freigegeben && (
+        <Section tone="sand" space="md" id="alle-hersteller" className="scroll-mt-24">
+          <div className="mx-auto max-w-3xl">
+            <SectionHeading eyebrow="Hersteller" title={SERVICE_FREMDMARKEN.titel} />
+            <p className="mt-5 text-[16px] leading-relaxed text-ink-600">{SERVICE_FREMDMARKEN.text}</p>
+          </div>
+        </Section>
+      )}
+
       <AnfragePremium
         eyebrow="Anfrage"
         titel="Prüfung für Ihre Anlage beauftragen"
@@ -248,7 +259,7 @@ export default function ECheckPage() {
           felder: [
             { name: "anlagengroesse", label: "PV-Leistung", typ: "zahl", einheit: "kWp", pflicht: true, placeholder: "z. B. 180" },
             { name: "baujahr", label: "Baujahr / Inbetriebnahme", typ: "zahl", placeholder: "z. B. 2016" },
-            { name: "wechselrichter", label: "Wechselrichter (Hersteller, Anzahl)", placeholder: "z. B. 4× SMA Sunny Tripower", breit: true },
+            { name: "wechselrichter", label: "Wechselrichter (Hersteller, Anzahl)", placeholder: "z. B. 4 Geräte, Hersteller und Typ laut Typenschild", breit: true },
             { name: "letzte_pruefung", label: "Letzter Prüfbefund", typ: "auswahl", optionen: ["Innerhalb der letzten 2 Jahre", "Vor 3–5 Jahren", "Vor mehr als 5 Jahren", "Nur Erstprüfung vorhanden", "Unbekannt"] },
             { name: "anlass", label: "Anlass", typ: "auswahl", pflicht: true, optionen: ["Wiederkehrende Prüfung (ESV 2012)", "Auflage der Versicherung", "Nach Erweiterung / Speicher / Ladepunkten", "Kauf oder Übernahme der Anlage", "Nach Schaden (Sturm, Hagel, Marder)", "Sonstiges"] },
             { name: "umfang", label: "Gewünschter Umfang", typ: "auswahl", optionen: ["Prüfung nach OVE E 8101 + EN 62446-1 Kategorie 1", "Zusätzlich Kategorie 2 (I-U-Kennlinien, Thermografie)", "Bitte beraten"] },
@@ -268,6 +279,7 @@ export default function ECheckPage() {
           { href: "/forderungen/richtlinien", art: "Recht", titel: "Richtlinien & Netzanschluss" },
           { href: "/technik/fernwartung", art: "Technik", titel: "Fernwartung" },
           { href: "/gewerbe", art: "Lösung", titel: "Photovoltaik für Gewerbe & Industrie" },
+          { href: "/produkte/wechselrichter", art: "Produkt", titel: "Wechselrichter" },
         ]}
       />
 
@@ -289,7 +301,7 @@ export default function ECheckPage() {
       <CtaBand
         eyebrow="Anlagenprüfung"
         title="Prüfbefund fällig? Wir prüfen Ihre PV- und Elektroanlage."
-        text="Prüfung nach OVE E 8101 und OVE EN 62446-1, Messprotokolle, Mängelliste und Behebung aus einer Hand – für Anlagen von Ökovolt und anderen Errichtern in ganz Österreich."
+        text="Prüfung nach OVE E 8101 und OVE EN 62446-1, Messprotokolle und Mängelliste nach Dringlichkeit – für Anlagen von Ökovolt und anderen Errichtern in ganz Österreich."
         primary={{ label: "Prüfung beauftragen", href: "#anfrage" }}
         secondary={{ label: "Wartungsvertrag ansehen", href: "/service/wartung", icon: ClipboardCheck }}
       />

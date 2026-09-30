@@ -53,7 +53,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Smart Meter Österreich", "Smart Meter Opt-out", "Viertelstundenwerte", "ElWG Smart Meter", "Lastprofilzähler", "Energiemanagementsystem Gewerbe"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

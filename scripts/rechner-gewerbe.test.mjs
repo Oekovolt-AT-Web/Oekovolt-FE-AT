@@ -70,7 +70,7 @@ import {
 } from "../src/lib/rechner/energiegemeinschaft.js";
 import { PV_MONAT } from "../src/lib/rechner/profile.js";
 
-// Summe der PV-Monatsanteile (sollte 1 sein – siehe Befund tests-01 in rechner-privat.test.mjs)
+// Summe der PV-Monatsanteile (seit Behebung von Befund tests-01 exakt 1, siehe rechner-privat.test.mjs)
 const PV_SUMME = PV_MONAT.reduce((a, b) => a + b, 0);
 
 const nahe = (ist, soll, tol, text = "") => assert.ok(Math.abs(ist - soll) <= tol, `${text} ${ist} ≠ ${soll} (±${tol})`);
@@ -207,10 +207,9 @@ describe("gewerbepv – rechneGewerbePv", () => {
     nahe(r.co2Tonnen, (190000 * 0.2582) / 1000, 1e-9);
     endlich(r);
   });
-  test(
-    "Befund: Eigenverbrauch + Einspeisung ergibt nur 99,5 % des ausgewiesenen Jahresertrags",
-    { todo: "Befund tests-01: PV_MONAT in src/lib/rechner/profile.js Z. 27 summiert sich auf 0,995 statt 1" },
-    () => nahe(r.eigenverbrauch + r.einspeisung, r.jahresertrag, r.jahresertrag * 1e-6)
+  // Befund tests-01 behoben (PV_MONAT in profile.js auf 1 normiert): Bilanz schließt auf den ausgewiesenen Ertrag
+  test("Energiebilanz ohne Speicher schließt auf den ausgewiesenen Jahresertrag", () =>
+    nahe(r.eigenverbrauch + r.einspeisung, r.jahresertrag, r.jahresertrag * 1e-6)
   );
   test("Geldwerte Jahr 1 aus den Annahmen nachgerechnet", () => {
     nahe(r.arbeitspreisCt, strompreisGewerbe(400000) * 100, 1e-9);
@@ -470,21 +469,24 @@ describe("pacht (Freiflächen-/Agri-PV)", () => {
     assert.equal(netzEinschaetzung(3, 2000).stufe, "pruefen"); // 1,5 km je MWp
     assert.equal(netzEinschaetzung(5, 1000).stufe, "kritisch");
   });
-  test(
-    "Befund: EAG-Investitionszuschuss über 1.000 kWp – pacht.js sagt nein, eagZuschuss()/eagKategorie() fördern anteilig bis 1.000 kWp",
-    { todo: "Befund tests-03: src/lib/rechner/pacht.js Z. 134 (eagInvestitionszuschuss: kwp <= 1000) widerspricht src/data/solarrechner.js eagZuschuss() und gewerbepv.eagKategorie()" },
-    () => {
-      const r = rechnePacht({ hektar: 2, standort: STANDORT });
-      assert.equal(r.eagInvestitionszuschuss, eagZuschuss(r.kwp).summe > 0);
+  // Befund tests-03 behoben: über 1.000 kWp anteilig gefördert, wie eagZuschuss()/eagKategorie()
+  test("EAG-Investitionszuschuss über 1.000 kWp: anteilig, deckungsgleich mit eagZuschuss()", () => {
+    const r = rechnePacht({ hektar: 2, standort: STANDORT });
+    assert.equal(r.eagInvestitionszuschuss, eagZuschuss(r.kwp).summe > 0);
+    assert.equal(r.eagAnteilig, true);
+    assert.equal(rechnePacht({ hektar: 0.5, standort: STANDORT }).eagAnteilig, false);
+  });
+  // Befund tests-04 behoben: pacht.js nutzt torTyp() aus gewerbepv.js (inkl. 0,8-kW-Grenze)
+  test("TOR-Typ: dieselbe Staffel wie gewerbepv.torTyp(), unter 0,8 kW „–“", () => {
+    assert.equal(rechnePacht({ hektar: 0, standort: STANDORT }).tor, "–");
+    for (const hektar of [0, 0.0005, 0.001, 0.2, 0.25, 34, 35, 49, 50, 60]) {
+      const r = rechnePacht({ hektar, standort: STANDORT });
+      assert.equal(r.tor, torTyp(r.kwp).typ, `${hektar} ha`);
+      assert.equal(r.torText, torTyp(r.kwp).text, `${hektar} ha`);
     }
-  );
-  test(
-    "Befund: TOR-Typ bei 0 kWp – pacht.js liefert „A“, gewerbepv.torTyp() „–“ (unter 0,8 kW)",
-    { todo: "Befund tests-04: src/lib/rechner/pacht.js Z. 117 (eigene TOR-Staffel ohne 0,8-kW-Grenze)" },
-    () => {
-      assert.equal(rechnePacht({ hektar: 0, standort: STANDORT }).tor, torTyp(0).typ);
-    }
-  );
+    assert.equal(rechnePacht({ hektar: 0.2, standort: STANDORT }).tor, "A"); // 200 kWp
+    assert.equal(rechnePacht({ hektar: 0.25, standort: STANDORT }).tor, "B"); // 250 kWp
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -691,7 +693,7 @@ describe("energiegemeinschaft", () => {
     nahe(b.monat.reduce((s, m) => s + m.geteilt, 0), b.geteilt, 1e-6);
     assert.ok(b.quoteUeberschuss > 0 && b.quoteUeberschuss <= 1);
     nahe(b.verbrauch, 85000 + 60000 + 140000, 1e-3);
-    nahe(b.erzeugung, 180 * EG_ANNAHMEN.ertragProKwp * PV_SUMME, 1e-3); // 0,995 – Befund tests-01
+    nahe(b.erzeugung, 180 * EG_ANNAHMEN.ertragProKwp * PV_SUMME, 1e-3); // PV_SUMME = 1 (Befund tests-01 behoben)
   });
   test("egBilanz: nicht zugelassene Teilnehmer teilen nichts", () => {
     const t = [...preset.teilnehmer, { typ: "betrieb", verbrauch: 100000, kwp: 0, ne: "6", gross: true }];

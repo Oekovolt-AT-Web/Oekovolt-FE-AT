@@ -22,7 +22,7 @@ import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 const PAGE_URL = `${BASE_URL}/partner`;
 const TITEL = "Elektro-Partner werden – PV-Projekte in Österreich | Ökovolt";
 const BESCHREIBUNG =
-  "Elektrotechnik-Betriebe als Partner für PV-Projekte in Österreich: Projekte, Zentraleinkauf, Planung, Parkregler und SCADA von Ökovolt. Anforderungen und Registrierung.";
+  "Elektrotechnik-Betriebe als PV-Partner in Österreich: Projekte, Zentraleinkauf, Planung, Parkregler und SCADA von Ökovolt. Anforderungen und Registrierung.";
 
 export const metadata = {
   title: TITEL,

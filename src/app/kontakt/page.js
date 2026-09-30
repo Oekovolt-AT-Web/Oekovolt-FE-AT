@@ -28,7 +28,6 @@ export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   keywords: ["Kontakt Ökovolt", "Photovoltaik Ostermiething", "Photovoltaik Oberösterreich", "PV-Errichter Salzburg", "Photovoltaik Gewerbe Österreich", "Ökovolt Österreich"],
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

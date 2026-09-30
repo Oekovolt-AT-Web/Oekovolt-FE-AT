@@ -45,7 +45,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["EAG Fördercall Oktober 2026", "OeMAG Fördercall 2026", "EAG Ticketziehung", "PV Förderung Oktober 2026", "Photovoltaik Förderung Österreich 2026", "Stromspeicher Förderung 2026", "EAG Investitionszuschuss 3. Call"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

@@ -3,12 +3,15 @@
 // <Faq/>-Komponente – beides exakt aus dem sichtbaren Inhalt.
 
 import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
+import { hreflangLanguages } from "@/lib/hreflang";
 
 const OG_BILD = `${BASE_URL}/og-image.jpg`;
 
 /**
  * Next-Metadaten nach Briefing: vollständiger Titel (Template ist „%s“),
  * Beschreibung 140–160 Zeichen, Canonical, de_AT, „Ökovolt Österreich“.
+ * hreflang nur, wenn der Pfad auf .de und .com existiert (src/lib/hreflang.js);
+ * robots bewusst nicht gesetzt, damit die Layout-Werte gelten (SEO-Plan M04).
  */
 export function seitenMeta({ pfad, titel, beschreibung, keywords, bild }) {
   const url = `${BASE_URL}${pfad}`;
@@ -17,8 +20,7 @@ export function seitenMeta({ pfad, titel, beschreibung, keywords, bild }) {
     title: titel,
     description: beschreibung,
     ...(keywords ? { keywords } : {}),
-    alternates: { canonical: url },
-    robots: { index: true, follow: true },
+    alternates: { canonical: url, languages: hreflangLanguages(pfad) },
     openGraph: {
       type: "website",
       locale: LOCALE,

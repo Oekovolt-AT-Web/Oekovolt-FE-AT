@@ -21,7 +21,10 @@ function eintragZuSlug(items, slug) {
   if (item) return { item, partner: partnerZuSlug("stromspeicher", slug) };
   const partner = partnerZuSlug("stromspeicher", slug);
   if (!partner) return { item: null, partner: null };
-  return { item: { title: partner.title, main_description: partner.main_description, alt_banner_image: partner.alt_banner_image }, partner };
+  return {
+    item: { title: partner.title, main_description: partner.speicher?.beschreibung || partner.main_description, alt_banner_image: partner.alt_banner_image },
+    partner,
+  };
 }
 
 // 1. ALLE Stromspeicher Items holen (für generateStaticParams)
@@ -142,19 +145,21 @@ export async function generateMetadata({ params }) {
   const manufacturer = partner && !items.length ? null : await fetchManufacturerByName(item.title);
   const name = manufacturer?.title || item.title;
   const url = `${BASE_URL}/produkte/stromspeicher/${slug}`;
-  const langerTitel = `${name} Stromspeicher: Planung & Einbau | Ökovolt`;
+  // Belegte Marken: Titel und Description aus partner.js (Speicherserie, z. B. Huawei LUNA2000)
+  const speicher = partner?.speicher;
+  const langerTitel = speicher?.seoTitel || `${name} Stromspeicher: Planung & Einbau | Ökovolt`;
   const title = langerTitel.length <= 60 ? langerTitel : `${name} Stromspeicher | Ökovolt`;
-  const description = kuerzen(
-    `${name} Stromspeicher in Österreich – Planung und Einbau durch Ökovolt: ${manufacturer?.main_description || item.main_description || ""}`.trim(),
-    155
-  );
+  const description =
+    speicher?.description ||
+    kuerzen(`${name} Stromspeicher in Österreich – Planung und Einbau durch Ökovolt: ${manufacturer?.main_description || item.main_description || ""}`.trim(), 155);
+  const belegt = istBelegterPartner(name);
 
   return {
     title,
     description,
     alternates: { canonical: url, languages: hreflangLanguages(url) },
-    // Nur Marken mit belegter Zusammenarbeit in Österreich indexieren
-    robots: { index: istBelegterPartner(name), follow: true },
+    // Nur Marken mit belegtem Einsatz (partner.js) indexieren; sonst gelten die Layout-Werte (M04)
+    ...(belegt ? {} : { robots: { index: false, follow: true } }),
     openGraph: {
       type: "website",
       locale: "de_AT",
@@ -166,7 +171,7 @@ export async function generateMetadata({ params }) {
         url: `${BASE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
-        alt: `${name} Stromspeicher`
+        alt: `${name}${speicher?.serie ? ` ${speicher.serie}` : ""} Stromspeicher`
       }],
     },
   };

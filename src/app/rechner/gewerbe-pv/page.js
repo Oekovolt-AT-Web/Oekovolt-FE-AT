@@ -15,9 +15,9 @@ const PFAD = "/rechner/gewerbe-pv";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "Gewerbe-PV-Rechner Österreich: Hallendach | Ökovolt",
+  title: "PV-Rechner für Unternehmen: Ertrag & Amortisation | Ökovolt",
   description:
-    "Gewerbe-PV-Rechner für Österreich: Dachfläche, Standort, Schichtbetrieb – Eigenverbrauch, Amortisation, IRR, EAG-Zuschuss und IFB stündlich simuliert. Kostenlos.",
+    "Gewerbe-PV-Rechner für Österreich: Dachfläche, Standort, Schichtbetrieb – Eigenverbrauch, Amortisation, IRR, EAG-Zuschuss und IFB stündlich simuliert.",
   keywords: ["Gewerbe PV Rechner", "Photovoltaik Hallendach Rechner", "PV Wirtschaftlichkeit Gewerbe Österreich", "PV Amortisation Betrieb", "Investitionsfreibetrag Photovoltaik Rechner", "EAG Investitionszuschuss Rechner"],
 });
 
@@ -57,8 +57,8 @@ export default function Page() {
       toolId="gewerbe-pv"
       breadcrumb="Gewerbe-PV-Rechner"
       eyebrow="Gewerbe-PV-Rechner"
-      title={<>Was bringt <span className="ov-text-gradient-light">Ihr Hallendach?</span></>}
-      lead="Dachfläche, Standort und Schichtbetrieb eingeben – Eigenverbrauch, Amortisation, Rendite und Förderung für Ihren Betrieb in Österreich, stündlich über ein Jahr simuliert."
+      title={<>Gewerbe-PV-Rechner: <span className="ov-text-gradient-light">Größe, Ertrag, Amortisation</span></>}
+      lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Was bringt Ihr Hallendach?</span><span className="mt-3 block">Dachfläche, Standort und Schichtbetrieb eingeben – Eigenverbrauch, Amortisation, Rendite und Förderung für Ihren Betrieb in Österreich, stündlich über ein Jahr simuliert.</span></>}
       chips={["PVGIS-Ertrag für 37 Orte", "EAG-Zuschuss & IFB", "Kauf oder Leasing", "Tagesprofil Sommer/Winter"]}
       app={{
         name: "Ökovolt Gewerbe-PV-Rechner",
@@ -91,7 +91,7 @@ export default function Page() {
           <div className="ov-prose mt-8 max-w-2xl">
             <p>
               Ein Betrieb mit zwei Schichten nutzt Solarstrom über den ganzen Tag, ein reiner Bürobetrieb nur werktags – und am Wochenende läuft die Anlage in den Überschuss. Deshalb überdimensionierte Anlagen nicht vorschnell verwerfen: Mit
-              {" "}<Link href="/ratgeber/reststromvermarktung">Reststromvermarktung</Link>, einer <Link href="/rechner/energiegemeinschaft">Energiegemeinschaft</Link> oder einem Speicher lässt sich der Überschuss verwerten.
+              {" "}<Link href="/service/direktvermarktung">Direktvermarktung</Link>, einer <Link href="/rechner/energiegemeinschaft">Energiegemeinschaft</Link> oder einem Speicher lässt sich der Überschuss verwerten.
             </p>
             <p>
               Die Finanzierungswege von Kauf über Leasing bis Contracting vergleicht unsere Seite <Link href="/service/finanzierung">Finanzierung</Link>; die Steuerseite erklärt den <Link href="/forderungen/steuerlich">Investitionsfreibetrag</Link>. Wie wir Hallendächer planen, zeigt <Link href="/gewerbe">Photovoltaik für Gewerbe</Link>.

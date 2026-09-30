@@ -23,7 +23,7 @@ import Fliesstext from "@/components/Reusable/Fliesstext";
 import SolarrechnerTeaser from "@/components/Solarrechner/Teaser";
 import ProduktGalerie from "@/components/Produktdetail/ProduktGalerie";
 import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
-import { partnerFuer } from "@/components/Hersteller/partner";
+import { BELEGTE_PARTNER, DATENBLATT_ABRUF, istBelegterPartner, partnerFuer } from "@/components/Hersteller/partner";
 import { generateSlug } from "@/lib/slugify";
 import { BASE_URL, FIRMA } from "@/lib/site";
 
@@ -57,13 +57,11 @@ export const KONTEXTE = {
 };
 
 /**
- * Hersteller, mit denen die österreichische Gesellschaft eine belegte
- * Zusammenarbeit hat (Stand 09/2026). Detailseiten anderer Marken aus dem
- * Backoffice der deutschen Seite werden auf noindex gesetzt und in
- * Übersichten nicht verlinkt.
+ * Belegte Marken (Feld `belegt` in @/components/Hersteller/partner – einzige Quelle, M17).
+ * Detailseiten anderer Marken aus dem Backoffice der deutschen Seite werden auf noindex
+ * gesetzt und in Übersichten nicht verlinkt. Re-Export für bestehende Importe.
  */
-export const BELEGTE_PARTNER = ["Fronius", "Huawei", "Solis", "BYD", "Sigenergy", "meteocontrol"];
-export const istBelegterPartner = (titel = "") => BELEGTE_PARTNER.some((p) => String(titel).toLowerCase().includes(p.toLowerCase()));
+export { BELEGTE_PARTNER, istBelegterPartner };
 
 /** Aktive Produkte aus den festen Feldern first…fifth des Herstellers */
 export function produkteAus(hersteller) {
@@ -115,7 +113,15 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
         .filter((p) => p.slug !== slug)
         .map((p) => ({ title: p.title, main_description: p.main_description, bild: p.bild, alt_banner_image: p.alt_banner_image }));
   const email = mailAdresse(hersteller?.email);
+  // Speicherserie und Datenblatt-Kennwerte der belegten Marke (partner.js), z. B. Huawei LUNA2000
+  const speicher = kontext === "stromspeicher" ? partner?.speicher || null : null;
+  const serie = speicher?.serie || null;
+  const markenUrl = partner?.website || hersteller?.website_url || null;
+  const sameAs = [...new Set([...(partner?.sameAs || []), ...(hersteller?.website_url ? [hersteller.website_url] : [])])];
+  const wrSeite = partner?.kontexte?.includes("wechselrichter") ? `/produkte/wechselrichter/${partner.slug}` : null;
 
+  // Kein Product-Markup ohne Angebot (offers): Die Seite beschreibt unsere Leistung – Planung und
+  // Einbau – als Service rund um die Marke (M19).
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -123,40 +129,32 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
         "@type": "WebPage",
         "@id": `${seitenUrl}/#webpage`,
         url: seitenUrl,
-        name: `${titel} – ${k.label} & Komponenten`,
+        name: `${titel}${serie ? ` ${serie}` : ""} – ${k.label}`,
         description: kuerzen(beschreibung, 300),
         inLanguage: "de-AT",
         isPartOf: { "@id": `${BASE}/#website` },
         about: { "@id": `${seitenUrl}/#brand` },
-        ...(produkte.length ? { mainEntity: { "@id": `${seitenUrl}/#produkte` } } : {}),
+        mainEntity: { "@id": `${seitenUrl}/#service` },
       },
       {
         "@type": "Brand",
         "@id": `${seitenUrl}/#brand`,
         name: titel,
         ...(logo ? { logo: `${BASE}${logo}` } : {}),
-        ...(hersteller?.website_url ? { url: hersteller.website_url } : {}),
+        ...(markenUrl ? { url: markenUrl } : {}),
+        ...(sameAs.length ? { sameAs } : {}),
       },
-      ...(produkte.length
-        ? [
-            {
-              "@type": "ItemList",
-              "@id": `${seitenUrl}/#produkte`,
-              name: `Produkte von ${titel}`,
-              itemListElement: produkte.map((p, i) => ({
-                "@type": "ListItem",
-                position: i + 1,
-                item: {
-                  "@type": "Product",
-                  name: p.name,
-                  brand: { "@id": `${seitenUrl}/#brand` },
-                  ...(p.beschreibung ? { description: kuerzen(p.beschreibung, 400) } : {}),
-                  ...(p.bild ? { image: `${BASE}${p.bild}` } : {}),
-                },
-              })),
-            },
-          ]
-        : []),
+      {
+        "@type": "Service",
+        "@id": `${seitenUrl}/#service`,
+        name: `${k.label} von ${titel}${serie ? ` (${serie})` : ""}: Planung und Einbau`,
+        serviceType: `Planung und Installation von ${k.label === "Wärmepumpe" ? "Wärmepumpen" : "Stromspeichern"}`,
+        brand: { "@id": `${seitenUrl}/#brand` },
+        provider: { "@id": `${BASE}/#organization` },
+        areaServed: { "@type": "Country", name: "Österreich" },
+        url: seitenUrl,
+        ...(produkte.length ? { description: `Produktlinien: ${produkte.map((p) => p.name).join(", ")}` } : {}),
+      },
     ],
   };
 
@@ -164,12 +162,12 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
     ["Hersteller", hersteller?.company_name || titel],
     hersteller?.location && ["Sitz / Region", hersteller.location],
     ["Produktbereich", partner?.rolle || k.label],
-    ...(partner?.fakten || []),
+    ...(speicher?.kennwerte || partner?.fakten || []),
     produkte.length > 0 && ["Produktlinien", produkte.map((p) => p.name).join(", ")],
-    hersteller?.website_url && [
+    markenUrl && [
       "Website",
-      <a key="w" href={hersteller.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 break-all font-semibold text-ov-700 hover:text-ov-800">
-        {hersteller.website_url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
+      <a key="w" href={markenUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 break-all font-semibold text-ov-700 hover:text-ov-800">
+        {markenUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")}
         <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
       </a>,
     ],
@@ -185,10 +183,10 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
       <PageHero
         variant={apiBanner ? "split" : "immersive"}
         breadcrumbs={[{ name: "Produkte" }, { name: k.label, href: k.pfad }, { name: titel }]}
-        eyebrow={`Hersteller · ${k.label}`}
+        eyebrow={serie ? `${titel} · ${k.label}` : `Hersteller · ${k.label}`}
         title={
           <>
-            {titel}-Produkte, <span className={apiBanner ? "ov-text-gradient" : "ov-text-gradient-light"}>fachgerecht eingebaut</span>
+            {serie ? `${titel} ${serie}` : `${titel}-Produkte`}, <span className={apiBanner ? "ov-text-gradient" : "ov-text-gradient-light"}>fachgerecht eingebaut</span>
           </>
         }
         lead={beschreibung}
@@ -242,7 +240,7 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
           <div>
             <SectionHeading eyebrow="Über den Hersteller" title={`${titel} im Überblick`} />
             <Reveal delay={80}>
-              <Fliesstext text={ueberText || (partner ? `${titel} gehört zu den Herstellern, mit denen wir in Österreich zusammenarbeiten. Welche Produktlinie und Größe passt, entscheiden wir nach Lastgang, Wechselrichter und Aufstellort – nicht nach dem Datenblatt allein.` : beschreibung)} className="mt-6 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
+              <Fliesstext text={ueberText || (speicher ? `${speicher.beschreibung} Welche Kapazität und welcher Wechselrichter passen, entscheiden wir nach Lastgang, Anlagengröße und Aufstellort – nicht nach dem Datenblatt allein.` : partner ? `${titel} gehört zu den Herstellern, mit denen wir in Österreich zusammenarbeiten. Welche Produktlinie und Größe passt, entscheiden wir nach Lastgang, Wechselrichter und Aufstellort – nicht nach dem Datenblatt allein.` : beschreibung)} className="mt-6 space-y-4 text-[16.5px] leading-relaxed text-ink-600" />
               {partner && (
                 <ul className="mt-8 grid gap-3 sm:grid-cols-2">
                   {(k.einsatz || []).map((punkt) => (
@@ -268,6 +266,12 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
                     </a>
                   )}
                 </div>
+              )}
+              {wrSeite && (
+                <Link href={wrSeite} className="group mt-8 inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                  {titel}-Wechselrichter im Detail
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
               )}
               {(email || hersteller?.phone_number) && (
                 <p className="mt-3 text-[13px] text-ink-500">Kontaktdaten des Herstellers. Für Angebot, Planung und Einbau sind wir Ihr Ansprechpartner.</p>
@@ -297,6 +301,15 @@ export default function HerstellerDetail({ kontext = "stromspeicher", slug, item
                   ))}
                 </tbody>
               </table>
+              {speicher?.datenblatt && (
+                <p className="border-t border-ink-100 px-6 py-4 text-[12.5px] leading-relaxed text-ink-500">
+                  Kennwerte laut{" "}
+                  <a href={speicher.datenblatt.url} target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    {speicher.datenblatt.titel}
+                  </a>
+                  , {speicher.datenblatt.version}, abgerufen am {DATENBLATT_ABRUF}. Welche Größe passt, legen wir nach Lastgang und Wechselrichter fest.
+                </p>
+              )}
               <div className="border-t border-ink-100 bg-sand-50 p-5">
                 <Link href="/angebot" className="group flex min-h-12 items-center justify-between gap-3 rounded-2xl bg-ov-600 px-5 text-[15px] font-semibold text-white transition-colors hover:bg-ov-700">
                   Angebot mit {titel} anfragen

@@ -220,7 +220,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: `Die Sechs-Stunden-Regel ist praktisch relevant: 2025 gab es in Österreich ${EREIGNISSE_6H[2025]} Blöcke mit mindestens sechs negativen Stunden in Folge, 2024 waren es ${EREIGNISSE_6H[2024]}, 2026 bisher ${EREIGNISSE_6H[2026]}. Die OeMAG-Untergrenze hat dagegen kleineren Anlagen in den Sommermonaten 2025 und 2026 einen stabilen Wert gesichert – Details im Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis). Einen Überblick über alle Wege, Überschuss zu verkaufen, bietet [Reststromvermarktung](/ratgeber/reststromvermarktung).`,
+          text: `Die Sechs-Stunden-Regel ist praktisch relevant: 2025 gab es in Österreich ${EREIGNISSE_6H[2025]} Blöcke mit mindestens sechs negativen Stunden in Folge, 2024 waren es ${EREIGNISSE_6H[2024]}, 2026 bisher ${EREIGNISSE_6H[2026]}. Die OeMAG-Untergrenze hat dagegen kleineren Anlagen in den Sommermonaten 2025 und 2026 einen stabilen Wert gesichert – Details im Ratgeber [OeMAG-Marktpreis](/ratgeber/oemag-marktpreis). Einen Überblick über alle Wege, Überschuss zu verkaufen, bietet [Einspeisung für Betriebe](/einspeisung-gewerbe).`,
         },
         {
           typ: "kasten",

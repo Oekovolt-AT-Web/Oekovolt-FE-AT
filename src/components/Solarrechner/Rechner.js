@@ -453,7 +453,7 @@ export default function Solarrechner({ className = "", start = STANDARD }) {
                 <span>
                   Nur {pctTxt(r.eigenverbrauchsquote)} des Solarstroms nutzt Ihr Betrieb selbst; der Rest bringt rund {zahl(r.satzCt, 1)} ct/kWh. Prüfen Sie eine kleinere
                   Anlage, einen Speicher oder die{" "}
-                  <Link href="/ratgeber/reststromvermarktung" className="font-semibold underline decoration-ink-400 underline-offset-2">
+                  <Link href="/einspeisung-gewerbe" className="font-semibold underline decoration-ink-400 underline-offset-2">
                     Vermarktung des Überschusses
                   </Link>
                   .

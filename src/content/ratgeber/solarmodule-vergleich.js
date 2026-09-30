@@ -3,6 +3,9 @@
 // Mechanik/Hagel: IEC 61215-2 (MQT 16/17), IEC 62938; HW-Klassen: Elementarschutzregister Hagel (VKF/EPZ).
 // Förderzuschlag EU-Wertschöpfung: EAG-IZ-VO Strom § 6 Abs. 6/8 (Fassung 2026).
 // Temperaturkoeffizienten, Bifazialität, Garantien: typische Datenblattwerte (Marktübersicht), keine Herstellerzusagen.
+// Hersteller-Vergleich (P4/M20, 30.09.2026): neutrale Datenblattwerte, alphabetisch, ohne Verbau- oder
+// Partner-Aussage; jede Zeile mit Herstellerdatenblatt, Version und Abrufdatum. Vor Veröffentlichung
+// rechtlich prüfen lassen (E12).
 
 const artikel = {
   slug: "solarmodule-vergleich",
@@ -24,7 +27,7 @@ const artikel = {
     "Solarmodul Hagelwiderstand",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Technik & Planung",
   bild: "/Images/AT/wissen/pv-modul-pruefung.jpg",
   bildAlt: "Techniker prüft ein monokristallines Solarmodul auf einem Dach",
@@ -213,6 +216,37 @@ const artikel = {
       ],
     },
     {
+      id: "hersteller-vergleich",
+      titel: "Module verbreiteter Hersteller im Datenblattvergleich",
+      tocLabel: "Hersteller-Vergleich",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Die Tabelle stellt Datenblattwerte von Modulen im Dachformat (108 Halbzellen, rund 1,76 bis 1,80 m Länge) verbreiteter Hersteller neutral gegenüber – alphabetisch und ohne Rangfolge.** Die Aufnahme bedeutet nicht, dass Ökovolt ein Modul verbaut oder empfiehlt, und sagt nichts über eine Geschäftsbeziehung zum Hersteller aus. Konkrete Modultypen nennen wir im Angebot mit Datenblatt.",
+        },
+        {
+          typ: "tabelle",
+          caption: "Solarmodule im Dachformat laut Herstellerdatenblatt",
+          kopf: ["Hersteller und Modul", "Zelltechnik laut Datenblatt", "Leistung", "Max. Wirkungsgrad", "Temperaturkoeffizient Pmax", "Aufbau", "Mechanische Last Front / Rück", "Garantie Produkt / Leistung", "Quelle (Version, Abruf)"],
+          zeilen: [
+            ["Aiko Neostar 3S+54 (AIKO-A-MCE54Db)", "n-Typ ABC (Rückkontakt)", "460–485 Wp", "24,3 %", "−0,26 %/°C", "Glas-Glas, 2,0 + 2,0 mm", "5.400 / 2.400 Pa (max. statische Last)", "k. A. / 30 Jahre", "[Datenblatt](https://aikosolar.com/wp-content/uploads/2024/10/Neostar-3S_Plus_54_AIKO-A-MCE54Db-460W-485W.pdf), DSDr_EN_2405_V1.5, abgerufen 30.09.2026"],
+            ["Astronergy CHSM54RNs(DG)(BLH)/F-BH", "n-Typ TOPCon", "440–460 Wp", "23,0 %", "−0,29 %/°C", "Glas-Glas, 1,6 + 1,6 mm, bifazial", "5.400 / 2.400 Pa (Prüflast)", "25 / 30 Jahre", "[Datenblatt](https://www.astronergy.com/wp-content/uploads/2024/03/440460ASTRO-N7s_CHSM54RNsDGBLHF-BH_1762%C3%971134%C3%9730_EN_20240601.pdf), Stand 202406, abgerufen 30.09.2026"],
+            ["DAS Solar DAS-DH108NA (445–450 W)", "n-Typ", "445–450 Wp", "23,0 %", "−0,30 %/°C", "Glas-Glas, 1,6 mm, bifazial", "5.400 / 2.400 Pa (statische Last)", "25 / 30 Jahre", "[Datenblatt](https://www.das-solar.com/uploads/Product%20Specifications%20%28New%29/DAS-DH108NA-EN-445-450%EF%BC%88Black%20Frame%EF%BC%89.pdf), Version 2024.05.22, abgerufen 30.09.2026"],
+            ["JinkoSolar Tiger Neo JKM420–440N-54HL4R-BDV", "n-Typ monokristallin", "420–440 Wp", "22,02 %", "−0,29 %/°C", "Glas-Glas, 1,6 + 1,6 mm, bifazial", "6.000 Pa Schnee / 4.000 Pa Wind (zertifiziert)", "15 / 30 Jahre", "[Datenblatt](https://jinkosolar.eu/wp-content/uploads/JKM420-440N-54HL4R-BDV-F1.2-EN-4.pdf), JKM420-440N-54HL4R-BDV-F1.2-EN, abgerufen 30.09.2026"],
+            ["LONGi Hi-MO X10 LR7-54HVH", "BC (Rückkontakt)", "475–490 Wp", "24,0 %", "−0,26 %/°C", "Einglas-Modul, 3,2 mm Frontglas", "5.400 / 2.400 Pa (max. statische Last)", "15 / 30 Jahre", "[Datenblatt](https://static.longi.com/Hi_MO_X10_Explorer_LR_7_54_HVH_475_490_M_30_30_and_15_Frame_e909d07793.pdf), 20241118 BGV02, abgerufen 30.09.2026"],
+            ["Risen RSM108-10-435-455NDGB", "n-Typ TOPCon", "435–455 Wp", "22,3 %", "−0,29 %/°C", "Glas-Glas", "k. A.", "25 / 30 Jahre", "[Datenblatt](https://en.risen.com/uploads/20240528/RSM108-10-435-455NDGB%20%20IEC1500V-30mm%202024H1-3-EN.pdf), REM108-NDGB-16BB-EN-H1-3-2024, abgerufen 30.09.2026"],
+            ["Trina Solar Vertex S+ TSM-NEG9RC.27", "n-Typ i-TOPCon", "415–440 Wp", "22,0 %", "−0,30 %/K", "Glas-Glas, 1,6 + 1,6 mm, bifazial", "5.400 / 4.000 Pa (Prüflast)", "25 / 30 Jahre", "[Datenblatt](https://static.trinasolar.com/sites/default/files/VertexS_NEG9RC.27_EN_2023_B_web.pdf), TSM_EN_2023_B, abgerufen 30.09.2026"],
+          ],
+          minBreite: 1100,
+          fussnote: "Herstellerangaben aus den verlinkten Datenblättern, abgerufen am 30.09.2026; Wirkungsgrad der stärksten Leistungsklasse unter Standard-Testbedingungen. Die Hersteller bezeichnen die mechanische Last unterschiedlich (Prüflast, maximale statische Last, zertifizierte Last) – vergleichbar sind nur Werte, die nach derselben Norm ermittelt wurden, siehe Abschnitt [Schnee & Wind](#mechanik). „k. A.“: im Datenblatt nicht angegeben. Formate und Leistungsklassen weichen voneinander ab. Änderungen durch die Hersteller vorbehalten; die Marken gehören ihren jeweiligen Inhabern.",
+        },
+        {
+          typ: "p",
+          text: "Die Werte bestätigen die Einordnung oben: Rückkontakt-Module (BC, ABC) erreichen im Dachformat 24 % und mehr, TOPCon-Module liegen bei 22 bis 23 %. Für die Auswahl zählen neben dem Wirkungsgrad die freigegebenen Montagearten und Klemmbereiche, die Hagelwiderstandsklasse und die Garantiebedingungen. Wie Sie das gesamte Angebot prüfen, zeigt die [Checkliste „PV-Firma prüfen“](/ratgeber/photovoltaik-angebot-vergleichen#pv-firma-pruefen).",
+        },
+      ],
+    },
+    {
       id: "auswahl",
       titel: "Auswahl-Checkliste für Gewerbe und alpine Lagen",
       tocLabel: "Checkliste",
@@ -270,7 +304,7 @@ const artikel = {
     { href: "/produkte/photovoltaikanlage", titel: "Photovoltaikanlage", text: "Module, Wechselrichter, Unterkonstruktion." },
     { href: "/ratgeber/hagel-photovoltaik", titel: "Hagel und Photovoltaik", text: "Hagelwiderstandsklassen und Versicherung." },
     { href: "/ratgeber/schneelast-photovoltaik", titel: "Schneelast und Photovoltaik", text: "Prüflast, Designlast, eHORA." },
-    { href: "/produkte/hersteller", titel: "Hersteller", text: "Marken, denen wir vertrauen." },
+    { href: "/produkte/hersteller", titel: "Hersteller bei Ökovolt", text: "Marken, die wir in Österreich verbauen." },
   ],
 
   quellen: [

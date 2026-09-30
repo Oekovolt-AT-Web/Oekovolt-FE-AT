@@ -5,14 +5,14 @@
 
 const artikel = {
   slug: "photovoltaik-steuern",
-  title: "Photovoltaik & Steuern in Österreich 2026",
-  seoTitle: "Photovoltaik & Steuern Österreich 2026 | Ökovolt",
+  title: "Photovoltaik und Steuern nach Rechtsform: GmbH, Landwirtschaft, Privat",
+  seoTitle: "PV-Steuern nach Rechtsform: GmbH, Landwirt, Privat | Ökovolt",
   kurzTitel: "Photovoltaik & Steuern",
   description:
-    "Photovoltaik & Steuern in Österreich 2026: AfA, 22 % Öko-IFB, Umsatzsteuer, Elektrizitätsabgabe – für Unternehmen, Landwirtschaft und Private mit Beispielen.",
+    "Photovoltaik und Steuern nach Rechtsform: GmbH und Einzelunternehmen, Land- und Forstwirtschaft, Privatpersonen – AfA, IFB, Umsatzsteuer, mit Beispielen 2026.",
   excerpt:
     "Wie eine PV-Anlage 2026 in Österreich besteuert wird – getrennt nach GmbH und Einzelunternehmen, land- und forstwirtschaftlichen Betrieben und Privatpersonen, mit Tabellen und Rechenbeispielen.",
-  hauptKeyword: "photovoltaik steuern österreich",
+  hauptKeyword: "photovoltaik steuern rechtsform",
   keywords: [
     "Photovoltaik Steuern Österreich",
     "PV-Anlage Abschreibung 20 Jahre",
@@ -24,7 +24,7 @@ const artikel = {
     "Umsatzsteuer PV-Anlage 2026",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Förderung, Steuern & Recht",
   bild: "/Images/Referenzen/Projekte-3.jpg",
   bildAlt: "Photovoltaik-Modulfeld frontal aufgenommen",
@@ -35,6 +35,7 @@ const artikel = {
     "**Der Eigenverbrauch von Solarstrom ist von der Elektrizitätsabgabe befreit – ohne Mengengrenze.** Bei 60.000 kWh Eigenverbrauch entfallen 2026 rund 490 € Abgabe (Satz 0,82 ct/kWh), ab 2027 beim Regelsatz 1,5 ct rund 900 € pro Jahr.",
     "**Land- und Forstwirte:** Wird mehr als die Hälfte des Stroms im eigenen Betrieb verbraucht, gehört die Überschusseinspeisung als Nebenbetrieb zur Landwirtschaft (Umsatzsteuer-Pauschalsatz 13 %). Sonst entsteht ein eigener Gewerbebetrieb; Volleinspeisung ist immer gewerblich.",
     "**Privatpersonen:** Einkünfte aus der Einspeisung von bis zu 12.500 kWh pro Jahr sind steuerfrei, wenn die Anlage höchstens 35 kWp und 25 kW Anschlussleistung hat. Der 0-%-Umsatzsteuersatz für Module ist ausgelaufen – 2026 gelten 20 %.",
+    "Die steuerlichen Vorteile für Betriebe kompakt – IFB, AfA, Gewinnfreibetrag, Elektrizitätsabgabe – stehen auf [Photovoltaik und Steuer](/forderungen/steuerlich); dieser Ratgeber geht die Rechtsformen einzeln durch.",
   ],
 
   abschnitte: [
@@ -129,7 +130,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Verkauft der Betrieb Überschussstrom an einen Energieversorger oder Stromhändler, geht die Steuerschuld auf den Käufer über (Reverse Charge nach der Umsatzsteuer-Betrugsbekämpfungsverordnung, UStBBKV). Der Käufer rechnet per Gutschrift netto ab und führt die Umsatzsteuer selbst ab; der Anlagenbetreiber haftet aber für deren Abfuhr. Voraussetzung ist, dass der Käufer den Strom überwiegend weiterliefert. Liefern Sie an Endkunden, etwa an Mieter im selben Gebäude, stellen Sie selbst 20 % Umsatzsteuer in Rechnung. Wie Sie den Überschuss am besten verkaufen, zeigen die Ratgeber [Einspeisetarif Österreich 2026](/ratgeber/einspeiseverguetung-2026) und [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+          text: "Verkauft der Betrieb Überschussstrom an einen Energieversorger oder Stromhändler, geht die Steuerschuld auf den Käufer über (Reverse Charge nach der Umsatzsteuer-Betrugsbekämpfungsverordnung, UStBBKV). Der Käufer rechnet per Gutschrift netto ab und führt die Umsatzsteuer selbst ab; der Anlagenbetreiber haftet aber für deren Abfuhr. Voraussetzung ist, dass der Käufer den Strom überwiegend weiterliefert. Liefern Sie an Endkunden, etwa an Mieter im selben Gebäude, stellen Sie selbst 20 % Umsatzsteuer in Rechnung. Wie Sie den Überschuss am besten verkaufen, zeigen die Ratgeber [Einspeisetarif Österreich 2026](/ratgeber/einspeiseverguetung-2026) und [Reststromvermarktung](/service/direktvermarktung).",
         },
         {
           typ: "kasten",

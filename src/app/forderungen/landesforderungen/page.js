@@ -33,7 +33,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["Photovoltaik Förderung Bundesland", "Landesförderung Photovoltaik 2026", "PV Förderung Österreich", "Stromspeicher Förderung Bundesland", "PV Förderung Unternehmen Österreich", "Förderung Energiegemeinschaft"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     url: PAGE_URL,

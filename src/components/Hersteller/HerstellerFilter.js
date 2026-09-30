@@ -9,7 +9,8 @@ import { herstellerId } from "./ids";
 /**
  * Filterbare Herstellerübersicht.
  * Alle Karten werden serverseitig gerendert (SEO); der Filter blendet nur aus.
- * props: kategorien [{ name, hersteller: [{ title, main_description, bild?, banner_image?, logo_image?, tag?, fakten? }] }]
+ * props: kategorien [{ name, hersteller: [{ title, slug, main_description, kontexte?, bild?, banner_image?, logo_image?, tag?, fakten? }] }]
+ *   kontexte – „wechselrichter“ / „stromspeicher“: Link auf die Detailseite der (belegten) Marke
  *   bild   – lokaler Bildpfad (hat Vorrang vor banner_image aus dem Backoffice)
  *   tag    – kurze Hervorhebung, z. B. „Hersteller aus Österreich“
  *   fakten – [["Sitz", "Pettenbach, OÖ"], …] für eine kompakte Kerndatenliste
@@ -55,11 +56,21 @@ function Karte({ h, kategorie, index }) {
             ))}
           </dl>
         )}
-        {h.kontexte?.includes("stromspeicher") && (
-          <Link href={`/produkte/stromspeicher/${h.slug}`} className="group/l mt-4 inline-flex min-h-11 items-center gap-2 self-start text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
-            {h.title}-Speicher im Detail
-            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/l:translate-x-1" />
-          </Link>
+        {(h.kontexte?.includes("wechselrichter") || h.kontexte?.includes("stromspeicher")) && (
+          <div className="mt-4 flex flex-col items-start">
+            {h.kontexte.includes("wechselrichter") && (
+              <Link href={`/produkte/wechselrichter/${h.slug}`} className="group/l inline-flex min-h-11 items-center gap-2 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+                {h.title}-Wechselrichter im Detail
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/l:translate-x-1" />
+              </Link>
+            )}
+            {h.kontexte.includes("stromspeicher") && (
+              <Link href={`/produkte/stromspeicher/${h.slug}`} className="group/l inline-flex min-h-11 items-center gap-2 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+                {h.title}-Speicher im Detail
+                <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover/l:translate-x-1" />
+              </Link>
+            )}
+          </div>
         )}
         {lang && (
           <button

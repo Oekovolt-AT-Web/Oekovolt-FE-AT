@@ -22,14 +22,14 @@ const SPAR_ABG_B = (UEBERSCHUSS * ELABG) / 100;
 
 const artikel = {
   slug: "energiegemeinschaft-gewerbe",
-  title: "Energiegemeinschaft für Unternehmen: Teilnahme, Abrechnung, Steuern",
-  seoTitle: "Energiegemeinschaft für Unternehmen | Ökovolt",
+  title: "Energiegemeinschaft im Betrieb: Abrechnung, Steuern und Verträge",
+  seoTitle: "EEG im Betrieb: Abrechnung, Steuern, Verträge | Ökovolt",
   kurzTitel: "Energiegemeinschaft Gewerbe",
   description:
-    "Energiegemeinschaft für Unternehmen: wer in EEG und BEG darf, was PV-Überschuss bringt, wie Abrechnung, Lieferantenpflichten und Steuern ab 2026 laufen.",
+    "Energiegemeinschaft im Betrieb: Abrechnung, Umsatzsteuer und Reverse Charge, Lieferantenpflichten über 100 kW, Vertragsinhalte und Checkliste für Unternehmen.",
   excerpt:
     "Betriebe mit PV-Überschuss können ihn in einer Energiegemeinschaft an Nachbarn, Mitarbeiter oder andere Unternehmen verkaufen. Wer teilnehmen darf, was sich rechnet und welche Pflichten das ElWG seit Oktober 2026 bringt.",
-  hauptKeyword: "energiegemeinschaft unternehmen",
+  hauptKeyword: "energiegemeinschaft abrechnung steuern betrieb",
   keywords: [
     "Energiegemeinschaft Unternehmen",
     "EEG Gewerbe Teilnahme",
@@ -40,7 +40,7 @@ const artikel = {
     "PV-Überschuss Energiegemeinschaft verkaufen",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Netz, Energiegemeinschaften & Markt",
   bild: "/Images/Dienstleistungen/Photovoltaik/314505-BAD.jpg",
   bildAlt: "Luftaufnahme eines Gewerbegebiets mit Photovoltaikanlagen auf mehreren Hallendächern",
@@ -51,6 +51,7 @@ const artikel = {
     `Ein Betrieb mit PV-Überschuss verkauft Strom in der Gemeinschaft typischerweise über dem Marktpreis (OeMAG August 2026: **${ct(MARKTPREIS)}/kWh**); der Abnehmer spart Energiepreis, Netzentgelt und – nur in der EEG – Elektrizitätsabgabe und Erneuerbaren-Förderbeitrag.`,
     "Bringt ein Unternehmen Anlagen mit **über 100 kW** Engpassleistung ein, muss es seit 1. Oktober 2026 **Lieferantenpflichten** erfüllen: Allgemeine Lieferbedingungen, Informationsblatt, normgerechte Rechnungen – oder einen Organisator damit beauftragen.",
     "Steuerlich ist die Stromlieferung an die Gemeinschaft eine unternehmerische Leistung; bei Lieferungen an eine Gemeinschaft, die überwiegend weiterliefert, kann die **Reverse-Charge-Regel** greifen.",
+    "Welche Modelle für Betriebe und Gemeinden passen und wie Ökovolt sie umsetzt, steht auf [Energiegemeinschaft für Betriebe und Gemeinden](/energiegemeinschaften/betriebe-gemeinden); dieser Ratgeber vertieft Abrechnung, Steuern und Verträge.",
   ],
 
   abschnitte: [
@@ -132,7 +133,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Die Zahlen zeigen die Größenordnung, nicht das Ergebnis Ihres Projekts. Entscheidend ist, wie viel Überschuss tatsächlich zeitgleich abgenommen wird – bei Betrieben mit ähnlichen Arbeitszeiten oft weniger als gedacht, bei der Kombination Gewerbe plus Haushalte oder Gewerbe plus Kühlhaus oft mehr. Ab 2027 kommt der Leistungspreis hinzu, der bei lokalen und regionalen Modellen nicht saldiert wird. Wie Sie den Überschuss sonst verwerten, zeigen [Reststromvermarktung](/ratgeber/reststromvermarktung) und [PPA in Österreich](/ratgeber/ppa-oesterreich).",
+          text: "Die Zahlen zeigen die Größenordnung, nicht das Ergebnis Ihres Projekts. Entscheidend ist, wie viel Überschuss tatsächlich zeitgleich abgenommen wird – bei Betrieben mit ähnlichen Arbeitszeiten oft weniger als gedacht, bei der Kombination Gewerbe plus Haushalte oder Gewerbe plus Kühlhaus oft mehr. Ab 2027 kommt der Leistungspreis hinzu, der bei lokalen und regionalen Modellen nicht saldiert wird. Wie Sie den Überschuss sonst verwerten, zeigen [Reststromvermarktung](/service/direktvermarktung) und [PPA in Österreich](/ratgeber/ppa-oesterreich).",
         },
       ],
     },
@@ -291,7 +292,7 @@ const artikel = {
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "Umsetzung mit Ökovolt." },
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Modelle, Netzentgelte, Ablauf." },
     { href: "/gewerbe", titel: "Photovoltaik für Betriebe", text: "Anlage passend zum Lastgang." },
-    { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "Überschuss am Markt verkaufen." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft für Betriebe & Gemeinden", text: "Modelle, Rollen und Umsetzung mit Ökovolt." },
   ],
 
   quellen: [

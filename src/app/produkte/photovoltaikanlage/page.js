@@ -66,16 +66,15 @@ import { ANNAHMEN, PREISQUELLEN, preisProKwpNetto } from "@/data/solarrechner";
 const PFAD = "/produkte/photovoltaikanlage";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 
-const TITLE = "Photovoltaikanlage für Gewerbe & Industrie | Ökovolt";
+const TITLE = "Gewerbe-PV-Komponenten: Module & Wechselrichter | Ökovolt";
 const DESCRIPTION =
-  "PV-Anlagen für Gewerbe, Industrie und Landwirtschaft in Österreich: Module, Unterkonstruktion, Wechselrichter, Parkregler und Netzanschluss nach TOR.";
+  "Module, Unterkonstruktion, Wechselrichter und Parkregler, die wir in Gewerbe-PV-Anlagen in Österreich verbauen – ausgewählt nach Dach, Statik und TOR Erzeuger.";
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
   keywords: ["Photovoltaikanlage Gewerbe", "PV-Anlage Industrie", "Photovoltaik Österreich", "Hallendach Photovoltaik", "Freiflächenanlage", "Glas-Glas-Module"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",
@@ -336,10 +335,10 @@ export default function PhotovoltaikanlagePage() {
         eyebrow="Photovoltaikanlage · Gewerbe & Industrie"
         title={
           <>
-            Photovoltaikanlagen für <span className="ov-text-gradient-light">Betriebe in ganz Österreich</span>
+            Komponenten für Ihre Gewerbe-PV: <span className="ov-text-gradient-light">Module, Unterkonstruktion, Wechselrichter</span>
           </>
         }
-        lead="Eine Photovoltaikanlage für Gewerbe und Industrie ist ein Kraftwerk am eigenen Standort: geplant nach Ihrem Lastgang, statisch nachgewiesen für österreichische Schnee- und Windlasten und nach TOR Stromerzeugungsanlagen an das Netz angeschlossen. Wir liefern Planung, Errichtung und Netzanschluss aus einer Hand."
+        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Photovoltaikanlagen für Betriebe in ganz Österreich</span><span className="mt-3 block">Eine Photovoltaikanlage für Gewerbe und Industrie ist ein Kraftwerk am eigenen Standort: geplant nach Ihrem Lastgang, statisch nachgewiesen für österreichische Schnee- und Windlasten und nach TOR Stromerzeugungsanlagen an das Netz angeschlossen. Wir liefern Planung, Errichtung und Netzanschluss aus einer Hand.</span></>}
         image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Luftaufnahme: Monteur zwischen Modulreihen auf einem großen Flachdach" }}
         points={["Seit 2012 in Österreich", "Hallendach, Freifläche, Carport", "Eigener Parkregler (EZA-Regler)", "Alle neun Bundesländer"]}
         actions={[

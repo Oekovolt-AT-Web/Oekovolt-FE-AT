@@ -20,6 +20,10 @@
 //  - Haushalte: Referenzhaushalt der E-Control mit 3.500 kWh/Jahr (Tarifkalkulator/Preismonitor).
 //  - Pacht: KEINE Marktangabe. Der Betrag ist Ihre Annahme (Regler); Pachthöhen variieren
 //    stark nach Region, Netznähe und Konzept – Landwirtschaftskammern beraten.
+//  - TOR-Typ: dieselbe Staffel wie der Gewerbe-PV-Rechner (torTyp() aus ./gewerbepv.js,
+//    inkl. 0,8-kW-Untergrenze) – eine Quelle statt zweier Staffeln (Befund tests-04).
+
+import { torTyp } from "./gewerbepv.js";
 
 export const PACHT = {
   konzepte: [
@@ -113,8 +117,8 @@ export function rechnePacht({ hektar, standort, konzept: konzeptId = "freiflaech
     reihe.push({ jahr: t, betrag, kumuliert: summe });
   }
 
-  const kw = kwp; // Maximalkapazität ≈ kWp (Näherung)
-  const tor = kw < 250 ? "A" : kw < 35000 ? "B" : kw < 50000 ? "C" : "D";
+  // Maximalkapazität ≈ kWp (Näherung); Staffel aus gewerbepv.torTyp()
+  const tor = torTyp(kwp);
   return {
     konzept: k,
     hektar: ha,
@@ -130,7 +134,8 @@ export function rechnePacht({ hektar, standort, konzept: konzeptId = "freiflaech
     pachtJeKwp: kwp > 0 ? (ha * pachtEurHa) / kwp : 0,
     laufzeit: jahre,
     netz: netzEinschaetzung(abstandKm, kwp),
-    tor,
+    tor: tor.typ, // String wie bisher („A“ … „D“, „–“ unter 0,8 kW) – PachtRechner zeigt „Typ {r.tor}“
+    torText: tor.text,
     // EAG-Investitionszuschuss auch über 1.000 kWp – dann anteilig bis 1.000 kWp (EAG-AS FAQ 2026 Fragen 19/20)
     eagInvestitionszuschuss: kwp > 0,
     eagAnteilig: kwp > 1000,

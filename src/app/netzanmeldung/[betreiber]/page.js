@@ -28,8 +28,13 @@ export function generateStaticParams() {
 }
 
 function titelFuer(b) {
-  const lang = `PV-Anlage bei ${b.kurz} anmelden: Ablauf & Unterlagen 2026 | Ökovolt`;
-  return lang.length <= 70 ? lang : `PV-Anlage bei ${b.kurz} anmelden 2026 | Ökovolt`;
+  // Höchstens 60 Zeichen (QA N1) – sonst kürzt Google den Titel in der Trefferliste
+  const varianten = [
+    `PV-Anlage bei ${b.kurz} anmelden: Ablauf & Unterlagen 2026 | Ökovolt`,
+    `PV bei ${b.kurz} anmelden: Ablauf & Unterlagen 2026 | Ökovolt`,
+    `PV-Anlage bei ${b.kurz} anmelden 2026 | Ökovolt`,
+  ];
+  return varianten.find((t) => t.length <= 60) || `PV bei ${b.kurz} anmelden 2026 | Ökovolt`;
 }
 
 function beschreibungFuer(b) {
@@ -49,7 +54,6 @@ export async function generateMetadata({ params }) {
     description,
     keywords: [`PV-Anlage anmelden ${b.kurz}`, `${b.kurz} Photovoltaik Anmeldung`, `${b.kurz} Einspeisezählpunkt`, `${b.kurz} Netzzugangsantrag`, `Balkonkraftwerk anmelden ${b.bundesland}`, "Einspeisezählpunkt EAG Fördercall"],
     alternates: { canonical: url },
-    robots: { index: true, follow: true },
     openGraph: {
       type: "article",
       url,

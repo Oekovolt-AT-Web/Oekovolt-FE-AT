@@ -225,7 +225,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Bei 500 kWp liegt die Anlage deutlich über der Grenze von 250 kW, ab der die TOR Stromerzeugungsanlagen Typ B gelten. Netzbetreiber verlangen dann in der Regel eine zentrale Regelung für Wirk- und Blindleistung – Ökovolt setzt dafür einen eigenen [Parkregler](/technik/parkregler) ein. Wie der Überschuss einer solchen Anlage vermarktet wird, zeigt der Ratgeber [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+          text: "Bei 500 kWp liegt die Anlage deutlich über der Grenze von 250 kW, ab der die TOR Stromerzeugungsanlagen Typ B gelten. Netzbetreiber verlangen dann in der Regel eine zentrale Regelung für Wirk- und Blindleistung – Ökovolt setzt dafür einen eigenen [Parkregler](/technik/parkregler) ein. Wie der Überschuss einer solchen Anlage vermarktet wird, zeigt die Übersicht [Einspeisung für Betriebe](/einspeisung-gewerbe).",
         },
       ],
     },

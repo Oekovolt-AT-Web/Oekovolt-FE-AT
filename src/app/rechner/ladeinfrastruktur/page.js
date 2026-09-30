@@ -16,7 +16,7 @@ export const metadata = rechnerMetadata({
   pfad: PFAD,
   title: "Ladeinfrastruktur-Planer für Betriebe | Ökovolt",
   description:
-    "Ladeinfrastruktur-Planer für Österreich: Ladepunkte AC/DC, Spitzenlast mit und ohne Lastmanagement, Netzanschluss, PV und Speicher – mit Richtkosten und Meldepflicht.",
+    "Ladeinfrastruktur-Planer Österreich: Ladepunkte AC/DC, Spitzenlast mit und ohne Lastmanagement, Netzanschluss, PV und Speicher – mit Richtkosten, Meldepflicht.",
   keywords: [
     "Ladeinfrastruktur planen",
     "Ladepunkte berechnen Firma",

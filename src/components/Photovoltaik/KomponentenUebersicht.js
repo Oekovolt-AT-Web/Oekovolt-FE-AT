@@ -23,8 +23,8 @@ const WISSEN = {
   wechselrichter: {
     gruppe: "Erzeugung",
     text: "Macht aus dem Gleichstrom der Module netzkonformen Wechselstrom. Bei größeren Anlagen regelt unser Parkregler alle Wechselrichter gemeinsam.",
-    href: "/produkte/hersteller",
-    link: "Hersteller ansehen",
+    href: "/produkte/wechselrichter",
+    link: "Wechselrichter ansehen",
     bild: "/Images/Dienstleistungen/Photovoltaik/welschelrichter.webp",
   },
   montagegestell: {
@@ -37,15 +37,15 @@ const WISSEN = {
   byd: {
     gruppe: "Speicher",
     text: "Modularer Batteriespeicher mit langlebigen LFP-Zellen, der sich in Stufen erweitern lässt, wenn der Verbrauch wächst.",
-    href: "/produkte/hersteller#hersteller-byd",
+    href: "/produkte/stromspeicher/byd",
     link: "BYD im Detail",
     bild: "/Images/Dienstleistungen/Photovoltaik/BYD.png",
   },
   huaweiluna: {
     gruppe: "Speicher",
     text: "Modularer Speicher, der eng mit Huawei-Wechselrichtern zusammenarbeitet – vom Wohnhaus bis zum Kleinbetrieb.",
-    href: "/produkte/hersteller#hersteller-huawei",
-    link: "LUNA im Detail",
+    href: "/produkte/stromspeicher/huawei",
+    link: "LUNA2000 im Detail",
     bild: "/Images/Dienstleistungen/Photovoltaik/HUAWEI-LUNA.jpg",
   },
 };

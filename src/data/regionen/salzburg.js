@@ -1,4 +1,6 @@
 // Recherche: 29.09.2026 – Quellen je Angabe (url). Netzbetreiber: E-Control-Tarifkalkulator, PLZ 5020.
+// SEO-Plan M26 (30.09.2026): Stadtseite – Titel und H1 nennen ausdrücklich die „Stadt Salzburg“;
+// das Bundesland steht unter /photovoltaik-bundesland/salzburg („Land Salzburg“).
 
 const salzburg = {
   name: "Salzburg",
@@ -9,7 +11,8 @@ const salzburg = {
   alpin: false,
   beschreibung:
     "Photovoltaik in der Stadt Salzburg: PV für Gewerbe in Schallmoos, Gnigl und Itzling, Hotels und Handel – Salzburg Netz, Altstadtschutz und PVGIS-Ertrag.",
-  titel: "Photovoltaik für Salzburg –",
+  seoTitel: "Photovoltaik Stadt Salzburg: PV für Gewerbe | Ökovolt",
+  titel: "Photovoltaik für die Stadt Salzburg –",
   akzent: "Gewerbegebiete, Hotels, Handel.",
   lead: "Die Landeshauptstadt liegt 30 km von unserem Firmensitz entfernt. Gewerbe in Schallmoos, Gnigl und Itzling, Hotellerie und Handel haben hier große Dächer – die Altstadt dagegen folgt eigenen Regeln.",
   einleitungTitel: "Welterbe-Altstadt und Gewerbegürtel",

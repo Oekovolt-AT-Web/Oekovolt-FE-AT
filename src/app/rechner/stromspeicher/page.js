@@ -11,7 +11,7 @@ const PFAD = "/rechner/stromspeicher";
 
 export const metadata = rechnerMetadata({
   pfad: PFAD,
-  title: "Stromspeicher-Rechner Österreich: Größe & Ersparnis | Ökovolt",
+  title: "Stromspeicher-Rechner Österreich: Größe, Ersparnis | Ökovolt",
   description:
     "Stromspeicher-Rechner für Österreich: Autarkie, Ersparnis und Amortisation stündlich simuliert – mit wirtschaftlich optimaler Speichergröße. Kostenlos rechnen.",
   keywords: ["Stromspeicher Rechner Österreich", "Speichergröße berechnen", "Batteriespeicher lohnt sich", "Autarkie berechnen", "PV Speicher Amortisation"],

@@ -259,7 +259,15 @@ def add_nachricht(**kwargs):
 
 def loesche_abgelaufene_hinweise():
 	"""Täglicher Scheduler-Job (hooks.py): löscht Fälle nach Ablauf der Frist
-	aus § 8 Abs. 11 HSchG (5 Jahre nach Abschluss), sofern nicht gesperrt."""
+	aus § 8 Abs. 11 HSchG (5 Jahre nach Abschluss), sofern nicht gesperrt.
+
+	delete_permanently=True: Ohne diesen Schalter legt Frappe (frappe/model/delete_doc.py, v15) eine vollständige
+	JSON-Kopie des Falls als „Deleted Document“ ab – die Meldung bliebe dann unbefristet im System.
+
+	OFFEN (§ 8 Abs. 12, § 9 Abs. 6 HSchG): Protokolldaten über Verarbeitungsvorgänge sind bis drei Jahre nach Ende
+	der Aufbewahrungspflicht aufzubewahren. Die Frappe-Versionshistorie enthält Meldungsinhalte und wird deshalb
+	mitgelöscht; ein inhaltsfreies Zugriffs-/Änderungsprotokoll (wer, wann, welcher Fall, welche Aktion), das die
+	Löschung überdauert, fehlt noch – vor HINWEIS_INTERN=1 einrichten (docs/datenschutz/VVT-Hinweisgebersystem.md, 6)."""
 	heute = now_datetime().date()
 	faellig = frappe.get_all(
 		"Hinweis",
@@ -267,7 +275,7 @@ def loesche_abgelaufene_hinweise():
 		pluck="name",
 	)
 	for name in faellig:
-		frappe.delete_doc("Hinweis", name, ignore_permissions=True, force=True)
+		frappe.delete_doc("Hinweis", name, ignore_permissions=True, force=True, delete_permanently=True)
 		# Versionshistorie mit Inhalten ebenfalls entfernen
 		frappe.db.delete("Version", {"ref_doctype": "Hinweis", "docname": name})
 	if faellig:

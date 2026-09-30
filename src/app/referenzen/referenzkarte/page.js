@@ -130,7 +130,6 @@ export const metadata = {
   description: META_DESCRIPTION,
   keywords: ["Photovoltaik Referenzkarte", "PV-Anlagen Österreich Karte", "Photovoltaik Referenzen Oberösterreich", "Ökovolt Referenzen", "Solarprojekte Salzburg"],
   alternates: { canonical: RK_PAGE_URL, languages: hreflangLanguages(PFAD) },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "website",
     locale: "de_AT",

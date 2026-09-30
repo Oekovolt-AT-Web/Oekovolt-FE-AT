@@ -16,8 +16,11 @@ import { actorId } from "@/lib/kanaele/activitypub";
 import { KATEGORIEN, BASE_URL, veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
 import { alleArtikel, artikelPfad, datumLang } from "@/lib/ratgeber";
 import { FIRMA, SCHWESTER } from "@/lib/site";
-import { KENNZAHLEN } from "@/data/kennzahlen";
+import { KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_STAND } from "@/data/kennzahlen";
 import PresseKontakt from "@/components/Presse/PresseKontakt";
+import { STAND as OEMAG_STAND } from "@/data/oemag";
+// Metadaten des Schneelast-Rasters (GeoSphere SNOWGRID-CL, eigene Auswertung) – hier nur Quelle und Stand
+import SCHNEELAST_RASTER from "../../../data/schneelast/sk50-at.json";
 
 export const revalidate = 300;
 
@@ -41,13 +44,55 @@ export const metadata = {
 };
 
 // Kurzprofil für Redaktionen – nur verifizierte Angaben (docs/AT-BRIEFING.md, src/lib/site.js)
-const BOILERPLATE = `Die ${FIRMA.name} mit Sitz in ${FIRMA.ort} (${FIRMA.bundesland}) plant, errichtet und betreut seit ${FIRMA.gegruendet} Photovoltaikanlagen in ganz Österreich – für Gewerbe und Industrie, Landwirtschaft, Gemeinden und Energieversorger. Das Elektrotechnik-Unternehmen entwickelt eigene Parkregler (EZA-Regler), Fernwartungs- und SCADA-Systeme. Gesellschafter sind Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %). Die deutsche Schwestergesellschaft ${SCHWESTER.name} (${SCHWESTER.ort}) ist seit 2010 am Markt.`;
+const BOILERPLATE = `Die ${FIRMA.name} mit Sitz in ${FIRMA.ort} (${FIRMA.bundesland}) plant, errichtet und betreut seit ${FIRMA.gegruendet} Photovoltaikanlagen in ganz Österreich – für Gewerbe und Industrie, Landwirtschaft, Gemeinden und Energieversorger. Das Elektrotechnik-Unternehmen entwickelt eigene Parkregler (EZA-Regler), Fernwartungs- und SCADA-Systeme. Gesellschafter sind Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %). Die deutsche Schwestergesellschaft ${SCHWESTER.name} (${SCHWESTER.ort}) ist seit 2010 am Markt.${FIRMA.verbaende.length ? ` Ökovolt ist ${FIRMA.verbaende.map((v) => `${v.status} im ${v.name}`).join(" und ")}.` : ""}`;
 
-// Zahlen für Redaktionen – Gesamtzahlen zentral aus src/data/kennzahlen.js (Angabe Ökovolt Österreich)
+// Zahlen für Redaktionen – Gesamtzahlen zentral aus src/data/kennzahlen.js (Angabe Ökovolt Österreich).
+// Die CO₂-Zahl erscheint dort erst mit festgelegtem Zeitraum (SEO-Plan M25). „TOP 3 der IPC-Errichter 2021“
+// laut docs/AT-BRIEFING.md (wie Startseite, src/data/hero.js).
 const FAKTEN = [
   ...KENNZAHLEN.map((k) => ({ wert: k.zahl, suffix: k.suffix, text: k.label })),
   { wert: "2012", text: "gegründet in Ostermiething, Oberösterreich" },
+  { wert: "TOP 3", text: "der IPC-Errichter Österreichs 2021" },
+].slice(0, 4);
+
+// Grafiken aus eigenen Datenauswertungen (public/presse/grafiken, erzeugt in Welle 4 / P6) – Vorschau und Download.
+// Quellenangabe und Nutzung wie auf den Datenseiten /schneelast und /einspeisung-gewerbe (CC BY 4.0);
+// die Lizenz ist dort bereits veröffentlicht – Bestätigung durch den Auftraggeber offen (P6, offener Punkt 3).
+// Stand: aus der jeweiligen Datenquelle, nicht von Hand. Breite/Höhe = PNG-Pixelmaße.
+const PRESSEGRAFIKEN = [
+  {
+    titel: "Karte: Schneelast-Richtwerte in Österreich",
+    text: "50-jährliche Richtwerte im 1-km-Raster, eigene Auswertung.",
+    datei: "/presse/grafiken/schneelast-karte-oesterreich",
+    breite: 2400,
+    hoehe: 1731,
+    seite: { href: "/schneelast", label: "Schneelast-Karte" },
+    quelle: "Ökovolt, Daten: GeoSphere Austria (SNOWGRID-CL v2.1, CC BY 4.0)",
+    stand: SCHNEELAST_RASTER?.stand,
+  },
+  {
+    titel: "Schneelast: Spanne und Median je Bundesland",
+    text: "Richtwerte der Bezirkshauptorte (Wien: Gemeindebezirke) je Bundesland.",
+    datei: "/presse/grafiken/schneelast-bundeslaender",
+    breite: 2100,
+    hoehe: 1146,
+    seite: { href: "/schneelast", label: "Schneelast-Karte" },
+    quelle: "Ökovolt, Daten: GeoSphere Austria (SNOWGRID-CL v2.1, CC BY 4.0)",
+    stand: SCHNEELAST_RASTER?.stand,
+  },
+  {
+    titel: "OeMAG-Marktpreis PV und Marktwert Solar im Verlauf",
+    text: "Monatswerte seit Jänner 2024, jeder mit Quelle belegt.",
+    datei: "/presse/grafiken/oemag-einspeise-verlauf",
+    breite: 2100,
+    hoehe: 1230,
+    seite: { href: "/einspeisung-gewerbe", label: "Einspeisung für Betriebe" },
+    quelle: "Ökovolt, Daten: OeMAG, E-Control",
+    stand: OEMAG_STAND.geprueftAm,
+  },
 ];
+
+const standLang = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString("de-AT", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Vienna" });
 
 // Themen, zu denen die Redaktion Hintergrund liefert – mit passendem Fachartikel
 const THEMEN = [
@@ -250,6 +295,9 @@ export default async function PressePage({ searchParams }) {
               </Reveal>
             ))}
           </dl>
+          <p className="mt-5 text-[13.5px] text-white/60">
+            {KENNZAHLEN_HINWEIS}, Stand {standLang(KENNZAHLEN_STAND)}. Nicht die Summe der online dokumentierten Referenzprojekte.
+          </p>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <Reveal className="rounded-[2rem] bg-white p-6 text-ink-900 md:p-9">
@@ -323,6 +371,41 @@ export default async function PressePage({ searchParams }) {
                   </div>
                 </div>
               </div>
+            </div>
+            <div id="grafiken" className="scroll-mt-24 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 sm:col-span-2">
+              <p className="font-display text-[17px] font-bold text-ink-900">Grafiken aus eigenen Daten</p>
+              <p className="mt-1 text-[14.5px] leading-relaxed text-ink-600">
+                Zur Weiterverwendung unter CC BY 4.0 mit der jeweils genannten Quellenangabe. Schneelast-Werte sind Richtwerte, keine Normwerte.
+              </p>
+              <ul className="mt-4 grid gap-4 sm:grid-cols-3">
+                {PRESSEGRAFIKEN.map((g) => (
+                  <li key={g.datei} className="flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-ink-200/60">
+                    <a href={`${g.datei}.png`} className="block border-b border-ink-100 bg-white" aria-label={`${g.titel} – Vorschau in voller Größe öffnen (PNG)`}>
+                      <Image src={`${g.datei}.png`} alt={g.titel} width={g.breite} height={g.hoehe} sizes="(min-width: 1024px) 220px, (min-width: 640px) 30vw, 90vw" className="h-auto w-full" />
+                    </a>
+                    <div className="flex flex-1 flex-col p-4">
+                      <p className="text-[14.5px] font-semibold leading-snug text-ink-900">{g.titel}</p>
+                      <p className="mt-1 text-[13px] leading-relaxed text-ink-600">{g.text}</p>
+                      <p className="mt-2 text-[12.5px] leading-relaxed text-ink-500">
+                        Quelle: „{g.quelle}“{g.stand ? ` · Stand ${standLang(g.stand)}` : ""} ·{" "}
+                        <Link href={g.seite.href} className="underline underline-offset-2 hover:text-ink-800">
+                          {g.seite.label}
+                        </Link>
+                      </p>
+                      <div className="mt-auto flex flex-wrap gap-2 pt-3">
+                        <a href={`${g.datei}.png`} download className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ink-900 px-3 text-[13px] font-semibold text-white hover:bg-ink-800">
+                          <Download aria-hidden="true" className="h-4 w-4" />
+                          PNG
+                        </a>
+                        <a href={`${g.datei}.svg`} download className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white px-3 text-[13px] font-semibold text-ink-800 ring-1 ring-ink-200 hover:ring-ink-300">
+                          <Download aria-hidden="true" className="h-4 w-4" />
+                          SVG
+                        </a>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 sm:col-span-2">
               <p className="flex items-center gap-2 font-display text-[17px] font-bold text-ink-900">

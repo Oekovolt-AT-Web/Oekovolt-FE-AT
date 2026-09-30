@@ -21,7 +21,6 @@ export function rechnerMetadata({ pfad, title, description, keywords = [] }) {
     description,
     keywords,
     alternates: { canonical: url },
-    robots: { index: true, follow: true },
     openGraph: {
       type: "website",
       locale: "de_AT",

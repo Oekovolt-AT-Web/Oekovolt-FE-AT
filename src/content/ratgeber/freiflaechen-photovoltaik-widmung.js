@@ -4,14 +4,14 @@
 
 const artikel = {
   slug: "freiflaechen-photovoltaik-widmung",
-  title: "Freiflächen-Photovoltaik: Widmung und Zonierung in allen Bundesländern",
-  seoTitle: "PV-Freifläche Widmung: alle Bundesländer | Ökovolt",
+  title: "Solarpark-Genehmigung in Österreich: Widmung, Ablauf und EABG ab 2027",
+  seoTitle: "Solarpark genehmigen: Ablauf & EABG 2027 | Ökovolt",
   kurzTitel: "Freiflächen-PV Widmung",
   description:
-    "Freiflächen-Photovoltaik in Österreich: Widmung, Zonen und Schwellenwerte aller neun Bundesländer, EABG-Beschleunigungsgebiete, EAG-Abschlag, Pacht und Netz.",
+    "Solarpark genehmigen in Österreich: wann eine Widmung nötig ist, Ablauf von der Fläche zur Genehmigung, EABG-Beschleunigungsgebiete ab 2027, Pacht und Netz.",
   excerpt:
     "Ob ein Solarpark gebaut werden darf, entscheidet in Österreich die Raumordnung des Landes: von 50 m² Modulfläche in Oberösterreich bis zu 116 PV-Zonen in Niederösterreich. Der Überblick mit Tabelle, Ablauf und Förderfolgen.",
-  hauptKeyword: "freiflächen photovoltaik widmung",
+  hauptKeyword: "solarpark genehmigung österreich",
   keywords: [
     "Freiflächen Photovoltaik Widmung",
     "PV Freifläche Raumordnung",
@@ -22,7 +22,7 @@ const artikel = {
     "Beschleunigungsgebiete Photovoltaik",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Förderung, Steuern & Recht",
   bild: "/Images/AT/ratgeber/freiflaechen-photovoltaik-widmung.jpg",
   bildAlt: "Aufgeständerte Photovoltaikanlage auf einer Wiese vor einem Wohnhaus im Vorarlberger Rheintal im Winter",
@@ -33,6 +33,7 @@ const artikel = {
     "Die Spannweite ist groß: In **Oberösterreich** braucht jede freistehende Anlage über **50 m² Modulfläche** eine Sonderausweisung, in **Niederösterreich** ab **50 kW**, und über **2 ha** nur in einer der **116 Zonen** des Sektoralen Raumordnungsprogramms. Die **Steiermark** lässt über 10 ha nur in **36 Vorrangzonen** zu, **Kärnten** begrenzt Widmungsflächen grundsätzlich auf **4 ha**.",
     "Das **Erneuerbaren-Ausbau-Beschleunigungsgesetz (EABG, BGBl. I Nr. 47/2026)** bringt Beschleunigungsgebiete mit verkürzter Grobprüfung ab 2027; die Länder weisen sie gerade aus – etwa Salzburg entlang von A1 und A10.",
     "**Förderung:** Auf landwirtschaftlich genutzten Flächen und im Grünland sinkt der EAG-Investitionszuschuss um **25 %** – außer bei Agri-PV mit mindestens 75 % landwirtschaftlicher Nutzung und auf vorbelasteten oder versiegelten Flächen.",
+    "Die Kriterien je Bundesland mit Quelle und Stand stehen im Überblick [Widmung für Freiflächen-PV](/freiflaechen-photovoltaik/widmung); dieser Ratgeber erklärt den Weg von der Fläche zur Genehmigung.",
   ],
 
   abschnitte: [
@@ -239,7 +240,7 @@ const artikel = {
     { href: "/freiflaechen-photovoltaik", titel: "Freiflächenanlagen", text: "Solarparks von 500 kWp bis in den MW-Bereich." },
     { href: "/agri-pv", titel: "Agri-PV", text: "Doppelte Ernte auf derselben Fläche." },
     { href: "/ratgeber/agri-pv-oesterreich", titel: "Agri-PV in Österreich", text: "Konzepte, Kulturen, Förderzuschlag." },
-    { href: "/forderungen/baurecht", titel: "Baurecht", text: "Bauordnungen der Bundesländer." },
+    { href: "/freiflaechen-photovoltaik/widmung", titel: "Widmung je Bundesland", text: "Kriterien, Schwellen und Zonen der neun Länder." },
   ],
 
   quellen: [

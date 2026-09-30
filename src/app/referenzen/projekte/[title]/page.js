@@ -24,10 +24,16 @@ import {
   ERTRAG_JE_KWP,
   HAUSHALT_KWH,
   fmtKwp,
+  brancheKurz,
   fmtZahl,
+  isoDatum,
   normalisiereProjekt,
+  ortKurz,
+  projektBeschreibung,
+  projektSeitenTitel,
   projektSlug,
 } from "@/components/Project/projektDaten";
+import { PROJEKTE_STAND } from "@/data/projekte";
 import { ladeProjekteRoh, ladeProjektRoh } from "@/components/Project/ladeProjekte";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import KundenPortraet from "@/components/Kundenbuehne/KundenPortraet";
@@ -121,6 +127,31 @@ export async function generateStaticParams() {
   return projekte.map((p) => ({ title: p.slug }));
 }
 
+/**
+ * Branche und Ort für Title, Description und H1 – nur belegte Werte: Projektort aus dem Backoffice,
+ * sonst Sitz/Werk des Unternehmens aus der Kundenbühne (src/data/kunden.js bzw. Backoffice-Kundenfelder).
+ */
+function seoKontext(p, kunde) {
+  return {
+    titel: p.titel,
+    leistungText: p.kwp != null ? p.leistungText : "",
+    branche: kunde?.branche || "",
+    ort: p.ort || kunde?.ort || "",
+    jahr: p.jahr,
+    modul: p.modul,
+  };
+}
+
+/**
+ * Feste Daten für das Schema (M15): kein new Date(). Veröffentlicht = Feld aus dem Backoffice
+ * (veroeffentlicht bzw. creation), sonst Stand der Übernahme in diese Website (PROJEKTE_STAND).
+ */
+function projektDaten(p) {
+  const veroeffentlicht = isoDatum(p.roh?.veroeffentlicht) || isoDatum(p.roh?.creation) || PROJEKTE_STAND;
+  const geaendert = isoDatum(p.modified) || isoDatum(p.roh?.modified) || veroeffentlicht;
+  return { veroeffentlicht, geaendert: geaendert < veroeffentlicht ? veroeffentlicht : geaendert };
+}
+
 /** Sachliche Kurzbeschreibung – nur aus den Projektfeldern zusammengesetzt */
 function kurzbeschreibung(p) {
   const teile = [];
@@ -155,9 +186,9 @@ export async function generateMetadata({ params }) {
       };
     }
 
-    const langerTitel = `${p.titel}${p.kwp != null ? ` – ${p.leistungText} PV` : ""} | Ökovolt`;
-    const seitenTitel = langerTitel.length <= 60 ? langerTitel : `${p.titel} | Ökovolt`;
-    const description = `${kurzbeschreibung(p)} Bilder, Kennzahlen und Projektdetails der Referenz.`.slice(0, 160);
+    const kontext = seoKontext(p, kundeFuerProjekt(p.roh, p.slug));
+    const seitenTitel = projektSeitenTitel(kontext);
+    const description = projektBeschreibung(kontext);
     const canonical = `${BASE_URL}/referenzen/projekte/${p.slug}`;
     const imgUrl = p.bilder[0] || `${BASE_URL}/og-image.jpg`;
 
@@ -165,7 +196,6 @@ export async function generateMetadata({ params }) {
       title: seitenTitel,
       description,
       alternates: { canonical },
-      robots: { index: true, follow: true },
       openGraph: {
         type: "article",
         locale: "de_AT",
@@ -297,6 +327,9 @@ export default async function ProjectDetailPage({ params }) {
   const kitFirma = kunde?.firma || p.titel;
   const kitZahlen = schaetzung({ kwp: p.kwp, ertragKwh: p.ertragApi });
   const kundeOrg = kundeSchema(kunde);
+  const seo = seoKontext(p, kunde);
+  const daten = projektDaten(p);
+  const h1Zusatz = [p.kwp != null && `${p.leistungText} Photovoltaik`, brancheKurz(seo.branche), ortKurz(seo.ort)].filter(Boolean).join(" · ");
 
   const galerie = p.bilder.map((src, i) => ({
     src,
@@ -314,7 +347,8 @@ export default async function ProjectDetailPage({ params }) {
     url: canonicalUrl,
     publisher: { "@id": `${BASE_URL}/#organization` },
     author: { "@id": `${BASE_URL}/#organization` },
-    dateModified: p.modified || new Date().toISOString(),
+    datePublished: daten.veroeffentlicht,
+    dateModified: daten.geaendert,
     ...(p.bilder.length > 0 && { image: p.bilder }),
     about: {
       "@type": "Thing",
@@ -395,7 +429,13 @@ export default async function ProjectDetailPage({ params }) {
           { name: p.titel },
         ]}
         eyebrow={["Referenzprojekt", p.jahr].filter(Boolean).join(" · ")}
-        title={p.titel}
+        title={
+          <>
+            {p.titel}
+            {h1Zusatz && " "}
+            {h1Zusatz && <span className="mt-3 block text-[0.5em] font-semibold leading-snug tracking-normal text-white/80">{h1Zusatz}</span>}
+          </>
+        }
         lead={kurzbeschreibung(p)}
         image={{
           src: p.bild || FALLBACK_BILD,

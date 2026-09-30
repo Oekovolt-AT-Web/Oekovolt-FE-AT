@@ -1,7 +1,7 @@
 # 03 – Schnittstellenbeschreibung
 
 Informationseinheit „Schnittstellenbeschreibung“ in Anlehnung an ISO/IEC/IEEE 15289 / 29148.
-Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 **Führendes Dokument für die Frappe-Methoden ist `docs/FRAPPE-AT-API-SPEZIFIKATION.md`** (Methoden #1–#14,
 Auth, Fehlerabbildung, Rollen, Abnahmetest). Dieses Kapitel dupliziert das nicht, sondern ergänzt:
@@ -52,6 +52,10 @@ Legende Auth: **öffentlich** = ohne Anmeldung aufrufbar · **Secret** = gemeins
 | `/schneelast/richtwert` | GET `?lat=&lon=` | lokales Raster; Seehöhe über Open Topo Data (EU-DEM) | Antwort `{ lage, seehoehe, richtwert, grund, hora }`; über 2.000 m kein Wert; Drosselung 30 je IP und 10 min; Adresssuche weiter über `/api/standort?q=` | `src/app/schneelast/richtwert/route.js:1-60` |
 | `/schneelast/karte.png` | GET | – | Karte als PNG, beim Build erzeugt | `src/app/schneelast/karte.png/route.js` |
 | `/beispiele/lastgang-beispiel.csv` | GET (statisch) | – | Beispiel-Lastgang (35.040 Zeilen, ca. 1,08 MB) für `/lastgang-analyse`; die Analyse selbst sendet keine Nutzerdaten | `public/beispiele/lastgang-beispiel.csv`, `src/components/Lastgang/LastgangAnalyse.js:42,109` |
+| `/produkte/wechselrichter`, `/produkte/wechselrichter/<slug>` | GET (Seiten) | `partner.js` | nur belegte Marken (fronius, huawei, solis), andere Slugs 404 | `src/app/produkte/wechselrichter/**`, `src/components/Hersteller/partner.js` |
+| `/llms.txt`, `/llms-full.txt` | GET | `src/lib/llms.js` | stündlich neu erzeugt (vorher nur beim Build) | `src/app/llms.txt/route.js`, `src/app/llms-full.txt/route.js` |
+| `/sitemap.xml` | GET | `src/app/sitemap.js` | inkl. Bild-Sitemap der Referenzfotos (`<image:loc>`) | `src/app/sitemap.js` |
+| IndexNow (ausgehend) | POST `https://api.indexnow.org/indexnow` | Bing, Yandex, Seznam, Naver, Yep | Skript `node scripts/indexnow.mjs [--trocken|--nur-zustand|--alle|--entfernte]`; Schlüsselprüfung vorab; Presse: `veroeffentlichungenMelden()` im POST von `/api/kanaele/verteilen` (Trockenlauf ohne `INDEXNOW_AKTIV=1`) | `scripts/indexnow.mjs:1-25`, `src/app/api/kanaele/verteilen/route.js:8,83` |
 | ~~`/api/optimize-video`~~ | – | – | **entfernt** in Welle 2 (war offener Proxy, S1) | Löschung laut `git status` |
 
 ### 2.3 Kanäle, Push, Fediverse

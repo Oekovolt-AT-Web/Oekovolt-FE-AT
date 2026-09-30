@@ -33,7 +33,6 @@ export const metadata = {
   description: artikel.description,
   keywords: artikel.keywords,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

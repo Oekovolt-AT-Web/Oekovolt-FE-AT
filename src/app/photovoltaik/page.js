@@ -67,13 +67,7 @@ export default function PhotovoltaikOesterreich() {
                 name: "Photovoltaik-Standorte von Ökovolt in Österreich",
                 itemListElement: regionen.map((r, i) => ({ "@type": "ListItem", position: i + 1, name: `Photovoltaik ${r.name}`, url: `${BASE_URL}/photovoltaik/${r.slug}` })),
               },
-              {
-                "@type": "BreadcrumbList",
-                itemListElement: [
-                  { "@type": "ListItem", position: 1, name: "Startseite", item: BASE_URL },
-                  { "@type": "ListItem", position: 2, name: HUB, item: `${BASE_URL}/photovoltaik` },
-                ],
-              },
+              // BreadcrumbList kommt aus der sichtbaren Brotkrumen-Navigation (src/components/ui/Breadcrumbs.js) – hier nicht doppelt (QA N3)
             ],
           }),
         }}

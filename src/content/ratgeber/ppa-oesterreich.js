@@ -266,7 +266,7 @@ const artikel = {
           cols: 2,
           items: [
             { titel: "Speicher glättet das Profil", text: "Ein Batteriespeicher verschiebt Mittagsstrom in die Abendstunden, in denen die Preise 2026 im Mittel deutlich höher lagen (11–15 Uhr: 62 €/MWh, 18–21 Uhr: 172 €/MWh; eigene Auswertung Energy-Charts). Das macht Profil- oder Baseload-nähere PPA möglich – mehr im Ratgeber [Großspeicher (BESS)](/ratgeber/grossspeicher-bess)." },
-            { titel: "Direktvermarktung als Brücke", text: "Bis ein PPA unterschrieben ist oder für die Mengen außerhalb des Vertrags vermarktet ein Direktvermarkter den Strom am Spotmarkt – siehe [Direktvermarktung](/service/direktvermarktung) und [Reststromvermarktung](/ratgeber/reststromvermarktung)." },
+            { titel: "Direktvermarktung als Brücke", text: "Bis ein PPA unterschrieben ist oder für die Mengen außerhalb des Vertrags vermarktet ein Direktvermarkter den Strom am Spotmarkt – siehe [Direktvermarktung](/service/direktvermarktung) und [Einspeisung für Betriebe](/einspeisung-gewerbe)." },
           ],
         },
         {
@@ -336,14 +336,14 @@ const artikel = {
     },
     {
       q: "Ab welcher Anlagengröße ist ein PPA sinnvoll?",
-      a: "PPA lohnen sich vor allem bei größeren Mengen, etwa Freiflächen, großen Dächern oder gebündelten Anlagen, weil Vertrag, Strukturierung und Absicherung Aufwand verursachen. Für kleinere Überschüsse sind OeMAG, Händlertarif oder Direktvermarktung meist einfacher – siehe [Reststromvermarktung](/ratgeber/reststromvermarktung).",
+      a: "PPA lohnen sich vor allem bei größeren Mengen, etwa Freiflächen, großen Dächern oder gebündelten Anlagen, weil Vertrag, Strukturierung und Absicherung Aufwand verursachen. Für kleinere Überschüsse sind OeMAG, Händlertarif oder Direktvermarktung meist einfacher – siehe [Einspeisung für Betriebe](/einspeisung-gewerbe).",
     },
   ],
 
   passend: [
     { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Planung und Bau von Solarparks." },
     { href: "/service/direktvermarktung", titel: "Direktvermarktung", text: "Strom am Markt vermarkten lassen." },
-    { href: "/ratgeber/reststromvermarktung", titel: "Reststromvermarktung", text: "Alle Wege für PV-Überschuss im Vergleich." },
+    { href: "/einspeisung-gewerbe", titel: "PV-Überschuss verkaufen", text: "Alle Wege für PV-Überschuss im Vergleich." },
     { href: "/ratgeber/grossspeicher-bess", titel: "Großspeicher (BESS)", text: "Speicher für Profil und Flexibilität." },
   ],
 

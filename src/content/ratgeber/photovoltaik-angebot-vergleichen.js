@@ -1,6 +1,9 @@
 // Ratgeber: PV-Angebote vergleichen – Checkliste für Betriebe in Österreich (Gruppe R1)
 // Beispielangebote sind fiktiv, Annahmen in den Fußnoten offengelegt. Wirkungen auf die Amortisation
 // mit dem gemeinsamen R1-Rechenkern (pvcalc.mjs) gerechnet (100 kWp, 750 €/kWp, 60 % EV, 18 ct, 6 ct Überschuss).
+// Checkliste „PV-Firma prüfen“ (P4/M20, 30.09.2026): Anker #pv-firma-pruefen – wird von Hersteller-,
+// Wechselrichter- und Ratgeberseiten verlinkt. Elektrotechnik als reglementiertes Gewerbe: § 94 Z 16 GewO 1994
+// (JUSLINE, Stand 30.09.2026); Register: GISA, WKO Firmen A–Z, Ediktsdatei. Keine Namen von Mitbewerbern.
 
 const artikel = {
   slug: "photovoltaik-angebot-vergleichen",
@@ -21,7 +24,7 @@ const artikel = {
     "Photovoltaik Angebot Warnsignale",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-28",
+  aktualisiert: "2026-09-30",
   kategorie: "Kosten & Wirtschaftlichkeit",
   bild: "/Images/AT/wissen/pv-ingenieur-tablet.jpg",
   bildAlt: "Photovoltaik-Montage auf einem Dach",
@@ -325,6 +328,37 @@ const artikel = {
       ],
     },
     {
+      id: "pv-firma-pruefen",
+      titel: "Checkliste: PV-Firma prüfen, bevor Sie unterschreiben",
+      tocLabel: "PV-Firma prüfen",
+      bloecke: [
+        {
+          typ: "p",
+          text: "**Eine PV-Firma prüfen Sie über Gewerbeberechtigung, Firmen- und Insolvenzdaten, Referenzen, belegte Herstellerangaben und klare Zuständigkeiten im Angebot.** Vieles davon lässt sich kostenlos in öffentlichen Registern kontrollieren – in wenigen Minuten und ohne den Anbieter zu fragen.",
+        },
+        {
+          typ: "checkliste",
+          punkte: [
+            "**Gewerbeberechtigung Elektrotechnik:** Elektrotechnik ist in Österreich ein reglementiertes Gewerbe (§ 94 Z 16 GewO 1994). Ob die Firma die Berechtigung hat, zeigt die kostenlose [GISA-Abfrage](https://www.gisa.gv.at/abfrage). Arbeitet ein Subunternehmer mit, lassen Sie sich auch dessen Berechtigung nennen.",
+            "**Firmendaten abgleichen:** Firmenname, Rechtsform, Sitz, Firmenbuchnummer und UID-Nummer müssen auf Website, Angebot und Rechnung übereinstimmen. Eingetragene Betriebe finden Sie auch in [Firmen A–Z der WKO](https://firmen.wko.at/).",
+            "**Insolvenz ausschließen:** Laufende Insolvenzverfahren veröffentlicht die [Ediktsdatei der Justiz](https://edikte.justiz.gv.at/). Eine insolvente Firma kann Gewährleistung und Garantieabwicklung nicht mehr sicherstellen.",
+            "**Referenzen mit Ansprechperson:** Lassen Sie sich zwei bis drei Anlagen ähnlicher Größe nennen – mit einer Person, die Sie anrufen dürfen. Eine Anlage, die Sie besichtigen können, sagt mehr als Fotos.",
+            "**Herstellerangaben belegen lassen:** Nennt sich ein Anbieter „Partner“ oder „zertifizierter Installateur“ eines Herstellers, fragen Sie nach der Urkunde und prüfen Sie den Eintrag in der Installateur-Suche des Herstellers. Klären Sie außerdem, ob eine Garantieverlängerung die Registrierung der Anlage durch den Installateur voraussetzt.",
+            "**Datenblätter statt „gleichwertig“:** Jede Komponente mit Hersteller, Modell und Datenblatt – siehe [Komponenten & Statik](#komponenten). Neutrale Datenblattvergleiche finden Sie für [Solarmodule](/ratgeber/solarmodule-vergleich#hersteller-vergleich) sowie für [Wechselrichter und Speicher](/ratgeber/wechselrichter-photovoltaik#hersteller-vergleich).",
+            "**Prüfung und Netz klar zugeordnet:** Wer führt die Erstprüfung nach ÖVE/ÖNORM E 8101 durch, wer stellt den Netzzugangsantrag, wer meldet die Fertigstellung? Siehe [Netz & ElWG](#netz) und [Brandschutz & Prüfung](#pruefung).",
+            "**Montage und Störfall:** Klären Sie, wer montiert, wer elektrisch anschließt und wer bei einer Störung kommt – mit Reaktionszeit und Einsatzgebiet. Fragen Sie nach der Betriebshaftpflichtversicherung für Arbeiten auf Dächern.",
+            "**Förderfähig abrechnen:** Für den EAG-Investitionszuschuss muss ein befugter Unternehmer errichten, und die Rechnungen müssen für die Endabrechnung verwendbar sein – siehe [Förderung & Zahlung](#foerderung-zahlung).",
+          ],
+        },
+        {
+          typ: "kasten",
+          variant: "tipp",
+          titel: "Unsere Angaben zum Nachprüfen",
+          text: "Firmenbuchnummer, UID-Nummer und Gewerbeberechtigung der Ökovolt Solartechnik GmbH stehen im [Impressum](/impressum). Welche Hersteller wir nachweislich verbauen, zeigt die Seite [Hersteller](/produkte/hersteller) – einen Partnerstatus nennen wir nur mit Urkunde.",
+        },
+      ],
+    },
+    {
       id: "warnsignale",
       titel: "Acht Warnsignale in PV-Angeboten für Betriebe",
       tocLabel: "Warnsignale",
@@ -352,6 +386,10 @@ const artikel = {
   ],
 
   faq: [
+    {
+      q: "Wie prüfe ich, ob eine PV-Firma seriös ist?",
+      a: "Prüfen Sie die Gewerbeberechtigung Elektrotechnik in der kostenlosen GISA-Abfrage, gleichen Sie Firmenbuch- und UID-Nummer mit dem Angebot ab, schließen Sie ein Insolvenzverfahren über die Ediktsdatei aus und lassen Sie sich Referenzen mit Ansprechperson sowie Urkunden zu behaupteten Herstellerpartnerschaften zeigen. Die vollständige [Checkliste](#pv-firma-pruefen) steht oben.",
+    },
     {
       q: "Wie viele Angebote sollte ein Betrieb für eine PV-Anlage einholen?",
       a: "Drei vergleichbare Angebote auf Basis derselben Unterlagen – Lastgang, Dachpläne, Statikunterlagen und gewünschter Leistungsumfang – sind ein guter Richtwert. Öffentliche Auftraggeber richten sich nach dem Vergaberecht.",
@@ -396,6 +434,8 @@ const artikel = {
     { titel: "PV&B Austria – ElWG: Das Wichtigste im Überblick für den PV- und Speicherbereich", url: "https://pvbaustria.at/elwg-das-wichtigste-im-uberblick-fur-den-pv-und-speicherbereich/", stand: "09/2026" },
     { titel: "Österreichisches Hagelregister – Hagelwiderstandsklassen", url: "https://www.hagelregister.at/", stand: "09/2026" },
     { titel: "WKO – Direktvergabe und Vergabeverfahren", url: "https://www.wko.at/wirtschaftsrecht/direktvergabe-vergabeverfahren", stand: "09/2026" },
+    { titel: "GISA – Gewerbeinformationssystem Austria, öffentliche Abfrage", url: "https://www.gisa.gv.at/abfrage", stand: "09/2026" },
+    { titel: "Gewerbeordnung 1994, § 94 (reglementierte Gewerbe, Z 16 Elektrotechnik) – JUSLINE", url: "https://www.jusline.at/gesetz/gewo/paragraf/94", stand: "09/2026" },
   ],
 
   seitenCta: { titel: "Angebot als Vergleichsbasis?", text: "Vollständiges Gewerbeangebot mit offenen Annahmen anfragen.", href: "/angebot", label: "Anfrage starten" },

@@ -7,6 +7,7 @@
 // Hand. Privat ist bewusst nachgeordnet (Premium-Objekte, Chalets).
 
 import { FIRMA } from "@/lib/site";
+import { REELS } from "@/data/reels";
 
 export const NAVIGATION = [
   {
@@ -63,6 +64,8 @@ export const NAVIGATION = [
         label: "Komponenten",
         items: [
           { name: "Photovoltaikanlage", href: "/produkte/photovoltaikanlage", icon: "Sun", text: "Module, Wechselrichter, Unterkonstruktion" },
+          // P4/M18: nur aufgenommen, weil das Technik-Mega-Menü damit unter 900 px Höhe bleibt (gemessen 30.09.2026)
+          { name: "Wechselrichter", href: "/produkte/wechselrichter", icon: "Zap", text: "Fronius, Huawei, Solis für Gewerbe" },
           { name: "Stromspeicher", href: "/produkte/stromspeicher", icon: "BatteryCharging", text: "Heim- und Gewerbespeicher" },
           { name: "Wärmepumpe", href: "/produkte/warmepumpe", icon: "Thermometer", text: "Heizen und Kühlen mit Solarstrom" },
           { name: "Wallbox", href: "/produkte/wallbox", icon: "PlugZap", text: "Laden mit PV-Überschuss" },
@@ -144,7 +147,8 @@ export const NAVIGATION = [
           { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon", icon: "Library", text: "Fachbegriffe von A bis Z" },
           { name: "FAQs", href: "/faqs", icon: "HelpCircle", text: "Häufige Fragen, kurz beantwortet" },
           { name: "Presse & News", href: "/presse", icon: "Newspaper", text: "Newsroom, RSS & Fediverse" },
-          { name: "Mediathek", href: "/mediathek", icon: "Clapperboard", text: "Kurzvideos von Baustellen und Projekten" },
+          // Mediathek erst verlinken, wenn mindestens ein Video in src/data/reels.js steht – vorher ist /mediathek noindex (QA N4)
+          ...(REELS.length > 0 ? [{ name: "Mediathek", href: "/mediathek", icon: "Clapperboard", text: "Kurzvideos von Baustellen und Projekten" }] : []),
         ],
       },
       {

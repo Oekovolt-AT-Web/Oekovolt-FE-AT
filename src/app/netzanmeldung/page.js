@@ -32,7 +32,6 @@ export const metadata = {
   description: DESCRIPTION,
   keywords: ["PV-Anlage anmelden Netzbetreiber", "Netzanmeldung Photovoltaik Österreich", "Einspeisezählpunkt beantragen", "Netzzugangsantrag PV", "Balkonkraftwerk anmelden Österreich", "Einspeisezählpunkt EAG Fördercall", "Wer ist mein Netzbetreiber"],
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
   openGraph: {
     type: "article",
     url: PAGE_URL,

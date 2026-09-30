@@ -49,3 +49,6 @@ next-env.d.ts
 
 # Reels-Rohdateien (Meta Business Suite) – werden per scripts/reels-optimieren.mjs nach public/videos/reels/ aufbereitet
 reels-roh/
+
+# IndexNow: Zustand der zuletzt gemeldeten Seiten (je Deploy-Umgebung)
+scripts/indexnow-zustand.json

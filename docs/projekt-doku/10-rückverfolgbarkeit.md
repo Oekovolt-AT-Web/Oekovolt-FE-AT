@@ -1,7 +1,7 @@
 # 10 – Rückverfolgbarkeit (Traceability-Matrix)
 
 In Anlehnung an ISO/IEC/IEEE 29148 (Rückverfolgbarkeit von Anforderungen). Keine Normkonformität behauptet.
-Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
+Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 
 Spalten: **Anforderung** (Kapitel 01) → **Umsetzung** (Datei) → **Test** (Kapitel 06; „–“ = kein automatisierter
 Test, „manuell“ = nur Sichtprüfung/Abnahme vorgesehen) → **Status**.
@@ -86,7 +86,7 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-LAST-01 Lastgang-Analyse | `src/lib/lastgang/*`, `src/components/Lastgang/*`, `src/app/lastgang-analyse/page.js` | `scripts/lastgang.test.mjs` (23) | umgesetzt (unveröff.); Q-12 |
 | REQ-EXP-01 A/B-Infrastruktur | `src/lib/experimente.js`, `src/middleware.js`, `src/components/Experimente/*` | `scripts/experimente.test.mjs` (12) | umgesetzt (unveröff.); K1 inaktiv |
 | REQ-BL-01 Bundesland-Hubs | `src/lib/bundesland/*`, `src/app/photovoltaik-bundesland/**` | `scripts/bundesland.test.mjs` (15) | umgesetzt (unveröff.); R-42 |
-| REQ-HER-01 Markenpolitik | – | – | offen (P4) |
+| REQ-HER-01 Markenpolitik | `src/components/Hersteller/partner.js`, `src/app/produkte/wechselrichter/**`, Ratgeber-Vergleichstabellen | manuell (QA-Crawl) | umgesetzt (unveröff.); R-55 |
 | REQ-ENE-01 Strommarkt live | `src/lib/energy.js`, `src/app/api/energie/live/route.js`, `src/app/energie-live/page.js` | – | umgesetzt; R-12 |
 | REQ-INH-01 Inhalte | `src/content/ratgeber/*`, `src/data/{lexikon,faqs}.js`, `src/data/regionen/*` | QA-Crawl 29.09. (`docs/AT-UEBERGABE.md:3-5`) | umgesetzt |
 | REQ-REC-LEG-01 Rechtsseiten | `src/app/{impressum,agb,datenschutz,barrierefreiheit,hinweisgeberschutz,bildnachweis}` | – | umgesetzt; Rechtsprüfung offen |
@@ -112,9 +112,22 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-NF-PERF-04 | `src/app/layout.js`, `src/components/Home2/HeroVideo.js`, `src/components/Reusable/footer.js`, `src/components/ui/RevealObserver.js` | – | umgesetzt (unveröff.) |
 | REQ-NF-A11Y-03 | `src/app/globals.css` | `scripts/kontrast.test.mjs` (18) | umgesetzt (unveröff.) |
 | REQ-NF-DS-04 | `docs/datenschutz/*` | Link-/Pfadprüfung durch den Datenschutz-Agenten | Entwurf (unveröff.) |
-| REQ-NF-SEO-07 | `public/robots.txt` | – | teilweise (R-44) |
+| REQ-NF-SEO-07 | `public/robots.txt` | – | umgesetzt (unveröff.) |
 | REQ-NF-SEO-08 | `docs/projekt-doku/11-seo.md` | – | teilweise |
 | REQ-NF-TEST-01 | `scripts/alle-tests.mjs` | selbst (21 Dateien grün) | umgesetzt (unveröff.) |
+| REQ-NF-SEO-09 | `next.config.mjs` (`htmlLimitedBots`) | QA: `curl -A` (Dev) | umgesetzt (unveröff.); Q-15 |
+| REQ-NF-SEO-10 | `src/components/ui/Breadcrumbs.js` | QA-Crawl | umgesetzt (unveröff.) |
+| REQ-NF-SEO-11 | `src/lib/seo/robots.js`, `src/app/layout.js` | QA-Crawl | umgesetzt (unveröff.) |
+| REQ-NF-SEO-12 | `src/app/sitemap.js` | QA-Crawl | umgesetzt (unveröff.) |
+| REQ-NF-SEO-13 | `src/lib/llms.js`, `src/app/llms*.txt/route.js` | QA-Crawl | umgesetzt (unveröff.) |
+| REQ-NF-SEO-14 | `scripts/indexnow.mjs`, `src/lib/indexnow.js` | Skripttests im Scratchpad (Q-16) | umgesetzt (unveröff.) |
+| REQ-NF-SEO-15 | P3-Seiten | QA-Crawl (Titles, H1) | umgesetzt (unveröff.) |
+| REQ-NF-SEO-16 | `src/app/layout.js`, `src/lib/site.js`, `src/app/uber-uns/page.js` | manuell | umgesetzt (unveröff.) |
+| REQ-NF-SEO-17 | `src/data/fachpruefer.js`, `src/data/faqs.js`, `src/app/technik/parkregler/page.js` | manuell | umgesetzt (unveröff.); F-25 |
+| REQ-NF-SEO-18 | `src/app/schneelast/page.js`, `src/app/einspeisung-gewerbe/page.js`, `src/lib/bundesland/auswertung.js` | Messskript P6 (Scratchpad) | umgesetzt (unveröff.) |
+| REQ-NF-SEO-19 | `next.config.mjs`, `src/components/Technik/seite.js` | QA/curl | umgesetzt (unveröff.) |
+| REQ-NF-DS-05 | `src/components/Datenschutz/datenschutz.js` | curl (Nummerierung, Sprungmarken) | umgesetzt (unveröff.); rechtlich prüfen |
+| REQ-PRE-02 | `public/presse/grafiken/*`, `src/app/presse/page.js` | manuell | umgesetzt (unveröff.); F-35 |
 | REQ-NF-DES-01 | Bausteine `src/components/ui/*`; Ausnahme `heatmap.js` (ADR-016) | – | umgesetzt |
 | REQ-NF-DES-02 | `docs/AT-DESIGN.md` | manuell 1440/390 | Stand 29.09.; neue Seiten offen |
 | REQ-NF-I18N-01 | Formatfunktionen, Texte | – | umgesetzt |
@@ -125,7 +138,7 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 
 | Kennzahl (30.09.2026) | Wert |
 |---|---|
-| Anforderungs-IDs in Kapitel 01 | 113 (Welle 3: 92, Welle 2: 85, Welle 1: 77) |
+| Anforderungs-IDs in Kapitel 01 | 126 (Welle 4: 113, Welle 3: 92, Welle 2: 85, Welle 1: 77) |
 | davon mit automatisiertem Test verknüpft | 29 (Welle 3: 15; neu u. a. REQ-PRO-01/02, REQ-SNK-01, REQ-EIN-01, REQ-EG-01, REQ-KOM-01, REQ-FLA-01/02, REQ-FIN-01, REQ-TEI-01, REQ-LAST-01, REQ-EXP-01, REQ-BL-01, REQ-NF-A11Y-03) |
 | Schwerpunkte offen | Commit der Welle 2, Installation/Abnahme Backoffice, Rechtsprüfungen (Datenschutz, Löschfristen, Kundenbühne, UWG/Kartell), Build-Nachweis, Tests Website-Seite |
 
