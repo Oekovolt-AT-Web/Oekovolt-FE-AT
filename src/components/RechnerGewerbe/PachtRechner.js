@@ -11,6 +11,9 @@ import { fmt } from "@/lib/rechner/annahmen";
 import { PACHT, WIDMUNG, rechnePacht } from "@/lib/rechner/pacht";
 import { DiagrammKarte, KumuliertDiagramm, PresetLeiste, StandortWahl, eur, useEingeblendet } from "./GewerbePVBausteine";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
+import useTeilenStart from "@/components/RechnerTeilen/useTeilenStart";
+import { kodiere } from "@/components/RechnerTeilen/kodierung";
 
 export const PACHT_PRESETS = [
   { id: "acker-noe", label: "Acker 10 ha · NÖ", hektar: 10, ort: "st-poelten", konzept: "freiflaeche", abstand: 2 },
@@ -24,6 +27,20 @@ const STUFE = {
   pruefen: { label: "prüfen", klasse: "bg-sun-400", text: "text-sun-500" },
   kritisch: { label: "lang", klasse: "bg-[#d9534f]", text: "text-[#b3403c]" },
 };
+
+/** Eingaben für geteilte Links (nur Abweichungen vom Start stehen im Link). */
+function teilenFelder(orte, startOrt) {
+  return [
+    { name: "preset", k: "p", typ: "wahl", optionen: [...PACHT_PRESETS.map((p) => p.id), "individuell"], standard: "acker-noe" },
+    { name: "hektar", k: "h", typ: "zahl", min: 0.5, max: 50, raster: 0.5, standard: 10 },
+    { name: "ort", k: "o", typ: "wahl", optionen: orte.map((o) => o.slug), standard: startOrt },
+    { name: "konzept", k: "k", typ: "wahl", optionen: PACHT.konzepte.map((k) => k.id), standard: "freiflaeche" },
+    { name: "abstand", k: "a", typ: "zahl", min: 0, max: 15, raster: 0.5, standard: 2 },
+    { name: "pacht", k: "pa", typ: "zahl", min: PACHT.pachtMin, max: PACHT.pachtMax, raster: 50, standard: PACHT.pachtStandard },
+    { name: "index", k: "i", typ: "zahl", min: 0, max: 4, raster: 0.25, standard: PACHT.indexStandard * 100 },
+    { name: "laufzeit", k: "l", typ: "zahl", min: 15, max: 35, raster: 1, standard: PACHT.laufzeitStandard },
+  ];
+}
 
 export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
   const orte = useMemo(() => standorte.flatMap((g) => g.orte), [standorte]);
@@ -49,6 +66,21 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
     setAbstand(p.abstand);
   };
 
+  // Geteilter Link: Eingaben wiederherstellen
+  const felder = useMemo(() => teilenFelder(orte, startOrt), [orte, startOrt]);
+  const setzer = {
+    preset: (v) => setPreset(v === "individuell" ? null : v),
+    hektar: setHektar,
+    ort: setOrtSlug,
+    konzept: setKonzept,
+    abstand: setAbstand,
+    pacht: setPacht,
+    index: setIndex,
+    laufzeit: setLaufzeit,
+  };
+  useTeilenStart(felder, (w) => Object.entries(w).forEach(([k, v]) => setzer[k]?.(v)));
+  const teilenQuery = kodiere(felder, { preset: preset ?? "individuell", hektar, ort: ortSlug, konzept, abstand, pacht, index, laufzeit });
+
   const schluessel = useDeferredValue(JSON.stringify({ hektar, ort: ort.slug, konzept, abstandKm: abstand, pachtEurHa: pacht, index: index / 100, laufzeit }));
   const r = useMemo(() => {
     const w = JSON.parse(schluessel);
@@ -57,6 +89,70 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
   const stufe = STUFE[r.netz.stufe];
   const widmung = WIDMUNG[ort.land];
   useRechnerErgebnis("freiflaeche-pacht", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const bericht = () => ({
+    untertitel: `Photovoltaik auf der Freifläche · ${ort.name}, ${ort.landName}`,
+    kennzahlen: [
+      ["Leistung", `${fmt(r.kwp / 1000, r.kwp < 10000 ? 1 : 0)} MWp`, `${fmt(r.konzept.kwpProHa)} kWp je Hektar`],
+      ["Jahresertrag", `${fmt(r.ertragKwh / 1e6, r.ertragKwh < 1e7 ? 2 : 1)} GWh`, `${fmt(r.mwhProHa)} MWh je Hektar`],
+      ["Haushalte versorgt", fmt(Math.round(r.haushalte / 10) * 10), `rechnerisch, je ${fmt(PACHT.haushaltKwh)} kWh`],
+      [`Pacht ${r.laufzeit} Jahre`, eur(r.pachtSumme), "mit Ihrer Pacht-Annahme"],
+    ],
+    eingaben: [
+      {
+        titel: "Fläche",
+        zeilen: [
+          ["Flächengröße", `${fmt(hektar, hektar % 1 ? 1 : 0)} ha`],
+          ["Lage (PVGIS)", `${ort.name}, ${ort.landName}`],
+          ["Nutzungskonzept", r.konzept.label],
+          ["Entfernung zum Netzanschluss", `${fmt(abstand, abstand % 1 ? 1 : 0)} km (Luftlinie)`],
+        ],
+      },
+      {
+        titel: "Ihre Pacht-Annahme",
+        zeilen: [
+          ["Pacht je Hektar und Jahr", `${fmt(pacht)} €`, "Ihre Annahme, keine Marktangabe"],
+          ["Indexierung pro Jahr", `${fmt(index, 2)} %`],
+          ["Laufzeit", `${laufzeit} Jahre`],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Anlage",
+        zeilen: [
+          ["Leistung", `${fmt(r.kwp / 1000, 1)} MWp`],
+          ["Jahresertrag", `${fmt(r.ertragKwh / 1e6, 2)} GWh`],
+          ["Haushalte (bilanziell)", fmt(Math.round(r.haushalte / 10) * 10)],
+          ["TOR-Typ", `Typ ${r.tor}`],
+        ],
+      },
+      {
+        titel: "Pacht",
+        zeilen: [
+          ["Pacht im ersten Jahr", eur(r.pachtJahr1)],
+          [`Pacht über ${r.laufzeit} Jahre`, eur(r.pachtSumme)],
+        ],
+      },
+      {
+        titel: "Netz & Genehmigung",
+        zeilen: [
+          ["Netzanschluss", `${fmt(abstand, abstand % 1 ? 1 : 0)} km für ${fmt(r.kwp / 1000, 1)} MWp: ${stufe.label}`, "Faustregel, keine Zusage"],
+          ["EAG-Abschlag Grünland", r.eagAbschlag ? "−25 % Investitionszuschuss" : "kein Abschlag (Agri-PV ≥ 75 % Landwirtschaft)"],
+          r.eagAnteilig && ["Förderweg über 1 MWp", "Zuschuss anteilig bis 1 MWp oder Marktprämie"],
+        ],
+      },
+    ],
+    hinweise: [r.netz.text, `Widmung in ${ort.landName}: ${widmung}`, `Landwirtschaft: ${r.konzept.landwirtschaft}`],
+    annahmen: [
+      `Leistung je Hektar als Richtwert je Konzept (${PACHT.konzepte.map((k) => `${k.label} ${fmt(k.kwpProHa)} kWp/ha`).join(", ")}); tatsächliche Belegung hängt von Zuschnitt, Hangneigung, Abständen und Trafostation ab.`,
+      `Ertrag nach PVGIS für ${ort.name}; Vergleichswerte: BOKU Wien, „The techno-economic potentials of agrivoltaic installations in Austria“ (Renewable Energy, 2026).`,
+      `Haushalte: Jahresertrag geteilt durch ${fmt(PACHT.haushaltKwh)} kWh (Referenzverbrauch E-Control) – bilanzielle Größe.`,
+      `Pacht ${fmt(pacht)} €/ha mit ${fmt(index, 2)} % Indexierung pro Jahr ist Ihre Annahme – keine Marktangabe und kein Angebot.`,
+      "Widmung, Netzkapazität, Naturschutz und Geländeform werden im Flächen-Check geprüft.",
+    ],
+  });
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
@@ -170,7 +266,7 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
                 {r.eagAbschlag
                   ? "Förderung: Auf Grünland und landwirtschaftlich genutzten Flächen sinkt der EAG-Investitionszuschuss um 25 %."
                   : "Förderung: Agri-PV mit mindestens 75 % landwirtschaftlicher Nutzung ist vom 25-%-Abschlag des EAG-Investitionszuschusses ausgenommen."}
-                {!r.eagInvestitionszuschuss && " Über 1 MWp kommt statt Investitionszuschuss die Marktprämie in Frage."}
+                {r.eagAnteilig && " Über 1 MWp wird der Investitionszuschuss anteilig bis 1 MWp gewährt; alternativ kommt die Marktprämie in Frage."}
               </p>
               <Link href="/ratgeber/freiflaechen-photovoltaik-widmung" className="mt-3 inline-flex items-center gap-1 text-[13.5px] font-semibold text-ov-700 hover:text-ov-800">
                 Widmung in allen Bundesländern <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
@@ -195,6 +291,17 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
               Fläche prüfen lassen
             </Button>
           </div>
+          <RechnerTeilen
+            className="mt-4"
+            rechner="freiflaeche-pacht"
+            name="Freiflächen- & Pacht-Rechner"
+            pfad="/rechner/freiflaeche-pacht"
+            query={teilenQuery}
+            titel="Freiflächen- & Pacht-Rechner: Was kann unsere Fläche?"
+            text="So viel Solarstrom und Pacht bringt diese Fläche – gerechnet mit dem Ökovolt Freiflächen- & Pacht-Rechner."
+            kampagne="rechner_freiflaeche_pacht"
+            bericht={bericht}
+          />
         </div>
       </div>
     </div>

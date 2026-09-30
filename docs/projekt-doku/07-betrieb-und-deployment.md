@@ -1,7 +1,7 @@
 # 07 – Betrieb und Deployment (Betriebsanleitung)
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 26514 (Informationen für Betreiber: Voraussetzungen, Konfiguration,
-Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 ## 1. Voraussetzungen
 
@@ -124,6 +124,12 @@ Aus `docs/AT-UEBERGABE.md:101-106`, ergänzt um Belege aus dem Code.
 | Netzbetreiber-Angaben | mindestens bei Änderungen der Netzbetreiber-Formulare/Preisblätter | `src/data/netzbetreiber.js` | `GEPRUEFT_AM` je Betreiber und `STAND` anpassen |
 | Reels/Mediathek | bei neuen Videos | `reels-roh/` (nicht versioniert) → `public/videos/reels/`, `src/data/reels.js` | ffmpeg installieren (`winget install Gyan.FFmpeg`), `node scripts/reels-optimieren.mjs`, Titel/Beschreibung/Kategorie/Datum ergänzen; Musikrechte prüfen |
 | Unternehmenskennzahlen | bei neuen Zahlen, mindestens jährlich | `src/data/kennzahlen.js` (+ Textstellen `src/data/unternehmen.js`, `src/lib/llms.js`, `src/app/page.js`) | `KENNZAHLEN_STAND` anpassen, danach `llms.txt` neu erzeugt (Build) |
+| **OeMAG-Marktpreis** | **monatlich**, Anfang des Folgemonats (nächster: Wert September 2026 Anfang Oktober) | `src/data/oemag.js` (`OEMAG_MONATE`, `REFERENZMARKTWERT_PV`, Quartalspreise, `NAECHSTE_VEROEFFENTLICHUNG`, `STAND.geprueftAm`) | `node scripts/einspeisung.test.mjs`; ohne Pflege erscheint nach 35 Tagen ein Warnhinweis (ab 05.11.2026); Ratgeber `oemag-marktpreis.js` mitziehen |
+| Widmung/Beschleunigungsgebiete | vierteljährlich | `src/lib/flaeche/laender.js` (`STAND`) | `node scripts/flaeche.test.mjs` |
+| EG-Netzentgelt-Abschläge ab 2027 | sobald Tarifverordnung/SNE-G-V veröffentlicht | `src/lib/egBetriebe.js`, `NahebereichStufen.js` | `node scripts/eg-betriebe.test.mjs` |
+| Vergabe-/Förderkarten Gemeinden | nach 22.10.2026 (EAG-Call) und bei neuer Klimafonds-Ausschreibung | `src/app/kommunen/vergabe-foerderung/page.js`, `src/lib/kommunen/*` | `node scripts/kommunen-vergabe.test.mjs` |
+| Lastgang-Beispieldatei | bei Änderung von `beispielCsv()` | `public/beispiele/lastgang-beispiel.csv` | Test meldet veraltete Datei |
+| Alle Node-Tests | vor jedem Commit/Deploy | `scripts/*.test.mjs` | `node scripts/alle-tests.mjs` |
 | Mannschaft & Maschinenpark | bei Änderungen | `src/data/mannschaft.js` | neue Einträge mit Quelle, `bestaetigt` erst nach Freigabe |
 | Fotos nachreichen | einmalig | `public/Images/AT/unternehmen/oekovolt-lkw.jpg` (optional `…-traktor.jpg`), `public/Images/AT/team/` (Pressekontakt) | Formatvorgaben im Kopfkommentar von `src/data/mannschaft.js` bzw. `PresseKontakt.js`; Bildquelle dokumentieren |
 | Backoffice-Korrekturen | laufend | Frappe | `docs/Backoffice-Korrekturen.md` (Sichtbarkeit nach ≤ 10 min, `revalidate: 600`) |
@@ -148,6 +154,15 @@ Täglich/zyklisch laufende Backoffice-Jobs (laut `apps/oekovoltdeutchland/README
 Anfragen, Website-Termine), alle 5 min geplante Veröffentlichungen und Webhook an die Website, alle 15 min
 Erinnerungsmails Solar Lead.
 
+## 5a. Kapazitätsgrenzen externer Dienste und Zwischenspeicher
+
+| Dienst / Speicher | Grenze | Genutzt von | Hinweis |
+|---|---|---|---|
+| Open Topo Data (öffentlich, EU-DEM) | 1 Anfrage/s, **1.000 Anfragen/Tag** | `/api/standort` und `/schneelast/richtwert` (gemeinsam) | bei viel Verkehr eigenen Zugang oder eigene Höhendatei einplanen; Rückfall PVGIS-Seehöhe nur im Standort-Check |
+| GeoSphere Data Hub | 5/s, 240/h je ausgehender IP | `/api/pv-prognose` | eigener Deckel 200/h; v1-Datensätze enden am 04.11.2026 (verwendet wird v2) |
+| Nominatim | 1/s | Adresssuche | unverändert |
+| **In-Memory-Caches und -Zähler** | je Serverprozess/Instanz, gehen beim Neustart verloren | Standort-Dienste, PV-Prognose (auf `globalThis`), Drosselungen aller Routen | bei mehreren Instanzen (z. B. Serverless) gelten Budgets und Drosselungen je Instanz – für zentrale Zähler wäre ein gemeinsamer Speicher (Redis/KV) nötig |
+
 ## 6. Störungen – Erstmaßnahmen
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme | Beleg |
@@ -159,3 +174,6 @@ Erinnerungsmails Solar Lead.
 | 500er nach Build während laufendem Server | `.next`-Konflikt | getrenntes `NEXT_DIST_DIR` | `next.config.mjs:3-7` |
 | Hinweisgeber-Meldung 503 | `HINWEIS_INTERN` nicht gesetzt (gewollt) | – | `src/lib/hinweisApi.js:18-21` |
 | Hinweisgebersystem zeigt nach Umschalten alten Stand | `HINWEIS_INTERN` wirkt erst ab dem nächsten Build | neu bauen und deployen | `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` |
+| PV-Prognose zeigt älteren Modelllauf | GeoSphere-Budget erschöpft → Antwort aus Cache (bis 12 h) | abwarten; Budget/Zellgröße prüfen | `src/lib/prognose/geosphere.js:19-25` |
+| `/einspeisung-gewerbe` zeigt Warnhinweis | `STAND.geprueftAm` älter als 35 Tage | Monatswert eintragen | `src/data/oemag.js:26` |
+| Schneelast-Richtwert „–“ auf Bundesland-Hubs | Raster bei ISR nicht ausgeliefert | `outputFileTracingIncludes` für `/photovoltaik-bundesland/[land]` prüfen | `next.config.mjs` |

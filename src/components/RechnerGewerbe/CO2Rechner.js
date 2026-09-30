@@ -11,15 +11,39 @@ import { fmt } from "@/lib/rechner/annahmen";
 import { CO2, rechneCo2, textbaustein } from "@/lib/rechner/co2";
 import { DiagrammKarte, PresetLeiste, Umschalter, useEingeblendet } from "./GewerbePVBausteine";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
+import useTeilenStart from "@/components/RechnerTeilen/useTeilenStart";
+import { kodiere } from "@/components/RechnerTeilen/kodierung";
 
 const t1 = (kg) => kg / 1000;
 const pct = (v) => Math.round(v * 100);
+const JAHRE = ["2025", "2026", "2027"];
 
 export const CO2_PRESETS = [
   { id: "produktion", label: "Produktion 1,5 GWh", verbrauch: 1500, pv: true, kwp: 800, ev: 70, oeko: 0, flotte: true, fahrzeuge: 12, km: 25000, liter: 8, anteilE: 50 },
   { id: "handel", label: "Handel & Kühlung", verbrauch: 600, pv: true, kwp: 300, ev: 85, oeko: 50, flotte: false, fahrzeuge: 4, km: 20000, liter: 7, anteilE: 50 },
   { id: "buero", label: "Bürogebäude", verbrauch: 180, pv: true, kwp: 80, ev: 75, oeko: 100, flotte: true, fahrzeuge: 8, km: 22000, liter: 6.5, anteilE: 75 },
   { id: "gemeinde", label: "Gemeinde", verbrauch: 900, pv: true, kwp: 400, ev: 60, oeko: 100, flotte: true, fahrzeuge: 10, km: 15000, liter: 9, anteilE: 40 },
+];
+
+/** Eingaben für geteilte Links – ohne Firmenname (nur Abweichungen vom Start stehen im Link). */
+const TEILEN_FELDER = [
+  { name: "preset", k: "p", typ: "wahl", optionen: [...CO2_PRESETS.map((p) => p.id), "individuell"], standard: "produktion" },
+  { name: "verbrauchMwh", k: "v", typ: "zahl", min: 20, max: 5000, raster: 10, standard: 1500 },
+  { name: "lokG", k: "lg", typ: "zahl", min: 50, max: 400, raster: 0.1, standard: CO2.lokFaktorG },
+  { name: "marktG", k: "mg", typ: "zahl", min: 0, max: 500, raster: 1, standard: CO2.marktFaktorBeispielG },
+  { name: "pvAn", k: "pv", typ: "bool", standard: true },
+  { name: "kwp", k: "k", typ: "zahl", min: 10, max: 3000, raster: 10, standard: 800 },
+  { name: "ev", k: "ev", typ: "zahl", min: 10, max: 100, raster: 1, standard: 70 },
+  { name: "oeko", k: "oe", typ: "zahl", min: 0, max: 100, raster: 5, standard: 0 },
+  { name: "flotteAn", k: "fl", typ: "bool", standard: true },
+  { name: "fahrzeuge", k: "fz", typ: "zahl", min: 1, max: 200, raster: 1, standard: 12 },
+  { name: "km", k: "km", typ: "zahl", min: 5000, max: 60000, raster: 1000, standard: 25000 },
+  { name: "liter", k: "l", typ: "zahl", min: 4, max: 14, raster: 0.5, standard: 8 },
+  { name: "anteilE", k: "ae", typ: "zahl", min: 0, max: 100, raster: 5, standard: 50 },
+  { name: "pvLaden", k: "pl", typ: "zahl", min: 0, max: 100, raster: 5, standard: 30 },
+  { name: "methode", k: "me", typ: "wahl", optionen: ["location", "market"], standard: "location" },
+  { name: "jahr", k: "j", typ: "wahl", optionen: JAHRE, standard: "2026" },
 ];
 
 export default function CO2Rechner() {
@@ -62,6 +86,28 @@ export default function CO2Rechner() {
     setAnteilE(p.anteilE);
   };
 
+  // Geteilter Link: Eingaben wiederherstellen
+  const setzer = {
+    preset: (v) => setPreset(v === "individuell" ? null : v),
+    verbrauchMwh: setVerbrauchMwh,
+    lokG: setLokG,
+    marktG: setMarktG,
+    pvAn: setPvAn,
+    kwp: setKwp,
+    ev: setEv,
+    oeko: setOeko,
+    flotteAn: setFlotteAn,
+    fahrzeuge: setFahrzeuge,
+    km: setKm,
+    liter: setLiter,
+    anteilE: setAnteilE,
+    pvLaden: setPvLaden,
+    methode: setMethode,
+    jahr: setJahr,
+  };
+  useTeilenStart(TEILEN_FELDER, (w) => Object.entries(w).forEach(([k, v]) => setzer[k]?.(v)));
+  const teilenQuery = kodiere(TEILEN_FELDER, { preset: preset ?? "individuell", verbrauchMwh, lokG, marktG, pvAn, kwp, ev, oeko, flotteAn, fahrzeuge, km, liter, anteilE, pvLaden, methode, jahr });
+
   const eingabe = useDeferredValue(
     JSON.stringify({
       strombezugKwh: verbrauchMwh * 1000,
@@ -87,6 +133,68 @@ export default function CO2Rechner() {
     }
   };
   useRechnerErgebnis("co2-esg", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const tonnen = (kg) => `${fmt(t1(kg), 1)} t`;
+  const reduktion = (x) => (x >= 0 ? `−${pct(x)} %` : `+${pct(-x)} %`);
+  const bericht = () => ({
+    untertitel: `Klimabilanz Scope 1 + 2${firma.trim() ? ` · ${firma.trim()}` : ""} · Berichtsjahr ${jahr}`,
+    kennzahlen: [
+      ["Scope 2 vorher", tonnen(s2.vorher), methode === "location" ? "standortbasiert" : "marktbasiert"],
+      ["Scope 2 nachher", tonnen(s2.nachher), `Netzbezug ${fmt(r.netz.nachher / 1000)} MWh`],
+      ["Reduktion Scope 2", reduktion(s2.reduktion), methode === "location" ? "standortbasiert" : "marktbasiert"],
+      ["Eingespart gesamt", `${fmt(t1(eingespart), 1)} t/Jahr`, r.flotte.scope1Vorher > 0 ? "Scope 1 + 2, marktbasiert" : "Scope 2, marktbasiert"],
+    ],
+    eingaben: [
+      {
+        titel: "Strombezug & Emissionsfaktoren",
+        zeilen: [
+          ["Strombezug pro Jahr", `${fmt(verbrauchMwh)} MWh`],
+          ["Faktor standortbasiert (Netzmix)", `${fmt(lokG, 1)} g/kWh`, Math.abs(lokG - CO2.lokFaktorG) < 0.05 ? "Standardwert" : "eigene Eingabe"],
+          ["Faktor marktbasiert (Lieferant)", `${fmt(marktG)} g/kWh`, marktG === CO2.marktFaktorBeispielG ? "Beispielwert" : "eigene Eingabe"],
+        ],
+      },
+      {
+        titel: "Maßnahmen",
+        zeilen: [
+          ["Eigene Photovoltaik", pvAn ? `${fmt(kwp)} kWp, ${ev} % Eigenverbrauch` : "nein"],
+          ["Ökostrom mit Herkunftsnachweis", `${oeko} % des Netzbezugs`],
+          ["Fahrzeugflotte (Scope 1)", flotteAn ? `${fmt(fahrzeuge)} Fahrzeuge` : "nicht erfasst"],
+          flotteAn && ["Fahrleistung je Fahrzeug", `${fmt(km)} km`],
+          flotteAn && ["Dieselverbrauch", `${fmt(liter, 1)} l/100 km`],
+          flotteAn && ["Davon elektrisch", `${anteilE} %`],
+          flotteAn && pvAn && ["Laden mit eigenem Solarstrom", `${pvLaden} %`],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Scope 2 (t CO₂e pro Jahr)",
+        zeilen: [
+          ["Standortbasiert", `${fmt(t1(r.scope2.location.vorher), 1)} → ${tonnen(r.scope2.location.nachher)}`, reduktion(r.scope2.location.reduktion)],
+          ["Marktbasiert", `${fmt(t1(r.scope2.market.vorher), 1)} → ${tonnen(r.scope2.market.nachher)}`, reduktion(r.scope2.market.reduktion)],
+          ["Netzbezug danach", `${fmt(r.netz.nachher / 1000)} MWh`],
+        ],
+      },
+      {
+        titel: "Gesamt",
+        zeilen: [
+          r.scope1.vorher > 0 && ["Scope 1 Flotte", `${fmt(t1(r.scope1.vorher), 1)} → ${tonnen(r.scope1.nachher)}`],
+          ["Scope 1 + 2 (marktbasiert)", `${fmt(t1(r.gesamt.vorher), 1)} → ${tonnen(r.gesamt.nachher)}`],
+          ["Eingespart pro Jahr", tonnen(eingespart)],
+          pvAn && ["Eingespeister Solarstrom (nicht anrechenbar)", `${fmt(r.pv.einspeisung / 1000)} MWh`, `vermeidet im Stromsystem ≈ ${tonnen(r.vermiedenEinspeisungKg)}`],
+        ],
+      },
+    ],
+    hinweise: [`Textbaustein ${jahr}: ${text}`],
+    annahmen: [
+      `Standortbasierter Faktor Standard ${fmt(CO2.lokFaktorG, 1)} g/kWh: mittlere österreichische Stromaufbringung 2024 (Marktentwicklung 2024, BMIMI) – für die Berichterstattung den Faktor Ihres Berichtsjahres einsetzen.`,
+      `Marktbasierter Faktor: Beispielwert, maßgeblich ist die Stromkennzeichnung Ihrer Rechnung. Herkunftsnachweise zählen marktbasiert mit 0 g/kWh.`,
+      pvAn && `PV-Ertrag ${fmt(CO2.pvErtragProKwp)} kWh je kWp und Jahr; nur selbst genutzter Solarstrom senkt Scope 2. Eingespeister Strom wird mit ${fmt(CO2.substitutionG, 1)} g/kWh Substitution nur informativ ausgewiesen.`,
+      flotteAn && `E-Fahrzeuge ${fmt(CO2.eFahrzeugKwhJe100)} kWh/100 km inkl. Ladeverluste (Annahme).`,
+      "Schätzung zur Orientierung (angelehnt an GHG Protocol Scope 2 Guidance, VSME und ESRS E1) – für den Bericht Messwerte und aktuelle Faktoren verwenden.",
+    ],
+  });
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
@@ -252,7 +360,7 @@ export default function CO2Rechner() {
               <div>
                 <label htmlFor={jahrId} className="mb-1.5 block text-[12.5px] font-semibold text-ink-600">Berichtsjahr</label>
                 <select id={jahrId} value={jahr} onChange={(e) => setJahr(e.target.value)} className="h-11 w-full cursor-pointer rounded-xl bg-white px-3 text-[15px] text-ink-900 ring-1 ring-ink-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500">
-                  {["2025", "2026", "2027"].map((j) => (
+                  {JAHRE.map((j) => (
                     <option key={j}>{j}</option>
                   ))}
                 </select>
@@ -279,6 +387,17 @@ export default function CO2Rechner() {
               PV für Ihren Betrieb planen
             </Button>
           </div>
+          <RechnerTeilen
+            className="mt-4"
+            rechner="co2-esg"
+            name="CO₂- & ESG-Rechner"
+            pfad="/rechner/co2-esg"
+            query={teilenQuery}
+            titel="CO₂- & ESG-Rechner: unsere Klimabilanz Scope 1 + 2"
+            text="So stark senken Photovoltaik, Ökostrom und E-Flotte unsere CO₂-Bilanz – gerechnet mit dem Ökovolt CO₂- & ESG-Rechner."
+            kampagne="rechner_co2_esg"
+            bericht={bericht}
+          />
         </div>
       </div>
     </div>

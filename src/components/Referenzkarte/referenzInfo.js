@@ -44,7 +44,7 @@ export default function SolutionsPage({ data }) {
       },
       {
         icon: <Factory className="text-[35px] text-[#669933]/90" />,
-        value: toNumber(data?.leistung, 340000),
+        value: toNumber(data?.leistung, 510000),
         suffix: "kWp",
         label: "Leistung",
       },

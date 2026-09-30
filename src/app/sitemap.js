@@ -14,6 +14,9 @@ import { veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
 import { NETZBETREIBER, betreiberPfad } from "@/data/netzbetreiber";
 import { mediathekSitemap } from "@/data/reels";
 import { HINWEIS_INTERN } from "@/data/hinweisgeber";
+import { LAENDER as SCHNEELAST_LAENDER, schneelastPfad } from "@/lib/schneelast/laender";
+import { LAENDER as WIDMUNG_LAENDER, widmungsPfad } from "@/lib/flaeche/laender";
+import { LAENDER as PV_LAENDER, landPfad } from "@/lib/bundesland/auswertung";
 
 // Hersteller-Slugs, die next.config.mjs per 301 auf die Übersicht umleitet –
 // dürfen nie in der Sitemap stehen, auch wenn das Backoffice sie liefert.
@@ -41,6 +44,8 @@ const LEGAL_DATE = new Date("2026-09-28");
 const REGIONEN_DATUM = new Date("2026-09-29");
 // Start der österreichischen Inhalte auf oekovolt.com
 const AT_START = new Date("2026-09-28");
+// Welle 4 (Werkzeuge & Landesseiten, Recherche 30.09.2026) – ein Datum für alle neuen Seiten
+const WELLE4_DATUM = new Date("2026-09-30");
 const STATIC_PAGES = [
   { path: "", changeFrequency: "weekly", priority: 1.0, lastModified: UPDATED_2026_09 },
   { path: "/dienstleistungen/photovoltaik", changeFrequency: "monthly", priority: 0.9, lastModified: UPDATED_2026_09 },
@@ -136,6 +141,19 @@ const STATIC_PAGES = [
   { path: "/rechner/blackout", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
   { path: "/rechner/co2-esg", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
   { path: "/rechner/freiflaeche-pacht", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
+
+  // Welle 4: neue Werkzeuge und Fachseiten (Landes-Unterseiten weiter unten, dynamisch)
+  // PV-Prognose: Inhalt ändert sich mit jedem Modelllauf, die Seite selbst ist statisch
+  { path: "/pv-prognose", changeFrequency: "daily", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/lastgang-analyse", changeFrequency: "monthly", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/rechner/finanzierung", changeFrequency: "monthly", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/flaechen-check", changeFrequency: "monthly", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/freiflaechen-photovoltaik/widmung", changeFrequency: "monthly", priority: 0.7, lastModified: WELLE4_DATUM },
+  { path: "/schneelast", changeFrequency: "yearly", priority: 0.7, lastModified: WELLE4_DATUM },
+  // OeMAG-Monatswerte werden monatlich gepflegt (src/data/oemag.js)
+  { path: "/einspeisung-gewerbe", changeFrequency: "monthly", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/energiegemeinschaften/betriebe-gemeinden", changeFrequency: "monthly", priority: 0.8, lastModified: WELLE4_DATUM },
+  { path: "/kommunen/vergabe-foerderung", changeFrequency: "monthly", priority: 0.7, lastModified: WELLE4_DATUM },
 ];
 
 // Helper function to make authenticated fetch requests.
@@ -352,6 +370,14 @@ export default async function sitemap() {
     priority: 0.7,
   }));
 
+  // 7b. Welle 4: Landesseiten – Slugs aus denselben Listen wie generateStaticParams
+  //     (/photovoltaik-bundesland ohne Land leitet auf /photovoltaik um und fehlt deshalb bewusst)
+  const landesEntries = [
+    ...PV_LAENDER.map((l) => ({ url: `${BASE_URL}${landPfad(l.slug)}`, priority: 0.7, changeFrequency: "monthly" })),
+    ...WIDMUNG_LAENDER.map((l) => ({ url: `${BASE_URL}${widmungsPfad(l.slug)}`, priority: 0.6, changeFrequency: "monthly" })),
+    ...SCHNEELAST_LAENDER.map((l) => ({ url: `${BASE_URL}${schneelastPfad(l.slug)}`, priority: 0.6, changeFrequency: "yearly" })),
+  ].map((e) => ({ ...e, lastModified: WELLE4_DATUM }));
+
   // Speicher-Detailseiten der belegten Partner existieren auch ohne Backoffice (statisch)
   ["byd", "sigenergy", "huawei"].forEach((slug) => {
     const url = `${BASE_URL}/produkte/stromspeicher/${slug}`;
@@ -374,7 +400,7 @@ export default async function sitemap() {
   // Doppelte URLs (z. B. Backoffice-Slug = statischer Slug) nur einmal ausgeben
   const gesehen = new Set();
   // Mediathek: leer, solange keine Videos da sind (Seite dann noindex)
-  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries, ...mediathekSitemap(BASE_URL)].filter((e) => {
+  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries, ...landesEntries, ...mediathekSitemap(BASE_URL)].filter((e) => {
     if (gesehen.has(e.url)) return false;
     gesehen.add(e.url);
     return true;

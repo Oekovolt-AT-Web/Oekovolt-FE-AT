@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { EXP_HEADER, middlewareZuweisung } from "@/lib/experimente";
+
 // WordPress-Artefakte, die es auf oekovolt.de nicht mehr gibt und auch nie
 // wieder geben wird. 410 Gone (statt 404) signalisiert Google endgueltig
 // "entfernt" -> die URLs fallen schneller aus dem Index bzw. aus dem
@@ -35,6 +37,19 @@ export function middleware(request) {
     }
   }
 
+  // A/B-Tests mit serverseitiger Variante (src/lib/experimente.js, ort: "server"): Die Variante
+  // wird pro Aufruf ausgelost (kein Cookie) und als Request-Header an die Seite gereicht. Für Bots
+  // und Menschen gleich – keine User-Agent-Weiche. Nur Pfade, die unten im Matcher stehen.
+  const exp = middlewareZuweisung(pathname);
+  if (exp) {
+    const kopf = new Headers(request.headers);
+    kopf.set(EXP_HEADER, exp);
+    const antwort = NextResponse.next({ request: { headers: kopf } });
+    antwort.headers.set(EXP_HEADER, exp);
+    antwort.headers.set("Cache-Control", "private, no-store");
+    return antwort;
+  }
+
   return NextResponse.next();
 }
 
@@ -54,5 +69,7 @@ export const config = {
     "/wp-json/:path*",
     "/feed",
     "/:path*/feed",
+    // A/B-Tests mit ort: "server" – Pfade hier als statische Literale ergänzen (Next.js wertet den
+    // Matcher beim Build aus) und nach Testende wieder entfernen. Derzeit keiner (K1 läuft im Browser).
   ],
 };

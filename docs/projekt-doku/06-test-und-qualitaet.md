@@ -2,7 +2,7 @@
 
 Testdokumentation in Anlehnung an ISO/IEC/IEEE 29119-3 (Testfälle, Testprotokoll, Testbericht) und
 Qualitätsmerkmale in Anlehnung an ISO/IEC 25010. Keine Normkonformität behauptet.
-Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 ## 1. Testumgebung
 
@@ -25,6 +25,8 @@ Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
 | T-PROJ | `scripts/projekte-fallback.test.mjs` | Referenzen-Rückfall: statische Daten (Slugs, Pflichtfelder, Bild-Hosts), API leer / `message=[]` / HTTP 500 / nicht erreichbar / ohne Zugangsdaten, API gewinnt, Kennzahlen | Unit/Integration mit Fetch-Attrappe, 9 Testfälle | `node scripts/projekte-fallback.test.mjs` (optional `--live`: Slugs aus der Live-Sitemap, braucht Internet) |
 | T-TERMIN | `Import-Backend-Frappe/apps/oekovolt_app/tests/test_termin_logik.py` | reine Terminlogik ohne Frappe: Feiertage, Zeit, Slots, Status, Buchung, ICS | Unit (unittest), 37 Testfälle in 6 Klassen | im Ordner `Import-Backend-Frappe/apps/oekovolt_app`: `python -m unittest discover -s tests -v` |
 | T-HEAT | `Import-Backend-Frappe/apps/oekovoltdeutchland/oekovoltdeutchland/oekovoltdeutchland/doctype/heatmap_zelle/test_heatmap_logik.py` | reine Heatmap-Logik ohne Frappe (`heatmap_logik.py`) | Unit (unittest), 18 Testfälle | im Ordner `…/doctype/heatmap_zelle`: `python -m unittest test_heatmap_logik -v` bzw. `bench --site <site> run-tests --module …heatmap_zelle.test_heatmap_logik` |
+| T-ALLE | `scripts/alle-tests.mjs` (Welle 4) | Sammellauf aller `scripts/*.test.mjs`; `todo`-Befunde brechen nicht ab | Runner, 21 Dateien (Stand 30.09.2026) | `node scripts/alle-tests.mjs` (Snippet `"test": "node scripts/alle-tests.mjs"` für `package.json` noch nicht übernommen) |
+| T-W4 | neu in Welle 4: `prognose` (27), `schneelast-seite` (17), `einspeisung` (10 Gruppen), `eg-betriebe`, `kommunen-vergabe`, `flaeche` (15), `finanzierung` (14), `rechner-teilen` (13), `lastgang` (23), `experimente` (12), `kontrast` (18), `rechner-gewerbe` (68), `rechner-mobilitaet` (29), `rechner-privat` (43), `kundenbuehne` (23), `kennzahlen` (8), `heatmap-frontend` (11), `bundesland` (15) | Fachlogik der neuen Werkzeuge, Rechner, Kundenbühne, Kennzahlen, Heatmap-Validierung (Website), Farbkontrast | node:test bzw. node:assert | über T-ALLE |
 | T-VERTRAG | `Import-Backend-Frappe/apps/oekovolt_app/tests/pruefe_vertrag.py` | Vertrag Website ↔ Backend ohne Frappe: Antwortformen `get_projekte`/`get_projekt`/`get_referenzkarte`, Formularprüfung (Honeypot, Pflichtfelder, PLZ, PDF), Herkunftszeile nicht in Kunden-Mail, DocType-Felder und Berechtigungen, Whitelist-Pfade mit Rollenprüfung | Prüfskript, 186 Prüfungen | im Ordner `Import-Backend-Frappe`: `python apps/oekovolt_app/tests/pruefe_vertrag.py` |
 
 **Lücken:**
@@ -38,6 +40,29 @@ Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
 - Kein Test für das Erzeugungsskript `scripts/schneelast-raster-erzeugen.py` (braucht ca. 0,9 GB Eingangsdaten); geprüft wird nur das Ergebnis (T-SNOW).
 
 ## 3. Testprotokoll
+
+### 3.00 Welle 4 (30.09.2026, Nachführung)
+
+| Test | Ergebnis | Exit-Code | Bemerkung |
+|---|---|---|---|
+| T-ALLE (`node scripts/alle-tests.mjs`) | **21 von 21 Dateien bestanden**, 0 fehlgeschlagen, ca. 5 s | 0 | 2 bekannte Befunde als `todo` (siehe unten) |
+| T-TERMIN | **bestanden** – 37 Tests OK | 0 | – |
+| T-HEAT | **bestanden** – 18 Tests OK | 0 | – |
+| T-VERTRAG | **bestanden** – 186/186 | 0 | – |
+
+**Befunde aus dem Testauftrag (tests-01 bis tests-05):**
+
+| Befund | Gegenstand | Stand 30.09.2026 |
+|---|---|---|
+| tests-01 | `PV_MONAT` in `src/lib/rechner/profile.js` summierte sich auf 0,995 | im Code **behoben** (Normierung); der Folgetest „Gewerbe ohne Speicher weist einen Speicherverlust aus“ (`scripts/rechner-privat.test.mjs:388`) meldet aber weiterhin einen Befund → Ursache in `src/lib/solarrechner.js` prüfen (Q-10) |
+| tests-02 | `zahlText()` gruppierte Dezimalzahlen falsch | **behoben** (`src/data/kennzahlen.js`, Dezimalkomma) |
+| tests-03 | EAG-Zuschuss über 1.000 kWp im Pacht-Rechner | **behoben** (`src/lib/rechner/pacht.js`, anteilig) |
+| tests-04 | eigene TOR-Staffel in `pacht.js` ohne 0,8-kW-Grenze | **offen** (todo im Sammellauf) |
+| tests-05 | `wallbox.js` ohne Rückfall bei unbekanntem Kraftstoff | **behoben** (Rückfall Benzin) |
+
+Weitere fachliche Hinweise aus dem Testauftrag (keine Logikfehler): Privat-Solarrechner mit Standardwerten amortisiert
+nicht innerhalb von 20 Jahren; `toLocaleString("de-DE")` in `src/lib/rechner/annahmen.js`, `co2.js`, `kundenbuehne.js`,
+`AnimZahl.js` (Hydrations-Risiko); Randfälle in `egAusParams` und `zeitfenster()`.
 
 ### 3.0 Welle 3 (30.09.2026, Nachführung)
 
@@ -76,7 +101,8 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 
 | Welle | Aufruf | Ergebnis |
 |---|---|---|
-| 3 | `npx eslint src -f json` (ohne Cache, schreibt nichts ins Projekt) | 865 Dateien, **0 Fehler, 0 Warnungen** |
+| 4 | `npx eslint src scripts -f json` (ohne Cache) | 976 Dateien, **0 Fehler, 0 Warnungen** |
+| 3 | `npx eslint src -f json` | 865 Dateien, 0 Fehler, 0 Warnungen |
 | 2 | wie oben | 848 Dateien, 0 Fehler, 0 Warnungen |
 | 1 | wie oben | 824 Dateien, 0 Fehler, 1 Warnung (`src/lib/heatmap.js`, überflüssige `eslint-disable`-Direktive – in Welle 2 behoben) |
 
@@ -87,13 +113,13 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | Stand | Ergebnis | Quelle |
 |---|---|---|
 | 29.09.2026 (vor Commit `11472bf`) | Produktions-Build fehlerfrei; QA-Crawl 199 Sitemap-URLs: 0 Fehlerseiten, 0 interne 404, Title/Description/Canonical/H1/JSON-LD gültig | `docs/AT-UEBERGABE.md:3-5` |
-| 30.09.2026, Wellen 2 und 3 | Build übernimmt der Koordinator (parallel) – **Ergebnis bei Redaktionsschluss nicht gemeldet** | beim nächsten Nachführen eintragen (P9) |
+| 30.09.2026, Wellen 2–4 | Build übernimmt der Koordinator (parallel) – **Ergebnis bei Redaktionsschluss nicht gemeldet**; laut Koordinator Sitemap mit 311 URLs | beim nächsten Nachführen eintragen (P9) |
 
 ## 4. Manuelle Sichtprüfungen
 
 | Prüfung | Vorgabe | Letzter belegter Stand | Offen |
 |---|---|---|---|
-| Visuelle Kontrolle Desktop 1440 px und Mobil 390 px im echten Browser, Vergleich zur DE-Seite | `docs/AT-DESIGN.md:8-20` | Premium-Überarbeitung, alle Bereiche (`docs/AT-UEBERGABE.md:35-36`) | neu seit 29.09.: EAG-Fördercall-Seite, Hinweisleiste, Standort-Check-Richtwert, Konfetti (auch mit „Bewegung reduzieren“), Heatmap-Ansicht, Netzanmeldung (inkl. Druckansicht Checkliste), Kundenbühne (Porträt, Siegel-Konfigurator, Social-Kit, ESG-Bericht, Siegel auf Fremdseite), Footer mit Instagram; Welle 3: WKO-Siegel im Hero, Kennzahlen-Band, Mannschaft (`/uber-uns#mannschaft`, Teaser), Pressekontakt, Mediathek (leer und mit ersten Videos), `/hinweisgeberschutz` in beiden Schalterstellungen |
+| Visuelle Kontrolle Desktop 1440 px und Mobil 390 px im echten Browser, Vergleich zur DE-Seite | `docs/AT-DESIGN.md:8-20` | Premium-Überarbeitung, alle Bereiche (`docs/AT-UEBERGABE.md:35-36`) | neu seit 29.09.: EAG-Fördercall-Seite, Hinweisleiste, Standort-Check-Richtwert, Konfetti (auch mit „Bewegung reduzieren“), Heatmap-Ansicht, Netzanmeldung (inkl. Druckansicht Checkliste), Kundenbühne (Porträt, Siegel-Konfigurator, Social-Kit, ESG-Bericht, Siegel auf Fremdseite), Footer mit Instagram; Welle 3: WKO-Siegel im Hero, Kennzahlen-Band, Mannschaft (`/uber-uns#mannschaft`, Teaser), Pressekontakt, Mediathek (leer und mit ersten Videos), `/hinweisgeberschutz` in beiden Schalterstellungen; Welle 4: `/pv-prognose`, `/schneelast` (Hydration-Konsole), Schneelast-Länderseiten, `/einspeisung-gewerbe`, `/energiegemeinschaften/betriebe-gemeinden`, `/kommunen/vergabe-foerderung`, `/flaechen-check` (mobil ca. 22 Bildschirmhöhen), Widmungsseiten, `/rechner/finanzierung`, PDF-Druck in allen 8 Gewerbe-Rechnern (Peak-Shaving ungeprüft), Teilen-Knopf mobil, `/lastgang-analyse` (Ergebnis PV/Peak), Bundesland-Hubs (Ertrags-Abschnitt, Wisch-Karten mobil), Kontrast auf Seiten mit Altbausteinen, Reveal-Elemente |
 | HORA-Direktlinks im Browser testen | `docs/AT-UEBERGABE.md:97` | nicht belegt | offen |
 | Abnahmetest Backoffice (curl + Seiten) | `docs/FRAPPE-AT-API-SPEZIFIKATION.md` Abschnitt 8; `Import-Backend-Frappe/README.md` („Abnahme nach der Installation“) | nicht belegt (AT-Backoffice nicht live) | offen |
 
@@ -124,3 +150,8 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | Q-07 | Test für den Kundenbühne-Rechenweg (`src/lib/kundenbuehne.js`) | mittel |
 | Q-08 | Tests für `src/data/reels.js` (`mediathekSitemap`, Sortierung) und `scripts/reels-optimieren.mjs` (Eintrag zwischen den Markierungen) | niedrig |
 | Q-09 | Prüfung, dass Kennzahlen nur aus `src/data/kennzahlen.js` stammen (Duplikate finden) | niedrig |
+| Q-10 | Folgebefund tests-01 (`speicherverlust` ohne Speicher) in `src/lib/solarrechner.js` klären | mittel |
+| Q-11 | Befund tests-04 (TOR-Staffel in `pacht.js`, `torTyp()` aus `gewerbepv.js` wiederverwenden) | niedrig |
+| Q-12 | Lastgang-Parser mit je einem echten, anonymisierten Export aus 2–3 Netzbetreiber-Portalen prüfen | mittel |
+| Q-13 | PV-Prognose gegen Monitoringdaten einer Ökovolt-Anlage validieren | mittel |
+| Q-14 | Seitenlängen über der Richtschnur 8–11 Bildschirmhöhen kürzen (Schneelast, EG Betriebe, Vergabe, Flächen-Check, Bundesland-Hubs) | niedrig |

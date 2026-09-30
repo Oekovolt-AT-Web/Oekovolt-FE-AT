@@ -38,6 +38,7 @@ import { rechneWallbox } from "@/lib/rechner/wallbox";
 import { rechneGewerbePv, annuitaet, kwpAusFlaeche, GEWERBE_PRESETS } from "@/lib/rechner/gewerbepv";
 import { rechneCo2 } from "@/lib/rechner/co2";
 import { rechnePacht } from "@/lib/rechner/pacht";
+import { rechneFinanzierung, zahl as zahlFz } from "@/lib/rechner/finanzierung";
 import { fmt } from "@/lib/rechner/annahmen";
 import { berechne as solarBerechne } from "@/lib/solarrechner";
 import { ANNAHMEN } from "@/data/solarrechner";
@@ -108,7 +109,8 @@ function beispiele() {
   const wp = rechneWaermepumpe({ flaeche: 150, standard: "1995", heizung: "gas", preis: 12, jaz: 3.5, pv: "pv", kwp: 10 });
   const ea = rechneWallbox({ km: 15000, verbrauch: 18, anteilZuhause: 0.8, anteilPv: 0.4, kraftstoff: "benzin" });
   const rate = annuitaet(gewerbe.investition, 0.05, 10);
-  return { gewerbe, co2, pacht, solar, wp, ea, rate, linz };
+  const fin = rechneFinanzierung();
+  return { gewerbe, co2, pacht, solar, wp, ea, rate, linz, fin };
 }
 
 async function liveDaten() {
@@ -190,6 +192,25 @@ export default async function RechnerHub() {
         ]}
       />
     ),
+    finanzierungsvergleich: (
+      <div>
+        <VorschauBalken
+          reihen={b.fin.modelle.map((m) => ({
+            label: m.name,
+            wert: Math.max(m.barwert, 0),
+            anzeige: `${zahlFz(Math.round(m.barwert / 1000))} T€`,
+            farbe: m.farbe,
+          }))}
+        />
+        <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+          Barwert über 20 Jahre, Beispiel {zahlFz(b.fin.basis.kwp)} kWp · Konditionen sind Beispielwerte
+        </p>
+      </div>
+    ),
+    "lastgang-analyse": <VorschauCheckliste punkte={["Lastprofil & Grundlast", "Spitzen & Peak-Shaving-Speicher", "PV-Größe für hohen Eigenverbrauch"]} />,
+    "pv-prognose": <VorschauCheckliste punkte={["Stündlich für 60 Stunden", "Unsicherheitsband", "Goldene Stunden nach Börsenpreis"]} />,
+    schneelast: <VorschauCheckliste punkte={["Richtwert sₖ je Ort", "Dachlast-Beispiel", "Passende Modulklasse"]} />,
+    "flaechen-check": <VorschauCheckliste punkte={["Widmung je Bundesland", "Größe, Netz & Hang", "Pachtspanne & Checkliste"]} />,
     waermepumpe: (
       <VorschauBalken
         reihen={[
@@ -312,8 +333,9 @@ export default async function RechnerHub() {
           <Reveal as="li" className="flex md:col-span-2">{karte("gewerbe-pv", { form: "breit" })}</Reveal>
           <Reveal as="li" delay={80} className="flex">{karte("solarrechner")}</Reveal>
           <Reveal as="li" delay={60} className="flex">{karte("freiflaeche-pacht", { ton: "sand" })}</Reveal>
-          <Reveal as="li" delay={120} className="flex">{karte("finanzierung")}</Reveal>
-          <Reveal as="li" delay={180} className="flex md:col-span-2 lg:col-span-1">{karte("waermepumpe", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={120} className="flex md:col-span-2">{karte("finanzierungsvergleich", { form: "breit" })}</Reveal>
+          <Reveal as="li" delay={60} className="flex">{karte("finanzierung")}</Reveal>
+          <Reveal as="li" delay={120} className="flex lg:col-span-2">{karte("waermepumpe", { ton: "sand" })}</Reveal>
         </ul>
       </KategorieSektion>
 
@@ -324,7 +346,9 @@ export default async function RechnerHub() {
           <Reveal as="li" delay={80} className="flex">{karte("stromspeicher", { ton: "glas" })}</Reveal>
           <Reveal as="li" delay={60} className="flex">{karte("energiegemeinschaft", { ton: "glas" })}</Reveal>
           <Reveal as="li" delay={120} className="flex">{karte("blackout", { ton: "glas" })}</Reveal>
-          <Reveal as="li" delay={180} className="flex md:col-span-2 lg:col-span-1">{karte("energie-live", { ton: "glas", mobilVorschau: true })}</Reveal>
+          <Reveal as="li" delay={180} className="flex">{karte("energie-live", { ton: "glas", mobilVorschau: true })}</Reveal>
+          <Reveal as="li" delay={60} className="flex md:col-span-2">{karte("lastgang-analyse", { ton: "glas", form: "breit" })}</Reveal>
+          <Reveal as="li" delay={120} className="flex md:col-span-2 lg:col-span-1">{karte("pv-prognose", { ton: "glas" })}</Reveal>
           <Reveal as="li" delay={100} className="md:col-span-2 lg:col-span-3">
             <LiveKachel tool={toolById("dynamisch")} live={live} />
           </Reveal>
@@ -342,10 +366,12 @@ export default async function RechnerHub() {
 
       {/* 04 Standort & Förderung */}
       <KategorieSektion id="standort-foerderung" nr="04" tone="white">
-        <ul className="grid gap-4 md:grid-cols-3 lg:gap-5">
+        <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-5">
           <Reveal as="li" className="flex">{karte("standort-check", { ton: "sand" })}</Reveal>
-          <Reveal as="li" delay={80} className="flex">{karte("foerdercheck", { ton: "sand" })}</Reveal>
-          <Reveal as="li" delay={160} className="flex">{karte("ifb", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={80} className="flex">{karte("schneelast", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={160} className="flex">{karte("flaechen-check", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={60} className="flex">{karte("foerdercheck", { ton: "sand" })}</Reveal>
+          <Reveal as="li" delay={120} className="flex md:col-span-2">{karte("ifb", { ton: "sand", form: "breit" })}</Reveal>
         </ul>
       </KategorieSektion>
 
@@ -375,9 +401,12 @@ export default async function RechnerHub() {
                 <tbody className="divide-y divide-ink-100">
                   {[
                     ["PV auf Halle oder Betriebsgebäude", "gewerbe-pv", "Eigenverbrauch, IRR, Förderung"],
+                    ["PV finanzieren: kaufen, leasen oder Strom kaufen?", "finanzierungsvergleich", "Barwert je Modell"],
                     ["Leistungspreis senken", "peak-shaving", "Speichergröße, Ersparnis"],
+                    ["Eigenen Lastgang (15-Minuten-Werte) auswerten", "lastgang-analyse", "Grundlast, Spitzen, PV-Größe"],
                     ["Klimabilanz für Bericht oder Bank", "co2-esg", "Scope 2 vorher/nachher"],
                     ["Fläche verpachten oder Solarpark", "freiflaeche-pacht", "MWp, Ertrag, Pacht"],
+                    ["Eignet sich meine Fläche für einen Solarpark?", "flaechen-check", "Ampel, Pacht, Checkliste"],
                     ["Strom mit Nachbarn teilen", "energiegemeinschaft", "Netzentgelt-Vorteil"],
                     ["Fuhrpark elektrifizieren", "e-flotte", "Kosten und CO₂"],
                     ["Ladepunkte am Firmenparkplatz", "ladeinfrastruktur", "Anzahl, Leistung, Netz"],

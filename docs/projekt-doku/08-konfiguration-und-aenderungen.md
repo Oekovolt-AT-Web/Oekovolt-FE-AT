@@ -1,7 +1,7 @@
 # 08 – Konfigurationsmanagement und Änderungsprotokoll
 
 Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE 12207 (Identifikation,
-Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 ## 1. Konfigurationseinheiten
 
@@ -10,10 +10,10 @@ Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE
 | Website-Quellcode | Repository `Oekovolt-FE-AT` (Remote `github.com/Oekovolt-AT-Web/Oekovolt-FE-AT`) | Git |
 | Abhängigkeiten | `package.json`, `package-lock.json` | Git |
 | Datenbestände | `src/data/*`, `src/content/*`, `data/schneelast/*` | Git (Raster als Binärdatei) |
-| Frappe-Pakete | `Import-Backend-Frappe/` (maßgeblich für AT, noch nicht committet), `Import-Frappe/` (DE-Stand, für AT nicht mehr nötig) | Git |
+| Frappe-Pakete | `Import-Backend-Frappe/` (maßgeblich für AT, in `add3074` committet), `Import-Frappe/` (DE-Stand, für AT nicht mehr nötig) | Git |
 | Laufzeitkonfiguration | Umgebungsvariablen (Hosting), Frappe `site_config.json` | **nicht** in Git (bewusst); Stand je Umgebung offen |
 | Backoffice-Inhalte | Frappe-Datenbank | außerhalb Git |
-| Projektdokumentation | `docs/projekt-doku/` (Version 0.3) | Git (noch nicht committet) |
+| Projektdokumentation | `docs/projekt-doku/` (Version 0.4, Version 0.3 in `add3074` committet) | Git (noch nicht committet) |
 
 ## 2. Branch-Modell (Ist, aus `git log`/`git branch -a` abgeleitet)
 
@@ -47,11 +47,47 @@ Verweis auf Anforderungs-IDs (`REQ-…`) aus Kapitel 01, damit die Matrix in Kap
 Format in Anlehnung an „Keep a Changelog“. Kategorien: Hinzugefügt · Geändert · Behoben · Entfernt · Sicherheit.
 Einträge werden beim Nachführen aus `git log` und `git diff --stat` gebildet.
 
-### [Unveröffentlicht] – Arbeitsbaum am 30.09.2026 nach Welle 3 (nicht committet)
+### [Unveröffentlicht] – Arbeitsbaum am 30.09.2026 nach Welle 4 (nicht committet)
 
-Gesamtumfang laut `git status` / `git diff --shortstat`: 57 geänderte bzw. gelöschte versionierte Dateien
-(+776/−318 Zeilen, ohne neue Dateien), dazu 32 neue, nicht versionierte Pfade. Die Einträge der Welle 3 stehen
-zuerst, darunter die der Welle 2.
+Umfang gegenüber `add3074` laut `git status` / `git diff --shortstat`: 58 geänderte versionierte Dateien
+(+2.422/−699 Zeilen, einschließlich dieser Dokumentation), dazu 62 neue, nicht versionierte Pfade.
+
+**Hinzugefügt**
+- PV-Prognose `/pv-prognose` mit `/api/pv-prognose` (GeoSphere NWP v2 und Ensemble v2, Cache je Zelle/Lauf, Budget 200/h),
+  `src/lib/prognose/*`, `src/components/Prognose/*`.
+- Schneelast-Karte `/schneelast`, 9 Länderseiten, `/schneelast/richtwert`, `/schneelast/karte.png` (`src/lib/schneelast/*`,
+  `src/components/Schneelast/*`); Redirect `/schneelast` → `/standort-check` entfernt.
+- `/einspeisung-gewerbe` mit `src/data/oemag.js` und `src/lib/einspeisung.js`.
+- `/energiegemeinschaften/betriebe-gemeinden` (`src/lib/egBetriebe.js`, `src/components/EGBetriebe/*`).
+- `/kommunen/vergabe-foerderung` (`src/lib/kommunen/*`, `src/components/KommunenVergabe/*`).
+- `/flaechen-check` und `/freiflaechen-photovoltaik/widmung` + Landesseiten (`src/lib/flaeche/*`, `src/components/FlaechenCheck/*`).
+- `/rechner/finanzierung` (`src/lib/rechner/finanzierung.js`, `src/components/RechnerFinanzierung/*`).
+- Teilen-Link und PDF-Bericht in 8 Gewerbe-Rechnern (`src/components/RechnerTeilen/*`).
+- `/lastgang-analyse` (nur im Browser) mit `src/lib/lastgang/*` und `public/beispiele/lastgang-beispiel.csv`.
+- A/B-Test-Infrastruktur `src/lib/experimente.js`, `src/components/Experimente/*`, Erweiterung `src/middleware.js` (K1 inaktiv).
+- Bundesland-Hubs `/photovoltaik-bundesland/[land]` (`src/lib/bundesland/*`, `src/components/Bundesland/*`).
+- Test-Sammellauf `scripts/alle-tests.mjs`, `scripts/lib/` und 18 neue Testdateien (21 insgesamt, alle grün).
+- Datenschutz-Doku AT: `docs/datenschutz/00-Uebersicht-VVT.md`, `VVT-Anfragen.md`, `VVT-Heatmap.md`, `VVT-Kundenbuehne.md`,
+  `VVT-Lastgang-Analyse.md`, `VVT-Mediathek.md`.
+- Projektdoku 0.4 mit neuem Kapitel `11-seo.md` und Anhang `anhang/seo-umsetzungsplan-2026-09-30.md`.
+
+**Geändert**
+- Integration: Sitemap (laut Koordinator 311 URLs), Navigation, Querverweise (`src/data/verlinkung.js`), Rechner-Hub
+  (`src/app/rechner/page.js`, `src/components/Rechner/tools.js`), Tracing für `/schneelast/richtwert` und
+  `/photovoltaik-bundesland/[land]` (`next.config.mjs`); Links von `/energiegemeinschaften`, `/kommunen`,
+  `/freiflaechen-photovoltaik`, `/photovoltaik`, `/photovoltaik/[stadt]`, Pacht-Rechner.
+- Performance/Barrierefreiheit: Schriften nur „latin“, `HeroVideo`, Cookie-Banner im Footer per `next/dynamic`,
+  `RevealObserver`, Kontrastregel in `globals.css`, `Teilen.js`, `icons.js`.
+- Kennzahl Gesamtleistung 510.000 kWp (vorher 340.000) in `src/data/kennzahlen.js`; `zahlText()` mit Dezimalkomma.
+- Befunde behoben: tests-01 (`profile.js`), tests-02 (`kennzahlen.js`), tests-03 (`pacht.js`), tests-05 (`wallbox.js`).
+- Bestehende Datenschutz-Dokumente auf AT angepasst.
+
+**Offen / nicht übernommen:** siehe 00 (P26–P32) und 09 (R-35 bis R-51).
+
+### [add3074] – 30.09.2026 (Wellen 2 und 3)
+
+Commit „Heatmap, Backend-Paket, Netzanmeldung, Kundenbühne, Mediathek, Mannschaft, Kennzahlen, Hinweisgeber-Schalter,
+ISO-Doku, Sicherheitsfixes“. Inhalt wie bis Version 0.3 unter „Unveröffentlicht“ geführt:
 
 #### Welle 3
 
@@ -168,12 +204,12 @@ zuerst, darunter die der Welle 2.
 GA statt Umami (`889295d`), UI-Korrekturen (`7dd016d`), Hinweisgebersystem vorerst über IntegrityLine (`922a0a1`).
 Details: `git log main`.
 
-## 5. Statusbericht Konfiguration (30.09.2026, nach Welle 3)
+## 5. Statusbericht Konfiguration (30.09.2026, nach Welle 4)
 
 | Punkt | Stand |
 |---|---|
-| HEAD | `11472bf` auf `at-launch` (seit Welle 1 kein neuer Commit) |
-| Remote | `origin/at-launch` einen Commit zurück |
-| Arbeitsbaum | 57 versionierte Dateien geändert/gelöscht (davon `src/app/api/optimize-video/route.js` als Löschung vorgemerkt), 32 neue Pfade (siehe „Unveröffentlicht“) |
+| HEAD | `add3074` auf `at-launch` (enthält Wellen 2 und 3) |
+| Remote | nicht erneut geprüft (Stand 0.3: `origin/at-launch` einen Commit zurück) |
+| Arbeitsbaum | 58 versionierte Dateien geändert, 62 neue Pfade (Welle 4, siehe „Unveröffentlicht“) |
 | Zeilenenden | Git meldet LF→CRLF-Umwandlung für mehrere Dateien (`.gitattributes` vorhanden) – unkritisch, beim Commit beachten |
-| Nächster Schritt | Commit der Wellen 2 und 3 durch den Koordinator; danach „Unveröffentlicht“ in eine datierte Version mit Commit-Hash überführen |
+| Nächster Schritt | Commit der Welle 4 durch den Koordinator; danach „Unveröffentlicht“ datieren |

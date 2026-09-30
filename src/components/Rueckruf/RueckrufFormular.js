@@ -48,8 +48,23 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
   const [ergebnis, setErgebnis] = useState(null);
   const [beruehrt, setBeruehrt] = useState({});
   const website = useRef(null);
+  const nameFeld = useRef(null);
   const telefonFeld = useRef(null);
-  const telefonFehlerId = useId();
+  const emailFeld = useRef(null);
+  const plzFeld = useRef(null);
+  const einwilligungFeld = useRef(null);
+  const zeitenRef = useRef(null); // Fieldset „Wunschzeit“
+  // Zu welchem Feld gehört die Sammelmeldung? Dort landet der Fokus, und das Feld verweist per aria-describedby darauf.
+  const [fehlerFeld, setFehlerFeld] = useState("");
+  const basisId = useId();
+  const ids = {
+    name: `${basisId}-name-fehler`,
+    telefon: `${basisId}-telefon-fehler`,
+    email: `${basisId}-email-fehler`,
+    plz: `${basisId}-plz-fehler`,
+    sammel: `${basisId}-fehler`,
+  };
+  const telefonFehlerId = ids.telefon;
 
   const status = useMemo(() => oeffnungsStatus(), []);
   // null = Kalender lädt noch; danach Tage mit Slots { start, zeit, frei } wie auf /termin
@@ -92,17 +107,42 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
   const plzFehler = beruehrt.plz && !plzOk;
   const nameFehler = beruehrt.name && !name.trim();
 
+  // Fokus erst nach dem Rendern setzen – dann steht die Fehlermeldung schon im
+  // DOM und wird über aria-describedby zusammen mit dem Feld vorgelesen (WCAG 3.3.1).
+  const [fokusAuf, setFokusAuf] = useState(null); // { feld, n } – n erzwingt erneutes Fokussieren
+  useEffect(() => {
+    if (!fokusAuf) return;
+    const ziele = { name: nameFeld, telefon: telefonFeld, email: emailFeld, plz: plzFeld, einwilligung: einwilligungFeld };
+    if (ziele[fokusAuf.feld]) return ziele[fokusAuf.feld].current?.focus();
+    if (fokusAuf.feld === "wunschzeit") {
+      const box = zeitenRef.current;
+      // erste freie Uhrzeit des gewählten Tags, sonst der erste wählbare Tag
+      (box?.querySelector("[data-slot]:not(:disabled)") || box?.querySelector("button:not(:disabled)"))?.focus();
+      return;
+    }
+    document.getElementById(ids.sammel)?.focus();
+    // ids.sammel ist über die Lebensdauer stabil (useId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fokusAuf]);
+
+  const melden = (feld, text) => {
+    setFehler(text);
+    setFehlerFeld(feld);
+    setFokusAuf((f) => ({ feld, n: (f?.n || 0) + 1 }));
+  };
+
   async function absenden(e) {
     e.preventDefault();
     setBeruehrt({ telefon: true, email: true, plz: true, name: true });
-    if (!name.trim()) return setFehler("Bitte geben Sie Ihren Namen an.");
-    if (!telefonOk) return setFehler("Bitte eine gültige österreichische, deutsche oder Schweizer Rufnummer angeben.");
-    if (!emailOk) return setFehler("Bitte eine gültige E-Mail-Adresse angeben.");
-    if (!plzOk) return setFehler("Bitte eine gültige Postleitzahl angeben.");
-    if (!wunschzeit) return setFehler("Bitte wählen Sie eine Wunschzeit.");
-    if (!einwilligung) return setFehler("Bitte bestätigen Sie, dass wir Sie anrufen dürfen.");
+    if (!name.trim()) return melden("name", "Bitte geben Sie Ihren Namen an.");
+    if (!telefonOk) return melden("telefon", "Bitte eine gültige österreichische, deutsche oder Schweizer Rufnummer angeben.");
+    if (!emailOk) return melden("email", "Bitte eine gültige E-Mail-Adresse angeben.");
+    if (!plzOk) return melden("plz", "Bitte eine gültige Postleitzahl angeben.");
+    if (!wunschzeit) return melden("wunschzeit", "Bitte wählen Sie eine Wunschzeit.");
+    if (!einwilligung) return melden("einwilligung", "Bitte bestätigen Sie, dass wir Sie anrufen dürfen.");
 
     setFehler("");
+    setFehlerFeld("");
     setZustand("sendet");
     const b = berlin(new Date(wunschzeit));
     try {
@@ -141,9 +181,9 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         // Zeit wurde inzwischen vergeben → Kalender neu laden, andere Zeit wählen lassen
         setWunschzeit("");
         kalenderLaden();
-        setFehler("Diese Zeit wurde gerade vergeben. Bitte wählen Sie eine andere Uhrzeit.");
+        melden("wunschzeit", "Diese Zeit wurde gerade vergeben. Bitte wählen Sie eine andere Uhrzeit.");
       } else {
-        setFehler(`Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: ${FIRMA.telefon}.`);
+        melden("sammel", `Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns direkt an: ${FIRMA.telefon}.`);
       }
       setZustand("form");
     }
@@ -194,7 +234,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
       </div>
 
       {/* Wunschzeit */}
-      <fieldset className="min-w-0">
+      <fieldset ref={zeitenRef} className="min-w-0" aria-describedby={fehler && fehlerFeld === "wunschzeit" ? ids.sammel : undefined}>
         <legend className={cn("mb-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] font-semibold", t.text)}>
           Wunschzeit
           {tage?.[tag]?.slots.some((s) => !s.frei) && (
@@ -240,10 +280,12 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
                   <button
                     key={s.start}
                     type="button"
+                    data-slot=""
                     aria-pressed={wunschzeit === s.start}
                     onClick={() => {
                       setWunschzeit(s.start);
                       setFehler("");
+                      setFehlerFeld("");
                     }}
                     className={cn("ov-num h-9 rounded-xl text-[13.5px] font-semibold ring-1 ring-inset transition", wunschzeit === s.start ? "bg-ov-600 text-white ring-ov-600" : t.chip)}
                   >
@@ -271,6 +313,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         <label className="block sm:col-span-2">
           <span className={cn("mb-1.5 block text-[13px] font-semibold", t.text)}>Name</span>
           <input
+            ref={nameFeld}
             type="text"
             autoComplete="name"
             required
@@ -279,8 +322,15 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             onBlur={() => setBeruehrt((b) => ({ ...b, name: true }))}
             placeholder="Wie dürfen wir Sie ansprechen?"
             aria-invalid={nameFehler}
+            aria-describedby={nameFehler ? ids.name : undefined}
             className={cn("h-12 w-full rounded-2xl px-4 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, nameFehler && "ring-red-400")}
           />
+          {nameFehler && (
+            <span id={ids.name} className={cn("mt-1.5 flex items-start gap-1.5 text-[12.5px]", dunkel ? "text-red-300" : "text-red-700")}>
+              <AlertCircle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              Bitte geben Sie Ihren Namen an.
+            </span>
+          )}
         </label>
         <label className="block">
           <span className={cn("mb-1.5 block text-[13px] font-semibold", t.text)}>Telefonnummer</span>
@@ -312,6 +362,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         <label className="block">
           <span className={cn("mb-1.5 block text-[13px] font-semibold", t.text)}>E-Mail-Adresse</span>
           <input
+            ref={emailFeld}
             type="email"
             inputMode="email"
             autoComplete="email"
@@ -321,10 +372,11 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             onBlur={() => setBeruehrt((b) => ({ ...b, email: true }))}
             placeholder="name@beispiel.at"
             aria-invalid={emailFehler}
+            aria-describedby={emailFehler ? ids.email : undefined}
             className={cn("h-12 w-full rounded-2xl px-4 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, emailFehler && "ring-red-400")}
           />
           {emailFehler && (
-            <span className={cn("mt-1.5 flex items-start gap-1.5 text-[12.5px]", dunkel ? "text-red-300" : "text-red-700")}>
+            <span id={ids.email} className={cn("mt-1.5 flex items-start gap-1.5 text-[12.5px]", dunkel ? "text-red-300" : "text-red-700")}>
               <AlertCircle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Bitte eine gültige E-Mail-Adresse angeben.
             </span>
@@ -333,6 +385,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         <label className="block">
           <span className={cn("mb-1.5 block text-[13px] font-semibold", t.text)}>PLZ</span>
           <input
+            ref={plzFeld}
             type="text"
             inputMode="numeric"
             autoComplete="postal-code"
@@ -343,10 +396,11 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
             onBlur={() => setBeruehrt((b) => ({ ...b, plz: true }))}
             placeholder="5121"
             aria-invalid={plzFehler}
+            aria-describedby={plzFehler ? ids.plz : undefined}
             className={cn("h-12 w-full rounded-2xl px-4 text-[16px] ring-1 ring-inset transition focus-visible:outline-none focus-visible:ring-2", t.feld, plzFehler && "ring-red-400")}
           />
           {plzFehler && (
-            <span className={cn("mt-1.5 flex items-start gap-1.5 text-[12.5px]", dunkel ? "text-red-300" : "text-red-700")}>
+            <span id={ids.plz} className={cn("mt-1.5 flex items-start gap-1.5 text-[12.5px]", dunkel ? "text-red-300" : "text-red-700")}>
               <AlertCircle aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               Bitte eine gültige Postleitzahl angeben.
             </span>
@@ -390,7 +444,14 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
       <input ref={website} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
 
       <label className="flex cursor-pointer items-start gap-3">
-        <input type="checkbox" checked={einwilligung} onChange={(e) => setEinwilligung(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-ov-600" />
+        <input
+          ref={einwilligungFeld}
+          type="checkbox"
+          checked={einwilligung}
+          onChange={(e) => setEinwilligung(e.target.checked)}
+          aria-invalid={fehlerFeld === "einwilligung" && !einwilligung ? true : undefined}
+          aria-describedby={fehler && fehlerFeld === "einwilligung" ? ids.sammel : undefined}
+          className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-ov-600" />
         <span className={cn("text-[13px] leading-relaxed", t.leise)}>
           Ökovolt darf mich unter dieser Nummer zu meiner Anfrage anrufen. Die Angaben werden nur dafür genutzt, Details in der{" "}
           <Link href="/datenschutz#rueckruf" className={cn("font-semibold underline underline-offset-2", dunkel ? "text-white" : "text-ov-700")}>
@@ -401,7 +462,13 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
       </label>
 
       {fehler && (
-        <p role="alert" className="flex items-start gap-2 rounded-xl bg-red-50 p-3 text-[13.5px] text-red-700 ring-1 ring-red-200">
+        <p
+          id={ids.sammel}
+          tabIndex={-1}
+          // Bei Textfeldern liest der Screenreader die Meldung schon über Fokus + aria-describedby vor – kein doppeltes „alert“.
+          role={["name", "telefon", "email", "plz"].includes(fehlerFeld) ? undefined : "alert"}
+          className="flex items-start gap-2 rounded-xl bg-red-50 p-3 text-[13.5px] text-red-700 ring-1 ring-red-200"
+        >
           <AlertCircle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
           {fehler}
         </p>

@@ -20,9 +20,10 @@ import {
   speicherVorschlag,
   szenarien,
 } from "@/lib/rechner/blackout";
-import { DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Vorlagen, Zahlfeld, euro, useStartAusUrl } from "./GewerbeBausteine";
+import { DiagrammKarte, GewerbeStil, Hinweis, Karte, Vorlagen, Zahlfeld, euro, useStartAusUrl } from "./GewerbeBausteine";
 import { BlackoutVerlauf } from "./BlackoutDiagramme";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 
 const PFAD = "/rechner/blackout";
 const START = BRANCHEN[0];
@@ -74,6 +75,86 @@ export default function BlackoutRechner() {
   const speicherMax = Math.max(500, Math.ceil((vorschlag * 4) / 100) * 100);
   const liter48 = useMemo(() => (e.ziel >= 48 ? sim.liter : simuliereAusfall({ ...volle, ziel: 48 }).liter), [sim]); // eslint-disable-line react-hooks/exhaustive-deps
   useRechnerErgebnis("blackout", sim);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const bericht = () => ({
+    untertitel: `Ausfallkosten und Ersatzstrom · ${b.label} · ${fmt(e.ziel)} h Überbrückung`,
+    kennzahlen: [
+      ["Blackout 48 h", euro(Math.round(blackout.ohne / 100) * 100), "Kosten ohne Ersatzstrom"],
+      ["Vermieden", euro(Math.max(0, Math.round(blackout.vermieden / 100) * 100)), sim.vollGedeckt ? `mit ${fmt(e.ziel)} h Überbrückung` : `nur ${fmt(sim.ueberbrueckt)} von ${fmt(e.ziel)} h gedeckt`],
+      ["Ersatzstrom-Leistung", `${fmt(Math.round(aus.leistung))} kW`, `Aggregat ${fmt(aus.kva)} kVA`],
+      [`Diesel für ${fmt(e.ziel)} h`, e.aggregat ? `${fmt(Math.round(sim.liter))} l` : "–", e.aggregat ? `nur Aggregat: ${fmt(sim.nurAggregatLiter)} l` : "kein Aggregat gewählt"],
+    ],
+    eingaben: [
+      {
+        titel: "Kritische Versorgung",
+        zeilen: [
+          ["Branche (Beispielwerte)", b.label],
+          ["Kritische Last", `${fmt(e.last)} kW`],
+          ["Gewünschte Überbrückung", `${fmt(e.ziel)} h`],
+        ],
+      },
+      {
+        titel: "Ausfallkosten",
+        zeilen: [
+          [b.id === "gemeinde" ? "Ersatzmaßnahmen je Stunde" : "Entgangener Deckungsbeitrag je Stunde", `${euro(e.db)}/h`],
+          ["Personal im Stillstand", `${fmt(e.personen)} Pers. × ${euro(e.lohn)}/h`],
+          [b.ware > 0 ? b.wareLabel : "Gefährdeter Warenwert", euro(e.ware), `verloren nach ${fmt(e.verderb, e.verderb % 1 ? 2 : 0)} h`],
+          ["Wiederanlauf", `${fmt(e.wiederanlauf, e.wiederanlauf % 1 ? 1 : 0)} h`, `Kosten ${euro(e.wiederanlaufKosten)}`],
+        ],
+      },
+      {
+        titel: "Ersatzstrom-Kombination",
+        zeilen: [
+          ["PV-Anlage (ersatzstromfähig)", e.kwp > 0 ? `${fmt(e.kwp)} kWp` : "keine"],
+          ["Speicher (Nennkapazität)", speicher > 0 ? `${fmt(speicher)} kWh` : "ohne", e.speicher == null ? "Vorschlag: 2 h mittlere Last" : "eigene Eingabe"],
+          ["Notstromaggregat (Diesel)", e.aggregat ? "ja" : "nein"],
+          ["Jahreszeit / Beginn", `${JAHRESZEITEN.find((j) => j.id === e.jahreszeit)?.label} · ${e.startStunde} Uhr`],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Ausfallkosten",
+        zeilen: [
+          ["Ausfallkosten je Stunde", `${euro(kh)}/h`],
+          ...sz.map((s) => [`${s.label} (${s.sub})`, `${euro(s.ohne)} → ${euro(s.mit)}`, "ohne → mit Ersatzstrom"]),
+        ],
+      },
+      {
+        titel: "Auslegung",
+        zeilen: [
+          ["Kritische Last × Anlaufreserve", `${fmt(e.last)} × ${fmt(b.anlauf, 2)} = ${fmt(aus.leistung)} kW`],
+          ["Aggregat (cos φ 0,8)", `${fmt(aus.kva)} kVA`],
+          [`Energie für ${fmt(e.ziel)} h`, `${fmt(aus.energie)} kWh`],
+          ["Nur Speicher (ohne PV/Aggregat)", `${fmt(Math.ceil(aus.speicherNur / 10) * 10)} kWh`],
+          speicher > 0 && ["Speicher Richtinvest (netto)", `≈ ${euro(Math.round(sim.speicherInvest / 100) * 100)}`, "Richtwert"],
+          ["Überbrückt", `${fmt(sim.ueberbrueckt)} von ${fmt(sim.dauer)} h`],
+        ],
+      },
+      e.aggregat && {
+        titel: "PV + Speicher + Aggregat",
+        zeilen: [
+          ["Aggregat-Laufzeit", `${fmt(sim.laufzeit)} von ${fmt(sim.dauer)} h`],
+          ["Diesel Kombination", `${fmt(sim.liter)} l`],
+          ["Diesel nur Aggregat", `${fmt(sim.nurAggregatLiter)} l`],
+          ["Ersparnis", `−${fmt(sim.ersparnisLiter)} l`],
+          ["Vorrat für 48 h Blackout", `≈ ${fmt(Math.ceil(liter48 / 10) * 10)} l`],
+        ],
+      },
+    ],
+    hinweise: [
+      !sim.vollGedeckt && `Ersatzstrom reicht ${sim.ueberbrueckt} von ${sim.dauer} Stunden – mehr Speicher, mehr PV oder ein Aggregat schließen die Lücke.`,
+      "PV und Speicher liefern nur mit Ersatzstromfunktion: automatische Netztrennung, netzbildender Wechselrichter, Schwarzstart – nach TOR und ÖVE/ÖNORM E 8101 geplant und lokal bedienbar.",
+    ],
+    annahmen: [
+      "Branchenwerte (Auslastung, Anlaufreserve, Kosten) sind Beispielwerte, keine Statistik – ersetzen Sie sie durch Ihre Zahlen.",
+      "GfKV: Bei einem Blackout rechnet Österreich mit 10–48 Stunden ohne Strom.",
+      `Vereinfachte Stundensimulation, ${JAHRESZEITEN.find((j) => j.id === e.jahreszeit)?.label}, Beginn ${e.startStunde} Uhr; PV mit ${fmt(BO_ANNAHMEN.ertragProKwp)} kWh/kWp, Speicher-Ladezustand bei Ausfallbeginn ${fmt(BO_ANNAHMEN.socStart * 100)} %.`,
+      `Dieselverbrauch nach Datenblattwerten (Deutz 2011, ${fmt(BO_ANNAHMEN.dichte, 3)} kg/l, Generator ${fmt(BO_ANNAHMEN.etaGenerator * 100)} %); das Aggregat läuft im Bestpunkt und lädt den Speicher mit.`,
+      "Kritische Lasten und Anlaufströme werden vor Ort gemessen – kein Angebot.",
+    ],
+  });
 
   return (
     <div className="space-y-6">
@@ -278,15 +359,17 @@ export default function BlackoutRechner() {
                 Notstrom-Konzept anfragen
               </Button>
             </div>
-            <div className="mt-4">
-              <LinkTeilen
-                pfad={PFAD}
-                query={boParams({ ...e, speicher })}
-                titel="Blackout-Rechner: Was kostet ein Stromausfall?"
-                text="So viel kostet ein Blackout bei diesen Werten – und so viel Ersatzstrom braucht es. Gerechnet mit dem Ökovolt Blackout-Rechner."
-                kampagne="rechner_blackout"
-              />
-            </div>
+            <RechnerTeilen
+              className="mt-4"
+              rechner="blackout"
+              name="Blackout-Rechner"
+              pfad={PFAD}
+              query={boParams({ ...e, speicher })}
+              titel="Blackout-Rechner: Was kostet ein Stromausfall?"
+              text="So viel kostet ein Blackout bei diesen Werten – und so viel Ersatzstrom braucht es. Gerechnet mit dem Ökovolt Blackout-Rechner."
+              kampagne="rechner_blackout"
+              bericht={bericht}
+            />
           </div>
         </div>
       </Karte>

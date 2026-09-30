@@ -1,6 +1,6 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Calculator, Zap } from "lucide-react";
 
@@ -9,6 +9,7 @@ import { ANNAHMEN, SCHICHTEN, zielgruppeGrenzen } from "@/data/solarrechner";
 import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
 import { LiveDot } from "@/components/ui/LiveTicker";
 import AnimZahl from "./AnimZahl";
+import { zahlText } from "@/data/kennzahlen";
 
 /**
  * Live-Mini-Rechner im Startseiten-Hero: „Was bringt Ihr Hallendach?“
@@ -29,7 +30,16 @@ const MWH_START = MWH_STUFEN.indexOf(400);
 // Schichtmodell → Betriebstage im Lastprofil (3 Schichten = rund um die Uhr, 7 Tage)
 const BETRIEBSTAGE = { 1: 5, 2: 5, 3: 7 };
 
-const zahl = (n, stellen = 0) => n.toLocaleString("de-DE", { minimumFractionDigits: stellen, maximumFractionDigits: stellen });
+// Tausenderpunkt ohne Intl – Server und Browser formatieren identisch (keine Hydration-Unterschiede)
+const zahl = (n) => zahlText(Math.round(n));
+// Eine Nachkommastelle mit Komma (österreichische Schreibweise)
+const zahl1 = (n) => {
+  const [ganz, rest] = (Math.round(n * 10) / 10).toFixed(1).split(".");
+  return `${zahlText(ganz)},${rest}`;
+};
+// So lange wartet die Ansage nach der letzten Reglerbewegung – Screenreader hören
+// eine Zusammenfassung statt jedes Zwischenschritts der Zahlenanimation.
+const ANSAGE_VERZOEGERUNG = 1200;
 
 export default function HeroGewerbeRechner() {
   const [flaeche, setFlaeche] = useState(FLAECHE.start);
@@ -64,6 +74,23 @@ export default function HeroGewerbeRechner() {
   const angebot = `/angebot?objekt=gewerbe&verbrauch=${mwh * 1000}&kwp=${kwp}`;
   const detail = `/rechner/gewerbe-pv?flaeche=${flaeche}&verbrauch=${mwh}&schichten=${schichten}`;
   const eigen = Math.round(r.eigenverbrauchsquote * 100);
+  const ersparnis = Math.round(r.nutzenProJahr / 100) * 100;
+
+  // Ruhige Live-Region: nur eine Ansage, wenn die Eingaben zur Ruhe gekommen sind;
+  // der erste Stand wird nicht angesagt (steht ohnehin sichtbar da).
+  const zusammenfassung = `Richtwert: Anlage ${zahl(kwp)} kWp, Ersparnis ca. ${zahl(ersparnis)} Euro pro Jahr, ${
+    r.amortisationJahre ? `Amortisation ca. ${zahl1(r.amortisationJahre)} Jahre, ` : ""
+  }Eigenverbrauch ${eigen} Prozent.`;
+  const [ansage, setAnsage] = useState("");
+  const [erstAnsage, setErstAnsage] = useState(zusammenfassung);
+  useEffect(() => {
+    if (zusammenfassung === erstAnsage) return undefined;
+    const t = setTimeout(() => {
+      setAnsage(zusammenfassung);
+      setErstAnsage(null);
+    }, ANSAGE_VERZOEGERUNG);
+    return () => clearTimeout(t);
+  }, [zusammenfassung, erstAnsage]);
 
   return (
     <div className="ov-glass relative overflow-hidden rounded-[2rem] p-5 text-white shadow-[0_40px_80px_-30px_rgba(0,0,0,0.65)] sm:p-6 md:p-8">
@@ -89,7 +116,7 @@ export default function HeroGewerbeRechner() {
         <div className="mt-6">
           <div className="flex items-baseline justify-between gap-3">
             <label htmlFor="hero-flaeche" className="text-[13.5px] text-white/70">Nutzbare Dachfläche</label>
-            <output htmlFor="hero-flaeche" className="ov-num font-display text-[21px] font-extrabold">
+            <output htmlFor="hero-flaeche" aria-live="off" className="ov-num font-display text-[21px] font-extrabold">
               {zahl(flaeche)} <span className="text-[13.5px] font-bold text-white/60">m²</span>
             </output>
           </div>
@@ -111,7 +138,7 @@ export default function HeroGewerbeRechner() {
         <div className="mt-5">
           <div className="flex items-baseline justify-between gap-3">
             <label htmlFor="hero-verbrauch" className="text-[13.5px] text-white/70">Stromverbrauch pro Jahr</label>
-            <output htmlFor="hero-verbrauch" className="ov-num font-display text-[21px] font-extrabold">
+            <output htmlFor="hero-verbrauch" aria-live="off" className="ov-num font-display text-[21px] font-extrabold">
               {zahl(mwh)} <span className="text-[13.5px] font-bold text-white/60">MWh</span>
             </output>
           </div>
@@ -150,13 +177,16 @@ export default function HeroGewerbeRechner() {
           </div>
         </fieldset>
 
-        {/* Ergebnis */}
-        <div aria-live="polite" className="mt-6 overflow-hidden rounded-2xl bg-navy-950/45 ring-1 ring-white/10">
+        {/* Ergebnis – bewusst ohne aria-live: die animierten Zahlen würden sonst bei jedem Zwischenwert angesagt */}
+        <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+          {ansage}
+        </p>
+        <div className="mt-6 overflow-hidden rounded-2xl bg-navy-950/45 ring-1 ring-white/10">
           <div className="flex items-end justify-between gap-4 border-b border-white/10 px-4 py-4 sm:px-5">
             <div className="min-w-0">
               <p className="text-[12.5px] text-white/60">Ersparnis pro Jahr, ca.</p>
               <p className="ov-num whitespace-nowrap font-display text-[34px] font-extrabold leading-none tracking-tight text-ov-300 sm:text-[40px]">
-                <AnimZahl wert={Math.round(r.nutzenProJahr / 100) * 100} /> €
+                <AnimZahl wert={ersparnis} /> €
               </p>
             </div>
             <div className="text-right">

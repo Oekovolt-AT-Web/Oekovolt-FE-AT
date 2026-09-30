@@ -7,7 +7,7 @@
 // seit 2012 in Österreich, 2021 rund 30 MWp errichtet und TOP 3 der
 // IPC-Errichter Österreichs, Salzburg AG als Gesellschafterin (49 %),
 // eigene Regelungs-/Leittechnik, Gründer betreiben eigene Solarparks.
-// Unternehmenskennzahlen (5.000 Anlagen, 340.000 kWp, 112.000 t CO₂) laut Geschäftsführung
+// Unternehmenskennzahlen (5.000 Anlagen, 510.000 kWp, 112.000 t CO₂) laut Geschäftsführung
 // Ökovolt Österreich (bestätigt 30.09.2026) – zentral in src/data/kennzahlen.js.
 
 import { KENNZAHLEN, zahlText } from "./kennzahlen.js";

@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Check, ChevronDown, Link2, Minus, Plus, Share2 } from "lucide-react";
-import Teilen from "@/components/ui/Teilen";
+import { ChevronDown, Minus, Plus } from "lucide-react";
 import { cn } from "@/components/ui/cn";
-import { ereignis } from "@/lib/statistik";
 
 /* ------------------------------------------------------------------
    Gemeinsame Bausteine der Gewerbe-Rechner (E-Flotte, Ladeinfrastruktur).
@@ -203,67 +201,6 @@ export function Aufklapper({ titel, zusatz, children, offen: start = false, icon
       <div id={id} hidden={!offen} className="space-y-6 border-t border-ink-100 px-4 pb-5 pt-4">
         {children}
       </div>
-    </div>
-  );
-}
-
-/** Teilen: Link mit den Eingaben kopieren oder über Netzwerke teilen. */
-export function ErgebnisLink({ pfad, query, titel, text, kampagne }) {
-  const [offen, setOffen] = useState(false);
-  const [kopiert, setKopiert] = useState(false);
-  const [url, setUrl] = useState("");
-
-  const bauen = () => {
-    const basis = process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : window.location.origin;
-    return `${basis}${pfad}?${query}`;
-  };
-  const oeffnen = () => {
-    if (offen) return setOffen(false);
-    setUrl(bauen());
-    setOffen(true);
-    ereignis("rechner_teilen_geoeffnet", { rechner: kampagne });
-  };
-  const kopieren = async () => {
-    const u = bauen();
-    setUrl(u);
-    try {
-      await navigator.clipboard.writeText(u);
-      setKopiert(true);
-      setTimeout(() => setKopiert(false), 2200);
-    } catch {
-      setOffen(true);
-    }
-  };
-
-  return (
-    <div className="rounded-2xl bg-white ring-1 ring-ink-200/70">
-      <div className="flex flex-wrap items-center gap-2 p-2 pl-4">
-        <span className="flex shrink-0 items-center gap-2 whitespace-nowrap text-[14px] font-semibold text-ink-800">
-          <Share2 aria-hidden="true" className="h-4 w-4 shrink-0 text-ov-600" />
-          Ergebnis teilen
-          <span className="hidden text-[12.5px] font-normal text-ink-500 xl:inline">· Link mit Ihren Eingaben, ohne persönliche Daten</span>
-        </span>
-        <span className="ml-auto flex items-center gap-1">
-          <button
-            type="button"
-            onClick={kopieren}
-            className={cn(
-              "inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-colors",
-              kopiert ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-800 hover:bg-ink-200",
-            )}
-          >
-            {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : <Link2 aria-hidden="true" className="h-4 w-4" />}
-            {kopiert ? "Kopiert" : "Link kopieren"}
-          </button>
-          <button type="button" onClick={oeffnen} aria-expanded={offen} className="inline-flex h-10 items-center rounded-full px-3 text-[13px] font-semibold text-ov-700 hover:bg-ov-50">
-            Mehr
-          </button>
-        </span>
-      </div>
-      <p className="sr-only" aria-live="polite">
-        {kopiert ? "Link in die Zwischenablage kopiert" : ""}
-      </p>
-      {offen && url && <Teilen url={url} titel={titel} text={text} kampagne={kampagne} netze={["linkedin", "whatsapp", "xing", "x"]} kompakt className="border-t border-ink-100 px-4 py-3" />}
     </div>
   );
 }

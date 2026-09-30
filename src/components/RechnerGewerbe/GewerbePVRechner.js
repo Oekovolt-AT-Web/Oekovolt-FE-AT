@@ -14,8 +14,39 @@ import { ANNAHMEN } from "@/data/solarrechner";
 import { DiagrammKarte, KumuliertDiagramm, Posten, PresetLeiste, StandortWahl, eur } from "./GewerbePVBausteine";
 import GewerbePVTagesprofil from "./GewerbePVTagesprofil";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
+import useTeilenStart from "@/components/RechnerTeilen/useTeilenStart";
+import { kodiere } from "@/components/RechnerTeilen/kodierung";
 
 const pct = (v) => Math.round(v * 100);
+const PFAD = "/rechner/gewerbe-pv";
+const PRESET_IDS = [...GEWERBE_PRESETS.map((p) => p.id), "individuell"];
+
+/** Eingaben für geteilte Links (nur Abweichungen vom Start stehen im Link). */
+function teilenFelder(orte, startOrt) {
+  return [
+    { name: "preset", k: "p", typ: "wahl", optionen: PRESET_IDS, standard: "logistik" },
+    { name: "modus", k: "m", typ: "wahl", optionen: ["flaeche", "kwp"], standard: "flaeche" },
+    { name: "flaeche", k: "f", typ: "zahl", min: 200, max: 20000, raster: 100, standard: 6000 },
+    { name: "kwpDirekt", k: "k", typ: "zahl", min: 20, max: 2000, raster: 10, standard: 500 },
+    { name: "dachart", k: "d", typ: "wahl", optionen: GEWERBE_PV.dacharten.map((d) => d.id), standard: "ost-west" },
+    { name: "ort", k: "o", typ: "wahl", optionen: orte.map((o) => o.slug), standard: startOrt },
+    { name: "typ", k: "ty", typ: "wahl", optionen: ["gewerbe", "landwirtschaft"], standard: "gewerbe" },
+    { name: "verbrauchMwh", k: "v", typ: "zahl", min: 20, max: 3000, raster: 10, standard: 450 },
+    { name: "tage", k: "bt", typ: "zahl", min: 5, max: 7, raster: 1, standard: 6 },
+    { name: "schichten", k: "sc", typ: "zahl", min: 1, max: 3, raster: 1, standard: 2 },
+    { name: "preisManuell", k: "ap", typ: "zahl", min: 8, max: 35, raster: 0.5, standard: null },
+    { name: "speicherAn", k: "sa", typ: "bool", standard: false },
+    { name: "speicher", k: "sp", typ: "zahl", min: 20, max: 1000, raster: 10, standard: 200 },
+    { name: "finanzierung", k: "fi", typ: "wahl", optionen: ["kauf", "leasing"], standard: "kauf" },
+    { name: "leasingJahre", k: "lj", typ: "zahl", min: 5, max: 15, raster: 1, standard: GEWERBE_PV.leasingLaufzeitStandard },
+    { name: "leasingZins", k: "lz", typ: "zahl", min: 2, max: 9, raster: 0.25, standard: GEWERBE_PV.leasingZinsStandard * 100 },
+    { name: "eag", k: "eg", typ: "bool", standard: true },
+    { name: "ifb", k: "ifb", typ: "bool", standard: true },
+    { name: "einspeiseManuell", k: "ep", typ: "zahl", min: 0, max: 12, raster: 0.25, standard: null },
+  ];
+}
+
 const mwh = (kwh) => (kwh >= 10000 ? fmt(kwh / 1000) : fmt(kwh / 1000, 1));
 
 export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
@@ -57,6 +88,52 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     if (v != null) setVerbrauchMwh(Math.round(v));
     if (sch != null) setSchichten(Math.round(sch));
   }, []);
+
+  // Geteilter Link: Eingaben wiederherstellen (nach dem Laden, siehe useTeilenStart)
+  const felder = useMemo(() => teilenFelder(orte, startOrt), [orte, startOrt]);
+  const setzer = {
+    preset: (v) => setPreset(v === "individuell" ? null : v),
+    modus: setModus,
+    flaeche: setFlaeche,
+    kwpDirekt: setKwpDirekt,
+    dachart: setDachart,
+    ort: setOrtSlug,
+    typ: setTyp,
+    verbrauchMwh: setVerbrauchMwh,
+    tage: setTage,
+    schichten: setSchichten,
+    preisManuell: setPreisManuell,
+    speicherAn: setSpeicherAn,
+    speicher: setSpeicher,
+    finanzierung: setFinanzierung,
+    leasingJahre: setLeasingJahre,
+    leasingZins: setLeasingZins,
+    eag: setEag,
+    ifb: setIfb,
+    einspeiseManuell: setEinspeiseManuell,
+  };
+  useTeilenStart(felder, (w) => Object.entries(w).forEach(([k, v]) => setzer[k]?.(v)));
+  const teilenQuery = kodiere(felder, {
+    preset: preset ?? "individuell",
+    modus,
+    flaeche,
+    kwpDirekt,
+    dachart,
+    ort: ortSlug,
+    typ,
+    verbrauchMwh,
+    tage,
+    schichten,
+    preisManuell,
+    speicherAn,
+    speicher,
+    finanzierung,
+    leasingJahre,
+    leasingZins,
+    eag,
+    ifb,
+    einspeiseManuell,
+  });
 
   const ort = orte.find((o) => o.slug === ortSlug) || orte[0];
   const kwpRoh = modus === "flaeche" ? kwpAusFlaeche(flaeche, dachart) : kwpDirekt;
@@ -117,6 +194,102 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   const amortText = r.amortisation != null ? `${fmt(r.amortisation, 1).replace(",0", "")} J.` : "–";
   const irrAnzeige = r.irr == null ? "–" : r.irr < 0 ? "< 0 %" : null;
   useRechnerErgebnis("gewerbe-pv", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const bericht = () => ({
+    untertitel: `Photovoltaik auf dem Betriebsdach · ${ort.name}, ${ort.landName}`,
+    kennzahlen: [
+      ["Anlagengröße", `${fmt(r.kwp)} kWp`, `≈ ${fmt(Math.round(r.flaecheQm / 10) * 10)} m² Dach`],
+      leasing ? ["Überschuss Jahr 1", eur(r.cashflow[1].netto), `nach Leasingrate ${eur(r.leasing.rate)}`] : ["Vorteil Jahr 1", eur(r.nutzenJahr1), "Ersparnis + Einspeisung − Betrieb"],
+      leasing ? ["Laufzeit Leasing", `${r.leasing.jahre} Jahre`, "danach voller Vorteil"] : ["Amortisation", r.amortisation != null ? `${fmt(r.amortisation, 1)} Jahre` : "> 25 Jahre", `Investition ${eur(r.investition)}`],
+      ["Rendite (IRR)", leasing ? "–" : (irrAnzeige ?? `${fmt(r.irr * 100, 1)} %`), leasing ? "bei Leasing nicht sinnvoll" : `über ${r.jahre} Jahre, vor Steuern`],
+    ],
+    eingaben: [
+      {
+        titel: "Dach & Standort",
+        zeilen: [
+          modus === "flaeche" ? ["Nutzbare Dachfläche", `${fmt(flaeche)} m²`] : ["Anlagengröße (direkt)", `${fmt(kwpDirekt)} kWp`],
+          ["Dachart", r.dachartLabel],
+          ["Standort (PVGIS)", `${ort.name}, ${ort.landName}`],
+        ],
+      },
+      {
+        titel: "Betrieb & Strompreis",
+        zeilen: [
+          ["Lastprofil", typ === "gewerbe" ? "Gewerbe / Industrie" : "Landwirtschaft (Milchvieh/Misch)"],
+          ["Jahresverbrauch", `${fmt(verbrauchMwh)} MWh`],
+          typ === "gewerbe" && ["Betriebstage", tage === 5 ? "Mo–Fr" : tage === 6 ? "Mo–Sa" : "täglich"],
+          typ === "gewerbe" && ["Schichtmodell", schichten === 1 ? "1 Schicht (7–16 Uhr)" : schichten === 2 ? "2 Schichten (6–22 Uhr)" : "3 Schichten (24 h)"],
+          ["Arbeitspreis netto (vermeidbar)", `${fmt(preisCt, 1)} ct/kWh`, preisManuell == null ? "Richtwert nach Jahresverbrauch" : "eigene Eingabe"],
+        ],
+      },
+      {
+        titel: "Speicher, Förderung & Finanzierung",
+        zeilen: [
+          ["Gewerbespeicher", speicherAn ? `${fmt(speicher)} kWh` : "ohne"],
+          ["Finanzierung", leasingEingabe ? `Leasing, ${leasingJahre} Jahre, ${fmt(leasingZins, 2)} %` : "Kauf (Eigenmittel/Kredit)", leasingEingabe ? "Zinssatz als Beispielwert" : ""],
+          ["EAG-Investitionszuschuss", eag ? "berücksichtigt" : "nicht berücksichtigt"],
+          ["Investitionsfreibetrag", r.ifb.aktiv ? "berücksichtigt" : leasingEingabe ? "nicht (Leasing)" : "nicht berücksichtigt"],
+          ["Einspeiseerlös", `${fmt(einspeiseCt, 2)} ct/kWh`, einspeiseManuell == null ? "Rechensatz" : "eigene Eingabe"],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Energie pro Jahr",
+        zeilen: [
+          ["Jahresertrag", `${mwh(r.jahresertrag)} MWh`, `${fmt(r.spezifischerErtrag)} kWh je kWp`],
+          ["Eigenverbrauch", `${pct(r.eigenverbrauchsquote)} %`, `${mwh(r.eigenverbrauch)} MWh selbst genutzt`],
+          ["Autarkie", `${pct(r.autarkie)} %`],
+          ["Netzbezug danach", `${mwh(r.netzbezug)} MWh`],
+          ["Einspeisung", `${mwh(r.einspeisung)} MWh`],
+          ["CO₂ vermieden", `${fmt(r.co2Tonnen, r.co2Tonnen < 100 ? 1 : 0)} t`],
+        ],
+      },
+      {
+        titel: `Investition ${leasing ? "(finanziert) " : ""}netto`,
+        zeilen: [
+          [`PV-Anlage ${fmt(r.kwp)} kWp`, eur(r.anlagenpreis)],
+          r.speicherpreis > 0 && [`Speicher ${fmt(speicher)} kWh`, eur(r.speicherpreis)],
+          r.zuschuss.summe > 0 && [`EAG-Zuschuss Kat. ${r.zuschuss.kategorie}`, eur(-r.zuschuss.summe)],
+          ["Investition", eur(r.investition)],
+          r.ifb.aktiv && [`IFB ${pct(r.ifb.satz)} % → Steuereffekt`, eur(r.ifb.steuereffekt), `bei ${pct(r.ifb.koest)} % KöSt`],
+        ],
+      },
+      {
+        titel: "Wirtschaftlichkeit",
+        zeilen: [
+          ["Ersparnis Strombezug (Jahr 1)", eur(r.ersparnis)],
+          ["Einspeiseerlös (Jahr 1)", eur(r.einspeiseErloes)],
+          ["Betriebskosten (Jahr 1)", eur(-r.betriebskosten)],
+          leasing && ["Leasingrate pro Jahr", eur(-r.leasing.rate), `bis Jahr ${r.leasing.jahre}`],
+          !leasing && ["Amortisation", amortText],
+          !leasing && ["Rendite (IRR)", irrAnzeige ?? `${fmt(r.irr * 100, 1)} %`],
+          [`Kumulierter Cashflow nach ${r.jahre} Jahren`, eur(r.summe)],
+        ],
+      },
+      {
+        titel: "Technik & Förderung",
+        zeilen: [
+          ["TOR Stromerzeugungsanlagen", `Typ ${r.tor.typ}`],
+          ["EAG-Kategorie", r.eag.id ? `Kat. ${r.eag.id}` : "– (über 1.000 kWp)"],
+          ["Überschuss-Vermarktung", r.oemagMoeglich ? "OeMAG (unter 500 kWp)" : "Direktvermarktung / PPA"],
+        ],
+      },
+    ],
+    annahmen: [
+      `Stündliche Jahressimulation (8.760 h): Ertrag nach PVGIS für ${ort.name}, typisches Lastprofil nach Betriebstagen und Schichtmodell mit Grundlast – kein gemessener Lastgang.`,
+      `Arbeitspreis ${fmt(preisCt, 1)} ct/kWh netto ohne Leistungspreis${preisManuell == null ? " – Richtwert nach Jahresverbrauch aus Eurostat-Preisen für Nicht-Haushalte in Österreich (2. Halbjahr 2025)" : " – Ihre Eingabe"}; Strompreissteigerung ${fmt(ANNAHMEN.strompreisSteigerung * 100)} % pro Jahr.`,
+      `Einspeiseerlös ${fmt(einspeiseCt, 2)} ct/kWh konstant über ${r.jahre} Jahre; OeMAG-Marktpreis PV zuletzt ${fmt(VERGUETUNG.marktpreis.aktuell.ct, 2)} ct (${VERGUETUNG.marktpreis.aktuell.zeitraum}, oem-ag.at/marktpreis).`,
+      `Modulalterung ${fmt(ANNAHMEN.degradationProJahr * 100, 1)} % pro Jahr, Betriebskosten +${fmt(ANNAHMEN.betriebskostenSteigerung * 100)} % pro Jahr.`,
+      "Investition: Richtwerte schlüsselfertig aus der österreichischen Marktstatistik, netto – keine Ökovolt-Preise.",
+      eag && "EAG-Investitionszuschuss mit den Höchstsätzen 2026 (EAG-Investitionszuschüsseverordnung-Strom, BGBl. II Nr. 12/2026); Vergabe nur im Fördercall nach Budget, kein Rechtsanspruch.",
+      r.ifb.aktiv && `Investitionsfreibetrag ${pct(r.ifb.satz)} % für Öko-Investitionen bei Anschaffung bis 31.12.2026, Steuereffekt mit ${pct(r.ifb.koest)} % KöSt im ersten Jahr.`,
+      leasingEingabe && "Leasingrate als Annuität ohne Restwert; der Zinssatz ist ein Beispielwert, keine Kondition eines Finanzierungspartners.",
+      `CO₂-Vermeidung mit ${fmt(ANNAHMEN.co2KgProKwh * 1000, 1)} g CO₂äqu je kWh substituierten Stroms (Marktentwicklung 2024, Berechnung Technikum Wien auf Basis E-Control).`,
+      "Mit Ihrem echten Viertelstunden-Lastgang (Smart Meter/Netzbetreiber) wird die Rechnung genauer.",
+    ],
+  });
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
@@ -417,6 +590,17 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
               Angebot mit diesen Werten
             </Button>
           </div>
+          <RechnerTeilen
+            className="mt-4"
+            rechner="gewerbe-pv"
+            name="Gewerbe-PV-Rechner"
+            pfad={PFAD}
+            query={teilenQuery}
+            titel="Gewerbe-PV-Rechner: Was bringt unser Hallendach?"
+            text="So viel bringt eine PV-Anlage auf unserem Hallendach – gerechnet mit dem Ökovolt Gewerbe-PV-Rechner."
+            kampagne="rechner_gewerbe_pv"
+            bericht={bericht}
+          />
         </div>
       </div>
     </div>

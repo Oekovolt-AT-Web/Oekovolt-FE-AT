@@ -24,12 +24,13 @@ export function rechneWallbox(e) {
     anteilZuhause,
     anteilPv,
     kraftstoff = "benzin",
-    kraftstoffPreis = W.kraftstoffe[kraftstoff].preis,
-    kraftstoffVerbrauch = W.kraftstoffe[kraftstoff].verbrauch,
+    // unbekannte Kraftstoffe (z. B. aus manipulierten Links) → Benzin (Befund tests-05)
+    kraftstoffPreis = (W.kraftstoffe[kraftstoff] ?? W.kraftstoffe.benzin).preis,
+    kraftstoffVerbrauch = (W.kraftstoffe[kraftstoff] ?? W.kraftstoffe.benzin).verbrauch,
     strompreisCt = ALLGEMEIN.strompreis * 100,
     kwp = 10,
   } = e;
-  const k = W.kraftstoffe[kraftstoff];
+  const k = W.kraftstoffe[kraftstoff] ?? W.kraftstoffe.benzin;
   const satz = satzFuer(kwp, "teileinspeisung") / 100;
   const strom = strompreisCt / 100;
   const oeffentlich = W.oeffentlichCt / 100;

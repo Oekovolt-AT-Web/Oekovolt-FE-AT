@@ -7,16 +7,21 @@ import LayoutWrapper from "@/components/Reusable/LayoutWrapper";
 // Zwei Schriften, klar getrennte Rollen: Inter trägt den Fließtext (hohe
 // Lesbarkeit auch bei langen deutschen Komposita), Manrope die Überschriften
 // (geometrisch, markant, gute Umlaute). next/font hostet beide selbst.
+// Performance: nur das Subset „latin“ wird vorab geladen (enthält ä ö ü ß € –
+// alles, was deutsche Texte brauchen). Die latin-ext-Dateien bleiben per
+// unicode-range deklariert und kommen nur, wenn ein Zeichen sie braucht
+// (z. B. Č, ő in Namen). Beide Schriften sind variable Fonts: eine Datei deckt
+// alle Stärken ab, daher bei Manrope keine Einzelgewichte (vorher 4 identische
+// @font-face-Blöcke je Subset).
 const inter = Inter({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],
 });
 
 const manrope = Manrope({
-  subsets: ["latin", "latin-ext"],
-  weight: ["500", "600", "700", "800"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-manrope",
   fallback: ["system-ui", "Segoe UI", "Arial", "sans-serif"],

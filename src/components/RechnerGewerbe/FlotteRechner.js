@@ -25,7 +25,8 @@ import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/Rechner/bausteine";
 import { MobilKurz } from "@/components/Rechner/StromspeicherRechner";
-import { Aufklapper, ErgebnisLink, Hinweis, NaechsteSchritte, PresetLeiste, Stepper, useGeteilteEingaben } from "./FlotteLadeBausteine";
+import { Aufklapper, Hinweis, NaechsteSchritte, PresetLeiste, Stepper, useGeteilteEingaben } from "./FlotteLadeBausteine";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 import FlotteTcoDiagramm, { eurKurz } from "./FlotteTcoDiagramm";
 import {
   FLOTTE,
@@ -79,6 +80,111 @@ export default function FlotteRechner() {
     pv: String(e.pv ? e.kwp : 0),
   }).toString()}`;
   useRechnerErgebnis("e-flotte", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const bericht = () => {
+    const aktiv = ["pkw", "transporter", "lkw"].filter((id) => e[id]?.n > 0);
+    const l = r.lade;
+    const punkte = [
+      [l.ac11, "AC 11 kW"],
+      [l.ac22, "AC 22 kW"],
+      [l.dc50, "DC 50 kW"],
+      [l.dc150, "DC 150 kW"],
+    ]
+      .filter(([n]) => n > 0)
+      .map(([n, t]) => `${n} × ${t}`)
+      .join(", ");
+    const kostengleich =
+      r.breakEven === 0 ? "ab dem ersten Tag" : r.breakEven != null ? `nach ${fmt(r.breakEven, 1)} Jahren` : r.amortisation ? `nach rund ${fmt(r.amortisation, 1)} Jahren` : "nicht erreicht";
+    return {
+      untertitel: `Umstellung des Fuhrparks auf Elektro · ${r.summe.n} Fahrzeuge · ${r.jahre} Jahre Nutzung · netto`,
+      kennzahlen: leer
+        ? []
+        : [
+            [vorteil ? `Vorteil ${r.jahre} Jahre` : `Mehrkosten ${r.jahre} Jahre`, euro(Math.round(Math.abs(r.tcoErsparnis))), `Kostengleichheit ${kostengleich}`],
+            [r.ersparnisJahr >= 0 ? "Ersparnis/Jahr" : "Mehrkosten/Jahr", euro(Math.round(Math.abs(r.ersparnisJahr))), "laufend: Energie, Wartung, Maut"],
+            ["CO₂ weniger", `${fmt(r.co2Ersparnis / 1000, 1)} t/Jahr`, "inkl. Vorkette"],
+            ["Kosten je 100 km", `${fmt(r.je100.e, 2)} €`, `Verbrenner ${fmt(r.je100.v, 2)} €`],
+          ],
+      eingaben: [
+        {
+          titel: "Fuhrpark",
+          zeilen: aktiv.length
+            ? aktiv.map((id) => {
+                const f = e[id];
+                const pkwKlasse = id === "pkw";
+                return [
+                  KLASSEN[id].lang,
+                  `${fmt(f.n)} × ${fmt(f.km)} km/Jahr`,
+                  `${fmt(f.liter, 1)} l ${pkwKlasse && e.pkwKraftstoff === "benzin" ? "Benzin" : "Diesel"} → ${fmt(f.kwh, f.kwh % 1 ? 1 : 0)} kWh/100 km · Preis ${euro(f.preis)} ${pkwKlasse ? "brutto inkl. NoVA" : "netto"}, Mehrpreis E ${euro(f.mehrpreis)}`,
+                ];
+              })
+            : [["Fahrzeuge", "keine"]],
+        },
+        {
+          titel: "Energie & Laden",
+          zeilen: [
+            ["Dieselpreis (brutto)", `${fmt(e.diesel, 2)} €/l`],
+            e.pkw?.n > 0 && e.pkwKraftstoff === "benzin" && ["Benzinpreis (brutto)", `${fmt(e.benzin, 2)} €/l`],
+            ["Strompreis im Betrieb (netto)", `${fmt(e.stromCt, e.stromCt % 1 ? 1 : 0)} ct/kWh`],
+            ["Anteil geladen am Betrieb", `${e.ladeanteil} %`, `Rest öffentlich zu ${fmt(e.oeffentlichCt)} ct/kWh netto`],
+            ["Eigene PV-Anlage", e.pv ? `${fmt(e.kwp)} kWp, Solaranteil ${e.pvAnteil} %` : "nein"],
+          ],
+        },
+        {
+          titel: "Wirtschaftlichkeit & Steuern",
+          zeilen: [
+            ["Nutzungsdauer", `${e.jahre} Jahre`],
+            ["Förderung je E-Fahrzeug", e.foerderung > 0 ? euro(e.foerderung) : "keine"],
+            ["Öko-Investitionsfreibetrag", e.ifb ? `ja, Steuersatz ${e.steuersatz} %` : "nein"],
+            ["Ladeinfrastruktur mitgerechnet", e.infra ? "ja" : "nein"],
+          ],
+        },
+      ],
+      ergebnisse: leer
+        ? []
+        : [
+            {
+              titel: `Gesamtkosten über ${r.jahre} Jahre (TCO, netto)`,
+              zeilen: [
+                ["Verbrenner", euro(Math.round(r.tcoV))],
+                ["E-Flotte", euro(Math.round(r.tcoE))],
+                [vorteil ? "Vorteil E-Flotte" : "Mehrkosten E-Flotte", euro(Math.round(Math.abs(r.tcoErsparnis)))],
+                ["Kostengleichheit", kostengleich],
+              ],
+            },
+            {
+              titel: "Pro Jahr",
+              zeilen: [
+                [r.ersparnisJahr >= 0 ? "Laufende Ersparnis" : "Laufende Mehrkosten", euro(Math.round(Math.abs(r.ersparnisJahr)))],
+                ["CO₂ weniger (inkl. Vorkette)", `${fmt(r.co2Ersparnis / 1000, 1)} t`],
+                ["Ladeenergie", `${fmt(r.summe.kwh / 1000, 1)} MWh`, r.summe.kwhPv > 0 ? `davon ${fmt(r.summe.kwhPv / 1000, 1)} MWh Solar` : ""],
+                ["Kosten je 100 km E / Verbrenner", `${fmt(r.je100.e, 2)} € / ${fmt(r.je100.v, 2)} €`],
+              ],
+            },
+            {
+              titel: "Ladepunkte am Standort",
+              zeilen: [
+                ["Empfehlung", punkte || "–"],
+                ["Leistung ohne / mit Lastmanagement", `${fmt(l.installiert)} kW / ≈ ${fmt(l.mitLm)} kW`],
+                ["Energie je Betriebstag", `${fmt(Math.round(l.energieTag))} kWh`],
+                e.infra && ["Ladeinfrastruktur (Richtwert, netto)", `≈ ${fmtEur(l.kosten)}`],
+              ],
+            },
+          ],
+      hinweise: [
+        !e.pv && r.pvVorschlag && r.pvVorschlag.ersparnis > 200 && `Mit einer eigenen PV-Anlage von rund ${fmt(r.pvVorschlag.kwp)} kWp könnten etwa ${Math.round(r.pvVorschlag.anteil * 100)} % des Ladestroms im Betrieb vom Dach kommen – rund ${fmtEur(r.pvVorschlag.ersparnis)} weniger Stromkosten pro Jahr.`,
+        pkw.n > 0 && `Sachbezug E-Pkw 2026: 0 € (steuerfrei); Verbrenner 2 % – laut Rechner ${fmtEur(sb.verbrenner)} je Mitarbeiter und Monat.`,
+      ],
+      annahmen: [
+        "Kraftstoffpreise brutto laut EU Weekly Oil Bulletin (Österreich, 21.09.2026) als Startwert; Strompreis im Betrieb netto nach Eurostat (Nicht-Haushalte AT, 2. Halbjahr 2025) abzüglich Leistungspreisanteil.",
+        `Solarstrom bewertet mit ${fmt(r.pvKostenCt, 1)} ct/kWh (entgangene Einspeisung).`,
+        `Öko-Investitionsfreibetrag ${fmt(FLOTTE.ifbSatz * 100)} % für emissionsfreie Fahrzeuge und Ladestationen bei Anschaffung bis 31.12.2026 (WKO); Pkw höchstens bis zur Luxustangente.`,
+        "„E-Mobilität für Betriebe“ (eMove Austria) ist ausgeschöpft – Förderung nur mit Zusage eintragen.",
+        "Netto, ohne Restwert und Finanzierung – kein Angebot und keine Steuerberatung.",
+      ],
+    };
+  };
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
@@ -321,12 +427,15 @@ export default function FlotteRechner() {
           )}
 
           <div className="mt-7 space-y-4 border-t border-ink-100 pt-6">
-            <ErgebnisLink
+            <RechnerTeilen
+              rechner="e-flotte"
+              name="E-Flotte-Rechner"
               pfad="/rechner/e-flotte"
               query={flotteQuery(e)}
               titel="E-Flotte-Rechner – Ergebnis für unseren Fuhrpark"
               text="So viel spart die Umstellung unserer Firmenflotte auf Elektro – gerechnet mit dem Ökovolt E-Flotte-Rechner."
               kampagne="rechner_e_flotte"
+              bericht={bericht}
             />
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-md text-[13px] leading-relaxed text-ink-500">Orientierung mit Richtwerten, netto, ohne Restwert und Finanzierung – kein Angebot und keine Steuerberatung.</p>

@@ -1,15 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 
-import CookieBanner from "../Cookies/cookiecomponent";
 import { NAVIGATION, KONTAKT } from "@/data/navigation";
 import LiveTicker from "@/components/ui/LiveTicker";
 import { FIRMA, SCHWESTER } from "@/lib/site";
+
+// Cookie-Einstellungen erst bei Bedarf laden: Der statische Import zog die rund
+// 27 KB Quelltext des Banners in das Fußbereich-Bundle jeder Seite, obwohl der
+// LayoutWrapper ihn ohnehin schon per next/dynamic nachlädt. Beide Aufrufe teilen
+// sich denselben Chunk; „Privatsphäre-Einstellungen“ lädt ihn beim Überfahren/
+// Fokussieren vorab, damit der Dialog beim Klick sofort erscheint.
+const ladeCookieBanner = () => import("../Cookies/cookiecomponent");
+const CookieBanner = dynamic(ladeCookieBanner, { ssr: false });
+const cookieVorladen = () => {
+  ladeCookieBanner().catch(() => {});
+};
 
 const SOCIAL = [
   { href: FIRMA.social.linkedin, label: "LinkedIn", Icon: FaLinkedinIn },
@@ -167,7 +178,17 @@ export default function Footer() {
           </div>
           <nav aria-label="Rechtliche Links">
             <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              <li><button type="button" onClick={() => setPopup(true)} className="transition-colors hover:text-white">Privatsphäre-Einstellungen</button></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => setPopup(true)}
+                  onPointerEnter={cookieVorladen}
+                  onFocus={cookieVorladen}
+                  className="transition-colors hover:text-white"
+                >
+                  Privatsphäre-Einstellungen
+                </button>
+              </li>
               <li><Link href="/impressum" className="transition-colors hover:text-white">Impressum</Link></li>
               <li><Link href="/datenschutz" className="transition-colors hover:text-white">Datenschutz</Link></li>
               <li><Link href="/agb" className="transition-colors hover:text-white">AGB</Link></li>

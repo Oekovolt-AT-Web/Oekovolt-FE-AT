@@ -90,6 +90,9 @@ export default function Page() {
             <p>
               Gute Pachtverträge regeln mehr als den Betrag: Laufzeit mit Verlängerungsoption, Indexierung, Rückbauverpflichtung samt Sicherheit, Pflege der Fläche und Dienstbarkeiten für Kabeltrassen. Die Regeln aller Bundesländer fasst der Ratgeber{" "}
               <Link href="/ratgeber/freiflaechen-photovoltaik-widmung">Freiflächen-Photovoltaik: Widmung und Zonierung</Link> zusammen.
+              Die Rechtslage je Land mit Normen und offenen Punkten finden Sie unter{" "}
+              <Link href="/freiflaechen-photovoltaik/widmung">Widmung je Bundesland</Link>, eine erste Eignungsprüfung Ihrer Fläche im{" "}
+              <Link href="/flaechen-check">Flächen-Check</Link>.
             </p>
             <p>
               Wie Landwirtschaft und Stromerzeugung zusammengehen, zeigt unsere Seite <Link href="/agri-pv">Agri-PV</Link>. Solarparks auf Gemeinde- und Betriebsflächen planen und errichten wir unter <Link href="/freiflaechen-photovoltaik">Freiflächenanlagen</Link>.

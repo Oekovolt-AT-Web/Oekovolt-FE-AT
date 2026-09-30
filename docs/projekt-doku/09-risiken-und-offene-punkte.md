@@ -6,7 +6,7 @@ Geschäftsführung zu bestätigen.** Skala: niedrig / mittel / hoch. **Keine Rec
 sind als Prüfaufträge formuliert.
 
 Quellen: `docs/AT-UEBERGABE.md` (Ü), Masterplan-Punkte aus dem Auftrag der Geschäftsführung (M, nicht im Repo
-abgelegt), Code-Durchsicht dieser Welle (C). Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+abgelegt), Code-Durchsicht dieser Welle (C). Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 ## 1. Risikoregister
 
@@ -46,6 +46,23 @@ abgelegt), Code-Durchsicht dieser Welle (C). Stand: Version 0.3, 30.09.2026 (Nac
 | R-32 | **Unternehmenskennzahlen (UWG):** 5.000 Anlagen, 340.000 kWp, 112.000 t CO₂ – Beleg und CO₂-Bezugszeitraum offen; Zahlen stehen zusätzlich als fester Text an mehreren Stellen | Auftrag Koordinator; `src/data/kennzahlen.js:4-12`, `src/data/unternehmen.js:45-52`, `src/lib/llms.js:41` | mittel | mittel | Belege ablegen, `CO2_ZEITRAUM` setzen, Duplikate auf zentrale Datei umstellen | GF / Entwicklung | offen |
 | R-33 | **Personenbezogene Veröffentlichung Pressekontakt** (Name, Foto): Einwilligung nur als Code-Kommentar vermerkt | `src/components/Presse/PresseKontakt.js:3-6` | niedrig | mittel | schriftliche Einwilligung ablegen; Widerruf regeln | GF / Datenschutz | offen |
 | R-34 | **Hinweisgebersystem-Umschaltung:** Build-Zeit-Schalter; falsche Umgebung beim Build (z. B. Variable nur zur Laufzeit gesetzt) führt zu inkonsistentem Meldekanal (Redirect vs. Formular) | `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md`, `next.config.mjs:32-39` | niedrig | hoch | Go-live-Checkliste abarbeiten, nach Deploy Health-Check und Testmeldung | Betrieb / Meldestelle | offen |
+| R-35 | **RIS nicht erreichbar** (30.09.2026, HTTP 503): Paragrafen zu ElWG, KIG, BVergG, HSchG, EAG wurden über JUSLINE, Koordinationsstelle oder Sekundärquellen belegt; eForms-Pflicht nur über Kanzlei-Übersicht | Agentenberichte Welle 4 | mittel | hoch | Rechtsquellen im RIS nachprüfen, Quellenangaben anpassen | Redaktion / Recht | offen |
+| R-36 | **KIG 2025:** `/kommunen` und Ratgeber nennen 500 Mio. €, § 2 Abs. 1 KIG 2025 idF BGBl. I Nr. 25/2025 laut Agent 620 Mio. € | `src/app/kommunen/page.js`; Agentenbericht | mittel | mittel | angleichen nach RIS-Prüfung | Redaktion | offen |
+| R-37 | **Finanzierungsvergleich:** Contracting 14 ct/kWh, PPA 12 ct/kWh, Leasingfaktor 1,10 %/Monat, Kreditzins 5 % sind Beispielwerte ohne Marktbeleg (gekennzeichnet); FAQ auf `/service/finanzierung` („wir organisieren die Finanzierung …“) widerspricht offener Leasing-Entscheidung | `src/lib/rechner/finanzierung.js`, `src/app/service/finanzierung/page.js` | mittel | mittel | belegte Werte oder deutlichere Kennzeichnung; FAQ entschärfen | GF / Fachbereich | offen |
+| R-38 | **Seitenlängen** über der Richtschnur (`docs/AT-DESIGN.md`): `/schneelast` mobil ca. 15.200 px, EG Betriebe 13–14, Vergabe 14,1, `/flaechen-check` mobil ca. 22, Bundesland-Hubs 10,5–14 Bildschirmhöhen | Agentenberichte Welle 4 | hoch | niedrig | Akkordeons/Tabs, Checklisten mobil einklappen | Entwicklung | offen |
+| R-39 | **GeoSphere-Nutzungsbedingungen und Modellgüte:** AGB verlangen Kenntnisnahme/Akzeptanz; Haftungsausschluss; Modellparameter (Temperaturkoeffizient, Ross-Koeffizienten, Albedo, 14 % Verluste) sind Literaturwerte; Stundenkennzeichnung von `ssrd` nicht von GeoSphere bestätigt; Rasterzelle 0,05° in Tallagen ungenau | `src/lib/prognose/*` | mittel | mittel | Rechtsprüfung, Validierung (Q-13) | Recht / Technik | offen |
+| R-40 | **OeMAG-Pflege und Ratgeber-Widersprüche:** Seite braucht monatliche Pflege; Ratgeber nennt für 09/2024 6,083 statt 6,038 ct/kWh, Q4/2026 (15,282 ct/kWh laut E-Control seit 29.09.2026) noch „nicht bekannt“, Monate 08–12/2025 fehlen | `src/data/oemag.js`, `src/content/ratgeber/oemag-marktpreis.js`, `einspeiseverguetung.js` | hoch | mittel | Verantwortliche Person benennen; Ratgeber auf `oemag.js` umstellen | Redaktion | offen |
+| R-41 | **A/B-Test K1:** Variante B ohne Einwilligungs-Checkbox (lit. b) – Rechtsfreigabe, Datenschutz-Hinweis und Annahme von `einwilligung=0` durch `submit_angebot` ungeklärt; ohne Umami keine Auswertung für Besucher ohne Einwilligung | `src/lib/experimente.js` | mittel | mittel | vor `aktiv: true` klären | Datenschutz / Backoffice | offen |
+| R-42 | **Doorway-Risiko** der Bundesland-Varianten (Schneelast, Widmung, PV-Bundesland, Regionalseiten) | SEO-Plan M26/E9; `src/lib/bundesland/*` | mittel | mittel | je Land eine Hauptseite festlegen, echte Unterschiede, ggf. zusammenführen | SEO / GF | offen |
+| R-43 | **Datenschutzerklärung ↔ Code** (Fristen A1–A8, CloudTalk), **HSchG-Fristberechnung** und fehlendes Zugriffsprotokoll, **`buche_termin` als Gastmethode** | 05 D7–D9 | mittel | hoch | Text oder Backend angleichen; Snippets übernehmen; Gastmethode auf Website-IP beschränken | Datenschutz / Backoffice | offen |
+| R-44 | **robots.txt nicht konsistent mit E1** (Training sperren): Applebot-Extended, anthropic-ai, Claude-Web stehen in der erlaubten Gruppe; `htmlLimitedBots` (M02) fehlt | `public/robots.txt:18-32`, `next.config.mjs` | hoch | mittel | robots.txt nach Plan anpassen, nach Build mit `curl -A` prüfen | Entwicklung | offen |
+| R-45 | **Fachprüfer** (drei Personen benannt) ohne schriftliche Einwilligung und festgelegte Rolle – `reviewedBy`/Autorenseiten erst danach | SEO-Plan E5/M22 | mittel | mittel | Einwilligung, Qualifikation, Foto einholen | GF | offen |
+| R-46 | **Kennzahl 510 MW:** im Code als 510.000 kWp; Einheit (MW vs. MWp) und Beleg klären (UWG); CO₂-Zeitraum weiter offen | `src/data/kennzahlen.js` | mittel | mittel | Einheit vereinheitlichen, Beleg ablegen | GF | offen |
+| R-47 | **Kapazitätsgrenzen:** Open Topo Data 1.000/Tag gemeinsam für Standort-Check und Schneelast-Karte; Caches/Budgets nur je Instanz | 07 Abschnitt 5a | mittel | mittel | eigener Höhenzugang bzw. -datei; zentraler Speicher bei Skalierung | Betrieb | offen |
+| R-48 | **Lastgang-Analyse:** CSV-Formate der Netzbetreiber-Portale nicht öffentlich belegt, nur synthetisch getestet; PV-Wetterfolge synthetisch; Netzebenen-Vorbelegung (NE 6 ab 250 kW) geschätzt | `src/lib/lastgang/*` | mittel | niedrig | echte Exporte testen (Q-12), fachliche Abnahme | Technik | offen |
+| R-49 | **Flächen-Check/Widmung:** Pachtspanne nur Stand 2022, Faustregeln (Netzentfernung, Hang) Ökovolt-Annahmen, NÖ-Zonen und Salzburger Beschleunigungsgebiete nicht im Gesetzestext geprüft; Ratgeber `freiflaechen-photovoltaik-widmung` konkurriert thematisch | `src/lib/flaeche/*` | mittel | mittel | Freigabe Annahmen, aktuelle LK-Werte anfragen, Aufgabenteilung Ratgeber/Landesseiten | Fachbereich / SEO | offen |
+| R-50 | **Offene Rechner-Befunde:** tests-04, Folgebefund tests-01, `toLocaleString` in einzelnen Modulen (Hydration), Hydration-Warnungen auf Pacht- und Peak-Shaving-Rechner | 06 | niedrig | niedrig | Q-10, Q-11 | Entwicklung | offen |
+| R-51 | **Hosting/Livegang:** www.oekovolt.com liefert am 30.09.2026 laut Datenschutz-Agent noch die alte Seite aus; `statistik.oekovolt.com` ohne DNS-Eintrag | `docs/datenschutz/00-Uebersicht-VVT.md` | – | hoch | Hosting festlegen und dokumentieren (07) | GF / Betrieb | offen |
 
 ## 2. Offene Freigaben und Entscheidungen
 
@@ -73,4 +90,14 @@ abgelegt), Code-Durchsicht dieser Welle (C). Stand: Version 0.3, 30.09.2026 (Nac
 | F-21 | Rechteklärung je Reel (insbesondere Musik) vor Veröffentlichung | R-31, REQ-MED-03 | vor erstem Video | offen |
 | F-22 | Mannschaft: vorbereitete Einträge (`bestaetigt: false`) bestätigen, Lkw-/Traktor-Foto liefern | REQ-UNT-02 | laufend | offen |
 | F-23 | Go-live eigenes Hinweisgebersystem (`HINWEIS_INTERN=1`) nach GO-LIVE-AT.md, inkl. „⚖️ rechtlich prüfen“-Stellen | R-34, REQ-HIN-01 | offen | offen |
+| F-24 | robots.txt nach E1 vervollständigen; `htmlLimitedBots` ergänzen | R-44 | vor Livegang | offen |
+| F-25 | Fachprüfer: Einwilligung, Rolle, Qualifikation | R-45 | vor Einsatz von `reviewedBy` | offen |
+| F-26 | Finanzierungsvergleich: Beispielwerte bestätigen oder durch belegte Werte ersetzen; FAQ Leasing | R-37 | vor Bewerbung | offen |
+| F-27 | Zuständige Person für die monatliche OeMAG-Pflege | R-40 | Anfang Oktober 2026 | offen |
+| F-28 | Start A/B-Test K1 (Recht, Backend, Datenschutztext, Testdauer) | R-41 | vor `aktiv: true` | offen |
+| F-29 | Bundesland-Struktur (E9) und Seitenkürzungen | R-38, R-42 | nächste Welle | offen |
+| F-30 | Datenschutzerklärung an Code angleichen oder Backend-Fristen senken (A1–A8) | R-43 | vor Livegang | offen |
+| F-31 | Flächen-Check-Faustregeln und Pachtspanne freigeben | R-49 | vor Bewerbung | offen |
+| F-32 | Einspeisung: Abschlussbanner-Zusage („Wir werten Ihre Einspeise-Zählwerte aus …“) und Spot-Entgelt-Annahme 0,5 ct/kWh bestätigen | REQ-EIN-01 | vor Bewerbung | offen |
+| F-33 | Kennzahl 510 MW: Einheit und Beleg | R-46 | vor Livegang | offen |
 | F-15 | Prüfung und Freigabe dieser Projektdokumentation | 00 | – | offen |

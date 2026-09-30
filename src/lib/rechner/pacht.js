@@ -131,7 +131,9 @@ export function rechnePacht({ hektar, standort, konzept: konzeptId = "freiflaech
     laufzeit: jahre,
     netz: netzEinschaetzung(abstandKm, kwp),
     tor,
-    eagInvestitionszuschuss: kwp <= 1000,
+    // EAG-Investitionszuschuss auch über 1.000 kWp – dann anteilig bis 1.000 kWp (EAG-AS FAQ 2026 Fragen 19/20)
+    eagInvestitionszuschuss: kwp > 0,
+    eagAnteilig: kwp > 1000,
     eagAbschlag: k.eagAbschlag,
   };
 }

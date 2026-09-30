@@ -24,7 +24,8 @@ import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/Rechner/bausteine";
 import { MobilKurz } from "@/components/Rechner/StromspeicherRechner";
-import { ErgebnisLink, NaechsteSchritte, PresetLeiste, Stepper, useGeteilteEingaben } from "./FlotteLadeBausteine";
+import { NaechsteSchritte, PresetLeiste, Stepper, useGeteilteEingaben } from "./FlotteLadeBausteine";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 import LadeKurve, { LADE_FARBEN } from "./LadeKurve";
 import {
   GEBAEUDE,
@@ -82,6 +83,74 @@ export default function LadeRechner() {
   const s = STATUS[r.status];
   const StatusIcon = s.icon;
   useRechnerErgebnis("ladeinfrastruktur", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const bericht = () => {
+    const sz = (liste, id) => liste.find((x) => x.id === id);
+    const art = (a) => (a === "dc50" ? "DC 50" : a === "dc150" ? "DC 150" : a === "ac22" ? "AC 22" : "AC 11");
+    const js = JAHRESZEITEN[e.jahreszeit];
+    return {
+      untertitel: `Ladepunkte, Spitzenlast und Netzanschluss · ${fmt(Math.round(r.energieTag))} kWh je Tag`,
+      kennzahlen: leer
+        ? []
+        : [
+            ["Ladepunkte", fmt(r.punkteGesamt), [acPunkte ? `${acPunkte} × AC` : null, r.punkte.dc50 ? `${r.punkte.dc50} × DC 50` : null, r.punkte.dc150 ? `${r.punkte.dc150} × DC 150` : null].filter(Boolean).join(" · ")],
+            ["Spitze ungesteuert", `${fmt(Math.round(r.spitze.ohne))} kW`, `installiert ${fmt(r.installiert)} kW`],
+            [e.speicherKwh > 0 ? "Spitze mit Speicher" : "Spitze gesteuert", `${fmt(Math.round(r.auslegung))} kW`, `${fmt(Math.round(r.spitze.ohne - r.auslegung))} kW weniger`],
+            ["Netzanschluss", r.status === "ok" ? "reicht" : r.status === "knapp" ? "knapp" : `+${fmt(r.erhoehungKw)} kW`, `Auslastung ${fmt(Math.round(auslastung * 100))} % am trüben Tag`],
+          ],
+      eingaben: [
+        {
+          titel: "Wer lädt am Standort?",
+          zeilen: [
+            ["Firmenflotte", e.flotte.an ? `${fmt(e.flotte.n)} Fahrzeuge` : "nein", e.flotte.an ? `${fmt(e.flotte.km)} km/Tag · ${fmt(e.flotte.verbrauch)} kWh/100 km · ${sz(STANDZEITEN.flotte, e.flotte.standzeit)?.label} (${sz(STANDZEITEN.flotte, e.flotte.standzeit)?.sub})` : ""],
+            ["Mitarbeitende", e.mitarbeitende.an ? `${fmt(e.mitarbeitende.n)} E-Autos` : "nein", e.mitarbeitende.an ? `Arbeitsweg ${fmt(e.mitarbeitende.km)} km · ${sz(STANDZEITEN.mitarbeitende, e.mitarbeitende.standzeit)?.label}` : ""],
+            ["Kundschaft & Gäste", e.kunden.an ? `${fmt(e.kunden.vorgaenge)} Ladevorgänge/Tag` : "nein", e.kunden.an ? `${KUNDEN_LADEN[e.kunden.laden]?.label} · ${sz(STANDZEITEN.kunden, e.kunden.oeffnung)?.label}` : ""],
+          ],
+        },
+        {
+          titel: "Ladepunkte & Standort",
+          zeilen: [
+            ["AC-Ladeleistung Flotte & Mitarbeitende", `${e.acKw} kW`],
+            ["Vereinbarte Anschlussleistung", `${fmt(e.anschlussKw)} kW`],
+            ["Spitzenlast Gebäude", `${fmt(e.gebaeudeKw)} kW`, `Betriebszeiten: ${GEBAEUDE[e.gebaeude]?.label} (${GEBAEUDE[e.gebaeude]?.sub})`],
+            ["PV-Anlage am Standort", e.kwp > 0 ? `${fmt(e.kwp)} kWp` : "keine"],
+            ["Speicher zur Spitzenkappung", e.speicherKwh > 0 ? `${fmt(e.speicherKwh)} kWh · ${fmt(r.speicherKw)} kW` : "nein"],
+          ],
+        },
+      ],
+      ergebnisse: leer
+        ? []
+        : [
+            {
+              titel: "Netzanschluss",
+              zeilen: [
+                ["Status", s.titel],
+                ["Auslegung (trüber Tag)", `${fmt(Math.round(r.auslegung))} kW von ${fmt(r.anschluss)} kW`],
+                r.vermieden.kw > 0 && ["Vermiedene Anschlusserhöhung", `${fmt(r.vermieden.kw)} kW`, `${tausend(r.vermieden.min)} – ${tausend(r.vermieden.max)} Netzbereitstellungsentgelt`],
+                e.kwp > 0 && ["Solar im Auto", `${Math.round(r.pvAnteil * 100)} %`, `${js?.label}stag, ${fmt(Math.round(r.pvInsAuto))} kWh`],
+              ],
+            },
+            {
+              titel: "Ladepunkte je Gruppe",
+              zeilen: r.gruppen.map((g) => [g.label, `${g.punkte} × ${art(g.art)} kW`, `${fmt(Math.round(g.kwhTag))} kWh/Tag · ${g.id === "kunden" ? `${g.n} Vorgänge` : `${g.n} Fahrzeuge`}`]),
+            },
+            {
+              titel: "Richtkosten netto",
+              zeilen: [...r.kosten.posten.map((p) => [p.label, `${tausend(p.min)} – ${tausend(p.max)}`]), ["Summe", `${tausend(r.kosten.min)} – ${tausend(r.kosten.max)}`, "Richtwert"]],
+            },
+          ],
+      hinweise: r.hinweise.map((h) => h.text),
+      annahmen: [
+        "Tageslastkurve in 96 Viertelstunden aus Standzeiten, Fahrleistung und Gebäudeprofil; Auslegung auf einen trüben Tag – kein gemessener Lastgang.",
+        "Lastmanagement verteilt die Ladeleistung dynamisch über die Standzeit.",
+        "Richtkosten netto aus der Marktbeobachtung 09/2026 zur Größenordnung – ohne Tiefbau, Trafostation und Netzzutrittsentgelt, keine Ökovolt-Preise.",
+        "Netzbereitstellungsentgelt nach Systemnutzungsentgelte-Verordnung (SNE-V) 2026.",
+        "Öko-Investitionsfreibetrag 22 % für Ladestationen bei Anschaffung bis 31.12.2026.",
+        "Überschlägige Planung – ersetzt keine Netzanfrage und keine Elektroplanung.",
+      ],
+    };
+  };
 
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
@@ -303,7 +372,10 @@ export default function LadeRechner() {
           )}
 
           <div className="mt-7 space-y-4 border-t border-ink-100 pt-6">
-            <ErgebnisLink
+            <RechnerTeilen
+              rechner="ladeinfrastruktur"
+              name="Ladeinfrastruktur-Planer"
+              bericht={bericht}
               pfad="/rechner/ladeinfrastruktur"
               query={ladeQuery(e)}
               titel="Ladeinfrastruktur-Planer – unser Standort"

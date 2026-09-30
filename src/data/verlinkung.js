@@ -21,13 +21,14 @@ export const QUERVERWEISE = {
   "/rechner/gewerbe-pv": [
     { href: "/gewerbe", titel: "Photovoltaik für Gewerbe", text: "Auslegung nach Lastgang, Netzebene und Technik." },
     { href: "/rechner/peak-shaving", titel: "Peak-Shaving-Rechner", text: "Leistungspreis zusätzlich mit Speicher senken." },
-    { href: "/service/finanzierung", titel: "Finanzierung & Leasing", text: "Kauf, Leasing oder Contracting vergleichen." },
+    { href: "/rechner/finanzierung", titel: "Finanzierungsvergleich", text: "Kauf, Leasing, Contracting oder PPA im Barwert vergleichen." },
     { href: "/forderungen/bundesfoerderung", titel: "EAG-Investitionszuschuss", text: "Fördersätze und Fördercall 2026." },
   ],
   "/rechner/peak-shaving": [
     { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Peak Shaving, Eigenverbrauch und Ersatzstrom." },
     { href: "/ratgeber/peak-shaving-leistungspreis", titel: "Peak Shaving & Leistungspreis", text: "Wie Monatsspitzen das Netzentgelt bestimmen." },
     { href: "/ratgeber/gewerbespeicher-kosten", titel: "Gewerbespeicher-Kosten", text: "Preise, Größen und Förderung." },
+    { href: "/lastgang-analyse", titel: "Lastgang-Analyse", text: "Echte Viertelstundenwerte auswerten – ohne Upload." },
   ],
   "/rechner/e-flotte": [
     { href: "/rechner/ladeinfrastruktur", titel: "Ladeinfrastruktur-Planer", text: "Ladepunkte, Spitzenlast und Netzanschluss." },
@@ -42,7 +43,7 @@ export const QUERVERWEISE = {
   "/rechner/energiegemeinschaft": [
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaften", text: "EEG, BEG und GEA richtig aufsetzen." },
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Rechtsform, Nahbereich und Registrierung." },
-    { href: "/kommunen", titel: "Gemeinden & Länder", text: "Die Gemeinde als Initiatorin." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Betriebe & Gemeinden", text: "Teilnahme-Check, Pflichten und Netzentgelt je Nahebereich." },
   ],
   "/rechner/blackout": [
     { href: "/service/notstrom", titel: "Notstrom & Blackout-Vorsorge", text: "Ersatzstrom-Konzept für Ihren Betrieb." },
@@ -58,11 +59,12 @@ export const QUERVERWEISE = {
     { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Solarparks planen, bauen, betreiben." },
     { href: "/agri-pv", titel: "Agri-PV", text: "Strom und Ernte auf derselben Fläche." },
     { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung je Bundesland", text: "Zonen und Sonderwidmung." },
+    { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignet sich Ihre Fläche? Ampel, Pacht, Checkliste." },
   ],
   "/gewerbe": [
     { href: "/gewerbespeicher", titel: "Gewerbespeicher & Peak Shaving", text: "Leistungspreis nach österreichischer Mechanik: Mittel der zwölf Monatsspitzen." },
     { href: "/ratgeber/investitionsfreibetrag-photovoltaik", titel: "Investitionsfreibetrag für PV", text: "22 % Öko-IFB für Anschaffungen bis 31.12.2026." },
-    { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "Überschuss über OeMAG, Stromhändler oder PPA verkaufen." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft für Betriebe", text: "PV-Überschuss teilen – KMU in EEG, Großbetriebe in BEG." },
     { href: "/ratgeber/tor-erzeuger-netzanschluss", titel: "TOR Erzeuger & Netzanschluss", text: "Netzebenen 7 bis 5, Typ A/B und Nachweise." },
   ],
   "/landwirtschaft": [
@@ -72,15 +74,15 @@ export const QUERVERWEISE = {
     { href: "/energiegemeinschaften", titel: "Energiegemeinschaft", text: "Hofüberschuss an Nachbarn und Gemeinde weitergeben." },
   ],
   "/kommunen": [
-    { href: "/energiegemeinschaften", titel: "Energiegemeinschaft der Gemeinde", text: "EEG, BEG, GEA – und die 10-%-Regel für Gemeinden." },
+    { href: "/kommunen/vergabe-foerderung", titel: "Vergabe & Förderung für Gemeinden", text: "Schwellenwerte 2026, Wegweiser, Checkliste für den Gemeinderat." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft der Gemeinde", text: "Rolle, 10-%-Regel, Vergabe und Checkliste für Gemeinden." },
     { href: "/ratgeber/photovoltaik-gemeinde", titel: "Photovoltaik für Gemeinden", text: "Vergabe nach BVergG 2026 und Bürgerbeteiligung." },
     { href: "/freiflaechen-photovoltaik", titel: "Solarparks auf Gemeindegrund", text: "Widmung, Netzanschluss und Pacht." },
-    { href: "/ladeinfrastruktur", titel: "Ladeinfrastruktur", text: "Fuhrpark, Bauhof und Ladepunkte für die Bevölkerung." },
   ],
   "/freiflaechen-photovoltaik": [
     { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung je Bundesland", text: "Zonen, Sonderwidmung und Beschleunigungsgebiete." },
     { href: "/ratgeber/ppa-oesterreich", titel: "PPA in Österreich", text: "Stromliefervertrag statt Marktprämie." },
-    { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Blindleistung und Einspeiselimit am Netzverknüpfungspunkt." },
+    { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignet sich Ihre Fläche? Ampel, Pacht, Checkliste." },
     { href: "/agri-pv", titel: "Agri-PV statt Freifläche", text: "30 % Zuschlag statt 25 % Abschlag auf Agrarflächen." },
   ],
   "/agri-pv": [
@@ -111,7 +113,7 @@ export const QUERVERWEISE = {
     { href: "/ratgeber/energiegemeinschaft-gruenden", titel: "Energiegemeinschaft gründen", text: "Rechtsform, Nahbereich und Registrierung." },
     { href: "/ratgeber/energiegemeinschaft-gewerbe", titel: "Energiegemeinschaften für Gewerbe", text: "Unternehmen als Erzeuger und Abnehmer." },
     { href: "/ratgeber/elwg-elektrizitaetswirtschaftsgesetz", titel: "ElWG im Überblick", text: "Was sich für Betreiber ändert." },
-    { href: "/kommunen", titel: "Gemeinden & Stadtwerke", text: "Die Gemeinde als Initiatorin." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Betriebe & Gemeinden", text: "Wer in EEG, BEG und P2P darf – 6-MW- und 10-%-Regel." },
   ],
   "/technik": [
     { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "Regelung am Netzanschlusspunkt nach TOR Erzeuger." },
@@ -137,6 +139,7 @@ export const QUERVERWEISE = {
     { href: "/energie-live", titel: "Strompreis Österreich live", text: "Spotpreis AT und negative Preise." },
     { href: "/ratgeber/ppa-oesterreich", titel: "PPA in Österreich", text: "On-site, Off-site, Laufzeiten." },
     { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Überschüsse speichern statt verschenken." },
+    { href: "/einspeisung-gewerbe", titel: "OeMAG-Marktpreis & Erlös-Rechner", text: "Alle Monatswerte seit 2024 und Erlös pro Jahr." },
   ],
   "/service/stromtarif": [
     { href: "/energie-live", titel: "Börsenstrompreis Österreich live", text: "Die Preise, nach denen dynamische Tarife abrechnen." },
@@ -147,6 +150,7 @@ export const QUERVERWEISE = {
     { href: "/service/stromtarif", titel: "Dynamischer Stromtarif Österreich", text: "§ 22 ElWG und Lastverschiebung." },
     { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "Was negative Preise für Ihren Überschuss bedeuten." },
     { href: "/ratgeber/negative-strompreise", titel: "Negative Strompreise", text: "Ursachen und Folgen für Betreiber." },
+    { href: "/pv-prognose", titel: "PV-Prognose", text: "Ihr Solarstrom der nächsten 60 Stunden." },
   ],
   "/service/wartung": [
     { href: "/service/e-check", titel: "E-Check & Anlagenprüfung", text: "Wiederkehrende Prüfung nach OVE E 8101 mit Prüfbefund." },
@@ -189,6 +193,7 @@ export const QUERVERWEISE = {
     { href: "/hotellerie-tourismus", titel: "Hotellerie & Tourismus", text: "Nachhaltigkeit, die Gäste sehen." },
   ],
   "/service/finanzierung": [
+    { href: "/rechner/finanzierung", titel: "Finanzierungsvergleich", text: "Kauf, Kredit, Leasing, Contracting und PPA über 20 Jahre rechnen." },
     { href: "/ratgeber/photovoltaik-leasing", titel: "Photovoltaik-Leasing", text: "Bilanz, Steuer und Vertragsformen." },
     { href: "/ratgeber/investitionsfreibetrag-photovoltaik", titel: "Investitionsfreibetrag für PV", text: "Öko-IFB, Höchstbetrag, Behaltefrist." },
     { href: "/forderungen/bundesfoerderung", titel: "Bundesförderung (EAG & KPC)", text: "Zuschüsse senken den Finanzierungsbedarf." },
@@ -352,7 +357,7 @@ export const QUERVERWEISE = {
   "/standort-check": [
     { href: "/ratgeber/schneelast-photovoltaik", titel: "Schneelast & Photovoltaik", text: "Die Norm und ihre Rechenwege im Detail." },
     { href: "/ratgeber/hagel-photovoltaik", titel: "Hagel & Photovoltaik", text: "Hagelwiderstandsklassen und Hagelregister." },
-    { href: "/chalets", titel: "Luxus-Chalets & Alpin", text: "Photovoltaik für hohe Schneelasten." },
+    { href: "/schneelast", titel: "Schneelast-Karte Österreich", text: "Richtwert je Ort und je Bundesland, mit Modulklassen." },
     { href: "/service/versicherung", titel: "PV-Versicherung", text: "Naturgefahren richtig absichern." },
   ],
 
@@ -405,6 +410,50 @@ export const QUERVERWEISE = {
     { href: "/ratgeber", titel: "Ratgeber", text: "Ausführliche Artikel zu Kosten, Förderung und Technik." },
     { href: "/faqs", titel: "Häufige Fragen", text: "Die Fragen, die uns Kunden am häufigsten stellen." },
     { href: "/rechner", titel: "Rechner & Tools", text: "Das Wissen direkt auf Ihr Projekt anwenden." },
+  ],
+  // --- Welle 4: neue Werkzeuge und Fachseiten ---
+  "/pv-prognose": [
+    { href: "/energie-live", titel: "Strommarkt Österreich live", text: "Day-Ahead-Preis der Gebotszone AT in Echtzeit." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Solarüberschüsse in Abend und Nachtschicht verschieben." },
+    { href: "/rechner/peak-shaving", titel: "Peak-Shaving-Rechner", text: "Leistungsspitzen mit Speicher kappen." },
+  ],
+  "/schneelast": [
+    { href: "/standort-check", titel: "Standort-Check Photovoltaik", text: "Schneelast, Wind, Hagel und Ertrag für Ihre Adresse." },
+    { href: "/ratgeber/schneelast-photovoltaik", titel: "Schneelast & Photovoltaik", text: "ÖNORM B 1991-1-3, Schneelastkarte und Modulprüflasten." },
+    { href: "/chalets", titel: "Photovoltaik für alpine Chalets", text: "Hochlastmodule, Schneefang und Indach-Lösungen." },
+  ],
+  "/einspeisung-gewerbe": [
+    { href: "/service/direktvermarktung", titel: "Reststromvermarktung", text: "Überschuss über Direktvermarktung oder PPA verkaufen." },
+    { href: "/ratgeber/oemag-marktpreis", titel: "OeMAG-Marktpreis erklärt", text: "§ 41 ÖSG, Korridor und Rechenweg." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Überschüsse speichern statt billig einspeisen." },
+  ],
+  "/kommunen/vergabe-foerderung": [
+    { href: "/kommunen", titel: "Photovoltaik für Gemeinden", text: "Schulen, Bauhöfe, Kläranlagen und Freibäder." },
+    { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Ticketziehung 08.10., Checkliste und Rechner." },
+    { href: "/energiegemeinschaften/betriebe-gemeinden", titel: "Energiegemeinschaft der Gemeinde", text: "EEG, BEG und die 10-%-Regel ab 01.10.2026." },
+    { href: "/ratgeber/photovoltaik-gemeinde", titel: "Ratgeber PV für Gemeinden", text: "Vergabe, Finanzierung, Bürgerbeteiligung." },
+  ],
+  "/flaechen-check": [
+    { href: "/rechner/freiflaeche-pacht", titel: "Freiflächen- & Pacht-Rechner", text: "Leistung, Ertrag und Pacht über die Laufzeit." },
+    { href: "/freiflaechen-photovoltaik/widmung", titel: "Widmung je Bundesland", text: "Schwellen, Zonen und offene Punkte im Vergleich." },
+    { href: "/agri-pv", titel: "Agri-PV statt Freifläche", text: "Fläche weiter bewirtschaften, ohne 25-%-Abschlag." },
+    { href: "/freiflaechen-photovoltaik", titel: "Freiflächen-Photovoltaik", text: "Solarparks planen, bauen, betreiben." },
+  ],
+  "/freiflaechen-photovoltaik/widmung": [
+    { href: "/flaechen-check", titel: "Flächen-Check", text: "Eignungsampel und belegte Pachtspanne für Ihre Fläche." },
+    { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Ratgeber Widmung", text: "EABG, EAG-Abschlag und Ablauf im Detail." },
+    { href: "/rechner/freiflaeche-pacht", titel: "Pacht-Rechner", text: "Ertrag und Pacht über die Laufzeit." },
+  ],
+  "/rechner/finanzierung": [
+    { href: "/rechner/gewerbe-pv", titel: "Gewerbe-PV-Rechner", text: "Eigenverbrauch stündlich simulieren – die Basis jedes Finanzierungsvergleichs." },
+    { href: "/service/finanzierung", titel: "PV-Finanzierung für Unternehmen", text: "Ablauf, Unterlagen und Vertragsformen im Überblick." },
+    { href: "/ratgeber/photovoltaik-leasing", titel: "Photovoltaik-Leasing", text: "Bilanz, Steuer und Vertragsformen." },
+    { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall", text: "Investitionszuschuss senkt den Finanzierungsbedarf." },
+  ],
+  "/lastgang-analyse": [
+    { href: "/rechner/peak-shaving", titel: "Peak-Shaving-Rechner", text: "Leistungspreis und Speicher im Detail rechnen." },
+    { href: "/rechner/gewerbe-pv", titel: "Gewerbe-PV-Rechner", text: "Wirtschaftlichkeit mit IRR, EAG und IFB." },
+    { href: "/gewerbespeicher", titel: "Gewerbespeicher", text: "Peak Shaving, Eigenverbrauch und Ersatzstrom." },
   ],
   "/netzanmeldung": [
     { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Ticketziehung am 08.10. – mit Einspeisezählpunkt." },

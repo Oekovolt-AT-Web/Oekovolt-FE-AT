@@ -31,6 +31,7 @@ export const NAVIGATION = [
           { name: "Ladeinfrastruktur", href: "/ladeinfrastruktur", icon: "PlugZap", text: "E-Flotte, Kundenparkplatz, Lkw" },
           { name: "Energiegemeinschaften", href: "/energiegemeinschaften", icon: "Share2", text: "EEG, BEG & GEA richtig aufsetzen" },
           { name: "Reststromvermarktung", href: "/service/direktvermarktung", icon: "TrendingUp", text: "Überschuss, PPA & Marktpreis" },
+          { name: "Einspeisung für Gewerbe", href: "/einspeisung-gewerbe", icon: "Euro", text: "OeMAG-Marktpreis & Erlös pro Jahr" },
         ],
       },
       {
@@ -151,6 +152,8 @@ export const NAVIGATION = [
         items: [
           { name: "Energie live", href: "/energie-live", icon: "Activity", text: "Strommarkt Österreich in Echtzeit" },
           { name: "Standort-Check (eHORA)", href: "/standort-check", icon: "Mountain", text: "Schneelast, Wind, Hagel, Ertrag" },
+          { name: "PV-Prognose", href: "/pv-prognose", icon: "CloudSun", text: "Solarstrom der nächsten 60 Stunden" },
+          { name: "Schneelast-Karte", href: "/schneelast", icon: "Snowflake", text: "Richtwert je Ort und Bundesland" },
         ],
       },
     ],
@@ -167,6 +170,7 @@ export const NAVIGATION = [
           { name: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv", icon: "Warehouse", text: "Was bringt Ihr Hallendach?" },
           { name: "Solarrechner", href: "/solarrechner", icon: "Calculator", text: "Privat, Gewerbe, Landwirtschaft" },
           { name: "Freiflächen & Pacht", href: "/rechner/freiflaeche-pacht", icon: "Sun", text: "Für Grundeigentümer" },
+          { name: "Finanzierungsvergleich", href: "/rechner/finanzierung", icon: "Scale", text: "Kauf, Leasing, PPA im Vergleich" },
           { name: "CO₂- & ESG-Rechner", href: "/rechner/co2-esg", icon: "Leaf", text: "Scope 2 für den Bericht" },
         ],
       },
@@ -174,6 +178,7 @@ export const NAVIGATION = [
         label: "Speicher & Netz",
         items: [
           { name: "Peak-Shaving-Rechner", href: "/rechner/peak-shaving", icon: "Gauge", text: "Leistungspreis senken" },
+          { name: "Lastgang-Analyse", href: "/lastgang-analyse", icon: "Activity", text: "15-Minuten-Werte auswerten" },
           { name: "Stromspeicher-Rechner", href: "/rechner/stromspeicher", icon: "BatteryCharging", text: "Die passende Speichergröße" },
           { name: "Energiegemeinschaft", href: "/rechner/energiegemeinschaft", icon: "Share2", text: "Netzentgelt teilen und sparen" },
           { name: "Blackout-Rechner", href: "/rechner/blackout", icon: "ShieldAlert", text: "Ausfallkosten vs. Ersatzstrom" },

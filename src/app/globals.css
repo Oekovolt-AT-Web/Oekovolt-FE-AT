@@ -330,6 +330,46 @@ main li::marker {
   }
 }
 
+/* Tastaturfokus nicht unter der mobilen Handlungsleiste verstecken (WCAG 2.4.11).
+   Leiste: 12 px Abstand + 60 px Höhe + Sicherheitsabstand + iPhone-Home-Balken.
+   scroll-padding wirkt beim Fokussieren per Tab und bei Sprunglinks. */
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ------------------------------------------------------------------
+   KONTRAST GRÜNER TEXT (WCAG 1.4.3, mind. 4,5 : 1 für normalen Text)
+   Gemessen (relative Leuchtdichte nach WCAG 2.x):
+     #669933 / ov-500 auf Weiß 3,40 · auf gray-100 3,09 · auf ov-50 3,18
+     #558822           auf Weiß 4,26
+     ov-600            auf Weiß 4,56 · auf sand-50 4,36 · auf ov-50 4,26 · auf ov-100 3,89
+     ov-700            auf Weiß 6,64 · auf sand-50 6,36 · auf ov-50 6,21 · auf ov-100 5,67
+   Statt ~220 Einzelstellen anzufassen, hebt eine Regel grünen TEXT auf hellem
+   Grund auf ov-700. Ausgenommen:
+   - Icons (svg bzw. reine Icon-Container) – für Grafiken genügen 3 : 1, die
+     Markenfarbe bleibt dort erhalten;
+   - alles auf dunklen Flächen (Navy, Schwarz, Glas, grüne Flächen) – dort ist
+     das hellere Grün kontrastreicher als ov-700 (ov-500 auf navy-950 5,48,
+     ov-700 nur 2,81).
+   In @layer utilities und mit Spezifität (0,1,1) – nur knapp über der
+   Farbklasse selbst: Hover-/Fokus-Varianten (hover:text-white = 0,2,0) gewinnen
+   weiterhin. Ausnahmen per :where(), damit sie die Spezifität nicht erhöhen.
+   ------------------------------------------------------------------ */
+@layer utilities {
+  /* A) #669933, #558822 und ov-500 als Textfarbe auf hellem Grund */
+  :is(.text-\[\#669933\], .text-\[\#558822\], .text-ov-500):not(svg, svg *):not(:where(:has(> svg:only-child))):not(:where(.ov-glass, [class*="bg-navy-7"], [class*="bg-navy-8"], [class*="bg-navy-9"], [class*="bg-[#003473]"], [class*="bg-[#0a1e35]"], [class*="bg-[#03122b]"], [class*="bg-[#041d42]"], [class*="bg-black"], [class*="bg-gray-8"], [class*="bg-gray-9"], [class*="bg-slate-8"], [class*="bg-slate-9"], [class*="bg-ov-500"], [class*="bg-ov-600"], [class*="bg-ov-700"], [class*="bg-ov-800"], [class*="bg-ov-900"], [class*="bg-[#669933]"], [class*="from-navy-9"], [class*="from-black"]) *) {
+    color: var(--color-ov-700);
+  }
+
+  /* B) ov-600 besteht auf Weiß knapp (4,56), auf getönten Flächen nicht –
+        dort ebenfalls ov-700 (Fläche am Element selbst oder an einem Vorfahren). */
+  .text-ov-600:is(:where(.bg-sand-50, .bg-sand-100, .bg-ov-50, .bg-ov-100, .bg-ink-50, .bg-ink-100, .bg-gray-50, .bg-gray-100, .bg-\[\#f0f7e6\]), :where(.bg-sand-50, .bg-sand-100, .bg-ov-50, .bg-ov-100, .bg-ink-50, .bg-ink-100, .bg-gray-50, .bg-gray-100, .bg-\[\#f0f7e6\]) *):not(svg, svg *):not(:where(:has(> svg:only-child))):not(:where(.ov-glass, [class*="bg-navy-7"], [class*="bg-navy-8"], [class*="bg-navy-9"], [class*="bg-[#003473]"], [class*="bg-[#0a1e35]"], [class*="bg-black"], [class*="bg-ov-500"], [class*="bg-ov-600"], [class*="bg-ov-700"], [class*="bg-[#669933]"]) *) {
+    color: var(--color-ov-700);
+  }
+}
+
 /* Mobilmenü offen: Hintergrund sperren, schwebende Elemente ausblenden. */
 body.ov-menu-offen {
   overflow: hidden;

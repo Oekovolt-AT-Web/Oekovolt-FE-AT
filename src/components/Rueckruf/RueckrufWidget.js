@@ -2,16 +2,33 @@
 
 import { FIRMA } from "@/lib/site";
 import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, CalendarDays, MapPin, Phone, PhoneCall, Video, X } from "lucide-react";
+import { ArrowRight, CalendarDays, Loader2, MapPin, Phone, PhoneCall, Video, X } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { TERMIN_ARTEN, oeffnungsStatus } from "@/data/erreichbarkeit";
 import useFokusFalle from "@/components/ui/useFokusFalle";
-import RueckrufFormular from "./RueckrufFormular";
 import { ereignis } from "@/lib/statistik";
 
 import { RUECKRUF_EVENT } from "./oeffnen";
+
+// Das Formular (Kalender-Abruf, Validierung, Kalender-Links) wird erst geladen,
+// wenn das Fenster aufgeht – vorher braucht es niemand. Überfahren oder
+// Fokussieren des Launchers lädt den Chunk vorab, damit er beim Klick bereitsteht.
+const ladeFormular = () => import("./RueckrufFormular");
+const vorladen = () => {
+  ladeFormular().catch(() => {});
+};
+const RueckrufFormular = dynamic(ladeFormular, {
+  ssr: false,
+  loading: () => (
+    <p role="status" className="flex items-center gap-2 py-6 text-[14px] text-ink-600">
+      <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin motion-reduce:animate-none" />
+      Formular wird geladen …
+    </p>
+  ),
+});
 
 // Hinweisgebersystem: bewusst keine Kontakt-Widgets (Vertraulichkeit); Terminseite hat eigenen Ablauf.
 const OHNE_WIDGET = ["/hinweisgebersystem", "/termin", "/angebot"];
@@ -39,6 +56,7 @@ export default function RueckrufWidget() {
   // Öffnen per Event (MobileCta, Buttons auf Seiten)
   useEffect(() => {
     const oeffnen = (e) => {
+      vorladen();
       const neu = e.detail?.tab === "termin" ? "termin" : "rueckruf";
       setTab(neu);
       setOffen(true);
@@ -103,6 +121,8 @@ export default function RueckrufWidget() {
             ref={ausloeser}
             type="button"
             onClick={() => (offen ? schliessen() : (setTab("rueckruf"), setOffen(true), ereignis("rueckruf_geoeffnet", { tab: "rueckruf", ausloeser: "launcher" })))}
+            onPointerEnter={vorladen}
+            onFocus={vorladen}
             aria-expanded={offen}
             aria-controls="ov-rueckruf-panel"
             aria-label={offen ? "Rückruf-Fenster schließen" : "Kostenlosen Rückruf anfordern"}

@@ -3,9 +3,9 @@
 | Dokumentenlenkung | |
 |---|---|
 | Dokument | Projektdokumentation Website oekovolt.com + Frappe-Backoffice |
-| Version | 0.3 (Nachführung Welle 3) |
+| Version | 0.4 (Nachführung Welle 4) |
 | Datum | 30.09.2026 |
-| Stand des Codes | Branch `at-launch`, Commit `11472bf` (30.09.2026) zzgl. unveröffentlichter Arbeitsbaum-Änderungen der Wellen 2 und 3 (siehe [08](08-konfiguration-und-aenderungen.md)) |
+| Stand des Codes | Branch `at-launch`, Commit `add3074` (30.09.2026, enthält Wellen 2 und 3 samt Doku 0.3) zzgl. unveröffentlichter Arbeitsbaum-Änderungen der Welle 4 (siehe [08](08-konfiguration-und-aenderungen.md)) |
 | Autor | Claude (KI-Assistent) im Auftrag der Geschäftsführung |
 | Prüfung | offen |
 | Freigabe | offen |
@@ -49,6 +49,7 @@ Was nicht belegt werden kann, ist als **offen** markiert.
 | [08-konfiguration-und-aenderungen.md](08-konfiguration-und-aenderungen.md) | ISO/IEC/IEEE 12207 (Konfigurationsmanagement-Prozess) | Branch-Modell, Commit-Konventionen, Änderungsprotokoll |
 | [09-risiken-und-offene-punkte.md](09-risiken-und-offene-punkte.md) | ISO/IEC/IEEE 16085 (Risikomanagement, nur als Raster) | Risikoregister, offene Freigaben |
 | [10-rückverfolgbarkeit.md](10-rückverfolgbarkeit.md) | ISO/IEC/IEEE 29148 (Traceability) | Matrix Anforderung → Umsetzung → Test → Status |
+| [11-seo.md](11-seo.md) | – (fachlicher Plan, keine Norm) | Kurzfassung SEO-/GEO-Plan, Stand der Maßnahmen M01–M30, Entscheidungen E1–E12; Volltext in `anhang/` |
 
 ## 4. Einordnung der vorhandenen Dokumentation
 
@@ -67,6 +68,9 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | `docs/regionen/` | DE-Recherche (laut `docs/AT-UEBERGABE.md:78` Aufräumkandidat) | – |
 | `Import-Frappe/ANLEITUNG.md` | Installationsablauf Frappe-Pakete (DE-Stand) | 07 |
 | `Import-Backend-Frappe/README.md`, `apps/*/README.md` | AT-Backoffice: Installation, Methoden, Kundenbühne, Heatmap, Löschfristen, Rollen | 03, 05, 07 |
+| `docs/datenschutz/00-Uebersicht-VVT.md` + `VVT-*.md` (14 Dateien) | Verzeichnis von Verarbeitungstätigkeiten für AT (Entwurf, rechtlich prüfen), Abweichungstabelle Datenschutzerklärung ↔ Code (A1–A8) | 05 |
+| `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` | Umstellung IntegrityLine → eigenes Hinweisgebersystem | 05, 07 |
+| `anhang/seo-umsetzungsplan-2026-09-30.md` | vollständiger SEO-Umsetzungsplan (Kopie) | 11 |
 
 ## 5. Pflegeprozess (Nachführen)
 
@@ -76,7 +80,7 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 - **Wie:**
   1. `git status`, `git diff --stat` und `git log` seit dem letzten Stand auswerten.
   2. Betroffene Kapitel nachführen (Anforderungen, Schnittstellen, Env-Variablen, Tests).
-  3. Tests erneut ausführen und Ergebnisse in [06](06-test-und-qualitaet.md) eintragen.
+  3. Tests erneut ausführen (`node scripts/alle-tests.mjs`, Python-Tests unter `Import-Backend-Frappe/`) und Ergebnisse in [06](06-test-und-qualitaet.md) eintragen.
   4. Änderungsprotokoll in [08](08-konfiguration-und-aenderungen.md) unter „Unveröffentlicht“ ergänzen;
      nach dem Commit in eine datierte Version überführen.
   5. Risikoregister ([09](09-risiken-und-offene-punkte.md)) und Matrix ([10](10-rückverfolgbarkeit.md)) aktualisieren.
@@ -90,41 +94,34 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | 0.1 | 30.09.2026 | Erstfassung aller Kapitel 00–10 auf Stand `11472bf` + Arbeitsbaum | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.2 | 30.09.2026 | Nachführung Welle 2: Heatmap fertig, `Import-Backend-Frappe/` vollständig, SEO, Netzanmeldung, Kundenbühne, Konfetti, Sicherheitsbefunde S1–S4 behoben, Schneelast-Erzeugungsskript, AT-Logo im PDF, WKO-Siegel (neu erfasst); Tests erneut ausgeführt (inkl. neu T-HEAT, T-VERTRAG); P1–P12 abgearbeitet; `docs/FRAPPE-AT-API-SPEZIFIKATION.md` um Kundenbühne-Felder (#1/#2) und Heatmap (#15/#16) ergänzt | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.3 | 30.09.2026 | Nachführung Welle 3: zentrale Kennzahlen, Mannschaft & Maschinenpark, Pressekontakt, selbst gehostete Mediathek (Reels), Schalter `HINWEIS_INTERN` + Go-live-Anleitung, WKO-Siegel mit Quellendatei, Drosselung ohne IP geändert; Tests und Lint erneut ausgeführt | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
+| 0.4 | 30.09.2026 | Nachführung Welle 4: PV-Prognose, Schneelast-Karte, Einspeisung Gewerbe, EG für Betriebe/Gemeinden, Vergabe für Gemeinden, Flächen-Check/Widmung, Finanzierungsvergleich, Teilen & PDF, Lastgang-Analyse, A/B-Infrastruktur, Performance/A11y, Test-Sammellauf (21 Dateien), Datenschutz-Doku AT, Bundesland-Hubs; Auftraggeber-Entscheidungen (KI-Training sperren, Marken, 510 MW, Fachprüfer); neues Kapitel 11 (SEO) | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 
 ## 7. Beim nächsten Nachführen prüfen
 
-### 7.1 Erledigt in Welle 2 (Liste aus Version 0.1)
+### 7.1 Stand der Liste aus Version 0.3
 
-| # | Bereich | Ergebnis |
+| # | Bereich | Stand nach Welle 4 |
 |---|---|---|
-| P1 | Heatmap | fertig: Frontend (`src/components/Statistik/Heatmap*.js`, `src/lib/heatmap.js`, `src/app/api/heatmap/route.js`), Backend (DocTypes Heatmap Zelle/Scroll/Seite, Bericht „Heatmap Auswertung“, 18 Unit-Tests), Vertrag in Spezifikation #15/#16; ESLint-Hinweis behoben (0 Warnungen) |
-| P2 | `Import-Backend-Frappe/` | vollständig laut Auftraggeber: `apps/oekovolt_app`, `apps/oekovoltdeutchland`, `installation/` (`installieren.sh`, `site_config.sh`, `rollen.csv`, `website_env.txt`), `README.md` |
-| P3 | SEO | 7 Hersteller-Slugs per 301, hreflang 28 Pfade, Organisations-Schema ohne `parentOrganization`, Instagram in `sameAs`/Footer, Presse in der Sitemap, Ratgeber-`author` nur `@id` |
-| P4 | Netzanmeldung | `/netzanmeldung`, 5 Betreiberseiten, Checkliste; in Sitemap, Navigation und Querverweisen |
-| P5 | Konfetti | 11 Aufrufstellen bestätigt; weiterhin nicht committet (Status „unveröff.“ bis zum Commit) |
-| P6 | `heatmap.js` | vom Auftraggeber ausdrücklich gewünscht – erledigt (nur Konfetti sollte ohne Bibliothek sein) |
-| P9 | Build | macht der Koordinator; Ergebnis in 06 eintragen, sobald gemeldet |
-| P11 | `src/components/Photovoltaik/Region.js` | Löschung gewollt |
-| P12 | Code-Befunde S1–S5 | S1–S4 behoben (siehe 05); offen: CSP, In-Memory-Drosselung, `X-Forwarded-For`, S5 `baseUrl.js` (nur toter Code) |
+| P9 | Build-Status | macht der Koordinator (parallel) – Ergebnis in 06 eintragen |
+| P10 | Sichtprüfung 1440/390 | offen, jetzt zusätzlich alle Welle-4-Seiten (siehe 06, Abschnitt 4) |
+| P13 | Commit | Wellen 2 und 3 committet (`add3074`); Welle 4 offen |
+| P14 | Rechtliche Freigaben | weiter offen; ergänzt um Welle-4-Punkte (09, F-24 bis F-33) |
+| P15 | Datenschutz-Doku | **erledigt in Welle 4** (`docs/datenschutz/00-Uebersicht-VVT.md` + VVT je Verarbeitung); Restbezüge auf DE-Recht in 4 Dateien, teils als Abgrenzung – prüfen |
+| P16 | Tests | **weitgehend erledigt**: Sammellauf `scripts/alle-tests.mjs` mit 21 Dateien inkl. Rechner- und Kundenbühne-Tests; offen: Befund tests-04, Folgetest zu tests-01 |
+| P17 | CO₂-Faktoren | offen (F-07) |
+| P19 | WKO-Siegel | Berechtigung weiter zu bestätigen |
+| P21 | Kennzahlen zentral | Leistung auf 510 MW (Code: 510.000 kWp) umgestellt; CO₂-Zeitraum offen; Textduplikate prüfen |
+| P22–P25 | Fotos, Mediathek, Hinweisgeber-Go-live, `mannschaft.js` | unverändert offen |
+| P7, P8, P18, P20 | Datenschutzerklärung, Umami, `Import-Frappe/`, Heatmap-/Siegel-Funktionstest | unverändert offen |
 
-### 7.2 Offen für die nächste Nachführung
+### 7.2 Neu für die nächste Nachführung
 
 | # | Bereich | Prüfen |
 |---|---|---|
-| P7 | Datenschutzerklärung / Cookie-Banner | Rechtsprüfung (F-04), insbesondere Heatmap (14 Monate), Umami ohne Einwilligung, basemap.at-Kacheln |
-| P8 | Umami | Env gesetzt? danach neu bauen (Datenschutztext entsteht zur Build-Zeit) |
-| P9 | Build-Status | Ergebnis des Koordinator-Builds in 06 eintragen |
-| P10 | Sichtprüfung Desktop 1440 / Mobil 390 | neue Seiten: Fördercall, Netzanmeldung, Kundenbühne (Porträt, `/siegel`, Social-Kit, ESG), Heatmap-Ansicht, Konfetti |
-| P13 | Commit der Wellen 2 und 3 | danach Changelog-Abschnitt „Unveröffentlicht“ in eine datierte Version überführen, Status „unveröff.“ in 01/10 anpassen |
-| P14 | Rechtliche Freigaben neu | Hinweis-Löschfrist 5 Jahre (HSchG), Löschfrist Anfragen 24 Monate, Kundenbühne (Porträts ohne Kundenfreigabe, Zitat/Logo nur mit Freigabe), Siegel-Aussagen (UWG) |
-| P15 | Datenschutz-Doku | `docs/datenschutz/*` noch DE-Stand (D1); VVT für Heatmap, Anfragen `oekovolt_app`, Kundenbühne fehlen |
-| P16 | Tests | Rechner-Tests (Q-01) und Kundenbühne-Rechenweg (`src/lib/kundenbuehne.js`, als Node-testbar beschrieben, kein Testskript) |
-| P17 | CO₂-Faktoren | Kundenbühne/Solarrechner/Gewerbe-PV/Pacht 258,2 g/kWh (Substitution), CO₂-Rechner 105,4 g/kWh (Strommix), E-Flotte 209 g/kWh – Unterschiede fachlich bestätigen (F-07) |
-| P18 | `Import-Frappe/` vs. `Import-Backend-Frappe/` | welches Paket ist maßgeblich? `Import-Frappe/` (DE-Stand) ggf. als veraltet kennzeichnen |
-| P19 | WKO-Siegel auf der Startseite | Quellendatei `public/Images/AT/QUELLEN-siegel.md` vorhanden (Welle 3); Berechtigung weiter vom Auftraggeber zu bestätigen (R-28, F-17) |
-| P20 | Heatmap-Ansicht und Siegel-Einbau auf Fremdseiten | Funktionstest nach Backoffice-Installation (`?heatmap=<TOKEN>`, `/siegel/<slug>.svg`) |
-| P21 | Kennzahlen zentral | `src/data/kennzahlen.js` vorhanden, aber Zahlen stehen zusätzlich fest im Text (`src/data/unternehmen.js` HEUTE, `src/lib/llms.js:41`, `src/app/page.js:424`) – bei Änderung (z. B. `CO2_ZEITRAUM`) mitziehen; CO₂-Zeitraum klären (F-19) |
-| P22 | Fotos folgen | `public/Images/AT/unternehmen/oekovolt-lkw.jpg` (ggf. Traktor) und `public/Images/AT/team/<Pressekontakt>.jpg` – nach Ablage Sichtprüfung; Einwilligung und Durchwahl Pressekontakt (F-20) |
-| P23 | Mediathek | erste Videos einpflegen (ffmpeg installieren), danach Sitemap/Index prüfen; Musikrechte je Video klären (F-21) |
-| P24 | Hinweisgebersystem Go-live | Entscheidung `HINWEIS_INTERN=1` nach `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` (Build-Zeit-Schalter) |
-| P25 | `mannschaft.js` | Einträge mit `bestaetigt: false` vom Auftraggeber bestätigen lassen |
+| P26 | Commit der Welle 4 | danach Abschnitt „Unveröffentlicht“ in 08 datieren |
+| P27 | SEO-Pakete P1–P7 | Stand in 11 gegen Code abgleichen (insbesondere M02 `htmlLimitedBots`, M07 robots.txt nach E1, M09 `llms.txt` ohne Welle-4-Seiten) |
+| P28 | Snippets der Welle-4-Agenten | nicht übernommene Snippets: `npm test` in `package.json`, `expFuerEreignis` in `src/lib/statistik.js`, A/B-Hinweis in der Datenschutzerklärung, HSchG-Fristen (`hinweis.py`, `hinweisgeber.js`), Kundenbühne-Abschnitt Datenschutzerklärung, Links von `/photovoltaik` auf Bundesland-Hubs |
+| P29 | Inhaltliche Korrekturen außerhalb der Welle-4-Dateien | OeMAG-Werte im Ratgeber (Sep 2024, Q4/2026, Aug–Dez 2025), KIG 500 vs. 620 Mio. auf `/kommunen`, FAQ Leasing auf `/service/finanzierung`, Link `/ratgeber/investitionsfreibetrag-photovoltaik` |
+| P30 | RIS-Abgleich | alle Rechtsquellen, die wegen RIS-Ausfall (HTTP 503) über Sekundärquellen belegt wurden (R-35) |
+| P31 | Monatliche Pflege OeMAG | Anfang Oktober Wert September 2026 eintragen (`src/data/oemag.js`), sonst Warnhinweis ab 05.11.2026 |
+| P32 | Kalender-gebundene Inhalte | nach 22.10.2026 EAG-Karte auf `/kommunen/vergabe-foerderung` umstellen; Klimafonds-Modellregionen-Ausschreibung; Abschläge SNE-V ab 01.01.2027 in `src/lib/egBetriebe.js` |

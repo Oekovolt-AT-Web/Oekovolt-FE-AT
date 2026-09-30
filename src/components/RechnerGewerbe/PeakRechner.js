@@ -22,9 +22,10 @@ import {
   psParams,
   psReihen,
 } from "@/lib/rechner/peakshaving";
-import { DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Liste, LogRegler, Umschalter, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
+import { DiagrammKarte, GewerbeStil, Hinweis, Karte, Liste, LogRegler, Umschalter, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
 import { PeakLastkurve, PeakMonate } from "./PeakDiagramme";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 
 const START = PS_PRESETS[0];
 const PFAD = "/rechner/peak-shaving";
@@ -120,6 +121,84 @@ export default function PeakRechner() {
     setVorlage(null);
   };
   useRechnerErgebnis("peak-shaving", r);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const amort = (a) => (a && a <= 25 ? `${fmt(a, 1)} Jahre` : kap > 0 ? "> 25 Jahre" : "–");
+  const bericht = () => ({
+    untertitel: `Lastspitzen kappen, Leistungspreis senken · ${r.netz.bereich.label}, Netzebene ${ne}`,
+    kennzahlen: [
+      ["Ersparnis/Jahr", euro(r.ersparnisLp), "Leistungspreis"],
+      ["Speicher", kap > 0 ? `${fmt(kap)} kWh` : "–", kap > 0 ? `${fmt(r.speicher.kw)} kW Entladeleistung` : "kein Speicher gewählt"],
+      ["Amortisation", amort(w.amortisation), kap > 0 ? `Richtinvest ≈ ${euro(w.invest)}` : ""],
+      ["Nettonutzen/Jahr", euro(w.netto), "nach Verlusten und Betrieb"],
+    ],
+    eingaben: [
+      {
+        titel: "Betrieb & Netzanschluss",
+        zeilen: [
+          ["Jahresstromverbrauch", menge(verbrauch)],
+          ["Betriebszeit", schichten === 1 ? "1 Schicht (7–16 Uhr)" : schichten === 2 ? "2 Schichten (6–22 Uhr)" : "3 Schichten (24/7)"],
+          ["Netzbereich", `${r.netz.bereich.label} · ${r.netz.bereich.betreiber}`],
+          ["Netzebene", `NE ${ne}`],
+          ["Leistungspreis je kW und Jahr", `${fmt(r.lp, 2)} €`, lpEigen == null ? "SNE-V 2026" : "eigene Eingabe"],
+        ],
+      },
+      {
+        titel: "Lastspitzen",
+        zeilen: [
+          ["Höchste Viertelstunde im Jahr", `${fmt(spitzeMax)} kW`],
+          ["Verteilung über das Jahr", form === "eigen" ? "eigene Monatswerte" : SPITZENFORMEN.find((s) => s.id === form)?.label],
+          ["Monatsspitzen Jän–Dez (kW)", spitzen.map((s) => fmt(s)).join(" · ")],
+          ["Form der Spitze", (() => { const a = SPITZENARTEN.find((x) => x.id === art); return a ? `${a.label} (${a.sub})` : art; })()],
+        ],
+      },
+      {
+        titel: "Ziel & Speicher",
+        zeilen: [
+          ["Spitze kappen auf", `${fmt(ziel)} kW`, `−${fmt(spitzeMax - ziel)} kW gegenüber der Jahresspitze`],
+          ["PV-Anlage am Standort", kwp > 0 ? `${fmt(kwp)} kWp` : "keine"],
+          ["Speicher (nutzbar)", kap > 0 ? `${fmt(kap)} kWh` : "ohne", speicher == null ? "Vorschlag des Rechners" : "eigene Eingabe"],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Leistungspreis",
+        zeilen: [
+          ["Ø Monatsmaximum vorher → nachher", `${fmt(r.ohneMittel)} → ${fmt(r.mitMittel)} kW`],
+          ["Senkung im Mittel", `${fmt(r.senkung, r.senkung < 10 ? 1 : 0)} kW`],
+          ["Ersparnis Leistungspreis", euro(r.ersparnisLp)],
+          ["Vorschlag für das Ziel", `${fmt(r.vorschlag.kw)} kW / ${fmt(r.vorschlag.kwh)} kWh`],
+          ["Ziel in jedem Monat erreicht", kap > 0 ? (r.zielErreicht ? "ja" : "nein") : "–"],
+        ],
+      },
+      {
+        titel: "Wirtschaftlichkeit pro Jahr",
+        zeilen: [
+          ["Ersparnis Leistungspreis", euro(r.ersparnisLp)],
+          ["PV-Überschuss selbst genutzt", kwp > 0 ? euro(w.pvNutzen) : "–"],
+          ["Ladeverluste Peak Shaving", `−${euro(w.verlustPs)}`],
+          ["Wartung, Versicherung, Software", `−${euro(w.betrieb)}`],
+          ["Nettonutzen", euro(w.netto)],
+          kap > 0 && ["Richtinvest Speicher (netto)", euro(w.invest), `${fmt(kap)} kWh × ${fmt(r.speicher.preisKwh)} €/kWh, schlüsselfertig`],
+          ["Amortisation", amort(w.amortisation)],
+          w.foerderung > 0 && ["EAG-Investitionszuschuss (bis zu)", euro(w.foerderung), w.amortisationFoerderung && w.amortisationFoerderung <= 25 ? `Amortisation dann ≈ ${fmt(w.amortisationFoerderung, 1)} Jahre` : ""],
+        ],
+      },
+    ],
+    hinweise: [
+      !r.gemessen && `Heute wahrscheinlich noch kein Leistungspreis: Auf Netzebene 7 wird die Leistung bis Ende 2026 erst ab mehr als 100.000 kWh Jahresverbrauch oder mehr als 50 kW gemessen; darunter gilt eine Pauschale von ${PS_ANNAHMEN.pauschaleNe7} € im Jahr.`,
+      kap > 0 && !r.zielErreicht && `Mit ${fmt(kap)} kWh bleibt die Spitze im ungünstigsten Monat bei ${fmt(Math.max(...r.gekappt))} kW – eine verpasste Spitze zählt voll.`,
+      "Ab 1. Jänner 2027 wird laut ElWG und SNE-G-V-Entwurf das Monatsmaximum mit einem Monatsleistungspreis verrechnet; die Tarifwerte 2027 folgen mit der SNE-T-V.",
+    ],
+    annahmen: [
+      "Modellierter Lastgang in Viertelstunden nach Schichtmodell und Form der Spitze – keine gemessenen 35.040 Viertelstundenwerte.",
+      `Leistungspreis ${fmt(r.lp, 2)} €/kW und Jahr${lpEigen == null ? ` laut SNE-V 2026 (${r.netz.bereich.label}, NE ${ne})` : " (Ihre Eingabe)"}; Abrechnung 2026 als Mittel der 12 Monatsmaxima – bitte mit Ihrem Preisblatt prüfen.`,
+      `Bezug ${fmt(w.bezug * 100, 1)} ct/kWh netto (vermeidbar), Einspeisung ${fmt(w.einspeisung * 100, 1)} ct/kWh, Wirkungsgrad Speicher ${fmt(PS_ANNAHMEN.eta * 100)} %, wirtschaftliche Nutzungsdauer ${PS_ANNAHMEN.lebensdauer} Jahre.`,
+      "Richtinvest Speicher netto, schlüsselfertig – Richtwert, kein Angebot.",
+      "EAG-Investitionszuschuss für Speicher nur gemeinsam mit PV (150 €/kWh bis 50 kWh), nur im Fördercall, kein Rechtsanspruch.",
+    ],
+  });
 
   return (
     <Karte>
@@ -446,15 +525,17 @@ export default function PeakRechner() {
               Lastgang prüfen lassen
             </Button>
           </div>
-          <div className="mt-4">
-            <LinkTeilen
-              pfad={PFAD}
-              query={psParams(eingaben)}
-              titel="Peak-Shaving-Rechner: Leistungspreis senken"
-              text="So viel Leistungspreis spart Peak Shaving bei diesen Werten – gerechnet mit dem Ökovolt Peak-Shaving-Rechner."
-              kampagne="rechner_peak_shaving"
-            />
-          </div>
+          <RechnerTeilen
+            className="mt-4"
+            rechner="peak-shaving"
+            name="Peak-Shaving-Rechner"
+            pfad={PFAD}
+            query={psParams(eingaben)}
+            titel="Peak-Shaving-Rechner: Leistungspreis senken"
+            text="So viel Leistungspreis spart Peak Shaving bei diesen Werten – gerechnet mit dem Ökovolt Peak-Shaving-Rechner."
+            kampagne="rechner_peak_shaving"
+            bericht={bericht}
+          />
         </div>
       </div>
     </Karte>

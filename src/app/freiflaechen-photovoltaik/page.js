@@ -324,6 +324,7 @@ export default async function FreiflaechePage({ searchParams }) {
               zeilen={LAENDER}
               fuss="Quellen: Energie- und Umweltagentur NÖ / Raumordnung NÖ; Leitfaden 2026 für PV-Anlagen, Land Oberösterreich; Land Steiermark, Landesentwicklung; Land Burgenland, RIS. Vereinfachte Darstellung – Details, Ausnahmen und laufende Novellen im Ratgeber."
             />
+            <p className="mt-4 text-[15px]"><Link href="/freiflaechen-photovoltaik/widmung" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Rechtslage aller neun Bundesländer im Detail</Link> · <Link href="/flaechen-check" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Flächen-Check für Grundeigentümer</Link></p>
             <Prosa className="mt-8 grid gap-6 xl:grid-cols-2 xl:gap-10 [&>*+*]:mt-0">
               <p>
                 <strong>Neben der Widmung zählen weitere Verfahren:</strong> die elektrizitätsrechtliche Bewilligung des Landes (in

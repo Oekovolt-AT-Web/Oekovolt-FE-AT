@@ -1,7 +1,7 @@
 # 02 – Architekturbeschreibung
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 42010 (Stakeholder und Belange, Sichten, Architekturentscheidungen).
-Keine Normkonformität behauptet. Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 ## 1. Stakeholder-Belange (Auszug)
 
@@ -21,6 +21,7 @@ flowchart LR
   W -->|"/api/method/* – Token-Auth"| F[Frappe-Backoffice<br/>eigener Server<br/>backoffice.oekovolt.com]
   F -->|Webhook X-Kanal-Secret| W
   W --> GEO[GeoSphere SNOWGRID-CL<br/>nur als lokale Rasterdatei]
+  W -->|serverseitig, Cache + Budget| NWP[GeoSphere Data Hub<br/>NWP v2 + Ensemble v2]
   W -->|serverseitig, gedrosselt| NOM[OSM Nominatim]
   W -->|serverseitig| OTD[Open Topo Data / EU-DEM]
   W -->|serverseitig| PVG[PVGIS JRC]
@@ -42,6 +43,7 @@ flowchart LR
 |---|---|---|
 | Frappe-Backoffice (AT) | Website → Frappe (Token), Frappe → Website (Webhook) | `src/lib/apiBaseUrl.js:4-19`, `src/app/api/kanaele/verteilen/route.js:19-21` |
 | GeoSphere Austria (SNOWGRID-CL) | keine Laufzeitverbindung; Daten als Datei im Repo | `data/schneelast/sk50-at.json`, `src/lib/standort/schneelastRaster.js:7-18` |
+| GeoSphere Austria Data Hub (NWP v2, Ensemble v2) | **Server → GeoSphere** (seit Welle 4, PV-Prognose), gecacht und budgetiert | `src/lib/prognose/geosphere.js:1-25` |
 | PVGIS (JRC) | Server → PVGIS | `src/lib/standort/dienste.js:14-17` |
 | Nominatim (OSM) | Server → Nominatim | `src/lib/standort/dienste.js:6-9`, `src/lib/referenzOrte.js:16` |
 | Open Topo Data (EU-DEM) | Server → Open Topo Data | `src/lib/standort/dienste.js:10-13` |
@@ -110,6 +112,12 @@ flowchart TB
 | `src/data/reels.js`, `src/components/Reels`, `src/app/mediathek`, `scripts/reels-optimieren.mjs` | selbst gehostete Mediathek | 01 REQ-MED-* |
 | `src/data/mannschaft.js`, `src/components/Mannschaft` | Mannschaft & Maschinenpark (Freigabe-Flag je Eintrag) | 01 REQ-UNT-02 |
 | `src/data/hinweisgeber.js` | zentraler Schalter `HINWEIS_INTERN` für Meldekanal, Texte, Redirects | 01 REQ-HIN-01 |
+| `src/lib/prognose/*`, `src/app/api/pv-prognose` | PV-Prognose: Server holt Wetterdaten (Cache/Budget), Browser rechnet Leistung | 01 REQ-PRO-* |
+| `src/lib/schneelast/*`, `src/app/schneelast/**` | Schneelast-Karte, Länderseiten, Punktabfrage | 01 REQ-SNK-01 |
+| `src/data/oemag.js`, `src/lib/einspeisung.js` | Einspeise-Marktdaten (manuell gepflegt) und Erlösrechnung | 01 REQ-EIN-01 |
+| `src/lib/egBetriebe.js`, `src/lib/kommunen/*`, `src/lib/flaeche/*`, `src/lib/rechner/finanzierung.js`, `src/lib/bundesland/*` | reine Fachlogik der neuen Werkzeuge (Node-getestet) | 06 |
+| `src/lib/lastgang/*` | CSV-Parser und Auswertung, nur im Browser | 01 REQ-LAST-01 |
+| `src/lib/experimente.js`, `src/middleware.js`, `src/components/Experimente/*` | A/B-Tests | 01 REQ-EXP-01 |
 
 ## 4. Laufzeitsicht (ausgewählte Abläufe)
 
@@ -227,3 +235,11 @@ flowchart LR
 | ADR-020 | **Kennzahlen aus einer Datei** mit Freigabe-Stand und neutraler CO₂-Beschriftung bis zur Klärung | UWG-Vorsicht, einheitliche Werte | `src/data/kennzahlen.js:1-21` | gültig; Duplikate im Text abbauen |
 | ADR-021 | **Freigabe-Flag je Aussage** (`bestaetigt`) für Unternehmensangaben | nur bestätigte Fakten sichtbar, vorbereitete Kandidaten ohne Codeänderung freischaltbar | `src/data/mannschaft.js:24-28` | gültig |
 | ADR-022 | **Hinweisgebersystem-Schalter zur Build-Zeit** (`HINWEIS_INTERN`) steuert Redirects, API, Texte, Sitemap und `llms.txt` gemeinsam | ein Schalter statt verstreuter Bedingungen; Wechsel erfordert neuen Build | `src/data/hinweisgeber.js:8`, `next.config.mjs:32-39`, `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` | gültig |
+| ADR-023 | **PV-Prognose: Wetterdaten serverseitig, PV-Rechnung im Browser** | Parameteränderungen (kWp, Neigung, Ausrichtung) erzeugen keine weiteren Abrufe; GeoSphere-Limit (240/h) wird mit Zell-/Lauf-Cache, eigenem Deckel 200/h und Header-Auswertung geschont; Rasterzelle 0,05° als Kompromiss zwischen Genauigkeit und Abrufzahl | `src/app/api/pv-prognose/route.js:1-13`, `src/lib/prognose/geosphere.js:19-25` | gültig (unveröff.); Zähler nur je Instanz |
+| ADR-024 | **Lastgang-Analyse ohne Upload** (Auswertung ausschließlich im Browser) | keine Verarbeitung von Verbrauchsdaten auf eigenen Servern, keine Einwilligung/AV nötig | `src/components/Lastgang/LastgangAnalyse.js:42` | gültig (unveröff.) |
+| ADR-025 | **A/B-Tests ohne Cookies**, Auslosung je Aufruf; serverseitige Variante per Middleware-Header, `private, no-store`; kein Cloaking | keine Einwilligung nach § 165 Abs. 3 TKG, keine Wiedererkennung, SEO-neutral | `src/lib/experimente.js:1-30`, `src/middleware.js` | gültig (unveröff.) |
+| ADR-026 | **Marktdaten (OeMAG, E-Control) manuell pflegen**, keine automatisierten Abrufe; Frische-Warnung nach 35 Tagen | Quellen ohne API, Nutzungsbedingungen, Prüfbarkeit jeder Zahl | `src/data/oemag.js:6-12,26` | gültig (unveröff.) |
+| ADR-027 | **Schneelast-Karte beim Build erzeugen** (PNG, eigener Kodierer), Punktabfrage zur Laufzeit aus dem lokalen Raster | keine Kartenbibliothek, kein Abruf bei HORA; Raster per `outputFileTracingIncludes` ausgeliefert | `src/app/schneelast/karte.png/route.js`, `src/app/schneelast/richtwert/route.js:1-17` | gültig (unveröff.) |
+| ADR-028 | **Test-Sammellauf** `scripts/alle-tests.mjs` für alle `scripts/*.test.mjs`; bekannte Befunde als `todo` | ein Befehl für lokale Prüfung und spätere CI, Befunde sichtbar ohne Abbruch | `scripts/alle-tests.mjs` | gültig (unveröff.) |
+| ADR-029 | **KI-Training sperren, Such-/Antwort-Crawler erlauben** (E1, Variante B) | Auftraggeber-Entscheidung 30.09.2026 | `public/robots.txt` | beschlossen; robots.txt noch unvollständig (R-44) |
+| ADR-030 | **Eigene Herstellerseiten nur für belegte Marken** (Fronius, Huawei, BYD, Sigenergy, Solis, meteocontrol) | MSchG/UWG-Risiko minimieren | SEO-Plan E3/M17 | beschlossen; Umsetzung offen |

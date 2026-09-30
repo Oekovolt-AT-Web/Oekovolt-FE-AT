@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  ArrowRight,
   Building2,
   CalendarCheck2,
   ClipboardList,
@@ -326,6 +327,10 @@ export default async function KommunenPage() {
               zeilen={VERGABE}
               fuss="Quellen: Vergaberechtsgesetz 2026, BGBl. I Nr. 8/2026 (§§ 46, 47, 213, 214 BVergG 2018 idF; Regierungsvorlage 302 BlgNR XXVIII. GP); EU-Schwellenwerte laut Rundschreiben des BMJ vom 8.1.2026. Alle Werte netto. Keine Rechtsberatung – die Wahl des Verfahrens verantwortet der Auftraggeber."
             />
+            <Link href="/kommunen/vergabe-foerderung" className="mt-6 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+              Vergabe-Wegweiser und Checkliste für den Gemeinderat
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
           </div>
 
           <div>

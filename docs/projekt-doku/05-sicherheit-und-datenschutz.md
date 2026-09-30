@@ -3,9 +3,9 @@
 Gliederung **nur als Ordnungsraster** in Anlehnung an die Themenbereiche von ISO/IEC 27001 Anhang A
 (organisatorisch, personenbezogen, physisch, technologisch). Es besteht **kein ISMS** nach ISO/IEC 27001
 und keine Zertifizierung; die Tabelle ist eine Bestandsaufnahme belegter Maßnahmen und Lücken.
-Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
-Ausführliche Datenschutz-Dokumente (unverändert, nur verlinkt):
+Ausführliche Datenschutz-Dokumente (nur verlinkt). **Welle 4:** Verzeichnis für AT überarbeitet und erweitert – Deckblatt `docs/datenschutz/00-Uebersicht-VVT.md` (Verantwortlicher, Aufsichtsbehörde, Systeme, Auftragsverarbeiter, Abweichungstabelle A1–A8) und neue Einträge `VVT-Anfragen.md`, `VVT-Heatmap.md`, `VVT-Kundenbuehne.md`, `VVT-Lastgang-Analyse.md`, `VVT-Mediathek.md`; bestehende Einträge angepasst. Status: Entwurf, rechtlich prüfen. Die folgende Tabelle beschreibt den Stand vor Welle 4:
 
 | Dokument | Inhalt | Bemerkung |
 |---|---|---|
@@ -80,6 +80,8 @@ nach `.env*`, `*.pem`, `*.key`, `site_config*.json` im Arbeitsbaum und in der Gi
 | `/api/hinweis` | global 40/10 min | `website`; < 4 s | `src/app/api/hinweis/route.js:16-26` |
 | `/api/award`, `/api/sponsoring`, `/api/partner-registrierung` | je IP (im Speicher) | `website` → stilles „Erfolg“ | `src/lib/api/uber-uns/anfrageWeiterleiten.js:92,135-144` |
 | `/api/heatmap` | je IP (gesalzener Hash): 120 Erfassungen, 60 Ansichten, 20 Token-Versuche je 10 min | – | `src/app/api/heatmap/route.js:38-60` |
+| `/api/pv-prognose` | 30 je IP / 10 min; GeoSphere-Budget 200/h je Instanz | – | `src/app/api/pv-prognose/route.js:26-34` |
+| `/schneelast/richtwert` | 30 je IP / 10 min; Open Topo Data gedrosselt (1,1 s, gemeinsamer Tagesvorrat 1.000) | – | `src/app/schneelast/richtwert/route.js:28-60` |
 | `/api/create_contact`, `/api/create_anfrage`, `/api/rueckruf`, `/api/termin` | je IP und Formular 5 / 10 min; Body ≤ 24.000 Byte (413) | Honeypot im Backoffice; dort zusätzlich Drosselung je `ip_adresse` und Stunde (Kontakt 5, Angebot 5, Solarrechner 10) | `src/lib/api/uber-uns/anfrageWeiterleiten.js:102-150`, `Import-Backend-Frappe/apps/oekovolt_app/README.md` |
 | Externe Dienste | 1,1 s Abstand je Dienst, Cache | – | `src/lib/standort/dienste.js:50-68` |
 
@@ -135,6 +137,9 @@ Regelmäßige Backups, Rotation und Wiederherstellungstests: **offen** (vgl. `do
 | Ohne Einwilligung | Umami (falls konfiguriert, cookielos); Kampagnen-Herkunft im Arbeitsspeicher | `src/components/Statistik/Umami.js`, `src/lib/herkunft.js` |
 | Mediathek (Reels) | selbst gehostete Videos, keine Verbindung zu Meta → keine Einwilligung nötig; Link zur Facebook-Seite ist ein normaler Link | `src/data/reels.js:5-6` |
 | Hinweisgebersystem | von GA4 und Umami ausgenommen (Welle 3), Heatmap ebenso | `src/components/Statistik/GoogleAnalytics.js:24`, `src/components/Statistik/Umami.js:29`, `src/lib/heatmap.js` |
+| PV-Prognose | Browser → eigener Server (Koordinaten); Server → GeoSphere nur mit Koordinaten der Rasterzelle (0,05°), keine Nutzerdaten | `src/app/api/pv-prognose/route.js`, `src/lib/prognose/geosphere.js` |
+| Lastgang-Analyse | Datei wird nur im Browser gelesen, kein Upload | `src/components/Lastgang/LastgangAnalyse.js:42` |
+| A/B-Tests | Auslosung je Aufruf ohne Cookie/Speicher; Ereignis-Kennung ohne Personenbezug | `src/lib/experimente.js:5-18` |
 | Referenzkarte (OSM-Kacheln) | eigene Einwilligung in der Karte (`openStreetMap` im Consent-Cookie) | `src/components/Referenzkarte/map.js:61-110` |
 | Standort-Check-Karte (basemap.at) | Kacheln werden **ohne vorherige Einwilligung** direkt vom Browser geladen; in der Datenschutzerklärung offengelegt | `src/components/StandortCheck/Karte.js:8-11`, Datenschutzerklärung Abschnitt Standort-Check |
 
@@ -166,4 +171,10 @@ Rechtliche Bewertung (TKG § 165 Abs. 3 für Umami ohne Einwilligung, Heatmap, b
 | D4 | Löschfrist Hinweisgebersystem widersprüchlich (VVT 3 Jahre vs. Backend 5 Jahre) | siehe Abschnitt 6 |
 | D5 | Pressekontakt: Name und Foto einer Mitarbeiterin werden veröffentlicht – Einwilligung (DSGVO, § 78 UrhG) laut Code „vom Auftraggeber bereitgestellt“, schriftlicher Nachweis nicht im Repo | `src/components/Presse/PresseKontakt.js:3-6` |
 | D6 | Datenschutztexte des Hinweisgebersystems hängen vom Schalter `HINWEIS_INTERN` ab (Build-Zeit) – nach Umschalten neu bauen und Datenschutzerklärung Punkte 9, 23, 24 prüfen | `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` (Abschnitt 0) |
+| D7 | Datenschutzerklärung weicht vom Code ab (u. a. Anfragen 12 statt 24 Monate, Rückruf 90 Tage, Termine 12 Monate, CloudTalk genannt, obwohl nicht aufgerufen, IP-Löschung, Partner-Frist) – Tabelle A1–A8 | `docs/datenschutz/00-Uebersicht-VVT.md` |
+| D8 | Hinweisgebersystem: Rückmeldefrist wird ab Bestätigung statt ab Eingang berechnet (§ 13 Abs. 9 HSchG); kein inhaltsfreies Zugriffsprotokoll nach § 8 Abs. 12 / § 9 Abs. 6 HSchG; Löschjob entfernt Versionshistorie – vor `HINWEIS_INTERN=1` beheben | Agentenbericht Welle 4 (Snippets für `hinweis.py`, `hinweisgeber.js`) |
+| D9 | `termin.buche_termin` ist Gastmethode und direkt aufrufbar – `ip_adresse` dann nicht vertrauenswürdig; auf die IP des Website-Servers beschränken | `Import-Backend-Frappe/…/website_api/termin.py` |
+| D10 | A/B-Test K1, Variante B: Rechtsgrundlage Art. 6 Abs. 1 lit. b ohne Einwilligungs-Checkbox und ohne AGB-Akzeptanz; Transparenzhinweis in der Datenschutzerklärung fehlt noch | `src/lib/experimente.js`, Agentenbericht Welle 4 |
+| D11 | Kundenbühne und Lastgang-Analyse sind in der Datenschutzerklärung noch nicht beschrieben (Textvorschläge in den VVT-Einträgen) | `docs/datenschutz/VVT-Kundenbuehne.md`, `VVT-Lastgang-Analyse.md` |
+| D12 | Offene Organisationspunkte: Beschäftigtenzahl (Pflicht zur internen Stelle nach § 11 HSchG ab 50), DSB-Benennung (Art. 37), Hosting (www.oekovolt.com liefert am 30.09.2026 noch die alte Seite aus), AV-Verträge (Hetzner, Microsoft 365, IntegrityLine …), 2FA für Desk-Konten, verschlüsselte Backups | `docs/datenschutz/00-Uebersicht-VVT.md` |
 | D3 | Datenschutzerklärung nennt Umami nur, wenn die Env-Variablen **zur Build-Zeit** gesetzt sind | Arbeitsbaum `src/components/Datenschutz/datenschutz.js` (Funktion `umamiAktiv`) |

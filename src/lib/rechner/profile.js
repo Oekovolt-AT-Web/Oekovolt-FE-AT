@@ -24,7 +24,8 @@ export const TAGE_MONAT = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 // Alpenvorland und die Beckenlagen (Linz, Salzburg, Wien, Graz): PVGIS-Monatswerte
 // für Süd/35° liegen dort im Dezember/Jänner bei rund 2,5–4 % und im Juni/Juli bei
 // 12–13,5 % des Jahresertrags. Inneralpine Hochlagen haben etwas höhere Winteranteile.
-export const PV_MONAT = [0.03, 0.05, 0.085, 0.115, 0.13, 0.13, 0.135, 0.115, 0.085, 0.06, 0.035, 0.025];
+// Rohwerte summieren sich auf 0,995 → auf exakt 1 normiert (Befund tests-01), Verlauf unverändert.
+export const PV_MONAT = [0.03, 0.05, 0.085, 0.115, 0.13, 0.13, 0.135, 0.115, 0.085, 0.06, 0.035, 0.025].map((v, _, a) => v / a.reduce((s, x) => s + x, 0));
 
 // Monatsanteile Haushaltsstrom (Standardlastprofil-Charakter, Summe 1)
 export const HAUSHALT_MONAT = [0.096, 0.088, 0.089, 0.081, 0.078, 0.073, 0.074, 0.075, 0.076, 0.084, 0.089, 0.097];

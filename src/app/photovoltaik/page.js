@@ -14,6 +14,7 @@ import FachAkkordeon, { FachTabelle } from "@/components/Produktdetail/FachAkkor
 import { INNVIERTEL_BILD, landesBild } from "@/components/Region/landesBilder";
 import { HEIMAT_SLUG, alleRegionen, pvgisQuelle, regionFuer, regionenNachLand } from "@/lib/regionen";
 import { BASE_URL, LOCALE, SITE_NAME } from "@/lib/site";
+import { landPfad } from "@/lib/bundesland/auswertung";
 
 const HUB = "Photovoltaik Österreich";
 const TITEL = "Photovoltaik in Österreich: Standorte & Erträge | Ökovolt";
@@ -240,6 +241,11 @@ export default function PhotovoltaikOesterreich() {
                       </li>
                     ))}
                   </ul>
+                  <Link href={landPfad(g.land)} className="group flex min-h-12 items-center gap-2 border-t border-ink-100 px-5 text-[14px] font-semibold text-ov-700 hover:text-ov-800">
+                    <MapPin aria-hidden="true" className="h-4 w-4" />
+                    Photovoltaik {g.name} im Überblick
+                    <ArrowRight aria-hidden="true" className="ml-auto h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
                   <Link href={g.foerderHref} className="group flex min-h-12 items-center gap-2 border-t border-ink-100 px-5 text-[14px] font-semibold text-ov-700 hover:text-ov-800">
                     <HandCoins aria-hidden="true" className="h-4 w-4" />
                     Landesförderungen {g.name}

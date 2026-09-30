@@ -1,33 +1,42 @@
-# Verzeichnis von Verarbeitungstätigkeiten (Art. 30 DSGVO) – Ausspielkanäle
+# VVT (Art. 30 Abs. 1 DSGVO) – Ausspielkanäle: Web-Push, Fediverse, RSS
 
-Stand: 14.09.2026 · Verantwortlicher: ÖKOVOLT GmbH Solartechnik, Schlingener Str. 1a, 86842 Türkheim · Prüfung DSB: [OFFEN]
+> **Entwurf – rechtlich prüfen.** Stand 30.09.2026 (ersetzt die deutsche Fassung vom 14.09.2026) · Verantwortlicher:
+> Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething ([Deckblatt](00-Uebersicht-VVT.md#verantwortlicher)) ·
+> Freigabe: `[OFFEN]` · Prüfung: `[OFFEN]`
+
+Umsetzung: `src/lib/kanaele/` (Website), Frappe-DocTypes Push Abonnement, Push Nachricht, Fediverse Follower,
+Veroeffentlichung, Verteilprotokoll (`Import-Backend-Frappe/apps/oekovoltdeutchland`, API-User „Kanal Webservice“,
+Variablen `KANAL_API_KEY`/`KANAL_API_SECRET`). Datenschutzerklärung Punkte 21 und 22.
 
 ## A. Web-Push-Benachrichtigungen
 
 | Angabe | Inhalt |
 |---|---|
-| Zweck | Information von Abonnenten über neue Beiträge zu gewählten Themen |
-| Rechtsgrundlage | Art. 6 Abs. 1 lit. a DSGVO; § 25 Abs. 1 TDDDG (Speicherung des Abos im Endgerät nach Einwilligung) |
-| Betroffene | Website-Besucher, die Benachrichtigungen aktivieren |
-| Daten | Push-Endpoint (URL des Push-Dienstes des Browsers), Verschlüsselungsschlüssel p256dh/auth, Themen, Anmeldezeitpunkt. Keine Namen, E-Mail- oder IP-Adressen |
-| Empfänger | Push-Dienste der Browserhersteller (Google FCM, Mozilla, Apple, Microsoft) – nur verschlüsselte Nachrichteninhalte; Website-Hosting [OFFEN]; Backoffice-Hosting [OFFEN] |
-| Drittland | Möglich über Push-Dienste (z. B. Google, Apple, Microsoft, USA) – Inhalte Ende-zu-Ende verschlüsselt (RFC 8291); Einschätzung DSB [OFFEN] |
-| Löschung | Bei Abbestellung sofort; bei Meldung „abgelaufen“ (HTTP 404/410) durch den Push-Dienst automatisch |
-| TOM | VAPID-Signatur, Endpoint-Allowlist, Rollenrechte, Hash-Index, TLS |
+| **Zweck** | Information von Abonnent:innen über neue Beiträge zu selbst gewählten Themen |
+| **Rechtsgrundlage** | Einwilligung, Art. 6 Abs. 1 lit. a DSGVO i. V. m. § 165 Abs. 3 TKG 2021 (Abonnement im Browser nach ausdrücklicher Erlaubnis) |
+| **Betroffene** | Website-Besucher:innen, die Benachrichtigungen aktivieren |
+| **Daten** | Push-Endpoint (Adresse beim Push-Dienst des Browsers), Schlüssel `p256dh` und `auth`, gewählte Themen, Anmeldezeitpunkt. Keine Namen, E-Mail- oder IP-Adressen. |
+| **Empfänger** | Push-Dienste der Browserhersteller (z. B. Google FCM, Mozilla, Apple, Microsoft) – sie erhalten nur verschlüsselte Nachrichteninhalte (RFC 8291) |
+| **Auftragsverarbeiter** | Hosting Website `[OFFEN]`; Backoffice (Hetzner, Nürnberg) `[OFFEN: AV-Vertrag]` |
+| **Drittland** | Möglich über die Push-Dienste (USA); Inhalte Ende-zu-Ende verschlüsselt. `[OFFEN: Einschätzung der Datenschutzberatung – der Push-Dienst ist vom Browser vorgegeben, nicht von Ökovolt ausgewählt]` |
+| **Löschung** | Bei Abbestellen sofort; meldet der Push-Dienst HTTP 404/410, wird das Abonnement automatisch entfernt (`src/lib/kanaele/push.js`) |
+| **TOM** | VAPID-Signatur, Prüfung der Endpoints gegen eine Liste bekannter Push-Dienste, Rollenrechte, TLS |
 
 ## B. Fediverse-Konten (ActivityPub)
 
 | Angabe | Inhalt |
 |---|---|
-| Zweck | Zustellung neuer Beiträge an Follower (Mastodon, Threads u. a.) |
-| Rechtsgrundlage | Art. 6 Abs. 1 lit. b DSGVO (Zustellung auf Anforderung durch „Folgen“) |
-| Betroffene | Personen/Organisationen, die einem Konto folgen |
-| Daten | Öffentliche Profildaten: Actor-URL, Handle, Anzeigename, Inbox-Adressen, Folgt-seit |
-| Empfänger | Server der Follower (Zustellung der öffentlichen Beiträge) |
-| Drittland | Möglich, abhängig vom Server des Followers (z. B. Threads/Meta, USA); es werden ausschließlich öffentliche Beiträge zugestellt |
-| Löschung | Bei „Entfolgen“ (Undo) oder Kontolöschung (Delete) automatisch |
-| TOM | HTTP-Signaturen (Prüfung eingehend, Signatur ausgehend), keine Veröffentlichung der Follower-Liste, Schutz vor internen Zieladressen (SSRF), Rollenrechte |
+| **Konten** | `@oekovolt@oekovolt.com`, `@ratgeber@oekovolt.com` (`src/lib/kanaele/fediverseKonten.js`) |
+| **Zweck** | Zustellung neuer Beiträge an Follower (z. B. Mastodon) |
+| **Rechtsgrundlage** | Art. 6 Abs. 1 lit. b DSGVO (Zustellung auf Anforderung durch „Folgen“) |
+| **Betroffene** | Personen und Organisationen, die einem Konto folgen |
+| **Daten** | Öffentliche Profilangaben: Actor-URL, Handle, Anzeigename, Inbox-Adressen, „folgt seit“ |
+| **Empfänger** | Server der Follower (Zustellung der öffentlichen Beiträge) |
+| **Drittland** | Möglich, abhängig vom Server der Follower; zugestellt werden ausschließlich öffentliche Beiträge |
+| **Löschung** | Automatisch bei „Entfolgen“ (Undo) oder Kontolöschung (Delete) |
+| **TOM** | HTTP-Signaturen (eingehend geprüft, ausgehend signiert), Follower-Liste wird nicht veröffentlicht, Schutz vor internen Zieladressen (SSRF), Rollenrechte. Reaktionen (Likes, Antworten, Boosts) werden nicht verarbeitet. |
 
-## C. RSS-/JSON-Feeds und Info-Bildschirm
+## C. RSS-/JSON-Feeds und Info-Bildschirme
 
-Keine Verarbeitung personenbezogener Daten über die Server-Logdateien hinaus (siehe allgemeiner VVT-Eintrag „Website-Betrieb“).
+Keine Verarbeitung personenbezogener Daten über die Server-Logdateien hinaus (Datenschutzerklärung Punkt 3).
+`[OFFEN: Eintrag „Hosting und Server-Logdateien“ im Verzeichnis anlegen – siehe Deckblatt, Abschnitt 4.]`

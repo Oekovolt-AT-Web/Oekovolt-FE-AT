@@ -6,6 +6,7 @@ import {
   HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Circle, Tractor, Warehouse,
   Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
   Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake, Car, Leaf,
+  CloudSun, Snowflake, Scale,
 } from "lucide-react";
 
 const ICONS = {
@@ -15,6 +16,7 @@ const ICONS = {
   HelpCircle, Users, Briefcase, MessageCircle, CalendarDays, Newspaper, Rss, Tractor, Warehouse,
   Sprout, Hotel, Share2, Mountain, SlidersHorizontal, Radio, MonitorDot, ClipboardCheck, ScanSearch,
   Droplets, ShieldAlert, ShieldCheck, Lightbulb, Clapperboard, Trophy, HeartHandshake, Handshake, Car, Leaf,
+  CloudSun, Snowflake, Scale,
 };
 
 export function iconFor(name) {

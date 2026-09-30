@@ -19,6 +19,7 @@ import { ladeProjekte } from "@/components/Project/ladeProjekte";
 import { REGIONEN } from "@/data/regionen";
 import { FIRMENSITZ_KOORD, ZONEN, naechsteReferenzen, nachbarn, pvgisQuelle, pvgisReferenz, regionFuer } from "@/lib/regionen";
 import { BASE_URL, LOCALE, SITE_NAME } from "@/lib/site";
+import { landPfad } from "@/lib/bundesland/auswertung";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -346,6 +347,10 @@ export default async function RegionSeite({ params }) {
           <Link href="/photovoltaik" className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
             <Compass aria-hidden="true" className="h-4 w-4" />
             Alle Standorte in Österreich
+          </Link>
+          <Link href={landPfad(r.land)} className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+            <MapPin aria-hidden="true" className="h-4 w-4" />
+            Photovoltaik {r.bundesland} im Überblick
           </Link>
           <Link href={r.foerderHref} className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
             <HandCoins aria-hidden="true" className="h-4 w-4" />

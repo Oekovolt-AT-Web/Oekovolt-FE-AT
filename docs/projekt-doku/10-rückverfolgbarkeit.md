@@ -1,7 +1,7 @@
 # 10 – Rückverfolgbarkeit (Traceability-Matrix)
 
 In Anlehnung an ISO/IEC/IEEE 29148 (Rückverfolgbarkeit von Anforderungen). Keine Normkonformität behauptet.
-Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 Spalten: **Anforderung** (Kapitel 01) → **Umsetzung** (Datei) → **Test** (Kapitel 06; „–“ = kein automatisierter
 Test, „manuell“ = nur Sichtprüfung/Abnahme vorgesehen) → **Status**.
@@ -72,6 +72,21 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-MED-02 Video-Aufbereitung | `scripts/reels-optimieren.mjs`, `.gitignore` | – (Q-08) | umgesetzt (unveröff.) |
 | REQ-MED-03 Musikrechte | – | – | offen (F-21) |
 | REQ-SIE-01 WKO-Siegel | `src/app/page.js`, `public/Images/AT/siegel/*`, `public/Images/AT/QUELLEN-siegel.md` | manuell | umgesetzt (unveröff.); F-17 offen |
+| REQ-PRO-01 PV-Prognose | `src/app/pv-prognose/page.js`, `src/app/api/pv-prognose/route.js`, `src/lib/prognose/*`, `src/components/Prognose/*` | `scripts/prognose.test.mjs` (27) | umgesetzt (unveröff.) |
+| REQ-PRO-02 GeoSphere-Budget/Cache | `src/lib/prognose/geosphere.js`, `src/lib/prognose/budget.js` | `scripts/prognose.test.mjs` | umgesetzt (unveröff.) |
+| REQ-PRO-03 Quellenangabe | `src/app/pv-prognose/page.js:69,198` | manuell | umgesetzt (unveröff.); R-39 |
+| REQ-SNK-01 Schneelast-Karte | `src/app/schneelast/**`, `src/lib/schneelast/*`, `src/components/Schneelast/*` | `scripts/schneelast-seite.test.mjs` (17), T-SNOW | umgesetzt (unveröff.) |
+| REQ-EIN-01 Einspeisung Gewerbe | `src/data/oemag.js`, `src/lib/einspeisung.js`, `src/app/einspeisung-gewerbe/page.js` | `scripts/einspeisung.test.mjs` | umgesetzt (unveröff.); F-32 |
+| REQ-EG-01 EG Betriebe & Gemeinden | `src/lib/egBetriebe.js`, `src/app/energiegemeinschaften/betriebe-gemeinden/page.js` | `scripts/eg-betriebe.test.mjs` | umgesetzt (unveröff.) |
+| REQ-KOM-01 Vergabe Gemeinden | `src/lib/kommunen/*`, `src/app/kommunen/vergabe-foerderung/page.js` | `scripts/kommunen-vergabe.test.mjs` | umgesetzt (unveröff.) |
+| REQ-FLA-01 Flächen-Check | `src/lib/flaeche/*`, `src/app/flaechen-check/page.js` | `scripts/flaeche.test.mjs` (15) | umgesetzt (unveröff.); F-31 |
+| REQ-FLA-02 Widmung je Land | `src/app/freiflaechen-photovoltaik/widmung/**`, `src/lib/flaeche/laender.js` | `scripts/flaeche.test.mjs` | umgesetzt (unveröff.) |
+| REQ-FIN-01 Finanzierungsvergleich | `src/lib/rechner/finanzierung.js`, `src/app/rechner/finanzierung/page.js` | `scripts/finanzierung.test.mjs` (14) | umgesetzt (unveröff.); F-26 |
+| REQ-TEI-01 Teilen & PDF | `src/components/RechnerTeilen/*`, `src/components/RechnerGewerbe/*` | `scripts/rechner-teilen.test.mjs` (13) | umgesetzt (unveröff.); PDF Peak-Shaving ungeprüft |
+| REQ-LAST-01 Lastgang-Analyse | `src/lib/lastgang/*`, `src/components/Lastgang/*`, `src/app/lastgang-analyse/page.js` | `scripts/lastgang.test.mjs` (23) | umgesetzt (unveröff.); Q-12 |
+| REQ-EXP-01 A/B-Infrastruktur | `src/lib/experimente.js`, `src/middleware.js`, `src/components/Experimente/*` | `scripts/experimente.test.mjs` (12) | umgesetzt (unveröff.); K1 inaktiv |
+| REQ-BL-01 Bundesland-Hubs | `src/lib/bundesland/*`, `src/app/photovoltaik-bundesland/**` | `scripts/bundesland.test.mjs` (15) | umgesetzt (unveröff.); R-42 |
+| REQ-HER-01 Markenpolitik | – | – | offen (P4) |
 | REQ-ENE-01 Strommarkt live | `src/lib/energy.js`, `src/app/api/energie/live/route.js`, `src/app/energie-live/page.js` | – | umgesetzt; R-12 |
 | REQ-INH-01 Inhalte | `src/content/ratgeber/*`, `src/data/{lexikon,faqs}.js`, `src/data/regionen/*` | QA-Crawl 29.09. (`docs/AT-UEBERGABE.md:3-5`) | umgesetzt |
 | REQ-REC-LEG-01 Rechtsseiten | `src/app/{impressum,agb,datenschutz,barrierefreiheit,hinweisgeberschutz,bildnachweis}` | – | umgesetzt; Rechtsprüfung offen |
@@ -94,6 +109,12 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-NF-SEO-06 | `src/app/layout.js`, `src/lib/site.js`, `src/components/Reusable/footer.js`, `src/app/ratgeber/[slug]/page.js`, `src/app/sitemap.js` | – | umgesetzt (unveröff.) |
 | REQ-NF-SEC-01 | `next.config.mjs` (headers) | – | umgesetzt; CSP fehlt |
 | REQ-NF-SEC-02 | Löschung `src/app/api/optimize-video/route.js`, `src/app/api/image/route.js:106-108`, `next.config.mjs` (Rewrite entfernt) | – | umgesetzt (unveröff.) |
+| REQ-NF-PERF-04 | `src/app/layout.js`, `src/components/Home2/HeroVideo.js`, `src/components/Reusable/footer.js`, `src/components/ui/RevealObserver.js` | – | umgesetzt (unveröff.) |
+| REQ-NF-A11Y-03 | `src/app/globals.css` | `scripts/kontrast.test.mjs` (18) | umgesetzt (unveröff.) |
+| REQ-NF-DS-04 | `docs/datenschutz/*` | Link-/Pfadprüfung durch den Datenschutz-Agenten | Entwurf (unveröff.) |
+| REQ-NF-SEO-07 | `public/robots.txt` | – | teilweise (R-44) |
+| REQ-NF-SEO-08 | `docs/projekt-doku/11-seo.md` | – | teilweise |
+| REQ-NF-TEST-01 | `scripts/alle-tests.mjs` | selbst (21 Dateien grün) | umgesetzt (unveröff.) |
 | REQ-NF-DES-01 | Bausteine `src/components/ui/*`; Ausnahme `heatmap.js` (ADR-016) | – | umgesetzt |
 | REQ-NF-DES-02 | `docs/AT-DESIGN.md` | manuell 1440/390 | Stand 29.09.; neue Seiten offen |
 | REQ-NF-I18N-01 | Formatfunktionen, Texte | – | umgesetzt |
@@ -104,8 +125,8 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 
 | Kennzahl (30.09.2026) | Wert |
 |---|---|
-| Anforderungs-IDs in Kapitel 01 | 92 (Welle 2: 85, Welle 1: 77) |
-| davon mit automatisiertem Test verknüpft | 15 (REQ-ANF-06, REQ-ANF-11, REQ-STO-05, REQ-STO-08, REQ-FOE-01, REQ-FOE-02, REQ-REF-01…04, REQ-REF-06, REQ-MES-04 (nur Backend), REQ-MES-06, REQ-NF-VERF-01) |
+| Anforderungs-IDs in Kapitel 01 | 113 (Welle 3: 92, Welle 2: 85, Welle 1: 77) |
+| davon mit automatisiertem Test verknüpft | 29 (Welle 3: 15; neu u. a. REQ-PRO-01/02, REQ-SNK-01, REQ-EIN-01, REQ-EG-01, REQ-KOM-01, REQ-FLA-01/02, REQ-FIN-01, REQ-TEI-01, REQ-LAST-01, REQ-EXP-01, REQ-BL-01, REQ-NF-A11Y-03) |
 | Schwerpunkte offen | Commit der Welle 2, Installation/Abnahme Backoffice, Rechtsprüfungen (Datenschutz, Löschfristen, Kundenbühne, UWG/Kartell), Build-Nachweis, Tests Website-Seite |
 
 Hinweis: Die Zählung ist beim Nachführen neu zu erstellen.

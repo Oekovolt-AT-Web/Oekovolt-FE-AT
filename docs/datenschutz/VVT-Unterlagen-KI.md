@@ -1,18 +1,25 @@
-# VVT (Art. 30 DSGVO) – Unterlagen per Smartphone & KI-Auswertung
+# VVT (Art. 30 Abs. 1 DSGVO) – Unterlagen per Smartphone und KI-Auswertung
 
-Stand: 14.09.2026 · Verantwortlicher: ÖKOVOLT GmbH Solartechnik, Schlingener Str. 1a, 86842 Türkheim · Prüfung DSB: [OFFEN]
+> **Entwurf – rechtlich prüfen.** Stand 30.09.2026 (ersetzt die deutsche Fassung vom 14.09.2026) · Verantwortlicher:
+> Ökovolt Solartechnik GmbH, Gewerbegebiet 10, 5121 Ostermiething ([Deckblatt](00-Uebersicht-VVT.md#verantwortlicher)) ·
+> Freigabe: `[OFFEN]` · Prüfung: `[OFFEN]`
+
+Umsetzung: `src/app/api/scan/*`, `src/lib/scan/backend.js`, `src/components/Scan/*`; Backoffice DocType „Solar Lead“
+mit `api.py` und `ki.py` (`Import-Backend-Frappe/apps/oekovoltdeutchland/.../doctype/solar_lead/`), API-User
+„Kontakt Webformular“. Datenschutzerklärung Punkt 11.
 
 | Angabe | Inhalt |
 |---|---|
-| Zweck | Erstellung präziser Photovoltaik-Angebote anhand von Zähler-, Rechnungs-, Zählerschrank- und Gebäudefotos; optional automatisches Auslesen der Rechnung |
-| Rechtsgrundlage | Art. 6 Abs. 1 lit. b DSGVO; Einwilligung Art. 6 Abs. 1 lit. a DSGVO; KI-Auswertung/Drittland: Einwilligung Art. 49 Abs. 1 lit. a DSGVO + SCC [OFFEN: prüfen] |
-| Betroffene | Interessenten; ggf. weitere auf der Rechnung genannte Personen (Mitbewohner) |
-| Datenkategorien | Name, E-Mail, Telefon, PLZ; Rechnerangaben; Fotos/PDF (enthalten Adresse, Kundennummer, Zählernummer, ggf. Bankdaten auf der Rechnung); Zählerstand; KI-Ergebnis (Verbrauch, Preise, Anbieter, Tarif, Zeitraum, Zählernummer, Beschreibungen) |
-| Empfänger intern | Rollen Vertrieb, Technik Innendienst, Administratoren |
-| Auftragsverarbeiter | Website-Hosting (Hetzner Online GmbH, DE) [OFFEN: bestätigen]; Backoffice-Hosting [OFFEN]; nur mit Einwilligung: Anthropic, PBC (USA) – DPA [OFFEN] |
-| Drittland | USA (Anthropic) nur bei Einwilligung |
-| Erinnerung | Einmalige E-Mail 2 h nach Start, falls keine Unterlagen eingegangen sind (Fortsetzen-Link, 72 h gültig, nur Hash gespeichert); Rechtsgrundlage Art. 6 Abs. 1 lit. b DSGVO (Durchführung der Anfrage), Hinweis im Formular und in der Datenschutzerklärung; keine Werbung, keine Folge-Erinnerungen [OFFEN: DSB bestätigen, alternativ gesondertes Opt-in] |
-| Löschfristen | Unvollständige Sitzungen: 24 h nach Ablauf des QR-Codes bzw. Fortsetzen-Links; Leads ohne Angebot/Auftrag: 12 Monate; bei Auftrag: Übernahme in Kundenakte, gesetzliche Fristen |
-| TOM | Einmal-Token (256 Bit) nur als Hash gespeichert, 45 min gültig; noindex/no-referrer; Magic-Byte-Prüfung, Größenlimits, Rate-Limits; private Dateiablage mit Rollenrechten; EXIF-Entfernung und OCR auf dem Endgerät; TLS; Löschjobs |
-| DSFA | Vorprüfung empfohlen (Fotos von Rechnungen, KI-Einsatz, Drittland) [OFFEN: DSB] |
-| Automatisierte Entscheidung | Nein – KI-Werte werden von Mitarbeitern geprüft |
+| **Zweck** | Präzise Photovoltaik-Angebote anhand von Fotos von Stromzähler, Stromrechnung sowie optional Zählerschrank und Gebäude/Dach; optional automatisches Auslesen der Rechnung mit KI |
+| **Rechtsgrundlage** | Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahme auf Anfrage); KI-Auswertung nur mit ausdrücklicher Einwilligung (Art. 6 Abs. 1 lit. a DSGVO); Übermittlung in die USA auf Grundlage der Einwilligung (Art. 49 Abs. 1 lit. a DSGVO) und von Standardvertragsklauseln (Art. 46 DSGVO) `[OFFEN: Prüfen, ob Anthropic, PBC am EU-US Data Privacy Framework teilnimmt – dann Art. 45 DSGVO; DPA/SCC-Stand dokumentieren]` |
+| **Betroffene** | Interessent:innen; weitere Personen, die auf der Rechnung stehen (z. B. Mitbewohner:innen, Ansprechpersonen) |
+| **Datenkategorien** | Name, E-Mail, Telefon, PLZ; Rechnerangaben; Fotos/PDF (Pflicht: `zaehler`, `rechnung`; optional `rechnung_2`, `schaltschrank`, `dach`; JPEG, PNG, WebP, HEIC, PDF, max. 8 MB), die Adresse, Kundennummer, Zählernummer/Zählpunkt und ggf. Bankdaten enthalten können; Zählerstand (auf dem Gerät per OCR gelesen); KI-Ergebnis (Verbrauch, Preise, Anbieter, Tarif, Zeitraum, Zählernummer, Beschreibungen von Zählerschrank und Dach); Herkunftsfelder |
+| **Empfänger intern** | Rollen **Vertrieb** und **Technik Innendienst** (Lesen/Schreiben), System Manager |
+| **Auftragsverarbeiter** | Hosting Website `[OFFEN]`; Backoffice (Hetzner, Nürnberg) `[OFFEN: AV-Vertrag]`; E-Mail-Versand `[OFFEN]`; nur mit Einwilligung: **Anthropic, PBC** (San Francisco, USA), Modell laut Standard `claude-sonnet-5` (`ki.py`, `MODELL_STANDARD`) `[OFFEN: DPA]` |
+| **Drittland** | USA (Anthropic) – nur bei Einwilligung. Ohne Einwilligung prüft eine Mitarbeiterin bzw. ein Mitarbeiter die Unterlagen manuell. |
+| **Erinnerung** | Einmalige E-Mail 2 Stunden nach dem Start, falls noch keine Unterlagen eingegangen sind (Fenster bis 24 h); darin ein persönlicher Fortsetzen-Link, 72 Stunden gültig, höchstens 10 Aufrufe, nur als SHA-256-Hash gespeichert. Rechtsgrundlage Art. 6 Abs. 1 lit. b DSGVO (Durchführung der begonnenen Anfrage); keine Werbung, keine weiteren Erinnerungen. `[OFFEN: Datenschutzberatung bestätigen lassen, dass § 174 TKG 2021 nicht greift (kein Werbezweck); sonst gesondertes Opt-in]` |
+| **Löschung (umgesetzt)** | Täglicher Job `solar_lead.api.aufraeumen`: nicht abgeschlossene Sitzungen 24 Stunden nach Ablauf von QR-Code bzw. Fortsetzen-Link samt Fotos endgültig löschen; Leads mit Status „Neu“, „In Prüfung“ oder „Verloren“ **12 Monate** nach Anlage samt Fotos und Versionen löschen. |
+| **Löschung (offen)** | `[OFFEN: Leads mit anderem Status (z. B. Angebot/Auftrag) werden nicht automatisch gelöscht – Übergang in die Kundenakte und Frist festlegen.]` |
+| **TOM** | QR-Token 32 Byte zufällig, nur als SHA-256-Hash im Backoffice, 45 Minuten gültig; `noindex`/`no-referrer` auf den Upload-Seiten; Prüfung von Dateityp (Magic Bytes) und Größe; Drosselung; private Dateiablage mit Rollenrechten; Fotos werden auf dem Gerät verkleinert, EXIF-Daten (Standort, Kamera) entfernt; OCR des Zählerstands auf dem Gerät (Programmdateien vom eigenen Server); Seiten `/scan` und `/fortsetzen` sind von Statistik und Heatmap ausgenommen; TLS; Löschjob. |
+| **DSFA** | Schwellwertprüfung empfohlen (Fotos von Rechnungen mit Bank- und Zählerdaten, KI-Einsatz, Drittland). `[OFFEN: Datenschutzberatung]` |
+| **Automatisierte Entscheidung** | Nein – die KI-Werte werden von Mitarbeitenden geprüft (Art. 22 DSGVO nicht anwendbar). |

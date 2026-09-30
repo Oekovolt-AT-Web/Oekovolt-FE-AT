@@ -138,7 +138,12 @@ export default function Teilen({
       <ul className="flex flex-wrap items-center gap-2">
         {nativ && (
           <li className="sm:hidden">
-            <button type="button" onClick={nativTeilen} className={cn(knopf, "w-auto gap-2 bg-navy-950 px-4 text-[14px] font-semibold text-white ring-navy-950")}>
+            {/* Nicht mit `knopf` kombinieren: cn() löst keine Klassenkonflikte, bg-white würde bg-navy-950 schlagen (weiß auf weiß) */}
+            <button
+              type="button"
+              onClick={nativTeilen}
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-navy-950 px-4 text-[14px] font-semibold text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500"
+            >
               <Share2 aria-hidden="true" className="h-4 w-4" />
               Teilen
             </button>

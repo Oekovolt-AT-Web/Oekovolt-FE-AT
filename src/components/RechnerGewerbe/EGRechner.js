@@ -23,9 +23,10 @@ import {
   lastprofil,
   verbrauchVon,
 } from "@/lib/rechner/energiegemeinschaft";
-import { Anteilsbalken, DiagrammKarte, GewerbeStil, Hinweis, Karte, LinkTeilen, Liste, LogRegler, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
+import { Anteilsbalken, DiagrammKarte, GewerbeStil, Hinweis, Karte, Liste, LogRegler, Vorlagen, Zahlfeld, euro, menge, useStartAusUrl } from "./GewerbeBausteine";
 import { EGFluss, EGMonate, EGPreisleiter } from "./EGDiagramme";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
+import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 
 const PFAD = "/rechner/energiegemeinschaft";
 const ICON = { gemeinde: Landmark, betrieb: Factory, landwirtschaft: Tractor, haushalte: Home };
@@ -106,6 +107,84 @@ export default function EGRechner() {
   const query = egParams({ teilnehmer, modell, bereich, energiepreisCt: energiepreis, egPreisCt: egPreis });
   const summeErz = Math.max(0, energiepreis - marktpreis);
   useRechnerErgebnis("energiegemeinschaft", w);
+
+  // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
+  const modellLabel = MODELLE.find((x) => x.id === modell)?.label || modell;
+  const bereichInfo = NETZBEREICHE.find((b) => b.id === bereich);
+  const neLabel = (id) => {
+    const n = NETZEBENEN_EG.find((x) => x.id === id);
+    return n ? `${n.label} (${n.sub})` : id;
+  };
+  const bericht = () => ({
+    untertitel: `${modellLabel} · ${teilnehmer.length} Teilnehmende · Netzbereich ${bereichInfo?.label || bereich}`,
+    kennzahlen: [
+      ["Gemeinschaftsstrom", menge(bilanz.geteilt), `${fmt(bilanz.quoteUeberschuss * 100)} % des PV-Überschusses`],
+      ["Vorteil gesamt/Jahr", euro(w.gesamt), "Erzeuger + Verbraucher, netto"],
+      ["Netzentgelt gespart", euro(w.netz), modell === "beg" ? "BEG: keine Reduktion 2026" : `Arbeitspreis −${modell === "lokal" ? "57" : "28/64"} %`],
+      ["Mehrerlös Erzeuger", euro(w.erzeuger), `vs. OeMAG-Marktpreis ${fmt(marktpreis, 2)} ct`],
+    ],
+    eingaben: [
+      {
+        titel: "Gemeinschaft",
+        zeilen: [
+          ["Form & Nahebereich", modellLabel],
+          ["Netzbereich", bereichInfo ? `${bereichInfo.label} · ${bereichInfo.betreiber}` : bereich],
+        ],
+      },
+      {
+        titel: "Teilnehmende",
+        zeilen: teilnehmer.map((x) => [
+          `${x.name} (${TYPEN[x.typ]?.label || x.typ})`,
+          `${menge(verbrauchVon(x))}${x.kwp > 0 ? ` · PV ${fmt(x.kwp)} kWp` : ""}`,
+          [x.typ === "haushalte" ? `${fmt(x.anzahl || 0)} Haushalte` : "", neLabel(x.ne), x.typ === "betrieb" ? `${x.schichten || 1} Schicht(en)${x.gross ? ", großes Unternehmen" : ""}` : ""].filter(Boolean).join(" · "),
+        ]),
+      },
+      {
+        titel: "Preise (netto)",
+        zeilen: [
+          ["Energiepreis beim Lieferanten", `${fmt(energiepreis, 1)} ct/kWh`],
+          ["Preis in der Gemeinschaft", `${fmt(egPreis, 2)} ct/kWh`, egPreisWahl == null ? "Win-win-Mitte" : "eigene Eingabe"],
+          ["Marktpreis-Referenz (OeMAG)", `${fmt(marktpreis, 2)} ct/kWh`, "Mittel der letzten 12 Monate"],
+        ],
+      },
+    ],
+    ergebnisse: [
+      {
+        titel: "Energie pro Jahr",
+        zeilen: [
+          ["Gemeinschaftsstrom (geteilt)", menge(bilanz.geteilt)],
+          ["PV-Überschuss gesamt", menge(bilanz.ueberschuss)],
+          ["Restbedarf aus dem Netz", menge(bilanz.restbedarf)],
+        ],
+      },
+      {
+        titel: "Vorteil je Teilnehmer pro Jahr",
+        zeilen: w.zeilen.map((z, i) => t[i] && [t[i].name, z.ok ? euro(z.vorteil) : "–", z.ok ? "" : "nicht teilnahmeberechtigt"]),
+      },
+      {
+        titel: "Zusammensetzung",
+        zeilen: [
+          ["Günstigere Energie (Verbraucher)", euro(w.energie)],
+          ["Netzentgelt-Reduktion", euro(w.netz)],
+          ["Elektrizitätsabgabe entfällt", modell === "beg" ? "– (nur EEG)" : euro(w.abgabe)],
+          ["Mehrerlös Erzeuger vs. OeMAG", euro(w.erzeuger)],
+          ["Vorteil gesamt", euro(w.gesamt)],
+        ],
+      },
+    ],
+    hinweise: [
+      ...ausgeschlossen.map((z) => `${z.name}: ${z.grund}`),
+      "Große Unternehmen dürfen nicht an EEG teilnehmen, nur an Bürgerenergiegemeinschaften und Peer-to-Peer-Modellen (höchstens 6 MW).",
+      "Die Reduktion von 57 % (lokal) bzw. 28 %/64 % (regional) gilt bis 31.12.2026. Danach gelten Abschläge je genutzter Netzinfrastruktur; die Sätze legt die noch ausstehende Tarifverordnung fest.",
+    ],
+    annahmen: [
+      "Typische Lastprofile in Stundenwerten über 8.760 Stunden, dynamische Aufteilung nach aktuellem Bedarf – keine gemessenen Viertelstundenwerte.",
+      "Netz-Arbeitspreise laut SNE-V 2026 für den gewählten Netzbereich; Reduktion nach Modell und Netzebene.",
+      `Marktpreis-Referenz: Mittel der letzten 12 veröffentlichten OeMAG-Monatspreise (${fmt(marktpreis, 2)} ct/kWh, zuletzt ${MARKTPREIS_AKTUELL.zeitraum}).`,
+      modell !== "beg" && "In der EEG entfällt zusätzlich der Erneuerbaren-Förderbeitrag auf den Gemeinschaftsstrom – hier nicht beziffert.",
+      "Kosten für Organisation und Abrechnung der Gemeinschaft sind nicht abgezogen.",
+    ],
+  });
 
   return (
     <Karte>
@@ -346,15 +425,17 @@ export default function EGRechner() {
               Gemeinschaft planen
             </Button>
           </div>
-          <div className="mt-4">
-            <LinkTeilen
-              pfad={PFAD}
-              query={query}
-              titel="Energiegemeinschafts-Rechner: geteilter Solarstrom"
-              text="So viel bringt eine Energiegemeinschaft bei diesen Teilnehmenden – gerechnet mit dem Ökovolt Energiegemeinschafts-Rechner."
-              kampagne="rechner_energiegemeinschaft"
-            />
-          </div>
+          <RechnerTeilen
+            className="mt-4"
+            rechner="energiegemeinschaft"
+            name="Energiegemeinschafts-Rechner"
+            pfad={PFAD}
+            query={query}
+            titel="Energiegemeinschafts-Rechner: geteilter Solarstrom"
+            text="So viel bringt eine Energiegemeinschaft bei diesen Teilnehmenden – gerechnet mit dem Ökovolt Energiegemeinschafts-Rechner."
+            kampagne="rechner_energiegemeinschaft"
+            bericht={bericht}
+          />
         </div>
       </div>
     </Karte>

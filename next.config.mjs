@@ -13,6 +13,11 @@ const nextConfig = {
     "/solarrechner/ergebnis/bild": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
     // Standort-Check: Schneelast-Richtwertraster (GeoSphere SNOWGRID-CL, eigene Auswertung), per fs gelesen
     "/api/standort": ["./data/schneelast/sk50-at.bin", "./data/schneelast/sk50-at.json"],
+    // Schneelast-Karte: Punktabfrage liest das Raster zur Laufzeit per fs
+    // (Seiten und karte.png sind statisch und lesen es nur beim Build)
+    "/schneelast/richtwert": ["./data/schneelast/sk50-at.bin", "./data/schneelast/sk50-at.json"],
+    // Bundesland-Hubseiten: Schneelast-Richtwerte per fs aus dem Raster (ISR über ladeProjekte)
+    "/photovoltaik-bundesland/[land]": ["./data/schneelast/sk50-at.bin", "./data/schneelast/sk50-at.json"],
     // Kundenbühne: Social-Media-Bilder (next/og) lesen Schriften und das AT-Logo per fs
     "/referenzen/projekte/[title]/bild/[format]": ["./src/lib/analyse/fonts/**", "./public/logo-oekovolt-weiss.png"],
   },
@@ -74,7 +79,7 @@ const nextConfig = {
       { source: "/reststromvermarktung", destination: "/service/direktvermarktung", permanent: true },
       { source: "/energiegemeinschaft", destination: "/energiegemeinschaften", permanent: true },
       { source: "/ehora", destination: "/standort-check", permanent: true },
-      { source: "/schneelast", destination: "/standort-check", permanent: true },
+      // /schneelast ist seit Welle 4 eine eigene Seite (Schneelast-Karte) – kein Redirect mehr
       { source: "/award", destination: "/pv-award", permanent: true },
       { source: "/elektriker-partner", destination: "/partner", permanent: true },
       { source: "/gemeinden", destination: "/kommunen", permanent: true },

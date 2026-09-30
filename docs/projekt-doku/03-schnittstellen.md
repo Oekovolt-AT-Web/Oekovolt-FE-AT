@@ -1,7 +1,7 @@
 # 03 – Schnittstellenbeschreibung
 
 Informationseinheit „Schnittstellenbeschreibung“ in Anlehnung an ISO/IEC/IEEE 15289 / 29148.
-Keine Normkonformität behauptet. Stand: Version 0.3, 30.09.2026 (Nachführung Welle 3).
+Keine Normkonformität behauptet. Stand: Version 0.4, 30.09.2026 (Nachführung Welle 4).
 
 **Führendes Dokument für die Frappe-Methoden ist `docs/FRAPPE-AT-API-SPEZIFIKATION.md`** (Methoden #1–#14,
 Auth, Fehlerabbildung, Rollen, Abnahmetest). Dieses Kapitel dupliziert das nicht, sondern ergänzt:
@@ -48,6 +48,10 @@ Legende Auth: **öffentlich** = ohne Anmeldung aufrufbar · **Secret** = gemeins
 | `/siegel/<slug>[.svg]` | GET `?stil=hell\|dunkel&format=klein\|breit` | Projekt- und Kundendaten (Backoffice oder statisch) | Solar-Siegel für Kunden-Websites; `X-Robots-Tag: noindex, follow`; Cache `max-age=3600, s-maxage=86400` (Header-Regel `/siegel/:path*` in `next.config.mjs`) | `src/app/siegel/[slug]/route.js:1-14` |
 | `/referenzen/projekte/<slug>/bild/{linkedin,instagram,story}` | GET | – | Social-Media-Bilder (PNG, `next/og`), noindex, Cache 1 Tag | `src/app/referenzen/projekte/[title]/bild/[format]/route.js:1-14,205` |
 | `/mediathek`, `/mediathek/<slug>` | GET (Seiten) | statisch `src/data/reels.js`, Videos aus `public/videos/reels/` | kein Drittanbieter; `noindex`, solange keine Videos; Detailseite 404 bei unbekanntem Slug, `VideoObject`-Schema | `src/app/mediathek/page.js:23`, `src/app/mediathek/[slug]/page.js:26-58` |
+| `/api/pv-prognose` | GET `?lat=&lon=` | GeoSphere Data Hub (`nwp-v2-1h-1km`, `ensemble-v2-1h-1km`), Day-Ahead-Preise über `src/lib/energy.js` | Antwort `{ zelle, lauf, herkunft, ensemble, stunden: [{ ende, ghi, t2m, ghiP10, ghiP50, ghiP90 }], preise, quelle }`; Drosselung 30 je IP und 10 min; Budget 200/h, Cache je Zelle/Lauf (bis 12 h als Rückfall) | `src/app/api/pv-prognose/route.js:1-34`, `src/lib/prognose/geosphere.js`, `src/lib/prognose/budget.js` |
+| `/schneelast/richtwert` | GET `?lat=&lon=` | lokales Raster; Seehöhe über Open Topo Data (EU-DEM) | Antwort `{ lage, seehoehe, richtwert, grund, hora }`; über 2.000 m kein Wert; Drosselung 30 je IP und 10 min; Adresssuche weiter über `/api/standort?q=` | `src/app/schneelast/richtwert/route.js:1-60` |
+| `/schneelast/karte.png` | GET | – | Karte als PNG, beim Build erzeugt | `src/app/schneelast/karte.png/route.js` |
+| `/beispiele/lastgang-beispiel.csv` | GET (statisch) | – | Beispiel-Lastgang (35.040 Zeilen, ca. 1,08 MB) für `/lastgang-analyse`; die Analyse selbst sendet keine Nutzerdaten | `public/beispiele/lastgang-beispiel.csv`, `src/components/Lastgang/LastgangAnalyse.js:42,109` |
 | ~~`/api/optimize-video`~~ | – | – | **entfernt** in Welle 2 (war offener Proxy, S1) | Löschung laut `git status` |
 
 ### 2.3 Kanäle, Push, Fediverse
@@ -64,6 +68,16 @@ Frappe-Methoden des Kanalmoduls (Aufrufe `kanal("…")` in `src/lib/kanaele/*`):
 `faellige_push`, `push_gesendet`, `ap_follower_speichern`, `ap_follower_loeschen`, `ap_followers`,
 `ap_follower_anzahl`, `verteilt_pruefen`, `verteilt_reservieren`, `verteilt_abschliessen` – deckungsgleich
 mit Spezifikation #13.
+
+### 2.3a Experimente (A/B-Tests, seit Welle 4)
+
+| Aspekt | Vertrag laut Code | Beleg |
+|---|---|---|
+| Verzeichnis | `EXPERIMENTE` mit `{ id, titel, seiten, varianten, gewichte, aktiv, bis, ort: "client" \| "server" }`; `varianten[0]` = Kontrolle; nach `bis` gilt automatisch die Kontrolle; K1 (Konfigurator) angelegt, `aktiv: false` | `src/lib/experimente.js` |
+| Server-Variante | Middleware lost für Pfade im `matcher` aus, setzt Request- und Response-Header `x-ov-exp` und `Cache-Control: private, no-store`; derzeit kein Pfad eingetragen | `src/middleware.js` |
+| Client-Variante | `useExperiment(id)` nach dem Mounten; Variante nur im Arbeitsspeicher | `src/components/Experimente/*` |
+| Messung | `exp_gesehen` einmal je Experiment und Aufruf bei Sichtbarkeit; Anfrage-Ereignisse tragen `exp` (z. B. `k1:b`) – im Konfigurator umgesetzt, für alle Ereignisse per `expFuerEreignis()` vorbereitet (Snippet für `src/lib/statistik.js` noch nicht übernommen) | `src/lib/experimente.js:15-18` |
+| Backoffice | Variante B von K1 sendet ggf. `einwilligung=0` an `submit_angebot` – Annahme durch das Backoffice **ungeklärt** | Agentenbericht Welle 4 |
 
 ### 2.4 Heatmap (Ergänzung – jetzt auch in der Spezifikation #15/#16)
 

@@ -33,6 +33,9 @@ import { ereignis } from "@/lib/statistik";
 import { herkunft } from "@/lib/herkunft";
 import { submitAnfrage } from "@/lib/api/anfrage/create_anfrage";
 import { FIRMA } from "@/lib/site";
+import { expFuerEreignis, expKennung } from "@/lib/experimente";
+import ExperimentSichtbar from "@/components/Experimente/ExperimentSichtbar";
+import useExperiment from "@/components/Experimente/useExperiment";
 
 /*
  * Angebots-Konfigurator Österreich (Gewerbe-Fokus).
@@ -121,6 +124,8 @@ const VERBRAUCH_PRIVAT = [
 const ZEITPLAN = ["So bald wie möglich", "In den nächsten 3 Monaten", "In 3–12 Monaten", "Später / Budgetplanung"];
 
 const SCHRITTE = ["Vorhaben", "Objekt", "Fläche", "Verbrauch & Netz", "Kontakt"];
+// Reihenfolge für „Fokus auf das erste fehlerhafte Feld“ (Element-ID = ov-<schlüssel>)
+const FEHLER_REIHENFOLGE = ["vorhaben", "verbrauch", "vorname", "nachname", "email", "telefon", "plz", "ort", "agb"];
 const SPEICHER_KEY = "ov_angebot_entwurf_at_v1";
 
 const zahl = (n) => Math.round(n).toLocaleString("de-DE");
@@ -179,6 +184,16 @@ export default function Konfigurator() {
   });
 
   const istPrivat = PRIVAT.includes(f.objekt);
+
+  // A/B-Test K1 (src/lib/experimente.js, standardmäßig inaktiv): Variante b = Telefon optional,
+  // Hinweis auf Art. 6 Abs. 1 lit. b DSGVO statt Pflicht-Checkbox. Ohne laufenden Test immer „a“.
+  const k1 = useExperiment("k1");
+  const k1b = k1.laeuft && k1.variante === "b";
+  // Anfrage-Ereignisse tragen die exp-Kennung (z. B. "k1:b"), sobald ein Test läuft
+  const mitExp = (daten) => {
+    const exp = expFuerEreignis();
+    return exp ? { ...daten, exp } : daten;
+  };
 
   // Vorbelegung: ?objekt=gewerbe|agri|… (Startseite), ?verbrauch=&kwp=&speicher=&wallbox=1&waermepumpe=1 (Rechner) oder Entwurf
   useEffect(() => {
@@ -341,12 +356,18 @@ export default function Konfigurator() {
       if (!f.vorname.trim()) e.vorname = "Bitte Vornamen angeben.";
       if (!f.nachname.trim()) e.nachname = "Bitte Nachnamen angeben.";
       if (!/^\S+@\S+\.\S+$/.test(f.email)) e.email = "Bitte gültige E-Mail-Adresse angeben.";
-      if (!/^[\d\s+()/-]{6,}$/.test(f.telefon)) e.telefon = "Bitte Telefonnummer angeben.";
+      const telefonOk = /^[\d\s+()/-]{6,}$/.test(f.telefon);
+      if (k1b) {
+        if (f.telefon.trim() && !telefonOk) e.telefon = "Bitte prüfen Sie die Telefonnummer oder lassen Sie das Feld leer.";
+      } else if (!telefonOk) e.telefon = "Bitte Telefonnummer angeben.";
       if (!/^\d{4,5}$/.test(f.plz.trim())) e.plz = "Postleitzahl (4-stellig)";
       if (!f.ort.trim()) e.ort = "Bitte Ort angeben.";
-      if (!f.agb) e.agb = "Bitte stimmen Sie zu, damit wir Sie kontaktieren dürfen.";
+      if (!k1b && !f.agb) e.agb = "Bitte stimmen Sie zu, damit wir Sie kontaktieren dürfen.";
     }
     setFehler(e);
+    // Barrierefreiheit: Fokus auf das erste fehlerhafte Feld – die Meldung hängt per aria-describedby daran
+    const erstes = FEHLER_REIHENFOLGE.find((k) => e[k]);
+    if (erstes) requestAnimationFrame(() => document.getElementById(`ov-${erstes}`)?.focus());
     return Object.keys(e).length === 0;
   };
 
@@ -355,7 +376,7 @@ export default function Konfigurator() {
     setRichtung(ziel > schritt ? 1 : -1);
     setSchritt(ziel);
     // Trichter-Messung: nur Vorwärtsschritte, ohne Eingabewerte
-    if (ziel > schritt) ereignis("konfigurator_schritt", { schritt: ziel + 1, name: SCHRITTE[ziel] });
+    if (ziel > schritt) ereignis("konfigurator_schritt", mitExp({ schritt: ziel + 1, name: SCHRITTE[ziel] }));
     requestAnimationFrame(() => {
       const top = kopfRef.current?.getBoundingClientRect().top;
       if (top !== undefined && (top < 80 || top > window.innerHeight * 0.5)) {
@@ -383,6 +404,8 @@ export default function Konfigurator() {
       f.kwpWunsch && `Wunschleistung: ${f.kwpWunsch} kWp`,
       !f.kwpWunsch && f.kwpOverride > 0 && `Leistung aus Online-Rechner übernommen: ${zahl(f.kwpOverride)} kWp`,
       `Richtwert Konfigurator: ${zahl(schaetzung.kwp)} kWp, ca. ${zahl(schaetzung.jahresertrag)} kWh/Jahr`,
+      k1b && "Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Hinweistext, keine Einwilligungs-Checkbox)",
+      k1.laeuft && `A/B-Test: ${expKennung({ k1: k1.variante })}${k1.vorschau ? " (Vorschau, nicht gezählt)" : ""}`,
     ]
       .filter(Boolean)
       .join("\n");
@@ -402,7 +425,8 @@ export default function Konfigurator() {
       telefon: f.telefon.trim(),
       plz: f.plz.trim(),
       ort: f.ort.trim(),
-      einwilligung: f.agb ? 1 : 0,
+      // Variante b fragt keine Einwilligung ab – Verarbeitung auf Grundlage Art. 6 Abs. 1 lit. b DSGVO
+      einwilligung: !k1b && f.agb ? 1 : 0,
 
       ergebnis: { ...ergebnisFuerApi(schaetzung), angaben },
       nachricht: angaben,
@@ -416,7 +440,7 @@ export default function Konfigurator() {
       await submitAnfrage(basis);
       setStatus("ok");
       import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
-      ereignis("angebot_angefragt", { kwp: schaetzung.kwp, objekt: f.objekt });
+      ereignis("angebot_angefragt", mitExp({ kwp: schaetzung.kwp, objekt: f.objekt }));
       try {
         localStorage.removeItem(SPEICHER_KEY);
       } catch {}
@@ -472,12 +496,19 @@ export default function Konfigurator() {
             <div key={schritt} className={richtung > 0 ? "ov-step-vor" : "ov-step-zurueck"}>
               {schritt === 0 && (
                 <Frage titel="Was möchten Sie umsetzen?" hinweis="Mehrfachauswahl möglich – wir stimmen alles aufeinander und auf Ihren Netzanschluss ab.">
-                  <div className="grid gap-3 sm:grid-cols-2">
+                  <div
+                    id="ov-vorhaben"
+                    role="group"
+                    aria-label="Vorhaben"
+                    tabIndex={-1}
+                    aria-describedby={fehler.vorhaben ? "ov-vorhaben-fehler" : undefined}
+                    className="grid gap-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-4 sm:grid-cols-2"
+                  >
                     {vorhabenSichtbar.map((v) => (
                       <Kachel key={v.id} aktiv={f.vorhaben.includes(v.id)} onClick={() => toggleVorhaben(v.id)} icon={v.icon} titel={v.label} text={v.text} mehrfach />
                     ))}
                   </div>
-                  <Fehler text={fehler.vorhaben} />
+                  <Fehler id="ov-vorhaben-fehler" text={fehler.vorhaben} />
                 </Frage>
               )}
 
@@ -660,56 +691,92 @@ export default function Konfigurator() {
               )}
 
               {schritt === 4 && (
-                <Frage titel="Wohin dürfen wir Ihre Einschätzung schicken?" hinweis="Eine Projektleiterin oder ein Projektleiter aus Ostermiething meldet sich persönlich – kein Callcenter, keine Weitergabe an Dritte.">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <p className="text-[13px] text-ink-500 sm:col-span-2">
-                      <span aria-hidden="true" className="text-red-700">
-                        *
-                      </span>{" "}
-                      Pflichtfeld
-                    </p>
-                    {!istPrivat && (
-                      <div className="sm:col-span-2">
-                        <Feld id="firma" label="Unternehmen / Gemeinde / Betrieb" wert={f.firma} setze={setze} autoComplete="organization" />
+                <ExperimentSichtbar id="k1" variante={k1.variante} schwelle={0.25}>
+                  <Frage titel="Wohin dürfen wir Ihre Einschätzung schicken?" hinweis="Eine Projektleiterin oder ein Projektleiter aus Ostermiething meldet sich persönlich – kein Callcenter, keine Weitergabe an Dritte.">
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <p className="text-[13px] text-ink-500 sm:col-span-2">
+                        <span aria-hidden="true" className="text-red-700">
+                          *
+                        </span>{" "}
+                        Pflichtfeld
+                      </p>
+                      {!istPrivat && (
+                        <div className="sm:col-span-2">
+                          <Feld id="firma" label="Unternehmen / Gemeinde / Betrieb" wert={f.firma} setze={setze} autoComplete="organization" />
+                        </div>
+                      )}
+                      <Feld id="vorname" label="Vorname" wert={f.vorname} setze={setze} fehler={fehler.vorname} autoComplete="given-name" pflicht />
+                      <Feld id="nachname" label="Nachname" wert={f.nachname} setze={setze} fehler={fehler.nachname} autoComplete="family-name" pflicht />
+                      <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" pflicht />
+                      <Feld
+                        id="telefon"
+                        label={k1b ? "Telefon (optional)" : "Telefon"}
+                        type="tel"
+                        wert={f.telefon}
+                        setze={setze}
+                        fehler={fehler.telefon}
+                        autoComplete="tel"
+                        pflicht={!k1b}
+                      />
+                      <div className="grid grid-cols-[120px_1fr] gap-4 sm:col-span-2">
+                        <Feld id="plz" label="PLZ" wert={f.plz} setze={setze} fehler={fehler.plz} autoComplete="postal-code" inputMode="numeric" maxLength={5} placeholder="5121" pflicht />
+                        <Feld id="ort" label="Ort des Objekts" wert={f.ort} setze={setze} fehler={fehler.ort} autoComplete="address-level2" pflicht />
                       </div>
-                    )}
-                    <Feld id="vorname" label="Vorname" wert={f.vorname} setze={setze} fehler={fehler.vorname} autoComplete="given-name" pflicht />
-                    <Feld id="nachname" label="Nachname" wert={f.nachname} setze={setze} fehler={fehler.nachname} autoComplete="family-name" pflicht />
-                    <Feld id="email" label="E-Mail" type="email" wert={f.email} setze={setze} fehler={fehler.email} autoComplete="email" pflicht />
-                    <Feld id="telefon" label="Telefon" type="tel" wert={f.telefon} setze={setze} fehler={fehler.telefon} autoComplete="tel" pflicht />
-                    <div className="grid grid-cols-[120px_1fr] gap-4 sm:col-span-2">
-                      <Feld id="plz" label="PLZ" wert={f.plz} setze={setze} fehler={fehler.plz} autoComplete="postal-code" inputMode="numeric" maxLength={5} placeholder="5121" pflicht />
-                      <Feld id="ort" label="Ort des Objekts" wert={f.ort} setze={setze} fehler={fehler.ort} autoComplete="address-level2" pflicht />
                     </div>
-                  </div>
-                  <label className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl p-4 ring-1 transition-colors ${fehler.agb ? "bg-red-50 ring-red-200" : "bg-sand-50 ring-ink-100"}`}>
-                    <input type="checkbox" checked={f.agb} onChange={(e) => setze("agb", e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 accent-[#669933]" />
-                    <span className="text-[13.5px] leading-relaxed text-ink-600">
-                      Ich stimme zu, dass Ökovolt mich zu meiner Anfrage kontaktiert, und akzeptiere die{" "}
-                      <Link href="/agb" target="_blank" className="font-medium text-ov-700 underline">
-                        AGB
-                      </Link>{" "}
-                      sowie die{" "}
-                      <Link href="/datenschutz" target="_blank" className="font-medium text-ov-700 underline">
-                        Datenschutzerklärung
-                      </Link>
-                      .
-                    </span>
-                  </label>
-                  <Fehler text={fehler.agb} />
-                  {status === "fehler" && (
-                    <p role="alert" className="mt-4 rounded-xl bg-red-50 p-4 text-[14px] text-red-800">
-                      Das hat leider nicht geklappt. Bitte versuchen Sie es erneut, schreiben Sie an{" "}
-                      <a href={`mailto:${FIRMA.email}`} className="font-semibold underline">
-                        {FIRMA.email}
-                      </a>{" "}
-                      oder rufen Sie uns an:{" "}
-                      <a href={FIRMA.telefonHref} className="font-semibold underline">
-                        {FIRMA.telefon}
-                      </a>
-                    </p>
-                  )}
-                </Frage>
+                    {k1b ? (
+                      <p className="mt-6 flex items-start gap-3 rounded-2xl bg-sand-50 p-4 text-[13.5px] leading-relaxed text-ink-600 ring-1 ring-ink-100">
+                        <ShieldCheck aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ov-700" />
+                        <span>
+                          Wir verwenden Ihre Angaben nur, um Ihre Anfrage zu bearbeiten und Ihnen eine Einschätzung bzw. ein Angebot zu erstellen (Art. 6 Abs. 1 lit. b
+                          DSGVO). Mehr dazu in unserer{" "}
+                          <Link href="/datenschutz#anfragen" target="_blank" className="font-medium text-ov-700 underline">
+                            Datenschutzerklärung
+                          </Link>
+                          .
+                        </span>
+                      </p>
+                    ) : (
+                      <>
+                        <label htmlFor="ov-agb" className={`mt-6 flex cursor-pointer items-start gap-3 rounded-2xl p-4 ring-1 transition-colors ${fehler.agb ? "bg-red-50 ring-red-200" : "bg-sand-50 ring-ink-100"}`}>
+                          <input
+                            id="ov-agb"
+                            type="checkbox"
+                            checked={f.agb}
+                            onChange={(e) => setze("agb", e.target.checked)}
+                            aria-required="true"
+                            aria-invalid={fehler.agb ? true : undefined}
+                            aria-describedby={fehler.agb ? "ov-agb-fehler" : undefined}
+                            className="mt-0.5 h-5 w-5 shrink-0 accent-[#669933]"
+                          />
+                          <span className="text-[13.5px] leading-relaxed text-ink-600">
+                            Ich stimme zu, dass Ökovolt mich zu meiner Anfrage kontaktiert, und akzeptiere die{" "}
+                            <Link href="/agb" target="_blank" className="font-medium text-ov-700 underline">
+                              AGB
+                            </Link>{" "}
+                            sowie die{" "}
+                            <Link href="/datenschutz" target="_blank" className="font-medium text-ov-700 underline">
+                              Datenschutzerklärung
+                            </Link>
+                            .
+                          </span>
+                        </label>
+                        <Fehler id="ov-agb-fehler" text={fehler.agb} />
+                      </>
+                    )}
+                    {status === "fehler" && (
+                      <p role="alert" className="mt-4 rounded-xl bg-red-50 p-4 text-[14px] text-red-800">
+                        Das hat leider nicht geklappt. Bitte versuchen Sie es erneut, schreiben Sie an{" "}
+                        <a href={`mailto:${FIRMA.email}`} className="font-semibold underline">
+                          {FIRMA.email}
+                        </a>{" "}
+                        oder rufen Sie uns an:{" "}
+                        <a href={FIRMA.telefonHref} className="font-semibold underline">
+                          {FIRMA.telefon}
+                        </a>
+                      </p>
+                    )}
+                  </Frage>
+                </ExperimentSichtbar>
               )}
             </div>
           )}
@@ -845,10 +912,11 @@ function Feld({ id, label, wert, setze, fehler, type = "text", pflicht = false, 
   );
 }
 
-function Fehler({ text }) {
+function Fehler({ id, text }) {
   if (!text) return null;
+  // Kein role="alert": Der Fokus springt auf das betroffene Feld, das die Meldung per aria-describedby vorliest
   return (
-    <p role="alert" className="mt-3 text-[13.5px] font-medium text-red-700">
+    <p id={id} className="mt-3 text-[13.5px] font-medium text-red-700">
       {text}
     </p>
   );

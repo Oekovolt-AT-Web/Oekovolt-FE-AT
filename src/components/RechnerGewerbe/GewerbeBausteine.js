@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { AlertTriangle, Info, Scale, Share2, Sparkles } from "lucide-react";
-import Teilen from "@/components/ui/Teilen";
+import { AlertTriangle, Info, Scale, Sparkles } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { Regler } from "@/components/Rechner/bausteine";
 import { fmt } from "@/lib/rechner/annahmen";
@@ -260,35 +259,6 @@ export function useStartAusUrl(parser, uebernehmen) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-}
-
-/** „Ergebnis teilen“: Link mit den Eingaben (keine persönlichen Daten). */
-export function LinkTeilen({ pfad, query, titel, text, kampagne }) {
-  const [url, setUrl] = useState("");
-  const oeffnen = () => {
-    if (url) return setUrl("");
-    const basis = process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : window.location.origin;
-    setUrl(`${basis}${pfad}?${query}`);
-  };
-  // Link aktuell halten, solange die Leiste offen ist
-  useEffect(() => {
-    if (!url) return;
-    const basis = url.split("?")[0];
-    setUrl(`${basis}?${query}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
-  return (
-    <div className="rounded-2xl bg-white p-4 ring-1 ring-ink-200/70">
-      <button type="button" onClick={oeffnen} aria-expanded={Boolean(url)} className="flex min-h-[44px] w-full items-center justify-between gap-3 text-left">
-        <span className="flex items-center gap-2 text-[14.5px] font-semibold text-ink-800">
-          <Share2 aria-hidden="true" className="h-4 w-4 text-ov-600" />
-          Berechnung teilen
-        </span>
-        <span className="hidden text-right text-[12.5px] text-ink-500 sm:inline">Link mit Ihren Eingaben · ohne persönliche Daten</span>
-      </button>
-      {url && <Teilen url={url} titel={titel} text={text} kampagne={kampagne} netze={["linkedin", "whatsapp", "xing"]} kompakt className="mt-3" />}
-    </div>
-  );
 }
 
 /** Balken-Anteil (z. B. Win-win-Aufteilung) */
