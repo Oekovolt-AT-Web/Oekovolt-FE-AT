@@ -1,0 +1,424 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_anfrage",
+  "status",
+  "zustaendig",
+  "anonymisiert",
+  "vorhaben",
+  "column_break_anfrage",
+  "gebaeudetyp",
+  "eigentuemer",
+  "startzeitpunkt",
+  "sec_objekt",
+  "dachform",
+  "dachausrichtung",
+  "column_break_objekt",
+  "jahresverbrauch_kwh",
+  "sec_kontakt",
+  "vorname",
+  "nachname",
+  "email",
+  "telefon",
+  "column_break_kontakt",
+  "plz",
+  "ort",
+  "sec_ergebnis",
+  "berechnungsbasis_kwh",
+  "anlagengroesse_kwp",
+  "speicher_kwh",
+  "jahresertrag_kwh",
+  "autarkie_prozent",
+  "column_break_ergebnis",
+  "vorteil_pro_jahr",
+  "investition_von",
+  "investition_bis",
+  "amortisation_jahre",
+  "sec_ergebnis_roh",
+  "ergebnis_angaben",
+  "ergebnis_json",
+  "sec_nachricht",
+  "nachricht",
+  "einwilligung",
+  "sec_bearbeitung",
+  "notiz",
+  "sec_herkunft",
+  "herkunft",
+  "herkunft_kanal",
+  "utm_source",
+  "utm_medium",
+  "column_break_herkunft",
+  "utm_campaign",
+  "utm_term",
+  "herkunft_referrer",
+  "einstiegsseite",
+  "ip_adresse"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_anfrage",
+   "fieldtype": "Section Break",
+   "label": "Anfrage"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Neu\nIn Bearbeitung\nAngebot erstellt\nGewonnen\nVerloren\nErledigt\nSpam",
+   "default": "Neu",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "zustaendig",
+   "fieldtype": "Link",
+   "label": "Zuständig",
+   "options": "User"
+  },
+  {
+   "fieldname": "anonymisiert",
+   "fieldtype": "Check",
+   "label": "Anonymisiert",
+   "default": "0",
+   "read_only": 1,
+   "description": "Nach Ablauf der Löschfrist (Standard 24 Monate) automatisch gesetzt – außer bei „Angebot erstellt“/„Gewonnen“."
+  },
+  {
+   "fieldname": "vorhaben",
+   "fieldtype": "Small Text",
+   "label": "Vorhaben (JSON)",
+   "read_only": 1,
+   "description": "Kennungen aus dem Konfigurator: pv, freiflaeche, speicher, wallbox, waermepumpe, notstrom, service"
+  },
+  {
+   "fieldname": "column_break_anfrage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gebaeudetyp",
+   "fieldtype": "Data",
+   "label": "Objekt / Gebäudetyp",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "eigentuemer",
+   "fieldtype": "Data",
+   "label": "Eigentümer"
+  },
+  {
+   "fieldname": "startzeitpunkt",
+   "fieldtype": "Data",
+   "label": "Startzeitpunkt"
+  },
+  {
+   "fieldname": "sec_objekt",
+   "fieldtype": "Section Break",
+   "label": "Dach und Verbrauch"
+  },
+  {
+   "fieldname": "dachform",
+   "fieldtype": "Data",
+   "label": "Dachform"
+  },
+  {
+   "fieldname": "dachausrichtung",
+   "fieldtype": "Data",
+   "label": "Dachausrichtung"
+  },
+  {
+   "fieldname": "column_break_objekt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "jahresverbrauch_kwh",
+   "fieldtype": "Float",
+   "label": "Jahresverbrauch (kWh)",
+   "precision": "0"
+  },
+  {
+   "fieldname": "sec_kontakt",
+   "fieldtype": "Section Break",
+   "label": "Kontakt"
+  },
+  {
+   "fieldname": "vorname",
+   "fieldtype": "Data",
+   "label": "Vorname",
+   "reqd": 1
+  },
+  {
+   "fieldname": "nachname",
+   "fieldtype": "Data",
+   "label": "Nachname",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-Mail",
+   "options": "Email",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "telefon",
+   "fieldtype": "Data",
+   "label": "Telefon"
+  },
+  {
+   "fieldname": "column_break_kontakt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "plz",
+   "fieldtype": "Data",
+   "label": "PLZ",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "ort",
+   "fieldtype": "Data",
+   "label": "Ort",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sec_ergebnis",
+   "fieldtype": "Section Break",
+   "label": "Ergebnis Konfigurator (Richtwerte)",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "berechnungsbasis_kwh",
+   "fieldtype": "Float",
+   "label": "Berechnungsbasis (kWh)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "anlagengroesse_kwp",
+   "fieldtype": "Float",
+   "label": "Anlagengröße (kWp)",
+   "precision": "2",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "speicher_kwh",
+   "fieldtype": "Float",
+   "label": "Speicher (kWh)",
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "fieldname": "jahresertrag_kwh",
+   "fieldtype": "Float",
+   "label": "Jahresertrag (kWh)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "autarkie_prozent",
+   "fieldtype": "Float",
+   "label": "Autarkie (%)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ergebnis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vorteil_pro_jahr",
+   "fieldtype": "Float",
+   "label": "Vorteil pro Jahr (€)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "investition_von",
+   "fieldtype": "Float",
+   "label": "Investition von (€)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "investition_bis",
+   "fieldtype": "Float",
+   "label": "Investition bis (€)",
+   "precision": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amortisation_jahre",
+   "fieldtype": "Float",
+   "label": "Amortisation (Jahre)",
+   "precision": "1",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_ergebnis_roh",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "ergebnis_angaben",
+   "fieldtype": "Long Text",
+   "label": "Angaben (ergebnis.angaben)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ergebnis_json",
+   "fieldtype": "Code",
+   "label": "Ergebnis (JSON, wie gesendet)",
+   "options": "JSON",
+   "read_only": 1,
+   "description": "Leere Werte (null, z. B. bei Gewerbe) bleiben hier erhalten; die Einzelfelder zeigen dann 0."
+  },
+  {
+   "fieldname": "sec_nachricht",
+   "fieldtype": "Section Break",
+   "label": "Nachricht"
+  },
+  {
+   "fieldname": "nachricht",
+   "fieldtype": "Long Text",
+   "label": "Nachricht"
+  },
+  {
+   "fieldname": "einwilligung",
+   "fieldtype": "Check",
+   "label": "Einwilligung Datenschutz",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_bearbeitung",
+   "fieldtype": "Section Break",
+   "label": "Bearbeitung"
+  },
+  {
+   "fieldname": "notiz",
+   "fieldtype": "Small Text",
+   "label": "Interne Notiz"
+  },
+  {
+   "fieldname": "sec_herkunft",
+   "fieldtype": "Section Break",
+   "label": "Herkunft (Kampagne) und Technik",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "herkunft",
+   "fieldtype": "Small Text",
+   "label": "Herkunft (Zeile aus der Nachricht)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "herkunft_kanal",
+   "fieldtype": "Select",
+   "label": "Kanal",
+   "options": "\nAnzeige\nSocial Media\nE-Mail\nOffline/QR\nKampagne\nSuchmaschine\nKI-Assistent\nVerweis\nDirekt",
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "utm_source",
+   "fieldtype": "Data",
+   "label": "UTM-Quelle (utm_source)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "utm_medium",
+   "fieldtype": "Data",
+   "label": "UTM-Medium (utm_medium)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_herkunft",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "utm_campaign",
+   "fieldtype": "Data",
+   "label": "Kampagne (utm_campaign)",
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "utm_term",
+   "fieldtype": "Data",
+   "label": "Suchbegriff (utm_term)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "herkunft_referrer",
+   "fieldtype": "Data",
+   "label": "Verweisende Website",
+   "read_only": 1
+  },
+  {
+   "fieldname": "einstiegsseite",
+   "fieldtype": "Data",
+   "label": "Einstiegsseite",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ip_adresse",
+   "fieldtype": "Data",
+   "label": "IP-Adresse",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Angebotsanfrage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Website API",
+   "create": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:AA-{YYYY}-{#####}",
+ "naming_rule": "Expression",
+ "description": "Anfrage aus dem Angebots-Konfigurator /angebot.",
+ "title_field": "nachname",
+ "search_fields": "vorname,email,plz,ort"
+}

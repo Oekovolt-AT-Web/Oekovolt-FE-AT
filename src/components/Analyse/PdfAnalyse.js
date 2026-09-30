@@ -95,6 +95,7 @@ export default function PdfAnalyse({ eingaben, dunkel = false, className }) {
       setTimeout(() => URL.revokeObjectURL(url), 4000);
       setReferenz(ref);
       setStatus("fertig");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       ereignis("pdf_analyse_erstellt", { kwp: eingaben?.kwp });
     } catch (err) {
       setFehler(FEHLER[err.message] || FEHLER.pdf);

@@ -153,6 +153,7 @@ export default function PartnerRegistrierung() {
     try {
       await sende("/api/partner-registrierung", { ...werte, quelle: window.location.pathname, website: website.current?.value || "" });
       setStatus("erfolg");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
     } catch (err) {
       if (err.felder) {
         setFehler(err.felder);

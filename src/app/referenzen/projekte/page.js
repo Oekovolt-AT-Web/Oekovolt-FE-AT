@@ -32,6 +32,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import { ReferenzNamenBand, ReferenzWand } from "@/components/Project/ReferenzNamen";
 import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import { KERNFAKTEN, REFERENZ_UNTERNEHMEN } from "@/data/hero";
+import { KENNZAHLEN } from "@/data/kennzahlen";
 
 // Projekte aus der API (oekovolt_app), sonst aus src/data/projekte.js (ladeProjekte).
 // Seitentexte sind statisch: Die frühere Backoffice-Seite (primary_page) lieferte Texte
@@ -173,22 +174,18 @@ export default async function ProjektePage() {
 
   const vorteile = VORTEILE;
 
-  const heroStats = projekte.length
-    ? [
-        { value: k.anzahl, label: "Referenzprojekte" },
-        {
-          value: Math.round(k.summeKwp),
-          suffix: " kWp",
-          label: "dokumentierte Leistung",
-        },
-        { value: k.orte, label: "Orte" },
-      ]
-    : [
-        // Ohne Projektdaten: belegte Unternehmenszahlen (src/data/hero.js)
-        { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
-        { value: 30, suffix: " MWp", label: "errichtet allein im Jahr 2021" },
-        { value: 9, label: "Bundesländer im Einzugsgebiet" },
-      ];
+  // Gesamtzahlen Ökovolt Österreich (src/data/kennzahlen.js) – die Online-Referenzen sind nur ein Ausschnitt
+  const [kzAnlagen, kzLeistung] = KENNZAHLEN;
+  const gesamt = [
+    { value: kzAnlagen.zahl, suffix: kzAnlagen.suffix, label: kzAnlagen.label },
+    { value: kzLeistung.zahl, suffix: kzLeistung.suffix, label: kzLeistung.label },
+  ];
+  const heroStats = [
+    ...gesamt,
+    projekte.length
+      ? { value: k.anzahl, label: "Referenzen hier online dokumentiert" }
+      : { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
+  ];
 
   return (
     <div>

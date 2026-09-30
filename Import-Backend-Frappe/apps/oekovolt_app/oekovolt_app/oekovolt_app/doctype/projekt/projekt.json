@@ -1,0 +1,400 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_projekt",
+  "projekt_name",
+  "projekt_website_name",
+  "veroeffentlicht",
+  "column_break_projekt",
+  "objekt",
+  "jahr",
+  "dach",
+  "sec_leistung",
+  "leistung",
+  "leistung_label",
+  "column_break_leistung",
+  "ertrag",
+  "sec_standort",
+  "ort",
+  "plz",
+  "land",
+  "column_break_standort",
+  "latitude",
+  "longitude",
+  "sec_technik",
+  "modul",
+  "wechselrichter",
+  "column_break_technik",
+  "speicher",
+  "sec_bilder",
+  "bild",
+  "bild_alt",
+  "bilder",
+  "sec_kunde",
+  "branche",
+  "website_url",
+  "portraet",
+  "portraet_quellen",
+  "column_break_kunde",
+  "linkedin",
+  "instagram",
+  "facebook",
+  "youtube",
+  "xing",
+  "tiktok",
+  "x",
+  "sec_freigaben",
+  "zitat",
+  "zitat_person",
+  "freigabe_zitat",
+  "column_break_freigaben",
+  "logo",
+  "freigabe_logo"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_projekt",
+   "fieldtype": "Section Break",
+   "label": "Projekt"
+  },
+  {
+   "fieldname": "projekt_name",
+   "fieldtype": "Data",
+   "label": "Projektname",
+   "reqd": 1,
+   "in_list_view": 1,
+   "bold": 1,
+   "description": "Titel auf der Website. Daraus entsteht die URL: „Mindelheim 2“ → /referenzen/projekte/mindelheim-2"
+  },
+  {
+   "fieldname": "projekt_website_name",
+   "fieldtype": "Data",
+   "label": "Website-Name (Schlüssel)",
+   "unique": 1,
+   "search_index": 1,
+   "in_standard_filter": 1,
+   "description": "Eindeutig, z. B. „haydu-2“ (wird automatisch klein geschrieben, Umlaute ersetzt). Nur Projekte mit diesem Feld erscheinen auf der Startseite."
+  },
+  {
+   "fieldname": "veroeffentlicht",
+   "fieldtype": "Check",
+   "label": "Veröffentlicht",
+   "default": "0",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Nur veröffentlichte Projekte liefert die Website-API aus (sichtbar nach max. 10 Minuten)."
+  },
+  {
+   "fieldname": "column_break_projekt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "objekt",
+   "fieldtype": "Select",
+   "label": "Objekt",
+   "options": "\nGewerbe\nLandwirtschaft\nEinfamilienhaus",
+   "in_standard_filter": 1,
+   "description": "Die Texte der Detailseite hängen davon ab."
+  },
+  {
+   "fieldname": "jahr",
+   "fieldtype": "Int",
+   "label": "Jahr",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "dach",
+   "fieldtype": "Data",
+   "label": "Dachart",
+   "description": "z. B. Flachdach, Ziegeldach, Trapezblech"
+  },
+  {
+   "fieldname": "sec_leistung",
+   "fieldtype": "Section Break",
+   "label": "Leistung"
+  },
+  {
+   "fieldname": "leistung",
+   "fieldtype": "Float",
+   "label": "Leistung (kWp)",
+   "in_list_view": 1,
+   "precision": "3"
+  },
+  {
+   "fieldname": "leistung_label",
+   "fieldtype": "Data",
+   "label": "Leistung (Anzeigetext)",
+   "description": "Leer lassen = automatisch aus der Leistung, z. B. „314,5 kWp“. Automatisch erzeugte Texte passen sich an, wenn sich die Leistung ändert; von Hand gepflegte bleiben."
+  },
+  {
+   "fieldname": "column_break_leistung",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ertrag",
+   "fieldtype": "Float",
+   "label": "Ertrag (kWh/Jahr)",
+   "precision": "0",
+   "description": "Leer = die Website rechnet mit kWp × 1.050 kWh."
+  },
+  {
+   "fieldname": "sec_standort",
+   "fieldtype": "Section Break",
+   "label": "Standort"
+  },
+  {
+   "fieldname": "ort",
+   "fieldtype": "Data",
+   "label": "Ort",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Gruppierung auf der Referenzkarte – gleiche Schreibweise für denselben Ort verwenden."
+  },
+  {
+   "fieldname": "plz",
+   "fieldtype": "Data",
+   "label": "PLZ"
+  },
+  {
+   "fieldname": "land",
+   "fieldtype": "Data",
+   "label": "Land",
+   "default": "Österreich"
+  },
+  {
+   "fieldname": "column_break_standort",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Breitengrad (Latitude)",
+   "precision": "6",
+   "description": "z. B. 47.798135 – für Karte und Schema"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Längengrad (Longitude)",
+   "precision": "6",
+   "description": "z. B. 13.046481"
+  },
+  {
+   "fieldname": "sec_technik",
+   "fieldtype": "Section Break",
+   "label": "Technik"
+  },
+  {
+   "fieldname": "modul",
+   "fieldtype": "Data",
+   "label": "Module"
+  },
+  {
+   "fieldname": "wechselrichter",
+   "fieldtype": "Data",
+   "label": "Wechselrichter"
+  },
+  {
+   "fieldname": "column_break_technik",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "speicher",
+   "fieldtype": "Data",
+   "label": "Speicher"
+  },
+  {
+   "fieldname": "sec_bilder",
+   "fieldtype": "Section Break",
+   "label": "Bilder"
+  },
+  {
+   "fieldname": "bild",
+   "fieldtype": "Attach Image",
+   "label": "Titelbild",
+   "description": "Wird öffentlich gespeichert (die Website lädt Bilder ohne Anmeldung)."
+  },
+  {
+   "fieldname": "bild_alt",
+   "fieldtype": "Data",
+   "label": "Alternativtext Titelbild"
+  },
+  {
+   "fieldname": "bilder",
+   "fieldtype": "Table",
+   "label": "Weitere Bilder",
+   "options": "Projekt Bild"
+  },
+  {
+   "fieldname": "sec_kunde",
+   "fieldtype": "Section Break",
+   "label": "Kundenbühne",
+   "collapsible": 1,
+   "description": "Angaben zum Kunden für die Referenzseite. Alle Adressen vollständig mit https:// eintragen."
+  },
+  {
+   "fieldname": "branche",
+   "fieldtype": "Data",
+   "label": "Branche",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "website_url",
+   "fieldtype": "Data",
+   "label": "Website des Kunden",
+   "options": "URL"
+  },
+  {
+   "fieldname": "portraet",
+   "fieldtype": "Small Text",
+   "label": "Porträt",
+   "description": "Kurzes Unternehmensporträt (öffentliche Angaben)."
+  },
+  {
+   "fieldname": "portraet_quellen",
+   "fieldtype": "Small Text",
+   "label": "Porträt-Quellen",
+   "description": "Eine https://-Adresse pro Zeile."
+  },
+  {
+   "fieldname": "column_break_kunde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "linkedin",
+   "fieldtype": "Data",
+   "label": "LinkedIn",
+   "options": "URL"
+  },
+  {
+   "fieldname": "instagram",
+   "fieldtype": "Data",
+   "label": "Instagram",
+   "options": "URL"
+  },
+  {
+   "fieldname": "facebook",
+   "fieldtype": "Data",
+   "label": "Facebook",
+   "options": "URL"
+  },
+  {
+   "fieldname": "youtube",
+   "fieldtype": "Data",
+   "label": "YouTube",
+   "options": "URL"
+  },
+  {
+   "fieldname": "xing",
+   "fieldtype": "Data",
+   "label": "XING",
+   "options": "URL"
+  },
+  {
+   "fieldname": "tiktok",
+   "fieldtype": "Data",
+   "label": "TikTok",
+   "options": "URL"
+  },
+  {
+   "fieldname": "x",
+   "fieldtype": "Data",
+   "label": "X (Twitter)",
+   "options": "URL"
+  },
+  {
+   "fieldname": "sec_freigaben",
+   "fieldtype": "Section Break",
+   "label": "Zitat und Logo (nur mit Freigabe des Kunden)",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "zitat",
+   "fieldtype": "Small Text",
+   "label": "Zitat"
+  },
+  {
+   "fieldname": "zitat_person",
+   "fieldtype": "Data",
+   "label": "Zitat von",
+   "description": "Name und Funktion, z. B. „Anna Huber, Geschäftsführerin“"
+  },
+  {
+   "fieldname": "freigabe_zitat",
+   "fieldtype": "Check",
+   "label": "Zitat freigegeben",
+   "default": "0",
+   "description": "Nur mit Haken liefert die Website-API Zitat und Person aus."
+  },
+  {
+   "fieldname": "column_break_freigaben",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Kundenlogo",
+   "description": "Wird öffentlich gespeichert."
+  },
+  {
+   "fieldname": "freigabe_logo",
+   "fieldtype": "Check",
+   "label": "Logo freigegeben",
+   "default": "0",
+   "description": "Nur mit Haken liefert die Website-API das Logo (logo_url) aus."
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Projekt",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Website API",
+   "read": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:PRJ-{#####}",
+ "naming_rule": "Expression",
+ "description": "Referenzprojekt für www.oekovolt.com (Referenzen, Startseite, Referenzkarte).",
+ "image_field": "bild",
+ "make_attachments_public": 1,
+ "search_fields": "projekt_website_name,ort",
+ "show_title_field_in_link": 1,
+ "title_field": "projekt_name"
+}

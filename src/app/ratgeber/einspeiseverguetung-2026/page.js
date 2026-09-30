@@ -214,7 +214,7 @@ export default function EinspeisetarifPage() {
         inLanguage: "de-AT",
         datePublished: ARTIKEL.veroeffentlicht,
         dateModified: ARTIKEL.aktualisiert,
-        author: { "@type": "Organization", name: "Ökovolt-Redaktion", "@id": `${BASE_URL}/#organization` },
+        author: { "@id": `${BASE_URL}/#organization` },
         publisher: { "@id": `${BASE_URL}/#organization` },
         mainEntityOfPage: { "@type": "WebPage", "@id": PAGE_URL },
         image: `${BASE_URL}${ARTIKEL.bild}`,

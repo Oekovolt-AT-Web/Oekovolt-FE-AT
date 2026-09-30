@@ -93,6 +93,7 @@ export default function ScanApp({ token, start }) {
       if (!r.ok) throw new Error(d.fehler || "backend");
       setBlatt(null);
       setFertig(true);
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       if (navigator.vibrate) navigator.vibrate([20, 60, 20]);
     } catch (e) {
       setMeldung(FEHLER[e.message] || "Das Senden hat nicht geklappt. Bitte erneut versuchen.");

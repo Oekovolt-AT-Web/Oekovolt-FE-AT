@@ -125,6 +125,7 @@ export default function KontaktFormular() {
       setBeruehrt({});
       setFehler({});
       setStatus("erfolg");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       ereignis("kontakt_gesendet", { thema: thema || "ohne" });
     } catch (error) {
       setServerFehler(error?.message && !/Failed to submit/i.test(error.message) ? error.message : "");

@@ -27,6 +27,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import { ReferenzNamenBand } from "@/components/Project/ReferenzNamen";
 import { REFERENZ_UNTERNEHMEN } from "@/data/hero";
 import { alleRegionen } from "@/lib/regionen";
+import { KENNZAHLEN } from "@/data/kennzahlen";
 
 // Kartenorte + Projekte aus der API (oekovolt_app). Seitentexte sind statisch:
 // Die frühere Backoffice-Seite lieferte Texte der deutschen Website.
@@ -224,18 +225,18 @@ export default async function ReferenzkarteSeite() {
     .filter((r) => !r.heimat)
     .map((r) => ({ id: `e-${r.slug}`, label: r.kurzname || r.name, lat: r.pvgis.lat, lng: r.pvgis.lon, km: r.km, land: r.bundesland, href: `/photovoltaik/${r.slug}` }));
   const ohneReferenzorte = standorte.length === 0;
-  const heroStats = projektDaten.anzahl
-    ? [
-        { value: projektDaten.anzahl, label: "Projekte" },
-        // ohne Ortsangaben (z. B. statischer Stand aus src/data/projekte.js) keine „0 Orte“ zeigen
-        anzahlOrte > 0 && { value: anzahlOrte, label: anzahlOrte === 1 ? "Ort" : "Orte" },
-        { value: Math.round(projektDaten.summeKwp), suffix: " kWp", label: "installierte Leistung" },
-      ].filter(Boolean)
-    : [
-        { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
-        { value: 30, suffix: " MWp", label: "errichtet allein 2021" },
-        { value: 9, label: "Bundesländer im Einzugsgebiet" },
-      ];
+  // Gesamtzahlen Ökovolt Österreich (src/data/kennzahlen.js) – die Online-Referenzen sind nur ein Ausschnitt
+  const [kzAnlagen, kzLeistung] = KENNZAHLEN;
+  const gesamt = [
+    { value: kzAnlagen.zahl, suffix: kzAnlagen.suffix, label: kzAnlagen.label },
+    { value: kzLeistung.zahl, suffix: kzLeistung.suffix, label: kzLeistung.label },
+  ];
+  const heroStats = [
+    ...gesamt,
+    projektDaten.anzahl
+      ? { value: projektDaten.anzahl, label: "Referenzen auf der Karte" }
+      : { value: REFERENZ_UNTERNEHMEN.length, label: "öffentlich gelistete Referenzunternehmen" },
+  ];
   const neueste = [...projekte]
     .sort((a, b) => (b.jahr || 0) - (a.jahr || 0) || (b.kwp || 0) - (a.kwp || 0))
     .slice(0, 3);

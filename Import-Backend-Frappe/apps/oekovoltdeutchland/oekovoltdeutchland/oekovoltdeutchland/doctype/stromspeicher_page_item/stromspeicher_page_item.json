@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "status",
+  "main_description",
+  "column_break_bilder",
+  "banner_image",
+  "alt_banner_image",
+  "logo_image",
+  "alt_logo_image"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Titel (Marke)",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "Markenname. Daraus entsteht der URL-Slug. Muss exakt dem Titel im DocType „Hersteller“ entsprechen."
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "reqd": 1,
+   "in_list_view": 1,
+   "description": "„Passiv“ wird auf der Website ausgeblendet."
+  },
+  {
+   "fieldname": "main_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung",
+   "in_list_view": 1,
+   "description": "Zeilenumbrüche bleiben erhalten."
+  },
+  {
+   "fieldname": "column_break_bilder",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "banner_image",
+   "fieldtype": "Attach Image",
+   "label": "Bannerbild",
+   "description": "Öffentliche Datei (nicht „Privat“ anhaken) – die Website lädt sie ohne Anmeldung."
+  },
+  {
+   "fieldname": "alt_banner_image",
+   "fieldtype": "Data",
+   "label": "Alt-Text Bannerbild"
+  },
+  {
+   "fieldname": "logo_image",
+   "fieldtype": "Attach Image",
+   "label": "Logo",
+   "description": "Öffentliche Datei (nicht „Privat“ anhaken)."
+  },
+  {
+   "fieldname": "alt_logo_image",
+   "fieldtype": "Data",
+   "label": "Alt-Text Logo"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Stromspeicher Page Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "idx",
+ "sort_order": "ASC",
+ "states": [],
+ "istable": 1,
+ "editable_grid": 0
+}

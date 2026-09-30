@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "autoname": "hash",
+ "creation": "2026-09-14 09:00:00.000000",
+ "description": "Protokoll: welcher Beitrag wurde wann an welchen Kanal verteilt (verhindert Doppelversand).",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["kanal", "objekt_id", "status", "zeitpunkt", "empfaenger", "erfolgreich", "fehlgeschlagen", "fehler"],
+ "fields": [
+  { "fieldname": "kanal", "fieldtype": "Select", "label": "Kanal", "options": "Fediverse\nPush", "reqd": 1, "in_list_view": 1, "in_standard_filter": 1 },
+  { "fieldname": "objekt_id", "fieldtype": "Data", "label": "Objekt", "reqd": 1, "unique": 1, "in_list_view": 1, "search_index": 1, "description": "Konto:Slug, z. B. oekovolt:neues-projekt" },
+  { "fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Reserviert\nVerteilt\nFehler", "default": "Reserviert", "in_list_view": 1 },
+  { "fieldname": "zeitpunkt", "fieldtype": "Datetime", "label": "Zeitpunkt", "read_only": 1, "in_list_view": 1 },
+  { "fieldname": "empfaenger", "fieldtype": "Int", "label": "Empfänger-Server", "read_only": 1 },
+  { "fieldname": "erfolgreich", "fieldtype": "Int", "label": "Erfolgreich", "read_only": 1 },
+  { "fieldname": "fehlgeschlagen", "fieldtype": "Int", "label": "Fehlgeschlagen", "read_only": 1 },
+  { "fieldname": "fehler", "fieldtype": "Data", "label": "Fehler", "read_only": 1 }
+ ],
+ "in_create": 1,
+ "modified": "2026-09-14 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Verteilprotokoll",
+ "owner": "Administrator",
+ "permissions": [
+  { "role": "Marketing", "read": 1, "report": 1 },
+  { "role": "System Manager", "read": 1, "write": 1, "delete": 1, "report": 1 }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

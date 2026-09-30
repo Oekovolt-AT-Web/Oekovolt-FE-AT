@@ -1,6 +1,6 @@
 # Frappe-Backoffice für oekovolt.com (AT) – vollständige API-Spezifikation
 
-Stand 29.09.2026, Branch `at-launch`. Abgeleitet aus dem tatsächlichen Code der Website (nicht aus Annahmen).
+Stand 29.09.2026, ergänzt 30.09.2026 (Kundenbühne-Felder bei #1/#2, Heatmap #15/#16), Branch `at-launch`. Abgeleitet aus dem tatsächlichen Code der Website (nicht aus Annahmen).
 Ziel: Ein neues/österreichisches Frappe-Backoffice so bauen, dass die Website **ohne Code-Änderung** läuft.
 
 ## 0. Grundregeln
@@ -41,6 +41,8 @@ Ziel: Ein neues/österreichisches Frappe-Backoffice so bauen, dass die Website *
 | 12 | `…doctype.solar_lead.api.*` (7 Methoden) | POST JSON | KONTAKT_API_KEY | **muss** – Foto-Upload per QR. **Code fertig** in `Import-Frappe/` |
 | 13 | `…doctype.veroeffentlichung.api.*` (16 Methoden) | POST JSON | KANAL_API_KEY | **muss** – `/presse`, RSS, `/tv`, Push, Fediverse. **Code fertig** in `Import-Frappe/` |
 | 14 | `…doctype.hinweis.api.*` (4 Methoden) | POST JSON | HINWEIS_API_KEY | optional – nur wenn `HINWEIS_INTERN=1`, sonst IntegrityLine. **Code fertig** |
+| 15 | `oekovoltdeutchland.oekovoltdeutchland.doctype.heatmap_zelle.api.erfassen` | POST JSON | API_KEY | sollte – Heatmap-Sammler (nur mit Einwilligung „Statistik“); ohne Backoffice verwirft die Website still (204). Siehe Abschnitt 5a |
+| 16 | `oekovoltdeutchland.oekovoltdeutchland.doctype.heatmap_zelle.api.auswertung` | POST JSON | API_KEY | optional – Heatmap-Ansicht `?heatmap=<HEATMAP_TOKEN>`. Siehe Abschnitt 5a |
 
 **Nicht bauen** (in der Website nur toter Code, von keiner Seite genutzt):
 `photovoltaikanlage_page…get_photovoltaik_page_with_keywords`, `hersteller_page…get_hersteller_page_with_keywords`,
@@ -77,6 +79,23 @@ Team und Jobs sind statisch (`src/data/stellen.js`), die Kennzahlen auf der Star
 | `ertrag` | Float | kWh/Jahr; leer → Website rechnet kWp × 1050 |
 | `latitude`, `longitude` | Float | für Karte und Schema |
 
+**Ergänzung 30.09.2026 – Kundenbühne** (Porträt, Solar-Siegel, Social-Kit, ESG-Kurzbericht; umgesetzt in
+`Import-Backend-Frappe/apps/oekovolt_app`, Details `Import-Backend-Frappe/apps/oekovolt_app/README.md`, Abschnitt „Kundenbühne“):
+
+| Feld | Typ | Hinweis |
+|---|---|---|
+| `website_url`, `linkedin`, `instagram`, `facebook`, `youtube`, `xing`, `tiktok`, `x` | Data (URL) | nur `https://`, sonst Fehler beim Speichern |
+| `branche` | Data | |
+| `portraet` | Text | Kundenporträt in eigenen Worten |
+| `portraet_quellen` | Small Text | eine `https://`-Adresse je Zeile |
+| `zitat`, `zitat_person` | Data/Text | nur mit `freigabe_zitat` ausgeliefert |
+| `freigabe_zitat` | Check | wird nicht ausgeliefert; Freigabe ohne Zitat nicht speicherbar |
+| `logo` | Attach Image (öffentlich) | → `logo_url` absolut, nur mit `freigabe_logo` |
+| `freigabe_logo` | Check | wird nicht ausgeliefert; Freigabe ohne Logo nicht speicherbar |
+
+Die Website nutzt diese Felder vorrangig; fehlen sie, greift der statische Stand `src/data/kunden.js`
+(`src/lib/kundenbuehneServer.js`).
+
 ### #1 `get_projekte` – GET, keine Parameter
 
 ```json
@@ -90,11 +109,15 @@ Team und Jobs sind statisch (`src/data/stellen.js`), die Kennzahlen auf der Star
 Wichtig: Immer die Form `message.projekte` liefern (Detailseite und Karte akzeptieren nur diese).
 Leere Liste → Startseite blendet Referenzen aus, **jede Projekt-Detailseite wird 404**.
 Die Slugs der bisherigen Live-Seite (z. B. `alpla-werke-alwin-lehner-gmbh-co-kg`) müssen über `projekt_name` wieder entstehen.
+Ergänzung Kundenbühne: jedes Projekt zusätzlich mit `website_url` und `branche` (neben `jahr`).
 
 ### #2 `get_projekt` – GET `?projekt_website_name=haydu-2`
 
 `message` = ein Objekt mit allen Feldern aus #1 **plus** `bilder`, `plz`, `modul`, `wechselrichter`, `speicher`,
 `ertrag`, `latitude`, `longitude`. Wird verworfen, wenn `message.projekt_website_name` fehlt.
+Ergänzung Kundenbühne: zusätzlich `website_url`, `branche`, `linkedin` … `x` (je `null`, wenn leer), `portraet`,
+`portraet_quellen` (Liste, `[]` wenn leer), `zitat`/`zitat_person` (nur mit Freigabe, sonst `null`),
+`logo_url` (absolut, nur mit Freigabe, sonst `null`). Nicht gefunden → `{}`.
 
 ### #3 `get_referenzkarte` – GET, keine Parameter
 
@@ -222,6 +245,40 @@ Nicht gefunden → leeres `message` (kein Fehler); die Seite zeigt dann nur die 
 
 ---
 
+## 5a. Heatmap (#15, #16) – Ergänzung 30.09.2026
+
+Umgesetzt in `Import-Backend-Frappe/apps/oekovoltdeutchland` (DocTypes „Heatmap Zelle“, „Heatmap Scroll“, „Heatmap Seite“,
+Bericht „Heatmap Auswertung“); ausführlich `Import-Backend-Frappe/apps/oekovoltdeutchland/README.md`, Abschnitt „Heatmap“.
+Website-Seite: `src/app/api/heatmap/route.js` (Sammler `src/components/Statistik/HeatmapSammler.js`, nur mit Einwilligung „Statistik“).
+
+### #15 `heatmap_zelle.api.erfassen` – POST JSON, Rolle Website API
+
+```json
+{ "pfad": "/gewerbe", "geraet": "mobil|tablet|desktop",
+  "klicks": [ { "sel": "css-selektor", "rx": 0.35, "ry": 0.5 } ], "scroll": 70 }
+→ { "message": { "ok": true } }
+```
+- Die Website sendet **keine IP-Adresse** und keine Kennungen; ein Aufruf = ein Seitenaufruf.
+- Validierung wie die Website: `pfad` beginnt mit `/`, ohne Query/Fragment, ≤ 200 Zeichen, nur `[a-z0-9/._-]` (klein);
+  `sel` ≤ 200 Zeichen; ≤ 100 Klicks; `rx`/`ry` 0…1 auf 0,05 gerundet; `scroll` 0…100 auf 10 gerundet.
+  Ungültiger `pfad`/`geraet` → ValidationError; ungültige Klicks werden still verworfen.
+- Speicherung nur **aggregiert je Monat** (Zähler je Zelle, Seite, Scrolltiefe), atomar hochgezählt.
+- Pfad-Limit: je Gerät und Monat höchstens **2.000 verschiedene Pfade**; weitere neue Pfade werden still verworfen.
+- Löschung: täglicher Job `heatmap_zelle.api.alte_monate_loeschen` – nichts ist älter als **14 Monate**.
+
+### #16 `heatmap_zelle.api.auswertung` – POST JSON, Rolle Website API
+
+```json
+{ "pfad": "/gewerbe", "geraet": "desktop", "tage": 30 }
+→ { "message": { "pfad": "…", "geraet": "…", "aufrufe": 123,
+                 "klicks": [ { "sel": "…", "rx": 0.35, "ry": 0.5, "anzahl": 7 } ],
+                 "scroll": [ { "tiefe": 10, "anzahl": 120 } ] } }
+```
+- `klicks` absteigend, max. 1.000; `scroll` kumuliert (Aufrufe mit mindestens dieser Tiefe); `tage` wird in Monate umgerechnet.
+- Die Website ruft #16 nur für die Ansicht mit gültigem `HEATMAP_TOKEN` auf (gleicher Wert wie `oekovolt_heatmap_token` in Frappe).
+
+---
+
 ## 6. Fertige Pakete aus `Import-Frappe/` (#12–#14)
 
 Code, DocTypes, Rollen, hooks, Installationsskript liegen vollständig bereit – Ablauf: `Import-Frappe/ANLEITUNG.md`.
@@ -243,7 +300,7 @@ Für AT anpassen: Site-Name (`backoffice.oekovolt.de` → AT-Backoffice), E-Mail
 
 | API-User | Rolle | Rechte | Website-Variable |
 |---|---|---|---|
-| `website-api@…` | Website API | lesen: Projekt, Stromspeicher Page, Waermepumpe Page, Hersteller, Termin Einstellungen; anlegen: Kontaktanfrage, Angebotsanfrage, Solarrechner Anfrage | `API_KEY` / `API_SECRET` |
+| `website-api@…` | Website API | lesen: Projekt, Stromspeicher Page, Waermepumpe Page, Hersteller, Termin Einstellungen; anlegen: Kontaktanfrage, Angebotsanfrage, Solarrechner Anfrage; Heatmap erfassen/auswerten (#15/#16) | `API_KEY` / `API_SECRET` |
 | `kontakt-web@…` | Kontakt Webformular | nur Solar-Lead-Methoden | `KONTAKT_API_KEY` / `KONTAKT_API_SECRET` |
 | `kanal-web@…` | Kanal Webservice | Veröffentlichungs-Methoden | `KANAL_API_KEY` / `KANAL_API_SECRET` |
 | `hinweis-web@…` | Hinweis Webformular | nur Hinweis-Methoden | `HINWEIS_API_KEY` / `HINWEIS_API_SECRET` |

@@ -2,19 +2,52 @@
 // Inhalte zum Hinweisgeberschutz nach dem österreichischen HinweisgeberInnenschutzgesetz (HSchG,
 // BGBl. I Nr. 6/2023).
 //
-// Aktueller Meldekanal: externes Portal IntegrityLine (INTEGRITYLINE_URL). Die Route
-// /hinweisgebersystem leitet per next.config dorthin um. Informationsseite: /hinweisgeberschutz.
-// Das eigene System (MeldeFormular/Postfach unter /hinweisgebersystem) ist fertig, aber noch
-// nicht freigegeben – seine Texte sind ebenfalls auf das HSchG angepasst.
+// Informationsseite: /hinweisgeberschutz (in beiden Zuständen erreichbar, Ziel von Footer,
+// Impressum, LegalShell und llms.txt).
+//
+// ── Schalter HINWEIS_INTERN ────────────────────────────────────────────────────────────────
+// Ein Schalter für alles: process.env.HINWEIS_INTERN === "1"
+//   AUS (Standard, Variable leer/0): Meldekanal ist das externe Portal IntegrityLine.
+//        /hinweisgebersystem leitet per next.config.mjs (307) dorthin um, /api/hinweis* antwortet 503.
+//   AN  (=1): eigenes Hinweisgebersystem (MeldeFormular + anonymes Postfach unter /hinweisgebersystem,
+//        Daten im eigenen Backoffice, DocType „Hinweis“). Kein Redirect, Seite indexierbar und in der
+//        Sitemap, Datenschutztexte beschreiben das eigene System.
+// Erst auf 1 setzen, wenn docs/frappe-hinweisgebersystem/GO-LIVE-AT.md vollständig abgehakt ist.
+//
+// WANN der Wert gilt: Die Konstanten werden SERVERSEITIG ausgewertet. Alle Seiten, die sie nutzen
+// (/hinweisgeberschutz, /hinweisgebersystem, /datenschutz, /barrierefreiheit, sitemap.xml,
+// llms.txt), sind Server-Komponenten bzw. werden statisch erzeugt → maßgeblich ist der Wert zur
+// BUILD-Zeit; die Redirects in next.config.mjs ebenfalls. Nur /api/hinweis* (force-dynamic) liest
+// ihn zur Laufzeit. Nach jeder Änderung daher: neu bauen UND neu starten.
+//
+// NICHT in Client-Komponenten ("use client") für Verzweigungen verwenden: Dort ist
+// process.env.HINWEIS_INTERN im Browser undefined → falscher Zustand bzw. Hydration-Fehler.
+// Braucht eine Client-Komponente den Zustand, wird er von einer Server-Komponente per Prop übergeben.
+// ───────────────────────────────────────────────────────────────────────────────────────────
 
 import { FIRMA } from "@/lib/site";
 
-/** Interner Meldekanal (Hinweisgeberportal eines spezialisierten Dienstleisters). */
+/** true = eigenes Hinweisgebersystem aktiv, false = IntegrityLine (Standard). */
+export const HINWEIS_INTERN = process.env.HINWEIS_INTERN === "1";
+
+/** Bisheriger interner Meldekanal (Hinweisgeberportal eines spezialisierten Dienstleisters). */
 export const INTEGRITYLINE_URL = "https://oekovolt.integrityline.com/";
+
+/** Pfad des eigenen Hinweisgebersystems. */
+export const EIGENES_SYSTEM_PFAD = "/hinweisgebersystem";
+
+/** Wohin „Hinweis abgeben“ führt – je nach Schalter. */
+export const MELDEKANAL_URL = HINWEIS_INTERN ? EIGENES_SYSTEM_PFAD : INTEGRITYLINE_URL;
+/** Sichtbare Bezeichnung des Meldekanals (Linktext). */
+export const MELDEKANAL_LABEL = HINWEIS_INTERN ? "www.oekovolt.com/hinweisgebersystem" : "oekovolt.integrityline.com";
+/** true = Meldekanal liegt auf fremder Domain (neuer Tab, rel="noopener noreferrer"). */
+export const MELDEKANAL_EXTERN = !HINWEIS_INTERN;
 
 // Weitere Meldewege (mündlich / persönlich) – nur für das eigene System.
 // TELEFON: eigene Rufnummer der Meldestelle eintragen, sobald vorhanden –
-// nicht die Zentrale, damit Anrufe vertraulich bei der Meldestelle landen.
+// nicht die Zentrale, damit Anrufe vertraulich bei der Meldestelle landen. Solange null,
+// zeigt /hinweisgebersystem keine Telefonnummer, sondern verweist für mündliche Meldungen auf
+// das persönliche Gespräch nach Terminvereinbarung (keine Nummer erfinden!).
 export const MELDESTELLE = {
   telefon: null, // z. B. "+43 6278 71030-99"
   telefonzeiten: null, // z. B. "Mo–Do 9–15 Uhr"
@@ -57,7 +90,9 @@ export const WEITERE_EXTERNE_STELLEN = [
   { name: "Bilanzbuchhaltungsbehörde, Kammer der Steuerberater:innen und Wirtschaftsprüfer:innen, Notariats- und Rechtsanwaltskammern (für ihre Berufsstände)" },
 ];
 
-// Datenschutzhinweise nach Art. 13 und 14 DSGVO für das (derzeit nicht freigegebene) eigene Hinweisgebersystem.
+// Datenschutzhinweise nach Art. 13 und 14 DSGVO für das EIGENE Hinweisgebersystem (HINWEIS_INTERN=1).
+// Angezeigt auf /hinweisgebersystem#datenschutz und – im AN-Zustand – auf /hinweisgeberschutz#datenschutz.
+// Nur beschreiben, was technisch umgesetzt ist (src/lib/hinweisApi.js, /api/hinweis*, Frappe-DocType „Hinweis“).
 export const DATENSCHUTZ = [
   {
     titel: "Verantwortlicher",
@@ -76,7 +111,15 @@ export const DATENSCHUTZ = [
     titel: "Welche Daten wir verarbeiten",
     text: [
       "Inhalt des Hinweises (Thema, Sachverhalt, Zeitraum, Ort, genannte Personen), Ihre Nachrichten im Postfach sowie – nur wenn Sie nicht anonym melden – Name, E-Mail-Adresse und Telefonnummer. Betroffen sein können neben der hinweisgebenden Person auch Personen, die im Hinweis genannt werden, sowie Zeuginnen und Zeugen.",
-      "Beim Absenden speichern wir weder Ihre IP-Adresse noch Browser- oder Gerätedaten zum Hinweis. Ihr Zugangsschlüssel wird nicht im Klartext, sondern nur als kryptografischer Hash gespeichert. Es werden keine Cookies oder Analysewerkzeuge für die Meldung eingesetzt.",
+      "Anonyme Meldung: Angaben zu Ihrer Person sind freiwillig. Nach dem Absenden erhalten Sie eine Fall-Nummer und einen Zugangsschlüssel für Ihr Postfach, über das Sie Rückfragen beantworten und den Bearbeitungsstand abrufen. Der Zugangsschlüssel wird nicht im Klartext, sondern nur als kryptografischer Hash gespeichert; verlorene Zugangsdaten können wir daher nicht wiederherstellen.",
+      "Ihre IP-Adresse sowie Browser- oder Gerätedaten werden nicht mit dem Hinweis gespeichert und nicht an unser Backoffice übermittelt. Ihre Eingaben werden nicht im Browser zwischengespeichert. Inhalte von Hinweisen und Postfach-Nachrichten werden nicht an Statistik- oder Analysewerkzeuge übermittelt.",
+    ],
+  },
+  {
+    titel: "Wo die Daten verarbeitet werden – Sicherheit",
+    text: [
+      "Hinweise werden nicht bei einem externen Portalanbieter, sondern in unserem eigenen Backoffice gespeichert. Die Übertragung von Ihrem Browser an unsere Website und von dort an das Backoffice erfolgt verschlüsselt (HTTPS/TLS). Das Formular übermittelt die Meldung ausschließlich serverseitig über einen eigenen, eingeschränkten Zugang, der Hinweise anlegen, aber nicht lesen kann.",
+      "Die Meldestelle wird über neue Meldungen und Nachrichten per E-Mail ohne Inhalte benachrichtigt; die Inhalte sind nur nach Anmeldung im Backoffice einsehbar.",
     ],
   },
   {
@@ -89,7 +132,11 @@ export const DATENSCHUTZ = [
   {
     titel: "Speicherdauer",
     text: [
-      "Personenbezogene Daten aus Hinweisen bewahren wir ab ihrer letztmaligen Verarbeitung oder Übermittlung fünf Jahre auf und darüber hinaus so lange, als es zur Durchführung bereits eingeleiteter verwaltungsbehördlicher oder gerichtlicher Verfahren erforderlich ist (§ 8 Abs. 11 HSchG). Protokolldaten über Verarbeitungsvorgänge werden bis drei Jahre nach Entfall der Aufbewahrungspflicht aufbewahrt. Danach werden die Daten gelöscht.",
+      // RECHTLICH PRÜFEN: Frist wie im Backend umgesetzt (Frappe hinweis.py: loeschung_faellig =
+      // abgeschlossen_am + 5 Jahre; täglicher Job loesche_abgelaufene_hinweise). § 8 Abs. 11 HSchG
+      // knüpft an die „letztmalige Verarbeitung oder Übermittlung“ an – Gleichsetzung mit dem Abschluss
+      // und Umgang mit Protokolldaten durch Jurist/DSB bestätigen lassen (siehe GO-LIVE-AT.md).
+      "Hinweise und die zugehörige Dokumentation bewahren wir fünf Jahre nach Abschluss des Verfahrens auf und darüber hinaus nur so lange, als es zur Durchführung bereits eingeleiteter verwaltungsbehördlicher oder gerichtlicher Verfahren erforderlich ist (§ 8 Abs. 11 HSchG). Danach werden sie automatisch gelöscht.",
     ],
   },
   {
@@ -130,7 +177,7 @@ export const ABLAUF = [
   { title: "Rückmeldung", text: "Spätestens drei Monate nach der Eingangsbestätigung erfahren Sie, welche Folgemaßnahmen ergriffen wurden oder geplant sind." },
 ];
 
-// FAQ des eigenen Systems (Seite /hinweisgebersystem, derzeit per Redirect nicht erreichbar)
+// FAQ des eigenen Systems (Seite /hinweisgebersystem; im AUS-Zustand per Redirect nicht erreichbar)
 export const FAQ = [
   {
     q: "Wer kann einen Hinweis abgeben?",
@@ -150,7 +197,7 @@ export const FAQ = [
   },
   {
     q: "Welche Daten werden gespeichert?",
-    a: "Nur die Angaben, die Sie selbst machen. Beim Absenden speichern wir weder Ihre IP-Adresse noch Browserdaten zum Hinweis. Die Daten werden fünf Jahre nach der letzten Verarbeitung gelöscht, sofern sie nicht für ein laufendes Verfahren benötigt werden (§ 8 Abs. 11 HSchG).",
+    a: "Nur die Angaben, die Sie selbst machen. Beim Absenden speichern wir weder Ihre IP-Adresse noch Browserdaten zum Hinweis. Die Daten werden fünf Jahre nach Abschluss des Verfahrens gelöscht, sofern sie nicht für ein bereits eingeleitetes behördliches oder gerichtliches Verfahren benötigt werden (§ 8 Abs. 11 HSchG).",
   },
   {
     q: "Gibt es externe Stellen?",
@@ -158,11 +205,14 @@ export const FAQ = [
   },
 ];
 
-// FAQ der Informationsseite /hinweisgeberschutz (sichtbarer Text = FAQPage-Schema, daher nur Strings)
+// FAQ der Informationsseite /hinweisgeberschutz (sichtbarer Text = FAQPage-Schema, daher nur Strings).
+// Die ersten Antworten hängen vom Schalter HINWEIS_INTERN ab (Build-Zeit, siehe oben).
 export const FAQ_INFO = [
   {
     q: "Wie gebe ich einen Hinweis bei Ökovolt ab?",
-    a: "Über unser Hinweisgeberportal unter oekovolt.integrityline.com. Das Portal ist rund um die Uhr erreichbar, verschlüsselt und erlaubt auf Wunsch eine anonyme Meldung. Über ein geschütztes Postfach können Sie mit der internen Stelle kommunizieren, ohne Ihre Identität preiszugeben.",
+    a: HINWEIS_INTERN
+      ? "Über unser Hinweisgebersystem unter www.oekovolt.com/hinweisgebersystem. Das Formular ist rund um die Uhr erreichbar, die Übertragung ist verschlüsselt und eine anonyme Meldung ist möglich. Über ein geschütztes Postfach mit Fall-Nummer und Zugangsschlüssel können Sie mit der internen Stelle kommunizieren, ohne Ihre Identität preiszugeben. Alternativ nehmen wir Hinweise per Post und im persönlichen Gespräch nach Terminvereinbarung entgegen."
+      : "Über unser Hinweisgeberportal unter oekovolt.integrityline.com. Das Portal ist rund um die Uhr erreichbar, verschlüsselt und erlaubt auf Wunsch eine anonyme Meldung. Über ein geschütztes Postfach können Sie mit der internen Stelle kommunizieren, ohne Ihre Identität preiszugeben.",
   },
   {
     q: "Wer kann einen Hinweis abgeben?",
@@ -174,7 +224,9 @@ export const FAQ_INFO = [
   },
   {
     q: "Kann ich anonym melden?",
-    a: "Ja. Sie müssen im Portal keine Angaben zu Ihrer Person machen. Merken Sie sich die Zugangsdaten zu Ihrem Postfach gut, damit Sie Rückfragen beantworten und die Rückmeldung abrufen können. Wird Ihre Identität später ohne Ihr Zutun bekannt, genießen Sie denselben Schutz wie namentlich Hinweisgebende.",
+    a: HINWEIS_INTERN
+      ? "Ja. Sie müssen im Formular keine Angaben zu Ihrer Person machen. Bewahren Sie Fall-Nummer und Zugangsschlüssel sicher auf, damit Sie Rückfragen beantworten und die Rückmeldung abrufen können – einen verlorenen Schlüssel können wir aus Gründen der Anonymität nicht wiederherstellen. Wird Ihre Identität später ohne Ihr Zutun bekannt, genießen Sie denselben Schutz wie namentlich Hinweisgebende."
+      : "Ja. Sie müssen im Portal keine Angaben zu Ihrer Person machen. Merken Sie sich die Zugangsdaten zu Ihrem Postfach gut, damit Sie Rückfragen beantworten und die Rückmeldung abrufen können. Wird Ihre Identität später ohne Ihr Zutun bekannt, genießen Sie denselben Schutz wie namentlich Hinweisgebende.",
   },
   {
     q: "Welche Fristen gelten?",

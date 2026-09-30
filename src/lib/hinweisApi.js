@@ -10,18 +10,20 @@
 //  - Es werden keine IP-Adressen, User-Agents oder sonstigen Metadaten
 //    weitergereicht und nichts vom Inhalt geloggt.
 
+import { HINWEIS_INTERN } from "@/data/hinweisgeber";
+
 const SERVER = process.env.SERVER;
 const KEY = process.env.HINWEIS_API_KEY || process.env.API_KEY;
 const SECRET = process.env.HINWEIS_API_SECRET || process.env.API_SECRET;
 const BASIS = `${SERVER}/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.hinweis.api.`;
 
-// Eigenes Hinweisgebersystem erst nach Freigabe aktiv (HINWEIS_INTERN=1). Bis dahin läuft der
-// Meldekanal über IntegrityLine und die API lehnt Meldungen ab (503), damit nichts in einem
-// Kanal landet, der noch nicht betreut wird.
-const INTERN_AKTIV = process.env.HINWEIS_INTERN === "1";
-
+// Eigenes Hinweisgebersystem erst nach Freigabe aktiv (HINWEIS_INTERN=1, zentraler Schalter in
+// src/data/hinweisgeber.js). Bis dahin läuft der Meldekanal über IntegrityLine und die API lehnt
+// Meldungen ab (503), damit nichts in einem Kanal landet, der noch nicht betreut wird.
+// Die API-Routen sind force-dynamic → hier gilt der Wert zur LAUFZEIT; Seiten und Redirects
+// übernehmen ihn erst mit dem nächsten Build. Deshalb nach jeder Änderung neu bauen UND neu starten.
 export function hinweisKonfiguriert() {
-  return Boolean(INTERN_AKTIV && SERVER && KEY && SECRET);
+  return Boolean(HINWEIS_INTERN && SERVER && KEY && SECRET);
 }
 
 /** Ruft eine whitelisted Frappe-Methode auf. Wirft bei Fehlern ohne Inhaltsdetails. */

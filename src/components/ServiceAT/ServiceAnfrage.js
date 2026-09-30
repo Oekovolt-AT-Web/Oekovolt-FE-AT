@@ -133,6 +133,7 @@ export default function ServiceAnfrage({
         website: website.current?.value || "",
       });
       setStatus("erfolg");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       setWerte(leer());
       setFehler({});
       ereignis("service_anfrage_gesendet", { betreff });

@@ -134,6 +134,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
       }
       setErgebnis({ wunschzeit });
       setZustand("fertig");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       ereignis("rueckruf_angefordert", { modus: "wunschzeit" });
     } catch (err) {
       if (err.status === 409) {

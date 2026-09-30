@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "autoname": "format:PUSH-{YYYY}-{#####}",
+ "creation": "2026-09-14 09:00:00.000000",
+ "description": "Push-Benachrichtigung an Abonnenten (unabhängig von RSS und Newsroom).",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": ["sec_nachricht", "titel", "text", "link", "bild", "column_break_n", "thema", "status", "senden_am", "sec_ergebnis", "gesendet_am", "erfolgreich", "column_break_e", "fehlgeschlagen", "entfernt", "fehler"],
+ "fields": [
+  { "fieldname": "sec_nachricht", "fieldtype": "Section Break", "label": "Nachricht" },
+  { "fieldname": "titel", "fieldtype": "Data", "label": "Titel", "reqd": 1, "length": 60, "in_list_view": 1, "description": "Max. 60 Zeichen – wird fett angezeigt." },
+  { "fieldname": "text", "fieldtype": "Small Text", "label": "Text", "reqd": 1, "description": "Max. 160 Zeichen. Kurz, konkret, ohne Werbesprech." },
+  { "fieldname": "link", "fieldtype": "Data", "label": "Link beim Antippen", "description": "Seite der Website, z. B. /presse/mein-beitrag oder /ratgeber/elwg-elektrizitaetswirtschaftsgesetz" },
+  { "fieldname": "bild", "fieldtype": "Attach Image", "label": "Bild (optional, nicht auf allen Geräten sichtbar)" },
+  { "fieldname": "column_break_n", "fieldtype": "Column Break" },
+  { "fieldname": "thema", "fieldtype": "Select", "label": "Empfänger", "options": "Alle Abonnenten\nnews\nratgeber\nfoerderung\naktionen\njobs", "default": "news", "reqd": 1, "in_list_view": 1, "description": "news = Unternehmensnews & Presse · ratgeber = Fachartikel · foerderung = Förderungen & Gesetze · aktionen = Aktionen & Veranstaltungen · jobs = Stellen" },
+  { "fieldname": "status", "fieldtype": "Select", "label": "Status", "options": "Entwurf\nGeplant\nJetzt senden\nWird gesendet\nGesendet\nFehler", "default": "Entwurf", "reqd": 1, "in_list_view": 1, "in_standard_filter": 1 },
+  { "fieldname": "senden_am", "fieldtype": "Datetime", "label": "Senden am", "depends_on": "eval:doc.status=='Geplant'" },
+  { "fieldname": "sec_ergebnis", "fieldtype": "Section Break", "label": "Ergebnis", "collapsible": 1 },
+  { "fieldname": "gesendet_am", "fieldtype": "Datetime", "label": "Gesendet am", "read_only": 1 },
+  { "fieldname": "erfolgreich", "fieldtype": "Int", "label": "Zugestellt", "read_only": 1, "in_list_view": 1 },
+  { "fieldname": "column_break_e", "fieldtype": "Column Break" },
+  { "fieldname": "fehlgeschlagen", "fieldtype": "Int", "label": "Fehlgeschlagen", "read_only": 1 },
+  { "fieldname": "entfernt", "fieldtype": "Int", "label": "Abgelaufene Abos entfernt", "read_only": 1 },
+  { "fieldname": "fehler", "fieldtype": "Data", "label": "Fehler", "read_only": 1 }
+ ],
+ "modified": "2026-09-14 09:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Push Nachricht",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  { "role": "Marketing", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1 },
+  { "role": "System Manager", "read": 1, "write": 1, "create": 1, "delete": 1, "report": 1, "export": 1 }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "titel",
+ "track_changes": 1
+}

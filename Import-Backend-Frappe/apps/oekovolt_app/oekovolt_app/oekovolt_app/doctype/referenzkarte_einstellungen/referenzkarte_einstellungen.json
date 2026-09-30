@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_firmensitz",
+  "firmensitz_name",
+  "beschreibung",
+  "column_break_firmensitz",
+  "latitude",
+  "longitude",
+  "umkreis_km"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_firmensitz",
+   "fieldtype": "Section Break",
+   "label": "Firmensitz"
+  },
+  {
+   "fieldname": "firmensitz_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "default": "Ostermiething",
+   "reqd": 1
+  },
+  {
+   "fieldname": "beschreibung",
+   "fieldtype": "Data",
+   "label": "Beschreibung",
+   "default": "Planung, Montage & Service"
+  },
+  {
+   "fieldname": "column_break_firmensitz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Breitengrad (Latitude)",
+   "precision": "6",
+   "default": "48.0428",
+   "reqd": 1
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Längengrad (Longitude)",
+   "precision": "6",
+   "default": "12.8417",
+   "reqd": 1
+  },
+  {
+   "fieldname": "umkreis_km",
+   "fieldtype": "Int",
+   "label": "Umkreis (km)",
+   "default": "100",
+   "description": "Orte bis zu dieser Entfernung zählen als „im Umkreis“."
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Referenzkarte Einstellungen",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1
+  },
+  {
+   "role": "Website API",
+   "read": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "issingle": 1,
+ "description": "Firmensitz und Umkreis für die Referenzkarte (get_referenzkarte)."
+}

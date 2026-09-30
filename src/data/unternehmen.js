@@ -24,6 +24,7 @@
 // PFLEGE: `STAND` dokumentiert den Redaktionsstand und wird ausgewiesen.
 
 import { FIRMA, SCHWESTER, SOLENSA } from "@/lib/site";
+import { kz } from "@/data/kennzahlen";
 
 export const STAND = "2026-09-28";
 
@@ -45,9 +46,10 @@ export const CLAIM = "ÖKOVOLT. Wir bauen, was wir selbst betreiben würden.";
  */
 export const HEUTE = [
   { wert: "seit 2012", label: "Photovoltaik-Errichter in Österreich" },
-  { wert: "30 MWp", label: "allein 2021 in Österreich errichtet" },
+  // Gesamtzahlen laut Ökovolt Österreich, siehe src/data/kennzahlen.js
+  { wert: `${kz("leistung")} kWp`, label: "installierte Leistung" },
   { wert: "9", label: "Bundesländer im Einzugsgebiet" },
-  { wert: null, label: "realisierte Projekte" },
+  { wert: kz("anlagen"), label: "PV-Kraftwerke errichtet" },
   { wert: null, label: "Fachleute in Ostermiething" },
 ];
 

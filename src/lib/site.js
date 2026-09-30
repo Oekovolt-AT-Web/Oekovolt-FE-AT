@@ -50,6 +50,8 @@ export const FIRMA = {
   social: {
     facebook: "https://www.facebook.com/Oekovolt/",
     linkedin: "https://www.linkedin.com/company/oekovolt",
+    // von der bisherigen oekovolt.com verlinkt (geprüft 2026-09-30)
+    instagram: "https://www.instagram.com/oekovolt.austria/",
   },
   wko: "https://firmen.wko.at/%C3%96kovolt-solartechnik-gmbh-%C3%96kovolt-solartechnik-gmbh/ober%C3%B6sterreich/?firmaid=683331b8-cc78-405b-983d-55acaee1a686",
   firmenabc: "https://www.firmenabc.at/oekovolt-solartechnik-gmbh_OvcS",

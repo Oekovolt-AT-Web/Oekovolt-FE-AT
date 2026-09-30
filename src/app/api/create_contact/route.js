@@ -8,10 +8,14 @@ import {
   API_BASE_URL,
 } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
+import { gedrosselt, leseJson } from "@/lib/api/uber-uns/anfrageWeiterleiten";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.kontakt.submit_kontakt`;
 
 export async function POST(request) {
+  const drossel = gedrosselt(request, "kontakt");
+  if (drossel) return drossel;
+
   // Check if API is configured
   if (!isApiConfigured()) {
     console.error(
@@ -21,7 +25,8 @@ export async function POST(request) {
   }
 
   try {
-    const body = await request.json();
+    const { daten: body, antwort } = await leseJson(request);
+    if (antwort) return antwort;
 
     // Get authenticated headers
     const headers = getApiHeaders();

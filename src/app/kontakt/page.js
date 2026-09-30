@@ -22,7 +22,6 @@ const TITEL = "Kontakt: Photovoltaik in ganz Österreich | Ökovolt";
 const BESCHREIBUNG =
   "Ökovolt Solartechnik GmbH in Ostermiething (OÖ): Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich. Telefon, E-Mail, Anfahrt.";
 const ADRESSE_EINZEILIG = `${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}`;
-const ROUTE_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${ADRESSE_EINZEILIG}, ${FIRMA.land}`)}`;
 
 export const metadata = {
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
@@ -46,16 +45,6 @@ export const metadata = {
     images: [`${BASE_URL}/og-image.jpg`],
   },
 };
-
-// Öffnungszeiten für Schema.org aus FIRMA ableiten ("Mo – Do" -> Monday … Thursday)
-const TAGE_EN = { Mo: "Monday", Di: "Tuesday", Mi: "Wednesday", Do: "Thursday", Fr: "Friday", Sa: "Saturday", So: "Sunday" };
-const TAGE_REIHE = Object.keys(TAGE_EN);
-const oeffnungSchema = FIRMA.oeffnungszeiten.map((o) => {
-  const [von, bis] = o.tage.split(/[–-]/).map((x) => x.trim());
-  const tage = TAGE_REIHE.slice(TAGE_REIHE.indexOf(von), TAGE_REIHE.indexOf(bis || von) + 1).map((t) => TAGE_EN[t]);
-  const [opens, closes] = o.zeit.split(/[–-]/).map((x) => x.trim());
-  return { "@type": "OpeningHoursSpecification", dayOfWeek: tage, opens, closes };
-});
 
 const FAQ = [
   {
@@ -94,35 +83,9 @@ const contactSchema = {
   inLanguage: "de-AT",
   isPartOf: { "@id": `${BASE_URL}/#website` },
   about: { "@id": `${BASE_URL}/#organization` },
-  mainEntity: {
-    "@type": ["LocalBusiness", "Electrician"],
-    "@id": `${BASE_URL}/#organization`,
-    name: FIRMA.name,
-    url: BASE_URL,
-    telephone: FIRMA.telefon,
-    email: FIRMA.email,
-    image: `${BASE_URL}/og-image.jpg`,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: FIRMA.strasse,
-      postalCode: FIRMA.plz,
-      addressLocality: FIRMA.ort,
-      addressRegion: FIRMA.bundesland,
-      addressCountry: "AT",
-    },
-    geo: { "@type": "GeoCoordinates", latitude: FIRMA.geo.lat, longitude: FIRMA.geo.lng },
-    hasMap: ROUTE_URL,
-    openingHoursSpecification: oeffnungSchema,
-    areaServed: { "@type": "Country", name: "Österreich" },
-    contactPoint: {
-      "@type": "ContactPoint",
-      telephone: FIRMA.telefon,
-      email: FIRMA.email,
-      contactType: "customer service",
-      areaServed: "AT",
-      availableLanguage: ["German"],
-    },
-  },
+  // Unternehmensknoten nur per @id referenzieren: vollständig definiert (Typen,
+  // Adresse, Öffnungszeiten, contactPoint) im Organization-Schema in src/app/layout.js.
+  mainEntity: { "@id": `${BASE_URL}/#organization` },
 };
 
 export default function KontaktPage() {

@@ -9,7 +9,7 @@ import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import Reveal from "@/components/ui/Reveal";
 import MeldeFormular from "@/components/Hinweisgeber/MeldeFormular";
-import { ABLAUF, FAQ, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL } from "@/data/hinweisgeber";
+import { ABLAUF, FAQ, MELDESTELLE, DATENSCHUTZ, EXTERNE_MELDESTELLE_URL, HINWEIS_INTERN } from "@/data/hinweisgeber";
 import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/hinweisgebersystem`;
@@ -17,11 +17,15 @@ const TITEL = "Hinweisgebersystem – vertraulich melden | Ökovolt";
 const BESCHREIBUNG =
   `Rechtsverstöße vertraulich und auf Wunsch anonym melden: das interne Hinweisgebersystem der ${FIRMA.name} nach dem HinweisgeberInnenschutzgesetz (HSchG).`;
 
+// Eigenes Hinweisgebersystem. Server-Komponente, statisch erzeugt → der Schalter HINWEIS_INTERN
+// (src/data/hinweisgeber.js) gilt zur BUILD-Zeit. Im AUS-Zustand ist die Seite nicht erreichbar
+// (next.config.mjs leitet /hinweisgebersystem* per 307 auf IntegrityLine um); noindex ist dann nur
+// ein Sicherheitsnetz. Im AN-Zustand indexierbar und in der Sitemap.
 export const metadata = {
   title: TITEL,
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
-  robots: { index: true, follow: true },
+  robots: HINWEIS_INTERN ? { index: true, follow: true } : { index: false, follow: false },
   openGraph: {
     type: "website",
     locale: LOCALE,
@@ -122,7 +126,7 @@ export default function HinweisgebersystemPage() {
           lead={
             MELDESTELLE.telefon
               ? "Sie können Ihre Meldung auch mündlich oder schriftlich abgeben. Auf Wunsch ist ein persönliches Gespräch mit der internen Stelle möglich."
-              : "Sie können Ihre Meldung auch schriftlich per Post abgeben. Auf Wunsch ist ein persönliches Gespräch mit der internen Stelle möglich."
+              : "Sie können Ihre Meldung auch schriftlich per Post abgeben. Mündlich nehmen wir Hinweise im persönlichen Gespräch mit der internen Stelle nach Terminvereinbarung entgegen."
           }
           className="mb-10"
         />
@@ -148,10 +152,18 @@ export default function HinweisgebersystemPage() {
           </Reveal>
           <Reveal delay={160} className="rounded-3xl bg-white p-7 ring-1 ring-ink-200/60">
             <MessagesSquare aria-hidden="true" className="h-6 w-6 text-ov-600" />
-            <h3 className="ov-h3 mt-5 text-ink-900">Persönliches Gespräch</h3>
+            <h3 className="ov-h3 mt-5 text-ink-900">Persönliches Gespräch nach Terminvereinbarung</h3>
             <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">
-              Geben Sie online eine kurze Meldung ab und bitten Sie darin um einen Termin. Die Meldestelle schlägt Ihnen über Ihr Postfach einen vertraulichen Gesprächstermin vor – vor Ort oder per Video.
+              Sie möchten Ihren Hinweis mündlich geben? Bitten Sie online in einer kurzen Meldung – auf Wunsch anonym – oder per
+              Brief an die interne Meldestelle um einen Termin. Die Meldestelle vereinbart mit Ihnen innerhalb angemessener Frist
+              ein vertrauliches Gespräch; bei einer Online-Meldung erhalten Sie den Terminvorschlag in Ihrem Postfach.
             </p>
+            {!MELDESTELLE.telefon && (
+              <p className="mt-3 text-[13.5px] leading-relaxed text-ink-500">
+                Eine eigene Telefonnummer der Meldestelle gibt es derzeit nicht. Für eine vertrauliche mündliche Meldung
+                vereinbaren Sie bitte wie beschrieben einen Gesprächstermin.
+              </p>
+            )}
           </Reveal>
         </div>
       </Section>

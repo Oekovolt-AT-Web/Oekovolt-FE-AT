@@ -30,6 +30,10 @@ import {
 } from "@/components/Project/projektDaten";
 import { ladeProjekteRoh, ladeProjektRoh } from "@/components/Project/ladeProjekte";
 import { BASE_URL, FIRMA } from "@/lib/site";
+import KundenPortraet from "@/components/Kundenbuehne/KundenPortraet";
+import SolarKit from "@/components/Kundenbuehne/SolarKit";
+import { hatPortraet, kundeSchema, schaetzung } from "@/lib/kundenbuehne";
+import { kundeFuerProjekt } from "@/lib/kundenbuehneServer";
 
 const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
@@ -83,6 +87,8 @@ function projektAusApi(p) {
     bilder,
     bild: bilder[0] || basis.bild || "",
     typTeile: [p?.objekt, p?.dach, p?.modul].filter(Boolean),
+    // Rohdaten für die Kundenbühne (Kundenfelder website_url, portraet, … aus dem Backoffice)
+    roh: p,
   };
 }
 
@@ -286,6 +292,12 @@ export default async function ProjectDetailPage({ params }) {
     : null;
   const wissen = WISSEN[p.segment] || WISSEN._;
 
+  // Kundenbühne: Backoffice-Felder am Projekt gewinnen, sonst src/data/kunden.js (fehlt beides: null)
+  const kunde = kundeFuerProjekt(p.roh, p.slug);
+  const kitFirma = kunde?.firma || p.titel;
+  const kitZahlen = schaetzung({ kwp: p.kwp, ertragKwh: p.ertragApi });
+  const kundeOrg = kundeSchema(kunde);
+
   const galerie = p.bilder.map((src, i) => ({
     src,
     alt: `${p.titel} – Photovoltaikanlage, Bild ${i + 1}`,
@@ -311,6 +323,8 @@ export default async function ProjectDetailPage({ params }) {
         description: `Nennleistung ${p.leistungText}${p.jahr ? `, Baujahr ${p.jahr}` : ""}${p.ort ? `, ${p.ort}` : ""}`,
       }),
     },
+    // Kunde als Organisation – nur belegte Werte (Website, Social-Profile)
+    ...(kundeOrg && { mentions: [kundeOrg] }),
     ...(p.ort && {
       contentLocation: {
         "@type": "Place",
@@ -467,6 +481,9 @@ export default async function ProjectDetailPage({ params }) {
         </Section>
       )}
 
+      {/* Kundenporträt – nur mit Kundendaten */}
+      {hatPortraet(kunde) && <KundenPortraet kunde={kunde} ort={p.ort} />}
+
       {/* Steckbrief + Einordnung */}
       <Section tone="sand" space="lg">
         <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
@@ -571,6 +588,9 @@ export default async function ProjectDetailPage({ params }) {
           </div>
         </div>
       </Section>
+
+      {/* Solar-Kit für den Kunden: Siegel, Social-Kit, ESG-Bericht */}
+      <SolarKit slug={p.slug} firma={kitFirma} zahlen={kitZahlen} />
 
       {/* Weitere Projekte */}
       {weitere.length > 0 && (

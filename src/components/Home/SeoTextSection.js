@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { BatteryCharging, Award, Cpu } from "lucide-react";
+import { kz } from "@/data/kennzahlen";
 
 const FEATURES = [
     {
@@ -10,7 +11,7 @@ const FEATURES = [
     {
         icon: Award,
         title: "Seit 2012 in Österreich",
-        text: "Seit 2012 begleiten wir Betriebe, Landwirtschaft und Gemeinden in ganz Österreich von der Lastganganalyse über Planung und Bau bis zum Betrieb – aus einer Hand. 2021 haben wir Anlagen mit rund 30 MWp errichtet.",
+        text: `Seit 2012 begleiten wir Betriebe, Landwirtschaft und Gemeinden in ganz Österreich von der Lastganganalyse über Planung und Bau bis zum Betrieb – aus einer Hand. Bisher sind es ${kz("anlagen")} PV-Kraftwerke mit zusammen ${kz("leistung")} kWp – allein 2021 kamen rund 30 MWp dazu.`,
     },
     {
         icon: Cpu,

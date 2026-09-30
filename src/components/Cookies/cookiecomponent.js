@@ -6,6 +6,7 @@ import CookieDetails from "./coookieItem";
 import Link from "next/link";
 import { Circle } from "lucide-react";
 import useFokusFalle from "@/components/ui/useFokusFalle";
+import { FIRMA } from "@/lib/site";
 
 
 // cookieData.js
@@ -84,6 +85,24 @@ export const cookieServices = {
       dataProcessing: {
         countries: [{ name: "Vereinigte Staaten", sub: "A" }],
         mechanisms: [{ name: "Angemessenheitsbeschluss (EU-US Data Privacy Framework)", sub: "A" }],
+      },
+    },
+    // Eigene Klick- und Scroll-Heatmap (src/components/Statistik/HeatmapSammler.js) – Teil der Kategorie „Statistik“,
+    // ohne eigenen Schalter: Sie läuft genau dann, wenn „Statistik“ eingewilligt ist.
+    heatmap: {
+      title: "Klick- und Scroll-Heatmap (Ökovolt)",
+      description: "Zeigt uns zusammengefasst, welche Elemente angeklickt werden und wie weit Besucher scrollen.",
+      purpose:
+        "Unser eigenes Skript erfasst je Seitenaufruf die Seite (ohne URL-Parameter), den Gerätetyp (Smartphone, Tablet, Desktop), welche Elemente angeklickt werden samt ungefährer Position im Element und die maximale Scrolltiefe. Eingaben, Formularinhalte und Texte werden nicht erfasst, die IP-Adresse wird nicht gespeichert. Die Daten werden in unserem eigenen Backoffice nur als monatliche Zählwerte gespeichert und nach 14 Monaten gelöscht. Keine Cookies, kein Browserspeicher, keine Weitergabe an Dritte.",
+      provider: `${FIRMA.name}, ${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}, ${FIRMA.land}`,
+      contact: {
+        phone: FIRMA.telefon,
+        email: FIRMA.email,
+        privacy: "/datenschutz#heatmap",
+      },
+      dataProcessing: {
+        countries: [{ name: "keine – Verarbeitung nur im Europäischen Wirtschaftsraum" }],
+        mechanisms: [{ name: " nicht erforderlich" }],
       },
     },
   },
@@ -230,8 +249,8 @@ export default function CookieBanner({ forceShow = false, onClose }) {
             <div>
               <h2 ref={kompaktTitel} tabIndex={-1} className="font-display text-[16.5px] font-bold text-ink-900 focus:outline-none">Ihre Privatsphäre zählt</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-ink-600">
-                Mit Ihrer Zustimmung nutzen wir Google Analytics für Besucherstatistiken und laden Karten von Google Maps.
-                Ohne Zustimmung werden keine Daten an Google übertragen.
+                Mit Ihrer Zustimmung nutzen wir Google Analytics und unsere eigene Klick-Heatmap für Besucherstatistiken und
+                laden Karten von Google Maps. Ohne Zustimmung werden keine Daten an Google übertragen.
               </p>
             </div>
           </div>
@@ -282,7 +301,8 @@ export default function CookieBanner({ forceShow = false, onClose }) {
               <p className="text-gray-600 text-sm">
                 Wir verwenden Cookies und ähnliche Technologien auf unserer Website und verarbeiten personenbezogene
                 Daten über Sie, wie Ihre IP-Adresse. Nur mit Ihrer Einwilligung (§ 165 Abs. 3 TKG 2021, Art. 6 Abs. 1 lit. a
-                DSGVO) werden Google Analytics und Inhalte von Drittanbietern (Google Maps) geladen. Technisch notwendige
+                DSGVO) werden Google Analytics, unsere Klick- und Scroll-Heatmap und Inhalte von Drittanbietern (Google Maps)
+                geladen bzw. aktiviert. Technisch notwendige
                 Speicherungen – etwa Ihre Auswahl in diesem Dialog – erfolgen ohne Einwilligung. Sie können Ihre Einwilligung
                 jederzeit über „Privatsphäre-Einstellungen“ im Seitenfuß ändern oder mit Wirkung für die Zukunft widerrufen.
                 Nachfolgend finden Sie eine Übersicht über alle Services, die von dieser Website genutzt werden. Sie
@@ -430,12 +450,14 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                     onChange={() => toggleConsent("statistics")}
                     className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
                   />
-                  <span className="font-medium text-gray-900">Statistik (1)</span>
+                  <span className="font-medium text-gray-900">Statistik (2)</span>
                 </label>
               </div>
               <p className="text-sm text-gray-500 ml-8">
                 Statistik-Dienste helfen uns zu verstehen, wie Besucher unsere Website nutzen, damit wir sie verbessern
-                können. Sie werden erst nach Ihrer Zustimmung geladen. Details in der{" "}
+                können: Google Analytics sowie unsere eigene Heatmap, die zusammengefasst erfasst, welche Elemente angeklickt
+                werden (ohne Eingaben oder Texte) und wie weit gescrollt wird. Beide werden erst nach Ihrer Zustimmung geladen
+                bzw. aktiviert und bei einem Widerruf sofort beendet. Details in der{" "}
                 <Link href="/datenschutz#statistik" className="font-medium text-ov-700 underline">
                   Datenschutzerklärung
                 </Link>
@@ -473,6 +495,21 @@ export default function CookieBanner({ forceShow = false, onClose }) {
                     </button>
                   </p>
                   {expandedServices.googleAnalytics && <CookieDetails service={cookieServices.statistics.googleAnalytics} />}
+
+                  {/* Heatmap: kein eigener Schalter – folgt der Kategorie „Statistik“ */}
+                  <p className="pt-3 font-medium text-black">{cookieServices.statistics.heatmap.title}</p>
+                  <p className="text-sm text-gray-500 ml-8">
+                    {cookieServices.statistics.heatmap.description} Aktiv, wenn „Statistik“ ausgewählt ist.&nbsp;&nbsp;
+                    <button
+                      type="button"
+                      onClick={() => toggleServiceDetails("heatmap")}
+                      aria-expanded={expandedServices.heatmap}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer bg-transparent border-0 p-0"
+                    >
+                      {expandedServices.heatmap ? "Details ausblenden" : "Details anzeigen"}
+                    </button>
+                  </p>
+                  {expandedServices.heatmap && <CookieDetails service={cookieServices.statistics.heatmap} />}
                 </div>
               )}
             </div>

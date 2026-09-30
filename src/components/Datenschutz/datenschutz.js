@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { FIRMA, SCHWESTER } from "@/lib/site";
+// Schalter eigenes Hinweisgebersystem ↔ IntegrityLine (Abschnitte 9, 23, 24). Wie bei Umami gilt der Wert
+// zur Build-Zeit, weil /datenschutz statisch erzeugt wird – siehe src/data/hinweisgeber.js.
+import { HINWEIS_INTERN } from "@/data/hinweisgeber";
 
 /** Stand der Datenschutzerklärung – bei jeder inhaltlichen Änderung anpassen. */
 export const DATENSCHUTZ_STAND = "30. September 2026";
@@ -16,12 +19,29 @@ function Ext({ href, children }) {
   );
 }
 
-const INHALT = [
+/**
+ * Umami (cookielose Reichweitenmessung) läuft nur, wenn UMAMI_SCRIPT_URL und UMAMI_WEBSITE_ID gesetzt sind
+ * (siehe src/components/Statistik/Umami.js). Die Datenschutzerklärung nennt Umami nur dann.
+ *
+ * Diese Datei ist eine Server-Komponente (kein "use client"): Die Umgebungsvariablen werden nur auf dem Server
+ * gelesen, an den Browser gelangt allein der fertige Text. /datenschutz wird statisch erzeugt – maßgeblich ist daher
+ * der Wert zur Build-Zeit (wie bei Umami.js im Layout). Nach dem Setzen oder Entfernen der Variablen neu bauen.
+ */
+function umamiAktiv() {
+  return Boolean(process.env.UMAMI_SCRIPT_URL && process.env.UMAMI_WEBSITE_ID);
+}
+
+const statistikTitel = (umami) =>
+  umami
+    ? "Besucherstatistik: cookielose Reichweitenmessung, Google Analytics und Heatmap"
+    : "Besucherstatistik: Google Analytics und Heatmap";
+
+const inhalt = (umami) => [
   ["verantwortlicher", "Verantwortlicher und Kontakt"],
   ["grundlagen", "Rechtsgrundlagen im Überblick"],
   ["hosting", "Hosting, Server-Logdateien und Sicherheit"],
   ["cookies", "Cookies und Einwilligungsverwaltung"],
-  ["statistik", "Besucherstatistik: cookielose Reichweitenmessung und Google Analytics"],
+  ["statistik", statistikTitel(umami)],
   ["karten", "Karten: Google Maps und OpenStreetMap"],
   ["anfragen", "Kontaktformular, Angebots- und Serviceanfragen"],
   ["herkunft", "Herkunft Ihrer Anfrage (Kampagnen-Zuordnung)"],
@@ -55,6 +75,9 @@ function Abschnitt({ id, titel, children }) {
 }
 
 const PrivacyPolicy = () => {
+  const umami = umamiAktiv();
+  // Unterpunkte in Abschnitt 5 lückenlos nummerieren – je nachdem, ob Umami aktiv ist
+  const [buchstabeGa, buchstabeHeatmap] = umami ? ["b", "c"] : ["a", "b"];
   return (
     <div>
       <p className="text-[14px] font-semibold uppercase tracking-[0.12em] text-ov-700">Stand: {DATENSCHUTZ_STAND}</p>
@@ -68,7 +91,7 @@ const PrivacyPolicy = () => {
       <nav aria-label="Inhalt der Datenschutzerklärung" className="mt-8 rounded-2xl bg-sand-50 p-5 ring-1 ring-ink-200/60 md:p-6">
         <p className="font-display text-[17px] font-bold text-ink-900">Inhalt</p>
         <ol className="mt-2 grid gap-x-8 gap-y-1 text-[15px] md:grid-cols-2">
-          {INHALT.map(([id, titel]) => (
+          {inhalt(umami).map(([id, titel]) => (
             <li key={id}>
               <a href={`#${id}`}>{titel}</a>
             </li>
@@ -113,7 +136,7 @@ const PrivacyPolicy = () => {
           </li>
           <li>
             <strong>Berechtigte Interessen</strong> (Art. 6 Abs. 1 lit. f DSGVO) – z. B. sicherer Betrieb der Website,
-            Missbrauchsschutz, Nachweis von Einwilligungen, cookielose Reichweitenmessung, Auswertung unserer
+            Missbrauchsschutz, Nachweis von Einwilligungen, {umami ? "cookielose Reichweitenmessung, " : ""}Auswertung unserer
             Marketingmaßnahmen, Geschäftskommunikation mit Unternehmen. Dieser Verarbeitung können Sie nach Art. 21 DSGVO widersprechen.
           </li>
         </ul>
@@ -156,42 +179,56 @@ const PrivacyPolicy = () => {
           enthalten keine Kennungen, mit denen wir Sie wiedererkennen könnten.
         </p>
         <p>
-          Die cookielose Reichweitenmessung (Abschnitt 5) setzt keine Cookies und legt nichts im Speicher Ihres Browsers ab.
-          Alle weiteren Dienste – Google Analytics (Statistik), Google Maps und OpenStreetMap-Karten – werden erst nach Ihrer
-          Einwilligung geladen. Rechtsgrundlage ist dann Art. 6 Abs. 1 lit. a DSGVO in Verbindung mit § 165 Abs. 3 TKG 2021.
+          {umami ? (
+            <>
+              Die cookielose Reichweitenmessung (Abschnitt 5) setzt keine Cookies und legt nichts im Speicher Ihres Browsers
+              ab. Alle weiteren Dienste – Google Analytics und unsere Heatmap (Statistik), Google Maps und
+              OpenStreetMap-Karten – werden erst nach Ihrer Einwilligung geladen bzw. aktiviert.
+            </>
+          ) : (
+            <>
+              Google Analytics und unsere Heatmap (Statistik, Abschnitt 5) sowie Google Maps und OpenStreetMap-Karten werden
+              erst nach Ihrer Einwilligung geladen bzw. aktiviert.
+            </>
+          )}{" "}
+          Rechtsgrundlage ist dann Art. 6 Abs. 1 lit. a DSGVO in Verbindung mit § 165 Abs. 3 TKG 2021.
           Sie können Ihre Einwilligung jederzeit mit Wirkung für die Zukunft über „Privatsphäre-Einstellungen“ bzw.
           „Cookie-Einstellungen“ im Seitenfuß ändern oder widerrufen. Zusätzlich können Sie Cookies in Ihrem Browser
           einschränken oder löschen.
         </p>
       </Abschnitt>
 
-      <Abschnitt id="statistik" titel="5. Besucherstatistik: cookielose Reichweitenmessung und Google Analytics">
+      <Abschnitt id="statistik" titel={`5. ${statistikTitel(umami)}`}>
+        {umami && (
+          <>
+            <p>
+              <strong>a) Cookielose Reichweitenmessung mit Umami.</strong> Um zu verstehen, welche Seiten und Funktionen unserer
+              Website genutzt werden (z. B. wie viele Besucher einen Rechner verwenden oder eine Anfrage beginnen), setzen wir die
+              quelloffene Statistiksoftware Umami ein. Sie läuft auf einem Server, den wir selbst betreiben und bei einem
+              Hosting-Dienstleister in der Europäischen Union angemietet haben; dieser ist als Auftragsverarbeiter nach Art. 28
+              DSGVO gebunden. Eine Weitergabe an Dritte zu eigenen Zwecken findet nicht statt.
+            </p>
+            <p>
+              Umami setzt keine Cookies, legt nichts im Speicher Ihres Browsers ab und bildet keine Nutzerprofile. Erfasst werden die aufgerufene Seite (ohne Such- und Formularparameter; Kampagnenparameter wie
+              utm_source bleiben erhalten), die Domain der verweisenden Website, Browsertyp, Betriebssystem, Gerätekategorie,
+              Bildschirmgröße, Sprache und das ungefähre Herkunftsland bzw. die Region sowie Ereignisse wie „Rechner-Ergebnis
+              angezeigt“, „Konfigurator-Schritt“ oder „Rückruf-Fenster geöffnet“ – ohne Namen, Kontaktdaten oder andere
+              Formularinhalte. Ihre IP-Adresse wird nur kurzzeitig zur Bestimmung des Landes und zur Bildung eines gesalzenen
+              Hashwerts verwendet, dessen Salt regelmäßig wechselt, und nicht gespeichert; eine Zuordnung zu Ihrer Person oder
+              eine Wiedererkennung über längere Zeit ist damit nicht vorgesehen. Seiten mit Einmal-Zugangscodes (z. B. Upload per
+              QR-Code) und die Info-Bildschirme werden nicht erfasst. Ist in Ihrem Browser „Do Not Track“ aktiviert, findet keine
+              Messung statt.
+            </p>
+            <p>
+              Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen, zusammengefassten Auswertung und
+              Verbesserung unseres Webangebots (Art. 6 Abs. 1 lit. f DSGVO). Sie können dieser Verarbeitung nach Art. 21 DSGVO
+              jederzeit widersprechen – z. B. durch Aktivieren von „Do Not Track“ in Ihrem Browser oder durch eine Nachricht an{" "}
+              {FIRMA.email}. Die Messdaten werden gelöscht, sobald sie für die Auswertung nicht mehr erforderlich sind.
+            </p>
+          </>
+        )}
         <p>
-          <strong>a) Cookielose Reichweitenmessung mit Umami.</strong> Um zu verstehen, welche Seiten und Funktionen unserer
-          Website genutzt werden (z. B. wie viele Besucher einen Rechner verwenden oder eine Anfrage beginnen), setzen wir die
-          quelloffene Statistiksoftware Umami ein. Sie läuft auf einem Server, den wir selbst betreiben und bei einem
-          Hosting-Dienstleister in der Europäischen Union angemietet haben; dieser ist als Auftragsverarbeiter nach Art. 28
-          DSGVO gebunden. Eine Weitergabe an Dritte zu eigenen Zwecken findet nicht statt.
-        </p>
-        <p>
-          Umami setzt keine Cookies, legt nichts im Speicher Ihres Browsers ab und bildet keine Nutzerprofile. Erfasst werden die aufgerufene Seite (ohne Such- und Formularparameter; Kampagnenparameter wie
-          utm_source bleiben erhalten), die Domain der verweisenden Website, Browsertyp, Betriebssystem, Gerätekategorie,
-          Bildschirmgröße, Sprache und das ungefähre Herkunftsland bzw. die Region sowie Ereignisse wie „Rechner-Ergebnis
-          angezeigt“, „Konfigurator-Schritt“ oder „Rückruf-Fenster geöffnet“ – ohne Namen, Kontaktdaten oder andere
-          Formularinhalte. Ihre IP-Adresse wird nur kurzzeitig zur Bestimmung des Landes und zur Bildung eines gesalzenen
-          Hashwerts verwendet, dessen Salt regelmäßig wechselt, und nicht gespeichert; eine Zuordnung zu Ihrer Person oder
-          eine Wiedererkennung über längere Zeit ist damit nicht vorgesehen. Seiten mit Einmal-Zugangscodes (z. B. Upload per
-          QR-Code) und die Info-Bildschirme werden nicht erfasst. Ist in Ihrem Browser „Do Not Track“ aktiviert, findet keine
-          Messung statt.
-        </p>
-        <p>
-          Rechtsgrundlage ist unser berechtigtes Interesse an einer datensparsamen, zusammengefassten Auswertung und
-          Verbesserung unseres Webangebots (Art. 6 Abs. 1 lit. f DSGVO). Sie können dieser Verarbeitung nach Art. 21 DSGVO
-          jederzeit widersprechen – z. B. durch Aktivieren von „Do Not Track“ in Ihrem Browser oder durch eine Nachricht an{" "}
-          {FIRMA.email}. Die Messdaten werden gelöscht, sobald sie für die Auswertung nicht mehr erforderlich sind.
-        </p>
-        <p>
-          <strong>b) Google Analytics (nur mit Einwilligung).</strong> Sofern Sie im Cookie-Banner unter „Statistik“ eingewilligt haben, nutzen wir Google Analytics 4, einen
+          <strong>{buchstabeGa}) Google Analytics (nur mit Einwilligung).</strong> Sofern Sie im Cookie-Banner unter „Statistik“ eingewilligt haben, nutzen wir Google Analytics 4, einen
           Webanalysedienst der Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland („Google“). Ohne Ihre
           Einwilligung wird Google Analytics nicht geladen und es werden keine Daten an Google übertragen.
         </p>
@@ -214,6 +251,41 @@ const PrivacyPolicy = () => {
           Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 165 Abs. 3 TKG 2021). Bei einem Widerruf wird
           die Messung sofort beendet und die Analytics-Cookies werden gelöscht. Weitere Informationen:{" "}
           <Ext href="https://policies.google.com/privacy">Datenschutzerklärung von Google</Ext>.
+        </p>
+        <p id="heatmap" className="scroll-mt-28">
+          <strong>{buchstabeHeatmap}) Klick- und Scroll-Heatmap (nur mit Einwilligung).</strong> Sofern Sie im Cookie-Banner
+          unter „Statistik“ eingewilligt haben, erfassen wir mit einem eigenen Skript, das von unserem Server ausgeliefert
+          wird, wie unsere Seiten bedient werden – etwa welche Schaltflächen genutzt oder übersehen werden und wie weit
+          Besucher nach unten scrollen. Ohne Ihre Einwilligung ist die Erfassung nicht aktiv. Je Seitenaufruf erfasst werden:
+        </p>
+        <ul className="mt-2">
+          <li>die aufgerufene Seite (ohne URL-Parameter),</li>
+          <li>der Gerätetyp (Smartphone, Tablet oder Desktop – abgeleitet aus der Fensterbreite),</li>
+          <li>
+            welche Elemente der Seite Sie anklicken (als technische Position im Seitenaufbau) und die ungefähre Klickposition
+            innerhalb des Elements (relativ, auf 5 % gerundet), höchstens 100 Klicks je Seitenaufruf,
+          </li>
+          <li>die maximale Scrolltiefe (auf 10 % gerundet).</li>
+        </ul>
+        <p className="mt-3">
+          Texteingaben, Formularinhalte sowie Texte oder Werte der angeklickten Elemente werden nicht erfasst; bei
+          Eingabefeldern halten wir nur fest, dass das Feld angeklickt wurde. Das Skript setzt keine Cookies, legt nichts im
+          Speicher Ihres Browsers ab und verwendet keine Kennung, mit der Ihr Browser wiedererkannt werden könnte. Die Angaben
+          werden beim Verlassen der Seite an unseren Server übermittelt. Ihre IP-Adresse wird dabei nur kurzzeitig im
+          Arbeitsspeicher zur Missbrauchsabwehr (Begrenzung der Zahl der Übermittlungen) verarbeitet, nicht gespeichert und
+          nicht an unser Backoffice weitergegeben. Seiten mit Einmal-Zugangscodes (z. B. Upload per QR-Code), die
+          Info-Bildschirme und das Hinweisgebersystem werden nicht erfasst.
+        </p>
+        <p>
+          In unserem eigenen Backoffice werden die Angaben ausschließlich zusammengefasst als Zählwerte je Seite, Gerätetyp und
+          Monat gespeichert (z. B. „Schaltfläche X auf Seite Y wurde im Mai 17-mal angeklickt“ oder „60 % der Aufrufe
+          erreichten 70 % Scrolltiefe“); einzelne Besuche oder Klickverläufe werden nicht gespeichert. Eine Weitergabe an
+          Dritte findet nicht statt. Die Zählwerte werden nach 14 Monaten gelöscht.
+        </p>
+        <p>
+          Rechtsgrundlage ist Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 165 Abs. 3 TKG 2021). Sie können sie jederzeit
+          mit Wirkung für die Zukunft über „Privatsphäre-Einstellungen“ bzw. „Cookie-Einstellungen“ im Seitenfuß widerrufen.
+          Die Erfassung endet dann sofort; noch nicht übermittelte Angaben des laufenden Seitenaufrufs werden verworfen.
         </p>
       </Abschnitt>
 
@@ -279,6 +351,7 @@ const PrivacyPolicy = () => {
           Anfrage bzw. Einwilligung nachweisen zu können (etwa bei der Erlaubnis, Sie anzurufen) und unsere Formulare vor
           Missbrauch und automatisierten Spam-Anfragen zu schützen. Sie wird nicht an Dritte weitergegeben und nicht zu einem
           Profil zusammengeführt.
+          {HINWEIS_INTERN && " Für Meldungen über das Hinweisgebersystem gilt das ausdrücklich nicht (siehe Punkt 23)."}
         </p>
         <p>
           Rechtsgrundlage ist unser berechtigtes Interesse an der Nachweisbarkeit von Einwilligungen und an der Sicherheit
@@ -529,15 +602,45 @@ const PrivacyPolicy = () => {
       </Abschnitt>
 
       <Abschnitt id="hinweisgeber" titel="23. Hinweisgebersystem">
-        <p>
-          Hinweise auf Rechtsverletzungen nach dem HinweisgeberInnenschutzgesetz (HSchG) können Sie vertraulich und auf Wunsch
-          anonym über unser Hinweisgeberportal{" "}
-          <Ext href="https://oekovolt.integrityline.com/">oekovolt.integrityline.com</Ext> abgeben. Das Portal wird nicht über
-          diese Website, sondern von einem spezialisierten Dienstleister als Auftragsverarbeiter betrieben. Rechtsgrundlage
-          ist Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit dem HSchG. Alle Informationen – auch zur Einschränkung von
-          Betroffenenrechten und zur Aufbewahrung nach § 8 HSchG – finden Sie auf unserer Seite{" "}
-          <Link href="/hinweisgeberschutz#datenschutz">Hinweisgeberschutz</Link>.
-        </p>
+        {HINWEIS_INTERN ? (
+          <>
+            {/* Eigenes Hinweisgebersystem (HINWEIS_INTERN=1). Frist wie im Backend umgesetzt (Frappe-DocType „Hinweis“:
+                Löschung 5 Jahre nach Abschluss) – RECHTLICH PRÜFEN, siehe docs/frappe-hinweisgebersystem/GO-LIVE-AT.md. */}
+            <p>
+              Hinweise auf Rechtsverletzungen nach dem HinweisgeberInnenschutzgesetz (HSchG) können Sie vertraulich und auf
+              Wunsch anonym über unser eigenes <Link href="/hinweisgebersystem">Hinweisgebersystem</Link> abgeben.
+              Verantwortlicher ist die {FIRMA.name} (Punkt 1). Die Meldung wird verschlüsselt (HTTPS/TLS) an unsere Website
+              und von dort an unser eigenes Backoffice übertragen und dort gespeichert; ein externer Portalbetreiber ist nicht
+              beteiligt. Zugriff auf die Meldungen haben ausschließlich die benannten, zur Vertraulichkeit verpflichteten
+              Personen der internen Meldestelle.
+            </p>
+            <p>
+              Angaben zu Ihrer Person sind freiwillig. Nach dem Absenden erhalten Sie eine Fall-Nummer und einen
+              Zugangsschlüssel; damit können Sie in Ihrem Postfach Rückfragen beantworten und den Bearbeitungsstand abrufen,
+              ohne Ihre Identität preiszugeben. Der Zugangsschlüssel wird nur als kryptografischer Hash gespeichert. Ihre
+              IP-Adresse und Browserdaten werden – anders als bei den übrigen Formularen (Punkt 9) – nicht mit der Meldung
+              gespeichert und nicht an das Backoffice übermittelt.
+            </p>
+            <p>
+              Rechtsgrundlage ist Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit § 8 HSchG. Meldungen und ihre Dokumentation
+              werden fünf Jahre nach Abschluss des Verfahrens gelöscht, sofern sie nicht für ein bereits eingeleitetes
+              verwaltungsbehördliches oder gerichtliches Verfahren weiter benötigt werden (§ 8 Abs. 11 HSchG). Alle
+              Informationen – auch für Personen, die in einer Meldung genannt werden, und zur Einschränkung von
+              Betroffenenrechten – finden Sie in den{" "}
+              <Link href="/hinweisgebersystem#datenschutz">Datenschutzhinweisen zum Hinweisgebersystem</Link>.
+            </p>
+          </>
+        ) : (
+          <p>
+            Hinweise auf Rechtsverletzungen nach dem HinweisgeberInnenschutzgesetz (HSchG) können Sie vertraulich und auf Wunsch
+            anonym über unser Hinweisgeberportal{" "}
+            <Ext href="https://oekovolt.integrityline.com/">oekovolt.integrityline.com</Ext> abgeben. Das Portal wird nicht über
+            diese Website, sondern von einem spezialisierten Dienstleister als Auftragsverarbeiter betrieben. Rechtsgrundlage
+            ist Art. 6 Abs. 1 lit. c DSGVO in Verbindung mit dem HSchG. Alle Informationen – auch zur Einschränkung von
+            Betroffenenrechten und zur Aufbewahrung nach § 8 HSchG – finden Sie auf unserer Seite{" "}
+            <Link href="/hinweisgeberschutz#datenschutz">Hinweisgeberschutz</Link>.
+          </p>
+        )}
       </Abschnitt>
 
       <Abschnitt id="empfaenger" titel="24. Empfänger, Auftragsverarbeiter und Drittländer">
@@ -546,11 +649,16 @@ const PrivacyPolicy = () => {
           oder Sie eingewilligt haben. Unsere Auftragsverarbeiter sind vertraglich nach Art. 28 DSGVO gebunden, insbesondere:
         </p>
         <ul className="mt-2 space-y-1">
-          <li>Hosting- und IT-Dienstleister für Website, Backoffice und die cookielose Reichweitenmessung (Server in der EU)</li>
+          <li>
+            {umami
+              ? "Hosting- und IT-Dienstleister für Website, Backoffice und die cookielose Reichweitenmessung (Server in der EU)"
+              : "Hosting- und IT-Dienstleister für Website und Backoffice (Server in der EU)"}
+          </li>
           <li>Google Ireland Limited (Google Analytics, Google Maps – nur nach Einwilligung)</li>
           <li>CloudTalk s.r.o. (Sofort-Rückruf)</li>
           <li>Anthropic, PBC (KI-Auswertung von Unterlagen – nur nach Einwilligung)</li>
-          <li>Betreiber des Hinweisgeberportals</li>
+          {/* Eigenes Hinweisgebersystem: kein externer Portalbetreiber mehr (läuft über Website und Backoffice oben) */}
+          {!HINWEIS_INTERN && <li>Betreiber des Hinweisgeberportals</li>}
           <li>E-Mail- und Kommunikationsdienstleister</li>
         </ul>
         <p className="mt-3">

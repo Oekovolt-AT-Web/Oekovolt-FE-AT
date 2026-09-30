@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 10:00:00.000000",
+ "description": "Hersteller-Kacheln für /produkte/stromspeicher und die Detailseiten /produkte/stromspeicher/<slug>.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_hersteller",
+  "strom_second_card_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_hersteller",
+   "fieldtype": "Section Break",
+   "label": "Stromspeicher-Hersteller",
+   "description": "Hersteller-Kacheln für /produkte/stromspeicher und die Detailseiten /produkte/stromspeicher/<slug>. Angezeigt werden nur Titel, die Fronius, Huawei, Solis, BYD, Sigenergy oder meteocontrol enthalten."
+  },
+  {
+   "fieldname": "strom_second_card_table",
+   "fieldtype": "Table",
+   "label": "Hersteller",
+   "options": "Stromspeicher Page Item"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Stromspeicher Page",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Marketing",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1
+  },
+  {
+   "role": "Website API",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "issingle": 1,
+ "track_changes": 1
+}

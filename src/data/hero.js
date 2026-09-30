@@ -7,7 +7,10 @@
 // seit 2012 in Österreich, 2021 rund 30 MWp errichtet und TOP 3 der
 // IPC-Errichter Österreichs, Salzburg AG als Gesellschafterin (49 %),
 // eigene Regelungs-/Leittechnik, Gründer betreiben eigene Solarparks.
-// KEINE Gruppen-Kennzahlen der deutschen Website übernehmen.
+// Unternehmenskennzahlen (5.000 Anlagen, 340.000 kWp, 112.000 t CO₂) laut Geschäftsführung
+// Ökovolt Österreich (bestätigt 30.09.2026) – zentral in src/data/kennzahlen.js.
+
+import { KENNZAHLEN, zahlText } from "./kennzahlen.js";
 
 export const HOME_HERO = {
   kicker: "Ökovolt Österreich · seit 2012",
@@ -29,11 +32,11 @@ export const HOME_HERO = {
  * Kennzahlenleiste unter dem Hero. `zahl` zählt beim Einblenden hoch (CountUp),
  * `wert` ist der Klartext (SEO, Screenreader). Jahreszahlen zählen bewusst nicht hoch.
  */
+// Gesamtzahlen aus src/data/kennzahlen.js (eine Quelle für Startseite, Presse, Referenzen).
+// „seit 2012“ und „Salzburg AG 49 %“ stehen bereits im Hero (Kicker bzw. Vertrauenspunkte).
 export const KERNFAKTEN = [
-  { wert: "2012", label: "in Österreich tätig – aus Ostermiething (OÖ)" },
-  { wert: "30 MWp", zahl: 30, suffix: " MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
+  ...KENNZAHLEN.map((k) => ({ wert: `${zahlText(k.zahl)}${k.suffix}`, zahl: k.zahl, suffix: k.suffix, label: k.label })),
   { wert: "TOP 3", zahl: 3, prefix: "TOP ", label: "der IPC-Errichter Österreichs 2021" },
-  { wert: "49 %", zahl: 49, suffix: " %", label: "hält die Salzburg AG an Ökovolt Österreich" },
 ];
 
 /**

@@ -10,6 +10,18 @@ import { PROJEKTE } from "@/data/projekte";
 import { REGIONEN } from "@/data/regionen";
 import { LAENDER_SLUGS, STAND as LAENDER_STAND } from "@/data/bundeslaender";
 import { istBelegterPartner } from "@/components/Produktdetail/HerstellerDetail";
+import { veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
+import { NETZBETREIBER, betreiberPfad } from "@/data/netzbetreiber";
+import { mediathekSitemap } from "@/data/reels";
+import { HINWEIS_INTERN } from "@/data/hinweisgeber";
+
+// Hersteller-Slugs, die next.config.mjs per 301 auf die Übersicht umleitet –
+// dürfen nie in der Sitemap stehen, auch wenn das Backoffice sie liefert.
+// Liste synchron mit next.config.mjs (redirects) halten.
+const WEITERGELEITETE_HERSTELLER = {
+  stromspeicher: new Set(["akcome", "wuerth", "solis"]),
+  warmepumpe: new Set(["schrack", "schweizer", "fronius", "trina"]),
+};
 
 const BASE_URL = "https://www.oekovolt.com";
 // ACHTUNG: Hier stand frueher `new Date()`. Damit bekam JEDE statische Seite
@@ -80,6 +92,10 @@ const STATIC_PAGES = [
   { path: "/datenschutz", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/agb", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE },
   { path: "/hinweisgeberschutz", changeFrequency: "yearly", priority: 0.3, lastModified: AT_START },
+  // Eigenes Hinweisgebersystem nur, wenn aktiv (HINWEIS_INTERN=1, Build-Zeit) – sonst leitet
+  // /hinweisgebersystem auf IntegrityLine um und darf nicht in der Sitemap stehen.
+  // Beim Umschalten lastModified auf das Go-live-Datum setzen.
+  ...(HINWEIS_INTERN ? [{ path: "/hinweisgebersystem", changeFrequency: "yearly", priority: 0.3, lastModified: LEGAL_DATE }] : []),
 
   // Österreich (Launch oekovolt.com, Gewerbe-Schwerpunkt)
   { path: "/uber-uns", changeFrequency: "monthly", priority: 0.7, lastModified: AT_START },
@@ -106,6 +122,8 @@ const STATIC_PAGES = [
   { path: "/forderungen/bundesfoerderung", changeFrequency: "monthly", priority: 0.9, lastModified: AT_START },
   // Landingpage 3. EAG-Fördercall 2026 (08.–22.10.2026), Countdown/Status ändern sich täglich
   { path: "/forderungen/eag-foerdercall", changeFrequency: "daily", priority: 0.9, lastModified: new Date("2026-09-30") },
+  // Netzanmeldung (PV beim Netzbetreiber anmelden), Recherche 30.09.2026
+  { path: "/netzanmeldung", changeFrequency: "monthly", priority: 0.8, lastModified: new Date("2026-09-30") },
   { path: "/pv-award", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
   { path: "/sponsoring", changeFrequency: "monthly", priority: 0.5, lastModified: AT_START },
   { path: "/partner", changeFrequency: "monthly", priority: 0.6, lastModified: AT_START },
@@ -187,6 +205,25 @@ async function fetchWarmepumpeManufacturers() {
   return manufacturers;
 }
 
+// Presse-Detailseiten – gleiche Quelle wie src/app/presse/[slug]/page.js
+// (Kanal "website"). Eigener 5-s-Deckel wie authenticatedFetch(); ohne
+// Backend bzw. bei Fehler/Timeout einfach keine Einträge.
+async function fetchPresseMeldungen(timeoutMs = 5000) {
+  let timer;
+  const timeout = new Promise((resolve) => {
+    timer = setTimeout(() => resolve([]), timeoutMs);
+  });
+  try {
+    const liste = await Promise.race([veroeffentlichungen({ kanal: "website", limit: 500 }), timeout]);
+    return Array.isArray(liste) ? liste.filter((m) => m?.slug && m.kanaele?.website) : [];
+  } catch (error) {
+    console.error("Error fetching presse:", error?.name || error);
+    return [];
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export default async function sitemap() {
   // alternates nur fuer Seiten, die es auch auf oekovolt.com gibt — sonst
   // laesst sitemapLanguages() das Feld weg (undefined wird nicht gerendert).
@@ -203,6 +240,16 @@ export default async function sitemap() {
 
   const dynamicEntries = [];
 
+  // Netzanmeldung je Netzbetreiber – statisch aus src/data/netzbetreiber.js
+  NETZBETREIBER.forEach((b) => {
+    dynamicEntries.push({
+      url: `${BASE_URL}${betreiberPfad(b.slug)}`,
+      lastModified: new Date(b.geprueftAm),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+  });
+
   // Fetch every data source in parallel so the sitemap's total time is the
   // slowest single request (~5s cap), not the sum of all five. Each fetcher
   // already returns [] on failure, so a partial outage never breaks the sitemap.
@@ -210,10 +257,12 @@ export default async function sitemap() {
     projects,
     stromspeicherManufacturers,
     warmepumpeManufacturers,
+    presseMeldungen,
   ] = await Promise.all([
     fetchAllProjects(),
     fetchStromspeicherManufacturers(),
     fetchWarmepumpeManufacturers(),
+    fetchPresseMeldungen(),
   ]);
 
   // 1. Project pages
@@ -256,7 +305,7 @@ export default async function sitemap() {
   // Nur belegte Partner – alle anderen Herstellerseiten stehen auf noindex.
   stromspeicherManufacturers.filter((m) => istBelegterPartner(m.title)).forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
-    if (slug) {
+    if (slug && !WEITERGELEITETE_HERSTELLER.stromspeicher.has(slug)) {
       const languages = sitemapLanguages(`/produkte/stromspeicher/${slug}`);
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/stromspeicher/${slug}`,
@@ -272,7 +321,7 @@ export default async function sitemap() {
   // Nur belegte Partner – alle anderen Herstellerseiten stehen auf noindex.
   warmepumpeManufacturers.filter((m) => istBelegterPartner(m.title)).forEach((manufacturer) => {
     const slug = generateSlug(manufacturer.title);
-    if (slug) {
+    if (slug && !WEITERGELEITETE_HERSTELLER.warmepumpe.has(slug)) {
       const languages = sitemapLanguages(`/produkte/warmepumpe/${slug}`);
       dynamicEntries.push({
         url: `${BASE_URL}/produkte/warmepumpe/${slug}`,
@@ -286,7 +335,8 @@ export default async function sitemap() {
 
   // 6. Ratgeber-Artikel (aus dem Register, nicht aus der API - deshalb immer
   //    vorhanden, auch wenn das Backoffice gerade nicht antwortet).
-  //    Deutschlandspezifisch -> bewusst ohne alternates/hreflang.
+  //    Österreich-spezifisch (Recht, Förderung, Netz, Tarife) und nicht in
+  //    SHARED_PATHS (src/lib/hreflang.js) -> bewusst ohne alternates/hreflang.
   const ratgeberEntries = alleArtikel().map((a) => ({
     url: `${BASE_URL}${artikelPfad(a.slug)}`,
     lastModified: new Date(a.aktualisiert),
@@ -310,9 +360,21 @@ export default async function sitemap() {
     dynamicEntries.push({ url, lastModified: AT_START, changeFrequency: "monthly", priority: 0.6, ...(languages ? { alternates: { languages } } : {}) });
   });
 
+  // 8. Presse-Detailseiten /presse/[slug] (nur mit Kanal-Backend, sonst leer)
+  presseMeldungen.forEach((m) => {
+    const geaendert = new Date(m.aktualisiert || m.datum);
+    dynamicEntries.push({
+      url: `${BASE_URL}/presse/${m.slug}`,
+      lastModified: Number.isNaN(geaendert.getTime()) ? AT_START : geaendert,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+  });
+
   // Doppelte URLs (z. B. Backoffice-Slug = statischer Slug) nur einmal ausgeben
   const gesehen = new Set();
-  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries].filter((e) => {
+  // Mediathek: leer, solange keine Videos da sind (Seite dann noindex)
+  const allEntries = [...staticEntries, ...dynamicEntries, ...ratgeberEntries, ...regionEntries, ...mediathekSitemap(BASE_URL)].filter((e) => {
     if (gesehen.has(e.url)) return false;
     gesehen.add(e.url);
     return true;

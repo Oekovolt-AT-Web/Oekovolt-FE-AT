@@ -20,7 +20,8 @@ import { usePathname } from "next/navigation";
  * DE-Statistik. Ohne NEXT_PUBLIC_GA_ID wird nichts geladen und nichts gerendert.
  */
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
-const AUSGENOMMEN = /^\/(scan|fortsetzen|tv)(\/|$)/;
+// Hinweisgebersystem ist vertraulich – nie messen
+const AUSGENOMMEN = /^\/(scan|fortsetzen|tv|hinweisgebersystem)(\/|$)/;
 
 export function statistikErlaubt() {
   if (typeof document === "undefined") return false;

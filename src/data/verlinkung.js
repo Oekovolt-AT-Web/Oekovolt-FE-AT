@@ -286,6 +286,7 @@ export const QUERVERWEISE = {
     { href: "/service/finanzierung", titel: "Finanzierung & Leasing", text: "Den Eigenanteil clever finanzieren." },
   ],
   "/forderungen/eag-foerdercall": [
+    { href: "/netzanmeldung", titel: "PV-Anlage beim Netzbetreiber anmelden", text: "So kommen Sie rechtzeitig zum Einspeisezählpunkt." },
     { href: "/forderungen/bundesfoerderung", titel: "Bundesförderung (EAG & KPC)", text: "Alle Kategorien, Zuschläge und die Marktprämie." },
     { href: "/forderungen/baurecht", titel: "Baurecht für PV-Anlagen", text: "Welche Anzeige oder Bewilligung vor dem Antrag vorliegen muss." },
     { href: "/rechner/stromspeicher", titel: "Stromspeicher-Rechner", text: "Die passende Speichergröße zur geförderten PV-Anlage." },
@@ -302,6 +303,7 @@ export const QUERVERWEISE = {
     { href: "/ratgeber/freiflaechen-photovoltaik-widmung", titel: "Widmung für Freiflächen", text: "Zonen und Sonderwidmung je Bundesland." },
   ],
   "/forderungen/richtlinien": [
+    { href: "/netzanmeldung", titel: "PV-Anlage beim Netzbetreiber anmelden", text: "So kommen Sie rechtzeitig zum Einspeisezählpunkt." },
     { href: "/technik/parkregler", titel: "Parkregler (EZA-Regler)", text: "TOR-konforme Regelung am Netzanschlusspunkt." },
     { href: "/ratgeber/photovoltaik-brandschutz", titel: "Brandschutz nach OVE R 11-1", text: "Feuerwehr, Abschaltung, Versicherung." },
     { href: "/forderungen/baurecht", titel: "Baurecht", text: "Wann eine PV-Anlage bewilligungspflichtig ist." },
@@ -404,6 +406,19 @@ export const QUERVERWEISE = {
     { href: "/faqs", titel: "Häufige Fragen", text: "Die Fragen, die uns Kunden am häufigsten stellen." },
     { href: "/rechner", titel: "Rechner & Tools", text: "Das Wissen direkt auf Ihr Projekt anwenden." },
   ],
+  "/netzanmeldung": [
+    { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Ticketziehung am 08.10. – mit Einspeisezählpunkt." },
+    { href: "/forderungen/richtlinien", titel: "Richtlinien & Netzanschluss", text: "TOR Erzeuger, Normen und ElWG im Überblick." },
+    { href: "/forderungen/baurecht", titel: "Baurecht für PV-Anlagen", text: "Welche Anzeige oder Bewilligung vor dem Antrag vorliegen muss." },
+  ],
+  ...Object.fromEntries(["wiener-netze", "netz-niederoesterreich", "netz-oberoesterreich", "energienetze-steiermark", "salzburg-netz"].map((s) => [
+    `/netzanmeldung/${s}`,
+    [
+      { href: "/netzanmeldung", titel: "Netzanmeldung im Überblick", text: "Alle fünf großen Netzbetreiber und die Checkliste." },
+      { href: "/forderungen/eag-foerdercall", titel: "EAG-Fördercall Oktober 2026", text: "Was bis zur Ticketziehung am 08.10. fertig sein muss." },
+      { href: "/ratgeber/photovoltaik-anmelden", titel: "PV-Anlage anmelden", text: "Ratgeber: Ablauf, Zählpunkt und ElWG-Neuerungen." },
+    ],
+  ])),
 };
 
 /** Verweise fuer einen Pfad; leeres Array, wenn nichts hinterlegt ist. */

@@ -72,7 +72,7 @@ export default async function RatgeberArtikelPage({ params }) {
       inLanguage: "de-AT",
       datePublished: a.veroeffentlicht,
       dateModified: a.aktualisiert,
-      author: { "@type": "Organization", name: "Ökovolt-Redaktion Österreich", "@id": `${BASE_URL}/#organization` },
+      author: { "@id": `${BASE_URL}/#organization` },
       publisher: { "@id": `${BASE_URL}/#organization` },
       mainEntityOfPage: { "@type": "WebPage", "@id": url },
       image: [`${BASE_URL}${a.bild}`, `${BASE_URL}/og/ratgeber/${a.slug}.jpg`],

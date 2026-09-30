@@ -46,3 +46,6 @@ next-env.d.ts
 .next-dev2/
 
 .next-dev3/
+
+# Reels-Rohdateien (Meta Business Suite) – werden per scripts/reels-optimieren.mjs nach public/videos/reels/ aufbereitet
+reels-roh/

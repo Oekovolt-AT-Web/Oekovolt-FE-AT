@@ -38,8 +38,9 @@ const siteSchema = {
         "@type": "ImageObject",
         "@id": `${BASE_URL}/#logo`,
         url: `${BASE_URL}/logo-oekovolt.png`,
-        width: 400,
-        height: 100,
+        // Tatsächliche Pixelmaße von public/logo-oekovolt.png (PNG-Header, geprüft 2026-09-30)
+        width: 1066,
+        height: 234,
         caption: "Ökovolt Österreich Logo",
       },
       image: { "@type": "ImageObject", url: `${BASE_URL}/og-image.jpg` },
@@ -69,8 +70,16 @@ const siteSchema = {
         { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday"], opens: "08:00", closes: "16:00" },
         { "@type": "OpeningHoursSpecification", dayOfWeek: ["Friday"], opens: "08:00", closes: "13:00" },
       ],
-      telephone: "+43-6278-71030",
+      telephone: FIRMA.telefon,
       email: FIRMA.email,
+      contactPoint: {
+        "@type": "ContactPoint",
+        telephone: FIRMA.telefon,
+        email: FIRMA.email,
+        contactType: "customer service",
+        areaServed: "AT",
+        availableLanguage: ["German"],
+      },
       priceRange: "€€€",
       currenciesAccepted: "EUR",
       paymentAccepted: "Bank Transfer, Leasing, Financing",
@@ -79,13 +88,13 @@ const siteSchema = {
         ...["Wien", "Niederösterreich", "Oberösterreich", "Salzburg", "Tirol", "Vorarlberg", "Kärnten", "Steiermark", "Burgenland"].map((n) => ({ "@type": "State", name: n })),
       ],
       memberOf: [{ "@type": "Organization", name: FIRMA.kammer, url: "https://www.wko.at/ooe" }],
-      parentOrganization: {
-        "@type": "Organization",
-        name: SCHWESTER.name,
-        url: SCHWESTER.web,
-        description: "Deutsche Schwestergesellschaft und Inhaberin der Marke ÖKOVOLT",
-      },
-      sameAs: [FIRMA.social.facebook, FIRMA.social.linkedin, FIRMA.wko, FIRMA.firmenabc],
+      // Bewusst KEINE parentOrganization: Gesellschafter sind A. Wegscheider (51 %)
+      // und die Salzburg AG (49 %); die deutsche ÖKOVOLT GmbH Solartechnik ist
+      // Schwester-, nicht Muttergesellschaft. Markenbezug nur über "brand".
+      brand: { "@type": "Brand", name: "ÖKOVOLT" },
+      // Nur verifizierte Profile: Facebook/LinkedIn werden von der bisherigen
+      // oekovolt.com verlinkt (die .de nutzt eigene Profile), dazu WKO und FirmenABC.
+      sameAs: [FIRMA.social.facebook, FIRMA.social.linkedin, FIRMA.social.instagram, FIRMA.wko, FIRMA.firmenabc],
       knowsAbout: [
         "Photovoltaik Gewerbe", "Photovoltaik Industrie", "Freiflächen-Photovoltaik", "Agri-Photovoltaik",
         "Gewerbespeicher", "Batteriespeicher", "Peak Shaving", "Ladeinfrastruktur", "Energiegemeinschaften",

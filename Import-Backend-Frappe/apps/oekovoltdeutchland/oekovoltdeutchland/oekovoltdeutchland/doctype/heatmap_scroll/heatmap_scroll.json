@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 10:00:00.000000",
+ "description": "Heatmap: Aufrufe je maximal erreichter Scrolltiefe. Wird ausschließlich über oekovoltdeutchland…heatmap_zelle.api.erfassen hochgezählt; keine IP, keine Personen. Monate älter als 14 Monate löscht eine tägliche Aufgabe.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "pfad",
+  "geraet",
+  "tiefe",
+  "monat",
+  "anzahl"
+ ],
+ "fields": [
+  {
+   "fieldname": "pfad",
+   "fieldtype": "Data",
+   "label": "Pfad",
+   "length": 200,
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "geraet",
+   "fieldtype": "Select",
+   "label": "Gerät",
+   "options": "mobil\ntablet\ndesktop",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "tiefe",
+   "fieldtype": "Int",
+   "label": "Maximale Scrolltiefe (%)",
+   "read_only": 1,
+   "in_list_view": 1,
+   "description": "Je Aufruf wird nur die maximal erreichte Tiefe (10er-Schritte) gezählt; die Auswertung kumuliert."
+  },
+  {
+   "fieldname": "monat",
+   "fieldtype": "Data",
+   "label": "Monat (JJJJ-MM)",
+   "length": 7,
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "anzahl",
+   "fieldtype": "Int",
+   "label": "Aufrufe",
+   "read_only": 1,
+   "in_list_view": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Heatmap Scroll",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Marketing",
+   "read": 1,
+   "report": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "autoname": "hash",
+ "in_create": 1,
+ "track_changes": 0
+}

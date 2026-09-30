@@ -5,10 +5,14 @@ import { ipAdresse } from "@/lib/ipAdresse";
 import { getApiHeaders, isApiConfigured, API_BASE_URL } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
 import { herkunftAnNachricht, herkunftZeile } from "@/lib/herkunftServer";
+import { gedrosselt, leseJson } from "@/lib/api/uber-uns/anfrageWeiterleiten";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.angebot.submit_angebot`;
 
 export async function POST(request) {
+  const drossel = gedrosselt(request, "angebot");
+  if (drossel) return drossel;
+
     // Check if API is configured
     if (!isApiConfigured()) {
         console.error("API not configured: Missing NEW_API_KEY or NEW_API_SECRET in environment variables");
@@ -21,7 +25,8 @@ export async function POST(request) {
     try {
         // Herkunft (Kanal, UTM, Einstieg) als Textblock an `nachricht` und `ergebnis.angaben` –
         // submit_angebot kennt dafür kein eigenes Feld, `angaben` wird mit dem Ergebnis gespeichert
-        const roh = await request.json();
+        const { daten: roh, antwort } = await leseJson(request);
+        if (antwort) return antwort;
         const body = herkunftAnNachricht(roh);
         const zeile = herkunftZeile(roh?.herkunft);
         if (zeile && body?.ergebnis && typeof body.ergebnis === "object") {

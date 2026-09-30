@@ -1,0 +1,21 @@
+[project]
+name = "oekovoltdeutchland"
+authors = [
+    { name = "Ökovolt Solartechnik GmbH", email = "office@oekovolt.com" },
+]
+description = "Backoffice-Erweiterungen für oekovolt.com (Österreich): Produktseiten, Hersteller, Heatmap, Rückruf/Solar Lead, Hinweisgebersystem, Veröffentlichungen"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+# Laufzeit-Pakete für die KI-Auswertung (solar_lead/ki.py) werden bewusst NICHT hier
+# erzwungen, damit eine fehlgeschlagene Kompilierung von pillow-heif die Installation
+# nicht blockiert. Sie werden von installation/installieren.sh nachinstalliert:
+#   bench pip install anthropic pillow-heif
+dependencies = []
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<16.0.0"

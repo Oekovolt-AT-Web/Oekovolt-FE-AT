@@ -13,6 +13,8 @@ const nextConfig = {
     "/solarrechner/ergebnis/bild": ["./src/lib/analyse/fonts/**", "./src/lib/analyse/logo-hell.png"],
     // Standort-Check: Schneelast-Richtwertraster (GeoSphere SNOWGRID-CL, eigene Auswertung), per fs gelesen
     "/api/standort": ["./data/schneelast/sk50-at.bin", "./data/schneelast/sk50-at.json"],
+    // Kundenbühne: Social-Media-Bilder (next/og) lesen Schriften und das AT-Logo per fs
+    "/referenzen/projekte/[title]/bild/[format]": ["./src/lib/analyse/fonts/**", "./public/logo-oekovolt-weiss.png"],
   },
   compress: true,
   poweredByHeader: false,
@@ -27,11 +29,19 @@ const nextConfig = {
         permanent: true,
       },
 
-      // Hinweisgebersystem: vorerst IntegrityLine (wie bisher). Eigenes System unter
-      // /hinweisgebersystem ist fertig, aber noch nicht freigegeben – temporär (307),
-      // damit die Seite später ohne Browser-Cache-Probleme zurückkommen kann.
-      { source: "/hinweisgebersystem", destination: "https://oekovolt.integrityline.com/", permanent: false },
-      { source: "/hinweisgebersystem/:path*", destination: "https://oekovolt.integrityline.com/", permanent: false },
+      // Hinweisgebersystem: Solange HINWEIS_INTERN nicht "1" ist, bleibt IntegrityLine der
+      // Meldekanal und /hinweisgebersystem leitet temporär (307) dorthin um – damit die Seite
+      // später ohne Browser-Cache-Probleme zurückkommen kann. Mit HINWEIS_INTERN=1 entfallen die
+      // Redirects und das eigene System (Formular + Postfach) ist erreichbar.
+      // Wert zur BUILD-Zeit maßgeblich → nach Umschalten neu bauen. Zentraler Schalter und
+      // Ziel-URL: src/data/hinweisgeber.js (HINWEIS_INTERN, INTEGRITYLINE_URL) – hier bewusst
+      // dupliziert, weil next.config keine @/-Aliasse auflösen kann.
+      ...(process.env.HINWEIS_INTERN === "1"
+        ? []
+        : [
+            { source: "/hinweisgebersystem", destination: "https://oekovolt.integrityline.com/", permanent: false },
+            { source: "/hinweisgebersystem/:path*", destination: "https://oekovolt.integrityline.com/", permanent: false },
+          ]),
 
       // HINWEIS: trailingSlash ist false -> Next normalisiert "/x/" zu "/x",
       // BEVOR diese Redirects ausgewertet werden. Alle Quellen daher OHNE
@@ -93,6 +103,21 @@ const nextConfig = {
         destination: "/kontakt",
         permanent: true,
       },
+
+      // --- Alte Hersteller-Detailseiten (Live-Sitemap oekovolt.com, Stand 2026-09-30) ---
+      // Im neuen Code gibt es als echte Seite nur die statischen Speicher-Partner
+      // (src/components/Hersteller/partner.js, Kontext "stromspeicher": huawei, byd,
+      // sigenergy). Alle übrigen, bisher indexierten Slugs führen ohne Backoffice
+      // zu 404 bzw. sind keine belegten Partner -> auf die jeweilige Übersicht.
+      // /produkte/warmepumpe/[slug] hat keine statische Absicherung.
+      // Gleiche Liste in src/app/sitemap.js (WEITERGELEITETE_HERSTELLER) pflegen.
+      { source: "/produkte/stromspeicher/akcome", destination: "/produkte/stromspeicher", permanent: true },
+      { source: "/produkte/stromspeicher/wuerth", destination: "/produkte/stromspeicher", permanent: true },
+      { source: "/produkte/stromspeicher/solis", destination: "/produkte/stromspeicher", permanent: true },
+      { source: "/produkte/warmepumpe/schrack", destination: "/produkte/warmepumpe", permanent: true },
+      { source: "/produkte/warmepumpe/schweizer", destination: "/produkte/warmepumpe", permanent: true },
+      { source: "/produkte/warmepumpe/fronius", destination: "/produkte/warmepumpe", permanent: true },
+      { source: "/produkte/warmepumpe/trina", destination: "/produkte/warmepumpe", permanent: true },
 
       // --- Kategorie-Einstiege ohne eigene Seite ---
       {
@@ -196,6 +221,14 @@ const nextConfig = {
         ],
       },
       {
+        // Solar-Siegel auf Kunden-Websites: Zahlen können sich ändern → kein Jahres-Cache
+        // (muss NACH der Bild-Regel stehen, damit dieser Wert gewinnt)
+        source: "/siegel/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" },
+        ],
+      },
+      {
         source: "/(.*)\\.(js|css)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
@@ -254,10 +287,6 @@ const nextConfig = {
       { source: "/.well-known/webfinger", destination: "/api/ap/webfinger" },
       { source: "/.well-known/nodeinfo", destination: "/api/ap/nodeinfo" },
       { source: "/.well-known/host-meta", destination: "/api/ap/host-meta" },
-      {
-        source: '/api/backoffice/:path*',
-        destination: 'https://backoffice.oekovolt.com/:path*',
-      },
     ];
   },
 };

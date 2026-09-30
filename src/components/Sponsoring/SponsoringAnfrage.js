@@ -95,6 +95,7 @@ export default function SponsoringAnfrage() {
     try {
       await sende("/api/sponsoring", { ...werte, quelle: window.location.pathname, website: website.current?.value || "" });
       setStatus("erfolg");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
     } catch (err) {
       if (err.felder) setFehler(err.felder);
       setMeldung(err.message);

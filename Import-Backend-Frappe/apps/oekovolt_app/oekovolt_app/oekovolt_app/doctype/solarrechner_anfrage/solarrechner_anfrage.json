@@ -1,0 +1,192 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-30 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_anfrage",
+  "status",
+  "zustaendig",
+  "anonymisiert",
+  "column_break_anfrage",
+  "analyse_referenz",
+  "quelle",
+  "sec_kontakt",
+  "kunden_name",
+  "email",
+  "column_break_kontakt",
+  "telefon",
+  "plz",
+  "sec_pdf",
+  "pdf",
+  "sec_bearbeitung",
+  "notiz",
+  "sec_technik",
+  "ip_adresse"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_anfrage",
+   "fieldtype": "Section Break",
+   "label": "Anfrage"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Neu\nIn Bearbeitung\nAngebot erstellt\nGewonnen\nVerloren\nErledigt\nSpam",
+   "default": "Neu",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "zustaendig",
+   "fieldtype": "Link",
+   "label": "Zuständig",
+   "options": "User"
+  },
+  {
+   "fieldname": "anonymisiert",
+   "fieldtype": "Check",
+   "label": "Anonymisiert",
+   "default": "0",
+   "read_only": 1,
+   "description": "Nach Ablauf der Löschfrist (Standard 24 Monate) automatisch gesetzt – außer bei „Angebot erstellt“/„Gewonnen“."
+  },
+  {
+   "fieldname": "column_break_anfrage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "analyse_referenz",
+   "fieldtype": "Data",
+   "label": "Analyse-Referenz",
+   "read_only": 1,
+   "in_list_view": 1,
+   "search_index": 1,
+   "description": "Aus dem Dateinamen, z. B. PVA-2026-3F9A1C (steht auch im PDF)"
+  },
+  {
+   "fieldname": "quelle",
+   "fieldtype": "Data",
+   "label": "Seite",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_kontakt",
+   "fieldtype": "Section Break",
+   "label": "Kontakt"
+  },
+  {
+   "fieldname": "kunden_name",
+   "fieldtype": "Data",
+   "label": "Name",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-Mail",
+   "options": "Email",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_kontakt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "telefon",
+   "fieldtype": "Data",
+   "label": "Telefon"
+  },
+  {
+   "fieldname": "plz",
+   "fieldtype": "Data",
+   "label": "PLZ",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "sec_pdf",
+   "fieldtype": "Section Break",
+   "label": "PV-Analyse"
+  },
+  {
+   "fieldname": "pdf",
+   "fieldtype": "Attach",
+   "label": "PDF (privat)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_bearbeitung",
+   "fieldtype": "Section Break",
+   "label": "Bearbeitung"
+  },
+  {
+   "fieldname": "notiz",
+   "fieldtype": "Small Text",
+   "label": "Interne Notiz"
+  },
+  {
+   "fieldname": "sec_technik",
+   "fieldtype": "Section Break",
+   "label": "Technik",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "ip_adresse",
+   "fieldtype": "Data",
+   "label": "IP-Adresse",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Solarrechner Anfrage",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Website API",
+   "create": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "format:SR-{YYYY}-{#####}",
+ "naming_rule": "Expression",
+ "description": "PV-Analyse (PDF) aus dem Solarrechner der Website.",
+ "title_field": "kunden_name",
+ "search_fields": "email,plz,analyse_referenz"
+}

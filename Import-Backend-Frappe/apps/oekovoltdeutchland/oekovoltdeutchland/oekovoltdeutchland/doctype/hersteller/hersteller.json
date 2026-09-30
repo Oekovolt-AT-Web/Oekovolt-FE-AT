@@ -1,0 +1,435 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 10:00:00.000000",
+ "description": "Herstellerdetails für die Produkt-Detailseiten (Stromspeicher, Wärmepumpe).",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_marke",
+  "title",
+  "main_description",
+  "column_break_marke",
+  "banner_image",
+  "alt_banner_image",
+  "logo_image",
+  "alt_logo_image",
+  "sec_unternehmen",
+  "company_name",
+  "location",
+  "website_url",
+  "column_break_unternehmen",
+  "email",
+  "phone_number",
+  "sec_texte",
+  "company_description",
+  "details_description",
+  "sec_first_product",
+  "first_product_status",
+  "first_product_name",
+  "first_product_description",
+  "column_break_first_product",
+  "first_product_image",
+  "first_product_image_alt",
+  "first_product_options",
+  "sec_second_product",
+  "second_product_status",
+  "second_product_name",
+  "second_product_description",
+  "column_break_second_product",
+  "second_product_image",
+  "second_product_image_alt",
+  "second_product_options",
+  "sec_third_product",
+  "third_product_status",
+  "third_product_name",
+  "third_product_description",
+  "column_break_third_product",
+  "third_product_image",
+  "third_product_image_alt",
+  "third_product_options",
+  "sec_fourth_product",
+  "fourth_product_status",
+  "fourth_product_name",
+  "fourth_product_description",
+  "column_break_fourth_product",
+  "fourth_product_image",
+  "fourth_product_image_alt",
+  "fourth_product_options",
+  "sec_fifth_product",
+  "fifth_product_status",
+  "fifth_product_name",
+  "fifth_product_description",
+  "column_break_fifth_product",
+  "fifth_product_image",
+  "fifth_product_image_alt",
+  "fifth_product_options"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_marke",
+   "fieldtype": "Section Break",
+   "label": "Marke"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Titel (Marke)",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Exakt wie der Titel in „Stromspeicher Page“ / „Waermepumpe Page“ – darüber findet die Website den Hersteller."
+  },
+  {
+   "fieldname": "main_description",
+   "fieldtype": "Small Text",
+   "label": "Kurzbeschreibung"
+  },
+  {
+   "fieldname": "column_break_marke",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "banner_image",
+   "fieldtype": "Attach Image",
+   "label": "Bannerbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "alt_banner_image",
+   "fieldtype": "Data",
+   "label": "Alt-Text Bannerbild"
+  },
+  {
+   "fieldname": "logo_image",
+   "fieldtype": "Attach Image",
+   "label": "Logo",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "alt_logo_image",
+   "fieldtype": "Data",
+   "label": "Alt-Text Logo"
+  },
+  {
+   "fieldname": "sec_unternehmen",
+   "fieldtype": "Section Break",
+   "label": "Unternehmen"
+  },
+  {
+   "fieldname": "company_name",
+   "fieldtype": "Data",
+   "label": "Firmenname"
+  },
+  {
+   "fieldname": "location",
+   "fieldtype": "Data",
+   "label": "Sitz / Region"
+  },
+  {
+   "fieldname": "website_url",
+   "fieldtype": "Data",
+   "label": "Website",
+   "description": "Vollständige URL, z. B. https://www.fronius.com/de-at"
+  },
+  {
+   "fieldname": "column_break_unternehmen",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-Mail"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Telefon"
+  },
+  {
+   "fieldname": "sec_texte",
+   "fieldtype": "Section Break",
+   "label": "Texte"
+  },
+  {
+   "fieldname": "company_description",
+   "fieldtype": "Text",
+   "label": "Über das Unternehmen"
+  },
+  {
+   "fieldname": "details_description",
+   "fieldtype": "Text",
+   "label": "Weitere Details"
+  },
+  {
+   "fieldname": "sec_first_product",
+   "fieldtype": "Section Break",
+   "label": "1. Produkt",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "first_product_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "description": "Nur „Aktiv“ mit Produktname wird angezeigt."
+  },
+  {
+   "fieldname": "first_product_name",
+   "fieldtype": "Data",
+   "label": "Produktname"
+  },
+  {
+   "fieldname": "first_product_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung"
+  },
+  {
+   "fieldname": "column_break_first_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "first_product_image",
+   "fieldtype": "Attach Image",
+   "label": "Produktbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "first_product_image_alt",
+   "fieldtype": "Data",
+   "label": "Alt-Text Produktbild"
+  },
+  {
+   "fieldname": "first_product_options",
+   "fieldtype": "Table",
+   "label": "Merkmale",
+   "options": "Hersteller Produktoption"
+  },
+  {
+   "fieldname": "sec_second_product",
+   "fieldtype": "Section Break",
+   "label": "2. Produkt",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "second_product_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "description": "Nur „Aktiv“ mit Produktname wird angezeigt."
+  },
+  {
+   "fieldname": "second_product_name",
+   "fieldtype": "Data",
+   "label": "Produktname"
+  },
+  {
+   "fieldname": "second_product_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung"
+  },
+  {
+   "fieldname": "column_break_second_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "second_product_image",
+   "fieldtype": "Attach Image",
+   "label": "Produktbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "second_product_image_alt",
+   "fieldtype": "Data",
+   "label": "Alt-Text Produktbild"
+  },
+  {
+   "fieldname": "second_product_options",
+   "fieldtype": "Table",
+   "label": "Merkmale",
+   "options": "Hersteller Produktoption"
+  },
+  {
+   "fieldname": "sec_third_product",
+   "fieldtype": "Section Break",
+   "label": "3. Produkt",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "third_product_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "description": "Nur „Aktiv“ mit Produktname wird angezeigt."
+  },
+  {
+   "fieldname": "third_product_name",
+   "fieldtype": "Data",
+   "label": "Produktname"
+  },
+  {
+   "fieldname": "third_product_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung"
+  },
+  {
+   "fieldname": "column_break_third_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "third_product_image",
+   "fieldtype": "Attach Image",
+   "label": "Produktbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "third_product_image_alt",
+   "fieldtype": "Data",
+   "label": "Alt-Text Produktbild"
+  },
+  {
+   "fieldname": "third_product_options",
+   "fieldtype": "Table",
+   "label": "Merkmale",
+   "options": "Hersteller Produktoption"
+  },
+  {
+   "fieldname": "sec_fourth_product",
+   "fieldtype": "Section Break",
+   "label": "4. Produkt",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "fourth_product_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "description": "Nur „Aktiv“ mit Produktname wird angezeigt."
+  },
+  {
+   "fieldname": "fourth_product_name",
+   "fieldtype": "Data",
+   "label": "Produktname"
+  },
+  {
+   "fieldname": "fourth_product_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung"
+  },
+  {
+   "fieldname": "column_break_fourth_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fourth_product_image",
+   "fieldtype": "Attach Image",
+   "label": "Produktbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "fourth_product_image_alt",
+   "fieldtype": "Data",
+   "label": "Alt-Text Produktbild"
+  },
+  {
+   "fieldname": "fourth_product_options",
+   "fieldtype": "Table",
+   "label": "Merkmale",
+   "options": "Hersteller Produktoption"
+  },
+  {
+   "fieldname": "sec_fifth_product",
+   "fieldtype": "Section Break",
+   "label": "5. Produkt",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "fifth_product_status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Aktiv\nPassiv",
+   "default": "Aktiv",
+   "description": "Nur „Aktiv“ mit Produktname wird angezeigt."
+  },
+  {
+   "fieldname": "fifth_product_name",
+   "fieldtype": "Data",
+   "label": "Produktname"
+  },
+  {
+   "fieldname": "fifth_product_description",
+   "fieldtype": "Small Text",
+   "label": "Beschreibung"
+  },
+  {
+   "fieldname": "column_break_fifth_product",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fifth_product_image",
+   "fieldtype": "Attach Image",
+   "label": "Produktbild",
+   "description": "Öffentliche Datei (nicht „Privat“)."
+  },
+  {
+   "fieldname": "fifth_product_image_alt",
+   "fieldtype": "Data",
+   "label": "Alt-Text Produktbild"
+  },
+  {
+   "fieldname": "fifth_product_options",
+   "fieldtype": "Table",
+   "label": "Merkmale",
+   "options": "Hersteller Produktoption"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Hersteller",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Marketing",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  },
+  {
+   "role": "Website API",
+   "read": 1
+  }
+ ],
+ "sort_field": "title",
+ "sort_order": "ASC",
+ "states": [],
+ "autoname": "field:title",
+ "naming_rule": "By fieldname",
+ "title_field": "title",
+ "track_changes": 1,
+ "image_field": "logo_image"
+}

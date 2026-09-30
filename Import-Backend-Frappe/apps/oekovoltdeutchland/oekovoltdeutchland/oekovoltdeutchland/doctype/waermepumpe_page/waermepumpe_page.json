@@ -1,0 +1,59 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 10:00:00.000000",
+ "description": "Hersteller für /produkte/warmepumpe/<slug>. Ohne Einträge liefern alle Detailseiten 404.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_hersteller",
+  "warmepumpe_third_card_options_table"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_hersteller",
+   "fieldtype": "Section Break",
+   "label": "Wärmepumpen-Hersteller",
+   "description": "Hersteller für /produkte/warmepumpe/<slug>. Ohne Einträge liefern alle Detailseiten 404."
+  },
+  {
+   "fieldname": "warmepumpe_third_card_options_table",
+   "fieldtype": "Table",
+   "label": "Hersteller",
+   "options": "Waermepumpe Page Item"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-30 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovoltdeutchland",
+ "name": "Waermepumpe Page",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Marketing",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "print": 1
+  },
+  {
+   "role": "Website API",
+   "read": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "issingle": 1,
+ "track_changes": 1
+}

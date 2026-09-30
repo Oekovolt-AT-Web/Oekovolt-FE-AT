@@ -8,6 +8,8 @@ import { herkunftErfassen } from "@/lib/herkunft";
 import EmailChangeNotice from "./EmailChangeNotice";
 import RevealObserver from "@/components/ui/RevealObserver";
 import MobileCta from "@/components/Reusable/MobileCta";
+// Klick-/Scroll-Heatmap: Sammler nur mit Einwilligung „Statistik“, Ansicht nur mit ?heatmap=<Token>
+import Heatmap from "@/components/Statistik/Heatmap";
 
 // const GoogleTagManager = dynamic(
 //   () => import("@next/third-parties/google").then((m) => m.GoogleTagManager),
@@ -30,6 +32,7 @@ export default function LayoutWrapper({ children }) {
     <>
       {/* <GoogleTagManager gtmId="GTM-WR8PDT7V" /> */}
       <RevealObserver />
+      <Heatmap />
       {/* Cookie-Banner vor dem Seitenkopf: in der Tab-Reihenfolge direkt nach dem Sprunglink erreichbar (fixiert positioniert) */}
       <CookieComponentLazy />
       <Navbar />

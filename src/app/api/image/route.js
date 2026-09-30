@@ -104,6 +104,10 @@ export async function GET(req) {
     }
 
     const safePath = path.startsWith("/") ? path : `/${path}`;
+    // Nur öffentliche Frappe-Dateien durchreichen – kein Zugriff auf /api, /app, /private o. ä.
+    if (!/^\/files\/[^?#\\]+$/.test(safePath) || safePath.includes("..")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     const externalUrl = `${BASE_URL}${safePath}`;
 
     // ✅ detect video

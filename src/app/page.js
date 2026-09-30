@@ -39,6 +39,9 @@ import HeroGewerbeRechner from "@/components/Home2/HeroGewerbeRechner";
 import HomeLive from "@/components/Home2/HomeLive";
 import RechnerShowcase from "@/components/Home2/RechnerShowcase";
 import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
+import MannschaftTeaser from "@/components/Mannschaft/MannschaftTeaser";
+import ReelsAbschnitt from "@/components/Reels/ReelsAbschnitt";
+import { kz } from "@/data/kennzahlen";
 
 // API, sonst statischer Stand src/data/projekte.js
 const getProjekte = cache(() => ladeProjekteRoh());
@@ -223,11 +226,22 @@ export default async function HomePage() {
 
         <div className="ov-container grid items-center gap-10 pb-16 pt-12 md:pb-24 md:pt-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-14 lg:pb-24 lg:pt-20">
           <div>
-            <div className="ov-hero-in">
+            <div className="ov-hero-in flex flex-wrap items-center gap-3">
               <span className="ov-glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] font-medium text-white/90">
                 <MapPin aria-hidden="true" className="h-3.5 w-3.5 text-ov-300" />
                 {HOME_HERO.kicker}
                 <span className="hidden sm:inline"> · {HOME_HERO.kickerZusatz}</span>
+              </span>
+              {/* WKO-Siegel: lokal gespeichert und unverändert; nur zu führen, solange die Berechtigung besteht */}
+              <span className="inline-flex items-center gap-2" title="Meisterbetrieb · Elektrotechnik staatlich geprüft">
+                {[
+                  ["/Images/AT/siegel/wko-gutesiegel-meisterbetrieb.png", "Gütesiegel Meisterbetrieb der Wirtschaftskammer Österreich"],
+                  ["/Images/AT/siegel/wko-elektrotechnik.png", "Elektrotechnik – staatlich geprüft"],
+                ].map(([src, alt]) => (
+                  <span key={src} className="grid h-12 w-12 place-items-center rounded-full bg-white p-0.5 shadow-[0_6px_18px_-6px_rgba(0,0,0,.5)] ring-1 ring-white/40 md:h-14 md:w-14">
+                    <Image src={src} alt={alt} width={56} height={56} priority className="h-full w-full" />
+                  </span>
+                ))}
               </span>
             </div>
             <h1 className="ov-display ov-hero-in mt-7" style={{ "--ov-delay": "100ms" }}>
@@ -359,6 +373,9 @@ export default async function HomePage() {
         </div>
       </Section>
 
+      {/* ================= EIGENE MANNSCHAFT (Teaser → /uber-uns#mannschaft) ================= */}
+      <MannschaftTeaser />
+
       {/* ================= RECHNER & TOOLS ================= */}
       <Section tone="navy" space="md" className="ov-noise overflow-hidden">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0" />
@@ -405,7 +422,7 @@ export default async function HomePage() {
             <SectionHeading
               eyebrow="Warum Ökovolt"
               title="Betreiber aus Überzeugung – Errichter mit System."
-              lead={`Seit 2012 baut Ökovolt Photovoltaik in Österreich. 2021 errichteten wir Anlagen mit rund 30 MWp und zählten zu den TOP 3 der IPC-Errichter Österreichs. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in ${SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.`}
+              lead={`Seit 2012 baut Ökovolt Photovoltaik in Österreich – bisher ${kz("anlagen")} PV-Kraftwerke mit zusammen ${kz("leistung")} kWp. 2021 errichteten wir allein rund 30 MWp und zählten zu den TOP 3 der IPC-Errichter Österreichs. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in ${SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.`}
             />
             <ul className="mt-8 space-y-3">
               {[
@@ -611,6 +628,9 @@ export default async function HomePage() {
       )}
 
       {/* ================= FAQ ================= */}
+      {/* Presse & News: selbst gehostete Kurzvideos (src/data/reels.js), Mediathek unter /mediathek */}
+      <ReelsAbschnitt tone="ink" space="md" />
+
       <Section tone={projekte.length > 0 ? "sand" : "white"} space="md">
         <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <div>

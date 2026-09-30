@@ -1,0 +1,30 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 08:00:00.000000",
+ "description": "Gesperrter Tag (oder Zeitraum) zusätzlich zu den gesetzlichen Feiertagen in Österreich.",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "datum",
+  "bis",
+  "grund"
+ ],
+ "fields": [
+  { "fieldname": "datum", "fieldtype": "Date", "label": "Datum", "reqd": 1, "in_list_view": 1, "columns": 3 },
+  { "fieldname": "bis", "fieldtype": "Date", "label": "bis (optional)", "in_list_view": 1, "columns": 3, "description": "Für mehrere Tage, z. B. Betriebsurlaub. Leer = nur ein Tag." },
+  { "fieldname": "grund", "fieldtype": "Data", "label": "Grund", "in_list_view": 1, "columns": 4 }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-30 08:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Termin Sperrtag",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

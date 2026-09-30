@@ -73,6 +73,7 @@ export default function ScanHandshake({ rechner, quelle = "Solarrechner", beiKiE
       setStatus(s);
       if (s.phase === "eingegangen") {
         setSchritt("fertig");
+        import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
         ereignis("scan_unterlagen_eingegangen", { quelle });
       }
     });

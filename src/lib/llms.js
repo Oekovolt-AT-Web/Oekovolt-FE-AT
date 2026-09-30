@@ -9,8 +9,18 @@ import { NAVIGATION } from "@/data/navigation";
 import { alleArtikel, artikelPfad, KATEGORIEN } from "@/lib/ratgeber";
 import { REGIONEN } from "@/data/regionen";
 import { BASE_URL, FIRMA, SCHWESTER } from "@/lib/site";
+// Eigenes Hinweisgebersystem nur verlinken, wenn aktiv (HINWEIS_INTERN=1) – sonst leitet
+// /hinweisgebersystem auf IntegrityLine um. Siehe src/data/hinweisgeber.js.
+import { HINWEIS_INTERN } from "@/data/hinweisgeber";
+import { KENNZAHLEN_SATZ } from "@/data/kennzahlen";
 
 const link = (name, pfad, text) => `- [${name}](${BASE_URL}${pfad})${text ? `: ${text}` : ""}`;
+
+// AN-Zustand: Informationsseite und eigenes Meldesystem getrennt nennen.
+const HINWEIS_LINKS_INTERN = [
+  link("Hinweisgeberschutz (HSchG): Informationen, Fristen, externe Stelle BAK", "/hinweisgeberschutz"),
+  link("Hinweisgebersystem (HSchG, anonym möglich)", "/hinweisgebersystem"),
+].join("\n");
 
 export function kopf() {
   const gesellschafter = FIRMA.gesellschafter.map((g) => `${g.name} (${g.anteil})`).join(", ");
@@ -29,6 +39,7 @@ export function kopf() {
 - Kontakt: ${FIRMA.telefon} · ${FIRMA.email} · ${BASE_URL}
 - Einzugsgebiet: ganz Österreich (alle neun Bundesländer)
 - Unternehmensgruppe: Stammhaus der ÖKOVOLT-Gruppe ist die deutsche Schwestergesellschaft ${SCHWESTER.name}, ${SCHWESTER.ort} (seit 2010, ${SCHWESTER.register}). Sie ist Inhaberin der Marke ÖKOVOLT und der Rechte an dieser Website; die österreichische GmbH ist rechtlich selbstständig.
+- Kennzahlen (laut Ökovolt Österreich): ${KENNZAHLEN_SATZ}.
 - Einordnung: 2021 errichtete die österreichische Gesellschaft PV-Anlagen mit 30 MWp und zählte zu den drei größten IPC-Errichtern (Integrierter Photovoltaik-Contractor) Österreichs; seit 2021 ist die Salzburg AG mit 49 % beteiligt. Die Gründer betreiben seit 2012 eigene Solarparks.
 - Zitierhinweis: Unternehmensangaben bitte als „laut Ökovolt“ kennzeichnen; Registerdaten sind im österreichischen Firmenbuch und bei WKO Firmen A–Z überprüfbar.
 
@@ -78,7 +89,7 @@ ${link("RSS: alle Neuigkeiten und Fachartikel", "/rss.xml")}
 ${link("Impressum", "/impressum")}
 ${link("Datenschutz", "/datenschutz")}
 ${link("AGB", "/agb")}
-${link("Hinweisgebersystem (HSchG)", "/hinweisgeberschutz")}
+${HINWEIS_INTERN ? HINWEIS_LINKS_INTERN : link("Hinweisgebersystem (HSchG)", "/hinweisgeberschutz")}
 ${link("Sitemap (XML)", "/sitemap.xml")}
 ${link("Ausführliche Fassung für KI-Systeme", "/llms-full.txt")}
 `;

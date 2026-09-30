@@ -126,6 +126,7 @@ export const NAVIGATION = [
         items: [
           { name: "Baurecht", href: "/forderungen/baurecht", icon: "Building2", text: "Bauordnungen der Bundesländer" },
           { name: "Richtlinien & Netzanschluss", href: "/forderungen/richtlinien", icon: "FileCheck2", text: "EAG, ElWG, TOR Erzeuger, OVE" },
+          { name: "Netzanmeldung", href: "/netzanmeldung", icon: "PlugZap", text: "PV beim Netzbetreiber anmelden" },
         ],
       },
     ],
@@ -142,6 +143,7 @@ export const NAVIGATION = [
           { name: "Photovoltaik-Lexikon", href: "/wissen/lexikon", icon: "Library", text: "Fachbegriffe von A bis Z" },
           { name: "FAQs", href: "/faqs", icon: "HelpCircle", text: "Häufige Fragen, kurz beantwortet" },
           { name: "Presse & News", href: "/presse", icon: "Newspaper", text: "Newsroom, RSS & Fediverse" },
+          { name: "Mediathek", href: "/mediathek", icon: "Clapperboard", text: "Kurzvideos von Baustellen und Projekten" },
         ],
       },
       {

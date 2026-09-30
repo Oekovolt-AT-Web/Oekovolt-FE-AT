@@ -268,6 +268,7 @@ export default function TerminBuchung({ kalender = null }) {
         throw err;
       }
       setErgebnis({ referenz: d?.data?.message?.referenz || null });
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       ereignis("termin_gebucht", { art: artId });
       zu(3);
     } catch (err) {

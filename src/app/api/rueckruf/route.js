@@ -4,10 +4,14 @@ import { ipAdresse } from "@/lib/ipAdresse";
 import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
 import { herkunftAnNachricht } from "@/lib/herkunftServer";
+import { gedrosselt, leseJson } from "@/lib/api/uber-uns/anfrageWeiterleiten";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.termin.buche_termin`;
 
 export async function POST(request) {
+  const drossel = gedrosselt(request, "rueckruf");
+  if (drossel) return drossel;
+
   // Diese Frappe-Methode ist als Gast erreichbar (kein API-Key nötig) – ein
   // Authorization-Header führt hier sogar zu 401, wenn der Token nicht exakt
   // zu diesem Server passt. Deshalb bewusst ohne Auth, nur Content-Type.
@@ -18,7 +22,9 @@ export async function POST(request) {
 
   try {
     // Herkunft (Kanal, UTM, Einstieg) als Textblock an `nachricht` – buche_termin kennt kein eigenes Feld dafür
-    const body = herkunftAnNachricht(await request.json());
+    const { daten, antwort } = await leseJson(request);
+    if (antwort) return antwort;
+    const body = herkunftAnNachricht(daten);
 
     // Forward the data to the external API (no auth – guest-accessible method)
     const response = await fetch(API_URL, {

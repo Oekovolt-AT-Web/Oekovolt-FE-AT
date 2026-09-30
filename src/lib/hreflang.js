@@ -12,8 +12,14 @@
 export const BASE_DE = "https://www.oekovolt.de";
 export const BASE_COM = "https://www.oekovolt.com";
 
-// Pfade, die auf .de UND .com identisch existieren (alle 2026-09-11 mit
-// HTTP 200 gegen www.oekovolt.com verifiziert).
+// Pfade, die auf .de UND .com identisch existieren. Geprüft am 2026-09-30:
+// jeder Pfad liefert im neuen .com-Code HTTP 200 auch OHNE Backoffice-API
+// (statische Seite bzw. statischer Partner-Fallback) und auf www.oekovolt.de
+// HTTP 200. Entfernt: /produkte/stromspeicher/solis und
+// /produkte/warmepumpe/fronius (auf .com ohne Backoffice 404, per 301 auf die
+// Übersicht umgeleitet, siehe next.config.mjs).
+// oekovolt.de muss die Gegenrichtung spiegeln (gleiche Liste, de-AT nur für
+// diese Pfade) – sonst sind die Annotationen nicht bidirektional.
 export const SHARED_PATHS = new Set([
   "/",
   "/dienstleistungen/photovoltaik",
@@ -43,11 +49,11 @@ export const SHARED_PATHS = new Set([
   "/faqs",
   // Impressum, Datenschutz und AGB bewusst NICHT: verschiedene Gesellschaften
   // (DE: ÖKOVOLT GmbH Solartechnik, AT: Ökovolt Solartechnik GmbH).
-  // Hersteller-Detailseiten
-  "/produkte/stromspeicher/solis",
+  // Hersteller-Detailseiten: nur statisch abgesicherte Speicher-Partner
+  // (src/components/Hersteller/partner.js). /produkte/stromspeicher/sigenergy
+  // fehlt bewusst – auf .de 404.
   "/produkte/stromspeicher/byd",
   "/produkte/stromspeicher/huawei",
-  "/produkte/warmepumpe/fronius",
 ]);
 
 /**

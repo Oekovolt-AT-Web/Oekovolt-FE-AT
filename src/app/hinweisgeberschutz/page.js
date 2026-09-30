@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ExternalLink, EyeOff, FileLock2, Gavel, Landmark, Scale, ShieldCheck, Timer, UserCheck } from "lucide-react";
+import { ExternalLink, EyeOff, FileLock2, Gavel, KeyRound, Landmark, Scale, ShieldCheck, Timer, UserCheck } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -10,7 +10,21 @@ import Faq from "@/components/ui/Faq";
 import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
-import { BAK, FAQ_INFO, INTEGRITYLINE_URL, RECHTSBEREICHE, WEITERE_EXTERNE_STELLEN } from "@/data/hinweisgeber";
+import {
+  BAK,
+  DATENSCHUTZ,
+  FAQ_INFO,
+  HINWEIS_INTERN,
+  MELDEKANAL_EXTERN,
+  MELDEKANAL_LABEL,
+  MELDEKANAL_URL,
+  RECHTSBEREICHE,
+  WEITERE_EXTERNE_STELLEN,
+} from "@/data/hinweisgeber";
+
+// Server-Komponente, statisch erzeugt: Der Schalter HINWEIS_INTERN (src/data/hinweisgeber.js)
+// wird zur BUILD-Zeit ausgewertet. AUS = IntegrityLine als Meldekanal (wie bisher),
+// AN = eigenes Hinweisgebersystem unter /hinweisgebersystem.
 
 const PAGE_URL = `${BASE_URL}/hinweisgeberschutz`;
 const TITEL = "Hinweisgeberschutz nach HSchG | Ökovolt";
@@ -49,13 +63,20 @@ const schema = {
 };
 
 const ABLAUF_INFO = [
-  {
-    title: "Portal öffnen",
-    text: "Über oekovolt.integrityline.com erreichen Sie unseren internen Meldekanal – rund um die Uhr, verschlüsselt, ohne Registrierung.",
-  },
+  HINWEIS_INTERN
+    ? {
+        title: "Formular öffnen",
+        text: "Unter www.oekovolt.com/hinweisgebersystem erreichen Sie unser eigenes Hinweisgebersystem – rund um die Uhr, verschlüsselt übertragen, ohne Registrierung.",
+      }
+    : {
+        title: "Portal öffnen",
+        text: "Über oekovolt.integrityline.com erreichen Sie unseren internen Meldekanal – rund um die Uhr, verschlüsselt, ohne Registrierung.",
+      },
   {
     title: "Hinweis schildern",
-    text: "Beschreiben Sie den Sachverhalt so konkret wie möglich. Angaben zu Ihrer Person sind freiwillig; Sie erhalten Zugang zu einem geschützten Postfach.",
+    text: HINWEIS_INTERN
+      ? "Beschreiben Sie den Sachverhalt so konkret wie möglich. Angaben zu Ihrer Person sind freiwillig; Sie erhalten eine Fall-Nummer und einen Zugangsschlüssel für Ihr geschütztes Postfach."
+      : "Beschreiben Sie den Sachverhalt so konkret wie möglich. Angaben zu Ihrer Person sind freiwillig; Sie erhalten Zugang zu einem geschützten Postfach.",
   },
   {
     title: "Eingangsbestätigung",
@@ -67,7 +88,9 @@ const ABLAUF_INFO = [
   },
 ];
 
-const DATENSCHUTZ_INFO = [
+// Datenschutzhinweise für den Meldekanal IntegrityLine (AUS-Zustand). Im AN-Zustand gilt stattdessen
+// DATENSCHUTZ aus src/data/hinweisgeber.js (eigenes System, eigenes Backoffice, kein externer Portalbetreiber).
+const DATENSCHUTZ_INTEGRITYLINE = [
   {
     titel: "Verantwortlicher",
     text: `${FIRMA.name}, ${FIRMA.strasse}, ${FIRMA.plz} ${FIRMA.ort}, E-Mail ${FIRMA.email}. Fragen zum Datenschutz im Zusammenhang mit einem Hinweis können Sie vertraulich auch über das Postfach im Hinweisgeberportal stellen.`,
@@ -98,6 +121,29 @@ const DATENSCHUTZ_INFO = [
   },
 ];
 
+/** Einheitliche Form { titel, text: string[] } für beide Zustände. */
+const DATENSCHUTZ_INFO = (HINWEIS_INTERN ? DATENSCHUTZ : DATENSCHUTZ_INTEGRITYLINE).map((a) => ({
+  titel: a.titel,
+  text: Array.isArray(a.text) ? a.text : [a.text],
+}));
+
+/** Link auf den Meldekanal: extern (IntegrityLine) im neuen Tab, intern (eigenes System) per next/link. */
+function MeldekanalLink({ children, className }) {
+  if (!MELDEKANAL_EXTERN) {
+    return (
+      <Link href={MELDEKANAL_URL} className={className}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <a href={MELDEKANAL_URL} target="_blank" rel="noopener noreferrer" className={className}>
+      {children}
+      <span className="sr-only"> (öffnet in neuem Tab)</span>
+    </a>
+  );
+}
+
 export default function HinweisgeberschutzPage() {
   return (
     <div>
@@ -112,10 +158,12 @@ export default function HinweisgeberschutzPage() {
             Missstände melden – <span className="ov-text-gradient-light">vertraulich und geschützt.</span>
           </>
         }
-        lead={`Ihr Hinweis hilft uns, Rechtsverstöße aufzudecken und abzustellen. Über unser Hinweisgeberportal erreichen Sie direkt die interne Stelle der ${FIRMA.name} – auf Wunsch vollständig anonym.`}
+        lead={`Ihr Hinweis hilft uns, Rechtsverstöße aufzudecken und abzustellen. Über unser ${HINWEIS_INTERN ? "Hinweisgebersystem" : "Hinweisgeberportal"} erreichen Sie direkt die interne Stelle der ${FIRMA.name} – auf Wunsch vollständig anonym.`}
         points={["Anonym möglich", "Eingangsbestätigung binnen 7 Tagen", "Rückmeldung binnen 3 Monaten", "Schutz vor Vergeltung"]}
         actions={[
-          { label: "Hinweis abgeben", href: INTEGRITYLINE_URL, icon: ExternalLink },
+          HINWEIS_INTERN
+            ? { label: "Hinweis abgeben", href: `${MELDEKANAL_URL}#meldung` }
+            : { label: "Hinweis abgeben", href: MELDEKANAL_URL, icon: ExternalLink },
           { label: "Externe Stelle (BAK)", href: "#extern" },
         ]}
       />
@@ -124,18 +172,42 @@ export default function HinweisgeberschutzPage() {
         <SectionHeading
           eyebrow="Interner Meldekanal"
           title="So geben Sie einen Hinweis ab"
-          lead="Unser interner Meldekanal ist ein webbasiertes Hinweisgeberportal. Es ist unabhängig von unseren übrigen IT-Systemen und ermöglicht schriftliche Hinweise und die Kommunikation über ein geschütztes Postfach – auf Wunsch ohne Angabe Ihrer Identität."
+          lead={
+            HINWEIS_INTERN
+              ? "Unser interner Meldekanal ist ein eigenes, webbasiertes Hinweisgebersystem. Meldungen werden verschlüsselt übertragen und in unserem eigenen Backoffice gespeichert, auf das nur die interne Stelle Zugriff hat. Es ermöglicht schriftliche Hinweise und die Kommunikation über ein geschütztes Postfach – auf Wunsch ohne Angabe Ihrer Identität."
+              : "Unser interner Meldekanal ist ein webbasiertes Hinweisgeberportal. Es ist unabhängig von unseren übrigen IT-Systemen und ermöglicht schriftliche Hinweise und die Kommunikation über ein geschütztes Postfach – auf Wunsch ohne Angabe Ihrer Identität."
+          }
           className="mb-14"
         />
         <Steps items={ABLAUF_INFO} />
         <div className="mt-12 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-          <Button href={INTEGRITYLINE_URL} size="lg" pfeil>
-            Zum Hinweisgeberportal
-            <span className="sr-only"> (öffnet in neuem Tab)</span>
-          </Button>
+          {HINWEIS_INTERN ? (
+            <>
+              <Button href={`${MELDEKANAL_URL}#meldung`} size="lg" pfeil>
+                Zum Hinweisgebersystem
+              </Button>
+              <Button href={`${MELDEKANAL_URL}/postfach`} size="lg" variant="secondary" icon={KeyRound}>
+                Zum Postfach
+              </Button>
+            </>
+          ) : (
+            <Button href={MELDEKANAL_URL} size="lg" pfeil>
+              Zum Hinweisgeberportal
+              <span className="sr-only"> (öffnet in neuem Tab)</span>
+            </Button>
+          )}
           <p className="text-[14.5px] leading-relaxed text-ink-600">
-            Auf Wunsch ist auch eine persönliche Besprechung mit der internen Stelle möglich – vermerken Sie dies bitte in
-            Ihrem Hinweis.
+            {HINWEIS_INTERN ? (
+              <>
+                Hinweise sind auch per Post oder mündlich im persönlichen Gespräch nach Terminvereinbarung möglich – siehe{" "}
+                <Link href={`${MELDEKANAL_URL}#meldewege`} className="font-medium text-ov-700 underline">
+                  weitere Meldewege
+                </Link>
+                .
+              </>
+            ) : (
+              "Auf Wunsch ist auch eine persönliche Besprechung mit der internen Stelle möglich – vermerken Sie dies bitte in Ihrem Hinweis."
+            )}
           </p>
         </div>
       </Section>
@@ -275,13 +347,12 @@ export default function HinweisgeberschutzPage() {
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Hinweisgeberschutz bei Ökovolt" />
             <Reveal delay={100} className="mt-8 rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60">
-              <p className="font-display text-[17px] font-bold text-ink-900">Direkt zum Portal</p>
+              <p className="font-display text-[17px] font-bold text-ink-900">
+                {HINWEIS_INTERN ? "Direkt zum Hinweisgebersystem" : "Direkt zum Portal"}
+              </p>
               <p className="mt-2 text-[14.5px] leading-relaxed text-ink-600">
                 Ihr Hinweis erreicht über{" "}
-                <a href={INTEGRITYLINE_URL} target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline">
-                  oekovolt.integrityline.com
-                  <span className="sr-only"> (öffnet in neuem Tab)</span>
-                </a>{" "}
+                <MeldekanalLink className="font-medium text-ov-700 underline">{MELDEKANAL_LABEL}</MeldekanalLink>{" "}
                 ausschließlich die mit der Bearbeitung betrauten, zur Vertraulichkeit verpflichteten Personen der internen
                 Stelle.
               </p>
@@ -306,7 +377,11 @@ export default function HinweisgeberschutzPage() {
                   <span className="mr-2 text-ov-600">{String(i + 1).padStart(2, "0")}</span>
                   {a.titel}
                 </h3>
-                <p className="mt-3 text-[15.5px] leading-relaxed text-ink-600">{a.text}</p>
+                <div className="mt-3 space-y-3 text-[15.5px] leading-relaxed text-ink-600">
+                  {a.text.map((t, j) => (
+                    <p key={j}>{t}</p>
+                  ))}
+                </div>
               </section>
             ))}
           </div>

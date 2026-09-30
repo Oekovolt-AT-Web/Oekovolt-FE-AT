@@ -1,0 +1,32 @@
+{
+ "actions": [],
+ "creation": "2026-09-30 08:00:00.000000",
+ "description": "Buchbares Zeitfenster je Terminart und Wochentag (Wiener Ortszeit).",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "terminart",
+  "wochentag",
+  "beginn",
+  "ende"
+ ],
+ "fields": [
+  { "fieldname": "terminart", "fieldtype": "Select", "label": "Terminart", "options": "Alle\nTelefonische Beratung\nVideo-Beratung\nVor-Ort-Termin", "default": "Alle", "reqd": 1, "in_list_view": 1, "columns": 3 },
+  { "fieldname": "wochentag", "fieldtype": "Select", "label": "Wochentag", "options": "Montag\nDienstag\nMittwoch\nDonnerstag\nFreitag\nSamstag\nSonntag", "reqd": 1, "in_list_view": 1, "columns": 3 },
+  { "fieldname": "beginn", "fieldtype": "Time", "label": "Beginn", "reqd": 1, "in_list_view": 1, "columns": 2 },
+  { "fieldname": "ende", "fieldtype": "Time", "label": "Ende", "reqd": 1, "in_list_view": 1, "columns": 2, "description": "Der Termin muss vor diesem Zeitpunkt enden." }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-30 08:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Termin Zeitfenster",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -10,11 +10,14 @@ import Section from "@/components/ui/Section";
 import SectionHeading, { Eyebrow } from "@/components/ui/SectionHeading";
 import FolgenBox from "@/components/Kanaele/FolgenBox";
 import MeldungKarte from "@/components/Kanaele/MeldungKarte";
+import ReelsAbschnitt from "@/components/Reels/ReelsAbschnitt";
 import Kopieren from "./Kopieren";
 import { actorId } from "@/lib/kanaele/activitypub";
 import { KATEGORIEN, BASE_URL, veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
 import { alleArtikel, artikelPfad, datumLang } from "@/lib/ratgeber";
 import { FIRMA, SCHWESTER } from "@/lib/site";
+import { KENNZAHLEN } from "@/data/kennzahlen";
+import PresseKontakt from "@/components/Presse/PresseKontakt";
 
 export const revalidate = 300;
 
@@ -40,12 +43,10 @@ export const metadata = {
 // Kurzprofil für Redaktionen – nur verifizierte Angaben (docs/AT-BRIEFING.md, src/lib/site.js)
 const BOILERPLATE = `Die ${FIRMA.name} mit Sitz in ${FIRMA.ort} (${FIRMA.bundesland}) plant, errichtet und betreut seit ${FIRMA.gegruendet} Photovoltaikanlagen in ganz Österreich – für Gewerbe und Industrie, Landwirtschaft, Gemeinden und Energieversorger. Das Elektrotechnik-Unternehmen entwickelt eigene Parkregler (EZA-Regler), Fernwartungs- und SCADA-Systeme. Gesellschafter sind Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %). Die deutsche Schwestergesellschaft ${SCHWESTER.name} (${SCHWESTER.ort}) ist seit 2010 am Markt.`;
 
-// Zahlen für Redaktionen (Stand 09/2026, siehe Unternehmensseite)
+// Zahlen für Redaktionen – Gesamtzahlen zentral aus src/data/kennzahlen.js (Angabe Ökovolt Österreich)
 const FAKTEN = [
+  ...KENNZAHLEN.map((k) => ({ wert: k.zahl, suffix: k.suffix, text: k.label })),
   { wert: "2012", text: "gegründet in Ostermiething, Oberösterreich" },
-  { wert: 30, suffix: " MWp", text: "PV-Leistung errichtet allein im Jahr 2021" },
-  { wert: 9, text: "Bundesländer – Projekte in ganz Österreich" },
-  { wert: 49, suffix: " %", text: "Beteiligung der Salzburg AG als Gesellschafterin" },
 ];
 
 // Themen, zu denen die Redaktion Hintergrund liefert – mit passendem Fachartikel
@@ -147,6 +148,9 @@ export default async function PressePage({ searchParams }) {
           </div>
         </div>
       </section>
+
+      {/* ---------- Facebook-Reels (erst nach Einwilligung) ---------- */}
+      <ReelsAbschnitt tone="white" space="md" presseLink={false} />
 
       {/* ---------- Meldungen ---------- */}
       <Section tone="sand" space="lg">
@@ -282,6 +286,9 @@ export default async function PressePage({ searchParams }) {
             lead="Sie berichten über Photovoltaik in Betrieben, Agri-PV, Energiegemeinschaften, die Energiewende in Gemeinden oder über ein Projekt von uns? Wir liefern Zahlen, Bilder und Ansprechpartner – schnell und unkompliziert."
           />
           <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <PresseKontakt />
+            </div>
             <a href={`mailto:${FIRMA.email}?subject=Presseanfrage`} className="group ov-card-hover flex flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-300">
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
                 <Mail aria-hidden="true" className="h-5 w-5" />

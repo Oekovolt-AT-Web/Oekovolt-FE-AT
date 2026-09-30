@@ -147,7 +147,7 @@ export default function SolaranlageKostenPage() {
         inLanguage: "de-AT",
         datePublished: artikel.veroeffentlicht,
         dateModified: artikel.aktualisiert,
-        author: { "@type": "Organization", name: "Ökovolt-Redaktion Österreich", "@id": `${BASE_URL}/#organization` },
+        author: { "@id": `${BASE_URL}/#organization` },
         publisher: { "@id": `${BASE_URL}/#organization` },
         mainEntityOfPage: { "@type": "WebPage", "@id": PAGE_URL },
         image: `${BASE_URL}${artikel.bild}`,

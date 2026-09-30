@@ -4,7 +4,7 @@
 // GmbH, Ostermiething). Registerwerte ausschließlich aus @/lib/site, Geschichte
 // und Gruppenstruktur aus @/data/unternehmen.
 //
-// Rhythmus: Hero (Salzach) → Kennzahlen → Foto-Bento „Was wir machen“ →
+// Rhythmus: Hero (Salzach) → Eigene Mannschaft (#mannschaft) → Kennzahlen → Foto-Bento „Was wir machen“ →
 // Zeitreise (scroll-gebunden, dunkel) → Gesellschafter (Ring) → Organigramm →
 // Haltung (Fotoband) → Einzugsgebiet (Karte) → Register (Akkordeon) →
 // Gemeinsam (Fotokacheln) → FAQ → Querverweise → CtaBand.
@@ -28,6 +28,7 @@ import Organigramm from "@/components/Team/Organigramm";
 import Einzugsgebiet from "@/components/Team/Einzugsgebiet";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import FotoKachel from "@/components/Team/FotoKachel";
+import MannschaftSektion from "@/components/Mannschaft/MannschaftSektion";
 import { BETEILIGUNGEN, CLAIM, GESELLSCHAFTEN, HALTUNG, PROFIL, ROLLEN_AT, SALZBURG_AG, STAND, URSPRUNG } from "@/data/unternehmen";
 import { BASE_URL, FIRMA, SCHWESTER, SITE_NAME, SOLENSA } from "@/lib/site";
 
@@ -163,6 +164,9 @@ export default function UberUnsPage() {
           { label: "Unsere Geschichte", href: "#geschichte", icon: CalendarCheck2 },
         ]}
       />
+
+      {/* Eigene Mannschaft, eigener Maschinenpark (#mannschaft) – Inhalte/Quellen: src/data/mannschaft.js */}
+      <MannschaftSektion />
 
       {/* Auf einen Blick + Kennzahlen */}
       <Section tone="white" space="lg">

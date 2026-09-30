@@ -415,6 +415,7 @@ export default function Konfigurator() {
     try {
       await submitAnfrage(basis);
       setStatus("ok");
+      import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
       ereignis("angebot_angefragt", { kwp: schaetzung.kwp, objekt: f.objekt });
       try {
         localStorage.removeItem(SPEICHER_KEY);

@@ -127,17 +127,22 @@ export async function leseJson(request) {
 const ZUGRIFFE = new Map();
 const FENSTER_MS = 10 * 60 * 1000;
 const MAX_JE_FENSTER = 5;
+const MAX_OHNE_IP = 60;
 
 /**
  * Einfache Drosselung je IP und Formular (pro Server-Instanz). Kein Ersatz für
  * einen Schutz am Backend, verhindert aber Formular-Fluten aus einer Quelle.
  */
 export function gedrosselt(request, formular) {
-  const ip = ipAdresse(request) || "unbekannt";
-  const schluessel = `${formular}:${ip}`;
+  const ip = ipAdresse(request);
+  // Ohne ermittelbare IP (Proxy liefert keinen Header) teilen sich alle Besucher einen
+  // Zähler – dort mit großzügigem Limit, damit echte Anfragen nicht blockiert werden,
+  // eine Formular-Flut aber trotzdem gebremst wird. Proxy beim Deploy prüfen (R-18).
+  const schluessel = `${formular}:${ip || "unbekannt"}`;
+  const limit = ip ? MAX_JE_FENSTER : MAX_OHNE_IP;
   const jetzt = Date.now();
   const liste = (ZUGRIFFE.get(schluessel) || []).filter((t) => jetzt - t < FENSTER_MS);
-  if (liste.length >= MAX_JE_FENSTER) {
+  if (liste.length >= limit) {
     ZUGRIFFE.set(schluessel, liste);
     return NextResponse.json(
       { error: "Zu viele Anfragen in kurzer Zeit – bitte versuchen Sie es in einigen Minuten erneut.", code: "zu_viele" },

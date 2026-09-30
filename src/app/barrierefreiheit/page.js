@@ -1,6 +1,9 @@
 import Link from "next/link";
 import LegalShell from "@/components/Reusable/LegalShell";
 import { BASE_URL, FIRMA, SITE_NAME, LOCALE } from "@/lib/site";
+// Eigenes Hinweisgebersystem (HINWEIS_INTERN=1) gehört zum Geltungsbereich; sonst ist das externe
+// Hinweisgeberportal (IntegrityLine) ein Dienst Dritter. Build-Zeit, siehe src/data/hinweisgeber.js.
+import { HINWEIS_INTERN } from "@/data/hinweisgeber";
 
 const PAGE_URL = `${BASE_URL}/barrierefreiheit`;
 const TITEL = "Erklärung zur Barrierefreiheit | Ökovolt";
@@ -51,6 +54,7 @@ export default function BarrierefreiheitPage() {
           <li>Rechner und Werkzeuge (u. a. Solarrechner, Standort-Check, Stromspeicher- und Finanzierungsrechner, Förder-Check)</li>
           <li>Rückruf-Service und Online-Terminbuchung</li>
           <li>Kontaktformular, Partner-Registrierung, Sponsoring-Anfrage, Einreichung zum PV Award und Kurzbewerbung</li>
+          {HINWEIS_INTERN && <li>Hinweisgebersystem nach dem HinweisgeberInnenschutzgesetz (Meldeformular und Postfach)</li>}
         </ul>
       </>
 
@@ -130,7 +134,7 @@ export default function BarrierefreiheitPage() {
           </li>
           <li>
             <strong>Inhalte und Dienste Dritter</strong> (z. B. Energiemarktdaten, verlinkte Profile in sozialen Netzwerken,
-            Telefonie-Dienstleister, das externe Hinweisgeberportal, eHORA): Auf deren Barrierefreiheit haben wir nur
+            Telefonie-Dienstleister, {HINWEIS_INTERN ? "" : "das externe Hinweisgeberportal, "}eHORA): Auf deren Barrierefreiheit haben wir nur
             begrenzt Einfluss.
           </li>
           <li>

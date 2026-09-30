@@ -1,0 +1,83 @@
+# Umgebungsvariablen der Next.js-Website www.oekovolt.com (Hosting / .env.local) – NICHT für Frappe.
+# Vollständig abgeglichen mit `grep -r "process.env." src/` (Stand 30.09.2026) plus HEATMAP_TOKEN (Heatmap).
+# Nach Änderungen neu deployen. NEXT_PUBLIC_* wird beim Build eingebettet → Änderung erfordert neuen Build.
+# Keys/Secrets kommen von den API-Usern im AT-Backoffice (Desk → User → API Access → Generate Keys).
+
+# ─────────────────────────────── Backoffice (Frappe)
+# Basis-URL des AT-Backoffice, OHNE abschließenden Schrägstrich.
+# Die Website ruft ${SERVER}/api/method/… auf und lädt Bilder über ${SERVER}/files/… (via /api/image).
+SERVER=https://backoffice.oekovolt.com
+
+# API-User website-api@oekovolt.com (Rolle „Website API“, kein Desk-Zugriff).
+# Projekte/Referenzen, Kontakt, Angebot, Kalender, Solarrechner-PDF, Stromspeicher-/Wärmepumpen-Seite,
+# Hersteller, Heatmap (erfassen/auswertung). Zugleich Rückfall für KONTAKT_/KANAL_/HINWEIS_* (nicht empfohlen).
+API_KEY=
+API_SECRET=
+
+# API-User kontakt-web@oekovolt.com (Rolle „Kontakt Webformular“).
+# Nur Solar-Lead-Methoden (Foto-Upload per QR, Fortsetzen-Link). Rückruf/Termin laufen ohne Token
+# (buche_termin = Gast) bzw. über API_KEY – die alte Angabe „deckt Rückruf/Termin/PDF ab“ gilt für AT nicht.
+KONTAKT_API_KEY=
+KONTAKT_API_SECRET=
+
+# API-User hinweis-web@oekovolt.com (Rolle „Hinweis Webformular“) – nur bei eigenem Hinweisgebersystem.
+HINWEIS_API_KEY=
+HINWEIS_API_SECRET=
+# Zentraler Schalter Hinweisgebersystem (src/data/hinweisgeber.js):
+#   leer/0 (Standard) = IntegrityLine bleibt Meldekanal; /hinweisgebersystem leitet dorthin um (307), /api/hinweis* → 503.
+#   1               = eigenes Hinweisgebersystem über Frappe (DocType „Hinweis“): kein Redirect, Links, Sitemap,
+#                     llms.txt, Datenschutz- und Barrierefreiheitstexte zeigen auf /hinweisgebersystem.
+# ERST AUF 1 SETZEN, WENN DIE GO-LIVE-CHECKLISTE ERFÜLLT IST: docs/frappe-hinweisgebersystem/GO-LIVE-AT.md
+# Wirkt auf Seiten/Redirects erst nach neuem Build (Build-Zeit!) – danach neu starten. Rückfall: leeren, neu bauen.
+# Monitoring (nur bei 1): https://www.oekovolt.com/api/hinweis/health → 200
+HINWEIS_INTERN=
+
+# API-User kanal-web@oekovolt.com (Rolle „Kanal Webservice“) – Newsroom /presse, RSS, /tv, Push, Fediverse.
+KANAL_API_KEY=
+KANAL_API_SECRET=
+# Gemeinsames Geheimnis für den Webhook Frappe → Website (Header X-Kanal-Secret);
+# gleicher Wert wie oekovolt_kanal_secret in der Frappe-site_config.
+KANAL_WEBHOOK_SECRET=
+# Nur Entwicklung: 1 = Demo-Beiträge ohne Backoffice (wirkt nie mit NODE_ENV=production).
+KANAL_DEMO=
+# Optional: Bearer-Token für den Cron-Aufruf GET /api/kanaele/verteilen (Sicherheitsnetz zum Webhook).
+CRON_SECRET=
+
+# ─────────────────────────────── Heatmap
+# Token für die visuelle Ansicht https://www.oekovolt.com<pfad>?heatmap=<TOKEN>&geraet=<geraet>.
+# Gleicher Wert wie oekovolt_heatmap_token in der Frappe-site_config. Erzeugen: openssl rand -hex 24
+HEATMAP_TOKEN=
+
+# ─────────────────────────────── Fediverse & Web-Push
+# Einmalig erzeugen mit:  node scripts/ap-schluessel.mjs   – danach NIE mehr ändern
+# (sonst verlieren Follower bzw. Push-Abos die Verbindung).
+AP_PUBLIC_KEY=
+AP_PRIVATE_KEY=
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=
+# Kontakt für Push-Dienste, z. B. mailto:office@oekovolt.com (Standard, wenn leer)
+VAPID_SUBJECT=mailto:office@oekovolt.com
+
+# ─────────────────────────────── CloudTalk (automatischer Sofort-Rückruf, optional)
+CLOUDTALK_KEY_ID=
+CLOUDTALK_KEY_SECRET=
+# Komma-Liste der Agent-IDs, z. B. 12345,23456 (Reihenfolge = Priorität)
+CLOUDTALK_AGENT_IDS=
+
+# ─────────────────────────────── Statistik
+# Umami (cookielos, selbst gehostet) – eigene Instanz/Website-ID für Österreich. Beide leer = aus.
+UMAMI_SCRIPT_URL=https://statistik.oekovolt.com/script.js
+UMAMI_WEBSITE_ID=
+# Google Analytics 4 – EIGENE Mess-ID für oekovolt.com (nicht die der DE-Seite). Leer = aus.
+# Wird erst nach Einwilligung geladen. Build-Zeit-Variable.
+NEXT_PUBLIC_GA_ID=
+
+# ─────────────────────────────── Sonstiges
+# Erlaubte Herkunft (Origin/Referer) für den Bild-Proxy /api/image. Leer = https://www.oekovolt.com.
+# Nur für lokale Entwicklung/Vorschau setzen, z. B. http://localhost:3000
+ALLOWED_LOCAL=
+
+# Nicht setzen – vom System vorgegeben bzw. nur lokal:
+#   NODE_ENV       (Next.js setzt production/development)
+#   NEXT_PHASE     (Next.js, erkennt den Produktions-Build)
+#   NEXT_DIST_DIR  (next.config.mjs; nur für einen parallelen lokalen Prüf-Build, z. B. .next-verify)

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaFacebookF, FaLinkedinIn } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 
 import CookieBanner from "../Cookies/cookiecomponent";
@@ -14,6 +14,7 @@ import { FIRMA, SCHWESTER } from "@/lib/site";
 const SOCIAL = [
   { href: FIRMA.social.linkedin, label: "LinkedIn", Icon: FaLinkedinIn },
   { href: FIRMA.social.facebook, label: "Facebook", Icon: FaFacebookF },
+  { href: FIRMA.social.instagram, label: "Instagram", Icon: FaInstagram },
 ];
 
 // Spalten aus der zentralen Navigation ableiten
