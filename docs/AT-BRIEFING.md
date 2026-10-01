@@ -40,7 +40,7 @@ FN, UID, GISA, Gesellschafter …), `SCHWESTER` (deutsche Schwester, Markeninhab
 - Gruppe: Muttergesellschaft ÖKOVOLT GmbH Solartechnik, Türkheim (DE, seit 2010) – dort liegen
   Standards, Technik und **Marken-/Websiterechte**. AT-Schwester seit 2012, mit denselben Prozessen.
   2021 errichtete die AT-Gesellschaft PV-Anlagen mit 30 MWp und zählte zu den TOP 3 der
-  IPC-Errichter Österreichs; bevorzugter PV-Errichter des Salzburg AG Konzerns. Beteiligung an der
+  EPC-Errichter Österreichs; bevorzugter PV-Errichter des Salzburg AG Konzerns. Beteiligung an der
   ÖkoInvest GmbH (22,60 %; Freifläche, Agri-PV, Contracting, PPA). Gründer betreiben eigene
   Solarparks seit 2012 → „Wir bauen, was wir selbst betreiben würden.“
 - Eigene Systeme: **Parkregler (EZA-Regler für Österreich)**, **eigene Fernwartungssysteme**,

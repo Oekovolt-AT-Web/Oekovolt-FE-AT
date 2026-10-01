@@ -54,7 +54,7 @@ Den ganzen Ordner `Import-Frappe` auf den Server kopieren (z. B. WinSCP oder `sc
 
 ```bash
 cd ~/Import-Frappe
-SITE=backoffice.oekovolt.de BENCH=/home/frappe/frappe-bench bash 3_installieren.sh
+SITE=backoffice.oekovolt.com BENCH=/home/frappe/frappe-bench bash 3_installieren.sh
 ```
 
 Das Skript kopiert `doctype/` und `report/` in die App, installiert `anthropic` und `pillow-heif`, führt `bench migrate` aus und startet neu.
@@ -72,7 +72,7 @@ Pfad oder Site-Name anders? Einfach `SITE` / `BENCH` anpassen.
 
 ### Schritt 4 – Site-Konfiguration (`4_site_config.sh`)
 
-Platzhalter `<…>` ersetzen, dann im `frappe-bench`-Ordner: `SITE=backoffice.oekovolt.de bash ~/Import-Frappe/4_site_config.sh`
+Platzhalter `<…>` ersetzen, dann im `frappe-bench`-Ordner: `SITE=backoffice.oekovolt.com bash ~/Import-Frappe/4_site_config.sh`
 
 | Schlüssel | Wofür |
 |---|---|
@@ -109,11 +109,11 @@ Die Keys aus Schritt 5 und die übrigen Werte in die Hosting-Umgebung der Next.j
 
 ```bash
 # Muss 403 liefern (Web-User darf nicht lesen):
-curl "https://backoffice.oekovolt.de/api/resource/Hinweis"         -H "Authorization: token KEY:SECRET"
-curl "https://backoffice.oekovolt.de/api/resource/Beratungstermin" -H "Authorization: token KEY:SECRET"
+curl "https://backoffice.oekovolt.com/api/resource/Hinweis"         -H "Authorization: token KEY:SECRET"
+curl "https://backoffice.oekovolt.com/api/resource/Beratungstermin" -H "Authorization: token KEY:SECRET"
 
 # Muss freie/belegte Zeiten liefern:
-curl -X POST "https://backoffice.oekovolt.de/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.beratungstermin.api.belegte_zeiten" \
+curl -X POST "https://backoffice.oekovolt.com/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.beratungstermin.api.belegte_zeiten" \
   -H "Authorization: token KEY:SECRET" -H "Content-Type: application/json" -d '{"art":"video"}'
 ```
 

@@ -1,5 +1,25 @@
 import QRCode from "qrcode";
+import { SCHAURAUM_FOLIEN } from "@/data/tvSchauraum";
+import { BASE_URL } from "@/lib/site";
 import { veroeffentlichungen } from "./veroeffentlichungen";
+
+const qrSvg = (ziel) => QRCode.toString(ziel, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#03122b", light: "#ffffff" } });
+
+/**
+ * Feste Werbefolien für den Schauraum (src/data/tvSchauraum.js) mit QR-Code.
+ * Der QR-Link trägt UTM-Parameter, damit Anfragen aus dem Schauraum in der Herkunftsstatistik erscheinen;
+ * angezeigt wird die kurze Adresse ohne Parameter.
+ */
+export async function tvSchauraumFolien() {
+  return Promise.all(
+    SCHAURAUM_FOLIEN.map(async (f) => {
+      if (!f.qr) return f;
+      const url = `${BASE_URL}${f.qr}`;
+      const ziel = `${url}?utm_source=schauraum&utm_medium=tv-qr&utm_campaign=${f.id}`;
+      return { ...f, url, qrSvg: await qrSvg(ziel) };
+    })
+  );
+}
 
 /**
  * Einträge für Info-Bildschirme (SCADA, Empfang, Kunden-TV):
@@ -17,7 +37,7 @@ export async function tvEintraege({ standort = "", limit = 20 } = {}) {
   return Promise.all(
     passend.map(async (e) => {
       const ziel = e.tv.qrLink || e.url;
-      const qr = await QRCode.toString(ziel, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#03122b", light: "#ffffff" } });
+      const qr = await qrSvg(ziel);
       return {
         id: e.slug,
         titel: e.titel,

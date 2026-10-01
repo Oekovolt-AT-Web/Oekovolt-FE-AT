@@ -100,7 +100,7 @@ const LAENDER = [
 const KENNZAHLEN = [
   { value: "2012", label: "in Österreich eingetragen", text: `${FIRMA.firmenbuch} · ${FIRMA.firmenbuchgericht}` },
   { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "PV-Leistung in einem Jahr" },
-  { value: 3, prefix: "TOP ", label: "IPC-Errichter Österreichs", text: "Stand 2021" },
+  { value: 3, prefix: "TOP ", label: "EPC-Errichter Österreichs", text: "Stand 2021" },
   { value: 9, label: "Bundesländer", text: "Einzugsgebiet: ganz Österreich" },
 ];
 

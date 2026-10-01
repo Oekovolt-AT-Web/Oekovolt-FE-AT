@@ -78,7 +78,7 @@ Die Meldestelle legt solche Fälle im Desk selbst an: **Hinweis → Neu**, Einga
 
 ## 5. Sicherheit – Checkliste vor Go-live
 
-- [ ] HTTPS durchgängig. `backoffice.oekovolt.de` nur über TLS erreichbar.
+- [ ] HTTPS durchgängig. `backoffice.oekovolt.com` nur über TLS erreichbar.
 - [ ] Datenbank-Backups verschlüsselt, Zugriff auf Backups dokumentiert (Backups enthalten Meldungen).
 - [ ] Access-Logs des Website-Hostings für `/api/hinweis*` deaktivieren oder IP-anonymisieren.
 - [ ] In Frappe `Error Log`/`Request Log` prüfen: Durch die API landen keine Inhalte darin. Trotzdem Zugriff auf Log-DocTypes einschränken.
@@ -92,7 +92,7 @@ Die Meldestelle legt solche Fälle im Desk selbst an: **Hinweis → Neu**, Einga
 
 ```bash
 # Meldung anlegen (mit dem Web-User)
-curl -X POST "https://backoffice.oekovolt.de/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.hinweis.api.create_hinweis" \
+curl -X POST "https://backoffice.oekovolt.com/api/method/oekovoltdeutchland.oekovoltdeutchland.doctype.hinweis.api.create_hinweis" \
   -H "Authorization: token KEY:SECRET" -H "Content-Type: application/json" \
   -d '{"kategorie":"Sonstiges","betreff":"Testmeldung","beschreibung":"Dies ist eine technische Testmeldung mit ausreichend Text.","anonym":1}'
 # -> {"message":{"referenz":"HW-XXXX-XXXX","zugangsschluessel":"XXXXXX-XXXXXX-XXXXXX-XXXXXX"}}

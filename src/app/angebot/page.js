@@ -93,7 +93,7 @@ export default function AngebotPage() {
             klein
             items={[
               { value: "2012", label: "in Österreich eingetragen", text: "Ökovolt Solartechnik GmbH" },
-              { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "TOP 3 der IPC-Errichter" },
+              { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "TOP 3 der EPC-Errichter" },
               { value: 9, label: "Bundesländer", text: "Vor-Ort-Termine in ganz Österreich" },
               { value: 0, suffix: " €", label: "Ersteinschätzung", text: "kostenlos und unverbindlich" },
             ]}

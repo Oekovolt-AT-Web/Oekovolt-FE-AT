@@ -2,13 +2,13 @@
 # Kopiert alle DocTypes + den Bericht in die Frappe-App und migriert.
 # Auf dem Server (Hetzner) im Ordner Import-Frappe ausführen:
 #
-#   SITE=backoffice.oekovolt.de BENCH=/home/frappe/frappe-bench bash 3_installieren.sh
+#   SITE=backoffice.oekovolt.com BENCH=/home/frappe/frappe-bench bash 3_installieren.sh
 #
 # Vorhandene Dateien mit gleichem Namen werden überschrieben (= Update).
 set -euo pipefail
 
 BENCH="${BENCH:-/home/frappe/frappe-bench}"
-SITE="${SITE:?Bitte SITE=<site-name> setzen, z. B. SITE=backoffice.oekovolt.de}"
+SITE="${SITE:?Bitte SITE=<site-name> setzen, z. B. SITE=backoffice.oekovolt.com}"
 ZIEL="$BENCH/apps/oekovoltdeutchland/oekovoltdeutchland/oekovoltdeutchland"
 HIER="$(cd "$(dirname "$0")" && pwd)"
 

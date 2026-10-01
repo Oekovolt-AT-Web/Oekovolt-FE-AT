@@ -353,7 +353,7 @@ export default function PhotovoltaikanlagePage() {
         items={[
           { wert: "2012", label: "in Österreich tätig – aus Ostermiething (OÖ)" },
           { value: 30, suffix: " MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
-          { wert: "TOP 3", label: "der IPC-Errichter Österreichs 2021" },
+          { wert: "TOP 3", label: "der EPC-Errichter Österreichs 2021" },
           { value: 9, label: "Bundesländer – Planung, Bau und Betrieb" },
         ]}
       />

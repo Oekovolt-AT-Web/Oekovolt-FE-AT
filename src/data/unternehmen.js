@@ -166,14 +166,14 @@ export const SALZBURG_AG = {
   kopf: "Gesellschafterin in Österreich",
   titel: "Die Partnerschaft mit der Salzburg AG",
   text:
-    `Seit 2021 ist die Salzburg AG für Energie, Verkehr und Telekommunikation mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer}. Die Gesellschaft zählte 2021 bereits zu den TOP 3 der IPC-Errichter Österreichs – genau deshalb kam einer der großen Landesenergieversorger auf sie zu: Die Position war der Grund für den Einstieg, nicht sein Ergebnis. Die Partnerschaft verbindet die Umsetzungsstärke eines spezialisierten Errichters mit dem Zugang zu Liegenschaften und Infrastruktur eines Landesversorgers.`,
+    `Seit 2021 ist die Salzburg AG für Energie, Verkehr und Telekommunikation mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer}. Die Gesellschaft zählte 2021 bereits zu den TOP 3 der EPC-Errichter Österreichs – genau deshalb kam einer der großen Landesenergieversorger auf sie zu: Die Position war der Grund für den Einstieg, nicht sein Ergebnis. Die Partnerschaft verbindet die Umsetzungsstärke eines spezialisierten Errichters mit dem Zugang zu Liegenschaften und Infrastruktur eines Landesversorgers.`,
   kennzahlen: [
-    { wert: "TOP 3", label: "IPC-Errichter – schon vor dem Einstieg" },
+    { wert: "TOP 3", label: "EPC-Errichter – schon vor dem Einstieg" },
     { wert: "49 %", label: "Salzburg AG, seit 2021" },
     { wert: "51 %", label: `${FIRMA.geschaeftsfuehrer}, Gründer und Geschäftsführer` },
   ],
   punkte: [
-    "Bereits 2021 unter den TOP 3 der IPC-Errichter (Integrierter Photovoltaik-Contractor) Österreichs",
+    "Bereits 2021 unter den TOP 3 der EPC-Errichter (Integrierter Photovoltaik-Contractor) Österreichs",
     "Bevorzugter PV-Errichter des Salzburg AG Konzerns",
     "Zugang zu Liegenschaften und Infrastrukturprojekten eines Landesenergieversorgers",
     "Großprojekte im Bereich Freifläche, Agri-PV und gewerbliche Dachanlagen",
@@ -356,7 +356,7 @@ export const MEILENSTEINE = [
     titel: "Nach Österreich – und vom Dach aufs Feld",
     text: [
       `Am 16. Februar 2012 wird die ${FIRMA.name} ins österreichische Firmenbuch eingetragen: Die Gruppe überschreitet die Grenze – mit Sitz in ${FIRMA.ort}, an der Salzach im Innviertel.`,
-      "Im selben Jahr gehen die Gründer den nächsten Schritt: Solarparks. Sie bauen sie nicht nur, sie betreiben sie auch selbst – mit einer eigenen Betreibergesellschaft je Park. Für die Fundamente gründen sie die Deutsche Solar & Rammtechnik GmbH: keine Abhängigkeit von Dritten, sondern Kontrolle über jede Schraube im Boden.",
+      "Im selben Jahr gehen die Gründer den nächsten Schritt: Solarparks. Sie bauen sie nicht nur, sie betreiben sie auch selbst – mit einer eigenen Betreibergesellschaft je Park.",
     ],
     icon: "Flag",
     hervorgehoben: true,
@@ -381,7 +381,7 @@ export const MEILENSTEINE = [
     jahr: "2021",
     titel: "30 MWp und ein Landesversorger als Partner",
     text: [
-      "Allein 2021 errichtet die Ökovolt Solartechnik GmbH PV-Anlagen mit 30 MWp Leistung und zählt damit zu den TOP 3 der IPC-Errichter Österreichs.",
+      "Allein 2021 errichtet die Ökovolt Solartechnik GmbH PV-Anlagen mit 30 MWp Leistung und zählt damit zu den TOP 3 der EPC-Errichter Österreichs.",
       "Im selben Jahr beteiligt sich die Salzburg AG, einer der großen österreichischen Landesenergieversorger, mit 49 % an der österreichischen Gesellschaft – eine Partnerschaft, die bis heute besteht. Ökovolt wird bevorzugter PV-Errichter des Salzburg AG Konzerns.",
       "In Deutschland ordnen die Gründer ihre Solarparks neu und bündeln sie in ihrer Beteiligungsgesellschaft; das Stammhaus in Türkheim konzentriert sich seitdem ganz auf Planung, Bau und Inbetriebnahme für Gewerbe, Industrie, Kommunen und Landwirtschaft.",
     ],

@@ -282,7 +282,7 @@ Website-Seite: `src/app/api/heatmap/route.js` (Sammler `src/components/Statistik
 ## 6. Fertige Pakete aus `Import-Frappe/` (#12–#14)
 
 Code, DocTypes, Rollen, hooks, Installationsskript liegen vollständig bereit – Ablauf: `Import-Frappe/ANLEITUNG.md`.
-Für AT anpassen: Site-Name (`backoffice.oekovolt.de` → AT-Backoffice), E-Mail-Adressen der API-User,
+Für AT anpassen: Site-Name (`backoffice.oekovolt.com` → AT-Backoffice), E-Mail-Adressen der API-User,
 `website_url` → `https://www.oekovolt.com`, Zeitzone/Texte (Berlin → Wien), Health-Check-URL auf .com.
 
 - **solar_lead** (`sitzung_starten`, `sitzung_status`, `sitzung_verbunden`, `foto_speichern`, `sitzung_abschliessen`,

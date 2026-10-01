@@ -47,12 +47,12 @@ export const metadata = {
 const BOILERPLATE = `Die ${FIRMA.name} mit Sitz in ${FIRMA.ort} (${FIRMA.bundesland}) plant, errichtet und betreut seit ${FIRMA.gegruendet} Photovoltaikanlagen in ganz Österreich – für Gewerbe und Industrie, Landwirtschaft, Gemeinden und Energieversorger. Das Elektrotechnik-Unternehmen entwickelt eigene Parkregler (EZA-Regler), Fernwartungs- und SCADA-Systeme. Gesellschafter sind Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %). Die deutsche Schwestergesellschaft ${SCHWESTER.name} (${SCHWESTER.ort}) ist seit 2010 am Markt.${FIRMA.verbaende.length ? ` Ökovolt ist ${FIRMA.verbaende.map((v) => `${v.status} im ${v.name}`).join(" und ")}.` : ""}`;
 
 // Zahlen für Redaktionen – Gesamtzahlen zentral aus src/data/kennzahlen.js (Angabe Ökovolt Österreich).
-// Die CO₂-Zahl erscheint dort erst mit festgelegtem Zeitraum (SEO-Plan M25). „TOP 3 der IPC-Errichter 2021“
+// Die CO₂-Zahl erscheint dort erst mit festgelegtem Zeitraum (SEO-Plan M25). „TOP 3 der EPC-Errichter 2021“
 // laut docs/AT-BRIEFING.md (wie Startseite, src/data/hero.js).
 const FAKTEN = [
   ...KENNZAHLEN.map((k) => ({ wert: k.zahl, suffix: k.suffix, text: k.label })),
   { wert: "2012", text: "gegründet in Ostermiething, Oberösterreich" },
-  { wert: "TOP 3", text: "der IPC-Errichter Österreichs 2021" },
+  { wert: "TOP 3", text: "der EPC-Errichter Österreichs 2021" },
 ].slice(0, 4);
 
 // Grafiken aus eigenen Datenauswertungen (public/presse/grafiken, erzeugt in Welle 4 / P6) – Vorschau und Download.

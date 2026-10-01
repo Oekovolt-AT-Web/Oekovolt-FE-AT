@@ -5,7 +5,7 @@
 //
 // Nur belegte Aussagen (Stand 09/2026, siehe docs/AT-BRIEFING.md):
 // seit 2012 in Österreich, 2021 rund 30 MWp errichtet und TOP 3 der
-// IPC-Errichter Österreichs, Salzburg AG als Gesellschafterin (49 %),
+// EPC-Errichter Österreichs, Salzburg AG als Gesellschafterin (49 %),
 // eigene Regelungs-/Leittechnik, Gründer betreiben eigene Solarparks.
 // Unternehmenskennzahlen (5.000 Anlagen, 510.000 kWp, 112.000 t CO₂) laut Geschäftsführung
 // Ökovolt Österreich (bestätigt 30.09.2026) – zentral in src/data/kennzahlen.js.
@@ -36,7 +36,7 @@ export const HOME_HERO = {
 // „seit 2012“ und „Salzburg AG 49 %“ stehen bereits im Hero (Kicker bzw. Vertrauenspunkte).
 export const KERNFAKTEN = [
   ...KENNZAHLEN.map((k) => ({ wert: `${zahlText(k.zahl)}${k.suffix}`, zahl: k.zahl, suffix: k.suffix, label: k.label })),
-  { wert: "TOP 3", zahl: 3, prefix: "TOP ", label: "der IPC-Errichter Österreichs 2021" },
+  { wert: "TOP 3", zahl: 3, prefix: "TOP ", label: "der EPC-Errichter Österreichs 2021" },
 ];
 
 /**

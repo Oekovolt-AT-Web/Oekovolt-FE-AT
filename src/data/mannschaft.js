@@ -9,9 +9,9 @@
 //   [U-10] src/data/unternehmen.js → MEILENSTEINE 2010: eigene Montagegesellschaft
 //          (ÖKOVOLT Montage GmbH, Gruppe), „Planung, Bau und Inbetriebnahme aus einer
 //          Hand – mit eigenen Montageteams und einem festen Ansprechpartner“.
-//   [U-12] src/data/unternehmen.js → MEILENSTEINE 2012: Deutsche Solar & Rammtechnik GmbH
-//          (Fundamente, Gesellschaft der GRUPPE – daher „in der Gruppe“);
-//          HALTUNG: „Die Gründer betreiben seit 2012 eigene Solarparks“.
+//   [U-12] src/data/unternehmen.js → HALTUNG: „Die Gründer betreiben seit 2012 eigene Solarparks“.
+//          Die Rammtechnik-Gesellschaft der Gruppe wird auf der Website NIE erwähnt
+//          (Vorgabe Auftraggeber, 09/2026).
 //   [U-R]  src/data/unternehmen.js → ROLLEN_AT „Eigene Technik“: eigener EZA-Regler
 //          (TOR Erzeuger), eigene Fernwartung, eigene SCADA-Systeme – mit Solensa;
 //          ROLLEN_AT „Service“: Wartung, Anlagenprüfung, Drohnen-Thermografie (als
@@ -88,7 +88,6 @@ export const AUSSTATTUNG = [
   { id: "lkw", kurz: "Eigener Lkw", text: "Transport von Material und Werkzeug", icon: "Truck", bestaetigt: true }, // [AG]
   { id: "traktoren", kurz: "Eigene Traktoren", text: "Für Arbeiten auf Freiflächen", icon: "Tractor", bestaetigt: true }, // [AG]
   { id: "montage", kurz: "Eigene Montageteams", text: "Montage aus einer Hand", icon: "HardHat", bestaetigt: true }, // [U-10]
-  { id: "ramm", kurz: "Rammtechnik in der Gruppe", text: "Deutsche Solar & Rammtechnik GmbH", icon: "Pickaxe", bestaetigt: true }, // [U-12]
   { id: "parkregler", kurz: "Eigener Parkregler", text: "EZA-Regler nach TOR Erzeuger", icon: "SlidersHorizontal", bestaetigt: true }, // [U-R]
   { id: "scada", kurz: "Eigene Fernwartung & SCADA", text: "Mit unserem Partner Solensa", icon: "MonitorDot", bestaetigt: true }, // [U-R]
   { id: "fachbetrieb", kurz: "Elektrotechnik-Fachbetrieb", text: `Reglementiertes Gewerbe, GISA ${FIRMA.gisa}`, icon: "BadgeCheck", bestaetigt: true }, // [SITE]
@@ -142,10 +141,10 @@ export const STATIONEN = [
   {
     id: "gelaende",
     titel: "Gelände & Freifläche",
-    eigen: "Eigene Traktoren · Rammtechnik in der Gruppe",
+    eigen: "Eigene Traktoren",
     icon: "Tractor",
-    nutzen: "Auf Freiflächen arbeiten wir mit eigenen Traktoren. Für Rammfundamente hat die Gruppe eine eigene Gesellschaft: die Deutsche Solar & Rammtechnik GmbH.",
-  }, // [AG], [U-12]
+    nutzen: "Auf Freiflächen arbeiten wir mit eigenen Traktoren.",
+  }, // [AG]
   {
     id: "montage",
     titel: "Montage",

@@ -438,7 +438,7 @@ export default async function HomePage() {
             <SectionHeading
               eyebrow="Warum Ökovolt"
               title="Betreiber aus Überzeugung – Errichter mit System."
-              lead={`Seit 2012 baut Ökovolt Photovoltaik in Österreich – bisher ${kz("anlagen")} PV-Kraftwerke mit zusammen ${kz("leistung")} kWp. 2021 errichteten wir allein rund 30 MWp und zählten zu den TOP 3 der IPC-Errichter Österreichs. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in ${SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.`}
+              lead={`Seit 2012 baut Ökovolt Photovoltaik in Österreich – bisher ${kz("anlagen")} PV-Kraftwerke mit zusammen ${kz("leistung")} kWp. 2021 errichteten wir allein rund 30 MWp und zählten zu den TOP 3 der EPC-Errichter Österreichs. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in ${SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.`}
             />
             <ul className="mt-8 space-y-3">
               {[
