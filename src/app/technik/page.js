@@ -12,7 +12,7 @@ import { Verweise } from "@/components/Technik/Bausteine";
 import QuellenKompakt from "@/components/ServiceAT/A/QuellenKompakt";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
 import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
-import FotoBento from "@/components/ServiceAT/A/FotoBento";
+import W26Systeme from "@/components/Technik/w26-Systeme";
 import { SOLENSA } from "@/lib/site";
 
 const PFAD = "/technik";
@@ -67,6 +67,39 @@ const VERGLEICH = [
   ["Daten für Bank und Controlling", "Einheitliche Kennzahlen über das ganze Portfolio", "Unterschiedliche Definitionen je Portal"],
 ];
 
+const SYSTEME = [
+  {
+    sys: "regler",
+    tag: "Regelebene",
+    titel: "Parkregler (EZA-Regler)",
+    text: "Wirkleistung, Blindleistung nach Q(U) oder cos φ, Einspeiselimit und Fernabschaltung am Netzanschlusspunkt – nach TOR Stromerzeugungsanlagen Typ A bis D.",
+    href: "/technik/parkregler",
+    cta: "Zum Parkregler",
+    bild: BILD.parkregler,
+    alt: "Transformatorstation und Zentralwechselrichter in einem Solarpark bei Sonnenaufgang",
+  },
+  {
+    sys: "fern",
+    tag: "Zugriff & Security",
+    titel: "Fernwartung & IT-Security",
+    text: "Verschlüsselte Zugriffe mit MFA und Protokoll, 24/7-Alarmierung, Firmware-Management – mit Blick auf NISG 2026 und IEC 62443.",
+    href: "/technik/fernwartung",
+    cta: "Zur Fernwartung",
+    bild: BILD.fernwartung,
+    alt: "Netzwerkstecker vor dunkelblauem Hintergrund – Symbol für gesicherte Datenverbindungen",
+  },
+  {
+    sys: "scada",
+    tag: "Leitebene",
+    titel: "SCADA & Leitwarte",
+    text: "Performance Ratio und Verfügbarkeit nach IEC 61724, Alarme, Berichte für Banken und ESG.",
+    href: "/technik/scada",
+    cta: "Zu SCADA & Leitwarte",
+    bild: BILD.scada,
+    alt: "Symbolbild: Leitstand mit Monitorwand und Bedienpult",
+  },
+];
+
 const WARUM = [
   { icon: Unlock, title: "Unabhängigkeit", text: "Keine Bindung an eine Wechselrichtermarke. Geräte lassen sich tauschen, ohne die Regelung neu zu erfinden." },
   { icon: Clock, title: "Tempo", text: "Neue Vorgaben von Netzbetreiber oder Direktvermarkter setzen wir selbst um – ohne auf Dritte zu warten." },
@@ -108,8 +141,19 @@ export default function TechnikPage() {
         points={["Parkregler nach TOR Erzeuger", "SCADA & Leitwarte", "Sichere Fernwartung", "Herstellerunabhängig"]}
       />
 
+      {/* Bühne: Regelkreis-Schema + drei Systeme */}
+      <W26Systeme
+        eyebrow="Unsere Systeme · ein Regelkreis"
+        titel={
+          <>
+            Drei Bausteine, <span className="ov-text-gradient-light">eine Verantwortung</span>
+          </>
+        }
+        lead="Jeder Baustein funktioniert für sich – seine Stärke entfaltet er im Verbund mit den anderen beiden."
+        systeme={SYSTEME}
+      />
+
       <AntwortBand
-        dunkel
         frage="Was gehört zur eigenen Technik von Ökovolt?"
         zahlen={[
           { value: 3, label: "eigene Systeme", text: "Parkregler, SCADA-Leitwarte, Fernwartung" },
@@ -142,66 +186,42 @@ export default function TechnikPage() {
         </div>
       </section>
 
-      {/* Drei Systeme als Foto-Bento */}
-      <Section tone="white" space="md" id="systeme" className="scroll-mt-24">
-        <SectionHeading
-          eyebrow="Unsere Systeme"
-          title="Drei Bausteine, eine Verantwortung"
-          lead="Jeder Baustein funktioniert für sich – seine Stärke entfaltet er im Verbund mit den anderen beiden."
-          className="mb-12"
-        />
-        <FotoBento
-          zeile={260}
-          items={[
-            {
-              form: "gross",
-              bild: BILD.parkregler,
-              alt: "Transformatorstation und Zentralwechselrichter in einem Solarpark bei Sonnenaufgang",
-              tag: "Regelebene",
-              titel: "Parkregler (EZA-Regler)",
-              text: "Wirkleistung, Blindleistung nach Q(U) oder cos φ, Einspeiselimit und Fernabschaltung am Netzanschlusspunkt – nach TOR Stromerzeugungsanlagen Typ A bis D.",
-              href: "/technik/parkregler",
-            },
-            {
-              bild: BILD.scada,
-              alt: "Symbolbild: Leitstand mit Monitorwand und Bedienpult",
-              tag: "Leitebene",
-              titel: "SCADA & Leitwarte",
-              text: "Performance Ratio und Verfügbarkeit nach IEC 61724, Alarme, Berichte für Banken und ESG.",
-              href: "/technik/scada",
-            },
-            {
-              bild: BILD.fernwartung,
-              alt: "Netzwerkstecker vor dunkelblauem Hintergrund – Symbol für gesicherte Datenverbindungen",
-              tag: "Zugriff & Security",
-              titel: "Fernwartung & IT-Security",
-              text: "Verschlüsselte Zugriffe mit MFA und Protokoll, 24/7-Alarmierung, Firmware-Management – mit Blick auf NISG 2026 und IEC 62443.",
-              href: "/technik/fernwartung",
-            },
-          ]}
-        />
-      </Section>
-
       {/* Warum eigene Technik */}
       <Section tone="sand" space="md" id="warum">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
-          <SectionHeading
-            eyebrow="Warum eigene Technik"
-            title="Unabhängig, schnell, sicher – und aus dem eigenen Betrieb gelernt"
-            lead="Wer eigene Solarparks betreibt, merkt schnell, wo Standardlösungen haken: bei gemischten Wechselrichterflotten, bei neuen Netzvorgaben, bei Störungen am Wochenende."
-          />
-          <ul className="grid gap-4 sm:grid-cols-2">
-            {WARUM.map((w, i) => (
-              <Reveal as="li" key={w.title} delay={i * 70} className="ov-card-hover rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
-                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-navy-950 text-ov-300">
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Warum eigene Technik" title="Unabhängig, schnell, sicher – und aus dem eigenen Betrieb gelernt" />
+          <Reveal delay={120} className="lg:pb-1">
+            <p className="ov-lead max-w-[34rem] text-ink-600">
+              Wer eigene Solarparks betreibt, merkt schnell, wo Standardlösungen haken: bei gemischten Wechselrichterflotten, bei neuen Netzvorgaben, bei Störungen
+              am Wochenende.
+            </p>
+          </Reveal>
+        </div>
+        <ul className="mt-12 grid gap-4 sm:grid-cols-2 md:mt-14 lg:grid-cols-4 lg:gap-5">
+          {WARUM.map((w, i) => (
+            <Reveal
+              as="li"
+              key={w.title}
+              delay={i * 80}
+              className="group ov-card-hover relative flex flex-col overflow-hidden rounded-[1.75rem] bg-white p-6 ring-1 ring-ink-200/70 transition-colors duration-500 hover:ring-ov-300/80 md:p-7"
+            >
+              <span aria-hidden="true" className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-ov-500 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <div className="flex items-center justify-between">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-navy-800 to-navy-950 text-ov-300 shadow-[0_12px_24px_-12px_rgba(3,18,43,0.7)] transition-colors duration-500 group-hover:text-ov-200">
                   <w.icon aria-hidden="true" className="h-5 w-5" />
                 </span>
-                <h3 className="mt-5 font-display text-[18px] font-bold text-ink-900">{w.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{w.text}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
+                <span aria-hidden="true" className="ov-num font-display text-[13px] font-extrabold tracking-[0.12em] text-ink-300 transition-colors duration-500 group-hover:text-ov-600">
+                  0{i + 1}
+                </span>
+              </div>
+              <h3 className="mt-7 font-display text-[19px] font-bold tracking-tight text-ink-900">{w.title}</h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{w.text}</p>
+              <span aria-hidden="true" className="mt-auto block pt-6">
+                <span className="block h-0.5 w-8 rounded-full bg-ov-500 transition-all duration-500 group-hover:w-16" />
+              </span>
+            </Reveal>
+          ))}
+        </ul>
       </Section>
 
       {/* Vergleich */}
@@ -216,23 +236,27 @@ export default function TechnikPage() {
             lead="Herstellerlösungen sind für einfache Anlagen oft völlig ausreichend. Sobald mehrere Marken, Speicher, Ladepunkte, Einspeiselimits oder Portfolios im Spiel sind, zeigt sich der Unterschied."
             className="mb-12"
           />
-          <Reveal as="figure" className="overflow-hidden rounded-[2rem] ring-1 ring-white/12">
+          <Reveal as="figure" className="relative overflow-hidden rounded-[2rem] bg-white/[0.02] shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)] ring-1 ring-white/12">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-12 top-0 z-10 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
             <table className="w-full border-collapse text-left">
               <caption className="sr-only">Typische Unterschiede in der Praxis: Ökovolt-Systemverbund und reine Herstellerlösung</caption>
               <thead className="hidden md:table-header-group">
                 <tr>
                   <th scope="col" className="w-[30%] bg-white/[0.03] px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-white/50">Situation</th>
-                  <th scope="col" className="w-[35%] bg-ov-600 px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-white">Ökovolt-Systemverbund</th>
+                  <th scope="col" className="relative w-[35%] bg-gradient-to-b from-ov-500 to-ov-700 px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-white">
+                    <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-ov-200/80" />
+                    Ökovolt-Systemverbund
+                  </th>
                   <th scope="col" className="w-[35%] bg-white/[0.03] px-6 py-4 text-[12px] font-semibold uppercase tracking-[0.12em] text-white/50">Reine Herstellerlösung</th>
                 </tr>
               </thead>
               <tbody>
                 {VERGLEICH.map(([s, o, h]) => (
-                  <tr key={s} className="grid border-t border-white/10 md:table-row">
+                  <tr key={s} className="grid border-t border-white/10 transition-colors duration-300 hover:bg-white/[0.025] md:table-row">
                     <th scope="row" className="px-5 pb-1 pt-5 font-display text-[16px] font-bold leading-snug text-white md:px-6 md:py-5">
                       {s}
                     </th>
-                    <td className="px-5 py-1.5 md:bg-ov-500/10 md:px-6 md:py-5">
+                    <td className="px-5 py-1.5 md:border-x md:border-ov-400/20 md:bg-ov-500/[0.09] md:px-6 md:py-5">
                       <span className="flex gap-2.5 text-[15px] leading-snug text-white/90">
                         <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" strokeWidth={3} />
                         <span>

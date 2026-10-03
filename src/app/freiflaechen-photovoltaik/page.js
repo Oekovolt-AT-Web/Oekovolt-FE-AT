@@ -23,7 +23,6 @@ import {
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SplitMedia from "@/components/ui/SplitMedia";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -32,6 +31,7 @@ import { Bildnachweis, Hebel, Prosa, StandPille, Tabelle } from "@/components/Lo
 import KennzahlenBand from "@/components/Loesungen/A/KennzahlenBand";
 import FotoBento from "@/components/Loesungen/A/FotoBento";
 import FlaechenRegler from "@/components/Loesungen/A/FlaechenRegler";
+import W25Biodiversitaet from "@/components/Loesungen/w25-Biodiversitaet";
 import TechnikSystem from "@/components/Loesungen/A/TechnikSystem";
 import ZitatBand from "@/components/Loesungen/A/ZitatBand";
 import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
@@ -109,6 +109,13 @@ const BEISPIEL = [
   { pos: "Zum Vergleich: Marktprämie", wert: "Höchstpreis 7,77 ct/kWh; auf Agrar- oder Grünland − 25 % → max. 5,83 ct/kWh anzulegender Wert", ergebnis: "Standort entscheidet" },
 ];
 
+const BIODIVERSITAET = [
+  { t: "Bodenfreiheit & Reihenabstand", x: "Für den EAG-Investitionszuschuss mindestens 80 cm Modulunterkante und 2 m zwischen den Reihen (ausgenommen innovative und nachgeführte Anlagen)." },
+  { t: "Extensive Pflege", x: "Mahd mit Abtransport oder Schafbeweidung, Blühstreifen mit regionalem Saatgut." },
+  { t: "Strukturen am Rand", x: "Hecken, Steinhaufen, Totholz und Kleingewässer als Lebensraum und Sichtschutz." },
+  { t: "Durchlässige Zäune", x: "Bodenabstand oder Durchlässe für Kleintiere, Wildkorridore bei großen Parks." },
+  { t: "Monitoring", x: "Vegetation und Insekten vor und nach dem Bau erheben, dokumentiert für Behörde und Nachhaltigkeitsbericht." },
+];
 
 export default async function FreiflaechePage({ searchParams }) {
   const v = zielgruppenVariante("freiflaeche", await searchParams);
@@ -150,6 +157,14 @@ export default async function FreiflaechePage({ searchParams }) {
         quelle="Quellen: EAG-Marktprämienverordnung und EAG-Investitionszuschüsseverordnung-Strom laut Leitfaden Land Oberösterreich 2026 (Stand 06/2026); Energie- und Umweltagentur NÖ; § 6 Oö. ElWOG 2006."
       />
 
+      <Section tone="sand" space="md" id="flaechenrechner">
+        <FlaechenRegler
+          eyebrow="Interaktiv · Fläche & Größe"
+          titel="Wie groß wird der Solarpark auf Ihrer Fläche?"
+          lead="Schieben Sie den Regler: Leistung, Jahresertrag und Klimawirkung als Richtwert – und ab welcher Größe Landeszonen und Bewilligungen greifen."
+        />
+      </Section>
+
       <Section tone="white" space="md">
         <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
           <SectionHeading eyebrow="Leistungsumfang" title="Vom Flächenscreening bis zum laufenden Solarpark" />
@@ -168,14 +183,6 @@ export default async function FreiflaechePage({ searchParams }) {
             { icon: TrendingUp, titel: "Vermarktung", text: "PPA, Direktvermarktung, Marktprämie und Speicher im Vergleich – als Grundlage für Finanzierung und Investitionsentscheidung.", bild: "/Images/AT/ratgeber/hochspannungsleitung-molln.jpg", alt: "Hochspannungsleitung in einer Voralpenlandschaft in Oberösterreich", href: "/service/direktvermarktung" },
             { icon: Wrench, titel: "Betrieb & Wartung", text: "Leitwarte, Fernwartung, Grünpflege, Thermografie und Reporting über die gesamte Laufzeit.", bild: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur mit Absturzsicherung trägt ein Photovoltaikmodul", href: "/service/wartung" },
           ]}
-        />
-      </Section>
-
-      <Section tone="sand" space="md" id="flaechenrechner">
-        <FlaechenRegler
-          eyebrow="Interaktiv · Fläche & Größe"
-          titel="Wie groß wird der Solarpark auf Ihrer Fläche?"
-          lead="Schieben Sie den Regler: Leistung, Jahresertrag und Klimawirkung als Richtwert – und ab welcher Größe Landeszonen und Bewilligungen greifen."
         />
       </Section>
 
@@ -204,32 +211,14 @@ export default async function FreiflaechePage({ searchParams }) {
       />
 
       <Section tone="white" space="md" id="biodiversitaet">
-        <SplitMedia
-          reverse
+        <W25Biodiversitaet
           eyebrow="Biodiversität"
-          title="Ein Solarpark kann mehr Artenvielfalt bringen als der Acker davor."
+          titel="Ein Solarpark kann mehr Artenvielfalt bringen als der Acker davor."
           text="Ökologisch geplante Freiflächenanlagen werden extensiv gepflegt, kommen ohne Dünger und Pflanzenschutzmittel aus und bieten Rückzugsräume. Mehrere Bundesländer verlangen dafür ein Ökologiekonzept."
-          image={{ src: "/Images/AT/loesungen-a/ff-schafe-solarpark.jpg", alt: "Schafe weiden zwischen Modulreihen eines Solarparks (Symbolbild)" }}
-        >
-          <ul className="mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2">
-            {[
-              { t: "Bodenfreiheit & Reihenabstand", x: "Für den EAG-Investitionszuschuss mindestens 80 cm Modulunterkante und 2 m zwischen den Reihen (ausgenommen innovative und nachgeführte Anlagen)." },
-              { t: "Extensive Pflege", x: "Mahd mit Abtransport oder Schafbeweidung, Blühstreifen mit regionalem Saatgut." },
-              { t: "Strukturen am Rand", x: "Hecken, Steinhaufen, Totholz und Kleingewässer als Lebensraum und Sichtschutz." },
-              { t: "Durchlässige Zäune", x: "Bodenabstand oder Durchlässe für Kleintiere, Wildkorridore bei großen Parks." },
-              { t: "Monitoring", x: "Vegetation und Insekten vor und nach dem Bau erheben, dokumentiert für Behörde und Nachhaltigkeitsbericht." },
-            ].map((k) => (
-              <li key={k.t} className="border-l-2 border-ov-300 pl-4">
-                <p className="font-display text-[15.5px] font-bold text-ink-900">{k.t}</p>
-                <p className="mt-1 text-[14px] leading-relaxed text-ink-600">{k.x}</p>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-6 rounded-2xl bg-ov-50 px-5 py-4 text-[14.5px] leading-relaxed text-ink-700 ring-1 ring-ov-100">
-            <strong className="text-ink-900">Doppelnutzung gewünscht?</strong> Soll die Fläche landwirtschaftlich vorrangig genutzt bleiben, ist{" "}
-            <Link href="/agri-pv" className="text-ov-700 underline">Agri-PV</Link> oft die bessere Wahl – mit 30 % Förderzuschlag statt 25 % Abschlag.
-          </p>
-        </SplitMedia>
+          massnahmen={BIODIVERSITAET}
+          bild={{ src: "/Images/AT/loesungen-a/ff-schafe-solarpark.jpg", alt: "Schafe weiden zwischen Modulreihen eines Solarparks (Symbolbild)" }}
+          hinweis
+        />
       </Section>
 
       <ZitatBand

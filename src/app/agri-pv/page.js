@@ -19,7 +19,6 @@ import {
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SplitMedia from "@/components/ui/SplitMedia";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -28,6 +27,7 @@ import { Bildnachweis, Hinweis, Prosa, StandPille, Tabelle } from "@/components/
 import KennzahlenBand from "@/components/Loesungen/A/KennzahlenBand";
 import FotoBento from "@/components/Loesungen/A/FotoBento";
 import AgriKonzepte from "@/components/Loesungen/A/AgriKonzepte";
+import W25Forschung from "@/components/Loesungen/w25-Forschung";
 import TechnikSystem from "@/components/Loesungen/A/TechnikSystem";
 import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
@@ -191,6 +191,17 @@ export default async function AgriPvPage({ searchParams }) {
         quelle="Quellen: EAG-Investitionszuschüsseverordnung-Strom § 6 laut Leitfaden Land Oberösterreich 2026 und WKO; klimaaktiv, Agri-PV: Landwirtschaft trifft Energiewende."
       />
 
+      <Section tone="sand" space="md" id="konzepte">
+        <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Konzepte · interaktiv" title="Drei Bauweisen – die Kultur entscheidet" />
+          <p className="text-[16.5px] leading-relaxed text-ink-600">
+            Agri-PV ist kein Produkt, sondern eine Planungsaufgabe: Reihenabstand, Höhe, Modultyp und Ausrichtung folgen der Bewirtschaftung, nicht
+            umgekehrt. Wählen Sie ein Konzept.
+          </p>
+        </div>
+        <AgriKonzepte konzepte={KONZEPTE} link={{ label: "Fläche und Konzept besprechen", href: "/termin?art=vor-ort&thema=freiflaeche" }} />
+      </Section>
+
       <Section tone="white" space="md" id="kulturen-ueberblick">
         <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
           <SectionHeading eyebrow="Kulturen in Österreich" title="Was unter und zwischen den Modulen wächst" />
@@ -209,26 +220,15 @@ export default async function AgriPvPage({ searchParams }) {
         />
       </Section>
 
-      <Section tone="sand" space="md" id="konzepte">
-        <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
-          <SectionHeading eyebrow="Konzepte · interaktiv" title="Drei Bauweisen – die Kultur entscheidet" />
-          <p className="text-[16.5px] leading-relaxed text-ink-600">
-            Agri-PV ist kein Produkt, sondern eine Planungsaufgabe: Reihenabstand, Höhe, Modultyp und Ausrichtung folgen der Bewirtschaftung, nicht
-            umgekehrt. Wählen Sie ein Konzept.
-          </p>
-        </div>
-        <AgriKonzepte konzepte={KONZEPTE} link={{ label: "Fläche und Konzept besprechen", href: "/termin?art=vor-ort&thema=freiflaeche" }} />
-      </Section>
-
-      <Section tone="white" space="md" id="forschung">
-        <SplitMedia
+      <Section tone="sand" space="md" id="forschung">
+        <W25Forschung
           eyebrow="Forschung & Praxis"
-          title="Was österreichische Versuchsanlagen zeigen"
-          text={[
+          titel="Was österreichische Versuchsanlagen zeigen"
+          absaetze={[
             "Seit 2019 erforscht Wien Energie gemeinsam mit der Universität für Bodenkultur (BOKU) an der Schafflerhofstraße in Wien vertikale Agri-PV: sechs Modulreihen mit 10 m Abstand, dazwischen Ackerbau. Im Projektjahr 2022 lag die Flächennutzungseffizienz – Strom und Ernte zusammen im Vergleich zu getrennter Nutzung – zwischen 0,94 bei Soja und 1,19 bei Wintergerste; vier von fünf Kulturen erreichten Werte über 1.",
             "In der Versuchsstation Haidegg des Landes Steiermark stehen auf rund 2.800 m² teiltransparente Module über Apfel, Birne, Kirsche, Marille und weiteren Obstarten. Die Anlage schützt vor Starkregen, Sonnenbrand und Blütenfrost – vor Hagel jedoch nicht zuverlässig, weshalb zusätzlich Hagelnetze montiert wurden.",
           ]}
-          image={{ src: "/Images/AT/loesungen-a/agri-hoch-acker-luftbild.jpg", alt: "Luftbild einer hoch aufgeständerten Agri-PV-Forschungsanlage über einem Getreidefeld (Deutschland)" }}
+          bild={{ src: "/Images/AT/loesungen-a/agri-hoch-acker-luftbild.jpg", alt: "Luftbild einer hoch aufgeständerten Agri-PV-Forschungsanlage über einem Getreidefeld (Deutschland)" }}
         />
       </Section>
 

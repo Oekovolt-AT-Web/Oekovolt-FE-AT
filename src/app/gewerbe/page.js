@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {
+  Activity,
+  BadgeEuro,
   BatteryCharging,
   Calculator,
   Car,
@@ -11,6 +13,7 @@ import {
   HandCoins,
   Leaf,
   LineChart,
+  MapPin,
   Receipt,
   TrendingUp,
   Users,
@@ -22,7 +25,6 @@ import {
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SplitMedia from "@/components/ui/SplitMedia";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -31,12 +33,12 @@ import { Bildnachweis, Hebel, Hinweis, Prosa, StandPille, Tabelle } from "@/comp
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
 import KennzahlenBand from "@/components/Loesungen/A/KennzahlenBand";
 import FotoBento from "@/components/Loesungen/A/FotoBento";
-import FotoKennzahl from "@/components/Loesungen/A/FotoKennzahl";
 import LastprofilExplorer from "@/components/Loesungen/A/LastprofilExplorer";
 import TechnikSystem from "@/components/Loesungen/A/TechnikSystem";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
 import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
 import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
+import W24KwhWert from "@/components/Loesungen/w24-KwhWert";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
 
@@ -125,6 +127,7 @@ const BRANCHEN = [
     titel: "Produktion im Zweischichtbetrieb",
     last: [0.3, 0.28, 0.28, 0.28, 0.3, 0.45, 0.85, 0.95, 0.98, 1, 0.98, 0.92, 0.95, 1, 0.98, 0.95, 0.92, 0.9, 0.88, 0.85, 0.8, 0.7, 0.45, 0.32],
     pvFaktor: 0.6,
+    marken: [{ h: 6, label: "Schichtbeginn" }],
     text: "Hohe Tages-Grundlast aus Druckluft, Lüftung, Absaugung und Maschinen – oft 60–90 % Eigenverbrauch möglich.",
     punkte: ["Spitzen beim Anfahren von Pressen, Öfen und Kompressoren", "Frühe Schicht- und Winterspitzen fängt nur ein Speicher ab"],
     link: { label: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv" },
@@ -162,6 +165,7 @@ const BRANCHEN = [
     titel: "Handwerk & kleine Betriebe",
     last: [0.1, 0.1, 0.1, 0.1, 0.1, 0.12, 0.35, 0.8, 0.9, 0.95, 0.92, 0.7, 0.65, 0.9, 0.92, 0.85, 0.6, 0.3, 0.18, 0.15, 0.12, 0.1, 0.1, 0.1],
     pvFaktor: 0.9,
+    marken: [{ h: 12, label: "Mittagspause" }],
     text: "Werkstatt, Büro und Fuhrpark – kleiner, aber mit hohem Eigenverbrauch, oft auf Netzebene 7.",
     punkte: ["Mittagspause und Wochenende erzeugen Überschuss", "Speicher oder E-Fuhrpark heben den Eigenverbrauch"],
     link: { label: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv" },
@@ -227,43 +231,78 @@ export default async function GewerbePage({ searchParams }) {
         />
       </Section>
 
-      <Section tone="sand" space="md" id="branchen">
+      {/* Bühne: der Lastgang entscheidet (dunkel, interaktiv) */}
+      <Section tone="navy" space="lg" id="branchen" className="ov-noise overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg absolute inset-0 opacity-60" />
+        <div aria-hidden="true" className="absolute -left-48 top-24 h-[560px] w-[560px] rounded-full bg-ov-500/[0.14] blur-[140px]" />
+        <div aria-hidden="true" className="absolute -right-40 bottom-0 h-[520px] w-[520px] rounded-full bg-navy-500/30 blur-[130px]" />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ov-300/30 to-transparent" />
         <LastprofilExplorer
+          dunkel
+          className="relative"
           ueberschrift="h2"
           eyebrow="Branchen · interaktiv"
-          titel="Jede Branche hat ihren eigenen Lastgang"
+          titel={<>Jede Branche hat ihren <span className="ov-text-gradient-light">eigenen Lastgang.</span></>}
           lead="Die richtige Anlagengröße ergibt sich nicht aus der Dachfläche, sondern aus der Deckung von Solarkurve und Verbrauch. Deshalb werten wir zuerst Ihre Viertelstundenwerte aus: Grundlast am Wochenende, Anlaufspitzen bei Schichtbeginn, Sommer- und Winterprofil."
           profile={BRANCHEN}
         />
       </Section>
 
-      <Section tone="white" space="md" id="wirtschaftlichkeit-kurz">
-        <SplitMedia
-          reverse
+      {/* Was eine selbst genutzte kWh wert ist */}
+      <Section tone="white" space="lg" id="wirtschaftlichkeit-kurz">
+        <W24KwhWert
           eyebrow="Wirtschaftlichkeit in Österreich"
-          title="Jede selbst genutzte kWh spart mehr als den Energiepreis."
+          titel="Jede selbst genutzte kWh spart mehr als den Energiepreis."
           text="Eine gewerbliche PV-Anlage rechnet sich in Österreich über fünf Hebel – der Überschusserlös ist nur der sechste:"
-          points={[
-            { title: "Energiepreis", text: "aus Ihrem Liefervertrag entfällt für jede selbst genutzte kWh." },
-            { title: "Netzentgelte", text: "Netznutzungs- und Netzverlustentgelt fallen für Eigenverbrauch nicht an." },
-            { title: "Elektrizitätsabgabe", text: "Eigenverbrauch aus Erneuerbaren ist nach § 2 ElAbgG befreit." },
-            { title: "Leistungspreis", text: "Mittagsspitzen im Sommer sinken – jeder Monat zählt." },
-            { title: "Steuer", text: "Öko-IFB 22 % bis Ende 2026, dazu lineare oder degressive AfA." },
+          hebel={[
+            { titel: "Energiepreis", text: "aus Ihrem Liefervertrag entfällt für jede selbst genutzte kWh." },
+            { titel: "Netzentgelte", text: "Netznutzungs- und Netzverlustentgelt fallen für Eigenverbrauch nicht an." },
+            { titel: "Elektrizitätsabgabe", text: "Eigenverbrauch aus Erneuerbaren ist nach § 2 ElAbgG befreit." },
+            { titel: "Leistungspreis", text: "Mittagsspitzen im Sommer sinken – jeder Monat zählt." },
+            { titel: "Steuer", text: "Öko-IFB 22 % bis Ende 2026, dazu lineare oder degressive AfA." },
           ]}
-          aside={
-            <FotoKennzahl
-              seite="links"
-              bild={{ src: "/Images/Referenzen/referenzkarte1.jpg", alt: "Techniker prüft eine Photovoltaikanlage auf einem Gewerbedach" }}
-              titel="Beispiel · 300 kWp · Netzebene 6 · OÖ"
-              werte={[
-                { wert: "≈ 6,1 J.", label: "statische Amortisation" },
-                { wert: "≈ 34.360 €", label: "Überschuss pro Jahr" },
-                { wert: "14,64 ct", label: "vermiedene Kosten je kWh" },
-              ]}
-              fuss="Annahmen und Rechenweg unter „Für Technik & Einkauf“ – kein Angebot."
-            />
-          }
-          action={{ label: "Eigene Zahlen rechnen", href: "/rechner/gewerbe-pv" }}
+          kopf={{ titel: "Was eine Kilowattstunde vom Dach wert ist", chip: "Beispiel · 300 kWp · Netzebene 6 · OÖ" }}
+          summe="14,64"
+          posten={[
+            { label: "Energiepreis", wert: "11,00", farbe: "#669933" },
+            { label: "Netznutzung", wert: "2,37", farbe: "#1f5aa1" },
+            { label: "Netzverlust", wert: "0,454", farbe: "#7fa7d6" },
+            { label: "Elektrizitätsabgabe", wert: "0,82", farbe: "#f5a70f" },
+          ]}
+          einspeisung={{ label: "Eingespeist – Überschusserlös", wert: "6,0" }}
+          faktor="2,4"
+          ergebnis={[
+            { wert: "≈ 6,1 J.", label: "statische Amortisation" },
+            { wert: "≈ 34.360 €", label: "Überschuss pro Jahr, vor Steuern" },
+            { wert: "≈ 10.600 €", label: "Steuerwirkung Öko-IFB" },
+          ]}
+          fuss="Arbeitspreise netto, Stand 09/2026. Annahmen und Rechenweg im Fachteil – kein Angebot."
+          fussLink={{ label: "Beispielrechnung ansehen", href: "#beispielrechnung" }}
+          aktionen={[
+            { label: "Eigene Zahlen rechnen", href: "/rechner/gewerbe-pv" },
+            { label: "Anfrage mit Lastgang", href: "/angebot?objekt=gewerbe" },
+          ]}
+        />
+      </Section>
+
+      {/* Werkzeuge: selbst rechnen */}
+      <Section tone="sand" space="lg" id="rechner" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg-light absolute inset-x-0 top-0 h-[520px]" />
+        <RechnerLeiste
+          className="relative"
+          variante="schaufenster"
+          eyebrow="Selbst rechnen"
+          titel={<>Ihr Betrieb in Zahlen&nbsp;– <span className="ov-text-gradient">bevor wir sprechen.</span></>}
+          text="Kostenlose Werkzeuge mit österreichischen Netzentgelten, Förderungen und Standortdaten: Hallendach, Leistungspreis, Flotte und Klimabilanz."
+          alle={{ label: "Alle Rechner & Tools", href: "/rechner" }}
+          items={[
+            { format: "gross", motiv: "gewerbe", icon: Calculator, tag: "Neu", titel: "Gewerbe-PV-Rechner", text: "Anlagengröße, Eigenverbrauch und Amortisation nach Ihrem Verbrauch – mit IRR, EAG-Zuschuss und Investitionsfreibetrag.", href: "/rechner/gewerbe-pv", cta: "Hallendach durchrechnen" },
+            { motiv: "peak", icon: Gauge, titel: "Peak-Shaving-Rechner", text: "Was ein Speicher am Leistungspreis der zwölf Monatsspitzen spart.", href: "/rechner/peak-shaving" },
+            { motiv: "flotte", icon: Car, titel: "E-Flotten-Rechner", text: "Ladebedarf der Flotte gegen Solarstrom vom eigenen Dach.", href: "/rechner/e-flotte" },
+            { motiv: "co2", icon: Leaf, titel: "CO₂- & ESG-Rechner", text: "Scope-2-Wirkung Ihrer Anlage für den Nachhaltigkeitsbericht.", href: "/rechner/co2-esg" },
+            { icon: Wrench, tag: "Service", titel: "Wartungsvertrag", text: "Service-Level nach Anlagengröße: Inspektion, Thermografie, Reinigung, Störungsbehebung.", href: "/service/wartung" },
+            { icon: Users, tag: "Service", titel: "Energiegemeinschaft", text: "Überschuss an Mitarbeitende, Nachbarbetriebe oder die Gemeinde weitergeben.", href: "/energiegemeinschaften" },
+          ]}
         />
       </Section>
 
@@ -334,7 +373,7 @@ export default async function GewerbePage({ searchParams }) {
               zeilen={NETZEBENEN}
               fuss="Richtwerte – die Netzebene legt der Netzbetreiber fest. Typen nach TOR Erzeuger (E-Control): Typ A ≥ 0,8 kW bis < 250 kW, Typ B 250 kW bis < 35 MW, Typ C 35 bis < 50 MW, Typ D ≥ 50 MW oder Anschluss ≥ 110 kV."
             />
-            <Prosa className="mt-8 grid gap-6 xl:grid-cols-2 xl:gap-10 [&>*+*]:mt-0">
+            <Prosa className="mt-8 grid gap-6 xl:grid-cols-2 xl:gap-10 [&>p]:mt-0!">
               <p>
                 <strong>Ab Typ B verlangt der Netzbetreiber zusätzliche Nachweise</strong> – unter anderem zur Blindleistungsbereitstellung, zur
                 Wirkleistungsreduktion auf Vorgabe und zur Fernwirkanbindung. Auf Mittelspannung übernimmt das ein Parkregler (EZA-Regler) am
@@ -472,20 +511,17 @@ export default async function GewerbePage({ searchParams }) {
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Geschäftsführung, Technik und Einkauf" />
-            <p className="mt-10 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Selbst rechnen & weiterlesen</p>
+            <p className="mt-10 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Vor dem Erstgespräch</p>
             <RechnerLeiste
               className="mt-4"
               kompakt
               mini
               spaltenKlasse="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1"
               items={[
-              { icon: Calculator, tag: "Rechner", titel: "Gewerbe-PV-Rechner", text: "Anlagengröße, Eigenverbrauch und Amortisation nach Ihrem Verbrauch.", href: "/rechner/gewerbe-pv" },
-              { icon: Gauge, tag: "Rechner", titel: "Peak-Shaving-Rechner", text: "Was ein Speicher am Leistungspreis der zwölf Monatsspitzen spart.", href: "/rechner/peak-shaving" },
-              { icon: Car, tag: "Rechner", titel: "E-Flotten-Rechner", text: "Ladebedarf der Flotte gegen Solarstrom vom eigenen Dach.", href: "/rechner/e-flotte" },
-              { icon: Leaf, tag: "Rechner", titel: "CO₂- & ESG-Rechner", text: "Scope-2-Wirkung Ihrer Anlage für den Nachhaltigkeitsbericht.", href: "/rechner/co2-esg" },
-              { icon: Wrench, tag: "Service", titel: "Wartungsvertrag", text: "Service-Level nach Anlagengröße: Inspektion, Thermografie, Reinigung, Störungsbehebung.", href: "/service/wartung" },
-              { icon: Users, tag: "Service", titel: "Energiegemeinschaft", text: "Überschuss an Mitarbeitende, Nachbarbetriebe oder die Gemeinde weitergeben.", href: "/energiegemeinschaften" },
-            ]}
+                { icon: Activity, titel: "Lastgang selbst auswerten", text: "", href: "/lastgang-analyse" },
+                { icon: BadgeEuro, titel: "Förder-Check", text: "", href: "/foerdercheck" },
+                { icon: MapPin, titel: "Standort-Check: Schnee & Wind", text: "", href: "/standort-check" },
+              ]}
             />
           </div>
           <Faq items={FAQ} />

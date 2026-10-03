@@ -18,6 +18,8 @@ const videoErlaubt = () => {
  * Performance: preload="metadata" (nur Kopfdaten, kein Vorabladen der ganzen
  * Datei); abgespielt wird nur, solange der Hero im Sichtfeld und der Tab
  * sichtbar ist – sonst pausiert es und lädt nicht weiter.
+ * Tiefe: `data-s01-tiefe` – die Startseiten-Parallaxe (Startseite/s01-buehne) bewegt das Video
+ * synchron mit dem Standbild.
  * Barrierefreiheit (WCAG 2.2.2): Das Video lässt sich jederzeit anhalten; die
  * Wahl des Besuchers („pausiert“) wird vom automatischen Abspielen respektiert.
  */
@@ -103,6 +105,7 @@ export default function HeroVideo({ src, poster }) {
     <>
       <video
         ref={ref}
+        data-s01-tiefe="0.3"
         className={`absolute inset-0 -z-20 h-full w-full object-cover transition-opacity duration-1000 ${bereit ? "opacity-100" : "opacity-0"}`}
         muted
         loop
@@ -119,7 +122,7 @@ export default function HeroVideo({ src, poster }) {
         onClick={umschalten}
         aria-label={pausiert ? "Hintergrundvideo abspielen" : "Hintergrundvideo pausieren"}
         title={pausiert ? "Video abspielen" : "Video pausieren"}
-        className="ov-glass absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition-colors hover:text-white md:right-6 md:top-6"
+        className="ov-glass absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full text-white/80 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ov-300 md:right-6 md:top-6"
       >
         {pausiert ? <Play aria-hidden="true" className="h-4 w-4" /> : <Pause aria-hidden="true" className="h-4 w-4" />}
       </button>

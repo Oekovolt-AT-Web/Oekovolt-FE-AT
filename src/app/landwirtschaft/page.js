@@ -10,9 +10,12 @@ import {
   Flame,
   HandCoins,
   LineChart,
+  MapPin,
   Milk,
+  Receipt,
   ShieldAlert,
   Sprout,
+  Sun,
   Users,
   Warehouse,
   Wheat,
@@ -22,7 +25,6 @@ import {
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SplitMedia from "@/components/ui/SplitMedia";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
@@ -36,6 +38,7 @@ import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
 import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
+import W24HofSystem from "@/components/Loesungen/w24-HofSystem";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
 
@@ -110,6 +113,7 @@ const BETRIEBE = [
     titel: "Milchvieh: Melken & Kühlen",
     last: [0.32, 0.3, 0.3, 0.3, 0.45, 0.95, 1, 0.8, 0.5, 0.45, 0.45, 0.48, 0.5, 0.5, 0.48, 0.5, 0.7, 0.95, 1, 0.75, 0.5, 0.4, 0.35, 0.33],
     pvFaktor: 0.9,
+    marken: [{ h: 6, label: "Melken" }, { h: 18, label: "Melken" }],
     text: "Melkroboter, Milchkühlung, Vakuumpumpen und Warmwasser laufen täglich – mit Speicher auch morgens und abends solar.",
     punkte: ["Speicher verschiebt den Mittagsüberschuss in die Melkzeiten", "Notstrom hält Melkanlage, Kühlung, Lüftung und Tränke am Laufen"],
     link: { label: "Blackout-Rechner", href: "/rechner/blackout" },
@@ -221,7 +225,8 @@ export default async function LandwirtschaftPage({ searchParams }) {
         />
       </Section>
 
-      <Section tone="sand" space="md" id="betriebsarten">
+      <Section tone="sand" space="lg" id="betriebsarten" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg-light absolute inset-x-0 top-0 h-[520px]" />
         <LastprofilExplorer
           ueberschrift="h2"
           eyebrow="Betriebsart · interaktiv"
@@ -231,21 +236,43 @@ export default async function LandwirtschaftPage({ searchParams }) {
         />
       </Section>
 
-      <Section tone="white" space="md">
-        <SplitMedia
+      {/* Hof als Energiesystem: gezeichnete Hofansicht */}
+      <Section tone="white" space="lg" id="energiesystem">
+        <W24HofSystem
           eyebrow="Mehr als ein Dach"
-          title="Hof, Wohnhaus und Fläche als ein Energiesystem"
-          text={[
+          titel="Hof, Wohnhaus und Fläche als ein Energiesystem"
+          absaetze={[
             "Viele Höfe haben mehrere Zählpunkte: Betrieb, Wohnhaus, Austragshaus, Hofladen. Wir planen die Anlage so, dass der Strom dort ankommt, wo er gebraucht wird – über die richtige Anschlusslösung, eine gemeinschaftliche Erzeugungsanlage oder die Energiegemeinschaft der Gemeinde.",
             "Wer zusätzlich Fläche hat, kann Agri-PV prüfen: Strom und landwirtschaftlicher Ertrag auf demselben Feld, mit Förderzuschlag statt Abschlag.",
           ]}
-          points={[
-            { title: "Wärmepumpe & Warmwasser", text: "Heizung und Reinigungswasser mit Solarstrom." },
-            { title: "E-Hoflader & Hof-Pkw", text: "Laden mit Überschuss statt Diesel." },
-            { title: "Energiegemeinschaft", text: "Überschuss regional verkaufen, Netzentgelte der Abnehmer sinken." },
+          punkte={[
+            { titel: "Wärmepumpe & Warmwasser", text: "Heizung und Reinigungswasser mit Solarstrom." },
+            { titel: "E-Hoflader & Hof-Pkw", text: "Laden mit Überschuss statt Diesel." },
+            { titel: "Energiegemeinschaft", text: "Überschuss regional verkaufen, Netzentgelte der Abnehmer sinken." },
           ]}
-          image={{ src: "/Images/AT/loesungen/agri-pv-obstbau.jpg", alt: "Hoch aufgeständerte Agri-PV-Module über einer Apfelanlage" }}
-          action={{ label: "Agri-PV kennenlernen", href: "/agri-pv" }}
+          bild={{ src: "/Images/AT/loesungen/agri-pv-obstbau.jpg", alt: "Hoch aufgeständerte Agri-PV-Module über einer Apfelanlage" }}
+          aktion={{ label: "Agri-PV kennenlernen", href: "/agri-pv" }}
+        />
+      </Section>
+
+      {/* Werkzeuge: selbst rechnen & vorsorgen */}
+      <Section tone="sand" space="lg" id="rechner" className="overflow-hidden">
+        <div aria-hidden="true" className="ov-grid-bg-light absolute inset-x-0 top-0 h-[520px]" />
+        <RechnerLeiste
+          className="relative"
+          variante="schaufenster"
+          eyebrow="Selbst rechnen & vorsorgen"
+          titel={<>Notstrom, Gemeinschaft, Förderung – <span className="ov-text-gradient">vorab durchgerechnet.</span></>}
+          text="Kostenlose Werkzeuge mit österreichischen Förderungen und Standortdaten – für den Hof, bevor wir zum ersten Mal vorbeikommen."
+          alle={{ label: "Alle Rechner & Tools", href: "/rechner" }}
+          items={[
+            { motiv: "blackout", icon: ShieldAlert, titel: "Blackout-Rechner", text: "Was kostet ein Stromausfall? Ersatzstrom-Leistung, Speicher, Aggregat und Kraftstoff – plus Vorsorge-Checkliste.", href: "/rechner/blackout" },
+            { motiv: "eeg", icon: Users, titel: "Energiegemeinschafts-Rechner", text: "Geteilte Energie, Netzentgelt-Ersparnis und fairer Preis für Hof, Nachbarn und Gemeinde.", href: "/rechner/energiegemeinschaft" },
+            { motiv: "standort", icon: MapPin, titel: "Standort-Check", text: "Schneelast, Wind, Hagel und Ertrag für Ihre Adresse – vor der Dachplanung.", href: "/standort-check" },
+            { format: "band", motiv: "foerder", icon: BadgeEuro, titel: "Förder-Check", text: "Welche Bundes- und Landesförderungen und welche steuerlichen Vorteile passen zu Ihrem Hof?", href: "/foerdercheck", cta: "Förder-Check starten" },
+            { format: "link", icon: Sun, titel: "Solarrechner für Betrieb, Hof und Haus", href: "/solarrechner" },
+            { format: "link", icon: ShieldAlert, titel: "Ratgeber Blackout-Vorsorge", href: "/ratgeber/blackout-vorsorge-unternehmen" },
+          ]}
         />
       </Section>
 
@@ -392,17 +419,15 @@ export default async function LandwirtschaftPage({ searchParams }) {
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen vor der Planung" />
-            <p className="mt-10 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Selbst rechnen & vorsorgen</p>
+            <p className="mt-10 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Weiterlesen</p>
             <RechnerLeiste
               className="mt-4"
               kompakt
               mini
               spaltenKlasse="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1"
               items={[
-                { icon: ShieldAlert, titel: "Blackout-Rechner", text: "", href: "/rechner/blackout" },
-                { icon: Users, titel: "Energiegemeinschafts-Rechner", text: "", href: "/rechner/energiegemeinschaft" },
-                { icon: BadgeEuro, titel: "Förder-Check", text: "", href: "/foerdercheck" },
-                { icon: ShieldAlert, titel: "Ratgeber Blackout-Vorsorge", text: "", href: "/ratgeber/blackout-vorsorge-unternehmen" },
+                { icon: Receipt, titel: "Ratgeber Photovoltaik & Steuern", text: "", href: "/ratgeber/photovoltaik-steuern" },
+                { icon: BatteryCharging, titel: "Notstrom für Melken, Kühlen, Lüften", text: "", href: "/service/notstrom" },
                 { icon: Flame, titel: "Ratgeber Brandschutz", text: "", href: "/ratgeber/photovoltaik-brandschutz" },
               ]}
             />

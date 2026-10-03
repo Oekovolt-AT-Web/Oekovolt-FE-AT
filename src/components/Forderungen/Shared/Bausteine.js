@@ -13,7 +13,7 @@ export function StandPille({ children, dark = false, className }) {
     <p
       className={cn(
         "inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px]",
-        dark ? "ov-glass text-white/80" : "bg-white text-ink-600 ring-1 ring-ink-200",
+        dark ? "ov-glass text-white/80" : "bg-white text-ink-600",
         className
       )}
     >
