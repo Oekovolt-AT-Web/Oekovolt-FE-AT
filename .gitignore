@@ -52,3 +52,10 @@ reels-roh/
 
 # IndexNow: Zustand der zuletzt gemeldeten Seiten (je Deploy-Umgebung)
 scripts/indexnow-zustand.json
+
+# Temporäre Build-Ordner von Prüfläufen, Logs und lokale Werkzeuge
+/.next-*/
+*.log
+__pycache__/
+.dev-waechter.pid
+/.claude/
