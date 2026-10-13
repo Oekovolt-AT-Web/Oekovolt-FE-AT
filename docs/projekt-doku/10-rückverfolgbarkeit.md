@@ -1,7 +1,7 @@
 # 10 – Rückverfolgbarkeit (Traceability-Matrix)
 
 In Anlehnung an ISO/IEC/IEEE 29148 (Rückverfolgbarkeit von Anforderungen). Keine Normkonformität behauptet.
-Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 Spalten: **Anforderung** (Kapitel 01) → **Umsetzung** (Datei) → **Test** (Kapitel 06; „–“ = kein automatisierter
 Test, „manuell“ = nur Sichtprüfung/Abnahme vorgesehen) → **Status**.
@@ -90,6 +90,19 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-ENE-01 Strommarkt live | `src/lib/energy.js`, `src/app/api/energie/live/route.js`, `src/app/energie-live/page.js` | – | umgesetzt; R-12 |
 | REQ-INH-01 Inhalte | `src/content/ratgeber/*`, `src/data/{lexikon,faqs}.js`, `src/data/regionen/*` | QA-Crawl 29.09. (`docs/AT-UEBERGABE.md:3-5`) | umgesetzt |
 | REQ-REC-LEG-01 Rechtsseiten | `src/app/{impressum,agb,datenschutz,barrierefreiheit,hinweisgeberschutz,bildnachweis}` | – | umgesetzt; Rechtsprüfung offen |
+| REQ-WA-01 Werbeaussagen-Register | `src/data/werbeaussagen.js`, `src/data/marke.js`, `src/data/hero.js`, `src/lib/site.js` (`guetesiegel`) | `scripts/werbeaussagen.test.mjs` (6) + QA-Textscan | umgesetzt (unveröff.); R-63 |
+| REQ-WA-02 Salzburg AG neutral | `src/data/unternehmen.js`, `src/app/uber-uns/page.js`, `src/components/Team/Firmengeschichte.js`, `src/app/kommunen/page.js` | QA-Textscan (A02) | umgesetzt (unveröff.); F-42 |
+| REQ-WA-03 Kennzahlen mit Stand | `src/data/kennzahlen.js` (`KENNZAHLEN_HINWEIS_STAND`), Presse, Referenzen, `SeoTextSection` | `scripts/kennzahlen.test.mjs` (9) | umgesetzt (unveröff.) |
+| REQ-WA-04 Referenz-Freigabe | `…/doctype/referenz_freigabe/*`, `website_api/freigabe.py`, `src/app/referenzen/freigabe/[token]/*`, `src/app/api/referenz-freigabe/route.js`, `src/lib/kundenbuehneServer.js`, `src/data/kunden.js` | `scripts/kundenbuehne.test.mjs` (40), T-FREIGABE (13) | umgesetzt (unveröff.); R-64, R-65 |
+| REQ-WA-05 Plakette, Award | `src/lib/kundenbuehne.js` (`plaketteSvg`), `src/app/siegel/[slug]/route.js`, `src/app/pv-award/page.js`, `src/components/Award/*` | `scripts/kundenbuehne.test.mjs` | umgesetzt (unveröff.) |
+| REQ-WA-06 Lead-Gate 2.0 | `src/data/leadRechner.js`, `src/lib/{rechnerLead,leadGateServer}.js`, `src/app/api/rechner_lead`, `src/app/api/lead-gate/*`, `src/app/freischalten`, `src/components/LeadGate/*`, `src/data/argumentarien.js`, `website_api/rechner.py` | `scripts/lead-gate.test.mjs` (22), T-RLEAD (10), T-VERTRAG | umgesetzt (unveröff.); F-44, F-47 |
+| REQ-WA-07 Commitment-Leiter | `src/lib/einwilligungen.js`, `src/components/Angebot/Konfigurator.js`, `src/components/Kontakt/KontaktFormular.js`, `src/components/Rueckruf/*`, `src/app/api/{create_anfrage,create_contact,termin}/route.js` | T-VERTRAG (Telefon optional), manuell | umgesetzt (unveröff.); R-67 |
+| REQ-WA-08 Verkaufs-Bausteine | `src/data/{branchenZuordnung,fristen,einwaende,preisbaender,fachberater,zielgruppen}.js`, `src/components/Verkauf/*`, `src/components/Referenzen/BranchenReferenzen.js` | `scripts/verkauf.test.mjs` (37) | umgesetzt (unveröff.) |
+| REQ-WA-09 Zielgruppenseiten | `src/app/{gewerbe,gewerbespeicher,landwirtschaft,agri-pv,freiflaechen-photovoltaik,kommunen,hotellerie-tourismus,ladeinfrastruktur}/page.js`, `src/app/kommunen/vergabe-foerderung/page.js` | manuell (QA 10 Geräte) | umgesetzt (unveröff.) |
+| REQ-WA-10 Rechner-Glaubwürdigkeit | `src/lib/rechner/{gewerbepv,finanzierung,blackout,pacht}.js`, `src/components/Technik/torTypen.js`, `src/components/RechnerGewerbe/*`, `src/components/Home2/HeroGewerbeRechner.js` | `scripts/rechner-gewerbe.test.mjs` (88), `finanzierung.test.mjs`, `rechner-privat.test.mjs` (45) | umgesetzt (unveröff.); F-51 |
+| REQ-WA-11 Speed-to-Lead | `…/doctype/lead_routing_regel/*`, `website_api/{lead_eingang,sla,format,kontakt,angebot,solarrechner,termin,rechner}.py`, DocType-JSONs | T-ROUTING (52), T-VERTRAG (361), T-RLEAD (10) | umgesetzt (unveröff., ohne Frappe); F-46 |
+| REQ-WA-12 Mobile Führung | `src/components/ui/PageHero.js`, `src/lib/kontextAngebot.js`, `src/components/Reusable/MobileCta.js`, `src/components/Navbar/navbar.js`, `src/components/Cookies/cookiecomponent.js`, `src/app/globals.css` | manuell (Playwright, A12 + QA) | umgesetzt (unveröff.); R-69, R-70 |
+| REQ-WA-13 Sicherheitsvorlauf | `package.json`, `package-lock.json`, `next.config.mjs`, `public/.well-known/security.txt`, `public/Images/leaflet/*` | `scripts/redirects.test.mjs` (7), `npm audit` in T-ALLE | umgesetzt (unveröff.); R-80 |
 
 ## 2. Nicht-funktionale Anforderungen
 
@@ -133,8 +146,17 @@ Statuswerte wie in Kapitel 01. „unveröff.“ = nur im Arbeitsbaum, nicht comm
 | REQ-NF-I18N-01 | Formatfunktionen, Texte | – | umgesetzt |
 | REQ-NF-WART-01 | `src/lib/site.js`, `src/data/navigation.js` | – | umgesetzt |
 | REQ-NF-VERF-01 | `ladeProjekte.js`, `anfrageWeiterleiten.js`, `src/app/produkte/stromspeicher/[slug]/page.js` | T-PROJ | umgesetzt |
+| REQ-NF-A11Y-04 | `src/app/globals.css` (`--color-ink-500`, `scroll-margin`), Welle-A-Dateien | `scripts/kontrast-klassen.test.mjs` (todo, 359) | teilweise (R-81) |
+| REQ-NF-PERF-05 | `src/components/ui/PageHero.js`, `src/components/Startseite/S01Hero.js`, `src/components/Cookies/cookiecomponent.js`, `src/app/layout.js` | manuell (LCP/CLS-Messung A12, QA) | teilweise (R-69) |
+| REQ-NF-RECHT-01 | `src/data/werbeaussagen.js`, Symbolbild-Kennzeichnung in A02-Dateien | `scripts/werbeaussagen.test.mjs` | umgesetzt (unveröff.) |
 
 ## 3. Auswertung
+
+| Kennzahl (12.10.2026, Version 0.6) | Wert |
+|---|---|
+| Anforderungs-IDs in Kapitel 01 | 142 (0.5: 126; neu REQ-WA-01 … 13, REQ-NF-A11Y-04, REQ-NF-PERF-05, REQ-NF-RECHT-01) |
+| davon mit automatisiertem Test verknüpft | 41 (0.5: 29; neu 12 der 16 Welle-A-IDs) |
+| Schwerpunkte offen | Commit der Welle A (F-49), Backoffice-Rollout und Abnahme (F-46, F-47), Rechtsprüfungen (F-41–F-44), Restbefunde QA (R-63, R-67, R-69–R-73), Build-Nachweis Endstand (Q-23) |
 
 | Kennzahl (30.09.2026) | Wert |
 |---|---|

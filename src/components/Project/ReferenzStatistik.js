@@ -39,7 +39,8 @@ export default function ReferenzStatistik({ projekte = [] }) {
         <dl className="mt-10 grid grid-cols-2 gap-3 sm:gap-4">
           <Kpi wert={k.anzahl} label="dokumentierte Projekte" />
           <Kpi wert={Math.round(k.summeKwp)} suffix=" kWp" label="installierte Leistung (Auswahl)" />
-          <Kpi wert={k.orte} label="Orte mit Referenzanlagen" />
+          {/* Ohne Ortsangaben in den Projektdaten keine „0 Orte“ zeigen */}
+          {k.orte > 0 && <Kpi wert={k.orte} label="Orte mit Referenzanlagen" />}
           <Kpi wert={Math.round(k.groesste?.kwp || 0)} suffix=" kWp" label="größte Anlage der Auswahl" href={k.groesste ? `/referenzen/projekte/${k.groesste.slug}` : undefined} />
         </dl>
         <p className="mt-5 text-[13px] leading-relaxed text-white/50">
@@ -48,7 +49,8 @@ export default function ReferenzStatistik({ projekte = [] }) {
       </div>
 
       <div className="grid gap-4">
-        {/* Projekte je Jahr */}
+        {/* Projekte je Jahr – nur, wenn die Projektdaten Baujahre enthalten */}
+        {jahre.length > 0 && (
         <Reveal className="ov-glass rounded-3xl p-6 md:p-8">
           <div className="flex items-baseline justify-between gap-4">
             <h3 className="font-display text-[18px] font-bold text-white">Projekte nach Baujahr</h3>
@@ -80,6 +82,7 @@ export default function ReferenzStatistik({ projekte = [] }) {
             ))}
           </div>
         </Reveal>
+        )}
 
         <div className="grid gap-4 sm:grid-cols-2">
           {/* Größenklassen */}

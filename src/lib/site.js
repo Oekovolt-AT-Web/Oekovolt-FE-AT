@@ -44,6 +44,18 @@ export const FIRMA = {
     { name: "Andreas Wegscheider", anteil: "51 %" },
     { name: "Salzburg AG für Energie, Verkehr und Telekommunikation", anteil: "49 %" },
   ],
+  // Gütesiegel (WKO Meisterbetrieb, „Elektrotechnik staatlich geprüft“): nur führen, wenn die
+  // Berechtigung belegt ist (Urkunde/Verleihung). Mitgliedschaft in Kammer und Innung ist belegt,
+  // das Siegel selbst nicht → belegt:false, Siegel bleiben ausgeblendet (Welle A02).
+  guetesiegel: {
+    meisterbetrieb: { belegt: false, beleg: "" },
+    elektrotechnik: { belegt: false, beleg: "" },
+  },
+  // Lead-Versprechen unter Formularen (A08/A09): sachlich, ohne Reaktionszeit-Zusage.
+  leadVersprechen: "Ihre Anfrage bearbeiten wir selbst – kein Callcenter, keine Weitergabe an Dritte.",
+  // Zeile „Gesellschafter laut Firmenbuch: …“ auf /uber-uns – vorbereitet, Standard AUS
+  // (Inhaber-Entscheidung 05.10.2026: neutral, Anwalt prüft). Impressum bleibt unverändert.
+  gesellschafterZeileFreigegeben: false,
   geo: { lat: 48.0428, lng: 12.8417 },
   oeffnungszeiten: [
     { tage: "Mo – Do", zeit: "08:00 – 16:00" },

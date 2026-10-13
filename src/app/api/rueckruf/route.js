@@ -5,6 +5,7 @@ import { API_BASE_URL } from "@/lib/apiBaseUrl";
 import { backendFehler, NICHT_ERREICHBAR } from "@/lib/backendFehler";
 import { herkunftAnNachricht } from "@/lib/herkunftServer";
 import { gedrosselt, leseJson } from "@/lib/api/uber-uns/anfrageWeiterleiten";
+import { einwilligungPruefen } from "@/lib/einwilligungen";
 
 const API_URL = `${API_BASE_URL}oekovolt_app.website_api.termin.buche_termin`;
 
@@ -30,7 +31,8 @@ export async function POST(request) {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...body, ip_adresse: ipAdresse(request) }),
+      // Einwilligungstext-Kennung und -Version nur aus dem Register (src/lib/einwilligungen.js, A08)
+      body: JSON.stringify({ ...body, ...einwilligungPruefen(daten?.einwilligung_id, daten?.einwilligung_version), ip_adresse: ipAdresse(request) }),
     });
 
     if (!response.ok) {

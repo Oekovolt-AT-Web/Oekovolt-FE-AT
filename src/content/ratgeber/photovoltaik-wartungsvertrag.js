@@ -283,7 +283,7 @@ const artikel = {
       bloecke: [
         {
           typ: "p",
-          text: "**Ökovolt betreut Photovoltaikanlagen von Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich – mit eigenem Parkregler, eigenen Fernwartungs- und SCADA-Systemen.** Den Leistungsumfang stimmen wir auf Ihre Anlage ab; ein Angebot erhalten Sie über die Seite [Wartung & Service](/service/wartung). Ergänzend bieten wir den [E-Check mit Prüfbefund](/service/e-check), die Drohnen-Thermografie und die Reinigung an.",
+          text: "**Ökovolt betreut Photovoltaikanlagen von Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich – mit Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa.** Den Leistungsumfang stimmen wir auf Ihre Anlage ab; ein Angebot erhalten Sie über die Seite [Wartung & Service](/service/wartung). Ergänzend bieten wir den [E-Check mit Prüfbefund](/service/e-check), die Drohnen-Thermografie und die Reinigung an.",
         },
       ],
     },

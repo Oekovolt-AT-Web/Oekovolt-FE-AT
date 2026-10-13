@@ -1,0 +1,341 @@
+{
+ "name": "Ökovolt Solar-Marktwert Österreich",
+ "beschreibung": "PV-gewichteter Day-Ahead-Monatspreis der Gebotszone AT: Summe aus Viertelstundenpreis × öffentlicher Netto-Solarerzeugung Österreichs, geteilt durch die Solarerzeugung. Eigene Schätzung von Ökovolt – nicht der amtliche Referenzmarktwert der E-Control nach § 13 EAG. Dazu das ungewichtete Monatsmittel und der Marktwertfaktor (Solar-Marktwert ÷ Monatsmittel).",
+ "lizenz": "CC BY 4.0",
+ "lizenzUrl": "https://creativecommons.org/licenses/by/4.0/",
+ "herausgeber": "Ökovolt Solartechnik GmbH (Ökovolt Österreich)",
+ "attribution": "Ökovolt Österreich – Solar-Marktwert, Daten: Bundesnetzagentur | SMARD.de und Energy-Charts (Fraunhofer ISE), jeweils CC BY 4.0",
+ "quellen": [
+  {
+   "name": "Bundesnetzagentur | SMARD.de – Marktpreis Österreich (Filter 4170, Day-Ahead, Viertelstunde)",
+   "url": "https://www.smard.de/home/downloadcenter/download-marktdaten/",
+   "lizenz": "CC BY 4.0"
+  },
+  {
+   "name": "Energy-Charts (Fraunhofer ISE) – öffentliche Nettostromerzeugung Österreich, Reihe Solar",
+   "url": "https://www.energy-charts.info/?l=de&c=AT",
+   "lizenz": "CC BY 4.0"
+  }
+ ],
+ "stand": "2026-10-11",
+ "zeitraum": {
+  "von": "2024-01",
+  "bis": "2026-09"
+ },
+ "zeitzone": "Europe/Vienna",
+ "hinweis": "Eigene Berechnung von Ökovolt Österreich aus offenen Daten – nicht amtlich, keine Erlöszusage, Richtwert/Orientierung.",
+ "skript": "scripts/marktindizes.mjs",
+ "rechenregeln": "src/lib/marktindizes.js",
+ "methode": {
+  "gewicht": "Energy-Charts public_power country=at, Reihe Solar (MW je Viertelstunde)",
+  "formel": "Σ(Preis_i × Solar_i) / Σ(Solar_i) über alle Viertelstunden des Monats mit Solarerzeugung > 0",
+  "abgrenzung": "Die E-Control gewichtet für den Referenzmarktwert die tatsächlich abgerechnete PV-Einspeisung; Mengen und Datenbasis unterscheiden sich, Abweichungen sind normal."
+ },
+ "einheiten": {
+  "solarMarktwert": "€/MWh",
+  "mittel": "€/MWh",
+  "marktwertfaktor": "Verhältnis",
+  "negativ": "Viertelstunden mit Preis < 0",
+  "abdeckung": "Anteil vorhandener Preis-Viertelstunden",
+  "pvViertelstunden": "Viertelstunden mit PV-Wert"
+ },
+ "monate": [
+  {
+   "monat": "2024-01",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 81.33,
+   "solarMarktwert": 80.33,
+   "marktwertfaktor": 0.988,
+   "negativ": 8
+  },
+  {
+   "monat": "2024-02",
+   "abdeckung": 1,
+   "pvViertelstunden": 2784,
+   "mittel": 65.78,
+   "solarMarktwert": 61.8,
+   "marktwertfaktor": 0.939,
+   "negativ": 0
+  },
+  {
+   "monat": "2024-03",
+   "abdeckung": 1,
+   "pvViertelstunden": 2972,
+   "mittel": 63.64,
+   "solarMarktwert": 46.19,
+   "marktwertfaktor": 0.726,
+   "negativ": 24
+  },
+  {
+   "monat": "2024-04",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 58.72,
+   "solarMarktwert": 30.84,
+   "marktwertfaktor": 0.525,
+   "negativ": 212
+  },
+  {
+   "monat": "2024-05",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 64.14,
+   "solarMarktwert": 32.21,
+   "marktwertfaktor": 0.502,
+   "negativ": 292
+  },
+  {
+   "monat": "2024-06",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 67.72,
+   "solarMarktwert": 41.66,
+   "marktwertfaktor": 0.615,
+   "negativ": 244
+  },
+  {
+   "monat": "2024-07",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 63.4,
+   "solarMarktwert": 42.6,
+   "marktwertfaktor": 0.672,
+   "negativ": 180
+  },
+  {
+   "monat": "2024-08",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 85.11,
+   "solarMarktwert": 57.34,
+   "marktwertfaktor": 0.674,
+   "negativ": 104
+  },
+  {
+   "monat": "2024-09",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 81.94,
+   "solarMarktwert": 58.53,
+   "marktwertfaktor": 0.714,
+   "negativ": 44
+  },
+  {
+   "monat": "2024-10",
+   "abdeckung": 1,
+   "pvViertelstunden": 2980,
+   "mittel": 85.58,
+   "solarMarktwert": 62.03,
+   "marktwertfaktor": 0.725,
+   "negativ": 76
+  },
+  {
+   "monat": "2024-11",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 130.82,
+   "solarMarktwert": 121.24,
+   "marktwertfaktor": 0.927,
+   "negativ": 0
+  },
+  {
+   "monat": "2024-12",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 129.67,
+   "solarMarktwert": 133.45,
+   "marktwertfaktor": 1.029,
+   "negativ": 0
+  },
+  {
+   "monat": "2025-01",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 133.85,
+   "solarMarktwert": 131.24,
+   "marktwertfaktor": 0.981,
+   "negativ": 0
+  },
+  {
+   "monat": "2025-02",
+   "abdeckung": 1,
+   "pvViertelstunden": 2688,
+   "mittel": 140.81,
+   "solarMarktwert": 125.84,
+   "marktwertfaktor": 0.894,
+   "negativ": 0
+  },
+  {
+   "monat": "2025-03",
+   "abdeckung": 1,
+   "pvViertelstunden": 2972,
+   "mittel": 103.91,
+   "solarMarktwert": 63.65,
+   "marktwertfaktor": 0.613,
+   "negativ": 28
+  },
+  {
+   "monat": "2025-04",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 81.04,
+   "solarMarktwert": 26.08,
+   "marktwertfaktor": 0.322,
+   "negativ": 304
+  },
+  {
+   "monat": "2025-05",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 70.55,
+   "solarMarktwert": 13.63,
+   "marktwertfaktor": 0.193,
+   "negativ": 368
+  },
+  {
+   "monat": "2025-06",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 66.46,
+   "solarMarktwert": 15.86,
+   "marktwertfaktor": 0.239,
+   "negativ": 460
+  },
+  {
+   "monat": "2025-07",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 87.91,
+   "solarMarktwert": 58.54,
+   "marktwertfaktor": 0.666,
+   "negativ": 24
+  },
+  {
+   "monat": "2025-08",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 74.29,
+   "solarMarktwert": 32.03,
+   "marktwertfaktor": 0.431,
+   "negativ": 236
+  },
+  {
+   "monat": "2025-09",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 92.28,
+   "solarMarktwert": 48.6,
+   "marktwertfaktor": 0.527,
+   "negativ": 92
+  },
+  {
+   "monat": "2025-10",
+   "abdeckung": 1,
+   "pvViertelstunden": 2980,
+   "mittel": 108.92,
+   "solarMarktwert": 86.85,
+   "marktwertfaktor": 0.797,
+   "negativ": 0
+  },
+  {
+   "monat": "2025-11",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 116.02,
+   "solarMarktwert": 101.77,
+   "marktwertfaktor": 0.877,
+   "negativ": 0
+  },
+  {
+   "monat": "2025-12",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 114.04,
+   "solarMarktwert": 111.58,
+   "marktwertfaktor": 0.978,
+   "negativ": 0
+  },
+  {
+   "monat": "2026-01",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 141.44,
+   "solarMarktwert": 139.87,
+   "marktwertfaktor": 0.989,
+   "negativ": 0
+  },
+  {
+   "monat": "2026-02",
+   "abdeckung": 1,
+   "pvViertelstunden": 2688,
+   "mittel": 109.19,
+   "solarMarktwert": 82.1,
+   "marktwertfaktor": 0.752,
+   "negativ": 16
+  },
+  {
+   "monat": "2026-03",
+   "abdeckung": 1,
+   "pvViertelstunden": 2972,
+   "mittel": 112.38,
+   "solarMarktwert": 57.16,
+   "marktwertfaktor": 0.509,
+   "negativ": 50
+  },
+  {
+   "monat": "2026-04",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 86.65,
+   "solarMarktwert": 14.63,
+   "marktwertfaktor": 0.169,
+   "negativ": 343
+  },
+  {
+   "monat": "2026-05",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 99.98,
+   "solarMarktwert": 34.35,
+   "marktwertfaktor": 0.344,
+   "negativ": 262
+  },
+  {
+   "monat": "2026-06",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 106.72,
+   "solarMarktwert": 53.82,
+   "marktwertfaktor": 0.504,
+   "negativ": 190
+  },
+  {
+   "monat": "2026-07",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 117.22,
+   "solarMarktwert": 66.17,
+   "marktwertfaktor": 0.564,
+   "negativ": 89
+  },
+  {
+   "monat": "2026-08",
+   "abdeckung": 1,
+   "pvViertelstunden": 2976,
+   "mittel": 148.06,
+   "solarMarktwert": 92.41,
+   "marktwertfaktor": 0.624,
+   "negativ": 24
+  },
+  {
+   "monat": "2026-09",
+   "abdeckung": 1,
+   "pvViertelstunden": 2880,
+   "mittel": 173.66,
+   "solarMarktwert": 103.54,
+   "marktwertfaktor": 0.596,
+   "negativ": 40
+  }
+ ]
+}

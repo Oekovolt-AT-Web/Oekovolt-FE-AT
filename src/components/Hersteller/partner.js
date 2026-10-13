@@ -222,7 +222,7 @@ export const PARTNER = [
     bild: "/Images/Ratgeber/energiemanagementsystem.jpg",
     alt_banner_image: "Monitoring-Oberfläche einer Photovoltaikanlage",
     main_description:
-      "meteocontrol liefert Datenlogger und Monitoring-Portale für gewerbliche PV-Anlagen und Solarparks. Wir nutzen die Systeme zur herstellerübergreifenden Überwachung – ergänzend zu unseren eigenen Fernwartungs- und SCADA-Systemen.",
+      "meteocontrol liefert Datenlogger und Monitoring-Portale für gewerbliche PV-Anlagen und Solarparks. Wir nutzen die Systeme zur herstellerübergreifenden Überwachung – ergänzend zu Fernwartung und SCADA mit unserem Technologiepartner Solensa.",
     fakten: [["Einsatz", "Gewerbe, Freifläche, Portfolio"]],
     kontexte: [],
     website: "https://www.meteocontrol.com/",

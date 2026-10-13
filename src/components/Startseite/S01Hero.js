@@ -1,7 +1,9 @@
 // src/components/Startseite/S01Hero.js
 //
-// Startseite – Abschnitt: Hero mit Video, Claim, Gewerbe-Rechner und Kennzahlenband.
-// Eingebunden in src/app/page.js.
+// Startseite – Abschnitt: Hero mit Standbild (Video erst nach Logo-Freigabe), Claim, Gewerbe-Rechner
+// und Kennzahlenband. Eingebunden in src/app/page.js.
+// Welle A02: Display-Zeile aus src/data/marke.js (Variante B Standard, A als Experiment k4),
+// WKO-Siegel nur mit belegter Berechtigung, CTA-Gruppe nach ≤ 250 ms sichtbar (LCP).
 //
 // Idee „Ihr Betrieb. Ihr Kraftwerk.“: eine Bühne in drei Ebenen (Foto/Video mit Parallaxe,
 // Lichtregie, Inhalt). Signatur ist die Sonnenbahn (s01-sonnenbahn): Beim Laden zieht die
@@ -15,7 +17,9 @@
 import { MapPin, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { HOME_HERO, KERNFAKTEN } from "@/data/hero";
-import { KENNZAHLEN_HINWEIS, KENNZAHLEN_STAND } from "@/data/kennzahlen";
+import { KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
+import { DISPLAY_ZEILEN } from "@/data/marke";
+import { FIRMA } from "@/lib/site";
 import Button from "@/components/ui/Button";
 import HeroVideo from "@/components/Home2/HeroVideo";
 import HeroGewerbeRechner from "@/components/Home2/HeroGewerbeRechner";
@@ -23,13 +27,14 @@ import S01Buehne from "./s01-buehne";
 import S01Sonnenbahn from "./s01-sonnenbahn";
 import S01Band from "./s01-band";
 
-const [STAND_JAHR, STAND_MONAT] = KENNZAHLEN_STAND.split("-");
-const BAND_HINWEIS = `${KENNZAHLEN_HINWEIS} · Stand ${STAND_MONAT}/${STAND_JAHR}`;
+const BAND_HINWEIS = KENNZAHLEN_HINWEIS_STAND;
 
+// WKO-Siegel nur, wenn die Berechtigung belegt ist (FIRMA.guetesiegel.*.belegt, Welle A02 –
+// Belegakte src/data/werbeaussagen.js „meisterbetrieb-wko“). Standard: ausgeblendet.
 const SIEGEL = [
-  ["/Images/AT/siegel/wko-gutesiegel-meisterbetrieb.png", "Gütesiegel Meisterbetrieb der Wirtschaftskammer Österreich"],
-  ["/Images/AT/siegel/wko-elektrotechnik.png", "Elektrotechnik – staatlich geprüft"],
-];
+  { ...FIRMA.guetesiegel.meisterbetrieb, src: "/Images/AT/siegel/wko-gutesiegel-meisterbetrieb.png", alt: "Gütesiegel Meisterbetrieb der Wirtschaftskammer Österreich" },
+  { ...FIRMA.guetesiegel.elektrotechnik, src: "/Images/AT/siegel/wko-elektrotechnik.png", alt: "Elektrotechnik – staatlich geprüft" },
+].filter((s) => s.belegt === true);
 
 const CSS = `
 .s01{--s01-e:cubic-bezier(.16,1,.3,1)}
@@ -46,7 +51,8 @@ const CSS = `
 .s01-sweep{position:absolute;top:-10%;bottom:-10%;left:0;width:34%;pointer-events:none;opacity:0;
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.045) 38%,rgba(255,230,163,.09) 50%,rgba(255,255,255,.045) 62%,transparent);
   transform:translate3d(-120%,0,0) skewX(-14deg)}
-.s01-claim{font-size:clamp(3.3rem,1.6rem + 4.6vw,5.6rem);line-height:.98;letter-spacing:-.045em}
+/* Claim mit zwei längeren Zeilen (Welle A02, DISPLAY_ZEILEN) – kleiner als der frühere Zweiwort-Spruch, damit er auf Desktop in 2–3 Zeilen passt */
+.s01-claim{font-size:clamp(2.6rem,1.5rem + 2.7vw,4.1rem);line-height:1;letter-spacing:-.04em;text-wrap:balance}
 .s01-maske{display:block;overflow:hidden;padding-bottom:.12em;margin-bottom:-.12em}
 .s01-zeile{display:block}
 .s01-siegel{box-shadow:0 8px 22px -8px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.35),0 0 0 5px rgba(255,255,255,.06)}
@@ -97,6 +103,8 @@ const CSS = `
 @media (prefers-reduced-motion:no-preference){
   .s01-foto{animation:s01-setzen 2800ms var(--s01-e) both}
   .s01-auf{animation:s01-auf 900ms var(--s01-e) both;animation-delay:var(--s01-d,0ms)}
+  /* CTA-Gruppe (LCP-relevant): nach höchstens 250 ms, 500 ms lang, nur transform; Start-Deckkraft ≥ 0,01 */
+  .s01-cta{animation:s01-cta 500ms var(--s01-e) 250ms both}
   .s01-zeile{animation:s01-zeile 1150ms var(--s01-e) both;animation-delay:var(--s01-d,0ms)}
   .s01-sweep{animation:s01-sweep 2400ms cubic-bezier(.45,0,.25,1) 1000ms both}
   .s01-karte{animation:s01-karte 1200ms var(--s01-e) 380ms both}
@@ -121,6 +129,7 @@ const CSS = `
 }
 @keyframes s01-setzen{from{transform:scale(1.07)}}
 @keyframes s01-auf{from{opacity:0;transform:translate3d(0,18px,0)}}
+@keyframes s01-cta{from{opacity:.01;transform:translate3d(0,14px,0)}}
 @keyframes s01-zeile{from{transform:translate3d(0,112%,0)}}
 @keyframes s01-karte{from{opacity:0;transform:translate3d(0,44px,0) scale(.965)}}
 @keyframes s01-kante{from{opacity:0;transform:scaleX(.2)}}
@@ -135,7 +144,12 @@ const CSS = `
 @keyframes s01-impuls{0%{opacity:0;transform:translate3d(-240px,0,0)}10%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translate3d(100vw,0,0)}}
 `;
 
-export default function StartHero() {
+/**
+ * `variante`: Display-Zeile aus DISPLAY_ZEILEN – "b" (Standard) oder "a" (Experiment k4,
+ * src/lib/experimente.js; die Seite reicht die ausgeloste Variante durch, sobald k4 aktiv ist).
+ */
+export default function StartHero({ variante = "b" }) {
+  const zeilen = DISPLAY_ZEILEN[variante] || DISPLAY_ZEILEN.b;
   return (
     <section data-start="hero" className="s01 ov-noise relative isolate overflow-hidden bg-navy-950 text-white">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
@@ -162,34 +176,36 @@ export default function StartHero() {
                 <span className="hidden sm:inline"> · {HOME_HERO.kickerZusatz}</span>
               </span>
             </span>
-            {/* WKO-Siegel: lokal gespeichert und unverändert; nur zu führen, solange die Berechtigung besteht */}
-            <span className="s01-auf inline-flex items-center gap-2.5" style={{ "--s01-d": "140ms" }} title="Meisterbetrieb · Elektrotechnik staatlich geprüft">
-              {SIEGEL.map(([src, alt]) => (
-                <span key={src} className="s01-siegel grid h-11 w-11 place-items-center rounded-full bg-white p-0.5 md:h-12 md:w-12">
-                  <Image src={src} alt={alt} width={56} height={56} priority className="h-full w-full" />
-                </span>
-              ))}
-            </span>
+            {/* WKO-Siegel: lokal gespeichert und unverändert; erscheinen nur mit belegter Berechtigung (SIEGEL ist sonst leer) */}
+            {SIEGEL.length > 0 && (
+              <span className="s01-auf inline-flex items-center gap-2.5" style={{ "--s01-d": "140ms" }} title={SIEGEL.map((s) => s.alt).join(" · ")}>
+                {SIEGEL.map((s) => (
+                  <span key={s.src} className="s01-siegel grid h-11 w-11 place-items-center rounded-full bg-white p-0.5 md:h-12 md:w-12">
+                    <Image src={s.src} alt={s.alt} width={56} height={56} priority className="h-full w-full" />
+                  </span>
+                ))}
+              </span>
+            )}
           </div>
 
-          {/* H1 mit Suchbegriff (M13); der Werbespruch bleibt als große Unterzeile sichtbar */}
+          {/* H1 mit Suchbegriff (M13); der Markenclaim bleibt als große Unterzeile sichtbar (Variante B, Experiment k4) */}
           <h1 className="s01-auf mt-9 max-w-[30rem] font-display text-[clamp(1.05rem,0.96rem+0.45vw,1.28rem)] font-semibold leading-snug tracking-[-0.01em] text-ov-200" style={{ "--s01-d": "200ms" }}>
             Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in Österreich
           </h1>
-          <p className="ov-display s01-claim mt-4">
+          <p className="ov-display s01-claim mt-4" data-display-variante={variante}>
             <span className="s01-maske">
-              <span className="s01-zeile" style={{ "--s01-d": "260ms" }}>Ihr Betrieb.</span>
+              <span className="s01-zeile" style={{ "--s01-d": "260ms" }}>{zeilen[0]}</span>
             </span>
             <span className="s01-maske">
-              <span className="s01-zeile" style={{ "--s01-d": "400ms" }}>
-                Ihr <span className="ov-text-gradient-light">Kraftwerk.</span>
+              <span className="s01-zeile ov-text-gradient-light" style={{ "--s01-d": "400ms" }}>
+                {zeilen[1]}
               </span>
             </span>
           </p>
           <p className="ov-lead s01-auf mt-7 max-w-[36rem] text-white/72" style={{ "--s01-d": "620ms" }}>
             {HOME_HERO.lead}
           </p>
-          <div className="s01-auf mt-9 flex flex-col gap-3 sm:flex-row" style={{ "--s01-d": "740ms" }}>
+          <div className="s01-cta mt-9 flex flex-col gap-3 sm:flex-row">
             <Button href="/angebot?objekt=gewerbe" size="lg" pfeil>Ersteinschätzung anfordern</Button>
             <Button href="/referenzen/projekte" size="lg" variant="outlineLight">Referenzen ansehen</Button>
           </div>

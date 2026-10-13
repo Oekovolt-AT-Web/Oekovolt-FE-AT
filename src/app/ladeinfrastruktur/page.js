@@ -32,6 +32,9 @@ import FachTabs from "@/components/Loesungen/B/FachTabs";
 import Rechenbeleg from "@/components/Loesungen/B/Rechenbeleg";
 import DunkelSektion, { SystemKarten } from "@/components/Loesungen/B/DunkelSektion";
 import FlottenRegler from "@/components/Loesungen/B/FlottenRegler";
+import BranchenReferenzen from "@/components/Referenzen/BranchenReferenzen";
+import IfbHinweis from "@/components/Verkauf/IfbHinweis";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
 
@@ -56,7 +59,7 @@ const FAQ = [
   },
   {
     q: "Bleibt der Sachbezug für E-Firmenwagen bei null?",
-    a: "Bis 31. Dezember 2026 ja, für Fahrzeuge mit 0 g CO₂-Emission. Der Nationalrat hat im Juli 2026 eine Neuregelung beschlossen: ab 2027 ein Sachbezug von 0,375 % der Anschaffungskosten (höchstens 180 € im Monat), ab 2028 von 0,625 % (höchstens 300 €). Für Verbrenner gelten weiterhin 1,5 bzw. 2 %. Prüfen Sie die Auswirkungen auf Ihre Car Policy mit der Lohnverrechnung.",
+    a: "Bis 31. Dezember 2026 ja, für Fahrzeuge mit 0 g CO₂-Emission. Der Nationalrat hat im Juli 2026 eine Neuregelung beschlossen: ab 2027 ein Sachbezug von 0,375 % der Anschaffungskosten (höchstens 180 € im Monat), ab 2028 von 0,625 % (höchstens 300 €). Für Verbrenner gelten weiterhin 1,5 bzw. 2 %. Prüfen Sie die Auswirkungen auf Ihre Car Policy mit der Lohnverrechnung.",
   },
   {
     q: "Müssen unsere Ladepunkte geeicht sein?",
@@ -72,7 +75,7 @@ const FAQ = [
   },
   {
     q: "Welche Förderung gibt es 2026 für betriebliche Ladeinfrastruktur?",
-    a: "Das Bundesprogramm E-Mobilität für Betriebe, Gebietskörperschaften und Vereine (eMove Austria) mit bis zu 22.500 € wurde vorzeitig geschlossen, weil das Budget ausgeschöpft war. Weiter nutzbar sind der ökologische Investitionsfreibetrag von 22 % für E-Ladestationen (bis Ende 2026), 30 % Zuschlag im EAG-Investitionszuschuss für PV-Parkplatzüberdachungen ab 10 Stellplätzen sowie Landesprogramme. Neue Bundescalls prüfen wir tagesaktuell.",
+    a: "Das Bundesprogramm E-Mobilität für Betriebe, Gebietskörperschaften und Vereine (eMove Austria) mit bis zu 22.500 € wurde vorzeitig geschlossen, weil das Budget ausgeschöpft war. Weiter nutzbar sind der ökologische Investitionsfreibetrag von 22 % für E-Ladestationen (bis Ende 2026), 30 % Zuschlag im EAG-Investitionszuschuss für PV-Parkplatzüberdachungen ab 10 Stellplätzen sowie Landesprogramme. Neue Bundescalls prüfen wir tagesaktuell.",
   },
   {
     q: "Was müssen öffentlich zugängliche Ladepunkte können?",
@@ -93,14 +96,26 @@ const LADEARTEN = [
 
 const BEISPIEL = [
   { pos: "Flotte", wert: "20 E-Transporter × 20.000 km/Jahr × 25 kWh/100 km", ergebnis: "100.000 kWh/Jahr" },
-  { pos: "Strom aus PV-Überschuss (60 %)", wert: "60.000 kWh × 6 ct (entgangene Einspeisung)", ergebnis: "3.600 €/Jahr" },
-  { pos: "Strom aus dem Netz (40 %)", wert: "40.000 kWh × 16 ct (Energie, Netz, Abgaben)", ergebnis: "6.400 €/Jahr" },
+  { pos: "Strom aus PV-Überschuss (60 %)", wert: "60.000 kWh × 6 ct (entgangene Einspeisung)", ergebnis: "3.600 €/Jahr" },
+  { pos: "Strom aus dem Netz (40 %)", wert: "40.000 kWh × 16 ct (Energie, Netz, Abgaben)", ergebnis: "6.400 €/Jahr" },
   { pos: "Energiekosten elektrisch", wert: "≈ 10 ct/kWh im Mittel", ergebnis: "10.000 €/Jahr", hervorheben: true },
   { pos: "Vergleich Diesel", wert: "400.000 km × 9 l/100 km × 1,40 €/l netto", ergebnis: "50.400 €/Jahr" },
   { pos: "Differenz Energiekosten", wert: "ohne Fahrzeug-, Wartungs- und Mautkosten", ergebnis: "≈ 40.400 €/Jahr", hervorheben: true },
   { pos: "Ladeinfrastruktur", wert: "Annahme 20 AC-Ladepunkte inkl. Lastmanagement, 2.500 €/Punkt netto", ergebnis: "50.000 €" },
-  { pos: "Öko-IFB 22 % (bis 31.12.2026)", wert: "Freibetrag auf 50.000 €, Körperschaftsteuer 23 %", ergebnis: "≈ 2.500 € Steuerwirkung" },
+  { pos: "Öko-IFB 22 % (bis 31.12.2026)", wert: "Freibetrag auf 50.000 €, Körperschaftsteuer 23 %", ergebnis: "≈ 2.500 € Steuerwirkung" },
 ];
+
+// Welle A / A05: Fette Hero-Zeile nur, wenn sie die H1 nicht wiederholt: Variante → titel + akzent, Standard → `kurz` (A03), sonst nur lead.
+function heroLead(v) {
+  const zeile = v.id === "standard" ? v.kurz : `${v.titel} ${v.akzent}`;
+  if (!zeile) return v.lead;
+  return (
+    <>
+      <span className="block font-display text-[1.15em] font-bold leading-snug text-white">{zeile}</span>
+      <span className="mt-3 block">{v.lead}</span>
+    </>
+  );
+}
 
 function TabKopf({ titel, text, children }) {
   return (
@@ -132,7 +147,7 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
         breadcrumbs={[{ name: "Gewerbe & Industrie", href: "/gewerbe" }, { name: "Ladeinfrastruktur" }]}
         eyebrow={v.eyebrow}
         title={<>Ladeinfrastruktur für Unternehmen – <span className="ov-text-gradient-light">Flotte, Belegschaft und Kunden</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+        lead={heroLead(v)}
         image={{ src: HERO_BILD, alt: "DC-Schnellladesäule mit drei Ladekabeln auf einem Parkplatz mit Ladeplätzen für Elektrofahrzeuge", position: "62% 50%" }}
         actions={[
           { label: v.cta, href: "/termin?art=video&thema=speicher" },
@@ -146,11 +161,14 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
         items={[
           { text: "0 €", label: "Sachbezug für E-Firmenwagen mit 0 g CO₂ bis Ende 2026 – Laden beim Arbeitgeber steuerfrei" },
           { wert: 32.806, dezimal: 3, suffix: " ct", label: "je kWh: steuerfreier Kostenersatz für das Laden zu Hause 2026" },
-          { wert: 30, prefix: "+ ", suffix: " %", label: "EAG-Zuschlag für PV-Parkplatzüberdachungen ab 10 Stellplätzen" },
-          { wert: 22, suffix: " %", label: "Öko-Investitionsfreibetrag für E-Ladestationen bis 31.12.2026" },
+          { wert: 30, prefix: "+ ", suffix: " %", label: "EAG-Zuschlag für PV-Parkplatzüberdachungen ab 10 Stellplätzen" },
+          { wert: 22, suffix: " %", label: "Öko-Investitionsfreibetrag für E-Ladestationen bis 31.12.2026" },
         ]}
         quelle="Quellen: BMF, Sachbezug Kraftfahrzeug; EY Österreich und ICON Wirtschaftstreuhand (Sachbezug 2026/2027); EAG-IZV § 6 laut Leitfaden Land Oberösterreich 2026; WKO (Investitionsfreibetrag)."
       />
+
+      {/* Belegte Autohaus-Referenzen (Zuordnung in src/data/branchenZuordnung.js, A03) – rendert nichts ohne Treffer */}
+      <BranchenReferenzen zielgruppe="autohaus" titel="Autohäuser, die bereits mit Ökovolt-Strom laden" />
 
       <Section tone="white" space="lg">
         <SectionHeading
@@ -164,7 +182,7 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
             { bild: "/Images/AT/loesungen-b/laden-tiefgarage.jpg", alt: "Elektrofahrzeuge an Wandladepunkten in einer Tiefgarage", tag: "Depot", titel: "Firmenflotte & Transporter", text: "Depotladen über Nacht und Zwischenladen am Tag – mit Priorisierung nach Einsatzplan und Ladestand." },
             { bild: "/Images/Ratgeber/pv-ueberschussladen.jpg", alt: "Wallbox an einer Holzfassade mit angeschlossenem Ladekabel", titel: "Mitarbeiterparkplatz", text: "Steuerfreies Laden für die Belegschaft, tagsüber mit Solarstrom – ein Argument im Recruiting." },
             { bild: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Luftbild eines Parkplatzes mit Solar-Carports und Ladestationen (Symbolbild)", titel: "Kunden- & Gästeparkplatz", text: "Handel, Gastronomie, Hotellerie: Ladeangebot mit Kartenzahlung, Preisauszeichnung und Roaming." },
-            { bild: "/Images/Ratgeber/solarcarport.jpg", alt: "Solarcarport mit Photovoltaikdach über einem Stellplatz", titel: "Solarcarport", text: "Parkplatz als Kraftwerk: Beschattung, Ladepunkte und 30 % EAG-Zuschlag ab 10 Stellplätzen." },
+            { bild: "/Images/Ratgeber/solarcarport.jpg", alt: "Solarcarport mit Photovoltaikdach über einem Stellplatz", titel: "Solarcarport", text: "Parkplatz als Kraftwerk: Beschattung, Ladepunkte und 30 % EAG-Zuschlag ab 10 Stellplätzen." },
             { bild: "/Images/Ratgeber/bidirektionales-laden.jpg", alt: "Modernes Wohnhaus mit Photovoltaik und Elektroauto vor der Garage am Abend", titel: "Laden zu Hause", text: "Wallboxen für Dienstwagen bei Mitarbeitenden, mit kWh-genauer Erfassung für den steuerfreien Kostenersatz.", href: "/produkte/wallbox" },
             { bild: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator und Schaltgeräte in einem Umspannwerk", titel: "Lkw & Megawatt-Laden", text: "Depot- und Schnellladen für E-Lkw, vorbereitet auf das Megawatt Charging System – mit Trafostation und Speicher." },
           ]}
@@ -208,7 +226,7 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
       <DunkelSektion
         eyebrow="Technik"
         title="Ladepunkte, PV und Speicher in einem System"
-        lead="Unsere eigenen Systeme verbinden Ladepunkte mit Erzeugung, Gebäudeverbrauch und Netzvorgaben – statt einer Insellösung pro Hersteller."
+        lead="Parkregler, Fernwartung und SCADA unseres Technologiepartners Solensa – parametriert, betreut und gewartet von uns – verbinden Ladepunkte mit Erzeugung, Gebäudeverbrauch und Netzvorgaben, statt einer Insellösung pro Hersteller."
         bild={{
           src: "/Images/Ratgeber/energiemanagementsystem.jpg",
           alt: "Visualisierung eines Energiemanagements: Hausanschluss, Speicher, Wallbox und Verbraucher sind verbunden",
@@ -246,6 +264,9 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
           </Link>
         </div>
       </Section>
+
+      {/* Öko-IFB bis 31.12.2026 – blendet sich nach Fristende selbst aus (A03) */}
+      <IfbHinweis />
 
       <Section tone="white" space="lg" id="fachdetails" className="scroll-mt-24">
         <SectionHeading
@@ -312,10 +333,10 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
                     className="mt-8"
                     cols={4}
                     items={[
-                      { icon: Receipt, titel: "Sachbezug", text: "2026: null für E-Firmenwagen mit 0 g CO₂. Ab 2027 laut Beschluss des Nationalrats 0,375 % der Anschaffungskosten (max. 180 €/Monat), ab 2028 0,625 % (max. 300 €/Monat)." },
+                      { icon: Receipt, titel: "Sachbezug", text: "2026: null für E-Firmenwagen mit 0 g CO₂. Ab 2027 laut Beschluss des Nationalrats 0,375 % der Anschaffungskosten (max. 180 €/Monat), ab 2028 0,625 % (max. 300 €/Monat)." },
                       { icon: Users, titel: "Laden für Mitarbeitende", text: "Kostenloses Laden beim Arbeitgeber ist kein Sachbezug – auch für private E-Autos der Belegschaft. Heimladen: Ersatz nach kWh, 2026 mit 32,806 ct/kWh." },
-                      { icon: HandCoins, titel: "Investitionsfreibetrag", text: "E-Ladestationen und emissionsfreie Fahrzeuge sind ökologische Investitionen: 22 % IFB für Anschaffungen bis 31.12.2026, danach 15 %." },
-                      { icon: CreditCard, titel: "Zuschüsse", text: "eMove Austria (bis 22.500 € für Betriebe) ist ausgeschöpft; ENIN für E-Lkw und Infrastruktur sowie Landesprogramme laufen in Calls. PV-Carports ab 10 Stellplätzen: 30 % EAG-Zuschlag." },
+                      { icon: HandCoins, titel: "Investitionsfreibetrag", text: "E-Ladestationen und emissionsfreie Fahrzeuge sind ökologische Investitionen: 22 % IFB für Anschaffungen bis 31.12.2026, danach 15 %." },
+                      { icon: CreditCard, titel: "Zuschüsse", text: "eMove Austria (bis 22.500 € für Betriebe) ist ausgeschöpft; ENIN für E-Lkw und Infrastruktur sowie Landesprogramme laufen in Calls. PV-Carports ab 10 Stellplätzen: 30 % EAG-Zuschlag." },
                     ]}
                   />
                   <Hinweis className="mt-8" titel="Förderungen ändern sich schnell">
@@ -339,7 +360,7 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
                     titel="Energiekosten E-Transporter-Flotte"
                     caption="Beispielrechnung Energiekosten einer E-Transporter-Flotte mit PV-Überschussladen"
                     zeilen={BEISPIEL}
-                    fuss="Beispiel, Stand 09/2026. Annahmen: Verbrauch 25 kWh/100 km, Dieselverbrauch 9 l/100 km, Dieselpreis 1,40 €/l netto, Netzstrom 16 ct/kWh netto inkl. Netzentgelten und Abgaben, PV-Anteil 60 % bei Tagstandzeiten, Ladepunktkosten als Marktannahme (kein Ökovolt-Preis). Förderungen können die IFB-Bemessungsgrundlage mindern."
+                    fuss="Beispiel, Stand 09/2026. Annahmen: Verbrauch 25 kWh/100 km, Dieselverbrauch 9 l/100 km, Dieselpreis 1,40 €/l netto, Netzstrom 16 ct/kWh netto inkl. Netzentgelten und Abgaben, PV-Anteil 60 % bei Tagstandzeiten, Ladepunktkosten als Marktannahme (kein Ökovolt-Preis). Förderungen können die IFB-Bemessungsgrundlage mindern."
                   />
                 </div>
               ),
@@ -356,6 +377,11 @@ export default async function LadeinfrastrukturPage({ searchParams }) {
       </Section>
 
       <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Flotte, Carport und Abrechnung" />
+
+      {/* Ansprechpartner (A03): Name und Foto nur mit Einwilligung, sonst Teamfunktion und Zentrale */}
+      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-24">
+        <Ansprechpartner zielgruppe="gewerbe" />
+      </Section>
 
       <CtaBand
         eyebrow="Kostenlos & unverbindlich"

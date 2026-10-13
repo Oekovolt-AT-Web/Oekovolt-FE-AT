@@ -3,6 +3,10 @@
 // Aufruf:  node scripts/alle-tests.mjs              alle Tests
 //          node scripts/alle-tests.mjs rechner      nur Dateien, deren Name „rechner“ enthält
 //          node scripts/alle-tests.mjs --ausgabe    Ausgabe jeder Datei vollständig zeigen
+//          node scripts/alle-tests.mjs --ohne-audit Abhängigkeits-Audit auslassen
+// Nach den Testdateien läuft (ohne Filter) `npm audit --omit=dev --audit-level=high`:
+// Befunde ab „high“ in Produktionsabhängigkeiten lassen den Lauf scheitern; ohne Netz
+// gibt es nur eine Warnung (Welle A01).
 // Exit-Code 0, wenn alle Dateien bestehen, sonst 1. Bekannte Befunde sind als node:test-„todo“
 // markiert: Sie werden gezählt und aufgelistet, lassen den Lauf aber nicht scheitern.
 
@@ -15,6 +19,7 @@ const ORDNER = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(ORDNER, "..");
 const args = process.argv.slice(2);
 const ausgabe = args.includes("--ausgabe");
+const ohneAudit = args.includes("--ohne-audit");
 const filter = args.filter((a) => !a.startsWith("--"));
 
 const dateien = fs
@@ -50,6 +55,24 @@ for (const datei of dateien) {
   console.log(`${ok ? "OK    " : "FEHLER"}  ${datei.padEnd(34)} ${detail} · ${e.ms} ms`);
   if (ausgabe || !ok) console.log(text.replace(/^/gm, "        ").trimEnd());
   if (lauf.error) console.log(`        ${lauf.error.message}`);
+}
+
+// Abhängigkeits-Audit (nur Produktionsabhängigkeiten, ab Schweregrad „high“).
+// Fehlendes Netz ist kein Testfehler – dann nur Warnung.
+if (!filter.length && !ohneAudit) {
+  const t0 = Date.now();
+  const audit = spawnSync("npm audit --omit=dev --audit-level=high", { cwd: ROOT, shell: true, encoding: "utf8", timeout: 180_000, maxBuffer: 16 * 1024 * 1024 });
+  const text = `${audit.stdout || ""}${audit.stderr || ""}`;
+  const ohneNetz = audit.error?.code === "ETIMEDOUT" || /ENOTFOUND|EAI_AGAIN|ECONNREFUSED|ECONNRESET|ETIMEDOUT|ENETUNREACH|network|offline|registry.*(unreachable|nicht erreichbar)/i.test(text);
+  const ok = audit.status === 0;
+  const name = "npm audit --omit=dev --audit-level=high";
+  if (ok) console.log(`OK      ${name.padEnd(34)} keine Befunde ab high · ${Date.now() - t0} ms`);
+  else if (ohneNetz) console.log(`WARNUNG ${name.padEnd(34)} ohne Netz nicht prüfbar · ${Date.now() - t0} ms`);
+  else {
+    console.log(`FEHLER  ${name.padEnd(34)} Befunde ab high · ${Date.now() - t0} ms`);
+    console.log(text.replace(/^/gm, "        ").trimEnd());
+    ergebnisse.push({ datei: name, ok: false, ms: Date.now() - t0, todos: [], text });
+  }
 }
 
 const fehlgeschlagen = ergebnisse.filter((e) => !e.ok);

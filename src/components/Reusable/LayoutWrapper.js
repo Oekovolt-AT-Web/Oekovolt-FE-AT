@@ -8,6 +8,10 @@ import { herkunftErfassen } from "@/lib/herkunft";
 import EmailChangeNotice from "./EmailChangeNotice";
 import RevealObserver from "@/components/ui/RevealObserver";
 import MobileCta from "@/components/Reusable/MobileCta";
+// Cookie-Banner: serverseitig gerenderte Hülle (Sichtbarkeit per Klasse auf <html>, siehe
+// COOKIE_KOPF_SKRIPT), als Client-Insel hydriert – nicht mehr per dynamic(…, { ssr: false }), sonst
+// erscheint er spät und wird zum LCP-Element.
+import CookieBanner from "@/components/Cookies/cookiecomponent";
 // Klick-/Scroll-Heatmap: Sammler nur mit Einwilligung „Statistik“, Ansicht nur mit ?heatmap=<Token>
 import Heatmap from "@/components/Statistik/Heatmap";
 
@@ -16,7 +20,6 @@ import Heatmap from "@/components/Statistik/Heatmap";
 //   { ssr: false }
 // );
 
-const CookieComponentLazy = dynamic(() => import("@/components/Cookies/cookiecomponent"), { ssr: false });
 const ToTopButtonLazy = dynamic(() => import("@/components/Home/BackToTop"), { ssr: false });
 const RueckrufWidgetLazy = dynamic(() => import("@/components/Rueckruf/RueckrufWidget"), { ssr: false });
 
@@ -34,7 +37,7 @@ export default function LayoutWrapper({ children }) {
       <RevealObserver />
       <Heatmap />
       {/* Cookie-Banner vor dem Seitenkopf: in der Tab-Reihenfolge direkt nach dem Sprunglink erreichbar (fixiert positioniert) */}
-      <CookieComponentLazy />
+      <CookieBanner />
       <Navbar />
       <main id="main-content">{children}</main>
       <EmailChangeNotice />

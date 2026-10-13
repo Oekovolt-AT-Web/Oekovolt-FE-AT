@@ -55,6 +55,7 @@ export default function RechnerSeite({
   faq = [],
   faqTitel = "Häufige Fragen",
   cta,
+  actions, // optional: Knöpfe im Seitenkopf, z. B. [{ label: "Jetzt rechnen", href: "#rechner" }] (mobil im ersten Bildschirm)
 }) {
   const url = `${BASE}${pfad}`;
   const schema = {
@@ -99,11 +100,12 @@ export default function RechnerSeite({
         title={title}
         lead={lead}
         points={chips}
+        actions={actions}
         className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
       />
 
       {/* Rechner überlappt den Hero – sofort sichtbar */}
-      <section aria-label="Rechner" className="relative z-10 -mt-20 pb-6 md:-mt-28 md:pb-10">
+      <section id="rechner" aria-label="Rechner" className="relative z-10 -mt-20 scroll-mt-24 pb-6 md:-mt-28 md:pb-10">
         <div className="ov-container">{rechner}</div>
       </section>
 

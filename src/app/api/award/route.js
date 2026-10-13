@@ -1,6 +1,8 @@
 // src/app/api/award/route.js
 //
 // Einreichungen zum Ökovolt PV Award (/pv-award).
+// Die Einwilligung in die Veröffentlichung ist optional (ohne sie: anonyme Bewertung,
+// Welle A07); Pflicht sind Kundenbestätigung und Datenschutzhinweis.
 // Validiert die Eingaben, verwirft Spam (Honeypot „website“) und leitet an das
 // Backoffice weiter (Kontakt-Endpunkt mit eigenem Thema, siehe
 // @/lib/api/uber-uns/anfrageWeiterleiten).
@@ -19,7 +21,7 @@ import {
   validierungsFehler,
   weiterleiten,
 } from "@/lib/api/uber-uns/anfrageWeiterleiten";
-import { AWARD_JAHR, AWARD_THEMA, KATEGORIE_TITEL } from "@/components/Award/awardDaten";
+import { AWARD_JAHR, AWARD_KENNZEICHNUNG, AWARD_THEMA, KATEGORIE_TITEL } from "@/components/Award/awardDaten";
 import { BUNDESLAENDER } from "@/components/Partner/partnerDaten";
 
 const zahl = (w) => {
@@ -84,7 +86,6 @@ export async function POST(request) {
   p.wenn(!istEmail(d.email), "email", "Bitte eine gültige E-Mail-Adresse angeben.");
   p.wenn(!istTelefon(d.telefon), "telefon", "Bitte eine Telefonnummer für Rückfragen angeben.");
   p.wenn(!d.kunde, "kunde", "Der Award steht nur Kundinnen und Kunden von Ökovolt offen.");
-  p.wenn(!d.veroeffentlichung, "veroeffentlichung", "Die Einwilligung zur Veröffentlichung ist Teilnahmevoraussetzung.");
   p.wenn(!d.datenschutz, "datenschutz", "Bitte bestätigen Sie die Datenschutzhinweise.");
   if (!p.ok()) return validierungsFehler(p.felder);
 
@@ -98,6 +99,7 @@ export async function POST(request) {
     kontakt: { vorname: d.vorname, nachname: d.nachname, email: d.email, telefon: d.telefon, strasse: "", plz: d.plz, ort: d.ort },
     zeilen: [
       ["Award-Jahrgang", String(AWARD_JAHR)],
+      ["Kennzeichnung", AWARD_KENNZEICHNUNG],
       ["Kategorie", d.kategorie],
       ["Projekt", d.projektname],
       ["Betreiber", d.betreiber],
@@ -114,7 +116,7 @@ export async function POST(request) {
       ["E-Mail", d.email],
       ["Telefon", d.telefon],
       ["Ökovolt-Kunde bestätigt", "ja"],
-      ["Einwilligung Veröffentlichung", "ja"],
+      ["Einwilligung Veröffentlichung", d.veroeffentlichung ? "ja" : "nein – anonym bewerten, keine Nennung des Betriebs"],
       ["Monitoring-Daten für Bewertung", d.monitoring ? "ja" : "nein"],
       ["Datenschutz-Einwilligung", "ja"],
     ],

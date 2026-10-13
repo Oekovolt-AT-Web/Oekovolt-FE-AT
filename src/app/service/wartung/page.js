@@ -26,11 +26,12 @@ const BESCHREIBUNG =
 
 export const metadata = serviceMetadata({ pfad: PFAD, titel: TITEL, beschreibung: BESCHREIBUNG });
 
+// Stock-Motive mit Personen (keine Ökovolt-Mitarbeitenden) – als Symbolbild gekennzeichnet (Welle A02)
 const BILD = {
-  hero: { src: "/Images/Jobs/download.jpg", alt: "Drei Techniker mit Helm und Warnweste prüfen PV-Module auf einem Flachdach bei Abendlicht" },
-  sicherheit: { src: "/Images/Referenzen/referenzkarte3.jpg", alt: "Techniker mit Helm arbeitet mit Akkuschrauber an einer PV-Unterkonstruktion" },
-  werterhalt: { src: "/Images/Jobs/jobs4.jpg", alt: "Ingenieur mit Schutzhelm prüft Anlagendaten auf einem Tablet vor PV-Modulen" },
-  versicherung: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur mit Auffanggurt und Seilsicherung trägt ein Solarmodul über ein Blechdach" },
+  hero: { src: "/Images/Jobs/download.jpg", alt: "Drei Techniker mit Helm und Warnweste prüfen PV-Module auf einem Flachdach bei Abendlicht (Symbolbild)" },
+  sicherheit: { src: "/Images/Referenzen/referenzkarte3.jpg", alt: "Techniker mit Helm arbeitet mit Akkuschrauber an einer PV-Unterkonstruktion (Symbolbild)" },
+  werterhalt: { src: "/Images/Jobs/jobs4.jpg", alt: "Ingenieur mit Schutzhelm prüft Anlagendaten auf einem Tablet vor PV-Modulen (Symbolbild)" },
+  versicherung: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Monteur mit Auffanggurt und Seilsicherung trägt ein Solarmodul über ein Blechdach (Symbolbild)" },
 };
 
 const PAKETE_KOPF = ["Leistung", "Basis", "Plus", "Premium"];
@@ -95,7 +96,7 @@ const FAQ = [
   },
   {
     q: "Brauchen wir einen Zugang zu unserem Monitoring?",
-    a: "Für laufende Überwachung ja. Wir benötigen einen Lese- oder Service-Zugang zum Wechselrichterportal oder binden die Anlage in unsere eigene Fernwartung und SCADA ein. Der Zugriff erfolgt verschlüsselt und nur in dem Umfang, der für die Wartung nötig ist.",
+    a: "Für laufende Überwachung ja. Wir benötigen einen Lese- oder Service-Zugang zum Wechselrichterportal oder binden die Anlage in unsere Fernwartung und SCADA ein. Der Zugriff erfolgt verschlüsselt und nur in dem Umfang, der für die Wartung nötig ist.",
   },
   {
     q: "Gehört der EZA-Regler zur Wartung?",
@@ -124,7 +125,9 @@ export default function WartungPage() {
           { label: "Wartungsvertrag anfragen", href: "#anfrage" },
           { label: "Pakete vergleichen", href: "#pakete", icon: ClipboardCheck },
         ]}
-      />
+      >
+        <p className="mt-6 text-[12px] text-white/60">Foto: Symbolbild.</p>
+      </PageHero>
 
       <AntwortBand
         frage="Ist die Wartung einer PV-Anlage in Österreich Pflicht?"
@@ -158,7 +161,7 @@ export default function WartungPage() {
               form: "hoch",
               bild: BILD.sicherheit.src,
               alt: BILD.sicherheit.alt,
-              tag: "Pflicht",
+              tag: "Pflicht · Symbolbild",
               titel: "Sicherheit & Prüfpflicht",
               text: "Arbeitgeber müssen elektrische Anlagen nach ESV 2012 wiederkehrend prüfen lassen. Die Prüfung nach OVE E 8101 mit Prüfbefund ist Teil der Pakete Plus und Premium.",
             },
@@ -168,7 +171,7 @@ export default function WartungPage() {
               form: "hoch",
               bild: BILD.werterhalt.src,
               alt: BILD.werterhalt.alt,
-              tag: "Nachweise",
+              tag: "Nachweise · Symbolbild",
               titel: "Werterhalt & Nachweise",
               text: "Anlagenbuch, Prüfbefunde und Ertragsberichte sind bei Verkauf, Refinanzierung, Förderprüfung oder Nachhaltigkeitsbericht gefragt.",
             },
@@ -211,11 +214,11 @@ export default function WartungPage() {
                 <span className="font-display text-[13px] font-bold text-ov-300">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="mt-2 font-display text-[20px] font-extrabold tracking-tight">{art}</h3>
                 <p className="mt-3 text-[14.5px] leading-relaxed text-white/65">
-                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/45">Beispiele</strong>
+                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/60">Beispiele</strong>
                   {bsp}
                 </p>
                 <p className="mt-3 text-[14.5px] leading-relaxed text-white/80">
-                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/45">Nutzen</strong>
+                  <strong className="block text-[12px] font-semibold uppercase tracking-[0.12em] text-white/60">Nutzen</strong>
                   {nutzen}
                 </p>
               </Reveal>
@@ -244,7 +247,7 @@ export default function WartungPage() {
                       </div>
                     ))}
                   </dl>
-                    <p className="mt-4 text-[12.5px] text-white/45">Definitionen angelehnt an IEC 61724-1 (Performance Monitoring) und IEC TS 63019 (Verfügbarkeit von PV-Systemen).</p>
+                    <p className="mt-4 text-[12.5px] text-white/60">Definitionen angelehnt an IEC 61724-1 (Performance Monitoring) und IEC TS 63019 (Verfügbarkeit von PV-Systemen).</p>
                   </>
                 ),
               },
@@ -276,6 +279,7 @@ export default function WartungPage() {
               bzw. mit geeigneten Schutzmaßnahmen an spannungsführenden DC-Teilen. Bitte informieren Sie uns vorab über Anschlagpunkte, Lichtkuppeln und Zugangsregeln auf Ihrem Gelände.
             </p>
           </Hinweis>
+          <p className="mt-6 text-[12.5px] text-ink-500">Foto: Symbolbild.</p>
         </SplitMedia>
       </Section>
 

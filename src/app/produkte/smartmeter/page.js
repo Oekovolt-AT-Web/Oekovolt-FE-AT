@@ -85,7 +85,7 @@ const GEWERBE = [
   { icon: TrendingDown, title: "Leistungspreis senken", text: "Mit Lastprofilzähler zählt jede Spitze. Energiemanagement und Speicher kappen sie gezielt.", href: "/gewerbespeicher" },
   { icon: Cpu, title: "Energiemanagement (EMS)", text: "Ein EMS steuert PV, Speicher, Ladeinfrastruktur und Wärmepumpe nach Erzeugung, Lastgang und Preis." },
   { icon: SlidersHorizontal, title: "Einspeiselimit & Netzvorgaben", text: "Am Netzanschlusspunkt regelt unser Parkregler Wirk- und Blindleistung nach den Vorgaben des Netzbetreibers.", href: "/technik/parkregler" },
-  { icon: MonitorDot, title: "Monitoring & SCADA", text: "Standortübergreifende Überwachung von Erzeugung und Verbrauch – mit eigenen Fernwartungs- und SCADA-Systemen.", href: "/technik/scada" },
+  { icon: MonitorDot, title: "Monitoring & SCADA", text: "Standortübergreifende Überwachung von Erzeugung und Verbrauch – mit Fernwartung und SCADA mit unserem Technologiepartner Solensa.", href: "/technik/scada" },
   { icon: Share2, title: "Energiegemeinschaften", text: "Viertelstundenwerte sind Voraussetzung für die Teilnahme an EEG, BEG und GEA.", href: "/energiegemeinschaften" },
 ];
 

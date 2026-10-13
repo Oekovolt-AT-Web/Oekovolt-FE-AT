@@ -12,6 +12,7 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import VorherNachher from "@/components/Repowering/VorherNachher";
+import TarifAuslauf from "@/components/Repowering/TarifAuslauf";
 import { JsonLd, serviceMetadata, serviceSchema } from "@/components/ServiceAT/meta";
 import Tabelle from "@/components/ServiceAT/Tabelle";
 import Hinweis from "@/components/ServiceAT/Hinweis";
@@ -128,6 +129,17 @@ export default function RepoweringPage() {
         </p>
       </Kennzahlen>
 
+      {/* Tarifauslauf-Radar (C05): Inbetriebnahmejahr und kWp → Restlaufzeit des 13-jährigen OeMAG-Tarifs */}
+      <Section tone="sand" space="lg" id="tarifauslauf" className="scroll-mt-24">
+        <SectionHeading
+          eyebrow="Tarifauslauf-Radar"
+          title="Wann endet Ihr OeMAG-Tarif – und was dann?"
+          lead="Inbetriebnahmejahr und Leistung eingeben: Das Radar zeigt die rechnerische Restlaufzeit des 13-jährigen Tarifvertrags nach ÖSG 2012 und ordnet Repowering, Speicher, Eigenverbrauch und Direktvermarktung ein. Richtwert – Ihr Vertrag ist maßgeblich."
+          className="mb-10"
+        />
+        <TarifAuslauf />
+      </Section>
+
       {/* Vorher/Nachher */}
       <Dunkel id="vergleich">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
@@ -204,7 +216,7 @@ export default function RepoweringPage() {
 
       {/* Förderung & Technik */}
       <Section tone="white" space="lg">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16 [&>*]:min-w-0">
           <div>
             <SectionHeading
               eyebrow="Förderung & Technik"
@@ -223,6 +235,7 @@ export default function RepoweringPage() {
             </Reveal>
           </div>
           <Fachdetails
+            className="grid-cols-1 [&>*]:min-w-0"
             items={[
               {
                 titel: "EAG-Investitionszuschuss – Fördersätze 2026",
@@ -353,6 +366,8 @@ export default function RepoweringPage() {
           { href: "/ratgeber/eag-investitionszuschuss", art: "Ratgeber", titel: "EAG-Investitionszuschuss" },
           { href: "/ratgeber/energiegemeinschaft-gewerbe", art: "Ratgeber", titel: "Energiegemeinschaft für Betriebe" },
           { href: "/service/drohneninspektion", art: "Service", titel: "Drohnen-Thermografie" },
+          { href: "/service/anlagen-check", art: "Service", titel: "Anlagen-Check mit Monatserträgen" },
+          { href: "/service/betriebsfuehrung", art: "Service", titel: "Betriebsführung & Anlagenübernahme" },
           { href: "/service/finanzierung", art: "Service", titel: "Finanzierung & Leasing" },
           { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)" },
           { href: "/gewerbespeicher", art: "Lösung", titel: "Gewerbespeicher" },
@@ -363,6 +378,7 @@ export default function RepoweringPage() {
           { titel: "Erneuerbaren-Ausbau-Gesetz § 56 – Investitionszuschüsse Photovoltaik", href: "https://www.jusline.at/gesetz/eag/paragraf/56" },
           { titel: "EAG-Abwicklungsstelle – Investitionszuschuss Photovoltaik & Speicher", href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/" },
           { titel: "OeMAG – Marktpreis", href: "https://www.oem-ag.at/marktpreis" },
+          { titel: "Ökostromgesetz 2012 § 16 – Vertragsdauer der Einspeisetarife (13 Jahre Photovoltaik)", href: "https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=20007386" },
           { titel: "Oesterreichs Energie – Wechselrichterliste TOR Erzeuger Typ A", href: "https://oesterreichsenergie.at/publikationen/ueberblick/detailseite/wechselrichterliste-tor-erzeuger-typ-a" },
           { titel: "WKO – Investitionsfreibetrag", href: "https://www.wko.at/steuern/investitionsfreibetrag" },
         ]}

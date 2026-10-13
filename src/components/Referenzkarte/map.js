@@ -44,11 +44,13 @@ const Map = ({ data }) => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const L = require("leaflet");
+      // Marker-Bilder von der eigenen Domain (Kopie aus node_modules/leaflet/dist/images,
+      // Leaflet 1.9.4) – keine Anfrage an unpkg.com, keine CSP-Freigabe nötig.
       setCustomIcon(
         new L.Icon({
-          iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-          iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-          shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+          iconUrl: "/Images/leaflet/marker-icon.png",
+          iconRetinaUrl: "/Images/leaflet/marker-icon-2x.png",
+          shadowUrl: "/Images/leaflet/marker-shadow.png",
           iconSize: [25, 41],
           iconAnchor: [12, 41],
           popupAnchor: [1, -34],

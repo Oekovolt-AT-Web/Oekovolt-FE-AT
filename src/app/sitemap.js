@@ -300,9 +300,10 @@ async function fetchAllProjects() {
   const data = await authenticatedFetch(API_URL);
   const msg = data?.message;
   const liste = Array.isArray(msg) ? msg : msg?.projekte;
-  // API, sonst statischer Stand src/data/projekte.js
-  if (Array.isArray(liste) && liste.length) return { roh: liste.filter((p) => p && typeof p === "object"), statisch: false };
-  return { roh: PROJEKTE, statisch: true };
+  // API, sonst statischer Stand src/data/projekte.js – Slugs ohne Kundennamen wie auf den Seiten (A07)
+  const { projekteNeutralisieren } = await import("@/lib/kundenbuehneServer");
+  if (Array.isArray(liste) && liste.length) return { roh: await projekteNeutralisieren(liste.filter((p) => p && typeof p === "object"), { quelle: "api" }), statisch: false };
+  return { roh: await projekteNeutralisieren(PROJEKTE, { quelle: "statisch" }), statisch: true };
 }
 
 // Bild-Sitemap: gleiche URLs wie auf der Projektseite (encodeURI(bild_url), vgl. referenzen/projekte/[title]/page.js).

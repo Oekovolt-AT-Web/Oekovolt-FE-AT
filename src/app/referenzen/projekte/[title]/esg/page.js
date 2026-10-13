@@ -15,7 +15,7 @@ import { BASE_URL, FIRMA } from "@/lib/site";
 export async function generateMetadata({ params }) {
   const { title } = await params;
   const d = await ladeKundenbuehne(title);
-  return kitMetadata(d, {
+  return kitMetadata(d?.kit?.esg ? d : null, {
     titel: "ESG-Kurzbericht",
     beschreibung: d ? `ESG-Kurzbericht zur Photovoltaikanlage von ${d.firma}: geschätzte Jahresproduktion und CO₂-Vermeidung mit Faktor und Quelle.` : "",
   });
@@ -50,7 +50,7 @@ function Zeile({ k, v }) {
 export default async function EsgSeite({ params }) {
   const { title } = await params;
   const d = await ladeKundenbuehne(title);
-  if (!d) notFound();
+  if (!d || !d.kit?.esg) notFound(); // nennt den Kunden – nur mit Namensfreigabe (A07)
   if (d.veraltet) permanentRedirect(`/referenzen/projekte/${d.projekt.slug}/esg`);
   const { projekt, firma, zahlen, ort, jahr, kunde } = d;
   const slug = projekt.slug;
@@ -60,7 +60,7 @@ export default async function EsgSeite({ params }) {
   return (
     <div className="ov-druck-flaeche bg-sand-50">
       <style dangerouslySetInnerHTML={{ __html: DRUCK_CSS }} />
-      <KitNavigation slug={slug} aktiv="esg" titel={projekt.titel} />
+      <KitNavigation slug={slug} aktiv="esg" titel={projekt.titel} kit={d.kit} />
 
       <div className="ov-container py-10 md:py-14">
         <div className="ov-druck-aus mx-auto mb-6 flex max-w-[860px] flex-wrap items-center justify-between gap-4">

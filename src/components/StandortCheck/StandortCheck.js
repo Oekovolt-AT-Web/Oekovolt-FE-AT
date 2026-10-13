@@ -27,6 +27,7 @@ import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/
 import { fmt } from "@/lib/rechner/annahmen";
 import { ereignis } from "@/lib/statistik";
 import { horaLinks } from "@/lib/standort/hora";
+import ZumDossierKnopf from "@/components/Dossier/ZumDossierKnopf";
 import {
   ALTFORMEL_MAX_SEEHOEHE,
   ALTZONEN,
@@ -84,7 +85,7 @@ function ZahlFeld({ label, einheit, wert, onChange, placeholder, hinweis, fehler
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={fehler ? "true" : undefined}
           aria-describedby={hinweis || fehler ? `${id}-h` : undefined}
-          className="ov-num min-h-12 w-full min-w-0 rounded-xl bg-transparent px-4 text-[16px] font-semibold text-ink-900 outline-none placeholder:font-normal placeholder:text-ink-400"
+          className="ov-num min-h-12 w-full min-w-0 rounded-xl bg-transparent px-4 text-[16px] font-semibold text-ink-900 outline-none placeholder:font-normal placeholder:text-ink-500"
         />
         {einheit && <span className="shrink-0 pr-4 text-[14px] font-medium text-ink-500">{einheit}</span>}
       </div>
@@ -372,6 +373,31 @@ export default function StandortCheck() {
 
   const adresse = punkt?.label || daten?.lage?.adresse || null;
 
+  /** Ergebnis für das Business-Case-Dossier (B07) – nur Standortwerte, keine Personendaten. */
+  const dossierEintrag = () => {
+    const ort = (adresse || (punkt ? `${fmt(punkt.lat, 3)}, ${fmt(punkt.lon, 3)}` : "")).split(",").slice(0, 2).join(",");
+    const kennzahlen = [];
+    if (gewaehlt?.ertrag) kennzahlen.push({ label: "Spezifischer Ertrag (Ihre Dachfläche)", wert: fmt(gewaehlt.ertrag), einheit: "kWh/kWp" });
+    if (optimal?.ertrag) kennzahlen.push({ label: "Optimum am Standort", wert: fmt(optimal.ertrag), einheit: "kWh/kWp" });
+    if (seehoehe != null) kennzahlen.push({ label: "Seehöhe", wert: fmt(seehoehe), einheit: "m" });
+    if (sk) kennzahlen.push({ label: istRichtwert ? "Schneelast sₖ (Richtwert, nicht normativ)" : "Schneelast sₖ (Ihre Eingabe aus HORA)", wert: fmt(sk, 2), einheit: "kN/m²" });
+    if (qb0) kennzahlen.push({ label: "Basisgeschwindigkeitsdruck q_b", wert: fmt(qb0, 2), einheit: "kN/m²" });
+    return {
+      id: "standort-check",
+      quelle: "/standort-check",
+      titel: `Standort-Check${ort ? ` ${ort}` : ""}`,
+      art: "standort",
+      kennzahlen,
+      annahmen: [
+        ["Dachfläche", `${neigung}° · ${AUSRICHTUNGEN.find((a) => a.id === ausrichtung)?.label} · ${montage === "building" ? "Indach" : "Aufdach"}`],
+        ["Ertrag", `PVGIS${gewaehlt?.datenbank ? ` (${gewaehlt.datenbank}, ${gewaehlt.zeitraum})` : ""} © Europäische Union, 1 kWp, 14 % Systemverluste`],
+        "Vorabschätzung – ersetzt keine statische Berechnung; Richtwert/Orientierung.",
+      ],
+      stand: gewaehlt?.zeitraum ? `PVGIS ${gewaehlt.zeitraum}` : "",
+      eingaben: gewaehlt?.ertrag ? { ertragProKwp: Math.round(gewaehlt.ertrag) } : undefined,
+    };
+  };
+
   return (
     <div className="overflow-clip rounded-[2rem] bg-white shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70">
       {/* Kopfleiste mit Fortschritt (nur Anzeige) */}
@@ -424,7 +450,7 @@ export default function StandortCheck() {
                     onChange={(e) => setSuche(e.target.value)}
                     placeholder="z. B. Hinterstadt 18, Kitzbühel"
                     autoComplete="street-address"
-                    className="min-h-12 w-full min-w-0 rounded-xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-400 focus:ring-2 focus:ring-ov-500"
+                    className="min-h-12 w-full min-w-0 rounded-xl bg-white px-4 text-[16px] text-ink-900 outline-none ring-1 ring-ink-200 placeholder:text-ink-500 focus:ring-2 focus:ring-ov-500"
                   />
                   <button
                     type="submit"
@@ -460,7 +486,7 @@ export default function StandortCheck() {
                   ))}
                 </ul>
               )}
-              <p className="text-[11.5px] text-ink-400">Adresssuche: © OpenStreetMap-Mitwirkende (Nominatim)</p>
+              <p className="text-[11.5px] text-ink-500">Adresssuche: © OpenStreetMap-Mitwirkende (Nominatim)</p>
             </Gruppe>
 
             <Gruppe titel="2 · Dach & Montage">
@@ -579,7 +605,7 @@ export default function StandortCheck() {
                         <>
                           Richtwert aus GeoSphere-Daten (1-km-Raster) – für die Statik gilt der Normwert aus eHORA.
                           {richtwert?.nachbarzelle ? " Grenzlage: Wert der benachbarten Rasterzelle." : ""}{" "}
-                          <span className="block pt-0.5 text-[11.5px] text-ink-400">Datenbasis: GeoSphere Austria, SNOWGRID-CL (CC BY 4.0), eigene Auswertung</span>
+                          <span className="block pt-0.5 text-[11.5px] text-ink-500">Datenbasis: GeoSphere Austria, SNOWGRID-CL (CC BY 4.0), eigene Auswertung</span>
                         </>
                       ) : (
                         <>
@@ -944,6 +970,10 @@ export default function StandortCheck() {
                   <Button href="/termin?art=vor-ort" size="lg" variant="secondary" icon={CalendarCheck2}>
                     Vor-Ort-Termin
                   </Button>
+                </div>
+                <div className="flex flex-col gap-1.5 rounded-2xl bg-sand-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <p className="text-[13.5px] leading-relaxed text-ink-600">Für Bank, Geschäftsführung oder Gemeinderat: Ergebnis im Business-Case-Dossier sammeln (bleibt in diesem Browser-Tab).</p>
+                  <ZumDossierKnopf eintrag={dossierEintrag} stand={`${punkt?.lat}|${punkt?.lon}|${neigung}|${ausrichtung}|${montage}|${skText}|${windText}|${gewaehlt?.ertrag ?? ""}`} deaktiviert={!gewaehlt?.ertrag} klein className="shrink-0" />
                 </div>
               </div>
             </div>

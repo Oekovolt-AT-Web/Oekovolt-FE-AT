@@ -182,6 +182,8 @@ export const ANNAHMEN = {
     ],
     speicherEurProKwh: 150,
     speicherMaxKwh: 50,
+    // Speicher wird erst ab 0,5 kWh je förderfähigem kWp gefördert (EAG-AS FAQ 2026, Frage 19; wie src/lib/foerdercall.js)
+    speicherMinKwhJeKwp: 0.5,
     quelle: "EAG-IZV, BGBl. II Nr. 12/2026, § 5",
     naechsterCall: "8. bis 22. Oktober 2026",
   },
@@ -329,8 +331,11 @@ export function eagZuschuss(kwp, speicherKwh = 0) {
   // Über 1.000 kWp: Kategorie D, gefördert anteilig bis 1.000 kWp (EAG-AS, FAQ 2026 Fragen 19 und 20)
   const kat = z.kategorien.find((k) => kwp <= k.bisKwp) ?? z.kategorien.find((k) => k.id === "D");
   if (!kat || !(kwp > 0)) return { kategorie: null, pv: 0, speicher: 0, summe: 0 };
-  const pv = Math.min(kwp, 1000) * kat.eurProKwp;
-  const speicher = Math.min(Math.max(speicherKwh, 0), z.speicherMaxKwh) * z.speicherEurProKwh;
+  const kwpFoerderbar = Math.min(kwp, 1000);
+  const pv = kwpFoerderbar * kat.eurProKwp;
+  const kwh = Math.max(speicherKwh, 0);
+  const speicherGross = kwh + 1e-9 >= kwpFoerderbar * z.speicherMinKwhJeKwp;
+  const speicher = speicherGross ? Math.min(kwh, z.speicherMaxKwh) * z.speicherEurProKwh : 0;
   return { kategorie: kat.id, pv, speicher, summe: pv + speicher };
 }
 

@@ -55,7 +55,8 @@
   --color-ink-200: #dfe3ea;
   --color-ink-300: #c4cad5;
   --color-ink-400: #97a0b0;
-  --color-ink-500: #6b7486;
+  /* 500: #646c7e statt #6b7486 (Welle A, A12) – auf Weiß 5,27, sand-50 5,04, ink-50 4,96, sand-100 4,74, ink-100 4,62 : 1 (vorher 4,12–4,70) */
+  --color-ink-500: #646c7e;
   --color-ink-600: #4e5667;
   --color-ink-700: #394050;
   --color-ink-800: #252b37;
@@ -135,9 +136,19 @@ html, body {
 }
 
 /* Sprungziele nicht unter dem (jetzt fixierten) Seitenkopf verstecken.
-   Header: 104 px oben, 80 px beim Scrollen. */
+   Header: 124 px oben (ab md, mobil 84 px), 68 px sichtbar beim Scrollen. */
 html {
   scroll-padding-top: 7rem;
+}
+
+/* Fokus nie unter dem Sticky-Header bzw. der mobilen Handlungsleiste (WCAG 2.4.11):
+   Beim Fokussieren per Tab scrollt der Browser das Element mit diesem Abstand ins Bild.
+   In @layer base, damit seitenweise scroll-mt-*-Klassen weiterhin Vorrang haben. */
+@layer base {
+  :where(a, button, input, select, textarea, summary, [tabindex]) {
+    scroll-margin-top: 6.5rem;
+    scroll-margin-bottom: 6rem;
+  }
 }
 
 /* ------------------------------------------------------------------
@@ -318,15 +329,19 @@ main li::marker {
   to   { opacity: 1; transform: none; }
 }
 
-/* Mobile CTA-Leiste sichtbar: Zurück-nach-oben-Button darüber anheben.
-   Der Button setzt seine Position inline, deshalb !important. */
+/* Mobile CTA-Leiste sichtbar: Sie enthält selbst „Rückruf“ – Rückruf-Icon und „Nach oben“ treten
+   zurück, statt sich übereinander zu stapeln und Formularfelder zu verdecken (QA Welle 1).
+   Ebenso, solange ein Formularfeld den Fokus hat (Bildschirmtastatur, Fehlermeldungen). */
 @media (max-width: 1023px) {
-  body.ov-cta-sichtbar button[aria-label="Nach oben"] {
-    bottom: 96px !important;
-  }
-  /* Rückruf-Icon (links unten) ebenfalls über die Leiste heben */
-  body.ov-cta-sichtbar .ov-rueckruf-launcher {
-    bottom: 96px;
+  body.ov-cta-sichtbar .ov-rueckruf-launcher,
+  body.ov-cta-sichtbar button[aria-label="Nach oben"],
+  body:has(:is(input, textarea, select):focus) .ov-rueckruf-launcher,
+  body:has(:is(input, textarea, select):focus) button[aria-label="Nach oben"],
+  /* Eigene klebende Fußleiste eines Formulars (Konfigurator /angebot, A08) – Knöpfe würden sie verdecken */
+  body:has(.ov-klebende-leiste) .ov-rueckruf-launcher,
+  body:has(.ov-klebende-leiste) button[aria-label="Nach oben"] {
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 }
 
@@ -370,13 +385,33 @@ main li::marker {
   }
 }
 
-/* Mobilmenü offen: Hintergrund sperren, schwebende Elemente ausblenden. */
+/* Mobilmenü offen: Hintergrund sperren, schwebende Elemente ausblenden
+   (der Rückruf-Launcher lag sonst über „Anrufen“ in der Aktionsleiste des Menüs). */
 body.ov-menu-offen {
   overflow: hidden;
 }
 body.ov-menu-offen .ov-mobile-cta,
+body.ov-menu-offen .ov-rueckruf-launcher,
 body.ov-menu-offen button[aria-label="Nach oben"] {
   display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   COOKIE-BANNER (src/components/Cookies/cookiecomponent.js)
+   Die Hülle wird serverseitig gerendert und ist standardmäßig ausgeblendet.
+   Ohne gespeicherte Auswahl hängt das Inline-Skript (COOKIE_KOPF_SKRIPT) vor dem
+   ersten Paint <style id="ov-cookie-offen"> an den <head>: Hülle sichtbar, dazu
+   scroll-padding/scroll-margin unten, damit der Banner keinen Fokus verdeckt.
+   Über den Footer geöffnet: .ov-cookie-zwang (blendet die Standard-Hülle aus).
+   ------------------------------------------------------------------ */
+.ov-cookie-huelle {
+  display: none;
+}
+.ov-cookie-huelle.ov-cookie-zwang {
+  display: block;
+}
+html.ov-cookie-zwang-aktiv .ov-cookie-huelle:not(.ov-cookie-zwang) {
+  display: none;
 }
 
 /* ==================================================================
@@ -493,18 +528,24 @@ h1, h2, h3, h4, .font-display {
   }
 }
 
-/* Reveal-Animation (gesteuert von <Reveal/>). Ohne JS bleibt alles sichtbar. */
+/* Reveal-Animation (gesteuert von <Reveal/>). Ohne JS bleibt alles sichtbar.
+   550 ms, nur Deckkraft und transform (kein blur – teuer beim Malen und unscharfer Text). */
 .ov-reveal {
   transition:
-    opacity 800ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 800ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 550ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: var(--ov-delay, 0ms);
 }
 .js-ready .ov-reveal:not(.is-visible) {
   opacity: 0;
   transform: translate3d(0, 28px, 0);
-  filter: blur(6px);
+}
+/* Per Tastatur erreichter Inhalt ist sofort voll sichtbar (sonst Fokus auf unsichtbarem Element) */
+.js-ready .ov-reveal:focus-within {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  transition: none;
 }
 .js-ready .ov-reveal[data-dir="left"]:not(.is-visible) { transform: translate3d(-32px, 0, 0); }
 .js-ready .ov-reveal[data-dir="right"]:not(.is-visible) { transform: translate3d(32px, 0, 0); }

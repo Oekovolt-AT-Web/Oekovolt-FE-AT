@@ -22,11 +22,11 @@ export default function FotoKachel({ href, bild, kopf, titel, text, icon: Icon, 
           style={bild.pos ? { objectPosition: bild.pos } : undefined}
         />
       )}
-      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/65 to-navy-950/0" />
+      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/80 to-navy-950/10" />
       <div aria-hidden="true" className="absolute inset-0 bg-ov-900/0 transition-colors duration-500 group-hover:bg-ov-900/10" />
       <div className="relative mt-auto p-6 md:p-7">
         {(kopf || Icon) && (
-          <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-300">
+          <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.16em] text-ov-300 [text-shadow:0_1px_10px_rgba(3,18,43,0.85)]">
             {Icon && (
               <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/15 text-white backdrop-blur">
                 <Icon aria-hidden="true" className="h-4 w-4" />
@@ -41,7 +41,7 @@ export default function FotoKachel({ href, bild, kopf, titel, text, icon: Icon, 
             <ArrowUpRight aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-white/60 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
           )}
         </Ueberschrift>
-        {text && <p className="mt-2 line-clamp-3 max-w-md text-[14.5px] leading-relaxed text-white/80">{text}</p>}
+        {text && <p className="mt-2 max-w-md text-[14.5px] leading-relaxed text-white/80">{text}</p>}
         {children}
       </div>
     </>

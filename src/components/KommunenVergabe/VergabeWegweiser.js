@@ -181,7 +181,7 @@ export default function VergabeWegweiser({ className }) {
               <ul className="mt-7 space-y-2.5">
                 {ergebnis.wege.map((w) => (
                   <li key={w.id} className={cn("flex gap-3 rounded-2xl p-3.5 ring-1", w.zulaessig ? "bg-white/[0.07] ring-white/15" : "ring-white/5")}>
-                    <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full", w.zulaessig ? "bg-ov-500 text-white" : "bg-white/10 text-white/50")}>
+                    <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full", w.zulaessig ? "bg-ov-600 text-white" : "bg-white/10 text-white/60")}>
                       {w.zulaessig ? <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} /> : <Minus aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />}
                     </span>
                     <span className="min-w-0">
@@ -189,7 +189,7 @@ export default function VergabeWegweiser({ className }) {
                         {w.name}
                         <span className="sr-only">{w.zulaessig ? ": zulässig" : ": nicht zulässig"}</span>
                       </span>
-                      <span className={cn("mt-0.5 block text-[13.5px] leading-relaxed", w.zulaessig ? "text-white/70" : "text-white/45")}>
+                      <span className={cn("mt-0.5 block text-[13.5px] leading-relaxed", w.zulaessig ? "text-white/70" : "text-white/60")}>
                         {w.grenze != null && <span className="ov-num">bis unter {euro(w.grenze)} · </span>}
                         {w.text} <span className="whitespace-nowrap">({w.norm})</span>
                       </span>

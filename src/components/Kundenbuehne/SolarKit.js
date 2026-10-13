@@ -3,18 +3,18 @@ import { ArrowRight, BadgeCheck, FileBarChart2, Share2 } from "lucide-react";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/ui/Reveal";
-import { siegelBildUrl } from "@/lib/kundenbuehne";
+import { plaketteBildUrl } from "@/lib/kundenbuehne";
 
-/** Leichte Vorschau je Karte (gleiche Höhe): echtes Siegel-SVG bzw. CSS-Skizzen von Bildern und Bericht */
+/** Leichte Vorschau je Karte (gleiche Höhe): echte Plakette (SVG) bzw. CSS-Skizzen von Bildern und Bericht */
 function Vorschau({ art, slug, zahlen }) {
   const rahmen = "mt-5 flex h-[156px] items-center justify-center overflow-hidden rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/10";
   const werte = zahlen?.kwp ? [zahlen.texte.kwp, zahlen.texte.mwh, zahlen.texte.co2] : [];
   if (art === "siegel") {
     return (
       <span className={rahmen}>
-        {/* SVG-Siegel aus eigener Route – kein next/image nötig */}
+        {/* SVG-Plakette aus eigener Route – kein next/image nötig */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={siegelBildUrl({ slug })} alt="" width={340} height={zahlen?.kwp ? 176 : 118} loading="lazy" className="h-auto max-h-full w-auto max-w-full" />
+        <img src={plaketteBildUrl({ slug })} alt="" width={340} height={zahlen?.kwp ? 176 : 118} loading="lazy" className="h-auto max-h-full w-auto max-w-full" />
       </span>
     );
   }
@@ -63,18 +63,20 @@ function Vorschau({ art, slug, zahlen }) {
 }
 
 /**
- * Block „Für <Firma>: Ihr Solar-Kit“ auf der Projektseite – Links zu Siegel, Social-Kit und ESG-Bericht.
+ * Block „Für <Firma>: Ihr Solar-Kit“ auf der Projektseite – Links zu Plakette, Social-Kit und ESG-Bericht.
+ * Jede Karte nur mit ihrer Freigabe (kit aus kitFreigabe, A07); ohne freigegebene Karte kein Block.
  */
-export default function SolarKit({ slug, firma, zahlen }) {
+export default function SolarKit({ slug, firma, zahlen, kit = null }) {
   const basis = `/referenzen/projekte/${slug}`;
   const karten = [
     {
       href: `${basis}/siegel`,
       icon: BadgeCheck,
-      titel: "Solar-Siegel für Ihre Website",
+      titel: "Projekt-Plakette für Ihre Website",
       text: "Zeigen Sie Ihren Besuchern, dass Ihr Betrieb Sonnenstrom erzeugt – als Bild mit Link, in hell oder dunkel, kompakt oder breit. Code kopieren, einfügen, fertig.",
-      cta: "Siegel holen",
+      cta: "Plakette holen",
       vorschau: "siegel",
+      freigabe: "plakette",
     },
     {
       href: `${basis}/teilen`,
@@ -83,6 +85,7 @@ export default function SolarKit({ slug, firma, zahlen }) {
       text: "Fertige Bilder für LinkedIn und Instagram (Beitrag und Story) mit Ihren Anlagendaten – dazu Textvorschläge zum Kopieren.",
       cta: "Bilder & Texte",
       vorschau: "social",
+      freigabe: "social",
     },
     {
       href: `${basis}/esg`,
@@ -91,8 +94,10 @@ export default function SolarKit({ slug, firma, zahlen }) {
       text: "Anlage, geschätzte Jahresproduktion und CO₂-Vermeidung mit Faktor und Quelle – druckfertig als PDF für Nachhaltigkeitsbericht, Bank oder Kunden.",
       cta: "Bericht öffnen",
       vorschau: "esg",
+      freigabe: "esg",
     },
-  ];
+  ].filter((k) => kit?.[k.freigabe]);
+  if (!karten.length) return null;
 
   return (
     <Section tone="navy" space="lg" className="ov-noise isolate overflow-hidden" aria-labelledby="solar-kit-titel">
@@ -111,14 +116,14 @@ export default function SolarKit({ slug, firma, zahlen }) {
           lead={`Ihre Anlage leistet${zahlen?.kwp ? ` ${zahlen.texte.kwp} und erzeugt geschätzt ${zahlen.texte.mwh} Solarstrom im Jahr` : " einen Beitrag zur Energiewende"}. Mit diesen Werkzeugen zeigen Sie das Ihren Kunden, Ihrem Team und Ihren Partnern – kostenlos und ohne Anmeldung.`}
         />
       </div>
-      <ul className="mt-12 grid gap-5 lg:grid-cols-3">
+      <ul className={`mt-12 grid gap-5 ${karten.length === 1 ? "lg:max-w-md" : karten.length === 2 ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
         {karten.map((k, i) => (
           <Reveal as="li" key={k.href} delay={i * 90} className="h-full">
             <Link
               href={k.href}
               className="ov-glass ov-card-hover group flex h-full flex-col rounded-3xl p-6 ring-1 ring-white/15 transition-colors hover:ring-ov-300/60 md:p-7"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500/90 text-white">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-600 text-white">
                 <k.icon aria-hidden="true" className="h-6 w-6" />
               </span>
               <h3 className="mt-5 font-display text-[21px] font-bold text-white">{k.titel}</h3>

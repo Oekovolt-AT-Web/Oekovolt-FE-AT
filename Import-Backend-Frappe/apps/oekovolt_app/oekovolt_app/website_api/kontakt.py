@@ -5,9 +5,11 @@
 #
 # Genutzt von /kontakt, den Service-Seiten, PV Award, Sponsoring und Partner-Registrierung.
 # Aufrufer: API-User mit Rolle „Website API“. Antwort wird von der Website nicht gelesen (2xx = Erfolg).
+#
+# Welle A11: Die Team-Mail kommt aus lead_eingang.after_insert (A06, Routing/Score/SLA); hier nur die
+# Eingangsbestätigung an den Kunden (Referenz im Betreff, kein Freitext; Schalter oekovolt_keine_kundenmail).
 
 import frappe
-from frappe.utils import get_url_to_form
 
 from oekovolt_app.website_api import format as fmt
 from oekovolt_app.website_api.helfer import (
@@ -15,7 +17,6 @@ from oekovolt_app.website_api.helfer import (
 	kunde_bestaetigen,
 	nur_website_api,
 	pruefen,
-	team_benachrichtigen,
 )
 
 DOCTYPE = "Kontaktanfrage"
@@ -36,8 +37,6 @@ def submit_kontakt(**kwargs):
 	doc.insert(ignore_permissions=True)
 	frappe.db.commit()
 
-	betreff, html = fmt.team_mail_kontakt(daten, get_url_to_form(DOCTYPE, doc.name))
-	team_benachrichtigen(betreff, html, DOCTYPE, doc.name, reply_to=daten["email"])
-	betreff, html = fmt.kunden_mail_kontakt(daten)
+	betreff, html = fmt.kunden_mail_kontakt(daten, doc.name, frappe.conf.get("oekovolt_website_url"))
 	kunde_bestaetigen(daten["email"], betreff, html, DOCTYPE, doc.name)
 	return {"ok": True}

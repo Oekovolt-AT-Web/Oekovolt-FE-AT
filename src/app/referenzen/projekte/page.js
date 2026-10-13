@@ -32,7 +32,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import { ReferenzNamenBand, ReferenzWand } from "@/components/Project/ReferenzNamen";
 import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import { KERNFAKTEN, REFERENZ_UNTERNEHMEN } from "@/data/hero";
-import { KENNZAHLEN } from "@/data/kennzahlen";
+import { KENNZAHLEN, KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 
 // Projekte aus der API (oekovolt_app), sonst aus src/data/projekte.js (ladeProjekte).
 // Seitentexte sind statisch: Die frühere Backoffice-Seite (primary_page) lieferte Texte
@@ -206,7 +206,7 @@ export default async function ProjektePage() {
             <span className="ov-text-gradient-light">heute Strom liefern</span>
           </>
         }
-        lead="Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und Gemeinden – und ausgewählte Premium-Wohnhäuser. Jede Referenz mit Leistung, Dachart und Ort."
+        lead={`Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und Gemeinden – und ausgewählte Premium-Wohnhäuser. Jede Referenz mit Leistung, Dachart und Ort. Gesamtzahlen: ${KENNZAHLEN_HINWEIS_STAND}.`}
         image={
           k.groesste?.bilder?.length
             ? {
@@ -300,8 +300,8 @@ export default async function ProjektePage() {
       <Section tone="white" space="lg">
         <SplitMedia
           eyebrow="Technik, die mitdenkt"
-          title="Eigene Regelungs- und Leittechnik in jedem Projekt"
-          text="Parkregler, Fernwartung und SCADA entwickeln wir selbst. So regeln wir Einspeiselimit und Blindleistung nach den Vorgaben des Netzbetreibers und überwachen jede Anlage über ihre gesamte Laufzeit."
+          title="Regelungs- und Leittechnik in jedem Projekt"
+          text="Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns. So regeln wir Einspeiselimit und Blindleistung nach den Vorgaben des Netzbetreibers und überwachen jede Anlage über ihre gesamte Laufzeit."
           points={[
             "Parkregler (EZA-Regler) für den TOR-konformen Netzanschluss",
             "Fernwartung und Monitoring über die gesamte Laufzeit",

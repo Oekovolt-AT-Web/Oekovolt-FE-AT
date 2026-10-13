@@ -27,7 +27,7 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import { ReferenzNamenBand } from "@/components/Project/ReferenzNamen";
 import { REFERENZ_UNTERNEHMEN } from "@/data/hero";
 import { alleRegionen } from "@/lib/regionen";
-import { KENNZAHLEN } from "@/data/kennzahlen";
+import { KENNZAHLEN, KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 
 // Kartenorte + Projekte aus der API (oekovolt_app). Seitentexte sind statisch:
 // Die frühere Backoffice-Seite lieferte Texte der deutschen Website.
@@ -282,7 +282,7 @@ export default async function ReferenzkarteSeite() {
         breadcrumbs={[{ name: "Referenzen", href: "/referenzen/projekte" }, { name: "Referenzkarte" }]}
         eyebrow="Referenzstandorte"
         title={<>Photovoltaik-Projekte <span className="ov-text-gradient">in Ihrer Nähe</span></>}
-        lead={`Von ${FIRMA.ort} im Innviertel aus planen und errichten wir Photovoltaikanlagen in ganz Österreich. Die Karte zeigt, wo unsere Anlagen bereits Strom erzeugen – mit Entfernung zu unserem Firmensitz.`}
+        lead={`Von ${FIRMA.ort} im Innviertel aus planen und errichten wir Photovoltaikanlagen in ganz Österreich. Die Karte zeigt, wo unsere Anlagen bereits Strom erzeugen – mit Entfernung zu unserem Firmensitz. Gesamtzahlen: ${KENNZAHLEN_HINWEIS_STAND}.`}
         image={{
           src: "/Images/Referenzen/referenzkarte1.jpg",
           alt: "Fachkraft kontrolliert Photovoltaik-Modul auf Dach",
@@ -390,7 +390,7 @@ export default async function ReferenzkarteSeite() {
               title={<>Zuletzt <span className="ov-text-gradient">realisiert</span></>}
               lead={projekte.length ? `${k.anzahl} dokumentierte Projekte mit Bildern, Leistung und Baujahr.` : undefined}
             />
-            <Button href="/referenzen/projekte" variant="secondary" icon={Images}>
+            <Button href="/referenzen/projekte" variant="ghost" icon={Images} className="bg-sand-100 text-ink-900">
               Alle Projekte
             </Button>
           </div>
@@ -414,7 +414,7 @@ export default async function ReferenzkarteSeite() {
           eyebrow="Solarlösungen"
           title="Für Betriebe, Landwirtschaft und Gemeinden"
           text="Wir planen jede Anlage nach Lastgang, Tragwerk und Netzanschluss – und begleiten sie über die gesamte Laufzeit mit Monitoring und Wartung. Premium-Wohnhäuser und Chalets planen wir mit derselben Sorgfalt."
-          points={["Netzzugangsantrag und Fertigstellungsmeldung inklusive", "Eigener Parkregler für den TOR-konformen Anschluss", "Wartungsvertrag und Fernüberwachung"]}
+          points={["Netzzugangsantrag und Fertigstellungsmeldung inklusive", "Parkregler für den TOR-konformen Anschluss", "Wartungsvertrag und Fernüberwachung"]}
           image={{
             src: "/Images/Referenzen/referenzkarte3.jpg",
             alt: "Arbeiter bereitet Solarmodul für Montage vor",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useDeferredValue, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useId, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -13,7 +13,9 @@ import {
   FileUp,
   Gauge,
   Loader2,
+  Lock,
   MonitorSmartphone,
+  Send,
   RotateCcw,
   ShieldCheck,
   Sparkles,
@@ -34,14 +36,21 @@ import { ersparnisLeistungspreis, schwellenBereich, speicherFuerSchwelle } from 
 import { datum, datumZeit, energie, leistung, prozent, zahl } from "@/lib/lastgang/format";
 import { NETZBEREICHE, PS_ANNAHMEN, netzpreise } from "@/lib/rechner/peakshaving";
 import { angebotUrl } from "@/lib/rechner/angebot";
+import useLeadGate from "@/components/LeadGate/useLeadGate";
 
 const BEISPIEL = "/beispiele/lastgang-beispiel.csv";
 
 /**
  * Lastgang-Analyse im Browser. Die Datei wird mit der File-API gelesen und ausschließlich hier
- * ausgewertet – es gibt in dieser Komponente keinen Upload, keinen fetch() mit Nutzerdaten und
- * keine Speicherung (auch nicht im localStorage). Einzige Netzwerkanfrage: das Laden der
- * Beispieldatei, wenn der Besucher sie ausdrücklich anfordert.
+ * ausgewertet – es gibt in dieser Komponente keinen Upload der Datei und keine Speicherung (auch nicht
+ * im localStorage). Netzwerkanfragen: das Laden der Beispieldatei (nur auf Wunsch), das Lead-Gate und –
+ * nur auf Klick – der Versand der Kennzahlen an einen Fachberater.
+ *
+ * Lead-Gate Stufe 2 (Inhaber 11.10.2026, Welle A, Paket A09): Die Auswertung einer EIGENEN Datei startet
+ * erst nach bestätigter E-Mail (Kennung „lastgang-analyse“, Freischalt-Cookie). Die gewählte Datei wartet
+ * so lange nur im Arbeitsspeicher dieser Seite und wird nach der Freischaltung automatisch ausgewertet –
+ * auch wenn sie von einer Smart-Meter-Seite übergeben wurde (C07). Der synthetische Beispiel-Lastgang
+ * und die Beispiel-CSV bleiben frei (statische Inhalte, klar als Beispiel gekennzeichnet).
  *
  * props: orte – [{ land, name, orte: [{ slug, name, lat, lon, monate_sued35, sued35_kwh_kwp, … }] }]
  */
@@ -52,6 +61,18 @@ export default function LastgangAnalyse({ orte, startOrt = "ostermiething" }) {
   const [lg, setLg] = useState(null);
   const [fehler, setFehler] = useState(null);
   const [laedt, setLaedt] = useState(false);
+  const [wartend, setWartend] = useState(null); // eigene Datei, die auf die Freischaltung wartet
+  const gefragtRef = useRef(false);
+  const gate = useLeadGate({
+    kennung: "lastgang-analyse",
+    modus: "auswertung",
+    kontext: {
+      titel: "Ihre Lastgang-Analyse starten",
+      einleitung: "Ihre Datei bleibt auf Ihrem Gerät – übertragen werden nur Name und E-Mail. Nach der Bestätigung startet die Auswertung hier im Browser.",
+      rueckkehr: "/lastgang-analyse",
+      segment: "gewerbe",
+    },
+  });
 
   const auswerten = useCallback((text, opt) => {
     setLaedt(true);
@@ -87,7 +108,7 @@ export default function LastgangAnalyse({ orte, startOrt = "ostermiething" }) {
     [auswerten]
   );
 
-  const ladeDatei = useCallback(
+  const ladeDateiFrei = useCallback(
     async (file) => {
       if (!file) return;
       setLaedt(true);
@@ -102,6 +123,40 @@ export default function LastgangAnalyse({ orte, startOrt = "ostermiething" }) {
     },
     [ladeBytes]
   );
+
+  // Eigene Datei: erst nach der Freischaltung auswerten (Stufe 2), bis dahin nur merken
+  const ladeDatei = useCallback(
+    (file) => {
+      if (!file) return;
+      if (gate.freigegeben) {
+        ladeDateiFrei(file);
+        return;
+      }
+      gefragtRef.current = false;
+      setWartend(file);
+      setFehler(null);
+    },
+    [gate.freigegeben, ladeDateiFrei]
+  );
+
+  const { freigegeben, geprueft, oeffnen } = gate;
+  useEffect(() => {
+    if (!wartend || !geprueft) return;
+    if (freigegeben) {
+      const f = wartend;
+      setWartend(null);
+      ladeDateiFrei(f);
+    } else if (!gefragtRef.current) {
+      gefragtRef.current = true;
+      let quelle = "";
+      try {
+        quelle = new URLSearchParams(window.location.search).get("quelle") || window.sessionStorage.getItem("ov-lastgang-quelle") || "";
+      } catch {
+        /* ohne Herkunft */
+      }
+      oeffnen("auswertung", quelle ? { ergebnis: { "Herkunft Smart-Meter-Seite": quelle.slice(0, 60) } } : {});
+    }
+  }, [wartend, geprueft, freigegeben, oeffnen, ladeDateiFrei]);
 
   const ladeBeispiel = useCallback(async () => {
     setLaedt(true);
@@ -134,7 +189,18 @@ export default function LastgangAnalyse({ orte, startOrt = "ostermiething" }) {
     <Karte>
       <GewerbeStil />
       {!lg ? (
-        <Start onDatei={ladeDatei} onBeispiel={ladeBeispiel} laedt={laedt} fehler={fehler} datei={datei} />
+        <Start
+          onDatei={ladeDatei}
+          onBeispiel={ladeBeispiel}
+          laedt={laedt}
+          fehler={fehler}
+          datei={datei}
+          wartend={wartend}
+          freigegeben={gate.freigegeben}
+          geradeBestaetigt={gate.geradeBestaetigt}
+          onFreischalten={() => gate.oeffnen("auswertung")}
+          onWartendVerwerfen={() => setWartend(null)}
+        />
       ) : (
         <Ergebnis
           key={`${datei?.name}-${optionen.einheit}-${optionen.spalte}-${lg.kwh.length}`}
@@ -147,8 +213,20 @@ export default function LastgangAnalyse({ orte, startOrt = "ostermiething" }) {
           onVerwerfen={verwerfen}
           orte={orte}
           startOrt={startOrt}
+          wartend={wartend}
+          onFreischalten={() => gate.oeffnen("auswertung")}
+          onSenden={(ergebnis) =>
+            gate.oeffnen("senden", {
+              titel: "Kennzahlen an einen Fachberater senden",
+              einleitung: "Ihre Datei bleibt auf Ihrem Gerät. Senden Sie uns nur die Kennzahlen, und wir legen die Anlage daran aus – statt an der Dachfläche.",
+              ergebnis,
+              nachSenden: "/angebot?objekt=gewerbe&lastgang=1",
+              weiterLabel: "Weiter zur Anfrage",
+            })
+          }
         />
       )}
+      {gate.dialog}
     </Karte>
   );
 }
@@ -215,7 +293,7 @@ function Dropzone({ onDatei, laedt, kompakt = false }) {
   );
 }
 
-function Start({ onDatei, onBeispiel, laedt, fehler, datei }) {
+function Start({ onDatei, onBeispiel, laedt, fehler, datei, wartend, freigegeben, geradeBestaetigt, onFreischalten, onWartendVerwerfen }) {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
       <div className="p-5 sm:p-6 md:p-8">
@@ -226,6 +304,33 @@ function Start({ onDatei, onBeispiel, laedt, fehler, datei }) {
         <div className="mt-6">
           <Dropzone onDatei={onDatei} laedt={laedt} />
         </div>
+        {wartend && !freigegeben ? (
+          <div role="status" className="mt-4 rounded-2xl bg-ov-50 px-4 py-3.5 text-[14px] leading-relaxed text-ink-800 ring-1 ring-ov-200">
+            <p className="flex items-start gap-2 font-semibold text-ink-900">
+              <Lock aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-700" />
+              <span className="min-w-0 break-words">„{wartend.name}“ ist bereit.</span>
+            </p>
+            <p className="mt-1">Die Auswertung startet automatisch, sobald Sie Ihre E-Mail-Adresse bestätigt haben. Die Datei bleibt bis dahin nur in diesem Browserfenster.</p>
+            <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+              <button type="button" onClick={onFreischalten} className="min-h-11 font-semibold text-ov-800 underline underline-offset-4 hover:text-ov-900">
+                Jetzt freischalten
+              </button>
+              <button type="button" onClick={onWartendVerwerfen} className="min-h-11 text-ink-600 underline underline-offset-4 hover:text-ink-900">
+                Datei verwerfen
+              </button>
+            </div>
+          </div>
+        ) : freigegeben ? (
+          <p className="mt-3 flex items-center gap-2 text-[13px] font-semibold text-ov-800">
+            <ShieldCheck aria-hidden="true" className="h-4 w-4 shrink-0" />
+            {geradeBestaetigt ? "E-Mail bestätigt – wählen Sie jetzt Ihre Datei." : "Auswertung auf diesem Gerät freigeschaltet."}
+          </p>
+        ) : (
+          <p className="mt-3 flex items-start gap-2 text-[13px] leading-relaxed text-ink-600">
+            <Lock aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ink-500" />
+            Für Ihre eigene Datei einmalig mit Name und E-Mail freischalten – die Datei selbst wird nie übertragen. Das Beispiel funktioniert ohne Freischaltung.
+          </p>
+        )}
         {fehler && (
           <div role="alert" className="mt-4 flex gap-3 rounded-2xl bg-sun-300/15 px-4 py-3.5 text-[14px] leading-relaxed text-ink-800 ring-1 ring-sun-400/50">
             <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-sun-500" />
@@ -239,10 +344,10 @@ function Start({ onDatei, onBeispiel, laedt, fehler, datei }) {
           </div>
         )}
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <Button variant="secondary" size="sm" icon={Sparkles} onClick={onBeispiel} disabled={laedt}>
+          <Button variant="secondary" size="sm" icon={Sparkles} onClick={onBeispiel} disabled={laedt} className="min-h-11">
             Beispiel-Lastgang laden
           </Button>
-          <a href={BEISPIEL} download className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 text-[13.5px] font-semibold text-ink-600 underline decoration-ink-300 underline-offset-4 hover:text-ink-900">
+          <a href={BEISPIEL} download className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-[13.5px] font-semibold text-ink-600 underline decoration-ink-300 underline-offset-4 hover:text-ink-900">
             <Download aria-hidden="true" className="h-4 w-4" />
             Beispiel-CSV herunterladen
           </a>
@@ -253,7 +358,7 @@ function Start({ onDatei, onBeispiel, laedt, fehler, datei }) {
       <aside aria-labelledby="lg-datenschutz" className="relative overflow-hidden border-t border-white/10 bg-navy-950 p-5 text-white sm:p-6 md:p-8 lg:border-l lg:border-t-0">
         <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-ov-500/25 blur-[90px]" />
         <div className="relative">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white">
             <ShieldCheck aria-hidden="true" className="h-6 w-6" />
           </span>
           <h2 id="lg-datenschutz" className="mt-5 font-display text-[21px] font-extrabold leading-snug tracking-tight">
@@ -263,8 +368,9 @@ function Start({ onDatei, onBeispiel, laedt, fehler, datei }) {
             {[
               [MonitorSmartphone, "Die Auswertung läuft vollständig auf Ihrem Gerät, im Browser. Die Datei wird nicht an unseren oder einen anderen Server übertragen."],
               [Trash2, "Nichts wird gespeichert – weder auf dem Server noch im Browser. Tab schließen oder „Daten verwerfen“, und alles ist weg."],
+              [Lock, "Freischaltung mit Name und E-Mail: Übertragen werden nur diese Kontaktdaten – für den Bestätigungslink und Rückfragen, kein Newsletter."],
               [Activity, "Prüfbar: Nach dem Laden der Seite funktioniert die Analyse auch offline, und im Netzwerk-Tab Ihres Browsers erscheint beim Auswerten keine Anfrage."],
-              [FileSpreadsheet, "Ins Angebot übernehmen Sie nur, was Sie wollen: Jahresverbrauch, Anlagengröße und Speicher – als drei Zahlen im Link."],
+              [FileSpreadsheet, "Ins Angebot übernehmen oder an einen Fachberater senden Sie nur, was Sie wollen: Kennzahlen, nie die Datei."],
             ].map(([Icon, text]) => (
               <li key={text} className="flex gap-3">
                 <Icon aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ov-300" />
@@ -331,7 +437,7 @@ function OrtWahl({ orte, wert, onChange }) {
   );
 }
 
-function Ergebnis({ lg, datei, optionen, setzeOption, laedt, onDatei, onVerwerfen, orte, startOrt }) {
+function Ergebnis({ lg, datei, optionen, setzeOption, laedt, onDatei, onVerwerfen, orte, startOrt, wartend, onFreischalten, onSenden }) {
   const a = useMemo(() => analysiere(lg), [lg]);
   const alleOrte = useMemo(() => orte.flatMap((g) => g.orte), [orte]);
 
@@ -368,6 +474,22 @@ function Ergebnis({ lg, datei, optionen, setzeOption, laedt, onDatei, onVerwerfe
   // ---------- Angebot ----------
   const [mitSpeicher, setMitSpeicher] = useState(false);
   const link = angebotUrl({ objekt: "gewerbe", kwp, verbrauch: a.jahresverbrauch, speicher: mitSpeicher && ps.moeglich ? ps.nennKwh : 0 });
+
+  // Kennzahlen für „an einen Fachberater senden“ – keine Rohdaten, nur auf Klick
+  const kennzahlenSenden = () => {
+    const energieTag = a.wochentage.map((w) => (Number.isFinite(w.kwhProTag) ? w.kwhProTag * w.tage : 0));
+    const summeWoche = energieTag.reduce((s, x) => s + x, 0);
+    return {
+      "Jahresverbrauch (kWh)": Math.round(a.jahresverbrauch),
+      "Grundlast (kW)": Math.round(a.grundlast * 10) / 10,
+      "Spitzenlast (kW)": Math.round(a.spitze.kw * 10) / 10,
+      "Monatsspitzen (kW)": a.monate.slice(-12).map((m) => Math.round(m.spitzeKw)),
+      "Wochenendanteil (%)": summeWoche > 0 ? Math.round(((energieTag[5] + energieTag[6]) / summeWoche) * 1000) / 10 : 0,
+      "PV-Deckungsgrad (%)": Math.round(sim.autarkie * 1000) / 10,
+      "PV-Anlage (kWp)": kwp,
+      Hochgerechnet: a.hochgerechnet ? "ja" : "nein",
+    };
+  };
 
   const [tgSicht, setTgSicht] = useState("alle");
   const sichtbar = tgSicht === "alle" ? ["werktag", "samstag", "sonntag"] : ["werktag", "max"];
@@ -429,6 +551,14 @@ function Ergebnis({ lg, datei, optionen, setzeOption, laedt, onDatei, onVerwerfe
           )}
         </div>
 
+        {wartend && (
+          <div role="status" className="mt-4 rounded-2xl bg-ov-50 px-4 py-3 text-[13.5px] leading-relaxed text-ink-800 ring-1 ring-ov-200">
+            „{wartend.name}“ wird ausgewertet, sobald Sie Ihre E-Mail-Adresse bestätigt haben.{" "}
+            <button type="button" onClick={onFreischalten} className="min-h-11 font-semibold text-ov-800 underline underline-offset-4">
+              Jetzt freischalten
+            </button>
+          </div>
+        )}
         {(lg.hinweise.length > 0 || a.hochgerechnet || datei?.beispiel) && (
           <div className="mt-5 space-y-2">
             {datei?.beispiel && (
@@ -725,6 +855,22 @@ function Ergebnis({ lg, datei, optionen, setzeOption, laedt, onDatei, onVerwerfe
             {ps.moeglich && ps.nennKwh > 0 && (
               <div className="rounded-2xl bg-white text-ink-900">
                 <Schalter label="Speicher mit anfragen" beschreibung={`${zahl(ps.leistungKw)} kW / ${zahl(ps.nennKwh)} kWh für Peak Shaving`} an={mitSpeicher} onChange={setMitSpeicher} icon={BatteryCharging} />
+              </div>
+            )}
+            {!datei?.beispiel && (
+              <div className="rounded-2xl bg-white/[0.06] p-4 ring-1 ring-white/10">
+                <p className="text-[14.5px] font-semibold">Auswertung an einen Fachberater senden</p>
+                <p className="mt-1 text-[13px] leading-relaxed text-white/70">
+                  Ihre Datei bleibt auf Ihrem Gerät. Senden Sie uns nur die Kennzahlen (Jahresverbrauch, Grundlast, zwölf Monatsspitzen, Wochenendanteil, Deckungsgrad), und wir legen die Anlage daran aus – statt an der Dachfläche.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onSenden(kennzahlenSenden())}
+                  className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-5 text-[14.5px] font-semibold text-navy-950 transition-colors hover:bg-ov-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950"
+                >
+                  <Send aria-hidden="true" className="h-4 w-4" />
+                  Kennzahlen senden
+                </button>
               </div>
             )}
             <Link

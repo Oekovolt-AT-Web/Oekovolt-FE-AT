@@ -329,7 +329,7 @@ const artikel = {
   seitenCta: { titel: "Projekt starten?", text: "Senden Sie uns Lastgang und Dachdaten – wir erstellen das Konzept.", href: "/angebot", label: "Projekt anfragen" },
   cta: {
     title: "Vom Lastgang zur laufenden Anlage – mit einem Ansprechpartner.",
-    text: "Ökovolt Solartechnik plant, errichtet und betreut PV-Anlagen für Betriebe in ganz Österreich – mit eigenem Parkregler, eigener Fernwartung und SCADA.",
+    text: "Ökovolt Solartechnik plant, errichtet und betreut PV-Anlagen für Betriebe in ganz Österreich – mit Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa.",
     primary: { label: "Projekt anfragen", href: "/angebot" },
     secondary: { label: "Photovoltaik für Betriebe", href: "/gewerbe" },
   },

@@ -1,7 +1,7 @@
 # 03 – Schnittstellenbeschreibung
 
 Informationseinheit „Schnittstellenbeschreibung“ in Anlehnung an ISO/IEC/IEEE 15289 / 29148.
-Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Keine Normkonformität behauptet. Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 **Führendes Dokument für die Frappe-Methoden ist `docs/FRAPPE-AT-API-SPEZIFIKATION.md`** (Methoden #1–#14,
 Auth, Fehlerabbildung, Rollen, Abnahmetest). Dieses Kapitel dupliziert das nicht, sondern ergänzt:
@@ -35,6 +35,11 @@ Legende Auth: **öffentlich** = ohne Anmeldung aufrufbar · **Secret** = gemeins
 | `/api/scan/start`, `/api/scan/fortsetzen`, `/api/scan/[token]/{verbunden,status,foto,abschliessen}` | POST/GET | `…doctype.solar_lead.api.*` (#12: `sitzung_starten`, `sitzung_status`, `sitzung_verbunden`, `foto_speichern`, `sitzung_abschliessen`, `fortsetzen_info`, `fortsetzen_starten`) mit `KONTAKT_API_KEY` (Rückfall `API_KEY`, `src/lib/rueckrufApi.js:17-18`); Token nur als SHA-256-Hash in Frappe, 45 min gültig (`src/lib/scan/backend.js:7-8,17`) | Drosselung (z. B. 40/10 min global, 5/h je E-Mail), Honeypot + Mindestdauer; Header noindex/no-referrer/no-store | `src/app/api/scan/start/route.js:19-38`, `src/lib/scan/backend.js`, `next.config.mjs` (headers `/scan`, `/fortsetzen`) |
 | `/api/hinweis`, `/api/hinweis/postfach` | POST | `…doctype.hinweis.api.*` (#14) | nur bei `HINWEIS_INTERN=1` (Build-Zeit), sonst 503 `nicht_konfiguriert`; Drosselung, Honeypot, Mindestdauer; Kategorien Website ↔ Backend abgeglichen (AT-Kategorien in `hinweis.json` ergänzt) | `src/app/api/hinweis/route.js:16-26`, `src/lib/hinweisApi.js`, `docs/frappe-hinweisgebersystem/GO-LIVE-AT.md` |
 | `/api/hinweis/health` | GET | `…hinweis.api.ping` | Monitoring: 200/503 | `src/app/api/hinweis/health/route.js` |
+| `/api/create_contact`, `/api/create_anfrage`, `/api/termin`, `/api/rueckruf` (**Welle A**) | POST | wie oben | zusätzlich durchgereicht: `einwilligung_id`/`einwilligung_version` (Hinweistext statt Pflicht-Häkchen), `rueckruf_ok`, Telefon optional (Pflicht nur mit `rueckruf_ok`), Konfigurator-Felder (`objekt`, `netzebene`, `lastgang_vorhanden`, `flaeche_m2`, `kwp_wunsch`, `zweck`, `thema`, `bezug`, `rolle`, `gremium`, `zeitplan` …); **fehlt:** `vorbelegt[]` (R-67) | A08, A11 |
+| `/api/rechner_lead` (**Welle A**) | POST | `oekovolt_app.website_api.rechner.submit_rechner_lead` (#17); Rückfall `kontakt.submit_kontakt` (Thema „Rechner-Lead“); ohne Backoffice Entwicklungs-Fallback bzw. 503 in production | Prüfung über `rechnerLeadPruefen` (Kennung nur aus `leadRechner.js`, sonst 422), Honigtopf `hp_feld_7`, Drossel nur gültiger Anfragen (20 je IP, 4 je E-Mail-Hash in 10 min), Token + Link (`linkBasis` = `BASE_URL` in production); Aktion `senden` ohne Double-Opt-in | `src/app/api/rechner_lead/route.js`, `src/lib/rechnerLead.js`, `src/lib/leadGateServer.js` |
+| `/api/lead-gate/status` (**Welle A**) | GET `?kennung=` / DELETE | – (Cookie `ov-lead-frei`) | `{ frei, freigegeben, kennung, bis }`, `no-store`; DELETE entfernt die Freischaltung | `src/app/api/lead-gate/status/route.js` |
+| `/api/lead-gate/bestaetigen` (**Welle A**) | POST `{ token }` (GET leitet nur auf `/freischalten`) | `…rechner.bestaetige_lead` (#19, Gast, `rate_limit`) | Signatur/Ablauf, Einmal-Verbrauch, Cookie setzen, Antwort `{ ok, kennung, ziel }`; Backoffice-Fehler → in production 502 | `src/app/api/lead-gate/bestaetigen/route.js` |
+| `/api/referenz-freigabe` (**Welle A**) | POST | `…website_api.freigabe.freigabe_lesen/freigabe_speichern/widerrufen` (Gast, nur POST, `rate_limit`, Einmal-Token) | JSON ≤ 24 kB, Herkunftsprüfung (Origin/Sec-Fetch-Site), Drosselung je Besucher, Vertretungsbefugnis serverseitig Pflicht, `no-store`, `noindex` | `src/app/api/referenz-freigabe/route.js`, `src/lib/kundenbuehneServer.js` |
 
 ### 2.2 Werkzeuge und Daten
 
@@ -97,6 +102,25 @@ Der Frappe-Teil ist seit Welle 2 in `docs/FRAPPE-AT-API-SPEZIFIKATION.md` (Absch
 | Frappe (schreibend) | `oekovoltdeutchland.oekovoltdeutchland.doctype.heatmap_zelle.api.erfassen` – **ohne IP-Adresse** | `src/app/api/heatmap/route.js:29-30` |
 | Ansicht | `GET /api/heatmap?pfad=&geraet=&tage=30&token=` → nur mit gültigem `HEATMAP_TOKEN` (≥ 16 Zeichen, zeitkonstanter Vergleich), sonst 404; Frappe `…heatmap_zelle.api.auswertung` | `src/app/api/heatmap/route.js:10-11,74-81` |
 | Frappe-DocTypes | „Heatmap Zelle“, „Heatmap Scroll“, „Heatmap Seite“, Bericht „Heatmap Auswertung“; Aufbewahrung ≤ 14 Monate; ≤ 2.000 Pfade je Gerät und Monat; Frappe-Aufrufe per POST | `Import-Backend-Frappe/apps/oekovoltdeutchland/README.md` (Abschnitt Heatmap), `src/app/api/heatmap/route.js:126-166` |
+
+### 2.5 Neue Backoffice-Methoden und Jobs (Welle A; führend: Spezifikation #17–#19, §3a/§3b)
+
+| Methode / Job | Zugriff | Zweck | Beleg |
+|---|---|---|---|
+| `rechner.submit_rechner_lead` (#17) | Rolle Website API | DocType `Rechner Lead` anlegen, Bestätigungsmail (Website-Token aus `bestaetigungs_link`) | `website_api/rechner.py` |
+| `rechner.sende_bestaetigung` (#18) | Gast, `rate_limit` | Bestätigung erneut senden (60 s Abstand, max. 5; Antwort verrät nichts) | ebd. |
+| `rechner.bestaetige_lead` (#19) | Gast, `rate_limit` | `{ ok, lead_id, kennung, rueckkehr }` bzw. `{ ok: false, grund }` (verwendet/abgelaufen/ungültig); Ergebnis-Mail erst danach | ebd. |
+| `rechner.unbestaetigte_loeschen` | Scheduler täglich | unbestätigte Rechner-Leads nach 30 Tagen löschen | `hooks.py` |
+| `freigabe.get_freigaben` | Rolle Website API | gültige, nicht widerrufene Referenz-Freigaben ohne E-Mail | `website_api/freigabe.py` |
+| `freigabe.neuer_link` | Desk | neuen Einmal-Link für eine Freigabe erzeugen | ebd. |
+| `sla.angerufen` | whitelisted, Schreibrecht | Erstreaktion setzen, Status „Kontaktversuch“ | `website_api/sla.py` |
+| `sla.pruefen` | Scheduler alle 5 min | Eskalation Stufe 1 (15 Geschäftsminuten) / Stufe 2 (60) für A-Leads | ebd. |
+| `lead_eingang.after_insert` | DocType-Hook (fünf Lead-DocTypes) | Segment, Score, Dubletten, Routing (`oekovolt_routing_aktiv`), Team-Mail, Alarm (`oekovolt_alarm_webhook`, `oekovolt_alarm_sms_an`) ohne Personendaten | `website_api/lead_eingang.py` |
+
+Neue DocTypes: `Rechner Lead` (`RL-YYYY-#####`), `Lead Routing Regel` (`LRR-###`), `Referenz Freigabe` (`RF-YYYY-#####`);
+Kernschema „Vertrieb“ in Kontaktanfrage, Angebotsanfrage, Solarrechner Anfrage, Website Termin und Rechner Lead
+(alle neuen Felder optional). Ausführlich: `docs/FRAPPE-AT-API-SPEZIFIKATION.md`, `docs/frappe-lead-routing/README.md`,
+`docs/frappe-referenzfreigabe/README.md`. Nur ohne Frappe getestet (06).
 
 ## 3. Abweichungen und Ergänzungen zur Frappe-Spezifikation
 

@@ -326,3 +326,85 @@ export function amortText(a, jahre = JAHRE) {
   if (a === 0) return "ab Jahr 1";
   return `${zahl(a, 1)} J.`;
 }
+
+// ---------------------------------------------------------------------------
+// CFO-Stresstest (Welle A, Paket A10) – wie im Gewerbe-PV-Rechner, für alle Modelle.
+// Drei Läufe: konservativ (Strompreis −30 % ab Jahr 1 inkl. Einspeiseerlös, Ertrag −10 %,
+// keine Preissteigerung, Zinsen +2 Pp.: Kalkulationszins, Kreditzins und der im
+// Leasingfaktor enthaltene Effektivzins), erwartet (Eingaben) und günstig (Preissteigerung +1 Pp.).
+// Betrachtungszeitraum dieses Rechners: JAHRE (20 Jahre).
+// ---------------------------------------------------------------------------
+
+export const STRESSTEST_FIN = {
+  strompreisFaktor: 0.7,
+  ertragFaktor: 0.9,
+  zinsPlusPp: 0.02,
+  preissteigerungPlusPp: 0.01,
+};
+
+export const STRESSTEST_FIN_LAEUFE = [
+  { id: "konservativ", label: "Konservativ", annahme: "Strompreis −30 %, Ertrag −10 %, keine Preissteigerung, Zinsen +2 Pp." },
+  { id: "erwartet", label: "Erwartet", annahme: "Ihre Eingaben" },
+  { id: "guenstig", label: "Günstig", annahme: "Strompreissteigerung +1 Pp." },
+];
+
+/**
+ * Stresstest des Finanzierungsvergleichs.
+ * @param {object} e  Eingaben wie rechneFinanzierung (alle optional)
+ * @returns {{ jahre:number, laeufe: Array<{id,label,annahme,modelle:Array<{id,name,amortisation,irr,summe,barwert}>}>, breakEven: Array<{id,name,ct:number|null,text:string}> }}
+ */
+export function stresstestFinanzierung(e = {}) {
+  const S = FINANZIERUNG;
+  const T = STRESSTEST_FIN;
+  const kwp = Math.max(zahlOder(e.kwp, S.kwp), 1);
+  const preisCt = zahlOder(e.strompreisCt, S.strompreisCt);
+  const einspeiseCt = zahlOder(e.einspeiseCt, einspeiseSatzCt(kwp));
+  const ertrag = zahlOder(e.ertragProKwp, S.ertragProKwp);
+  const steigerung = zahlOder(e.strompreisSteigerung, S.strompreisSteigerung);
+  const kz = zahlOder(e.kalkulationszins, S.kalkulationszins);
+  const kr = { ...S.kredit, ...(e.kredit || {}) };
+  const le = { ...S.leasing, ...(e.leasing || {}) };
+
+  // Leasing: Effektivzins aus dem Faktor + 2 Pp., daraus der neue Faktor
+  const effektiv = leasingEffektivzins(le.faktor, le.jahre, Math.max(le.restwert, 0));
+  const faktorKons = effektiv == null ? le.faktor : monatsfaktor(effektiv + T.zinsPlusPp, le.jahre, Math.max(le.restwert, 0));
+
+  const laeufe = {
+    konservativ: rechneFinanzierung({
+      ...e,
+      strompreisCt: preisCt * T.strompreisFaktor,
+      einspeiseCt: einspeiseCt * T.strompreisFaktor,
+      ertragProKwp: ertrag * T.ertragFaktor,
+      strompreisSteigerung: 0,
+      kalkulationszins: kz + T.zinsPlusPp,
+      kredit: { ...kr, zins: kr.zins + T.zinsPlusPp },
+      leasing: { ...le, faktor: faktorKons },
+    }),
+    erwartet: rechneFinanzierung(e),
+    guenstig: rechneFinanzierung({ ...e, strompreisSteigerung: steigerung + T.preissteigerungPlusPp }),
+  };
+
+  // Break-even: der Cashflow ist linear im Strompreis → aus dem Lauf bei 0 ct exakt bestimmbar
+  const nullPreis = rechneFinanzierung({ ...e, strompreisCt: 0 });
+  const breakEven = laeufe.erwartet.modelle.map((m, i) => {
+    const s0 = nullPreis.modelle[i].summe;
+    const sp = m.summe;
+    const ct = sp - s0 > 0 && s0 < 0 ? (-s0 * preisCt) / (sp - s0) : null;
+    const text =
+      ct == null
+        ? "trägt sich unabhängig vom Strompreis"
+        : ct > preisCt
+          ? `rechnet sich erst ab ${zahl(ct, 1)} ct/kWh`
+          : `Ab welchem Strompreis rechnet sich ${m.id === "eigenkapital" ? "die Anlage" : "dieses Modell"} nicht mehr: ${zahl(ct, 1)} ct/kWh`;
+    return { id: m.id, name: m.name, ct, text };
+  });
+
+  return {
+    jahre: JAHRE,
+    laeufe: STRESSTEST_FIN_LAEUFE.map((l) => ({
+      ...l,
+      modelle: laeufe[l.id].modelle.map((m) => ({ id: m.id, name: m.name, amortisation: m.amortisation, irr: m.irr, summe: m.summe, barwert: m.barwert })),
+    })),
+    breakEven,
+  };
+}

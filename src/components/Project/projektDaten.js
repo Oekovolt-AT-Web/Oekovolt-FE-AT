@@ -232,7 +232,7 @@ export function projektSeitenTitel({ titel, leistungText, branche, ort }) {
 /** Branche ohne Klammerzusätze: "Autohaus und Werkstätte (Ford-Partner)" -> "Autohaus und Werkstätte" */
 export function brancheKurz(branche = "") {
   return String(branche || "")
-    .replace(/s*(.*?)/g, "")
+    .replace(/\s*\(.*?\)/g, "")
     .trim();
 }
 

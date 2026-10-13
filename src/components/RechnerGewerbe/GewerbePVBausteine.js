@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { ChevronDown, MapPin, Sparkles } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import { useBreite } from "@/components/Rechner/bausteine";
+import { liesZahlDe } from "@/components/Technik/torTypen";
 
 /* ------------------------------------------------------------------
    Gemeinsame Bausteine der Rechner Gewerbe-PV, CO₂/ESG und Pacht
@@ -105,7 +106,7 @@ export function Umschalter({ optionen, wert, onChange, label, dunkel = false }) 
             aria-checked={an}
             onClick={() => onChange(o.id)}
             className={cn(
-              "min-h-9 rounded-full px-3.5 text-[13px] font-semibold transition-all duration-200",
+              "min-h-11 rounded-full px-3.5 text-[13px] font-semibold transition-all duration-200",
               an ? (dunkel ? "bg-white text-ink-900" : "bg-white text-ink-900 shadow-[0_2px_8px_-2px_rgba(21,26,36,0.18)]") : dunkel ? "text-white/70 hover:text-white" : "text-ink-600 hover:text-ink-900"
             )}
           >
@@ -153,14 +154,114 @@ function schoeneSchritte(min, max) {
   return { unten, oben, ticks };
 }
 
+// Zahlformat ohne Intl/Locale – Server und Browser formatieren identisch (keine Hydration-Unterschiede)
+const tausender = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const komma1 = (n) => {
+  const r = Math.round(n * 10) / 10;
+  return Number.isInteger(r) ? tausender(r) : `${tausender(Math.trunc(r))},${Math.round(Math.abs(r % 1) * 10)}`;
+};
 const eurKurz = (v) => {
   const a = Math.abs(v);
   const s = v < 0 ? "−" : "";
-  if (a >= 1e6) return `${s}${(a / 1e6).toLocaleString("de-DE", { maximumFractionDigits: 1 })} Mio. €`;
-  if (a >= 1000) return `${s}${Math.round(a / 1000).toLocaleString("de-DE")} T€`;
+  if (a >= 1e6) return `${s}${komma1(a / 1e6)} Mio. €`;
+  if (a >= 1000) return `${s}${tausender(Math.round(a / 1000))} T€`;
   return `${s}${Math.round(a)} €`;
 };
-export const eur = (n) => `${n < 0 ? "−" : ""}${Math.abs(Math.round(n)).toLocaleString("de-DE")} €`;
+export const eur = (n) => `${n < 0 && Math.round(n) !== 0 ? "−" : ""}${tausender(Math.abs(Math.round(n)))} €`;
+
+/**
+ * Ganzzahl-Feld in österreichischer Schreibweise („1.000“ = 1000, Komma als Dezimaltrenner)
+ * für die TOR-Gruppe. Tippziel ≥ 44 px, ein einziger Fokusrahmen (kein versetzter Zusatzring).
+ * Anzeige mit Tausenderpunkt; übernommen wird bei jeder gültigen Eingabe, beim Verlassen begrenzt.
+ */
+export function ZahlfeldDe({ label, wert, onChange, einheit, min = 0, max = 1e9, className, disabled = false }) {
+  const id = useId();
+  const anzeige = (v) => (Number.isFinite(v) ? tausender(Math.round(v)) : "");
+  const [text, setText] = useState(anzeige(wert));
+  const fokus = useRef(false);
+  useEffect(() => {
+    if (!fokus.current) setText(anzeige(wert));
+  }, [wert]);
+  const begrenzt = (n) => Math.min(max, Math.max(min, n));
+  return (
+    <div className={cn("flex flex-col", className)}>
+      <label htmlFor={id} className="mb-1.5 block min-h-[2lh] text-[12px] font-semibold leading-snug text-ink-700 sm:min-h-0">
+        {label}
+      </label>
+      <div className={cn("mt-auto flex items-center rounded-xl bg-white ring-1 ring-ink-200 focus-within:ring-2 focus-within:ring-ov-600", disabled && "opacity-60")}>
+        <input
+          id={id}
+          type="text"
+          inputMode="decimal"
+          value={text}
+          disabled={disabled}
+          onFocus={() => (fokus.current = true)}
+          onBlur={() => {
+            fokus.current = false;
+            const n = liesZahlDe(text);
+            const neu = Number.isFinite(n) ? begrenzt(n) : wert;
+            if (Number.isFinite(n)) onChange(neu);
+            setText(anzeige(neu));
+          }}
+          onChange={(e) => {
+            setText(e.target.value);
+            const n = liesZahlDe(e.target.value);
+            if (Number.isFinite(n) && n >= min && n <= max) onChange(n);
+          }}
+          className="ov-num h-11 w-full min-w-0 rounded-xl bg-transparent px-3 text-[14px] font-semibold text-ink-900 outline-none focus-visible:shadow-none focus-visible:outline-none"
+        />
+        {einheit && <span className="shrink-0 pr-3 text-[12.5px] font-medium text-ink-500">{einheit}</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Auf eine Nachkommastelle gerundete SVG-Koordinate (deterministisch auf Server und Client). */
+const r1 = (v) => Math.round(v * 10) / 10;
+
+/**
+ * Delta-Chip beim Ziehen: zeigt kurz (1,2 s), um wie viel sich ein Euro-Wert seit Beginn
+ * der Bewegung geändert hat. Nur dekorativ (aria-hidden; die Werte stehen ohnehin da)
+ * und nur ohne „reduzierte Bewegung“. Beim ersten Rendern nichts.
+ */
+export function DeltaChip({ wert, className, dunkel = false }) {
+  const basis = useRef(wert);
+  const timer = useRef(null);
+  const [delta, setDelta] = useState(0);
+  useEffect(() => {
+    if (!Number.isFinite(wert)) return undefined;
+    const d = Math.round(wert - basis.current);
+    if (d === 0 || reduziert()) {
+      if (!timer.current) basis.current = wert;
+      return undefined;
+    }
+    setDelta(d);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => {
+      basis.current = wert;
+      timer.current = null;
+      setDelta(0);
+    }, 1200);
+    return undefined;
+  }, [wert]);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  if (!delta) return null;
+  const plus = delta > 0;
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "ov-num pointer-events-none inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2 py-0.5 text-[12px] font-bold motion-safe:animate-[ov-delta_1.2s_ease-out_both]",
+        plus ? (dunkel ? "bg-ov-600 text-white" : "bg-ov-50 text-ov-700 ring-1 ring-ov-200") : dunkel ? "bg-white/15 text-white" : "bg-ink-100 text-ink-700 ring-1 ring-ink-200",
+        className
+      )}
+    >
+      {plus ? "+" : "−"}
+      {tausender(Math.abs(delta))} €
+      <style>{"@keyframes ov-delta{0%{opacity:0;transform:translateY(4px)}15%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}"}</style>
+    </span>
+  );
+}
 
 /**
  * Kumuliertes Balkendiagramm (Cashflow, Pachtsumme). Balken wachsen beim ersten
@@ -178,17 +279,19 @@ export function KumuliertDiagramm({ reihe, marke = null, markeLabel = "", toolti
   const [hover, setHover] = useState(null);
   const schmal = W < 520;
   const H = schmal ? 230 : 280;
-  const P = { l: schmal ? 52 : 70, r: 12, t: 34, b: 30 };
+  const P = { l: schmal ? 64 : 70, r: 12, t: 34, b: 30 };
   const { unten, oben, ticks } = useMemo(() => {
     const w = reihe.map((c) => c.kumuliert);
     return schoeneSchritte(Math.min(0, ...w), Math.max(0, ...w));
   }, [reihe]);
   const n = reihe.length || 1;
   const spalte = (W - P.l - P.r) / n;
-  const bw = Math.max(spalte * 0.62, 3);
+  const bw = r1(Math.max(spalte * 0.62, 3));
   const y = (v) => Math.round((P.t + (H - P.t - P.b) * (1 - (v - unten) / (oben - unten || 1))) * 10) / 10;
   const x = (i) => Math.round((P.l + i * spalte + spalte / 2) * 10) / 10;
-  const markeX = marke != null && marke <= n - 1 ? x(0) + marke * spalte : null;
+  // Markierung (z. B. Amortisation) erst nach dem Einblenden: Server und erster Client-Render
+  // sind damit identisch (Befund: Hydration-Fehler bei x1/x2/cx der Markierung).
+  const markeX = an && marke != null && Number.isFinite(marke) && marke <= n - 1 ? r1(x(0) + marke * spalte) : null;
   const aktiv = hover != null ? reihe[hover] : null;
   const labelAlle = schmal ? 10 : 5;
 
@@ -198,7 +301,7 @@ export function KumuliertDiagramm({ reihe, marke = null, markeLabel = "", toolti
         {ticks.map((t) => (
           <g key={t}>
             <line x1={P.l} x2={W - P.r} y1={y(t)} y2={y(t)} stroke={t === 0 ? "#151a24" : "#e8ebf0"} strokeWidth={t === 0 ? 1.25 : 1} />
-            <text x={P.l - 8} y={y(t) + 4} textAnchor="end" className="fill-ink-400 text-[11.5px]" style={{ fontVariantNumeric: "tabular-nums" }}>
+            <text x={P.l - 8} y={r1(y(t) + 4)} textAnchor="end" className="fill-ink-500 text-[11.5px]" style={{ fontVariantNumeric: "tabular-nums" }}>
               {t === 0 ? "0 €" : eurKurz(t)}
             </text>
           </g>
@@ -207,27 +310,27 @@ export function KumuliertDiagramm({ reihe, marke = null, markeLabel = "", toolti
           const plus = c.kumuliert >= 0;
           const y0 = y(0);
           const y1 = an ? y(c.kumuliert) : y0;
-          const top = Math.min(y0, y1);
-          const h = Math.max(Math.abs(y1 - y0), an ? 1.5 : 0);
+          const top = r1(Math.min(y0, y1));
+          const h = r1(Math.max(Math.abs(y1 - y0), an ? 1.5 : 0));
           const ist = hover === i;
           return (
             <g key={c.jahr}>
               <rect
-                x={x(i) - bw / 2}
+                x={r1(x(i) - bw / 2)}
                 y={top}
                 width={bw}
                 height={h}
-                rx={Math.min(4, bw / 3)}
+                rx={r1(Math.min(4, bw / 3))}
                 fill={plus ? farbePlus : farbeMinus}
                 opacity={hover == null || ist ? 1 : 0.55}
                 style={{ transition: `y 600ms cubic-bezier(.22,1,.36,1) ${an ? 0 : i * 18}ms, height 600ms cubic-bezier(.22,1,.36,1) ${i * 18}ms, fill 250ms, opacity 200ms` }}
               />
               {(i % labelAlle === 0 || (!schmal && i === n - 1)) && (
-                <text x={x(i)} y={H - 9} textAnchor="middle" className="fill-ink-400 text-[11.5px]">
+                <text x={x(i)} y={H - 9} textAnchor="middle" className="fill-ink-500 text-[11.5px]">
                   {i === 0 ? startLabel : `${c.jahr} J.`}
                 </text>
               )}
-              <rect x={P.l + i * spalte} y={P.t} width={spalte} height={H - P.t - P.b} fill="transparent" onPointerEnter={() => setHover(i)} onPointerDown={() => setHover(i)} />
+              <rect x={r1(P.l + i * spalte)} y={P.t} width={r1(spalte)} height={H - P.t - P.b} fill="transparent" onPointerEnter={() => setHover(i)} onPointerDown={() => setHover(i)} />
             </g>
           );
         })}
@@ -241,7 +344,7 @@ export function KumuliertDiagramm({ reihe, marke = null, markeLabel = "", toolti
       {markeX != null && (
         <span
           className="pointer-events-none absolute top-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-navy-700 px-2.5 py-1 text-[11.5px] font-semibold text-white shadow-md"
-          style={{ left: `${Math.min(Math.max((markeX / W) * 100, 14), 86)}%` }}
+          style={{ left: `${r1(Math.min(Math.max((markeX / W) * 100, 14), 86))}%` }}
         >
           {markeLabel}
         </span>
@@ -250,7 +353,7 @@ export function KumuliertDiagramm({ reihe, marke = null, markeLabel = "", toolti
         <div
           role="status"
           className="pointer-events-none absolute z-10 w-[220px] rounded-xl bg-ink-900 px-4 py-3 text-[12.5px] text-white shadow-xl"
-          style={{ left: `${Math.min(Math.max((x(hover) / W) * 100, 18), 82)}%`, top: "16%", transform: "translateX(-50%)" }}
+          style={{ left: `${r1(Math.min(Math.max((x(hover) / W) * 100, 18), 82))}%`, top: "16%", transform: "translateX(-50%)" }}
         >
           {tooltip(aktiv).map(([k, v], i) =>
             i === 0 ? (

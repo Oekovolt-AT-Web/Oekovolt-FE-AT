@@ -14,16 +14,54 @@ import KalenderLinks from "./KalenderLinks";
 import { oeffneRueckruf } from "./oeffnen";
 import { ereignis } from "@/lib/statistik";
 import { herkunft } from "@/lib/herkunft";
+import { einwilligung as einwilligungEintrag, einwilligungFelder } from "@/lib/einwilligungen";
+import { EMAIL_FEHLER, PLZ_FEHLER, TELEFON_PFLICHT_FEHLER, istEmail, istPlz, telefonPruefen } from "@/lib/api/contact/create_contact";
+import { TERMIN_VORBELEGUNG_KEY } from "@/lib/api/anfrage/create_anfrage";
+
+/*
+ * Terminbuchung (/termin und eingebettet im Erfolg von Konfigurator und Kontaktformular).
+ *
+ * Vorbelegung (Welle A, Paket A08) – Vorrang: Props > Query > sessionStorage:
+ *   Props:  name, email, telefon, plz, firma, thema, bezug (Referenz der Anfrage, z. B. „AK-20261011-7F3K“)
+ *   Query:  ?name=&email=&telefon=&plz=&firma=&thema=&ref=
+ *   Rückfall: sessionStorage[TERMIN_VORBELEGUNG_KEY] (vom Konfigurator geschrieben), nach der Buchung gelöscht.
+ * Der Bezug geht als `bezug` an /api/termin. Hinweistext „termin-info“ (Art. 6 Abs. 1 lit. b DSGVO) statt
+ * Pflicht-Checkbox. `eingebettet` blendet die Seitenleiste aus und lädt den Kalender selbst
+ * (/api/termin/kalender), weil die Seite /termin ihn sonst serverseitig mitgibt.
+ */
 
 const ICONS = { Phone, Video, MapPin };
 const SCHRITTE = ["Art", "Termin", "Kontakt"];
+const HINWEIS = einwilligungEintrag("termin-info");
+const BEZUG_MUSTER = /^[A-Z]{1,3}-\d{4,8}-[A-Z0-9]{4,8}$/;
+// Leeres Telefonfeld: eigene Pflichtmeldung (aus der Anfrage kommt die Nummer oft leer, dort ist sie optional)
+const TELEFON_LEER_FEHLER = "Bitte eine Telefonnummer angeben – wir bestätigen oder verschieben Termine telefonisch.";
+const kurz = (w, max) => String(w ?? "").trim().slice(0, max);
+
+/** Vorbelegung zusammenführen: Props > Query > sessionStorage. Nur Text, mit Längenlimits. */
+function vorbelegungLesen(props, params) {
+  let gespeichert = {};
+  try {
+    gespeichert = JSON.parse(sessionStorage.getItem(TERMIN_VORBELEGUNG_KEY) || "{}") || {};
+  } catch {}
+  const wert = (k, q = k) => props[k] || params.get(q) || gespeichert[k] || "";
+  const bezug = kurz(wert("bezug", "ref"), 24).toUpperCase();
+  return {
+    name: kurz(wert("name"), 120),
+    email: kurz(wert("email"), 200),
+    telefon: kurz(wert("telefon"), 40),
+    plz: kurz(wert("plz"), 5),
+    firma: kurz(wert("firma"), 140),
+    thema: themaAusParam(wert("thema")),
+    bezug: BEZUG_MUSTER.test(bezug) ? bezug : "",
+  };
+}
 
 const langDatum = (iso) =>
   new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "long", day: "numeric", month: "long" }).format(new Date(iso));
 const uhrzeit = (iso) => new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
 
 const FEHLERTEXT = {
-  einwilligung: "Bitte stimmen Sie der Verarbeitung Ihrer Angaben zu.",
   backend: "Das hat leider nicht geklappt. Bitte versuchen Sie es erneut oder rufen Sie uns an.",
   vergeben: "Dieser Termin wurde gerade vergeben. Bitte wählen Sie eine andere Uhrzeit.",
 };
@@ -32,7 +70,7 @@ const FEHLERTEXT = {
  * Horizontale Tagesleiste: Pfeile, Ziehen mit der Maus und Mausrad scrollen seitlich.
  * Touch/Trackpad scrollen wie gewohnt nativ.
  */
-function TageLeiste({ aktivIndex, children }) {
+function TageLeiste({ aktivIndex, kompakt = false, children }) {
   const leiste = useRef(null);
   const zug = useRef(null);
   const [rand, setRand] = useState({ links: false, rechts: false });
@@ -109,8 +147,11 @@ function TageLeiste({ aktivIndex, children }) {
     }
   };
 
-  const pfeil =
-    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-ink-800 shadow-sm ring-1 ring-ink-200 transition hover:bg-ov-50 hover:text-ov-700 hover:ring-ov-300 disabled:cursor-default disabled:bg-ink-50 disabled:text-ink-300 disabled:shadow-none disabled:ring-ink-100 sm:h-12 sm:w-12";
+  // Kompakt (eingebettet): Pfeile erst ab sm – mobil wird gewischt, so passen mindestens drei Tage
+  const pfeil = cn(
+    kompakt && "hidden sm:flex",
+    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white text-ink-800 shadow-sm ring-1 ring-ink-200 transition hover:bg-ov-50 hover:text-ov-700 hover:ring-ov-300 disabled:cursor-default disabled:bg-ink-50 disabled:text-ink-300 disabled:shadow-none disabled:ring-ink-100 sm:h-12 sm:w-12"
+  );
 
   // Weiche Kanten, solange es in die Richtung noch weitergeht
   const maske = `linear-gradient(to right, ${rand.links ? "transparent" : "#000"} 0, #000 ${rand.links ? "28px" : "0"}, #000 calc(100% - ${rand.rechts ? "28px" : "0px"}), ${rand.rechts ? "transparent" : "#000"} 100%)`;
@@ -152,33 +193,60 @@ function tageLokal(artId) {
   }));
 }
 
-export default function TerminBuchung({ kalender = null }) {
+export default function TerminBuchung({ kalender = null, name = "", email = "", telefon = "", plz = "", firma = "", thema = "", bezug = "", art: artVorgabe = "", eingebettet = false }) {
   const params = useSearchParams();
   const router = useRouter();
   const [aktualisiert, startTransition] = useTransition();
-  const startArt = TERMIN_ARTEN.some((a) => a.id === params.get("art")) ? params.get("art") : null;
+  // Terminart vorwählen: Prop `art` (z. B. "telefon" für den 20-Minuten-Termin nach der Anfrage) oder ?art=
+  const artWunsch = artVorgabe || params.get("art");
+  const startArt = TERMIN_ARTEN.some((a) => a.id === artWunsch) ? artWunsch : null;
 
   const [schritt, setSchritt] = useState(startArt ? 1 : 0);
   const [artId, setArtId] = useState(startArt || "video");
   const [daten, setDaten] = useState({ laden: false, tage: [], verfuegbar: true, live: true });
+  // Eingebettet: Kalender je Terminart selbst laden (auf /termin kommt er als Prop vom Server)
+  const [kalenderEigen, setKalenderEigen] = useState(null);
+  const [eigenLaedt, setEigenLaedt] = useState(eingebettet);
   const [tagIndex, setTagIndex] = useState(0);
   const [slot, setSlot] = useState("");
-  // ?thema=gewerbe|freiflaeche|… (Links der Zielgruppenseiten) belegt das Thema vor
+  // ?thema=gewerbe|freiflaeche|… (Links der Zielgruppenseiten) belegt das Thema vor. Kontaktdaten belegen
+  // Props/Query/sessionStorage vor – erst nach dem Mounten, sessionStorage gibt es nur im Browser.
   const [werte, setWerte] = useState(() => ({ name: "", firma: "", email: "", telefon: "", plz: "", adresse: "", thema: themaAusParam(params.get("thema")), nachricht: "" }));
-  const [einwilligung, setEinwilligung] = useState(false);
+  const [bezugWert, setBezugWert] = useState("");
   const [beruehrt, setBeruehrt] = useState({});
   const [senden, setSenden] = useState(false);
   const [fehler, setFehler] = useState("");
   const [ergebnis, setErgebnis] = useState(null);
   const website = useRef(null);
   const kopf = useRef(null);
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    const v = vorbelegungLesen({ name, email, telefon, plz, firma, thema, bezug }, params);
+    setBezugWert(v.bezug);
+    setWerte((w) => ({
+      ...w,
+      name: w.name || v.name,
+      email: w.email || v.email,
+      telefon: w.telefon || v.telefon,
+      plz: w.plz || v.plz,
+      firma: w.firma || v.firma,
+      thema: w.thema || v.thema,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, email, telefon, plz, firma, thema, bezug]);
 
   const art = TERMIN_ARTEN.find((a) => a.id === artId);
 
   // Builds the days: API data if available, otherwise local fallback
   const aufbauen = (id, zuruecksetzen) => {
     const a = TERMIN_ARTEN.find((x) => x.id === id);
-    const api = kalender?.[a?.titel];
+    // Eingebettet und noch nicht geladen: Ladeanzeige statt kurz aufblitzender lokaler Zeiten
+    if (eingebettet && !(kalenderEigen && a && a.titel in kalenderEigen)) {
+      setDaten({ laden: true, tage: [], verfuegbar: true, live: true });
+      return;
+    }
+    const api = (eingebettet ? kalenderEigen : kalender)?.[a?.titel];
     const live = Array.isArray(api) && api.length > 0;
     const tage = live ? tageAusApi(api) : tageLokal(id);
 
@@ -195,20 +263,37 @@ export default function TerminBuchung({ kalender = null }) {
     }
   };
 
+  // Eingebettet: Kalender der Terminart über /api/termin/kalender holen (ohne Backend: lokaler Rückfall)
+  const eigenLaden = async (id) => {
+    const a = TERMIN_ARTEN.find((x) => x.id === id);
+    if (!a) return;
+    setEigenLaedt(true);
+    let tage = [];
+    try {
+      const r = await fetch(`/api/termin/kalender?terminart=${encodeURIComponent(a.titel)}&tage=21`, { cache: "no-store" });
+      const d = await r.json().catch(() => ({}));
+      if (Array.isArray(d?.kalender)) tage = d.kalender;
+    } catch {}
+    setKalenderEigen((k) => ({ ...(k || {}), [a.titel]: tage }));
+    setEigenLaedt(false);
+  };
+
   // New Terminart → rebuild and reset selection
   useEffect(() => {
+    if (eingebettet) eigenLaden(artId);
     aufbauen(artId, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artId]);
 
   // New server data (after "Aktualisieren") → rebuild, keep selection if still free
   useEffect(() => {
-    aufbauen(artId, false);
+    // Ohne gewählte Uhrzeit (z. B. erster Abruf eingebettet) auf den ersten buchbaren Tag springen
+    aufbauen(artId, !slot);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [kalender]);
+  }, [kalender, kalenderEigen]);
 
-  // Reload calendar from the server (runs page.js again → new kalender prop)
-  const laden = () => startTransition(() => router.refresh());
+  // Reload calendar (auf /termin: page.js neu ausführen → neues kalender-Prop; eingebettet: eigener Abruf)
+  const laden = () => (eingebettet ? eigenLaden(artId) : startTransition(() => router.refresh()));
 
   const zu = (n) => {
     setSchritt(n);
@@ -216,12 +301,16 @@ export default function TerminBuchung({ kalender = null }) {
     requestAnimationFrame(() => kopf.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   };
 
+  // Gemeinsame Prüfregeln (src/lib/api/contact/create_contact.js). Telefon bleibt beim Termin Pflicht:
+  // Wir bestätigen bzw. verschieben telefonisch, und buche_termin verlangt die Nummer.
   const feldFehler = useMemo(() => {
     const f = {};
     if (werte.name.trim().length < 2) f.name = "Bitte Ihren Namen angeben.";
-    if (!/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(werte.email.trim())) f.email = "Bitte eine gültige E-Mail-Adresse angeben.";
-    if (!telefonNormalisieren(werte.telefon)) f.telefon = "Bitte eine gültige Telefonnummer (AT, DE, CH) angeben.";
-    if (!/^\d{4,5}$/.test(werte.plz.trim())) f.plz = "Bitte eine gültige Postleitzahl angeben.";
+    if (!istEmail(werte.email)) f.email = EMAIL_FEHLER;
+    const tel = telefonPruefen(werte.telefon);
+    if (tel.leer) f.telefon = TELEFON_LEER_FEHLER;
+    else if (!tel.ok) f.telefon = TELEFON_PFLICHT_FEHLER;
+    if (!istPlz(werte.plz)) f.plz = PLZ_FEHLER;
     if (art?.mitAdresse && werte.adresse.trim().length < 5) f.adresse = "Für den Vor-Ort-Termin brauchen wir Straße und Ort.";
     return f;
   }, [werte, art]);
@@ -232,8 +321,12 @@ export default function TerminBuchung({ kalender = null }) {
   async function buchen(e) {
     e.preventDefault();
     setBeruehrt({ name: true, email: true, telefon: true, plz: true, adresse: true });
-    if (Object.keys(feldFehler).length) return setFehler("Bitte prüfen Sie die markierten Felder.");
-    if (!einwilligung) return setFehler(FEHLERTEXT.einwilligung);
+    const erstes = ["name", "email", "telefon", "plz", "adresse"].find((k) => feldFehler[k]);
+    if (erstes) {
+      // Barrierefreiheit: Fokus auf das erste fehlerhafte Feld – die Meldung hängt per aria-describedby daran
+      requestAnimationFrame(() => formRef.current?.querySelector(`#termin-${erstes}`)?.focus());
+      return setFehler("Bitte prüfen Sie die markierten Felder.");
+    }
 
     setSenden(true);
     setFehler("");
@@ -254,7 +347,9 @@ export default function TerminBuchung({ kalender = null }) {
           plz: werte.plz.trim(),
           thema: werte.thema,
           nachricht,
-          einwilligung: einwilligung ? 1 : 0,
+          // Hinweistext statt Checkbox – /api/termin setzt `einwilligung` für das heutige Backend
+          ...einwilligungFelder("termin-info"),
+          ...(bezugWert ? { bezug: bezugWert } : {}),
           quelle: window.location.pathname,
           website: website.current?.value || "",
           // Kampagnen-Zuordnung – /api/termin hängt sie als Textzeile an `nachricht` an (kein eigenes Frappe-Feld)
@@ -269,7 +364,10 @@ export default function TerminBuchung({ kalender = null }) {
       }
       setErgebnis({ referenz: d?.data?.message?.referenz || null });
       import("@/lib/konfetti").then((m) => m.konfetti()).catch(() => {});
-      ereignis("termin_gebucht", { art: artId });
+      ereignis("termin_gebucht", { art: artId, quelle: eingebettet ? "anfrage-erfolg" : bezugWert ? "anfrage" : "termin" });
+      try {
+        sessionStorage.removeItem(TERMIN_VORBELEGUNG_KEY);
+      } catch {}
       zu(3);
     } catch (err) {
       if (err.status === 409) {
@@ -287,14 +385,14 @@ export default function TerminBuchung({ kalender = null }) {
   }
 
   const tag = daten.tage[tagIndex];
-  const laedt = daten.laden || aktualisiert;
+  const laedt = daten.laden || aktualisiert || eigenLaedt;
 
   // ------------------------------------------------ Bestätigung
   if (schritt === 3 && ergebnis) {
     const ort = art.id === "vor-ort" ? werte.adresse : art.id === "video" ? "Video-Link folgt per E-Mail" : "Telefon – wir rufen Sie an";
     return (
-      <div ref={kopf} className="scroll-mt-28 rounded-[2rem] bg-white p-6 text-center shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70 sm:p-10 md:p-14" role="status" aria-live="polite">
-        <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-ov-500 text-white shadow-[0_14px_34px_-12px_rgba(102,153,51,0.8)]">
+      <div ref={kopf} className={cn("scroll-mt-28 bg-white text-center", eingebettet ? "border-t border-ink-100 pt-6" : "rounded-[2rem] p-6 shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70 sm:p-10 md:p-14")} role="status" aria-live="polite">
+        <span className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-ov-600 text-white shadow-[0_14px_34px_-12px_rgba(102,153,51,0.8)]">
           <CalendarCheck2 aria-hidden="true" className="h-9 w-9" />
         </span>
         <p className="mt-6 text-[13px] font-semibold uppercase tracking-[0.16em] text-ov-600">Termin gebucht</p>
@@ -307,7 +405,7 @@ export default function TerminBuchung({ kalender = null }) {
         </p>
         {ergebnis.referenz && <p className="mt-3 text-[14px] text-ink-500">Buchungsnummer: <span className="ov-num font-semibold text-ink-900">{ergebnis.referenz}</span></p>}
         <KalenderLinks
-          className="mt-8 justify-center"
+          className="mt-8 justify-center [&>*]:h-11 [&>*]:px-4"
           titel={`Ökovolt: ${art.titel}`}
           beschreibung={`${art.titel} mit Ökovolt (${art.dauer} Min.). Fragen oder Terminänderung: ${FIRMA.telefon} · ${FIRMA.email}`}
           ort={ort}
@@ -331,8 +429,9 @@ export default function TerminBuchung({ kalender = null }) {
   }
 
   return (
-    <div ref={kopf} className="grid scroll-mt-28 grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-      <div className="min-w-0 rounded-[2rem] bg-white p-5 shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70 sm:p-8 md:p-10">
+    <div ref={kopf} className={cn("grid scroll-mt-28 grid-cols-1 gap-5", !eingebettet && "lg:grid-cols-[minmax(0,1fr)_320px]")}>
+      {/* Eingebettet ohne eigenen Rahmen – die umgebende Karte rahmt schon (kein doppelter Rand/Innenabstand) */}
+      <div className={cn("min-w-0 bg-white", eingebettet ? "border-t border-ink-100 pt-6" : "rounded-[2rem] p-5 shadow-[0_40px_80px_-40px_rgba(3,18,43,0.45)] ring-1 ring-ink-200/70 sm:p-8 md:p-10")}>
         {/* Fortschritt */}
         <ol className="mb-8 flex items-center gap-2" aria-label="Fortschritt">
           {SCHRITTE.map((s, i) => (
@@ -342,7 +441,7 @@ export default function TerminBuchung({ kalender = null }) {
                 disabled={i > schritt || (i === 2 && !slot)}
                 onClick={() => zu(i)}
                 aria-current={i === schritt ? "step" : undefined}
-                className="flex items-center gap-2 disabled:cursor-default"
+                className="flex min-h-11 min-w-11 items-center gap-2 disabled:cursor-default"
               >
                 <span className={cn("ov-num flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[13px] font-bold transition", i < schritt ? "bg-ov-600 text-white" : i === schritt ? "bg-navy-950 text-white" : "bg-ink-100 text-ink-600")}>
                   {i < schritt ? <Check aria-hidden="true" className="h-4 w-4" /> : i + 1}
@@ -375,7 +474,7 @@ export default function TerminBuchung({ kalender = null }) {
                     )}
                   >
                     {a.empfohlen && <span className="absolute right-4 top-4 rounded-full bg-ov-600 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-white">Beliebt</span>}
-                    <span className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", aktiv ? "bg-ov-500 text-white" : "bg-sand-100 text-ov-600")}>
+                    <span className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", aktiv ? "bg-ov-600 text-white" : "bg-sand-100 text-ov-600")}>
                       <Icon aria-hidden="true" className="h-5 w-5" />
                     </span>
                     <span className="mt-4 text-[17px] font-bold text-ink-900">{a.titel}</span>
@@ -429,7 +528,7 @@ export default function TerminBuchung({ kalender = null }) {
               </div>
             ) : !daten.verfuegbar || daten.tage.length === 0 ? (
               <div className="mt-7 rounded-3xl bg-sand-50 p-6 text-center ring-1 ring-ink-200/60">
-                <CalendarDays aria-hidden="true" className="mx-auto h-8 w-8 text-ink-400" />
+                <CalendarDays aria-hidden="true" className="mx-auto h-8 w-8 text-ink-500" />
                 <p className="mt-3 font-semibold text-ink-900">Gerade können wir keine freien Zeiten anzeigen.</p>
                 <p className="mt-1 text-[14.5px] text-ink-600">Wir rufen Sie gern zurück und finden gemeinsam einen Termin.</p>
                 <button type="button" onClick={() => oeffneRueckruf()} className="mt-5 inline-flex h-11 items-center gap-2 rounded-full bg-navy-950 px-5 text-[14.5px] font-semibold text-white">
@@ -439,7 +538,7 @@ export default function TerminBuchung({ kalender = null }) {
               </div>
             ) : (
               <>
-                <TageLeiste aktivIndex={tagIndex}>
+                <TageLeiste aktivIndex={tagIndex} kompakt={eingebettet}>
                   {daten.tage.map((d, i) => {
                     const [, mo, ta] = d.ymd.split("-");
                     const aktiv = i === tagIndex;
@@ -459,15 +558,15 @@ export default function TerminBuchung({ kalender = null }) {
                         className={cn(
                           "flex w-[68px] shrink-0 flex-col items-center rounded-2xl py-2.5 ring-1 ring-inset transition",
                           zu_
-                            ? "cursor-not-allowed bg-ink-50 text-ink-400 ring-ink-100"
+                            ? "cursor-not-allowed bg-ink-50 text-ink-500 ring-ink-100"
                             : aktiv
                               ? "bg-navy-950 text-white ring-navy-950"
                               : "bg-white text-ink-800 ring-ink-200 hover:ring-ov-300"
                         )}
                       >
-                        <span className={cn("text-[12px] font-semibold uppercase", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>{d.label.slice(0, 2)}</span>
+                        <span className={cn("text-[12px] font-semibold uppercase", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-500" : "text-ink-500")}>{d.label.slice(0, 2)}</span>
                         <span className={cn("ov-num font-display text-[21px] font-extrabold leading-tight", zu_ && "line-through decoration-1")}>{Number(ta)}</span>
-                        <span className={cn("text-[11.5px]", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-400" : "text-ink-500")}>
+                        <span className={cn("text-[11.5px]", aktiv && !zu_ ? "text-white/70" : zu_ ? "text-ink-500" : "text-ink-500")}>
                           {zu_ ? hinweis : new Intl.DateTimeFormat("de-AT", { month: "short" }).format(new Date(Date.UTC(2026, Number(mo) - 1, 1)))}
                         </span>
                       </button>
@@ -510,7 +609,7 @@ export default function TerminBuchung({ kalender = null }) {
                             type="button"
                             disabled
                             aria-label={`${s.zeit} Uhr – bereits vergeben`}
-                            className="ov-num h-11 cursor-not-allowed rounded-xl bg-ink-50 text-[15px] font-semibold text-ink-400 line-through ring-1 ring-inset ring-ink-100"
+                            className="ov-num h-11 cursor-not-allowed rounded-xl bg-ink-50 text-[15px] font-semibold text-ink-500 line-through ring-1 ring-inset ring-ink-100"
                           >
                             {s.zeit}
                           </button>
@@ -537,7 +636,7 @@ export default function TerminBuchung({ kalender = null }) {
 
         {/* Schritt 3: Kontaktdaten */}
         {schritt === 2 && (
-          <form onSubmit={buchen} noValidate>
+          <form ref={formRef} onSubmit={buchen} noValidate>
             <h2 className="font-display text-[24px] font-extrabold tracking-tight text-ink-900 md:text-[28px]">Fast geschafft</h2>
             <p className="mt-2 text-[15.5px] text-ink-600">Wohin dürfen wir die Bestätigung schicken?</p>
 
@@ -545,7 +644,7 @@ export default function TerminBuchung({ kalender = null }) {
               <Feld label="Vor- und Nachname" name="name" autoComplete="name" wert={werte.name} setze={setze} verlasse={verlasse} fehler={beruehrt.name && feldFehler.name} />
               <Feld label="Unternehmen / Gemeinde (optional)" name="firma" autoComplete="organization" wert={werte.firma} setze={setze} verlasse={verlasse} />
               <Feld label="E-Mail" name="email" type="email" inputMode="email" autoComplete="email" wert={werte.email} setze={setze} verlasse={verlasse} fehler={beruehrt.email && feldFehler.email} />
-              <Feld label="Telefon" name="telefon" type="tel" inputMode="tel" autoComplete="tel" wert={werte.telefon} setze={setze} verlasse={verlasse} fehler={beruehrt.telefon && feldFehler.telefon} />
+              <Feld label="Telefon" hinweis="(für die Terminbestätigung)" name="telefon" type="tel" inputMode="tel" autoComplete="tel" required aria-required="true" wert={werte.telefon} setze={setze} verlasse={verlasse} fehler={beruehrt.telefon && feldFehler.telefon} />
               <Feld label="PLZ" name="plz" inputMode="numeric" autoComplete="postal-code" wert={werte.plz} setze={setze} verlasse={verlasse} fehler={beruehrt.plz && feldFehler.plz} />
               {art.mitAdresse && (
                 <Feld label="Straße, Hausnummer, Ort" name="adresse" autoComplete="street-address" wert={werte.adresse} setze={setze} verlasse={verlasse} fehler={beruehrt.adresse && feldFehler.adresse} />
@@ -563,7 +662,7 @@ export default function TerminBuchung({ kalender = null }) {
                     type="button"
                     aria-pressed={werte.thema === x}
                     onClick={() => setWerte((w) => ({ ...w, thema: w.thema === x ? "" : x }))}
-                    className={cn("h-9 rounded-full px-3.5 text-[13.5px] font-semibold ring-1 ring-inset transition", werte.thema === x ? "bg-navy-950 text-white ring-navy-950" : "bg-white text-ink-700 ring-ink-200 hover:ring-ov-300")}
+                    className={cn("h-11 rounded-full px-4 text-[13.5px] font-semibold transition", werte.thema === x ? "bg-navy-950 text-white" : "bg-ink-100 text-ink-700 hover:bg-ink-200/70")}
                   >
                     {x}
                   </button>
@@ -586,16 +685,17 @@ export default function TerminBuchung({ kalender = null }) {
 
             <input ref={website} type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
 
-            <label className="mt-6 flex cursor-pointer items-start gap-3">
-              <input type="checkbox" checked={einwilligung} onChange={(e) => setEinwilligung(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-ov-600" />
-              <span className="text-[13.5px] leading-relaxed text-ink-600">
-                Ich bin einverstanden, dass Ökovolt meine Angaben zur Terminvereinbarung und Beratung verarbeitet und mich dazu per E-Mail oder Telefon kontaktiert. Einzelheiten in der{" "}
-                <Link href="/datenschutz#rueckruf" className="font-semibold text-ov-700 underline underline-offset-2">
+            {/* Hinweis (Art. 6 Abs. 1 lit. b DSGVO) statt Pflicht-Checkbox – Text versioniert in src/lib/einwilligungen.js */}
+            <p className="mt-6 flex items-start gap-3 rounded-2xl bg-sand-50 p-4 text-[13.5px] leading-relaxed text-ink-600 ring-1 ring-ink-100">
+              <Lock aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-700" />
+              <span>
+                {HINWEIS.text} Einzelheiten in der{" "}
+                <Link href={HINWEIS.link} className="font-semibold text-ov-700 underline underline-offset-2">
                   Datenschutzerklärung
                 </Link>
                 .
               </span>
-            </label>
+            </p>
 
             {fehler && (
               <p role="alert" className="mt-5 flex items-start gap-2 rounded-xl bg-red-50 p-3 text-[14px] text-red-700 ring-1 ring-red-200">
@@ -618,14 +718,15 @@ export default function TerminBuchung({ kalender = null }) {
         )}
       </div>
 
-      {/* Zusammenfassung */}
+      {/* Zusammenfassung – eingebettet entfällt sie (die Leiste der Seite zeigt schon die Anfrage) */}
+      {!eingebettet && (
       <aside className="lg:sticky lg:top-28 lg:self-start">
         <div className="rounded-[1.75rem] bg-navy-950 p-6 text-white">
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Ihr Termin</p>
           <dl className="mt-4 space-y-4">
             {/* dl-Gruppen enthalten nur dt/dd – Symbol steckt (dekorativ) im dt */}
             <div className="relative min-h-10 pl-13">
-              <dt className="text-[12.5px] text-white/55">
+              <dt className="text-[12.5px] text-white/60">
                 <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
                   {(() => {
                     const Icon = ICONS[art.icon];
@@ -637,7 +738,7 @@ export default function TerminBuchung({ kalender = null }) {
               <dd className="text-[15px] font-semibold">{art.titel}</dd>
             </div>
             <div className="relative min-h-10 pl-13">
-              <dt className="text-[12.5px] text-white/55">
+              <dt className="text-[12.5px] text-white/60">
                 <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
                   <CalendarDays className="h-4 w-4" />
                 </span>
@@ -646,7 +747,7 @@ export default function TerminBuchung({ kalender = null }) {
               <dd className="text-[15px] font-semibold">{slot ? `${langDatum(slot)}, ${uhrzeit(slot)} Uhr` : "noch nicht gewählt"}</dd>
             </div>
             <div className="relative min-h-10 pl-13">
-              <dt className="text-[12.5px] text-white/55">
+              <dt className="text-[12.5px] text-white/60">
                 <span aria-hidden="true" className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-ov-300">
                   <Clock className="h-4 w-4" />
                 </span>
@@ -669,15 +770,19 @@ export default function TerminBuchung({ kalender = null }) {
           Verschlüsselte Übertragung · keine Weitergabe an Dritte
         </p>
       </aside>
+      )}
     </div>
   );
 }
 
-function Feld({ label, name, type = "text", wert, setze, verlasse, fehler, className, ...rest }) {
+function Feld({ label, hinweis, name, type = "text", wert, setze, verlasse, fehler, className, ...rest }) {
   const id = `termin-${name}`;
   return (
     <label htmlFor={id} className={cn("block", className)}>
-      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">{label}</span>
+      <span className="mb-1.5 block text-[14px] font-semibold text-ink-900">
+        {label}
+        {hinweis && <span className="font-normal text-ink-500"> {hinweis}</span>}
+      </span>
       <input
         id={id}
         type={type}

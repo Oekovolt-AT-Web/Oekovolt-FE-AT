@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Calculator, Coins, Info, LandPlot, Scale } from "lucide-react";
 import Button from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { Auswahl, Gruppe, Regler } from "@/components/Rechner/bausteine";
 import { AMPEL, AUSRICHTUNGEN, STUFEN, WIDMUNGEN, pruefeFlaeche } from "@/lib/flaeche/check";
 import { LAENDER, widmungsPfad } from "@/lib/flaeche/laender";
 import { euro, hektar, zahl } from "@/lib/flaeche/format";
+import NetzSchritt from "./NetzSchritt";
 
 const AMPEL_FARBE = {
   gruen: { punkt: "bg-ov-500", glow: "shadow-[0_0_28px_4px_rgba(102,153,51,0.65)]", text: "text-ov-300" },
@@ -48,6 +49,16 @@ export default function FlaechenCheck({ startLand = "oberoesterreich" }) {
   const [ha, setHa] = useState(3);
   const [widmung, setWidmung] = useState("acker");
   const [netzKm, setNetzKm] = useState(1);
+  // Netzschritt (B06): Karte belegt den Regler vor; jede Handänderung danach überschreibt den Vorschlag
+  const [netzAusKarte, setNetzAusKarte] = useState(null);
+  const netzVorbelegen = useCallback((km) => {
+    setNetzKm(km);
+    setNetzAusKarte(km);
+  }, []);
+  const netzVonHand = (km) => {
+    setNetzKm(km);
+    setNetzAusKarte(null);
+  };
   const [ausrichtung, setAusrichtung] = useState("sued");
   const [neigung, setNeigung] = useState(5);
 
@@ -92,10 +103,15 @@ export default function FlaechenCheck({ startLand = "oberoesterreich" }) {
               min={0}
               max={10}
               step={0.1}
-              onChange={setNetzKm}
+              onChange={netzVonHand}
               format={(v) => `${zahl(v, 1)} km`}
-              hinweis="Luftlinie zur nächsten Mittelspannungsleitung oder zum Umspannwerk – grob geschätzt reicht."
+              hinweis={
+                netzAusKarte !== null && netzAusKarte === netzKm
+                  ? "Vorbelegt aus der Karte: Luftlinie zur nächsten Station ab 20 kV. Luftlinie ist nicht gleich Trassenlänge – bei Bedarf verstellen."
+                  : "Luftlinie zur nächsten Mittelspannungsleitung oder zum Umspannwerk – grob geschätzt reicht, oder unten auf der Karte markieren."
+              }
             />
+            <NetzSchritt bundesland={bundesland} onVorschlag={netzVorbelegen} />
           </Gruppe>
 
           <Gruppe titel="Gelände">

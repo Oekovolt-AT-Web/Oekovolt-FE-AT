@@ -12,8 +12,9 @@ import { ANNAHMEN, preisProKwp } from "@/data/solarrechner";
 import { einspeiseSatzCt } from "@/lib/rechner/gewerbepv";
 import { angebotUrl } from "@/lib/rechner/angebot";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
-import { FINANZIERUNG as S, MODELLE, amortText, euro, euroKurz, prozent, rechneFinanzierung, zahl } from "@/lib/rechner/finanzierung";
+import { FINANZIERUNG as S, MODELLE, amortText, euro, euroKurz, prozent, rechneFinanzierung, stresstestFinanzierung, zahl } from "@/lib/rechner/finanzierung";
 import CashflowKurven from "./CashflowKurven";
+import StresstestFinanzierung from "./StresstestFinanzierung";
 
 const ct = (v) => `${zahl(v, 1)} ct/kWh`;
 const pz = (v, st = 1) => `${zahl(v, st)} %`;
@@ -82,6 +83,8 @@ export default function FinanzierungsVergleich() {
   // Regler bleiben flüssig: Rechnung mit zurückgestellter Eingabe
   const schluessel = useDeferredValue(JSON.stringify(eingabe));
   const r = useMemo(() => rechneFinanzierung(JSON.parse(schluessel)), [schluessel]);
+  // CFO-Stresstest (A10): konservativ / erwartet / günstig je Modell
+  const st = useMemo(() => stresstestFinanzierung(JSON.parse(schluessel)), [schluessel]);
   useRechnerErgebnis("finanzierungsvergleich", r);
 
   const b = r.basis;
@@ -338,6 +341,8 @@ export default function FinanzierungsVergleich() {
           >
             <CashflowKurven modelle={r.modelle} ansicht={ansicht} sichtbar={sichtbar} onSichtbar={setSichtbar} />
           </DiagrammKarte>
+
+          <StresstestFinanzierung st={st} className="mt-6" />
 
           <Hinweis ton="info" titel="Neutral gerechnet – Modelle am Markt" className="mt-6">
             Alle Preise für Kredit, Leasing, Contracting und PPA sind Beispielwerte, keine Konditionen eines Anbieters. Nicht enthalten: Ertragsteuern außer

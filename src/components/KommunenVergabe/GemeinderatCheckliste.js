@@ -8,7 +8,8 @@ import { cn } from "@/components/ui/cn";
  * Abhakbare Checkliste „Unterlagen für den Gemeinderat“.
  * Fortschritt nur im Browser (localStorage, optional); Startzustand „nichts abgehakt“
  * (hydrationssicher). „Liste kopieren“ legt die Punkte als Text in die Zwischenablage –
- * zum Einfügen in Sitzungsvorlage oder Amtsvortrag. Es wird nichts übertragen.
+ * zum Einfügen in Sitzungsvorlage oder Amtsvortrag. Es wird nichts übertragen. Statischer Inhalt → kein Lead-Gate
+ * (Entscheidung des Inhabers, Welle A, Paket A09).
  *
  * gruppen: [{ titel, punkte: [{ id, titel, text }] }]
  */
@@ -85,13 +86,13 @@ export default function GemeinderatCheckliste({ gruppen = [] }) {
           <button
             type="button"
             onClick={kopieren}
-            className="inline-flex items-center gap-1.5 rounded-full bg-navy-950 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-2"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-navy-950 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-navy-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-2"
           >
             <ClipboardCopy aria-hidden="true" className="h-3.5 w-3.5" />
             Liste kopieren
           </button>
           {anzahl > 0 && (
-            <button type="button" onClick={zuruecksetzen} className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-ink-500 hover:text-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500">
+            <button type="button" onClick={zuruecksetzen} className="inline-flex min-h-11 items-center gap-1.5 text-[13px] font-semibold text-ink-500 hover:text-ink-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500">
               <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
               Zurücksetzen
             </button>

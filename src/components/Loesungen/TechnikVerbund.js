@@ -14,19 +14,19 @@ export default function TechnikVerbund({ texte = {}, className }) {
       items={[
         {
           icon: SlidersHorizontal,
-          title: "Eigener Parkregler (EZA-Regler)",
+          title: "Parkregler (EZA-Regler)",
           text: texte.parkregler || "Regelt Wirk- und Blindleistung am Netzverknüpfungspunkt nach den Vorgaben des Netzbetreibers und der TOR Erzeuger.",
           href: "/technik/parkregler",
         },
         {
           icon: Radio,
-          title: "Eigene Fernwartung",
+          title: "Fernwartung",
           text: texte.fernwartung || "Gesicherter Fernzugriff auf Wechselrichter, Regler und Zähler – Störungen erkennen und beheben, oft ohne Anfahrt.",
           href: "/technik/fernwartung",
         },
         {
           icon: MonitorDot,
-          title: "Eigenes SCADA",
+          title: "SCADA & Leitwarte",
           text: texte.scada || "Erzeugung, Verbrauch, Speicher und Netzvorgaben in einer Leitwarte – mit Berichten für Controlling und Nachhaltigkeit.",
           href: "/technik/scada",
         },

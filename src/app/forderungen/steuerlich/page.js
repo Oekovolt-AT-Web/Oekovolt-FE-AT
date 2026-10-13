@@ -5,7 +5,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, BadgeEuro, Building2, Calculator, ClipboardCheck, FileText, Home, Landmark, Percent, Receipt, Store, Sun, Tractor, TrendingDown, Zap } from "lucide-react";
+import { ArrowRight, BadgeEuro, Building2, CalendarClock, Calculator, ClipboardCheck, FileText, Home, Landmark, Percent, Receipt, Store, Sun, Tractor, TrendingDown, Zap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -14,6 +14,9 @@ import CtaBand from "@/components/ui/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import Querverweise from "@/components/Reusable/Querverweise";
 import SteuerCheck from "@/components/Forderungen/Steuerlich/SteuerCheck";
+import ElektrizitaetsabgabeRechner from "@/components/Forderungen/Steuerlich/ElektrizitaetsabgabeRechner";
+// Konstanten aus einer Datei ohne "use client" – sonst landet auf dem Server nur ein Client-Proxy im Text.
+import { ELABG_SATZ_2027 } from "@/components/Forderungen/Steuerlich/elabg";
 import Umschalter from "@/components/Forderungen/Shared/Umschalter";
 import Prozess from "@/components/Forderungen/Shared/Prozess";
 import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
@@ -25,12 +28,51 @@ import { hreflangLanguages } from "@/lib/hreflang";
 
 const PAGE_URL = `${BASE_URL}/forderungen/steuerlich`;
 const TITLE = "Photovoltaik & Steuer 2026: IFB 22 %, AfA, USt | Ökovolt";
-const DESCRIPTION = "PV und Steuer in Österreich 2026: Investitionsfreibetrag 22 %, AfA 20 Jahre, Elektrizitätsabgabe, Umsatzsteuer, Landwirtschaft und Private – mit IFB-Rechner.";
+const DESCRIPTION = "PV und Steuer in Österreich 2026: IFB 22 %, AfA, Umsatzsteuer, Elektrizitätsabgabe mit Mini-Rechner – und was sich 2027 ändert. Keine Steuerberatung.";
+
+/** Prüfdatum der Abschnitte „Was sich 2027 ändert“ und „Elektrizitätsabgabe“ (Quellen am Erstellungstag abgerufen). */
+const GEPRUEFT_2027 = "11.10.2026";
+
+/** Änderungen ab 2027 – jede Zeile mit Rechtsgrundlage, Quelle und Stand; „zu prüfen“, wo nur die Regierungsvorlage ausgewertet wurde. */
+const AENDERUNGEN_2027 = [
+  {
+    titel: "Gewinnfreibetrag nur noch für Sachinvestitionen",
+    text: "Der investitionsbedingte Gewinnfreibetrag (§ 10 EStG) steht für Wirtschaftsjahre, die nach dem 31.12.2026 und vor dem 01.01.2030 beginnen, nur noch für Realinvestitionen zu – Wertpapiere scheiden aus (Ersatzanschaffungen für bereits begünstigte Wertpapiere ausgenommen). Eine PV-Anlage auf dem Betriebsgebäude ist eine solche Sachinvestition. Ab Wirtschaftsjahren, die nach dem 31.12.2029 beginnen, sollen Wertpapiere wieder zählen.",
+    norm: "§ 10 EStG idF Budgetbegleitgesetz 2027–2028, BGBl. I Nr. 62/2026",
+    pruefen: true,
+    pruefText: "Inhalt laut BMF-Rechtsnews und Regierungsvorlage (KPMG/Deloitte); Wortlaut der Kundmachung vor Veröffentlichung im RIS gegenlesen.",
+    // Link auf /ratgeber/gewinnfreibetrag-photovoltaik-2027 erst nach Freigabe durch die Steuerberatung (Artikel liegt als Entwurf _gewinnfreibetrag-photovoltaik-2027.js).
+  },
+  {
+    titel: "Investitionsfreibetrag zurück auf 15 % (Öko) bzw. 10 %",
+    text: `Die befristete Erhöhung auf ${STEUER.ifb.satzOekoTemp} % bzw. ${STEUER.ifb.satzTemp} % endet mit Anschaffungen bis 31.12.2026. Maßgeblich ist der Anschaffungszeitpunkt – die Übergabe bzw. Fertigstellung der Anlage (Erlangen der wirtschaftlichen Verfügungsmacht), nicht die Bestellung. Bemessungsgrundlage bleibt max. 1 Mio. € je Wirtschaftsjahr.`,
+    norm: "§ 11 EStG, § 124b Z 480 EStG (BGBl. I Nr. 79/2025)",
+  },
+  {
+    titel: "Degressive AfA für Elektrizitätsunternehmen auf 10 % gedeckelt",
+    text: "Für Elektrizitätsunternehmen im Sinne des § 7 Z 11 ElWOG 2010 sinkt der degressive AfA-Satz auf höchstens 10 % (statt bis zu 30 %) vom Restbuchwert – für Wirtschaftsjahre, die nach dem 31.12.2026 und vor dem 01.01.2030 beginnen, bei Wirtschaftsgütern, die nach dem 30.06.2020 und vor dem 01.01.2026 angeschafft oder hergestellt wurden. Für gewerbliche PV-Betreiber ohne Elektrizitätsunternehmens-Status ändert sich an der AfA nichts.",
+    norm: "§ 7 Abs. 1a EStG idF BGBl. I Nr. 62/2026",
+    pruefen: true,
+    pruefText: "Satz und Zeitraum laut Regierungsvorlage (KPMG, 06/2026); BMF bestätigt die Maßnahme als beschlossen – Kundmachungstext gegenlesen.",
+  },
+  {
+    titel: "Elektrizitätsabgabe: Senkung läuft aus",
+    text: `${ELABG_SATZ_2027}. 2026 gilt befristet 0,82 ct/kWh (Unternehmen) bzw. 0,1 ct/kWh (Haushalte nach § 4 Abs. 1 SKZG). Die Befreiung für selbst erzeugten und verbrauchten PV-Strom bleibt davon unberührt – ihr Wert steigt mit dem Satz.`,
+    norm: "§ 4 und § 7 Abs. 16 ElAbgG idF BGBl. I Nr. 95/2025",
+  },
+  {
+    titel: "Netzentgelte neu und Infrastrukturbeitrag für Einspeiser",
+    text: `Mit 01.01.2027 greifen die neuen Systemnutzungsentgelte nach dem ElWG; Einspeiser zahlen einen Infrastrukturbeitrag von max. 0,05 ct/kWh (Anlagen bis 20 kW befreit). Die Sätze der Energiegemeinschaften legt die E-Control neu fest – zum Prüfdatum ${GEPRUEFT_2027} noch nicht verordnet.`,
+    norm: "ElWG, BGBl. I Nr. 91/2025; SNE-V (E-Control)",
+    pruefen: true,
+    pruefText: "Verordnung der E-Control für 2027 lag am Prüfdatum nicht vor.",
+  },
+];
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ["Investitionsfreibetrag Photovoltaik", "IFB 22 Prozent", "Photovoltaik Steuer Österreich", "PV Abschreibung Nutzungsdauer", "Elektrizitätsabgabe Eigenverbrauch", "Umsatzsteuer Photovoltaik 2026", "Photovoltaik Landwirtschaft Steuer"],
+  keywords: ["Investitionsfreibetrag Photovoltaik", "IFB 22 Prozent", "Photovoltaik Steuer Österreich", "PV Abschreibung Nutzungsdauer", "Elektrizitätsabgabe Eigenverbrauch", "Elektrizitätsabgabe 2027", "Gewinnfreibetrag 2027 Sachinvestitionen", "Umsatzsteuer Photovoltaik 2026", "Photovoltaik Landwirtschaft Steuer"],
   alternates: { canonical: PAGE_URL, languages: hreflangLanguages(PAGE_URL) },
   openGraph: {
     type: "article",
@@ -78,6 +120,14 @@ const FAQ = [
   {
     q: "Sind Einspeiseerlöse für Private steuerfrei?",
     a: "Ja, bis 12.500 kWh eingespeisten Stroms je Person und Jahr, wenn die Anlage höchstens 35 kWp Engpass- und 25 kW Anschlussleistung hat (§ 3 Abs. 1 Z 39 EStG). Darüber ist nur der übersteigende Teil steuerpflichtig.",
+  },
+  {
+    q: "Was ändert sich 2027 beim Gewinnfreibetrag und beim Investitionsfreibetrag?",
+    a: "Der investitionsbedingte Gewinnfreibetrag steht für Wirtschaftsjahre, die nach dem 31.12.2026 beginnen, nur noch für Sachinvestitionen zu – Wertpapiere scheiden bis 2029 aus (Budgetbegleitgesetz 2027–2028, BGBl. I Nr. 62/2026). Eine PV-Anlage auf dem Betriebsgebäude erfüllt das. Der Investitionsfreibetrag fällt für Anschaffungen ab 01.01.2027 von 22 % auf 15 % (Öko) zurück. Für dasselbe Wirtschaftsgut gibt es nur eines von beiden. Keine Steuerberatung – Details mit Ihrer Steuerberatung abstimmen.",
+  },
+  {
+    q: "Zählt für den 22-%-IFB die Bestellung oder die Übergabe?",
+    a: "Die Anschaffung, also die Übergabe bzw. Fertigstellung der Anlage (Erlangen der wirtschaftlichen Verfügungsmacht) – nicht das Datum der Bestellung oder Anzahlung. Wer den 22-%-Satz nutzen will, braucht die Anlage bis 31.12.2026 übergeben; bei Teilleistungen zählen die Herstellungskosten, die auf den Begünstigungszeitraum entfallen. Die Bemessungsgrundlage ist mit 1 Mio. € je Wirtschaftsjahr gedeckelt.",
   },
   {
     q: "Kürzt der EAG-Investitionszuschuss die Abschreibung?",
@@ -225,6 +275,63 @@ export default function Steuerlich() {
         <Reveal dir="scale">
           <SteuerCheck />
         </Reveal>
+        <Hinweis className="mt-8" titel="Anschaffungszeitpunkt und 1-Mio.-Deckel">
+          Für den {STEUER.ifb.satzOekoTemp}-%-Satz zählt die Anschaffung bis 31.12.2026 – das ist die Übergabe bzw. Fertigstellung der Anlage (Erlangen der wirtschaftlichen Verfügungsmacht), nicht die Bestellung oder Anzahlung. Bei Herstellung über den Jahreswechsel sind nur die bis 31.12.2026 angefallenen Teilherstellungskosten mit {STEUER.ifb.satzOekoTemp} % begünstigt. Die Bemessungsgrundlage ist mit 1 Mio. € Anschaffungs- oder Herstellungskosten je Wirtschaftsjahr gedeckelt (Rumpfwirtschaftsjahr aliquot). Keine Steuerberatung.
+        </Hinweis>
+      </Section>
+
+      {/* Elektrizitätsabgabe */}
+      <Section tone="white" space="md" id="elektrizitaetsabgabe" className="scroll-mt-24">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Elektrizitätsabgabe"
+            title="Elektrizitätsabgabe bei PV-Eigenverbrauch"
+            lead="Selbst erzeugter und verbrauchter Strom aus Erneuerbaren ist ohne Mengengrenze von der Elektrizitätsabgabe befreit (§ 2 Abs. 1 Z 4 ElAbgG). Wie viel das wert ist, hängt vom Satz ab – und der springt 2027 zurück."
+          />
+          <StandPille className="shrink-0 self-start md:self-auto">Stand 29.09.2026</StandPille>
+        </div>
+        <Reveal dir="scale">
+          <ElektrizitaetsabgabeRechner />
+        </Reveal>
+        <p className="mt-6 max-w-3xl text-[15px] leading-relaxed text-ink-700">
+          Zum Stand der Verhandlungen: Am 29.09.2026 hat der Finanzausschuss einen Antrag auf Verlängerung um mindestens ein Jahr vertagt; laut Regierungsparteien laufen die Gespräche, offen ist die Gegenfinanzierung von rund 520 Mio. €. Rechtsgrundlage der Senkung 2026: BGBl. I Nr. 95/2025 (§ 7 Abs. 16 ElAbgG).
+        </p>
+      </Section>
+
+      {/* Was sich 2027 ändert */}
+      <Section tone="sand" space="md" id="aenderungen-2027" className="scroll-mt-24">
+        <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading eyebrow="Ausblick" title="Was sich 2027 ändert" lead="Budgetbegleitgesetz 2027–2028, Ende der IFB-Erhöhung, Elektrizitätsabgabe und ElWG-Netzentgelte – mit Rechtsgrundlage. Was nur aus der Regierungsvorlage bekannt ist, steht als „zu prüfen“." />
+          <StandPille className="shrink-0 self-start md:self-auto">geprüft am {GEPRUEFT_2027}</StandPille>
+        </div>
+        <ol className="grid gap-4 md:grid-cols-2">
+          {AENDERUNGEN_2027.map((a, i) => (
+            <Reveal as="li" key={a.titel} delay={i * 60} className="flex flex-col rounded-[2rem] bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
+              <div className="flex items-start gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-50 font-display text-[15px] font-extrabold text-ov-700">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900">{a.titel}</h3>
+              </div>
+              <p className="mt-4 text-[15px] leading-relaxed text-ink-700">{a.text}</p>
+              <p className="mt-3 text-[13px] text-ink-600">
+                <CalendarClock aria-hidden="true" className="mr-1 inline h-3.5 w-3.5 text-ov-600" />
+                {a.norm}
+              </p>
+              {a.pruefen && (
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-800">
+                  <span className="mr-2 inline-flex items-center rounded-full bg-sun-300/35 px-2 py-0.5 text-[11.5px] font-semibold text-ink-800">zu prüfen</span>
+                  {a.pruefText}
+                </p>
+              )}
+              {a.link && (
+                <Link href={a.link.href} className="group mt-auto inline-flex items-center gap-2 pt-5 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+                  {a.link.label}
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              )}
+            </Reveal>
+          ))}
+        </ol>
+        <p className="mt-6 text-[13.5px] text-ink-600">Allgemeine Information, keine Steuerberatung. Quellen: BMF-Rechtsnews zum Budgetbegleitgesetz 2027 und 2028, KPMG Tax News 06/2026, Parlamentskorrespondenz 16.12.2025 und 29.09.2026 – siehe Quellenblock unten.</p>
       </Section>
 
       <Section tone="white" space="md">
@@ -270,7 +377,7 @@ export default function Steuerlich() {
             <dl className="mt-7 divide-y divide-white/10 border-t border-white/10 text-[14px]">
               {BEISPIEL.map((z) => (
                 <div key={z.pos} className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 py-2.5">
-                  <dt className="text-white/85">{z.pos}<span className="block text-[12.5px] text-white/45">{z.rechnung}</span></dt>
+                  <dt className="text-white/85">{z.pos}<span className="block text-[12.5px] text-white/60">{z.rechnung}</span></dt>
                   <dd className="ov-num self-center font-display font-bold text-ov-300">{z.betrag}</dd>
                 </div>
               ))}
@@ -309,7 +416,21 @@ export default function Steuerlich() {
           </SectionHeading>
           <Faq items={FAQ} />
         </div>
-        <Quellen klappbar className="mt-12" stand={STAND.label} quellen={[...STEUER.quellen, ENERGIEGEMEINSCHAFTEN.quellen[2]]} hinweis="Allgemeine Information, keine Steuerberatung. Für Vermietung, Landwirtschaft, Gemeinden und mehrere Anlagen empfehlen wir die Abstimmung mit Ihrer Steuerberatung." />
+        <Quellen
+          klappbar
+          className="mt-12"
+          stand={`${STAND.label} (Ausblick 2027: ${GEPRUEFT_2027})`}
+          quellen={[
+            ...STEUER.quellen,
+            ENERGIEGEMEINSCHAFTEN.quellen[2],
+            { label: "BMF – Budgetbegleitgesetz 2027 und 2028, Teil Steuern (BGBl. I Nr. 62/2026)", url: "https://www.bmf.gv.at/rechtsnews/steuern-rechtsnews/neue-gesetze/2026/budgetbegleitgesetz-2027-und-2028-teil-steuern.html" },
+            { label: "KPMG – Steuerliche Maßnahmen Doppelbudget 2027/2028 (Gewinnfreibetrag, degressive AfA)", url: "https://kpmg.com/at/de/media/newsletter/tax-news/2026/06/tf-steuerliche-massnahmen-doppelbudget-2027-2028.html" },
+            { label: "RIS – BGBl. I Nr. 95/2025, Änderung des Elektrizitätsabgabegesetzes (Senkung 2026)", url: "https://www.ris.bka.gv.at/Dokumente/BgblAuth/BGBLA_2025_I_95/BGBLA_2025_I_95.pdf" },
+            { label: "Parlament – Nationalrat beschließt Senkung der Elektrizitätsabgabe (16.12.2025)", url: "https://www.parlament.gv.at/aktuelles/news/Nationalrat-beschliesst-Senkung-der-Elektrizitaetsabgabe" },
+            { label: "Parlamentskorrespondenz – Finanzausschuss zur Verlängerung der Senkung (29.09.2026)", url: "https://www.ots.at/presseaussendung/OTS_20260929_OTS0144/finanzausschuss-diskutiert-forderungen-der-gruenen-zur-elektrizitaetsabgabe-energiekrisenbeitraege-und-dienstwaegen" },
+          ]}
+          hinweis="Allgemeine Information, keine Steuerberatung. Für Vermietung, Landwirtschaft, Gemeinden und mehrere Anlagen empfehlen wir die Abstimmung mit Ihrer Steuerberatung. Angaben zu 2027 beruhen teils auf der Regierungsvorlage – vor Entscheidungen den Gesetzestext prüfen."
+        />
       </Section>
 
       <Querverweise pfad="/forderungen/steuerlich" />

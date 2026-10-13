@@ -1,9 +1,9 @@
 // src/components/Team/Firmengeschichte.js
 //
 // Unternehmensgeschichte aus Sicht der österreichischen Gesellschaft:
-// Zeitleiste, Haltung, Verbund mit dem Stammhaus, Generationen, die
-// Partnerschaft mit der Salzburg AG (Gesellschafterin seit 2021), die Rolle der
-// Ökovolt Solartechnik GmbH, Gruppenstruktur und Registerdaten.
+// Zeitleiste, Haltung, Verbund mit dem Stammhaus, Generationen, die Gesellschafter
+// (sachlich: Andreas Wegscheider 51 %, Salzburg AG 49 % – kein Werbeargument, Welle A02),
+// die Rolle der Ökovolt Solartechnik GmbH, Gruppenstruktur und Registerdaten.
 //
 // Alle Bausteine sind einzeln exportiert, damit /uber-uns und /uber-uns/team
 // unterschiedliche Ausschnitte zeigen können. Für dunkle Abschnitte
@@ -40,6 +40,7 @@ import {
   STAND,
   URSPRUNG,
 } from "@/data/unternehmen";
+import { KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 
 const ICONS = { Building2, Code, Flag, Handshake, Home, Network, ShieldCheck, Sunrise, TrendingUp, Wrench };
 
@@ -113,7 +114,7 @@ export function Zeitleiste() {
               aria-hidden="true"
               className={`absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-full md:left-1/2 md:-translate-x-1/2 ${
                 m.hervorgehoben
-                  ? "bg-ov-500 text-white shadow-[0_0_0_6px_rgba(102,153,51,0.25)]"
+                  ? "bg-ov-600 text-white shadow-[0_0_0_6px_rgba(102,153,51,0.25)]"
                   : "bg-navy-950 text-ov-300 ring-2 ring-ov-400"
               }`}
             >
@@ -209,8 +210,9 @@ export function Generationen({ className = "mt-20 md:mt-28" }) {
   );
 }
 
-/* ---------------------------------------------------------------- Salzburg AG */
+/* ------------------------------------------------------------- Gesellschafter */
 
+/** Gesellschafter – sachlich (Registerstand), ohne Werbepunkte. Der Exportname bleibt für Importeure. */
 export function Partnerschaft() {
   const s = SALZBURG_AG;
   return (
@@ -219,20 +221,22 @@ export function Partnerschaft() {
         {s.text}
       </Ueberschrift>
 
-      <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-3">
+      <div className={`mx-auto mt-10 grid max-w-3xl gap-4 ${s.kennzahlen.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
         {s.kennzahlen.map((k) => (
           <Kennzahl key={k.label} {...k} />
         ))}
       </div>
 
-      <ul className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-2">
-        {s.punkte.map((p) => (
-          <li key={p} className="flex gap-3 rounded-2xl bg-white/[0.05] p-4 text-[15px] leading-relaxed text-white/75 ring-1 ring-white/10">
-            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ov-400" />
-            {p}
-          </li>
-        ))}
-      </ul>
+      {s.punkte.length > 0 && (
+        <ul className="mx-auto mt-10 grid max-w-4xl gap-3 sm:grid-cols-2">
+          {s.punkte.map((p) => (
+            <li key={p} className="flex gap-3 rounded-2xl bg-white/[0.05] p-4 text-[15px] leading-relaxed text-white/75 ring-1 ring-white/10">
+              <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ov-400" />
+              {p}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -265,6 +269,8 @@ export function Haltung() {
           <span className="ml-3 text-[15px] text-white/60">{zahlen[0].label}</span>
         </p>
       )}
+      {/* Gesamtzahlen sind eigene Angaben – immer mit Quelle und Stand (Welle A02) */}
+      {zahlen.length > 0 && <p className="mt-6 text-center text-[12.5px] text-white/60">{KENNZAHLEN_HINWEIS_STAND}</p>}
     </div>
   );
 }
@@ -316,7 +322,7 @@ export function RollenAt() {
               <p className="mt-4 flex items-start justify-between gap-3 font-display text-[17px] font-bold text-white">
                 {e.name}
                 {e.href && (
-                  <ArrowUpRight aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-white/40 transition-colors group-hover:text-ov-300" />
+                  <ArrowUpRight aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-white/60 transition-colors group-hover:text-ov-300" />
                 )}
               </p>
               <p className="mt-2 text-[14.5px] leading-relaxed text-white/60">{e.text}</p>
@@ -426,7 +432,7 @@ export function Register() {
                 .filter(([, wert]) => wert)
                 .map(([label, wert]) => (
                   <div key={label} className="flex flex-wrap gap-x-2">
-                    <dt className="w-32 shrink-0 text-white/45">{label}</dt>
+                    <dt className="w-32 shrink-0 text-white/60">{label}</dt>
                     <dd className="min-w-0 flex-1 text-white/80">{wert}</dd>
                   </div>
                 ))}
@@ -445,7 +451,7 @@ export function Register() {
 
       {BETEILIGUNGEN?.length > 0 && (
         <div className="mx-auto mt-6 max-w-4xl">
-          <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-white/40">
+          <p className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] text-white/60">
             Projektgesellschaften im österreichischen Firmenbuch
           </p>
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -453,14 +459,14 @@ export function Register() {
               <div key={b.register} className="rounded-2xl bg-white/[0.05] p-4 ring-1 ring-white/10">
                 <p className="font-display text-[14.5px] font-bold leading-snug text-white">{b.name}</p>
                 <p className="mt-1.5 text-[13.5px] font-semibold text-ov-300">{b.register}</p>
-                <p className="mt-1 text-[13px] leading-snug text-white/45">{b.gericht}</p>
+                <p className="mt-1 text-[13px] leading-snug text-white/60">{b.gericht}</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <p className="mt-8 text-center text-[13px] text-white/40">Stand der Angaben: {datumLang(STAND)}</p>
+      <p className="mt-8 text-center text-[13px] text-white/60">Stand der Angaben: {datumLang(STAND)}</p>
     </div>
   );
 }

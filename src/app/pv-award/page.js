@@ -1,9 +1,11 @@
 // src/app/pv-award/page.js
 //
-// Ökovolt PV Award – jährlicher Preis für die besten Anlagen und
-// Nachhaltigkeitsinvestitionen unserer Kundinnen und Kunden.
+// Ökovolt PV Award – jährlicher Unternehmenspreis der Ökovolt Solartechnik GmbH für die
+// Anlagen und Nachhaltigkeitsinvestitionen ihrer Kundinnen und Kunden (keine unabhängige
+// Auszeichnung – Kennzeichnung AWARD_KENNZEICHNUNG auf der Seite, Welle A07).
 // Inhalte: src/components/Award/awardDaten.js · Formular → /api/award
-// Event-Schema nur, wenn TERMINE.fix (Datum und Ort feststehen).
+// Event-Schema nur, wenn TERMINE.fix (Datum und Ort feststehen) und der Award nicht mehr
+// im Konzeptstatus ist (AWARD_STATUS).
 //
 // Gala-Ästhetik: dunkler Hero mit animierter Trophäe und Gold-Akzenten
 // (sun-*), Kategorien als edle Karten, Gewichtungsband, Zeitstrahl,
@@ -27,13 +29,13 @@ import Querverweise from "@/components/Reusable/Querverweise";
 import Trophaee from "@/components/Award/Trophaee";
 import AwardKriterien from "@/components/Award/AwardKriterien";
 import AwardEinreichung from "@/components/Award/AwardEinreichung";
-import { AWARD_JAHR, AWARD_NAME, JURY, KATEGORIEN, KRITERIEN, TEILNAHME, TERMINE, ZEITPLAN } from "@/components/Award/awardDaten";
+import { AWARD_JAHR, AWARD_KENNZEICHNUNG, AWARD_NAME, AWARD_STATUS, JURY, JURY_HINWEIS, JURY_KLAUSEL, KATEGORIEN, KRITERIEN, TEILNAHME, TERMINE, ZEITPLAN } from "@/components/Award/awardDaten";
 import { BASE_URL, FIRMA, SITE_NAME, SOLENSA } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}/pv-award`;
 const TITEL = "Ökovolt PV Award – die besten PV-Anlagen | Ökovolt";
 const BESCHREIBUNG =
-  "Der Ökovolt PV Award zeichnet jährlich die besten PV-Anlagen und Nachhaltigkeitsinvestitionen unserer Kunden aus: 7 Kategorien, Kriterien, Jury, Einreichung.";
+  "Der Ökovolt PV Award ist der Unternehmenspreis der Ökovolt Solartechnik GmbH für die PV-Anlagen ihrer Kunden: 7 Kategorien, Kriterien, Jury, Einreichung.";
 
 export const metadata = {
   title: TITEL,
@@ -53,7 +55,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Was ist der Ökovolt PV Award?",
-    a: `Der ${AWARD_NAME} ist ein jährlicher Preis der ${FIRMA.name} für die besten Photovoltaikanlagen und Nachhaltigkeitsinvestitionen ihrer Kundinnen und Kunden in Österreich – vergeben in ${KATEGORIEN.length} Kategorien von Gewerbe und Industrie bis zur Energiegemeinschaft des Jahres.`,
+    a: `Der ${AWARD_NAME} ist ein ${AWARD_KENNZEICHNUNG} in Österreich – künftig jährlich vergeben für Photovoltaikanlagen und Nachhaltigkeitsinvestitionen in ${KATEGORIEN.length} Kategorien von Gewerbe und Industrie bis zur Energiegemeinschaft des Jahres. Er ist keine unabhängige oder staatliche Auszeichnung und kein Gütezeichen.`,
   },
   {
     q: "Wer kann teilnehmen?",
@@ -69,11 +71,11 @@ const FAQ = [
   },
   {
     q: "Wie wird bewertet?",
-    a: `Eine Fachjury aus Technik, Wirtschaft und Nachhaltigkeit bewertet nach sechs Kriterien: ${KRITERIEN.map((k) => `${k.titel} (${k.gewicht} %)`).join(", ")}.`,
+    a: `Eine von Ökovolt berufene Fachjury aus Technik, Wirtschaft und Nachhaltigkeit bewertet nach sechs Kriterien: ${KRITERIEN.map((k) => `${k.titel} (${k.gewicht} %)`).join(", ")}. ${JURY_KLAUSEL}`,
   },
   {
     q: "Was passiert mit meinen Projektdaten und Fotos?",
-    a: "Mit der Einreichung willigen Sie ein, dass Projektname, Betreiber, Ort, Beschreibung, Fotos und Kennzahlen im Rahmen des Awards veröffentlicht werden. Die Einwilligung können Sie bis zur Jurysitzung widerrufen; Betriebsdaten aus dem Monitoring verwenden wir nur mit Ihrer gesonderten Zustimmung.",
+    a: "Die Veröffentlichung von Projektname, Betreiber, Ort, Beschreibung, Fotos und Kennzahlen ist eine eigene, optionale Einwilligung im Formular. Ohne sie bewerten wir Ihr Projekt anonym und nennen den Betrieb nicht. Die Einwilligung können Sie jederzeit widerrufen; Betriebsdaten aus dem Monitoring verwenden wir nur mit Ihrer gesonderten Zustimmung.",
   },
 ];
 
@@ -92,8 +94,8 @@ export default function PvAwardPage() {
       about: { "@id": `${BASE_URL}/#organization` },
     },
   ];
-  // Event-Schema ausschließlich mit fixem Datum und Ort (siehe awardDaten.TERMINE).
-  if (TERMINE.fix && TERMINE.verleihung?.datum && TERMINE.verleihung?.ort) {
+  // Event-Schema ausschließlich mit fixem Datum und Ort (siehe awardDaten.TERMINE) und nie im Konzeptstatus.
+  if (AWARD_STATUS !== "konzept" && TERMINE.fix && TERMINE.verleihung?.datum && TERMINE.verleihung?.ort) {
     schemaGraph.push({
       "@type": "Event",
       name: `${AWARD_NAME} ${AWARD_JAHR} – Verleihung`,
@@ -124,7 +126,7 @@ export default function PvAwardPage() {
           <div>
             <Breadcrumbs dark items={[{ name: "Über uns", href: "/uber-uns" }, { name: AWARD_NAME }]} className="ov-hero-in mb-10" />
             <div className="ov-hero-in" style={{ "--ov-delay": "60ms" }}>
-              <p className="inline-flex items-center gap-2 rounded-full bg-sun-400/10 px-3.5 py-1.5 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-sun-300 ring-1 ring-sun-400/30">
+              <p className="inline-flex items-center gap-2 rounded-full bg-sun-400/10 px-3.5 py-1.5 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-sun-300">
                 <Sparkles aria-hidden="true" className="h-3.5 w-3.5" />
                 {AWARD_NAME} {AWARD_JAHR}
               </p>
@@ -133,15 +135,23 @@ export default function PvAwardPage() {
               Ausgezeichnete Anlagen. <span className={GOLD}>Ausgezeichnete Betriebe.</span>
             </h1>
             <p className="ov-lead ov-hero-in mt-6 max-w-2xl text-white/75" style={{ "--ov-delay": "200ms" }}>
-              Mit dem {AWARD_NAME} zeichnen wir jedes Jahr die besten Photovoltaikanlagen und Nachhaltigkeitsinvestitionen unserer Kundinnen und Kunden in Österreich aus – bewertet von einer Fachjury aus Technik, Wirtschaft und Nachhaltigkeit.
+              Mit dem {AWARD_NAME} zeichnen wir künftig jährlich Photovoltaikanlagen und Nachhaltigkeitsinvestitionen unserer Kundinnen und Kunden in Österreich aus – bewertet von einer von uns berufenen Fachjury aus Technik, Wirtschaft und Nachhaltigkeit.
+            </p>
+            <p className="ov-hero-in mt-4 max-w-2xl text-[14px] leading-relaxed text-white/60" style={{ "--ov-delay": "240ms" }}>
+              {AWARD_KENNZEICHNUNG} – keine unabhängige Auszeichnung, kein Gütezeichen.{AWARD_STATUS === "konzept" ? " Konzeptstatus: Termine und Jury-Besetzung folgen." : ""}
             </p>
             <div className="ov-hero-in mt-9 flex flex-col gap-3 sm:flex-row" style={{ "--ov-delay": "280ms" }}>
               <Button href="#einreichen" variant="sun" size="lg" pfeil>
                 Projekt einreichen
               </Button>
-              <Button href="#kategorien" variant="outlineLight" size="lg" icon={ListChecks}>
-                Kategorien & Kriterien
-              </Button>
+              {/* Weiche Fläche statt Outline (Wunsch Inhaber: keine harten Rahmen) */}
+              <a
+                href="#kategorien"
+                className="inline-flex h-14 select-none items-center justify-center gap-2.5 whitespace-nowrap rounded-full bg-white/10 px-8 text-[16px] font-semibold tracking-[-0.005em] text-white backdrop-blur-sm transition-all duration-300 hover:bg-white/[0.16] active:scale-[0.98]"
+              >
+                <ListChecks aria-hidden="true" className="h-[1.1em] w-[1.1em] shrink-0" />
+                <span>Kategorien & Kriterien</span>
+              </a>
             </div>
             <dl className="ov-hero-in mt-12 grid max-w-xl grid-cols-3 gap-6 border-t border-white/15 pt-8" style={{ "--ov-delay": "360ms" }}>
               {[
@@ -174,8 +184,9 @@ export default function PvAwardPage() {
           eyebrow="Der Preis"
           title="Wofür der Ökovolt PV Award steht"
           text={[
-            `Der ${AWARD_NAME} ist ein jährlicher Preis für Photovoltaikanlagen, die mehr leisten als Kilowattstunden: Sie senken Kosten, sparen CO₂, verbinden Sektoren, fügen sich in Gebäude und Landschaft ein – und zeigen anderen, dass es geht.`,
+            `Der ${AWARD_NAME} ist ein künftig jährlich vergebener Preis für Photovoltaikanlagen, die mehr leisten als Kilowattstunden: Sie senken Kosten, sparen CO₂, verbinden Sektoren, fügen sich in Gebäude und Landschaft ein – und zeigen anderen, dass es geht.`,
             "Ausgezeichnet werden nicht wir, sondern die Unternehmen, Höfe, Gemeinden, Hotels und Energiegemeinschaften, die investiert haben. Preisträger erhalten die Award-Trophäe und eine Urkunde; auf Wunsch stellen wir ihr Projekt auf oekovolt.com vor.",
+            `Der ${AWARD_NAME} ist ein ${AWARD_KENNZEICHNUNG}. Er ist keine unabhängige oder staatliche Auszeichnung und kein Gütezeichen; die Jury wird von Ökovolt berufen.`,
           ]}
           points={[
             { title: "Kostenlos", text: "und unabhängig von künftigen Aufträgen" },
@@ -224,7 +235,7 @@ export default function PvAwardPage() {
                       <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sun-400/10 text-sun-300 ring-1 ring-sun-400/30 transition-colors duration-300 group-hover:bg-sun-400 group-hover:text-navy-950">
                         {Icon && <Icon aria-hidden="true" className="h-5 w-5" />}
                       </span>
-                      <span className="ov-num font-display text-[13px] font-bold text-white/35">{String(i + 2).padStart(2, "0")}</span>
+                      <span className="ov-num font-display text-[13px] font-bold text-white/60">{String(i + 2).padStart(2, "0")}</span>
                     </div>
                     <h3 className="mt-5 font-display text-[17.5px] font-bold leading-snug">{k.titel}</h3>
                     <p className="mt-2 text-[14px] leading-relaxed text-white/60">{k.text}</p>
@@ -278,7 +289,7 @@ export default function PvAwardPage() {
                   <p className="ov-num text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">Phase {i + 1}</p>
                   <h3 className="mt-1 font-display text-[19px] font-bold text-ink-900">{z.titel}</h3>
                   <p className="mt-2 text-[15px] leading-relaxed text-ink-600">{z.text}</p>
-                  <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[12.5px] font-semibold text-ink-600 ring-1 ring-ink-200">
+                  <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-sand-100 px-3 py-1 text-[12.5px] font-semibold text-ink-600">
                     <CalendarClock aria-hidden="true" className="h-3.5 w-3.5 text-sun-500" />
                     {i === 0 ? "ab sofort möglich" : TERMINE.fix ? "Termin siehe oben" : "Termin folgt"}
                   </p>
@@ -292,7 +303,7 @@ export default function PvAwardPage() {
           <SectionHeading
             eyebrow="Jury"
             title="Eine Fachjury aus Technik, Wirtschaft und Nachhaltigkeit"
-            lead="Die Jury besteht aus Fachleuten, die nicht an den eingereichten Projekten beteiligt waren. Die Besetzung veröffentlichen wir gemeinsam mit den Terminen."
+            lead={JURY_HINWEIS}
           />
           <ul className="grid gap-3 sm:grid-cols-3">
             {JURY.map((j, i) => {
@@ -320,7 +331,7 @@ export default function PvAwardPage() {
             <h2 className="ov-h2 mt-4">
               Ihr Projekt <span className={GOLD}>auf die Bühne</span>
             </h2>
-            <p className="ov-lead mt-5 text-white/70">Vier kurze Schritte, rund zehn Minuten: Kategorie, Projekt, Kennzahlen, Ansprechperson. Fotos teilen Sie per Link zu einem Cloud-Ordner.</p>
+            <p className="ov-lead mt-5 text-white/70">Vier kurze Schritte, rund zehn Minuten: Kategorie, Projekt, Kennzahlen, Ansprechperson. Fotos teilen Sie per Link zu einem Cloud-Ordner. Ob wir Ihr Projekt veröffentlichen dürfen, entscheiden Sie mit einem eigenen Häkchen – ohne Einwilligung bewerten wir anonym.</p>
             <ul className="mt-8 space-y-3 text-[15px] text-white/75">
               {["Fotos oder Drohnenaufnahmen der Anlage im Betrieb", "Jahresertrag und Eigenverbrauch aus dem Monitoring", "Ein Satz, warum Sie investiert haben", "Was sich seitdem verändert hat – Kosten, CO₂, Abläufe"].map((t) => (
                 <li key={t} className="flex gap-3">

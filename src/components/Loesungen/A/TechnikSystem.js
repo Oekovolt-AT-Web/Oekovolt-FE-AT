@@ -5,6 +5,7 @@ import Reveal from "@/components/ui/Reveal";
 import SectionHeading from "@/components/ui/SectionHeading";
 import W23Buehne from "@/components/Loesungen/w23-buehne";
 import W23Schema, { W23_SCHEMA_CSS, kontextVon } from "@/components/Loesungen/w23-schema";
+import { PARKREGLER_RECHTE_GEKLAERT } from "@/data/marke";
 
 /**
  * Dunkle Technik-Sektion: gezeichnetes, animiertes Systemschema im Stil des Leitstands der
@@ -45,9 +46,9 @@ export default function TechnikSystem({ id, eyebrow = "Technik & Betrieb", title
   const art = kontextVon(k, kontext);
 
   const karten = [
-    { sys: "regler", icon: SlidersHorizontal, titel: "Eigener Parkregler", text: texte.parkregler, href: "/technik/parkregler", cta: "Zum Parkregler" },
-    { sys: "fern", icon: Radio, titel: "Eigene Fernwartung", text: texte.fernwartung, href: "/technik/fernwartung", cta: "Zur Fernwartung" },
-    { sys: "scada", icon: MonitorDot, titel: "Eigenes SCADA", text: texte.scada, href: "/technik/scada", cta: "Zu SCADA & Leitwarte" },
+    { sys: "regler", icon: SlidersHorizontal, titel: "Parkregler", text: texte.parkregler, href: "/technik/parkregler", cta: "Zum Parkregler" },
+    { sys: "fern", icon: Radio, titel: "Fernwartung", text: texte.fernwartung, href: "/technik/fernwartung", cta: "Zur Fernwartung" },
+    { sys: "scada", icon: MonitorDot, titel: "SCADA & Leitwarte", text: texte.scada, href: "/technik/scada", cta: "Zu SCADA & Leitwarte" },
   ];
 
   return (
@@ -108,7 +109,7 @@ export default function TechnikSystem({ id, eyebrow = "Technik & Betrieb", title
                 <W23Schema knoten={k} art={art} />
               </W23Buehne>
               <p className="sr-only">
-                Schematische Darstellung: {k.erzeugung.titel} ({k.erzeugung.text}) speist über den Parkregler (EZA-Regler, eigene Entwicklung) und den Netzanschlusspunkt mit Zähler ins Netz ({k.netz.titel}: {k.netz.text}). Am Energiefluss hängen {k.zusatz.titel} ({k.zusatz.text}). Der Netzbetreiber gibt Sollwerte an den Parkregler. Erzeugung, Regler und Zähler sind über gesicherte Fernwartung an {k.leitwarte.titel} ({k.leitwarte.text}) angebunden.
+                Schematische Darstellung: {k.erzeugung.titel} ({k.erzeugung.text}) speist über den Parkregler (EZA-Regler{PARKREGLER_RECHTE_GEKLAERT ? ", eigene Entwicklung" : ", betreut von uns"}) und den Netzanschlusspunkt mit Zähler ins Netz ({k.netz.titel}: {k.netz.text}). Am Energiefluss hängen {k.zusatz.titel} ({k.zusatz.text}). Der Netzbetreiber gibt Sollwerte an den Parkregler. Erzeugung, Regler und Zähler sind über gesicherte Fernwartung an {k.leitwarte.titel} ({k.leitwarte.text}) angebunden.
               </p>
 
               <div className="mt-6 flex items-center justify-between gap-4 border-t border-white/10 pt-5 md:mt-8">

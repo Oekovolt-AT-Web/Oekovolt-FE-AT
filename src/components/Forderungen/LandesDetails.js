@@ -8,9 +8,12 @@ import Reveal from "@/components/ui/Reveal";
 import MiniKarte from "@/components/Forderungen/Landes/MiniKarte";
 import Umschalter from "@/components/Forderungen/Shared/Umschalter";
 import { AmpelChip, PruefenMarke } from "@/components/Forderungen/Shared/Bausteine";
+import ProgrammStatusChip from "@/components/Forderungen/ProgrammStatusChip";
 import { EAG_IZ } from "@/components/Forderungen/Shared/bund";
 import { datumLang } from "@/components/Forderungen/Shared/format";
 import { AMPEL, BUNDESLAENDER, FOERDERARTEN, STAND, ZIELGRUPPEN, landesPfad } from "@/data/bundeslaender";
+import { tickerEintraege, tickerPfad } from "@/data/foerderTicker";
+import { datumKurzIso, programmStatus } from "@/lib/programmStatus";
 
 /**
  * Bausteine der Landesseiten /forderungen/landesforderungen/<slug>.
@@ -28,11 +31,38 @@ const PUNKT = { zuschuss: "bg-ov-500", gezielt: "bg-sun-400", bund: "bg-ink-400"
 const ZG_LABEL = Object.fromEntries(ZIELGRUPPEN.map((z) => [z.id, z.label]));
 const kwh = (n) => n.toLocaleString("de-DE");
 
-/** Ampel-Status eines Landesprogramms für die Anzeige (aus Status-Feldern abgeleitet). */
-export function programmAmpel(p) {
-  if (p.anzeigeStatus === "pausiert") return { ton: "rot", label: "derzeit keine Einreichung", punkt: "bg-[#e5484d]", ring: "ring-[#e5484d]/25", text: "text-[#b42318]", flaeche: "bg-[#e5484d]/10" };
-  if (p.pruefen) return { ton: "gelb", label: "läuft laut Sekundärquelle – bitte prüfen", punkt: "bg-sun-400", ring: "ring-sun-400/40", text: "text-ink-800", flaeche: "bg-sun-300/25" };
-  return { ton: "gruen", label: "läuft", punkt: "bg-ov-500", ring: "ring-ov-300/60", text: "text-ov-800", flaeche: "bg-ov-50" };
+/** "2026-10-11" → "Oktober 2026" (Wiener Zeit). */
+const monatJahr = (iso) => (iso ? new Date(`${iso}T12:00:00+02:00`).toLocaleDateString("de-AT", { month: "long", year: "numeric", timeZone: "Europe/Vienna" }) : STAND.label);
+
+/**
+ * Ampel-Status eines Landesprogramms – nur serverseitig (Zeitpunkt des Renderns).
+ * Für sichtbare Chips bitte ProgrammStatusChip mit statusFelder(p) verwenden: Der rechnet
+ * nach dem Laden mit der Uhr des Browsers, Statuswechsel greifen dann ohne Deploy.
+ * jetzt: Zeitpunkt (ms | ISO | Date), Standard: Zeitpunkt des Renderns.
+ */
+export function programmAmpel(p, jetzt = Date.now()) {
+  const code = programmStatus(p, jetzt);
+  if (code === "abgelaufen") return { ton: "rot", code, label: p.anzeigeStatus === "pausiert" ? "derzeit keine Einreichung" : "abgelaufen", punkt: "bg-[#e5484d]", ring: "ring-[#e5484d]/25", text: "text-[#b42318]", flaeche: "bg-[#e5484d]/10" };
+  if (code === "wartet") return { ton: "blau", code, label: p.anzeigeStatus === "pausiert" ? "derzeit keine Einreichung – neuen Call abwarten" : p.startVoraussichtlich ? "noch nicht geöffnet – Start voraussichtlich" : "noch nicht geöffnet", punkt: "bg-navy-400", ring: "ring-navy-200", text: "text-navy-800", flaeche: "bg-navy-50" };
+  if (code === "bald") return { ton: "gelb", code, label: "endet bald", punkt: "bg-sun-400", ring: "ring-sun-400/40", text: "text-ink-800", flaeche: "bg-sun-300/25" };
+  if (p.pruefen) return { ton: "gelb", code, label: "läuft laut Sekundärquelle – bitte prüfen", punkt: "bg-sun-400", ring: "ring-sun-400/40", text: "text-ink-800", flaeche: "bg-sun-300/25" };
+  return { ton: "gruen", code, label: "läuft", punkt: "bg-ov-500", ring: "ring-ov-300/60", text: "text-ov-800", flaeche: "bg-ov-50" };
+}
+
+/**
+ * Datumsfelder eines Programms für den Client-Chip (nur serialisierbare Werte).
+ * Verwendung: <ProgrammStatusChip programm={statusFelder(p)} heuteIso={land.stand} />
+ */
+export function statusFelder(p) {
+  return {
+    startIso: p.startIso,
+    startVoraussichtlich: Boolean(p.startVoraussichtlich),
+    fristIso: p.fristIso,
+    gueltigBisIso: p.gueltigBisIso,
+    geprueftAm: p.geprueftAm,
+    anzeigeStatus: p.anzeigeStatus,
+    pruefen: Boolean(p.pruefen),
+  };
 }
 
 function Extern({ href, children, className = "" }) {
@@ -52,7 +82,7 @@ export function LandAufEinenBlick({ keyName, land }) {
     { icon: Landmark, label: "Landesprogramme", wert: `${aktiv} erfasst`, text: land.ausgelaufen.length ? `${land.ausgelaufen.length} zuletzt beendet oder ausgeschöpft` : "keine beendeten Programme erfasst" },
     { icon: BatteryCharging, label: "Speicher", wert: land.ueberblick.speicher.length > 26 ? "siehe unten" : land.ueberblick.speicher, text: land.ueberblick.speicher },
     { icon: Sun, label: "Solarertrag (PVGIS)", wert: `${kwh(land.ertrag[0])}–${kwh(land.ertrag[1])}`, text: `kWh je kWp – 100 kWp erzeugen rund ${kwh(land.ertrag[0] * 100)}–${kwh(land.ertrag[1] * 100)} kWh im Jahr` },
-    { icon: CalendarClock, label: "Zuletzt geprüft", wert: STAND.label, text: `Stand ${datumLang(land.stand)} – Landesbudgets können kurzfristig enden` },
+    { icon: CalendarClock, label: "Zuletzt geprüft", wert: monatJahr(land.stand), text: `Stand ${datumLang(land.stand)} – Landesbudgets können kurzfristig enden` },
   ];
 
   return (
@@ -176,16 +206,17 @@ export function LandesProgramme({ land }) {
         <div className="max-w-3xl">
           <p className="inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
             <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-ov-500" />
-            Landesprogramme {STAND.label}
+            Landesprogramme · Stand {monatJahr(land.stand)}
           </p>
           <h2 id="landesprogramme-titel" className="ov-h2 mt-4 text-ink-900">Welche Programme {land.name} aktuell anbietet</h2>
           <p className="ov-lead mt-5 text-ink-600">Landesförderungen kommen zum EAG-Investitionszuschuss des Bundes hinzu – mit Ausnahme der Kategorie D, die nicht kombiniert werden darf.</p>
         </div>
         <ul className="flex flex-wrap gap-2 md:justify-end" aria-label="Legende Programmstatus">
           {[
-            { k: "bg-ov-500", l: "läuft" },
-            { k: "bg-sun-400", l: "bitte prüfen" },
-            { k: "bg-[#e5484d]", l: "pausiert" },
+            { k: "bg-ov-500", l: "offen" },
+            { k: "bg-sun-400", l: "endet bald / bitte prüfen" },
+            { k: "bg-navy-400", l: "noch nicht geöffnet" },
+            { k: "bg-[#e5484d]", l: "abgelaufen" },
           ].map((x) => (
             <li key={x.l} className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[12.5px] font-medium text-ink-600 ring-1 ring-ink-200">
               <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${x.k}`} />
@@ -200,17 +231,12 @@ export function LandesProgramme({ land }) {
           {land.programme.map((p, i) => {
             const a = programmAmpel(p);
             return (
-              <Reveal as="li" key={p.name} delay={i * 80} className="flex">
+              <Reveal as="li" key={p.name} delay={i * 80} className={`flex ${a.code === "abgelaufen" ? "opacity-80" : ""}`}>
                 <article className="group ov-card-hover relative flex w-full flex-col overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 hover:ring-ov-200 md:p-7">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <p className="text-[12.5px] font-medium text-ink-500">{p.traeger}</p>
-                    <span className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[12px] font-semibold ring-1 ${a.flaeche} ${a.ring} ${a.text}`}>
-                      <span className="relative flex h-2.5 w-2.5">
-                        {a.ton === "gruen" && <span aria-hidden="true" className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-50 motion-reduce:hidden ${a.punkt}`} />}
-                        <span aria-hidden="true" className={`relative inline-flex h-2.5 w-2.5 rounded-full ${a.punkt}`} />
-                      </span>
-                      {a.label}
-                    </span>
+                    {/* Status rechnet nach dem Laden mit der Uhr des Browsers – Statuswechsel ohne Deploy */}
+                    <ProgrammStatusChip programm={statusFelder(p)} heuteIso={land.stand || STAND.iso} />
                   </div>
                   <h3 className="mt-3 font-display text-[20px] font-bold leading-snug text-ink-900">{p.name}</h3>
                   <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Zielgruppen">
@@ -226,7 +252,16 @@ export function LandesProgramme({ land }) {
                       <span className="font-semibold text-ink-900">Status: </span>
                       {p.status}
                     </p>
-                    {p.pruefen && <PruefenMarke stand={STAND.label} />}
+                    {(p.fristIso || p.gueltigBisIso || p.startIso) && (
+                      <p className="mt-1 text-[13px] text-ink-500">
+                        {p.startIso && `${p.startVoraussichtlich ? "Start voraussichtlich" : "Start"} ${datumKurzIso(p.startIso)}`}
+                        {p.startIso && (p.fristIso || p.gueltigBisIso) && " · "}
+                        {p.fristIso ? `Frist ${datumKurzIso(p.fristIso)}` : p.gueltigBisIso ? `Laufzeit bis ${datumKurzIso(p.gueltigBisIso)}` : ""}
+                        {p.geprueftAm && ` · geprüft ${datumKurzIso(p.geprueftAm)}`}
+                      </p>
+                    )}
+                    {/* Prüfdatum steht schon in der Zeile darüber – keine zweite, abweichende Stand-Angabe */}
+                    {p.pruefen && <PruefenMarke />}
                     <p className="mt-3">
                       <Extern href={p.url} className="text-[14px]">Förderstelle: {p.quelle}</Extern>
                     </p>
@@ -243,6 +278,43 @@ export function LandesProgramme({ land }) {
       <div className="mt-12">
         <Umschalter label={`Weitere Informationen zu ${land.name}`} tabs={tabs} panels={panels} />
       </div>
+    </Section>
+  );
+}
+
+/** Aktuelle Ticker-Meldungen (Bund + dieses Land) mit Link zu Ticker und Fristen-Kalender. */
+export function LandesTicker({ keyName, land, limit = 4 }) {
+  const eintraege = tickerEintraege({ bundesland: keyName, limit });
+  if (!eintraege.length) return null;
+  return (
+    <Section tone="white" space="sm" aria-labelledby="landesticker-titel">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+        <SectionHeading as="h2" eyebrow="Förder-Ticker" title={`Aktuelles zur Förderung – Bund und ${land.name}`} lead="Datierte Meldungen mit amtlicher Quelle. Angekündigtes bleibt als angekündigt gekennzeichnet, bis es beschlossen ist." />
+        <div className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link href="/forderungen/aktuell" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+            Alle Meldungen
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link href="/forderungen/fristen" className="group inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+            Fristen-Kalender
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </div>
+      <ol className="mt-8 grid gap-3 md:grid-cols-2">
+        {eintraege.map((e, i) => (
+          <Reveal as="li" key={e.id} delay={i * 60} className="rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/60">
+            <p className="flex flex-wrap items-center gap-2 text-[12.5px] text-ink-500">
+              <time dateTime={e.datum} className="ov-num font-semibold text-ink-700">{datumKurzIso(e.datum)}</time>
+              <span aria-hidden="true">·</span>
+              <span>{e.bundesland === "bund" ? "Bund" : land.name}</span>
+              {e.status === "angekuendigt" && <span className="rounded-full bg-sun-300/40 px-2 py-0.5 font-semibold text-ink-800">angekündigt</span>}
+            </p>
+            <Link href={tickerPfad(e.id)} className="mt-2 block font-display text-[17px] font-bold leading-snug text-ink-900 hover:text-ov-700">{e.titel}</Link>
+            <p className="mt-1.5 line-clamp-3 text-[14.5px] leading-relaxed text-ink-600">{e.kurz}</p>
+          </Reveal>
+        ))}
+      </ol>
     </Section>
   );
 }
@@ -496,7 +568,7 @@ export function landesFaq(land) {
   const faq = [
     {
       q: `Welche Photovoltaik-Förderung gibt es 2026 in ${land.name}?`,
-      a: `${land.kurz} Zusätzlich gilt in ${land.name} der EAG-Investitionszuschuss des Bundes (Kategorie A 150 €/kWp bis D max. 120 €/kWp, Speicher 150 €/kWh); der nächste Fördercall läuft von ${EAG_IZ.naechsterCall.zeitraum}. Stand: ${STAND.label}.`,
+      a: `${land.kurz} Zusätzlich gilt in ${land.name} der EAG-Investitionszuschuss des Bundes (Kategorie A 150 €/kWp bis D max. 120 €/kWp, Speicher 150 €/kWh); der nächste Fördercall läuft von ${EAG_IZ.naechsterCall.zeitraum}. Stand: ${datumLang(land.stand || STAND.iso)}.`,
     },
     {
       q: `Gibt es in ${land.name} eine Landesförderung für Unternehmen?`,

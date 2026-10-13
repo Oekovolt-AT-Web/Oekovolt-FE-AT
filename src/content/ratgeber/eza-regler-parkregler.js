@@ -34,7 +34,7 @@ const artikel = {
     "Laut TOR kann der Netzbetreiber im Mittelspannungsnetz einen **Park- und Anlagenregler** verlangen: mit Mittelspannungsmessung ab einer Summe der Engpassleistungen von **über 100 kVA**, ohne Mittelspannungsmessung ab **über 400 kVA**.",
     "Kernfunktionen: Wirkleistungsbegrenzung in Stufen (z. B. **100/60/30/0 %**) innerhalb **einer Minute**, Blindleistung nach **cos φ fix, cos φ(P), Q(U) oder Q fix**, Einspeisebegrenzung auf die netzwirksame Leistung und ab **1 MW** Online-Sollwerte über **IEC 60870-5-104** oder Modbus mit **30 Minuten** Notstromversorgung der Kommunikation.",
     "Mit dem ElWG wird der Regler noch wichtiger: Ab 2027 dürfen Netzbetreiber neue PV-Anlagen auf **70 %** der Modulspitzenleistung begrenzen, und flexible Netzanschlüsse setzen eine zuverlässige Leistungsbegrenzung voraus.",
-    "Den eigenen Parkregler von Ökovolt – Funktionen, Schnittstellen und Einsatz – stellt die Seite [Ökovolt Parkregler](/technik/parkregler) vor; dieser Ratgeber erklärt die Regelungstechnik herstellerneutral.",
+    "Den Parkregler, den Ökovolt mit unserem Technologiepartner Solensa einsetzt – Funktionen, Schnittstellen und Einsatz – stellt die Seite [Ökovolt Parkregler](/technik/parkregler) vor; dieser Ratgeber erklärt die Regelungstechnik herstellerneutral.",
   ],
 
   abschnitte: [
@@ -133,12 +133,18 @@ const artikel = {
           kopf: ["Verfahren", "Stützpunkte (Standard)", "Dynamik"],
           zeilen: [
             ["cos φ(P)", "P/PEmax = 0 → cos φ 1; 0,5 → cos φ 1; 1,0 → cos φ 0,9 untererregt", "nach Vorgabe"],
-            ["Q(U)", "0,92 Un → Qmax übererregt; 0,96 Un → 0; 1,05 Un → 0; 1,08 Un → Qmax untererregt; Qmax/Pmax = 0,436 (bis 3,68 kVA: 0,312)", "PT1-Filter, Zeitkonstante 3–60 s, Standard 5 s; 95 % in drei Zeitkonstanten; Anlaufverzögerung max. 1 s"],
+            ["Q(U)", "0,92 Un → Qmax übererregt; 0,96 Un → 0; 1,05 Un → 0; 1,08 Un → Qmax untererregt; Typ A: Qmax = ±0,436·Sr (cos φ 0,9, bezogen auf Sr, nicht auf Pmax; bis 3,68 kVA 0,312·Sr)", "PT1-Filter, Zeitkonstante 3–60 s, Standard 5 s; 95 % in drei Zeitkonstanten; Anlaufverzögerung max. 1 s"],
             ["P(U)", "110 % Un → 100 % Pn; 112 % Un → 0 %", "PT1-Filter, Standard 5 s; Anlaufverzögerung max. 3 s"],
             ["Blindleistungsbereich (Typ B)", "Bereich II: Q/Pmax −0,411 bis +0,411 (cos φ 0,925 unter- bis übererregt)", "Sollwerte spätestens nach 1 min an der Messstelle"],
           ],
           minBreite: 760,
-          fussnote: "Quelle: TOR Stromerzeugungsanlagen Typ B, Kap. 5.3.3, 5.3.4, 5.3.6 und Anhang A3. Die Stützpunkte müssen frei parametrierbar sein; Netzbetreiber können abweichende Werte vorgeben und das Verfahren später ändern (Umsetzung binnen 12 Monaten).",
+          fussnote: "Quelle: TOR Stromerzeugungsanlagen Typ B, Kap. 5.3.3, 5.3.4, 5.3.6 und Anhang A3; Typ A V1.4 Kap. 5.3.3. Die Stützpunkte müssen frei parametrierbar sein; Netzbetreiber können abweichende Werte vorgeben und das Verfahren später ändern (Umsetzung binnen 12 Monaten).",
+        },
+        {
+          typ: "kasten",
+          variant: "info",
+          titel: "Q/Sr oder Q/Pmax? Zwei Bezugsgrößen, zwei Zahlen",
+          text: "Bei Typ A bezieht die TOR die Blindleistung auf die Bemessungsscheinleistung Sr des Wechselrichters: Qmax = ±0,436·Sr entspricht cos φ 0,9 (sin φ = 0,436), bei Einheiten bis 3,68 kVA 0,312·Sr (cos φ 0,95). Bei Typ B gilt die Maximalkapazität Pmax als Bezug: Bereich II mit Q/Pmax = ±0,411 entspricht cos φ 0,925 (tan φ = 0,411). Ein Wert von 0,436 bezogen auf Pmax wäre also falsch – bei cos φ 0,9 ergäbe Q/Pmax = tan φ = 0,484. Für den Parkregler heißt das: Vorgaben des Netzbetreibers immer mit ihrer Bezugsgröße übernehmen.",
         },
         {
           typ: "p",
@@ -284,7 +290,7 @@ const artikel = {
   seitenCta: { titel: "Parkregler gefordert?", text: "Unser EZA-Regler ist für österreichische Netzbetreiber entwickelt.", href: "/technik/parkregler", label: "Zum Parkregler" },
   cta: {
     title: "Regelung, Fernwirktechnik und Nachweise aus einer Hand.",
-    text: "Ökovolt Solartechnik setzt bei Gewerbe- und Freiflächenanlagen den eigenen Parkregler ein – abgestimmt auf die TOR und die Vorgaben Ihres Netzbetreibers.",
+    text: "Ökovolt Solartechnik setzt bei Gewerbe- und Freiflächenanlagen einen Parkregler mit unserem Technologiepartner Solensa ein – abgestimmt auf die TOR und die Vorgaben Ihres Netzbetreibers.",
     primary: { label: "Projekt anfragen", href: "/angebot" },
     secondary: { label: "Parkregler ansehen", href: "/technik/parkregler" },
   },

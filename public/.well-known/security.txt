@@ -1,0 +1,8 @@
+# Sicherheitshinweise zur Website der Ökovolt Solartechnik GmbH (RFC 9116).
+# Bitte Schwachstellen vertraulich an das genannte Postfach melden, nicht öffentlich.
+# Hinweis: Ein eigenes Postfach security@oekovolt.at ist noch nicht bestätigt –
+# bis dahin nimmt das allgemeine Büro-Postfach (src/lib/site.js) Meldungen entgegen.
+Contact: mailto:office@oekovolt.at
+Expires: 2027-10-11T00:00:00.000Z
+Preferred-Languages: de, en
+Canonical: https://www.oekovolt.com/.well-known/security.txt

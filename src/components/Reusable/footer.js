@@ -10,6 +10,7 @@ import { ArrowUpRight, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { NAVIGATION, KONTAKT } from "@/data/navigation";
 import LiveTicker from "@/components/ui/LiveTicker";
 import { FIRMA, SCHWESTER } from "@/lib/site";
+import { FOOTER_CLAIM } from "@/data/marke";
 
 // Cookie-Einstellungen erst bei Bedarf laden: Der statische Import zog die rund
 // 27 KB Quelltext des Banners in das Fußbereich-Bundle jeder Seite, obwohl der
@@ -86,8 +87,9 @@ export default function Footer() {
             <Link href="/" className="relative block h-[62px] w-[200px]" aria-label="Zur Startseite">
               <Image src="/logo-oekovolt-weiss.png" alt="Ökovolt Solartechnik GmbH" fill sizes="200px" className="object-contain object-left" />
             </Link>
+            {/* Claim aus dem Markenkern (src/data/marke.js) – Akzent auf dem Schlussteil */}
             <p className="mt-5 font-display text-[clamp(1.4rem,1.1rem+1vw,2rem)] font-bold leading-tight tracking-tight">
-              Solarenergie für alle – <span className="ov-text-gradient-light">einfach, sicher, wirtschaftlich.</span>
+              {FOOTER_CLAIM.split(" – ")[0]} – <span className="ov-text-gradient-light">{FOOTER_CLAIM.split(" – ").slice(1).join(" – ")}</span>
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
@@ -136,7 +138,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Ökovolt auf ${label}`}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/80 ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:bg-ov-500 hover:text-white"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/80 ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:bg-ov-600 hover:text-white"
                   >
                     <Icon aria-hidden="true" className="h-4 w-4" />
                   </a>
@@ -169,10 +171,10 @@ export default function Footer() {
         </div>
 
         {/* Rechtliches */}
-        <div className="flex flex-col gap-4 py-8 text-[13.5px] text-white/50 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 py-8 text-[13.5px] text-white/60 md:flex-row md:items-center md:justify-between">
           <div className="max-w-xl space-y-1">
             <p>© {jahr} {FIRMA.name} · {FIRMA.firmenbuch} · UID {FIRMA.uid}</p>
-            <p className="text-[12.5px] text-white/40">
+            <p className="text-[12.5px] text-white/60">
               Website, Inhalte und Marke ÖKOVOLT: alle Rechte bei der {SCHWESTER.name} ({SCHWESTER.ort}, {SCHWESTER.land}), Markeninhaberin und Schwestergesellschaft.
             </p>
           </div>

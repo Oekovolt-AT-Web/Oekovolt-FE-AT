@@ -32,7 +32,7 @@ const ostermiething = {
     },
     {
       titel: "Service und Wartung vor der Haustür",
-      text: "Für Anlagen in der Heimatregion bieten wir Wartungsverträge, E-Check, Thermografie per Drohne und Reinigung an. Überwacht werden die Anlagen über unsere eigenen Fernwartungs- und SCADA-Systeme.",
+      text: "Für Anlagen in der Heimatregion bieten wir Wartungsverträge, E-Check, Thermografie per Drohne und Reinigung an. Überwacht werden die Anlagen per Fernwartung und SCADA.",
     },
   ],
   wirtschaft: {

@@ -4,9 +4,9 @@ import { cn } from "@/components/ui/cn";
 
 /**
  * Kennzahlenband unter dem Seitenkopf: 3–4 große Zahlen mit kurzer Erklärung.
- * items: [{ value: 30, suffix: " MWp", label: "…", quelle? }] oder { wert: "TOP 3", label }
+ * items: [{ value: 30, suffix: " MWp", label: "…", quelle? }] oder { wert: "2012", label }
  *   value  → zählt hoch (CountUp, Endwert im Server-HTML)
- *   wert   → feststehender Text (z. B. Jahreszahlen, „TOP 3“)
+ *   wert   → feststehender Text (z. B. Jahreszahlen, „seit 2012“)
  * tone: dark (Navy, Standard) | light (Sand)
  */
 export default function Kennzahlenband({ items = [], tone = "dark", fussnote, className }) {
@@ -40,7 +40,7 @@ export default function Kennzahlenband({ items = [], tone = "dark", fussnote, cl
             </Reveal>
           ))}
         </dl>
-        {fussnote && <p className={cn("mt-10 text-[12.5px] leading-relaxed", dunkel ? "text-white/45" : "text-ink-500")}>{fussnote}</p>}
+        {fussnote && <p className={cn("mt-10 text-[12.5px] leading-relaxed", dunkel ? "text-white/60" : "text-ink-500")}>{fussnote}</p>}
       </div>
     </section>
   );

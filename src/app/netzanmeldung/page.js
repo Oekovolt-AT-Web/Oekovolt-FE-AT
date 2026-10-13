@@ -1,12 +1,13 @@
 // src/app/netzanmeldung/page.js
 //
 // Übersicht „PV-Anlage beim Netzbetreiber anmelden“: Wer ist mein Netzbetreiber,
-// die fünf größten Verteilernetzbetreiber, allgemeiner Ablauf, Einspeisezählpunkt
-// (Engpass beim EAG-Fördercall 08.–22.10.2026), Checkliste, ElWG, FAQ, Quellen.
-// Daten und Quellen: src/data/netzbetreiber.js (Stand 30.09.2026).
+// zehn Verteilernetzbetreiber in allen neun Bundesländern, allgemeiner Ablauf,
+// Einspeisezählpunkt (Engpass beim EAG-Fördercall 08.–22.10.2026), Balkonkraftwerk
+// bis 800 W, Netzanschluss-Realität in Österreich (E-Control), Checkliste, ElWG,
+// FAQ, Quellen. Daten und Quellen: src/data/netzbetreiber.js (Stand 11.10.2026).
 
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, CalendarClock, FileSearch, Hash, PlugZap, Receipt, Scale, Search, Send, Sun, Wrench, Zap } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarClock, FileSearch, Gauge, Hash, MapPinned, PlugZap, Receipt, Scale, Search, Send, Sun, Timer, Wrench, Zap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -20,17 +21,17 @@ import { Checkliste, Hinweis, Quellen, StandPille } from "@/components/Forderung
 import BetreiberKarten from "@/components/Netzanmeldung/BetreiberKarten";
 import NetzCheckliste from "@/components/Netzanmeldung/NetzCheckliste";
 import ZaehlpunktPruefer from "@/components/Netzanmeldung/ZaehlpunktPruefer";
-import { ABLAUF, AUSWAHL, CHECKLISTE, DRUCK_PFAD, EAG_BEZUG, ELWG, FAQ, HINWEIS_GEWAEHR, NETZBETREIBER, PFAD, Q, STAND, ZAEHLPUNKT, betreiberPfad } from "@/data/netzbetreiber";
+import { ABLAUF, AUSWAHL, BUNDESLAENDER_NETZ, CHECKLISTE, DRUCK_PFAD, EAG_BEZUG, ELWG, FAQ, HINWEIS_GEWAEHR, KAPAZITAET_PFAD, KLEINSTERZEUGUNG, NETZANSCHLUSS_REALITAET, NETZBETREIBER, PFAD, Q, STAND, ZAEHLPUNKT, ZAEHLPUNKT_PFAD, betreiberFuerBundesland, betreiberPfad } from "@/data/netzbetreiber";
 import { BASE_URL } from "@/lib/site";
 
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITLE = "PV-Anlage beim Netzbetreiber anmelden 2026 | Ökovolt";
-const DESCRIPTION = "PV-Anlage in Österreich anmelden: Netzbetreiber finden, Ablauf, Unterlagen und Einspeisezählpunkt für den EAG-Fördercall – bei den 5 größten Netzbetreibern.";
+const DESCRIPTION = "PV-Anlage in Österreich anmelden: Netzbetreiber finden, Ablauf, Unterlagen, Balkonkraftwerk bis 800 W und Einspeisezählpunkt für den EAG-Fördercall – 10 Netzbetreiber in allen 9 Bundesländern.";
 
 export const metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  keywords: ["PV-Anlage anmelden Netzbetreiber", "Netzanmeldung Photovoltaik Österreich", "Einspeisezählpunkt beantragen", "Netzzugangsantrag PV", "Balkonkraftwerk anmelden Österreich", "Einspeisezählpunkt EAG Fördercall", "Wer ist mein Netzbetreiber"],
+  keywords: ["PV-Anlage anmelden Netzbetreiber", "Netzanmeldung Photovoltaik Österreich", "Einspeisezählpunkt beantragen", "Netzzugangsantrag PV", "Balkonkraftwerk anmelden Österreich", "Einspeisezählpunkt EAG Fördercall", "Wer ist mein Netzbetreiber", "Netzanschluss Dauer Österreich", "Netzbetreiber nach Bundesland"],
   alternates: { canonical: PAGE_URL },
   openGraph: {
     type: "article",
@@ -68,8 +69,12 @@ export default function NetzanmeldungPage() {
     isPartOf: { "@id": `${BASE_URL}/#website` },
     publisher: { "@id": `${BASE_URL}/#organization` },
     dateModified: STAND.iso,
-    hasPart: NETZBETREIBER.map((b) => ({ "@type": "WebPage", name: `PV-Anlage bei ${b.kurz} anmelden`, url: `${BASE_URL}${betreiberPfad(b.slug)}` })),
+    hasPart: [
+      ...NETZBETREIBER.map((b) => ({ "@type": "WebPage", name: `PV-Anlage bei ${b.kurz} anmelden`, url: `${BASE_URL}${betreiberPfad(b.slug)}` })),
+      { "@type": "WebPage", name: "Zählpunkt prüfen und zerlegen", url: `${BASE_URL}${ZAEHLPUNKT_PFAD}` },
+    ],
   };
+  const zahl1 = (n) => n.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
   return (
     <div>
@@ -80,9 +85,9 @@ export default function NetzanmeldungPage() {
         breadcrumbs={[{ name: "Netzanmeldung" }]}
         eyebrow={`Netzanmeldung · Stand ${STAND.label}`}
         title={<>PV-Anlage beim Netzbetreiber <span className="ov-text-gradient-light">anmelden</span></>}
-        lead="Ohne Einspeisezählpunkt kein Ticket im EAG-Fördercall am 08.10.2026. Hier sehen Sie, wer Ihr Netzbetreiber ist, wie die Anmeldung bei den fünf größten Netzbetreibern Österreichs abläuft und welche Unterlagen Sie brauchen."
+        lead="Ohne Einspeisezählpunkt kein Ticket und kein Antrag im EAG-Fördercall. Hier sehen Sie, wer Ihr Netzbetreiber ist, wie die Anmeldung bei zehn Netzbetreibern in allen neun Bundesländern abläuft, wie ein Balkonkraftwerk gemeldet wird und welche Unterlagen Sie brauchen."
         image={{ src: "/Images/AT/ratgeber/hochspannungsleitung-molln.jpg", alt: "Hochspannungsleitung über einer Wiese bei Molln in Oberösterreich", position: "center 40%" }}
-        points={["5 Netzbetreiber im Vergleich", "Einspeisezählpunkt vor dem Bau", "Checkliste zum Ausdrucken", "Jede Angabe mit Quelle"]}
+        points={["10 Netzbetreiber, 9 Bundesländer", "Einspeisezählpunkt vor dem Bau", "Balkonkraftwerk bis 800 W", "Jede Angabe mit Quelle"]}
         actions={[
           { label: "Netzanmeldung übergeben", href: "/angebot?objekt=gewerbe" },
           { label: "Zum Netzbetreiber", href: "#netzbetreiber", icon: PlugZap },
@@ -94,7 +99,7 @@ export default function NetzanmeldungPage() {
           { value: 33, suffix: " Stellen", label: "hat jede Zählpunktbezeichnung, beginnend mit AT" },
           { value: 20, suffix: " kW", label: "Anzeige statt Antrag nach § 96 ElWG" },
           { value: 4, suffix: " Wochen", label: "Frist des Netzbetreibers bei Anlagen bis 20 kW" },
-          { text: "08.10.", label: "Ticketziehung im EAG-Fördercall, ab 17 Uhr" },
+          { value: 10, suffix: " Netzbetreiber", label: "in allen neun Bundesländern, je mit Quelle" },
         ]}
       />
 
@@ -140,31 +145,185 @@ export default function NetzanmeldungPage() {
         </div>
       </Section>
 
-      {/* Die fünf Netzbetreiber */}
+      {/* Die zehn Netzbetreiber */}
       <Section tone="sand" space="md" id="netzbetreiber" className="scroll-mt-24">
         <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            eyebrow="Die fünf größten Netzbetreiber"
+            eyebrow="Zehn Netzbetreiber, neun Bundesländer"
             title="Anmeldung Schritt für Schritt – je Netzbetreiber"
-            lead="Portal, Unterlagen, Fristen, Kosten und wann der Einspeisezählpunkt kommt. Gleich aufgebaut für alle fünf, jede Angabe mit Quelle beim Netzbetreiber."
+            lead="Portal, Unterlagen, Fristen, Kosten, Energiegemeinschaft, Balkonkraftwerk und wann der Einspeisezählpunkt kommt. Gleich aufgebaut für alle, jede Angabe mit Quelle beim Netzbetreiber."
           />
           <StandPille className="shrink-0 self-start md:self-auto">Geprüft am {STAND.label}</StandPille>
         </div>
-        <BetreiberKarten betreiber={NETZBETREIBER} />
-        <p className="mt-6 text-[14px] leading-relaxed text-ink-600">
-          Ihr Netzbetreiber ist nicht dabei – etwa KNG-Kärnten Netz, TINETZ, LINZ NETZ oder ein Stadtwerk? Der Ablauf ist ähnlich; Details nennt die{" "}
-          <a href={Q.econtrolSuche.url} target="_blank" rel="noopener noreferrer" className={LINK}>
-            Übersicht der E-Control
-          </a>
-          . Für unsere Projekte übernehmen wir die Anmeldung beim jeweils zuständigen Netzbetreiber.
-        </p>
+        <BetreiberKarten betreiber={NETZBETREIBER} kompakt className="lg:grid-cols-5" />
+
+        {/* Nach Bundesland */}
+        <div className="mt-10 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-8">
+          <p className="flex items-center gap-2 font-display text-[19px] font-bold text-ink-900">
+            <MapPinned aria-hidden="true" className="h-5 w-5 text-ov-600" />
+            Netzbetreiber nach Bundesland
+          </p>
+          <p className="mt-1 text-[14px] leading-relaxed text-ink-600">Welcher der zehn Netzbetreiber in Ihrem Bundesland zuständig ist – und wo eigene Stadtwerke oder Werke das Netz betreiben.</p>
+          <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+            {BUNDESLAENDER_NETZ.map((l) => (
+              <li key={l.land} className="border-l-2 border-ov-200 pl-3">
+                <p className="text-[12.5px] font-semibold uppercase tracking-wider text-ink-500">{l.land}</p>
+                <p className="mt-0.5 text-[15px] font-semibold text-ink-900">
+                  {betreiberFuerBundesland(l.land).map((b, i, alle) => (
+                    <span key={b.slug}>
+                      <Link href={betreiberPfad(b.slug)} className="text-ov-700 hover:text-ov-800">
+                        {b.kurz}
+                      </Link>
+                      {i < alle.length - 1 ? " · " : ""}
+                    </span>
+                  ))}
+                </p>
+                {l.hinweis && <p className="text-[13px] leading-relaxed text-ink-500">{l.hinweis}</p>}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 border-t border-dashed border-ink-200 pt-4 text-[13.5px] leading-relaxed text-ink-600">
+            Ihr Netzbetreiber ist ein Stadtwerk oder ein kleines E-Werk? Der Ablauf ist ähnlich; die vollständige Liste führt die{" "}
+            <a href={Q.econtrolSuche.url} target="_blank" rel="noopener noreferrer" className={LINK}>
+              Übersicht der E-Control
+            </a>
+            . Welcher Netzbetreiber hinter Ihrer Zählpunktbezeichnung steckt, zeigt der{" "}
+            <Link href={ZAEHLPUNKT_PFAD} className={LINK}>
+              Zählpunkt-Prüfer
+            </Link>
+            .
+          </p>
+        </div>
+      </Section>
+
+      {/* Balkonkraftwerk */}
+      <Section tone="white" space="md" id="balkonkraftwerk" className="scroll-mt-24">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div>
+            <SectionHeading
+              eyebrow="Kleinsterzeugungsanlagen"
+              title={<>Balkonkraftwerk anmelden <span className="ov-text-gradient">(bis 800 W)</span></>}
+              lead={`Grenze: ${KLEINSTERZEUGUNG.grenze}. Was das ElWG vorgibt und was bei allen Netzbetreibern ähnlich läuft – die Details je Netzbetreiber stehen in den Karten.`}
+            />
+            <Checkliste className="mt-7" items={KLEINSTERZEUGUNG.punkte} />
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {NETZBETREIBER.map((b, i) => (
+              <Reveal as="li" key={b.slug} delay={(i % 2) * 60} className="flex flex-col rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/60">
+                <p className="flex items-center justify-between gap-3">
+                  <span className="font-display text-[16.5px] font-bold text-ink-900">{b.kurz}</span>
+                  <span className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">{b.bundesland}</span>
+                </p>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-ink-600">{b.kleinsterzeugung?.text || b.sonderfaelle[0].text}</p>
+                <span className="mt-auto flex flex-col pt-2">
+                  {b.kleinsterzeugung?.formular && (
+                    <a href={b.kleinsterzeugung.formular.url} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1.5 text-[13.5px] font-semibold text-ov-700 hover:text-ov-800">
+                      {b.kleinsterzeugung.formular.name}
+                      <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                      <span className="sr-only">(externer Link, neues Fenster)</span>
+                    </a>
+                  )}
+                  <Link href={`${betreiberPfad(b.slug)}#balkonkraftwerk`} className="inline-flex min-h-11 items-center gap-1.5 text-[13.5px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+                    Details bei {b.kurz}
+                    <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
+                  </Link>
+                </span>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </Section>
+
+      {/* Netzanschluss-Realität */}
+      <Section tone="sand" space="md" id="realitaet" className="scroll-mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="E-Control-Erhebung Netzanschluss"
+            title="Netzanschluss-Realität in Österreich"
+            lead={`Wie lange die Netzbetreiber tatsächlich brauchen und wie oft Zusagen mit Einschränkung kommen – aus der jährlichen Erhebung der E-Control bei ${NETZANSCHLUSS_REALITAET.netzbetreiber} Verteilernetzbetreibern, Berichtsjahr ${NETZANSCHLUSS_REALITAET.berichtsjahr}. Als Orientierung für Ihre Planung, nicht als Bewertung einzelner Netzbetreiber.`}
+          />
+          <StandPille className="shrink-0 self-start md:self-auto">Jahresbericht 2025, Stand {NETZANSCHLUSS_REALITAET.stand.label}</StandPille>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="grid gap-4 self-start sm:grid-cols-3">
+            {NETZANSCHLUSS_REALITAET.dauer.map((d, i) => (
+              <Reveal key={d.klasse} delay={i * 80} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">
+                  <Timer aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                  {d.klasse}
+                </p>
+                <p className="ov-num mt-3 font-display text-[clamp(1.9rem,1.4rem+1.6vw,2.6rem)] font-extrabold leading-none tracking-tight text-ink-900">
+                  {zahl1(d.tage)} <span className="text-[16px] font-bold text-ink-500">Tage</span>
+                </p>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-ink-600">im Schnitt bis zur Bestätigung des vollständigen Antrags · {d.anteil}</p>
+              </Reveal>
+            ))}
+            <Reveal delay={240} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 sm:col-span-3">
+              <div className="grid gap-5 sm:grid-cols-3">
+                <div>
+                  <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">Spanne</p>
+                  <p className="ov-num mt-1.5 font-display text-[22px] font-extrabold text-ink-900">
+                    {NETZANSCHLUSS_REALITAET.spanne.min} bis {NETZANSCHLUSS_REALITAET.spanne.max} Tage
+                  </p>
+                  <p className="text-[13px] text-ink-600">schnellste und längste Antwort, Letztere bei großen Anlagen</p>
+                </div>
+                <div>
+                  <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">Bis zur Betriebserlaubnis</p>
+                  <p className="ov-num mt-1.5 font-display text-[22px] font-extrabold text-ink-900">{zahl1(NETZANSCHLUSS_REALITAET.betriebTage)} Tage</p>
+                  <p className="text-[13px] text-ink-600">ab Fertigmeldung und Zählpunktanmeldung, Anlagen bis 20 kW</p>
+                </div>
+                <div>
+                  <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ink-500">Anträge 2024</p>
+                  <p className="ov-num mt-1.5 font-display text-[22px] font-extrabold text-ink-900">{zahl(NETZANSCHLUSS_REALITAET.antraege)}</p>
+                  <p className="text-[13px] text-ink-600">vollständige PV-Anträge bei 60 Netzbetreibern; die meisten in {NETZANSCHLUSS_REALITAET.meisteAntraege.laender.join(" und ")} ({NETZANSCHLUSS_REALITAET.meisteAntraege.anzahl})</p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+          <div className="flex flex-col gap-4">
+            <div className="rounded-3xl bg-navy-950 p-6 text-white md:p-7">
+              <p className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.14em] text-ov-300">
+                <Gauge aria-hidden="true" className="h-4 w-4" />
+                Zusagen mit Einschränkung
+              </p>
+              <p className="ov-num mt-3 font-display text-[clamp(2rem,1.5rem+1.8vw,2.8rem)] font-extrabold leading-none tracking-tight">
+                {NETZANSCHLUSS_REALITAET.eingeschraenkt.anteil} %
+              </p>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-white/75">
+                In {NETZANSCHLUSS_REALITAET.eingeschraenkt.land} kam {NETZANSCHLUSS_REALITAET.berichtsjahr} der größte Anteil der Zusagen mit Einschränkung – etwa mit begrenzter Einspeiseleistung. In den meisten Bundesländern wurde der Großteil ohne Einschränkung zugesagt. Eine eingeschränkte Zusage ist kein Nein: Ob die Anlage mit Leistungsregelung oder Speicher trotzdem in der geplanten Größe gebaut werden kann, klärt die Planung im Einzelfall.
+              </p>
+              <Link href={KAPAZITAET_PFAD} className="mt-4 inline-flex items-center gap-2 text-[14.5px] font-semibold text-ov-300 hover:text-white">
+                Kapazitäts-Wegweiser: freie Netzkapazität je Netzbetreiber
+                <ArrowRight aria-hidden="true" className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+              <p className="font-display text-[16.5px] font-bold text-ink-900">So lesen Sie die Zahlen</p>
+              <ul className="mt-3 space-y-2 text-[13.5px] leading-relaxed text-ink-600">
+                {NETZANSCHLUSS_REALITAET.erlaeuterung.map((e) => (
+                  <li key={e} className="flex gap-2">
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ov-500" />
+                    {e}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 border-t border-dashed border-ink-200 pt-3 text-[12.5px] leading-relaxed text-ink-500">
+                Quelle:{" "}
+                <a href={NETZANSCHLUSS_REALITAET.quelle.url} target="_blank" rel="noopener noreferrer" className="underline decoration-ink-300 underline-offset-2 hover:text-ov-700">
+                  {NETZANSCHLUSS_REALITAET.quelle.titel}
+                </a>
+                . Durchschnittswerte aller 60 erhobenen Netzbetreiber – Richtwert zur Orientierung, keine Zusage für den Einzelfall.
+              </p>
+            </div>
+          </div>
+        </div>
       </Section>
 
       {/* Auswahl – dunkle Kontrast-Sektion */}
       <Section tone="navy" space="md" id="auswahl" className="ov-noise isolate scroll-mt-24 overflow-hidden">
         <Glow />
         <div className="relative grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:gap-16">
-          <SectionHeading dark eyebrow="Warum diese fünf" title="Gemessen an den Zählpunkten im Netz" lead={AUSWAHL.text} />
+          <SectionHeading dark eyebrow="Warum diese zehn" title="Gemessen an den Zählpunkten im Netz" lead={AUSWAHL.text} />
           <div className="ov-glass rounded-3xl p-5 md:p-7">
             <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-white/55">Zählpunkte je Netzbetreiber, Ende 2024</p>
             <ol className="mt-5 space-y-3">
@@ -172,7 +331,7 @@ export default function NetzanmeldungPage() {
                 const breite = Math.max(4, Math.round((r.anzahl / maxAnzahl) * 100));
                 const drin = !!r.slug;
                 return (
-                  <li key={r.name} className="grid grid-cols-[1.5rem_minmax(0,1fr)] items-center gap-x-3 gap-y-1 sm:grid-cols-[1.5rem_11rem_minmax(0,1fr)]">
+                  <li key={r.name} className="grid grid-cols-[1.5rem_minmax(0,1fr)] items-center gap-x-3 gap-y-1 sm:grid-cols-[1.5rem_13.5rem_minmax(0,1fr)]">
                     <span className={`ov-num text-right text-[13px] font-bold ${drin ? "text-ov-300" : "text-white/35"}`}>{i + 1}</span>
                     <span className={`truncate text-[14px] font-semibold ${drin ? "text-white" : "text-white/45"}`}>{r.name}</span>
                     <span className="col-start-2 flex items-center gap-3 sm:col-start-3">
@@ -223,7 +382,11 @@ export default function NetzanmeldungPage() {
             </Link>
           </div>
           <div className="flex flex-col gap-5">
-            <ZaehlpunktPruefer />
+            <ZaehlpunktPruefer betreiberBasis={PFAD} kompakt />
+            <Link href={ZAEHLPUNKT_PFAD} className="inline-flex items-center gap-2 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+              Mehr zum Aufbau, zu den Netzbetreiber-Kennungen und zum Unterschied Einspeise-/Bezugszählpunkt
+              <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
+            </Link>
             <div className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
               <p className="font-display text-[17px] font-bold text-ink-900">Gut zu wissen</p>
               <ul className="mt-4 space-y-2.5 text-[14.5px] leading-relaxed text-ink-700">
@@ -345,7 +508,9 @@ export default function NetzanmeldungPage() {
           klappbar
           className="mt-6"
           stand={STAND.label}
-          quellen={[AUSWAHL.quelle, Q.econtrolSuche, Q.econtrolTarifkalkulator, Q.torZaehler, ...ELWG.quellen, ...EAG_BEZUG.quellen].map((q) => ({ label: q.titel, url: q.url }))}
+          quellen={[AUSWAHL.quelle, Q.econtrolSuche, Q.econtrolTarifkalkulator, Q.torZaehler, NETZANSCHLUSS_REALITAET.quelle, ...KLEINSTERZEUGUNG.quellen, ...ELWG.quellen, ...EAG_BEZUG.quellen]
+            .filter((q, i, alle) => alle.findIndex((x) => x.url === q.url) === i)
+            .map((q) => ({ label: q.titel, url: q.url }))}
           hinweis={`${HINWEIS_GEWAEHR} Die Quellen der einzelnen Netzbetreiber stehen auf deren Seiten. Orientierung ohne Gewähr, keine Rechtsberatung.`}
         />
       </Section>

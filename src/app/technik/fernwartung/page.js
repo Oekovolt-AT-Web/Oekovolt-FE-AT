@@ -34,7 +34,7 @@ export const metadata = seitenMeta({
 const NORMEN = [
   [
     "NISG 2026 (Umsetzung NIS2)",
-    "Österreichisches Gesetz, in Kraft ab 01.10.2026; betrifft mittlere und große Einrichtungen in 18 Sektoren, darunter Energie",
+    "Österreichisches Gesetz (BGBl. I Nr. 94/2025), gilt seit 1. Oktober 2026; betrifft mittlere und große Einrichtungen in 18 Sektoren, darunter Energie",
     "Risikomanagement, Lieferkettensicherheit, Multi-Faktor-Authentifizierung, Meldepflichten (24 h / 72 h / 1 Monat), Verantwortung der Geschäftsleitung",
   ],
   [
@@ -63,7 +63,7 @@ const FAQ = [
   },
   {
     q: "Fällt mein Betrieb unter das NISG 2026?",
-    a: "Das NISG 2026 tritt am 1. Oktober 2026 in Kraft und gilt grundsätzlich für mittlere und große Einrichtungen – ab 50 Beschäftigten oder, bei weniger Beschäftigten, mit mehr als 10 Mio. € Jahresumsatz und mehr als 10 Mio. € Bilanzsumme – in 18 Sektoren, darunter Energie. Ob Ihr Unternehmen erfasst ist, hängt vom Sektor und der konkreten Tätigkeit ab; das klären Sie am besten mit Ihrer Rechts- oder IT-Security-Beratung. Betroffene Einrichtungen müssen sich binnen drei Monaten registrieren und auch die Sicherheit ihrer Lieferkette – also etwa ihrer Fernwartungsdienstleister – bewerten.",
+    a: "Das NISG 2026 (BGBl. I Nr. 94/2025) gilt seit 1. Oktober 2026 und erfasst grundsätzlich für mittlere und große Einrichtungen – ab 50 Beschäftigten oder, bei weniger Beschäftigten, mit mehr als 10 Mio. € Jahresumsatz und mehr als 10 Mio. € Bilanzsumme – in 18 Sektoren, darunter Energie. Ob Ihr Unternehmen erfasst ist, hängt vom Sektor und der konkreten Tätigkeit ab; das klären Sie am besten mit Ihrer Rechts- oder IT-Security-Beratung. Betroffene Einrichtungen müssen sich binnen drei Monaten registrieren und auch die Sicherheit ihrer Lieferkette – also etwa ihrer Fernwartungsdienstleister – bewerten.",
   },
   {
     q: "Was bedeutet das NISG 2026 für die Fernwartung meiner PV-Anlage?",
@@ -88,6 +88,7 @@ const FAQ = [
 ];
 
 const QUELLEN = [
+  { titel: "RIS: Netz- und Informationssystemsicherheitsgesetz 2026 (NISG 2026), BGBl. I Nr. 94/2025", href: "https://www.ris.bka.gv.at/eli/bgbl/I/2025/94", hinweis: "§ 51 Inkrafttreten: gilt seit 01.10.2026; Stand 10/2026" },
   { titel: "WKO: NISG 2026 – neue Pflichten zur Cybersicherheit", href: "https://www.wko.at/it-sicherheit/nis2-uebersicht", hinweis: "Inkrafttreten, Fristen, Schwellenwerte, Meldepflichten" },
   { titel: "Richtlinie (EU) 2022/2555 (NIS2)", href: "https://eur-lex.europa.eu/eli/dir/2022/2555/oj" },
   { titel: "Verordnung (EU) 2024/2847 (Cyber Resilience Act)", href: "https://eur-lex.europa.eu/eli/reg/2024/2847/oj" },
@@ -128,7 +129,7 @@ export default function FernwartungPage() {
             Fernwartung, die Ausfälle verkürzt – <span className="ov-text-gradient-light">und sicher bleibt</span>
           </>
         }
-        lead="Mit eigenen Fernwartungssystemen erkennen wir Störungen an PV-Anlagen, Speichern und Parkreglern früh, beheben viele aus der Ferne und schicken Technikerinnen und Techniker nur dann, wenn es nötig ist – mit Diagnose und passendem Ersatzteil."
+        lead="Mit Fernwartungssystemen mit unserem Technologiepartner Solensa erkennen wir Störungen an PV-Anlagen, Speichern und Parkreglern früh, beheben viele aus der Ferne und schicken Technikerinnen und Techniker nur dann, wenn es nötig ist – mit Diagnose und passendem Ersatzteil."
         image={{ src: "/Images/AT/technik-service/netzwerk-sicherheit.jpg", alt: "Netzwerkstecker vor dunkelblauem Hintergrund – Symbol für gesicherte Datenverbindungen", position: "80% 50%" }}
         actions={[
           { label: "Fernwartung anfragen", href: "/service/wartung" },
@@ -143,7 +144,7 @@ export default function FernwartungPage() {
           { value: "24/7", label: "Überwachung & Alarmierung", text: "klassifiziert, gebündelt, eskaliert" },
           { value: 0, label: "offene Ports an der Anlage", text: "Verbindung nur von innen nach außen" },
           { value: 2, label: "Faktoren je Zugriff", text: "persönliche Kennung plus zweiter Faktor" },
-          { value: "1.10.2026", label: "NISG 2026 in Kraft", text: "Fernwartung wird Teil der Lieferkette" },
+          { value: "1.10.2026", label: "NISG 2026 gilt seit", text: "Fernwartung ist Teil der Lieferkette (BGBl. I Nr. 94/2025)" },
         ]}
       >
         <p>
@@ -261,8 +262,8 @@ export default function FernwartungPage() {
         <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
           <SectionHeading eyebrow="IT-Security & Datenschutz" title="NISG 2026, IEC 62443 und DSGVO: was für Fernwartung gilt" />
           <p className="ov-lead text-ink-600 lg:pb-1">
-            Am 1. Oktober 2026 tritt das NISG 2026 in Kraft. Für betroffene Einrichtungen im Energiesektor wird die Fernwartung Teil der Lieferkette, deren Sicherheit sie nachweisen
-            müssen.
+            Das NISG 2026 gilt seit 1. Oktober 2026 (BGBl. I Nr. 94/2025, § 51). Für betroffene Einrichtungen im Energiesektor ist die Fernwartung Teil der Lieferkette, deren
+            Sicherheit sie nachweisen müssen.
           </p>
         </div>
         <Tabs
@@ -278,12 +279,12 @@ export default function FernwartungPage() {
             zeilen={NORMEN}
             kompakt
             minBreite={820}
-            quelle="Stand September 2026. Ob und in welcher Rolle Ihr Unternehmen unter das NISG 2026 fällt, ist eine Rechtsfrage des Einzelfalls – keine Rechtsberatung."
+            quelle="Stand Oktober 2026 (NISG 2026 gilt seit 1. Oktober 2026). Ob und in welcher Rolle Ihr Unternehmen unter das NISG 2026 fällt, ist eine Rechtsfrage des Einzelfalls – keine Rechtsberatung."
           />
           <div className="grid gap-4 lg:grid-cols-2">
             <Hinweis ton="norm" titel="NISG 2026: die wichtigsten Fristen">
               <p>
-                Inkrafttreten am 1. Oktober 2026, ohne Übergangsfrist für die Sicherheitsmaßnahmen. Registrierung betroffener Einrichtungen binnen drei Monaten, also bis Jahresende 2026.
+                Das Gesetz gilt seit 1. Oktober 2026 (Inkrafttreten nach § 51 NISG 2026, BGBl. I Nr. 94/2025), ohne Übergangsfrist für die Sicherheitsmaßnahmen. Registrierung betroffener Einrichtungen binnen drei Monaten, also bis Jahresende 2026.
                 Erhebliche Sicherheitsvorfälle: Frühwarnung binnen 24 Stunden, Meldung binnen 72 Stunden, Abschlussbericht binnen eines Monats.
               </p>
             </Hinweis>
@@ -363,7 +364,7 @@ export default function FernwartungPage() {
       />
 
 
-      <QuellenKompakt items={QUELLEN} bildnachweis="Netzwerkstecker: Yuri Samoilov, CC BY 2.0, via Wikimedia Commons · Techniker am Schaltschrank: AndGra (Pixabay), CC0, via Wikimedia Commons." />
+      <QuellenKompakt items={QUELLEN} stand="Oktober 2026" bildnachweis="Netzwerkstecker: Yuri Samoilov, CC BY 2.0, via Wikimedia Commons · Techniker am Schaltschrank: AndGra (Pixabay), CC0, via Wikimedia Commons." />
 
       <CtaBand
         eyebrow="Fernwartung & Wartungsvertrag"

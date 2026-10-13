@@ -1,19 +1,16 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  Building2,
   CalendarCheck2,
   ClipboardList,
   Droplets,
   FileCheck2,
   Flame,
   HandCoins,
-  Handshake,
+  History,
   Landmark,
   LineChart,
-  Mail,
-  MapPin,
-  Phone,
+  MonitorDot,
   School,
   Sprout,
   Users,
@@ -38,18 +35,28 @@ import ZitatBand from "@/components/Loesungen/A/ZitatBand";
 import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
+import EinwandKarten from "@/components/Verkauf/EinwandKarten";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
 import { veroeffentlichungen } from "@/lib/kanaele/veroeffentlichungen";
 import { actorId } from "@/lib/kanaele/activitypub";
 import { zielgruppenVariante } from "@/data/zielgruppen";
-import { BASE_URL, FIRMA } from "@/lib/site";
+import { BASE_URL } from "@/lib/site";
 
 export const revalidate = 300;
+
+// Welle A / A05: Die Salzburg AG ist auf dieser Seite kein Werbeargument mehr (Entscheidung des
+// Inhabers 05.10.2026, Anwaltsprüfung offen). Die neutrale Gesellschafterangabe steht auf /uber-uns
+// und im Impressum. Keine Aussagen zu Unabhängigkeit, Beteiligungen oder Vorrang im Vergabeverfahren.
+// CTA-Kette: „Beschlussvorlage anfordern“ → /angebot?objekt=gemeinde&thema=beschlussvorlage (Auswertung des
+// Parameters „thema“ im Konfigurator: Übergabe an A08).
+const CTA_BESCHLUSS = { label: "Beschlussvorlage anfordern", href: "/angebot?objekt=gemeinde&thema=beschlussvorlage" };
+const CTA_TERMIN = { label: "Video-Termin vereinbaren", href: "/termin?art=video&thema=gemeinde" };
 
 const PFAD = "/kommunen";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "Photovoltaik für Gemeinden: Planung bis Betrieb | Ökovolt";
 const BESCHREIBUNG =
-  "PV für Gemeinden: Schulen, Bauhöfe, Kläranlagen, Freibäder, Energiegemeinschaft und Vergabe nach BVergG 2026 – vom PV-Errichter der Salzburg AG.";
+  "PV für Gemeinden: Schulen, Bauhöfe, Kläranlagen, Freibäder, Energiegemeinschaft und Vergabe nach BVergG 2026 – Photovoltaik für Gemeinden in ganz Österreich: Planung, Vergabeunterstützung, Bau und Betrieb.";
 const HERO_BILD = "/Images/AT/loesungen-a/gem-schule-luftbild.jpg";
 
 export const metadata = {
@@ -59,8 +66,6 @@ export const metadata = {
   openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630 }] },
   other: { "fediverse:creator": "@oekovolt@oekovolt.com" },
 };
-
-const salzburgAg = FIRMA.gesellschafter.find((g) => g.name.startsWith("Salzburg AG"));
 
 const FAQ = [
   {
@@ -77,15 +82,15 @@ const FAQ = [
   },
   {
     q: "Was gilt für Gemeinden in einer Energiegemeinschaft?",
-    a: "Gemeinden dürfen Mitglied, Gründerin oder Anlagenbetreiberin einer Erneuerbare-Energie-Gemeinschaft oder Bürgerenergiegemeinschaft sein. Betreibt die Gemeinde Erzeugungsanlagen in der gemeinsamen Nutzung, muss sie nach dem Elektrizitätswirtschaftsgesetz schutzbedürftigen Haushalten den Zugang zu mindestens 10 % der jährlich erzeugten Energie ermöglichen. Preise und Bedingungen legt sie selbst fest.",
+    a: "Gemeinden dürfen Mitglied, Gründerin oder Anlagenbetreiberin einer Erneuerbare-Energie-Gemeinschaft oder Bürgerenergiegemeinschaft sein. Betreibt die Gemeinde Erzeugungsanlagen in der gemeinsamen Nutzung, muss sie nach dem Elektrizitätswirtschaftsgesetz schutzbedürftigen Haushalten den Zugang zu mindestens 10 % der jährlich erzeugten Energie ermöglichen. Preise und Bedingungen legt sie selbst fest.",
   },
   {
     q: "Welche Förderungen und Mittel können Gemeinden nutzen?",
     a: "Den EAG-Investitionszuschuss für PV-Anlagen bis 1.000 kWp und Speicher, Zuschläge für innovative Anlagen wie Parkplatzüberdachungen, Mittel aus dem Kommunalinvestitionsgesetz 2025 sowie Programme für Klima- und Energie-Modellregionen und Landesförderungen. Welche Kombination zulässig ist, hängt von den beihilferechtlichen Höchstgrenzen ab; wir stellen die Varianten für Ihre Gremien zusammen.",
   },
   {
-    q: "Welche Rolle spielt die Salzburg AG bei Ökovolt?",
-    a: "Die Salzburg AG für Energie, Verkehr und Telekommunikation ist mit 49 % Gesellschafterin der Ökovolt Solartechnik GmbH; Ökovolt ist bevorzugter PV-Errichter des Salzburg AG Konzerns. Für Gemeinden, Länder und Stadtwerke bedeutet das Erfahrung in der Zusammenarbeit mit Landesversorgern, Netzbetreibern und öffentlichen Auftraggebern.",
+    q: "Was bekommt der Gemeinderat von Ökovolt für seinen Beschluss?",
+    a: "Eine Beschlussvorlage mit Rechenweg: Dachbewertung je Liegenschaft, Ertragsprognose, Eigenverbrauchsanteil, Kostenrahmen, Netzauskunft, Förderweg (EAG, KIG 2025, Land) und der passende Vergabeweg nach dem geschätzten Auftragswert. Die Unterlagen sind so aufgebaut, dass Amtsleitung und Prüfungsausschuss jede Zahl nachvollziehen können. Rechts- und Steuerfragen klären Sie mit Gemeindebund, Landesverwaltung oder Ihrer Beratung.",
   },
   {
     q: "Können wir Photovoltaik mit Notstrom für Feuerwehr und Krisenstab kombinieren?",
@@ -159,6 +164,9 @@ const GEBAEUDE = [
   },
 ];
 
+// Feste Trennstellen für lange Komposita in der H1 (WebKit ohne Silbentrennungsdaten bricht sonst mitten im Wort)
+const trennbar = (text) => String(text || "").replace("Gemeinderatstauglich", "Gemeinde\u00ADrats\u00ADtauglich");
+
 export default async function KommunenPage() {
   // Ohne Kampagnenvarianten: Seite bleibt statisch (ISR), damit der Newsroom-Block gecacht wird.
   const v = zielgruppenVariante("gemeinden");
@@ -181,24 +189,24 @@ export default async function KommunenPage() {
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Gemeinden, Länder & Stadtwerke" }]}
         eyebrow={v.eyebrow}
-        title={<>Photovoltaik für Gemeinden, <span className="ov-text-gradient-light">Länder und Stadtwerke</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+        title={<>Photovoltaik für Gemeinden: <span className="ov-text-gradient-light">{trennbar(v.titel)} {v.akzent}</span></>}
+        lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftbild eines Schulzentrums in Klagenfurt mit Photovoltaikanlage auf dem Flachdach" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video&thema=gemeinde" },
-          { label: "Liegenschaften bewerten lassen", href: "/angebot?objekt=gemeinde", icon: ClipboardList },
+          { label: CTA_BESCHLUSS.label, href: CTA_BESCHLUSS.href },
+          { label: CTA_TERMIN.label, href: CTA_TERMIN.href, icon: CalendarCheck2 },
         ]}
-        points={["Schulen, Bauhöfe, Kläranlagen, Freibäder", "Vergabe nach BVergG 2026", "Energiegemeinschaft der Gemeinde", "Salzburg AG als Gesellschafterin"]}
+        points={["Schulen, Bauhöfe, Kläranlagen, Freibäder", "Vergabe nach BVergG 2026", "Energiegemeinschaft der Gemeinde", "Beschlussvorlage mit Rechenweg"]}
       />
 
       <KennzahlenBand
         items={[
           { wert: 200000, nach: " €", label: "Direktvergabe bei Bauaufträgen seit 1. März 2026 (Vergaberechtsgesetz 2026)" },
           { wert: 50000, nach: " €", label: "darüber drei Angebote bzw. Preisauskünfte und Veröffentlichung der Vergabe" },
-          { wert: 10, nach: " %", label: "der Erzeugung von Gemeinde-Anlagen in Energiegemeinschaften für schutzbedürftige Haushalte" },
-          { text: salzburgAg?.anteil || "49 %", label: "Anteil der Salzburg AG an der Ökovolt Solartechnik GmbH" },
+          { wert: 10, nach: " %", label: "der Erzeugung von Gemeinde-Anlagen in Energiegemeinschaften für schutzbedürftige Haushalte" },
+          { wert: 1000, nach: " kWp", label: "bis dahin EAG-Investitionszuschuss für PV-Anlagen – auch für Gemeinden, Speicher bis 50 kWh" },
         ]}
-        quelle="Quellen: Vergaberechtsgesetz 2026, BGBl. I Nr. 8/2026 (Regierungsvorlage 302 BlgNR XXVIII. GP); Österreichische Koordinationsstelle für Energiegemeinschaften (FAQ zum ElWG); Firmenbuch FN 375708m."
+        quelle="Quellen: Vergaberechtsgesetz 2026, BGBl. I Nr. 8/2026 (Regierungsvorlage 302 BlgNR XXVIII. GP); Österreichische Koordinationsstelle für Energiegemeinschaften (FAQ zum ElWG); EAG-Investitionszuschüsseverordnung-Strom laut Leitfaden Land Oberösterreich 2026."
       />
 
       <Section tone="white" space="md">
@@ -233,7 +241,7 @@ export default async function KommunenPage() {
       <TechnikSystem
         eyebrow="Technik & Betrieb"
         title="Anlagen, die Gemeinden selbst im Blick haben"
-        lead="Eigene Systeme für Regelung, Fernwartung und Monitoring – mit Kennzahlen für Energiebuchhaltung, Klimaberichte und Öffentlichkeitsarbeit."
+        lead="Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns. Mit Kennzahlen für Energiebuchhaltung, Klimaberichte und Öffentlichkeitsarbeit."
         fakten={[
           { wert: "Alle", label: "Liegenschaften in einer Übersicht" },
           { wert: "CO₂", label: "Einsparung für Klimaberichte" },
@@ -271,16 +279,21 @@ export default async function KommunenPage() {
 
       <ZitatBand
         bild={{ src: "/Images/AT/ratgeber/hochspannungsleitung-molln.jpg", alt: "", position: "center 40%" }}
-        id="salzburg-ag"
-        eyebrow="Partner der Landesversorger"
-        titel="Bevorzugter PV-Errichter des Salzburg AG Konzerns"
-        text={`Die ${salzburgAg?.name || "Salzburg AG für Energie, Verkehr und Telekommunikation"} ist mit ${salzburgAg?.anteil || "49 %"} Gesellschafterin der ${FIRMA.name}. Aus dieser Zusammenarbeit kennen wir die Anforderungen von Landesversorgern, Netzbetreibern und öffentlichen Auftraggebern – von der Ausschreibung über den Netzanschluss bis zum Betrieb. Diese Erfahrung bringen wir in Projekte von Gemeinden, Ländern und Stadtwerken in ganz Österreich ein.`}
+        id="betreiberblick"
+        eyebrow="Betreiberblick"
+        titel="Betreiberblick für öffentliche Anlagen"
+        text="Die Gründer von Ökovolt betreiben seit 2012 eigene Solarparks. Deshalb planen wir Anlagen für Gemeinden so, wie wir sie selbst betreiben würden: mit Leittechnik, die Erzeugung, Eigenverbrauch und Einspeisung je Liegenschaft liefert und damit die Energiebuchhaltung der Gemeinde versorgt – und mit Unterlagen, die Vergabe, Förderantrag und Gemeinderatsbeschluss tragen."
         fakten={[
-          { icon: Handshake, titel: "Kooperation", text: "Gemeinsame Projekte mit Landesversorgern und Stadtwerken – als Errichter, Planer oder Generalunternehmer." },
-          { icon: Building2, titel: "Seit 2012 in Österreich", text: "Ökovolt Solartechnik GmbH mit Sitz in Ostermiething (OÖ), tätig in allen neun Bundesländern." },
+          { icon: History, titel: "Seit 2012", text: "eigene Solarparks der Gründer – Betrieb aus erster Hand, über die gesamte Laufzeit." },
+          { icon: MonitorDot, titel: "Leittechnik", text: "Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns; Kennzahlen für die Energiebuchhaltung." },
+          { icon: FileCheck2, titel: "Vergabe-Know-how", text: "Schwellenwerte nach BVergG 2026, Wegweiser und Checkliste für den Gemeinderat – siehe Vergabe und Förderung." },
         ]}
       >
-        <div className="border-t border-white/15 pt-12">
+        <Link href="/kommunen/vergabe-foerderung" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white/[0.08] px-5 text-[15px] font-semibold text-white ring-1 ring-white/20 transition hover:bg-ov-600 hover:ring-ov-600">
+          Vergabe und Förderung für Gemeinden
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
+        <div className="mt-12 border-t border-white/15 pt-12">
           <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Vorgehen</p>
           <h2 className="ov-h3 mt-3 text-white md:text-[28px]">Vom Gemeinderatsbeschluss zur laufenden Anlage</h2>
           <AblaufLeiste
@@ -344,7 +357,8 @@ export default async function KommunenPage() {
               </p>
               <p>
                 <strong>Stadtwerke und Landesversorger</strong> sind häufig Sektorenauftraggeber mit eigenen Grenzen. Für große Anlagen auf
-                Mittelspannung gelten zusätzlich die Anforderungen der TOR Erzeuger – dafür setzen wir eigene Parkregler und Leitwarten ein.
+                Mittelspannung gelten zusätzlich die Anforderungen der TOR Erzeuger – dafür setzen wir Parkregler und Leitwarte unseres
+                Technologiepartners Solensa ein, parametriert und betreut von uns.
               </p>
             </Prosa>
           </div>
@@ -361,7 +375,7 @@ export default async function KommunenPage() {
               className="mt-6"
               cols={2}
               items={[
-                { icon: HandCoins, titel: "EAG-Investitionszuschuss", text: "PV bis 1.000 kWp und Speicher bis 50 kWh; 30 % Zuschlag für Parkplatzüberdachungen ab 10 Stellplätzen und gebäudeintegrierte PV. Letzter Call 2026: 8.–22. Oktober." },
+                { icon: HandCoins, titel: "EAG-Investitionszuschuss", text: "PV bis 1.000 kWp und Speicher bis 50 kWh; 30 % Zuschlag für Parkplatzüberdachungen ab 10 Stellplätzen und gebäudeintegrierte PV. Letzter Call 2026: 8.–22. Oktober." },
                 { icon: Landmark, titel: "Kommunalinvestitionsgesetz", text: "Der Bund stellt nach § 2 KIG 2025 insgesamt 620 Mio. € als Finanzzuweisung an die Gemeinden bereit – seit dem Budgetbegleitgesetz 2025 (BGBl. I Nr. 25/2025) ohne Antrag und ohne Eigenanteil, ausgezahlt in Tranchen von 2025 bis 2028. Im Bericht an den Gemeinderat sind Investitionen in die Energiewende besonders zu berücksichtigen (§ 3)." },
                 { icon: Sprout, titel: "KEM & KLAR!", text: "Klima- und Energie-Modellregionen sowie Klimawandel-Anpassungsregionen des Klima- und Energiefonds bündeln Beratung und Projekte über Gemeindegrenzen hinweg." },
                 { icon: Users, titel: "Bürgerbeteiligung", text: "Energiegemeinschaft, Genossenschaft, Sale-and-lease-back oder Nachrangdarlehen – mit Blick auf Kapitalmarkt- und Gemeinderecht." },
@@ -382,10 +396,16 @@ export default async function KommunenPage() {
         </FachTabs>
       </Section>
 
-      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-20">
-        <div className="grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-16">
+      {/* Einwände vor der FAQ; FAQPage-Schema liefert die FAQ, daher mitSchema aus */}
+      <Section tone="white" space="md" id="einwaende" className="scroll-mt-24">
+        <SectionHeading eyebrow="Einwände" title="Was Gemeinderat und Amtsleitung vor dem Beschluss fragen" className="mb-8" />
+        <EinwandKarten gruppe="kommunen" mitSchema={false} titel={false} />
+      </Section>
+
+      <Section tone="sand" space="md" id="faq" className="scroll-mt-20">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Bürgermeister, Amtsleitung und Gremien" />
           <div>
-            <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Bürgermeister, Amtsleitung und Gremien" className="mb-8" />
             <Faq items={FAQ} />
             {meldungen.length > 0 && (
               <div className="mt-12">
@@ -398,84 +418,25 @@ export default async function KommunenPage() {
               </div>
             )}
           </div>
-          <div className="lg:sticky lg:top-28">
-            <p className="mb-4 flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">
-              <CalendarCheck2 aria-hidden="true" className="h-4 w-4" />
-              Direkter Draht
-            </p>
-            <AnsprechpartnerGemeinden />
-          </div>
         </div>
       </Section>
 
       <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Vergabe, Energiegemeinschaft und Förderung" />
 
+      {/* Ansprechpartner (A03): Name und Foto nur mit Einwilligung, sonst Teamfunktion und Zentrale */}
+      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-20">
+        <Ansprechpartner zielgruppe="gemeinde" />
+      </Section>
+
       <CtaBand
         eyebrow="Kostenlos & unverbindlich"
         title="Lassen Sie uns Ihre Liegenschaften gemeinsam bewerten."
-        text="Erstgespräch per Video oder vor Ort – mit ersten Zahlen zu Potenzial, Wirtschaftlichkeit, Vergabeweg, Förderung und Energiegemeinschaft."
-        primary={{ label: v.cta, href: "/termin?art=video&thema=gemeinde" }}
-        secondary={{ label: "Zum Newsroom", href: "/presse?kategorie=Kommunen%20%26%20Stadtwerke", icon: Users }}
+        text="Sie bekommen eine Beschlussvorlage mit Rechenweg: Potenzial, Wirtschaftlichkeit, Vergabeweg, Förderung und Energiegemeinschaft – als Grundlage für Gemeinderat und Prüfungsausschuss."
+        primary={{ label: CTA_BESCHLUSS.label, href: CTA_BESCHLUSS.href }}
+        secondary={{ label: CTA_TERMIN.label, href: CTA_TERMIN.href, icon: CalendarCheck2 }}
       />
 
       <Bildnachweis items={nachweise("schuleLuftbild", "schuleDach", "gemeindeamt", "feuerwehr", "klaeranlage", "freibad", "hochbehaelter", "molln", "leitwarte")} />
-    </div>
-  );
-}
-
-/** Kontaktkarte für Gemeinden – Firmendaten aus @/lib/site, bewusst ohne Personennamen. */
-function AnsprechpartnerGemeinden() {
-  return (
-    <div className="rounded-[1.75rem] bg-white p-6 text-ink-900 ring-1 ring-ink-200/70 md:p-8">
-      <h2 className="font-display text-[22px] font-extrabold tracking-tight">Ansprechpartner für Gemeinden</h2>
-      <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-        Unsere Projektberatung für Gemeinden, Stadtwerke und Verbände – persönlich aus {FIRMA.ort}, für Liegenschaften in ganz Österreich. Nennen Sie uns gern Gemeinde und Objekt, dann
-        bereiten wir das Gespräch vor.
-      </p>
-
-      <ul className="mt-6 space-y-3">
-        <li>
-          <a href={FIRMA.telefonHref} className="flex items-center gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 transition hover:ring-ov-300">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ov-600 text-white">
-              <Phone aria-hidden="true" className="h-5 w-5" />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-[13px] text-ink-600">Telefon</span>
-              <span className="ov-num block text-[16px] font-semibold">{FIRMA.telefon}</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href={`mailto:${FIRMA.email}`} className="flex items-center gap-3 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 transition hover:ring-ov-300">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-navy-950 text-white">
-              <Mail aria-hidden="true" className="h-5 w-5" />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-[13px] text-ink-600">E-Mail</span>
-              <span className="block text-[16px] font-semibold [overflow-wrap:anywhere]">{FIRMA.email}</span>
-            </span>
-          </a>
-        </li>
-      </ul>
-      <p className="mt-3 text-[13px] text-ink-600">Erreichbar {FIRMA.oeffnungszeiten.map((o) => `${o.tage} ${o.zeit}`).join(" · ")}</p>
-
-      <div className="mt-6 flex flex-col gap-2.5 sm:flex-row lg:flex-col xl:flex-row">
-        <Link
-          href="/termin?art=video&thema=gemeinde"
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(102,153,51,0.65)] transition hover:bg-ov-700"
-        >
-          <CalendarCheck2 aria-hidden="true" className="h-4 w-4" />
-          Video-Termin
-        </Link>
-        <Link
-          href="/termin?art=vor-ort&thema=gemeinde"
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-white px-5 text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200 transition hover:bg-ink-50 hover:ring-ink-300"
-        >
-          <MapPin aria-hidden="true" className="h-4 w-4" />
-          Vor-Ort-Termin
-        </Link>
-      </div>
-      <p className="mt-3 text-[12.5px] text-ink-500">Kostenlos und unverbindlich.</p>
     </div>
   );
 }

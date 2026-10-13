@@ -401,7 +401,7 @@ const artikel = {
   seitenCta: { titel: "Speicher für Ihren Betrieb?", text: "Nutzen stapeln, Größe aus dem Lastgang ableiten, Kosten ehrlich rechnen.", href: "/gewerbespeicher", label: "Gewerbespeicher ansehen" },
   cta: {
     title: "Gewerbespeicher, die sich rechnen müssen.",
-    text: "Wir legen Speicher auf Basis Ihres Lastgangs aus, kombinieren Peak Shaving, Eigenverbrauch und Spotpreis und binden sie in eigene SCADA- und Fernwartungssysteme ein.",
+    text: "Wir legen Speicher auf Basis Ihres Lastgangs aus, kombinieren Peak Shaving, Eigenverbrauch und Spotpreis und binden sie in unsere Fernwartung und SCADA ein.",
     primary: { label: "Angebot anfragen", href: "/angebot" },
     secondary: { label: "Gewerbespeicher", href: "/gewerbespeicher" },
   },

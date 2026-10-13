@@ -57,11 +57,13 @@ import Kennzahlenband from "@/components/Produktdetail/Kennzahlenband";
 import FotoBento from "@/components/Produktdetail/FotoBento";
 import FachAkkordeon, { FachTabelle } from "@/components/Produktdetail/FachAkkordeon";
 import HerstellerWortmarken from "@/components/Hersteller/HerstellerWortmarken";
+import { KENNZAHLEN, KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 import { hreflangLanguages } from "@/lib/hreflang";
 import { BASE_URL, FIRMA } from "@/lib/site";
 import { regionenNachLand } from "@/lib/regionen";
 import Querverweise from "@/components/Reusable/Querverweise";
 import { ANNAHMEN, PREISQUELLEN, preisProKwpNetto } from "@/data/solarrechner";
+import { PARKREGLER_RECHTE_GEKLAERT } from "@/data/marke";
 
 const PFAD = "/produkte/photovoltaikanlage";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
@@ -251,7 +253,7 @@ const FAQ = [
   },
   {
     q: "Wann braucht eine Anlage einen Parkregler?",
-    a: "Sobald der Netzbetreiber Vorgaben zu Wirkleistungsbegrenzung, Blindleistung oder Fernsteuerung am Netzanschlusspunkt macht – spätestens bei Anlagen vom Typ B nach TOR Stromerzeugungsanlagen ab 250 kW, häufig auch darunter. Der Parkregler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam. Wir setzen dafür unseren eigenen EZA-Regler ein.",
+    a: "Sobald der Netzbetreiber Vorgaben zu Wirkleistungsbegrenzung, Blindleistung oder Fernsteuerung am Netzanschlusspunkt macht – spätestens bei Anlagen vom Typ B nach TOR Stromerzeugungsanlagen ab 250 kW, häufig auch darunter. Der Parkregler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam. Wir setzen dafür einen Parkregler ein, den wir mit unserem Technologiepartner Solensa parametrieren, betreuen und warten.",
   },
   {
     q: "Wie läuft der Netzanschluss in Österreich ab?",
@@ -340,7 +342,7 @@ export default function PhotovoltaikanlagePage() {
         }
         lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Photovoltaikanlagen für Betriebe in ganz Österreich</span><span className="mt-3 block">Eine Photovoltaikanlage für Gewerbe und Industrie ist ein Kraftwerk am eigenen Standort: geplant nach Ihrem Lastgang, statisch nachgewiesen für österreichische Schnee- und Windlasten und nach TOR Stromerzeugungsanlagen an das Netz angeschlossen. Wir liefern Planung, Errichtung und Netzanschluss aus einer Hand.</span></>}
         image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Luftaufnahme: Monteur zwischen Modulreihen auf einem großen Flachdach" }}
-        points={["Seit 2012 in Österreich", "Hallendach, Freifläche, Carport", "Eigener Parkregler (EZA-Regler)", "Alle neun Bundesländer"]}
+        points={["Seit 2012 in Österreich", "Hallendach, Freifläche, Carport", "Parkregler (EZA-Regler) – betreut von uns", "Alle neun Bundesländer"]}
         actions={[
           { label: "Projekt anfragen", href: "/angebot" },
           { label: "Hallendach berechnen", href: "#rechner", icon: Calculator },
@@ -349,13 +351,15 @@ export default function PhotovoltaikanlagePage() {
 
       <HerstellerWortmarken />
 
+      {/* Welle A02: ohne Rangaussage (kein Beleg); Gesamtzahl aus src/data/kennzahlen.js mit Hinweis und Stand */}
       <Kennzahlenband
         items={[
           { wert: "2012", label: "in Österreich tätig – aus Ostermiething (OÖ)" },
           { value: 30, suffix: " MWp", label: "PV-Leistung errichtet allein im Jahr 2021" },
-          { wert: "TOP 3", label: "der EPC-Errichter Österreichs 2021" },
+          { value: KENNZAHLEN.find((k) => k.id === "anlagen").zahl, label: "PV-Anlagen errichtet – jeder Größe" },
           { value: 9, label: "Bundesländer – Planung, Bau und Betrieb" },
         ]}
+        fussnote={KENNZAHLEN_HINWEIS_STAND}
       />
 
       {/* Montagesysteme als Foto-Karten */}
@@ -508,15 +512,15 @@ export default function PhotovoltaikanlagePage() {
               <div className="relative aspect-[16/9] overflow-hidden">
                 <Image src="/Images/AT/ratgeber/eza-regler-parkregler.jpg" alt="Regelungstechnik unter den Modulreihen einer Photovoltaikanlage" fill sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
                 <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/20 to-transparent" />
-                <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-ov-500 px-3.5 py-1.5 text-[12.5px] font-bold text-white shadow-lg">
+                <span className="absolute left-5 top-5 inline-flex items-center gap-2 rounded-full bg-ov-600 px-3.5 py-1.5 text-[12.5px] font-bold text-white shadow-lg">
                   <Cpu aria-hidden="true" className="h-4 w-4" />
-                  Eigene Entwicklung
+                  {PARKREGLER_RECHTE_GEKLAERT ? "Eigene Entwicklung" : "Von uns parametriert"}
                 </span>
               </div>
               <div className="flex flex-1 flex-col p-6 md:p-8">
                 <h3 className="font-display text-[24px] font-extrabold text-white">Parkregler (EZA-Regler)</h3>
                 <p className="mt-3 text-[15.5px] leading-relaxed text-white/75">
-                  Unser EZA-Regler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam: Einspeiselimit, Blindleistung nach Q(U) oder cos φ, Fernsteuerbefehle des Netzbetreibers.
+                  Der EZA-Regler misst am Netzanschlusspunkt und regelt alle Wechselrichter gemeinsam: Einspeiselimit, Blindleistung nach Q(U) oder cos φ, Fernsteuerbefehle des Netzbetreibers.
                 </p>
                 <Link href="/technik/parkregler" className="group mt-auto inline-flex min-h-11 items-center gap-2 pt-5 text-[15px] font-semibold text-ov-300 hover:text-ov-200">
                   Parkregler im Detail
@@ -574,7 +578,7 @@ export default function PhotovoltaikanlagePage() {
             <ul className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
               {PAKET.map((p) => (
                 <li key={p} className="flex gap-3 text-[15px] leading-snug text-ink-700">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500 text-white">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-600 text-white">
                     <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
                   </span>
                   {p}
@@ -674,7 +678,7 @@ export default function PhotovoltaikanlagePage() {
               lead="Ihre Frage ist nicht dabei? Rufen Sie uns an – wir beraten persönlich und herstellerunabhängig."
             />
             <Reveal delay={100} className="mt-8 flex items-center gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-200/70">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ov-600 text-white">
                 <ClipboardCheck aria-hidden="true" className="h-6 w-6" />
               </span>
               <div>

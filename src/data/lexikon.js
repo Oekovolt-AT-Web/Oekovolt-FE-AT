@@ -516,7 +516,7 @@ export const BEGRIFFE = [
     begriff: "EZA-Regler (Parkregler)",
     // Definitionssatz – wörtlich auch oben auf /technik/parkregler (SEO-Plan M23)
     kurz: "Ein EZA-Regler ist die übergeordnete Regelung einer Erzeugungsanlage (EZA), die am Netzanschlusspunkt misst und Wirk- und Blindleistung aller Wechselrichter, Speicher und Ladepunkte so steuert, dass dort die Vorgaben des Netzbetreibers eingehalten werden; die österreichischen TOR Erzeuger nennen ihn Park- und Anlagenregler.",
-    text: "Er setzt Wirkleistungsbegrenzungen, Blindleistungsverfahren wie Q(U) oder cos φ(P) und Fernsteuerbefehle des Netzbetreibers oder Direktvermarkters um und dokumentiert das Verhalten. Ab mittleren Anlagengrößen verlangen die TOR Erzeuger eine solche Regelung am Netzanschlusspunkt. Ökovolt setzt dafür einen selbst entwickelten Parkregler für Österreich ein.",
+    text: "Er setzt Wirkleistungsbegrenzungen, Blindleistungsverfahren wie Q(U) oder cos φ(P) und Fernsteuerbefehle des Netzbetreibers oder Direktvermarkters um und dokumentiert das Verhalten. Ab mittleren Anlagengrößen verlangen die TOR Erzeuger eine solche Regelung am Netzanschlusspunkt. Ökovolt setzt dafür einen Parkregler mit unserem Technologiepartner Solensa ein.",
     kategorie: "netz",
     synonyme: ["Parkregler", "Power Plant Controller", "PPC", "Erzeugungsanlagen-Regler"],
     verwandt: ["tor-erzeuger", "q-u-regelung", "cos-phi", "fernwirktechnik"],
@@ -1174,7 +1174,7 @@ export const BEGRIFFE = [
     id: "scada",
     begriff: "SCADA",
     kurz: "SCADA (Supervisory Control and Data Acquisition) ist ein Leitsystem, das technische Anlagen wie PV-Parks, Speicher und Umspannwerke zentral überwacht, visualisiert und steuert.",
-    text: "Es sammelt Messwerte von Wechselrichtern, Zählern, Wetterstationen und Schutzgeräten, meldet Störungen, archiviert Daten und leitet Steuerbefehle – etwa vom Netzbetreiber oder Direktvermarkter – an den Parkregler weiter. Weil SCADA-Systeme kritische Infrastruktur steuern, sind Netzwerksegmentierung und IT-Security zentral. Ökovolt betreibt dafür eigene SCADA-Systeme.",
+    text: "Es sammelt Messwerte von Wechselrichtern, Zählern, Wetterstationen und Schutzgeräten, meldet Störungen, archiviert Daten und leitet Steuerbefehle – etwa vom Netzbetreiber oder Direktvermarkter – an den Parkregler weiter. Weil SCADA-Systeme kritische Infrastruktur steuern, sind Netzwerksegmentierung und IT-Security zentral. Ökovolt betreibt SCADA mit unserem Technologiepartner Solensa.",
     kategorie: "betrieb",
     synonyme: ["Leitsystem", "Supervisory Control and Data Acquisition", "Leittechnik"],
     verwandt: ["fernwirktechnik", "eza-regler", "anlagenmonitoring", "iec-60870-5-104"],

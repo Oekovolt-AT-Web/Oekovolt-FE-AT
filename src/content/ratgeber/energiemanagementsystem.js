@@ -313,7 +313,7 @@ const artikel = {
   seitenCta: { titel: "Energie im Betrieb steuern?", text: "EMS, Speicher und Ladepunkte als Gesamtsystem.", href: "/angebot", label: "Anfrage starten" },
   cta: {
     title: "PV, Speicher und Ladepunkte, die zusammenarbeiten.",
-    text: "Ökovolt plant Energiemanagement mit offenen Schnittstellen, eigenem Parkregler und SCADA – für Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich.",
+    text: "Ökovolt plant Energiemanagement mit offenen Schnittstellen, Parkregler und SCADA – für Gewerbe, Landwirtschaft, Hotellerie und Gemeinden in ganz Österreich.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "Technik ansehen", href: "/technik" },
   },

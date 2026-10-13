@@ -19,7 +19,8 @@ import { BASE_URL, FIRMA, SCHWESTER } from "@/lib/site";
 // Eigenes Hinweisgebersystem nur verlinken, wenn aktiv (HINWEIS_INTERN=1) – sonst leitet
 // /hinweisgebersystem auf IntegrityLine um. Siehe src/data/hinweisgeber.js.
 import { HINWEIS_INTERN } from "@/data/hinweisgeber";
-import { KENNZAHLEN_SATZ, KENNZAHLEN_STAND, zahlText } from "@/data/kennzahlen";
+import { KENNZAHLEN_HINWEIS_STAND, KENNZAHLEN_SATZ, KENNZAHLEN_STAND, zahlText } from "@/data/kennzahlen";
+import { KERN, PARKREGLER_SATZ } from "@/data/marke";
 import { PARTNER } from "@/components/Hersteller/partner";
 import { LAENDER_SLUGS, STAND as FOERDER_STAND } from "@/data/bundeslaender";
 import { NETZBETREIBER, STAND as NETZ_STAND, betreiberPfad } from "@/data/netzbetreiber";
@@ -157,7 +158,7 @@ export function kopf() {
   const gesellschafter = FIRMA.gesellschafter.map((g) => `${g.name} (${g.anteil})`).join(", ");
   return `# Ökovolt Österreich – ${FIRMA.name}
 
-> Photovoltaik für Gewerbe, Industrie, Landwirtschaft, Tourismus und die öffentliche Hand in ganz Österreich. Dach- und Freiflächenanlagen, Agri-PV, Gewerbespeicher, Ladeinfrastruktur und Energiegemeinschaften – mit eigenem Parkregler (EZA-Regler), eigener Fernwartung und eigenem SCADA-System. Planung, Bau, Netzanschluss, Betrieb und Wartung aus einer Hand, seit 2012.
+> Photovoltaik für Gewerbe, Industrie, Landwirtschaft, Tourismus und die öffentliche Hand in ganz Österreich. Dach- und Freiflächenanlagen, Agri-PV, Gewerbespeicher, Ladeinfrastruktur und Energiegemeinschaften – ${PARKREGLER_SATZ} Planung, Bau, Netzanschluss, Betrieb und Wartung aus einer Hand, seit 2012.
 
 Stand: ${llmsStand()} · Sprache: Deutsch (Österreich) · Geltungsbereich: Österreich (Recht, Förderung, Netz, Tarife)
 
@@ -172,8 +173,8 @@ Stand: ${llmsStand()} · Sprache: Deutsch (Österreich) · Geltungsbereich: Öst
 - Kontakt: ${FIRMA.telefon} · ${FIRMA.email}
 - Einzugsgebiet: ganz Österreich (alle neun Bundesländer)
 - Unternehmensgruppe: Stammhaus der ÖKOVOLT-Gruppe ist die deutsche Schwestergesellschaft ${SCHWESTER.name}, ${SCHWESTER.ort} (seit 2010, ${SCHWESTER.register}). Sie ist Inhaberin der Marke ÖKOVOLT und der Rechte an dieser Website; die österreichische GmbH ist rechtlich selbstständig.
-- Kennzahlen (laut Ökovolt Österreich): ${KENNZAHLEN_SATZ}.
-- Einordnung: 2021 errichtete die österreichische Gesellschaft PV-Anlagen mit 30 MWp und zählte zu den drei größten EPC-Errichtern (Integrierter Photovoltaik-Contractor) Österreichs; seit 2021 ist die Salzburg AG mit 49 % beteiligt. Die Gründer betreiben seit 2012 eigene Solarparks.
+- Kennzahlen (${KENNZAHLEN_HINWEIS_STAND}): ${KENNZAHLEN_SATZ}.
+- Einordnung: 2021 errichtete die österreichische Gesellschaft PV-Anlagen mit rund 30 MWp (Planung, Beschaffung und Bau). Die Gründer betreiben seit 2012 eigene Solarparks. ${KERN}
 - Zitierhinweis: Unternehmensangaben bitte als „laut Ökovolt“ kennzeichnen; Registerdaten sind im österreichischen Firmenbuch und bei WKO Firmen A–Z überprüfbar.
 
 `;

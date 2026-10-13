@@ -213,8 +213,8 @@ export default async function TerminPage() {
       </div>
 
       <Section tone="sand" space="lg" id="rueckruf">
-        <div className="grid items-start gap-12 lg:grid-cols-[1fr_440px] lg:gap-20">
-          <div>
+        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-20">
+          <div className="min-w-0">
             <SectionHeading
               eyebrow="Keine Zeit für Termine?"
               title={
@@ -270,7 +270,7 @@ export default async function TerminPage() {
               <OeffnungszeitenListe />
             </div>
           </div>
-          <div className="rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-40px_rgba(15,23,42,0.45)] ring-1 ring-ink-200/70 md:p-8">
+          <div className="min-w-0 rounded-[2rem] bg-white p-6 shadow-[0_30px_70px_-40px_rgba(15,23,42,0.45)] ring-1 ring-ink-200/70 md:p-8">
             <p className="mb-5 font-display text-[22px] font-extrabold tracking-tight text-ink-900">
               Rückruf anfordern
             </p>

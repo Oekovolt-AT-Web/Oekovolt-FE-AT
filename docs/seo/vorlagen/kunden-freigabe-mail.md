@@ -1,37 +1,44 @@
-# Vorlage: Kunden-Freigabe für die Kundenbühne (M30)
+# Vorlage: Kunden-Freigabe für die Kundenbühne (M30) – per Einmal-Link
 
-Zum [Offpage-Fahrplan, Abschnitt 12](../Offpage-Fahrplan.md#12-kunden-freigaben-für-die-kundenbühne-m30). Stand: 30.09.2026.
+> **Vor Einsatz anwaltlich prüfen.** Stand 11.10.2026 (Welle A07; ersetzt die Fassung vom 30.09.2026 mit Antwort per
+> Ankreuzen in der E-Mail). Zum [Offpage-Fahrplan, Abschnitt 12](../Offpage-Fahrplan.md#12-kunden-freigaben-für-die-kundenbühne-m30).
 
 **Wer versendet:** die Projektleitung bzw. der bisherige Ansprechpartner des Kunden. Keine Massenmail.
-**Keine Gegenleistung** für Zitat oder Logo: kein Rabatt, keine Gutschrift, kein Gewinnspiel.
-Nach der Antwort in `src/data/kunden.js` bzw. im Backoffice nur das eintragen, was **ausdrücklich** freigegeben wurde, jeweils mit Datum.
+**Vorher:** im Backoffice „Referenz Freigabe“ anlegen (Projekt, Firma, Ansprechperson, E-Mail) – der Desk zeigt den
+Einmal-Link genau einmal; 30 Tage gültig. Vertrag: `docs/frappe-referenzfreigabe/README.md`.
+**Keine Gegenleistung** für die Freigabe: kein Rabatt, keine Gutschrift, kein Gewinnspiel.
+**Kein Link verlangt:** Wir bitten ausdrücklich **nicht** um eine Verlinkung von der Kunden-Website. Die Projekt-Plakette
+ist ein Angebot, keine Bedingung, und verlinkt mit `rel="nofollow"`.
+Nach der Antwort nichts von Hand eintragen – die Website liest die Freigabe aus dem Backoffice. Nur bei Papier/PDF:
+`src/data/kunden.js` (`freigegebenAm`, `beleg`) und Desk nachtragen.
 
 ---
 
-**Betreff:** Ihre Photovoltaikanlage auf oekovolt.com – Ihre Freigabe
+**Betreff:** Ihre Photovoltaikanlage auf oekovolt.com – Ihre Freigabe in zwei Minuten
 
 > Guten Tag **[Anrede Name]**,
 >
 > Ihre Photovoltaikanlage **[Projektname, Ort, kWp]** zeigen wir als Referenz auf unserer Website:
 > **https://www.oekovolt.com/referenzen/projekte/[slug]**
 >
-> Neben den Anlagendaten steht dort ein kurzes Porträt Ihres Unternehmens. Wir haben es in eigenen Worten **ausschließlich aus Ihren öffentlichen Angaben** geschrieben (Website, Impressum) und die Quellen auf der Seite genannt. Den Ertrag und die vermiedenen CO₂-Emissionen weisen wir als **Schätzung** mit offengelegtem Rechenweg aus.
+> Derzeit nennen wir dort bewusst **weder Ihren Firmennamen noch Logo, Zitat oder Fotos** – das zeigen wir nur, wenn
+> Sie es ausdrücklich freigeben. Bitte entscheiden Sie das Punkt für Punkt über Ihren persönlichen Link
+> (einmalig gültig, 30 Tage):
 >
-> Wir würden die Seite gern um zwei Dinge ergänzen, aber nur mit Ihrer Zustimmung:
+> **[Einmal-Link aus dem Backoffice]**
 >
-> 1. **Zitat:** ein bis zwei Sätze von Ihnen zur Anlage, mit Name und Funktion der zitierten Person. Einen Vorschlag schreiben wir bewusst nicht vor – Ihre eigenen Worte sind uns lieber.
-> 2. **Logo:** Ihr Firmenlogo neben dem Porträt.
+> Dort können Sie einzeln ankreuzen: Firmenname, Logo, Zitat (in Ihren Worten), Fotos der Anlage (ohne Personen),
+> eine sachliche Projekt-Plakette für Ihre eigene Website, Live-Daten und Messwerte Ihrer Anlage. Nichts ist
+> vorausgewählt. Bitte bestätigen Sie dabei, dass Sie für Ihr Unternehmen zeichnungsberechtigt sind.
 >
-> Bitte antworten Sie kurz mit:
+> **Freiwillig, widerrufbar, ohne Gegenleistung:** Sie können jede Freigabe jederzeit widerrufen – über den Link in
+> der Bestätigungsmail oder formlos an office@oekovolt.at. Es gibt dafür keine Vergütung oder Vergünstigung.
+> Datenschutz: https://www.oekovolt.com/datenschutz
 >
-> - Porträttext: ☐ passt so ☐ bitte ändern: …
-> - Zitat: ☐ ja, Wortlaut: „…“ – Name, Funktion: … ☐ nein
-> - Logo: ☐ ja (bitte als Datei mitschicken) ☐ nein
->
-> **Freiwillig und widerrufbar:** Die Freigabe ist freiwillig. Sie können sie jederzeit per E-Mail an office@oekovolt.at widerrufen; wir entfernen Zitat bzw. Logo dann umgehend. Ohne Ihre Zustimmung erscheinen weder Zitat noch Logo. Den Namen der zitierten Person verarbeiten wir nur zu diesem Zweck (Datenschutzerklärung: https://www.oekovolt.com/datenschutz).
->
-> **Nur wenn Sie möchten:** Zu jeder Referenz gibt es ein Solar-Siegel mit den Kennzahlen Ihrer Anlage und einen ESG-Kurzbericht. Das Siegel können Sie auf Ihrer Website einbinden. Das ist keine Bedingung, und der Code verlinkt bewusst mit `rel="nofollow"`:
-> https://www.oekovolt.com/referenzen/projekte/[slug]/siegel
+> **Nur wenn Sie möchten – gemeinsame Meldung im Kunden-Newsroom:** Auf Wunsch veröffentlichen wir eine kurze
+> gemeinsame Projektmeldung (Text stimmen wir vorher mit Ihnen ab) in unserem Newsroom und – wenn Sie das möchten –
+> stellen wir sie Ihnen für Ihre eigenen Kanäle bereit. Eine Verlinkung Ihrer Website zu uns ist **nicht** nötig und
+> wird nicht erwartet.
 >
 > Vielen Dank und freundliche Grüße
 > **[Name, Funktion]**
@@ -39,8 +46,8 @@ Nach der Antwort in `src/data/kunden.js` bzw. im Backoffice nur das eintragen, w
 
 ---
 
-## Freigabe-Protokoll
+## Freigabe-Protokoll (ergänzend zum Backoffice)
 
-| Projekt-Slug | Kunde | angefragt am | Antwort am | Porträt | Zitat (ja/nein) | Logo (ja/nein) | eingetragen am | Ablage der Freigabe |
-|---|---|---|---|---|---|---|---|---|
-| | | | | | | | | |
+| Projekt-Slug | Kunde | RF-Nummer | Link verschickt am | Antwort am | Name | Logo | Zitat | Fotos | Plakette | Live | Messwerte | Newsroom-Meldung |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | | |

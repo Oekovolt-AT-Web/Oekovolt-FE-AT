@@ -1,7 +1,9 @@
 // src/components/Startseite/S08Technik.js
 //
-// Startseite – Abschnitt: Eigene Technik & Service.
+// Startseite – Abschnitt: Regelung, Leittechnik & Service.
 // Eingebunden in src/app/page.js.
+// Welle A02: keine Eigen-Parkregler- oder „selbst entwickelt“-Aussage ohne Rechteklärung (src/data/marke.js);
+// Stock-Motive sind als Symbolbild gekennzeichnet (sichtbar und im Alt-Text), kein Stock-Personenfoto.
 //
 // Idee: ein dunkles „Leitstand“-Modul mit gezeichnetem Systemschema (PV-Park → Wechselrichter →
 // Parkregler → Netzanschlusspunkt → Netzbetreiber, darüber SCADA, dazwischen gesicherte
@@ -17,13 +19,16 @@ import Section from "@/components/ui/Section";
 import SectionHeading, { Eyebrow } from "@/components/ui/SectionHeading";
 import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import S08Buehne from "./s08-Buehne";
 import S08Schema, { S08_CSS } from "./s08-Schema";
 
+// `symbolbild`: Stock-Motiv (keine Ökovolt-Anlage) – sichtbar gekennzeichnet. Das frühere Stock-Personenfoto
+// (Jobs/jobs4.jpg) ist durch ein personenloses Motiv ersetzt (public/Images/AT/QUELLEN-technik-service.md).
 const TECHNIK = [
-  { sys: "regler", icon: SlidersHorizontal, title: "Parkregler (EZA-Regler)", text: "Regelt Wirk- und Blindleistung am Netzanschlusspunkt nach den Vorgaben des Netzbetreibers und den TOR Erzeuger – inklusive Einspeisebegrenzung und Fernwirkanbindung.", href: "/technik/parkregler", cta: "Zum Parkregler", bild: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator und Schaltgeräte in einem Umspannwerk" },
-  { sys: "fern", icon: Radio, title: "Fernwartung", text: "Gesicherte Fernzugriffe auf Wechselrichter, Regler und Zähler: Viele Störungen beheben wir, ohne dass jemand anfahren muss.", href: "/technik/fernwartung", cta: "Zur Fernwartung", bild: "/Images/Jobs/jobs4.jpg", alt: "Techniker prüft Anlagendaten auf einem Tablet neben PV-Modulen" },
-  { sys: "scada", icon: MonitorDot, title: "SCADA & Leitwarte", text: "Portfolio-Monitoring, Alarmierung und Reporting über alle Anlagen – entwickelt mit unserem Digitalisierungspartner Solensa.", href: "/technik/scada", cta: "Zu SCADA & Leitwarte", bild: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Großbildwand und Arbeitsplätzen (Symbolbild)" },
+  { sys: "regler", icon: SlidersHorizontal, title: "Parkregler (EZA-Regler)", text: "Regelt Wirk- und Blindleistung am Netzanschlusspunkt nach den Vorgaben des Netzbetreibers und den TOR Erzeuger – inklusive Einspeisebegrenzung und Fernwirkanbindung.", href: "/technik/parkregler", cta: "Zum Parkregler", bild: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator und Schaltgeräte in einem Umspannwerk (Symbolbild)", symbolbild: true },
+  { sys: "fern", icon: Radio, title: "Fernwartung", text: "Gesicherte Fernzugriffe auf Wechselrichter, Regler und Zähler: Viele Störungen beheben wir, ohne dass jemand anfahren muss.", href: "/technik/fernwartung", cta: "Zur Fernwartung", bild: "/Images/AT/technik-service/netzwerk-sicherheit.jpg", alt: "Netzwerkstecker vor blauem Hintergrund (Symbolbild für gesicherte Fernwartung)", symbolbild: true },
+  { sys: "scada", icon: MonitorDot, title: "SCADA & Leitwarte", text: "Portfolio-Monitoring, Alarmierung und Reporting über alle Anlagen – mit unserem Technologiepartner Solensa.", href: "/technik/scada", cta: "Zu SCADA & Leitwarte", bild: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Großbildwand und Arbeitsplätzen (Symbolbild)", symbolbild: true },
 ];
 
 const SERVICE = [
@@ -76,10 +81,10 @@ export default function StartTechnik() {
         <style>{S08_CSS + EIGENES_CSS}</style>
 
         <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr] lg:items-end lg:gap-16">
-          <SectionHeading eyebrow="Eigene Technik" title={<>Drei Systeme. <span className="ov-text-gradient">Selbst entwickelt.</span></>} />
+          <SectionHeading eyebrow="Regelung und Leittechnik" title={<>Drei Systeme. <span className="ov-text-gradient">Von uns betreut.</span></>} />
           <Reveal delay={120} className="lg:pb-1">
             <p className="ov-lead max-w-[34rem] text-ink-600">
-              Große Anlagen stellen hohe Anforderungen an Netzanschluss und Betrieb. Deshalb setzen wir auf eigene Regelungs- und Leittechnik statt auf Blackbox-Lösungen.
+              Große Anlagen stellen hohe Anforderungen an Netzanschluss und Betrieb. {PARKREGLER_SATZ} Keine Blackbox-Lösungen.
             </p>
             <Button href="/technik" variant="secondary" pfeil className="mt-6">
               Technik-Übersicht
@@ -110,16 +115,16 @@ export default function StartTechnik() {
               <S08Schema />
             </S08Buehne>
             <p className="sr-only">
-              Schema: Der PV-Park speist über Wechselrichter, Parkregler (EZA-Regler, eigene Entwicklung) und Netzanschlusspunkt mit Zähler ins Netz. Der Netzbetreiber gibt Sollwerte nach TOR Erzeuger an den Parkregler. Wechselrichter, Regler und Zähler sind über gesicherte Fernwartung an SCADA und Leitwarte angebunden.
+              Schema: Der PV-Park speist über Wechselrichter, Parkregler (EZA-Regler) und Netzanschlusspunkt mit Zähler ins Netz. Der Netzbetreiber gibt Sollwerte nach TOR Erzeuger an den Parkregler. Wechselrichter, Regler und Zähler sind über gesicherte Fernwartung an SCADA und Leitwarte angebunden.
             </p>
 
             <div className="mt-8 flex items-center justify-between gap-4 border-t border-white/10 pt-6 md:mt-10">
-              <p className="flex items-center gap-2 text-[13px] text-white/50">
+              <p className="flex items-center gap-2 text-[13px] text-white/60">
                 <MousePointerClick aria-hidden="true" className="hidden h-4 w-4 text-ov-300 lg:block" strokeWidth={1.8} />
                 <span className="hidden lg:inline">System wählen – es leuchtet im Schema auf.</span>
                 <span className="lg:hidden">Schematische Darstellung</span>
               </p>
-              <p className="hidden text-[13px] text-white/40 lg:block">Schematische Darstellung</p>
+              <p className="hidden text-[13px] text-white/60 lg:block">Schematische Darstellung</p>
             </div>
 
             <ul className="ov-no-scrollbar -mx-5 mt-6 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-1 md:mx-0 md:grid md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
@@ -137,7 +142,10 @@ export default function StartTechnik() {
                       <span aria-hidden="true" className="absolute left-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-ov-400 font-display text-[12px] font-extrabold text-navy-950 ring-4 ring-navy-950/40">
                         0{i + 1}
                       </span>
-                      <span className="absolute bottom-4 left-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-navy-950/60 ring-1 ring-white/15 backdrop-blur-md transition-colors duration-500 group-hover:bg-ov-500 group-hover:ring-ov-400">
+                      {t.symbolbild && (
+                        <span className="absolute right-4 top-4 rounded-full bg-navy-950/70 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm">Symbolbild</span>
+                      )}
+                      <span className="absolute bottom-4 left-5 flex h-11 w-11 items-center justify-center rounded-2xl bg-navy-950/60 ring-1 ring-white/15 backdrop-blur-md transition-colors duration-500 group-hover:bg-ov-600 group-hover:ring-ov-400">
                         <t.icon aria-hidden="true" className="h-5 w-5 text-ov-300 transition-colors duration-500 group-hover:text-white" strokeWidth={1.8} />
                       </span>
                     </div>
@@ -205,7 +213,7 @@ export default function StartTechnik() {
                     {p.items.map((s) => (
                       <li key={s.href}>
                         <Link href={s.href} className="group flex min-h-[76px] items-center gap-3.5 rounded-2xl bg-sand-50 p-3.5 ring-1 ring-ink-200/60 transition-[background-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_40px_-22px_rgba(15,23,42,0.35)] hover:ring-ov-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500">
-                          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200/70 transition-colors duration-300 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
+                          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200/70 transition-colors duration-300 group-hover:bg-ov-600 group-hover:text-white group-hover:ring-ov-600">
                             <s.icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />
                           </span>
                           <span className="min-w-0 flex-1">

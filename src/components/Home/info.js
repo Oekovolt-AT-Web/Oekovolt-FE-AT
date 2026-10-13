@@ -13,7 +13,7 @@ export default function SolutionsPage({ data }) {
     {
       icon: <Sun className="text-[35px] text-[#669933]/90" />,
       value: toNumber(data?.pv_kraftwerke, 0),
-      label: "PV-Kraftwerke",
+      label: "PV-Anlagen",
     },
     {
       icon: <Factory className="text-[35px] text-[#669933]/90" />,

@@ -1,6 +1,9 @@
+// Welle C, Paket C08: Block „Weiter für <Stadt>“ (./weiter.js) – Netzanmeldungs-Leitfaden des
+// zuständigen Betreibers, in alpinen Lagen /schneelast samt Ratgeber, dazu zwei thematische Ratgeber.
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ArrowUpRight, CalendarCheck2, Compass, Factory, Gauge, HandCoins, MapPin, MonitorCog, Route, Smartphone, Sun, Wrench } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpen, CalendarCheck2, Compass, Factory, Gauge, HandCoins, MapPin, MonitorCog, PlugZap, Route, Smartphone, Snowflake, Sun, Wrench } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -20,6 +23,10 @@ import { REGIONEN } from "@/data/regionen";
 import { FIRMENSITZ_KOORD, ZONEN, naechsteReferenzen, nachbarn, pvgisQuelle, pvgisReferenz, regionFuer } from "@/lib/regionen";
 import { BASE_URL, LOCALE, SITE_NAME } from "@/lib/site";
 import { landPfad } from "@/lib/bundesland/auswertung";
+import { artikelNachSlug } from "@/lib/ratgeber";
+import { weiterFuerStadt } from "./weiter";
+
+const SCHRITT_ICON = { netz: PlugZap, schnee: Snowflake, ratgeber: BookOpen };
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -58,7 +65,7 @@ const UMFANG = {
     punkte: [
       { icon: Smartphone, title: "Vorplanung mit Ihren Daten", text: "Lastgang, Stromrechnung, Dachpläne und Fotos reichen für eine belastbare Vorplanung. Die Begehung vor Ort vereinbaren wir vor dem verbindlichen Angebot." },
       { icon: Factory, title: "Gewerbe, Industrie, Landwirtschaft", text: "Dach-, Carport- und Freiflächenanlagen inklusive Speicher, Ladeinfrastruktur und EZA-Regelung am Netzanschlusspunkt." },
-      { icon: MonitorCog, title: "Überwachung aus der Ferne", text: "Eigene Fernwartungs- und SCADA-Systeme melden Abweichungen; Vor-Ort-Einsätze planen wir gebündelt und frühzeitig." },
+      { icon: MonitorCog, title: "Überwachung aus der Ferne", text: "Fernwartung und SCADA mit unserem Technologiepartner Solensa melden Abweichungen; Vor-Ort-Einsätze planen wir gebündelt und frühzeitig." },
     ],
   },
   3: {
@@ -66,7 +73,7 @@ const UMFANG = {
     punkte: [
       { icon: Sun, title: "Schwerpunkt größere Anlagen", text: "In dieser Entfernung bauen wir vor allem für Unternehmen, Industrie, Landwirtschaft und öffentliche Hand. Private Anfragen prüfen wir im Einzelfall." },
       { icon: Smartphone, title: "Digitale Vorplanung", text: "Lastgangdaten, Pläne und Fotos genügen für eine erste Auslegung und Wirtschaftlichkeitsrechnung – ohne dass jemand anreisen muss." },
-      { icon: MonitorCog, title: "Betrieb mit Fernüberwachung", text: "Monitoring über eigene Fernwartung und SCADA; Service-Einsätze werden gebündelt und im Voraus geplant." },
+      { icon: MonitorCog, title: "Betrieb mit Fernüberwachung", text: "Monitoring über Fernwartung und SCADA mit unserem Technologiepartner Solensa; Service-Einsätze werden gebündelt und im Voraus geplant." },
     ],
   },
 };
@@ -86,6 +93,7 @@ export default async function RegionSeite({ params }) {
   const bild = r.bild || landesBild(r.land);
   const netz = r.fakten.netzbetreiber;
   const winter = Math.round(([0, 1, 10, 11].reduce((s, i) => s + r.pvgis.monate_sued35[i], 0) / r.pvgis.sued35_kwh_kwp) * 100);
+  const weiter = weiterFuerStadt(r, { titelFuer: (slug) => artikelNachSlug(slug)?.title || null });
 
   return (
     <div>
@@ -285,6 +293,62 @@ export default async function RegionSeite({ params }) {
       <Section tone="white" space="lg">
         <SectionHeading eyebrow={ZONEN[r.zone].label} title={`${umfang.titel} ${name}`} className="mb-10" />
         <FeatureGrid cols={3} items={umfang.punkte} />
+      </Section>
+
+      {/* Weiter für <Stadt>: Netzanmeldung, Schneelast (alpin) und zwei thematische Ratgeber */}
+      <Section tone="sand" space="lg" id="weiter">
+        <SectionHeading eyebrow="Nächste Schritte" title={weiter.ueberschrift} lead={weiter.lead} className="mb-10" />
+        <div className={`grid gap-4 md:grid-cols-2 ${weiter.schritte.length + weiter.themen.length === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3"}`}>
+          {weiter.schritte.map((s, i) => {
+            const Icon = SCHRITT_ICON[s.icon] || ArrowRight;
+            return (
+              <Reveal key={s.id} delay={i * 80} className="flex">
+                <article className="flex w-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-50 text-ov-600 ring-1 ring-ov-200">
+                    <Icon aria-hidden="true" className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 font-display text-[18px] font-bold leading-snug text-ink-900">{s.titel}</h3>
+                  <p className="mt-2 text-[14.5px] leading-relaxed text-ink-700">{s.text}</p>
+                  <div className="mt-auto flex flex-col gap-1 pt-4">
+                    <Link href={s.href} className="inline-flex min-h-11 items-center gap-2 text-[14.5px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+                      <ArrowRight aria-hidden="true" className="h-4 w-4" />
+                      {s.label}
+                    </Link>
+                    {s.ratgeber && (
+                      <Link href={s.ratgeber.href} className="inline-flex min-h-11 items-center gap-2 text-[14.5px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+                        <BookOpen aria-hidden="true" className="h-4 w-4" />
+                        Ratgeber: {s.ratgeber.titel}
+                      </Link>
+                    )}
+                    {s.extern && (
+                      <a href={s.extern.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-1 text-[13.5px] font-semibold text-ink-700 underline decoration-ink-300 underline-offset-2 hover:decoration-current">
+                        {s.extern.label}
+                        <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" />
+                        <span className="sr-only">(öffnet neues Fenster)</span>
+                      </a>
+                    )}
+                  </div>
+                </article>
+              </Reveal>
+            );
+          })}
+          {weiter.themen.map((t, i) => (
+            <Reveal key={t.id} delay={(weiter.schritte.length + i) * 80} className="flex">
+              <Link href={t.href} className="group flex w-full flex-col rounded-3xl bg-navy-950 p-6 text-white ring-1 ring-black/5 transition-shadow hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500">
+                <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-ov-300">
+                  <BookOpen aria-hidden="true" className="h-5 w-5" />
+                </span>
+                <span className="mt-4 text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-300">Ratgeber</span>
+                <span className="mt-2 font-display text-[18px] font-bold leading-snug">{t.titel}</span>
+                <span className="mt-2 text-[14px] leading-relaxed text-white/75">{t.text}</span>
+                <span className="mt-auto inline-flex items-center gap-2 pt-4 text-[14.5px] font-semibold text-white">
+                  {t.label}
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
       </Section>
 
       {referenzen.length > 0 && (

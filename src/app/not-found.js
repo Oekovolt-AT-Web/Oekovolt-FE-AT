@@ -26,7 +26,7 @@ export default function NotFound() {
         </p>
         <h1 className="ov-h2 ov-hero-in mt-4" style={{ "--ov-delay": "100ms" }}>Diese Seite hat heute keine Sonne abbekommen.</h1>
         <p className="ov-lead ov-hero-in mx-auto mt-5 max-w-xl text-white/65" style={{ "--ov-delay": "180ms" }}>
-          Die gesuchte Seite existiert nicht oder wurde verschoben. Diese Wege führen garantiert ans Ziel:
+          Die gesuchte Seite existiert nicht oder wurde verschoben. Diese Wege helfen Ihnen weiter:
         </p>
         <ul className="ov-hero-in mt-10 grid w-full max-w-3xl gap-3 sm:grid-cols-3" style={{ "--ov-delay": "260ms" }}>
           {ZIELE.map((z) => (

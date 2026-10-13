@@ -421,6 +421,15 @@ describe("solarrechner – berechne()", () => {
     assert.equal(empfohlenerSpeicher(12000), 12);
     assert.equal(empfohlenerSpeicher(0), 5);
   });
+  // Welle A (A10): EAG-Speicherzuschuss erst ab 0,5 kWh je kWp (EAG-AS FAQ 2026, wie src/lib/foerdercall.js).
+  // 20 kWp brauchen mind. 10 kWh – 5 kWh dürfen keinen Speicherzuschuss bekommen.
+  test("Förderung: 20 kWp mit 5 kWh Speicher → 0 € Speicherzuschuss", () => {
+    const f = berechne({ kwp: 20, ausrichtung: "sued", neigung: "mittel", verbrauch: 6000, speicherKwh: 5, foerderung: true }).foerderung;
+    assert.equal(f.speicher, 0);
+    assert.equal(f.summe, f.pv);
+    // mit 10 kWh (= 0,5 kWh/kWp) gibt es den Speicherzuschuss
+    assert.ok(berechne({ kwp: 20, ausrichtung: "sued", neigung: "mittel", verbrauch: 6000, speicherKwh: 10, foerderung: true }).foerderung.speicher > 0);
+  });
 });
 
 // ---------------------------------------------------------------------------

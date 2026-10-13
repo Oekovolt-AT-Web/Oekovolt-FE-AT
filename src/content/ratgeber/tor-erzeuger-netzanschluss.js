@@ -251,7 +251,7 @@ const artikel = {
 
   passend: [
     { href: "/ratgeber/eza-regler-parkregler", titel: "EZA-Regler & Parkregler", text: "Regelung am Netzanschlusspunkt." },
-    { href: "/technik/parkregler", titel: "Ökovolt Parkregler", text: "Eigenentwicklung für österreichische Netze." },
+    { href: "/technik/parkregler", titel: "Ökovolt Parkregler", text: "Mit Technologiepartner Solensa, betreut von uns." },
     { href: "/ratgeber/photovoltaik-anmelden", titel: "PV-Anlage anmelden", text: "Vom Netzzugangsantrag zum Zählpunkt." },
     { href: "/forderungen/richtlinien", titel: "Normen & Richtlinien", text: "TOR, OVE und ÖNORM im Überblick." },
   ],
@@ -269,7 +269,7 @@ const artikel = {
   seitenCta: { titel: "Netzanschluss für über 250 kW?", text: "Wir übernehmen Netzanfrage, Regelungskonzept und Nachweise.", href: "/angebot", label: "Projekt anfragen" },
   cta: {
     title: "Netzanschluss ohne Überraschungen – von der Anfrage bis zur Abnahme.",
-    text: "Ökovolt Solartechnik plant PV-Anlagen bis in den Megawattbereich und liefert mit dem eigenen Parkregler die Regelungstechnik für österreichische Netzbetreiber.",
+    text: "Ökovolt Solartechnik plant PV-Anlagen bis in den Megawattbereich und liefert mit dem Parkregler mit unserem Technologiepartner Solensa die Regelungstechnik für österreichische Netzbetreiber.",
     primary: { label: "Projekt anfragen", href: "/angebot" },
     secondary: { label: "Parkregler", href: "/technik/parkregler" },
   },

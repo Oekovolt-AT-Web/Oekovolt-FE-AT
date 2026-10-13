@@ -2,7 +2,7 @@
 
 import { useDeferredValue, useId, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Car, Check, ClipboardCopy, Factory, Leaf, Sun, TrendingDown, Truck } from "lucide-react";
+import { ArrowUpRight, Car, Check, ClipboardCopy, Factory, Leaf, Lock, Sun, TrendingDown, Truck } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/Rechner/bausteine";
@@ -14,6 +14,7 @@ import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
 import useTeilenStart from "@/components/RechnerTeilen/useTeilenStart";
 import { kodiere } from "@/components/RechnerTeilen/kodierung";
+import useLeadGate from "@/components/LeadGate/useLeadGate";
 
 const t1 = (kg) => kg / 1000;
 const pct = (v) => Math.round(v * 100);
@@ -123,7 +124,10 @@ export default function CO2Rechner() {
   const text = textbaustein(r, { jahr, firma: firma.trim() || "Unser Unternehmen" });
   const eingespart = Math.max(r.gesamt.reduktionKg, 0);
 
-  const kopieren = async () => {
+  // Lead-Gate (A09): Der Textbaustein ist ein individuelles Ergebnis – am Bildschirm frei, „Text kopieren“ erst
+  // nach bestätigter E-Mail. Der Bestätigungslink führt auf dieselbe Berechnung zurück (ohne Firmenname).
+  const gate = useLeadGate({ kennung: "co2-esg", modus: "export", kontext: { rueckkehr: `/rechner/co2-esg${teilenQuery ? `?${teilenQuery}` : ""}` } });
+  const kopierenFrei = async () => {
     try {
       await navigator.clipboard.writeText(text);
       setKopiert(true);
@@ -132,6 +136,13 @@ export default function CO2Rechner() {
       setKopiert(false);
     }
   };
+  const kopieren = () =>
+    gate.ausfuehren("export", kopierenFrei, {
+      titel: "Textbaustein für Ihren Nachhaltigkeitsbericht",
+      einleitung: "Der Text steht unten zum Lesen bereit. Zum Kopieren in Ihren Bericht schalten Sie ihn einmalig frei.",
+      weiterLabel: "Text jetzt kopieren",
+      ergebnis: { "Berichtsjahr": jahr, "Reduktion gesamt (t CO₂/Jahr)": Math.round(eingespart / 100) / 10, "Methode Scope 2": methode },
+    });
   useRechnerErgebnis("co2-esg", r);
 
   // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
@@ -187,6 +198,8 @@ export default function CO2Rechner() {
       },
     ],
     hinweise: [`Textbaustein ${jahr}: ${text}`],
+    // Zahlen für die Entscheider-Mappe (src/data/argumentarien.js): CO₂ je Betriebsjahr, Anlagengröße
+    mappe: { co2TonnenJahr: eingespart / 1000, ...(pvAn ? { kwp } : {}) },
     annahmen: [
       `Standortbasierter Faktor Standard ${fmt(CO2.lokFaktorG, 1)} g/kWh: mittlere österreichische Stromaufbringung 2024 (Marktentwicklung 2024, BMIMI) – für die Berichterstattung den Faktor Ihres Berichtsjahres einsetzen.`,
       `Marktbasierter Faktor: Beispielwert, maßgeblich ist die Stromkennzeichnung Ihrer Rechnung. Herkunftsnachweise zählen marktbasiert mit 0 g/kWh.`,
@@ -309,7 +322,7 @@ export default function CO2Rechner() {
                 <li className="flex gap-2"><Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />Selbst genutzter Solarstrom senkt Scope 2 in beiden Methoden.</li>
                 <li className="flex gap-2"><Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-600" />Herkunftsnachweise senken nur den marktbasierten Wert.</li>
                 <li className="flex gap-2">
-                  <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
+                  <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ink-500" />
                   <span>
                     Eingespeister Solarstrom ({fmt(r.pv.einspeisung / 1000)} MWh) ist nicht anrechenbar – er vermeidet im Stromsystem rund <strong className="ov-num text-ink-800">{fmt(t1(r.vermiedenEinspeisungKg), 1)} t</strong> ({fmt(CO2.substitutionG, 1)} g/kWh Substitution).
                   </span>
@@ -319,7 +332,7 @@ export default function CO2Rechner() {
             <div className="rounded-3xl bg-navy-950 p-5 text-white md:p-6">
               <h3 className="font-display text-[16px] font-bold">Gesamt Scope 1 + 2 (marktbasiert)</h3>
               <p className="mt-3 font-display text-[clamp(1.6rem,1.3rem+1vw,2.2rem)] font-extrabold leading-none tracking-tight">
-                <Zahl wert={t1(r.gesamt.vorher)} stellen={1} /> <span className="text-white/40">→</span> <Zahl wert={t1(r.gesamt.nachher)} stellen={1} suffix=" t" className="text-ov-300" />
+                <Zahl wert={t1(r.gesamt.vorher)} stellen={1} /> <span className="text-white/60">→</span> <Zahl wert={t1(r.gesamt.nachher)} stellen={1} suffix=" t" className="text-ov-300" />
               </p>
               <p className="mt-2 text-[13px] text-white/65">
                 {eingespart > 0 ? `${fmt(t1(eingespart), 1)} t CO₂e weniger pro Jahr` : "keine Reduktion"}
@@ -344,18 +357,18 @@ export default function CO2Rechner() {
                 type="button"
                 onClick={kopieren}
                 className={cn(
-                  "inline-flex h-10 items-center gap-2 rounded-full px-4 text-[13.5px] font-semibold transition-colors",
+                  "inline-flex h-11 items-center gap-2 rounded-full px-4 text-[13.5px] font-semibold transition-colors",
                   kopiert ? "bg-ov-600 text-white" : "bg-ink-900 text-white hover:bg-ov-600"
                 )}
               >
-                {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : <ClipboardCopy aria-hidden="true" className="h-4 w-4" />}
+                {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : gate.freigegeben ? <ClipboardCopy aria-hidden="true" className="h-4 w-4" /> : <Lock aria-hidden="true" className="h-4 w-4" />}
                 {kopiert ? "Kopiert" : "Text kopieren"}
               </button>
             </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_140px]">
               <div>
                 <label htmlFor={firmaId} className="mb-1.5 block text-[12.5px] font-semibold text-ink-600">Firmenname (optional)</label>
-                <input id={firmaId} value={firma} onChange={(e) => setFirma(e.target.value)} placeholder="Unser Unternehmen" className="h-11 w-full rounded-xl bg-white px-3.5 text-[15px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500" />
+                <input id={firmaId} value={firma} onChange={(e) => setFirma(e.target.value)} placeholder="Unser Unternehmen" className="h-11 w-full rounded-xl bg-white px-3.5 text-[15px] text-ink-900 ring-1 ring-ink-200 placeholder:text-ink-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-ov-500" />
               </div>
               <div>
                 <label htmlFor={jahrId} className="mb-1.5 block text-[12.5px] font-semibold text-ink-600">Berichtsjahr</label>
@@ -398,6 +411,7 @@ export default function CO2Rechner() {
             kampagne="rechner_co2_esg"
             bericht={bericht}
           />
+          {gate.dialog}
         </div>
       </div>
     </div>

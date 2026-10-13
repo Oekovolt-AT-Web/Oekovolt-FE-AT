@@ -42,7 +42,7 @@ export const FAQ = [
   },
   {
     q: "Was unterscheidet Ökovolt von anderen PV-Errichtern?",
-    a: "Wir decken Planung, Bau und Betrieb aus einer Hand ab und setzen dafür eigene Systeme ein: einen selbst entwickelten Parkregler (EZA-Regler) für den österreichischen Netzanschluss sowie eigene Fernwartungs- und SCADA-Systeme. Und wir wissen, worauf es im Betrieb ankommt – die Gründer betreiben seit 2012 eigene Solarparks. Wir bauen, was wir selbst betreiben würden.",
+    a: "Wir decken Planung, Bau und Betrieb aus einer Hand ab und setzen dafür Parkregler (EZA-Regler), Fernwartung und SCADA mit unserem Technologiepartner Solensa ein – parametriert, betreut und gewartet von uns. Und wir wissen, worauf es im Betrieb ankommt – die Gründer betreiben seit 2012 eigene Solarparks. Wir bauen, was wir selbst betreiben würden.",
   },
   {
     q: "Welche Förderungen gibt es für Photovoltaik in Österreich?",

@@ -20,10 +20,11 @@
 //  - Haushalte: Referenzhaushalt der E-Control mit 3.500 kWh/Jahr (Tarifkalkulator/Preismonitor).
 //  - Pacht: KEINE Marktangabe. Der Betrag ist Ihre Annahme (Regler); Pachthöhen variieren
 //    stark nach Region, Netznähe und Konzept – Landwirtschaftskammern beraten.
-//  - TOR-Typ: dieselbe Staffel wie der Gewerbe-PV-Rechner (torTyp() aus ./gewerbepv.js,
-//    inkl. 0,8-kW-Untergrenze) – eine Quelle statt zweier Staffeln (Befund tests-04).
+//  - TOR-Typ: gemeinsame Staffel torTyp() aus src/components/Technik/torTypen.js (wie
+//    Gewerbe-PV-Rechner und TOR-Typ-Finder, inkl. 0,8-kW-Untergrenze), eingestuft nach der
+//    AC-Maximalkapazität: Wechselrichterleistung ≈ kWp ÷ 1,15 (Annahme DC_AC_VORSCHLAG).
 
-import { torTyp } from "./gewerbepv.js";
+import { acVorschlag, torTyp } from "../../components/Technik/torTypen.js";
 
 export const PACHT = {
   konzepte: [
@@ -117,8 +118,9 @@ export function rechnePacht({ hektar, standort, konzept: konzeptId = "freiflaech
     reihe.push({ jahr: t, betrag, kumuliert: summe });
   }
 
-  // Maximalkapazität ≈ kWp (Näherung); Staffel aus gewerbepv.torTyp()
-  const tor = torTyp(kwp);
+  // TOR nach AC-Maximalkapazität: Wechselrichter ≈ kWp ÷ 1,15 (offengelegte Annahme)
+  const acKva = acVorschlag(kwp);
+  const tor = torTyp(acKva);
   return {
     konzept: k,
     hektar: ha,
@@ -136,6 +138,8 @@ export function rechnePacht({ hektar, standort, konzept: konzeptId = "freiflaech
     netz: netzEinschaetzung(abstandKm, kwp),
     tor: tor.typ, // String wie bisher („A“ … „D“, „–“ unter 0,8 kW) – PachtRechner zeigt „Typ {r.tor}“
     torText: tor.text,
+    torKnapp: tor.knapp,
+    acKva,
     // EAG-Investitionszuschuss auch über 1.000 kWp – dann anteilig bis 1.000 kWp (EAG-AS FAQ 2026 Fragen 19/20)
     eagInvestitionszuschuss: kwp > 0,
     eagAnteilig: kwp > 1000,

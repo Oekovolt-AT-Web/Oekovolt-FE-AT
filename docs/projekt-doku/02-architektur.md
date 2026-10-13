@@ -1,7 +1,7 @@
 # 02 – Architekturbeschreibung
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 42010 (Stakeholder und Belange, Sichten, Architekturentscheidungen).
-Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Keine Normkonformität behauptet. Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 ## 1. Stakeholder-Belange (Auszug)
 
@@ -250,3 +250,13 @@ flowchart LR
 | ADR-035 | **Freigabe-Tor für Personen** (`einwilligung`, Rolle, Qualifikation) vor jeder Namens-/Schema-Ausgabe von Fachprüfern | DSGVO, E-E-A-T nur mit echten Angaben | `src/data/fachpruefer.js` | gültig (unveröff.) |
 | ADR-036 | **Doorway-Vermeidung messbar**: 5-Wort-Überschneidung < 0,35 je Vorlage; sonst Zusammenführen (Schneelast-Länder → Sprungmarken, 308) | Suchmaschinen-Richtlinien | `src/app/schneelast/[bundesland]/page.js`, `src/lib/bundesland/auswertung.js` | gültig (unveröff.) |
 | ADR-037 | **Kennzahl ausblenden statt unbelegt zeigen** (CO₂ ohne Zeitraum) | UWG | `src/data/kennzahlen.js` | gültig (unveröff.) |
+| ADR-038 | **Werbeaussagen-Register mit Schaltern** (`src/data/werbeaussagen.js`): Aussage nur aktiv bei Schalter + Beleg + Freigabe; Testabgleich gegen eine triagierte Baseline | Inhaber-Entscheidung 4 (05.10.2026), UWG/EmpCo; sofort aktivierbar ohne Textsuche im Code | `src/data/werbeaussagen.js`, `scripts/werbeaussagen.test.mjs` | gültig (unveröff.) |
+| ADR-039 | **Marken-Kern als Daten** (`src/data/marke.js`: Claim, Lead, Display-Zeilen, Zusagen, `PARKREGLER_SATZ`) statt verstreuter Texte | eine Stelle für Botschaften und Schalter | `src/data/marke.js` | gültig (unveröff.) |
+| ADR-040 | **Kundenfreigabe fail-closed:** Backoffice-Freigaben (Einmal-Link, DocType `Referenz Freigabe`) gewinnen gegenüber `kunden.js`; bei Fehler gilt alles als nicht freigegeben; ohne Namensfreigabe neutraler Slug und keine Verlinkung | Persönlichkeits-/Namensrecht, UWG; Livegang ohne vollständiges Backoffice | `src/lib/kundenbuehneServer.js`, `src/data/kunden.js` | gültig (unveröff.); ersetzt Teile von ADR-017 |
+| ADR-041 | **Lead-Gate mit signiertem Website-Token** (HMAC-SHA256, `LEAD_GATE_SECRET`, 24 h, einmalig), Bestätigung nur per Klick, Freischaltung als HttpOnly-Cookie; das Backoffice übernimmt den Token in `bestaetigungs_link` | Mail-Scanner dürfen nichts freischalten; keine E-Mail im Token; Website und Backoffice prüfen dieselbe Bestätigung | `src/lib/leadGateServer.js`, `src/app/api/lead-gate/*`, `website_api/rechner.py` | gültig (unveröff.) |
+| ADR-042 | **Eine Liste der Gate-Kennungen** (`src/data/leadRechner.js`, 25 Einträge) für Website und Backoffice (`RECHNER_NAMEN` wird gegen die Liste geprüft) | unbekannte Kennungen werden abgewiesen, keine Rechnernamen-Injektion in Mails | `src/data/leadRechner.js`, `website_api/format.py`, `tests/pruefe_vertrag.py` | gültig (unveröff.) |
+| ADR-043 | **Lead-Verarbeitung zentral im `after_insert`-Hook** (`lead_eingang.py`): Scoring, Dubletten, Routing, Team-Mail, Alarm für alle fünf Lead-DocTypes; die API-Module senden keine Team-Mail mehr; nie blockierend | eine Logik statt fünf; Fehler landen im Error Log, die Anfrage geht nicht verloren | `website_api/lead_eingang.py`, `website_api/sla.py` | gültig (unveröff.) |
+| ADR-044 | **SLA in Geschäftsminuten nur aus den Zeitfenstern von `termin_logik.py`** | eine Quelle für Öffnungszeiten, Feiertage und Sperrtage (Termine und SLA) | `website_api/sla.py` | gültig (unveröff.) |
+| ADR-045 | **Cookie-Banner serverseitig gerendert**, Sichtbarkeit nur per CSS-Stil vor dem ersten Paint, Client-Insel nur für die Interaktion | kein Layout-Shift, Banner ist nicht das LCP-Element; Zwischenlösung: Skript im `<body>` statt im `<head>` (A-INT offen) | `src/components/Cookies/cookiecomponent.js`, `src/components/Reusable/LayoutWrapper.js` | gültig (unveröff.) |
+| ADR-046 | **TOR-Typ nach AC-Summe** (Wechselrichter + Speicher + Bestand) mit einer gemeinsamen Staffel `torTypen.js` für alle Rechner | Netzanschlussregeln richten sich nach der AC-Leistung; vorher abweichende Staffeln je Rechner | `src/components/Technik/torTypen.js` | gültig (unveröff.) |
+| ADR-047 | **`next dev` ohne Turbopack** (Wächter `scripts/dev-waechter.mjs`, Port 3001) | Windows Smart App Control blockiert `@next/swc-win32-x64-msvc` | `package.json` (`dev`, `dev:lan`) | gültig |

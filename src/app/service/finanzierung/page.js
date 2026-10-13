@@ -29,6 +29,7 @@ import Bildband from "@/components/ServiceAT/B/Bildband";
 import Fachdetails from "@/components/ServiceAT/B/Fachdetails";
 import Abschluss from "@/components/ServiceAT/B/Abschluss";
 import FinanzModelle from "@/components/ServiceAT/B/FinanzModelle";
+import ModellvergleichInteraktiv from "@/components/Dossier/ModellvergleichInteraktiv";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/service/finanzierung";
@@ -198,6 +199,20 @@ export default function FinanzierungPage() {
             .
           </p>
         </Hinweis>
+      </Section>
+
+      {/* Neutraler Modellvergleich (B07) */}
+      <Section tone="white" space="lg" id="modellvergleich" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-end lg:gap-16">
+          <SectionHeading eyebrow="Modellvergleich" title="Kaufen, leasen oder pachten? Neutral gerechnet" />
+          <Reveal delay={100}>
+            <p className="ov-lead text-ink-600">
+              Dieselbe Anlage in sechs Modellen: Kauf mit Eigenkapital, Kredit, Leasing/Mietkauf, Contracting, Dach-PPA und Dachpacht. Sie setzen die Konditionen aus Ihren Angeboten ein – wir zeigen
+              Kapitalwert, Liquidität im ersten Jahr, wem die Anlage am Ende gehört und wer IFB und AfA nutzt.
+            </p>
+          </Reveal>
+        </div>
+        <ModellvergleichInteraktiv />
       </Section>
 
       {/* Steuer & Förderung */}

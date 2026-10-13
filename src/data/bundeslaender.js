@@ -18,6 +18,16 @@
 /** Zentrales Prüfdatum für alle Förder- und Rechtsseiten. */
 export const STAND = { iso: "2026-09-29", label: "September 2026", kurz: "09/2026" };
 
+// Datumsfelder je Programm (C01): fristIso = Einreichfrist, startIso = Beginn der Einreichung,
+// gueltigBisIso = Ende der Laufzeit, geprueftAm = letzte redaktionelle Prüfung (ISO).
+// Nur aus den Statustexten übertragen – nichts geschätzt. Der sichtbare Status wird zur Laufzeit
+// im Browser über programmStatus() aus @/lib/programmStatus berechnet; "anzeigeStatus" bleibt die
+// redaktionelle Einordnung (pausiert | angekuendigt | beendet).
+// startVoraussichtlich: true = Start nur angekündigt (z. B. „ab Mitte Oktober“) – Anzeige „voraussichtlich“,
+// nach dem Tag „Start erwartet – bitte prüfen“ statt „offen“; dazu naechstePruefungIso (Test schlägt danach fehl).
+const GEPRUEFT = STAND.iso; // Sofort-Welle, 29.09.2026
+const GEPRUEFT_C01 = "2026-10-11"; // Quelle am 11.10.2026 erneut abgerufen
+
 /** Hinweistext für nicht an der Primärquelle belegte Werte. */
 export const PRUEFEN_HINWEIS = `Stand ${STAND.label}, bitte bei der Förderstelle prüfen`;
 
@@ -83,6 +93,7 @@ export const BUNDESLAENDER = {
         hoehe: "max. 30 % der Kosten, gestaffelt 400 €/kWp (bis 50 kWp), 300 €/kWp (50–100 kWp), 250 €/kWp (100–1.000 kWp) – der niedrigere Betrag gilt",
         was: "PV auf Bestandswohnbauten mit mindestens 3 Wohneinheiten und mindestens 50 % Wohnnutzung",
         status: "laufend, solange Mittel reichen – Antrag vor der Bestellung",
+        geprueftAm: GEPRUEFT,
         url: "https://www.wien.gv.at/amtswege/oekostromanlagen-photovoltaik-anlagen-foerderantrag",
         quelle: "wien.gv.at",
       },
@@ -94,6 +105,8 @@ export const BUNDESLAENDER = {
         hoehe: "Fördersätze je Sonderform laut Stadt Wien",
         was: "Gründach-PV, Flugdach-PV, PV-Fassaden sowie PV-Dachgärten und Verschattungen auf begehbaren Dächern",
         status: "seit 01.05.2026",
+        startIso: "2026-05-01",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         hinweis: "Ob eine Kombination mit dem EAG-Investitionszuschuss möglich ist, geben Sekundärquellen unterschiedlich an – vor dem Antrag klären.",
         url: "https://www.wien.gv.at/umwelt/photovoltaik-foerderpaket-ab-mai-2026",
@@ -170,6 +183,8 @@ export const BUNDESLAENDER = {
         hoehe: "max. 45 % der umweltrelevanten Mehrkosten, Bonuspunkte für Speicher und E-Ladestellen",
         was: "PV als Parkplatzüberdachung für Betriebe, Gemeinden und Vereine; Budget 2 Mio. €",
         status: "einziger Stichtag 30.06.2026 – derzeit keine Einreichung; neuen Call abwarten",
+        fristIso: "2026-06-30",
+        geprueftAm: GEPRUEFT,
         anzeigeStatus: "pausiert", // Anzeige: Ampel „derzeit keine Einreichung“
         url: "https://www.noe.gv.at/noe/Energie/PV-Ueberdachung_Parkplaetze.html",
         quelle: "noe.gv.at",
@@ -182,6 +197,7 @@ export const BUNDESLAENDER = {
         hoehe: "Punkte im Förderungsmodell Eigenheim (Neubau und Sanierung)",
         was: "PV und – seit der Novelle 11/2025 – Stromspeicher im Punktesystem der Wohnbauförderung",
         status: "laufend",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.energie-noe.at/foerderung-fuer-photovoltaik",
         quelle: "energie-noe.at",
@@ -194,6 +210,7 @@ export const BUNDESLAENDER = {
         hoehe: "Vor-Ort-Paket 100 €, telefonische Erstberatung kostenlos",
         was: "Beratung für Gemeinden und KEM-Regionen zur Gründung und zum Betrieb von Energiegemeinschaften",
         status: "laufend",
+        geprueftAm: GEPRUEFT,
         url: "https://www.energie-noe.at/gemeinde-energiegemeinschaften",
         quelle: "energie-noe.at",
       },
@@ -270,6 +287,8 @@ export const BUNDESLAENDER = {
         hoehe: "25 % der Bundesförderung als Aufschlag, KMU-Zuschlag 20 bzw. 30 %",
         was: "Prozesseffizienz, Abwärmenutzung, Wärmepumpen für Niedertemperatur-Abwärme – PV ist nicht Gegenstand",
         status: "bis 31.12.2026, Einreichung über den UFI-Prozess der KPC",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT,
         url: "https://www.land-oberoesterreich.gv.at/183291.htm",
         quelle: "land-oberoesterreich.gv.at",
       },
@@ -347,6 +366,7 @@ export const BUNDESLAENDER = {
         hoehe: "1.000 € pauschal je PV-Anlage (ab 5 kWp) bzw. je Speicher (ab 5 kWh), max. 40 % der Kosten",
         was: "Betriebe, land- und forstwirtschaftliche Betriebe, gemeinnützige Vereine",
         status: "laut Sekundärquellen laufend",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.salzburg.gv.at/energiefoerderung/photovoltaikanlagen-und-stromspeicher",
         quelle: "salzburg.gv.at",
@@ -423,6 +443,7 @@ export const BUNDESLAENDER = {
         hoehe: "100 €/kWh, max. 10 kWh bzw. 1.000 €",
         was: "Nachrüstung oder Erweiterung von Speichern, Inbetriebnahme ab 01.01.2026; Budget rund 1 Mio. €",
         status: "bis zur Ausschöpfung – Antrag nach Inbetriebnahme",
+        geprueftAm: GEPRUEFT,
         url: "https://www.tirol.gv.at/presse/meldungen/meldung/land-tirol-foerdert-2026-nachruestung-von-pv-anlagen-mit-stromspeichern/",
         quelle: "tirol.gv.at",
       },
@@ -434,6 +455,8 @@ export const BUNDESLAENDER = {
         hoehe: "Fördersätze laut Richtlinie",
         was: "PV auf Gemeindeobjekten (bis 31.12.2028), Wärmepumpen, Wärmenetze, Ladeinfrastruktur für E-Carsharing (bis 31.12.2030)",
         status: "laufend",
+        gueltigBisIso: "2028-12-31", // PV auf Gemeindeobjekten bis 31.12.2028
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.energieagentur.tirol/fuer-gemeinden/foerderuebersicht/",
         quelle: "energieagentur.tirol",
@@ -446,6 +469,7 @@ export const BUNDESLAENDER = {
         hoehe: "50 % der Kosten, max. 125 €/kWp",
         was: "PV im Rahmen der Wohnhaussanierung; Teile der Sanierungsoffensive 2026 sind ausgeschöpft",
         status: "laut Sekundärquellen seit 01.01.2026 halbierter Satz",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.energieagentur.tirol/fuer-private/foerderuebersicht/",
         quelle: "energieagentur.tirol",
@@ -523,6 +547,8 @@ export const BUNDESLAENDER = {
         hoehe: "Fördersatz laut aktueller Richtlinie",
         was: "PV-Überdachung von Carports, Parkplätzen und anderen versiegelten Flächen",
         status: "laut Sekundärquellen bis 31.12.2026",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://formulare.vorarlberg.gv.at/",
         quelle: "vorarlberg.gv.at",
@@ -574,7 +600,7 @@ export const BUNDESLAENDER = {
     // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
     bild: { src: "/Images/AT/foerderung/land-kaernten-woerthersee.jpg", alt: "Wörthersee mit Maria Wörth und den Karawanken", position: "center 45%", motiv: "Wörthersee", urheber: "Johann Jaritz", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:P%C3%B6rtschach_Halbinselpromenade_W%C3%B6rther_See_mit_Maria_W%C3%B6rth_19112017_2022.jpg" },
     slugs: ["landesfoerderungen-in-kaernten"],
-    stand: STAND.iso,
+    stand: GEPRUEFT_C01,
     foerderart: "zuschuss",
     ertrag: [1220, 1300],
     ertragOrte: [["Klagenfurt", 1252], ["Villach", 1301], ["Spittal an der Drau", 1223], ["Wolfsberg", 1238]],
@@ -597,9 +623,16 @@ export const BUNDESLAENDER = {
         themen: ["pv-dach"],
         hoehe: "bis 200 €/kWp, max. 45 % der Kosten, max. 500.000 € je Standort",
         was: "Förderbare Anlagengröße nach Jahresstromverbrauch; kombinierbar mit dem EAG-Zuschuss (Formular WT-L48)",
-        status: "laufend 2026 – Antrag nach Fertigstellung",
+        status: "Richtlinie gilt laut LK Kärnten (23.09.2026) bis Ende 2026 – Anträge nach Fertigstellung voraussichtlich ab Mitte Oktober 2026",
+        // Portalstart nur „Mitte Oktober“ angekündigt → 15.10. als voraussichtlicher Tag, am 16.10. erneut prüfen
+        startIso: "2026-10-15",
+        startVoraussichtlich: true,
+        naechstePruefungIso: "2026-10-16",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT_C01,
+        hinweis: "Kombination mit Bundesförderung: bei betrieblichen Anlagen max. 45 % Förderintensität; gefördert werden nur nach dem 01.01.2026 realisierte Projekte (LK Kärnten, 23.09.2026).",
         pruefen: true,
-        url: "https://ktn.lko.at/photovoltaik-neuer-f%C3%B6rdercall-gestartet+2400+4411646",
+        url: "https://ktn.lko.at/eag-investitionszuschuss-letzter-f%C3%B6rdercall-2026+2400+4457200",
         quelle: "LK Kärnten",
       },
       {
@@ -610,6 +643,8 @@ export const BUNDESLAENDER = {
         hoehe: "bis 45 % der Kosten, gestaffelt nach Größe",
         was: "PV auf Gemeindegebäuden und kommunaler Infrastruktur (Formular WT-L47)",
         status: "laufend 2026",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.ktn.gv.at",
         quelle: "ktn.gv.at",
@@ -621,7 +656,13 @@ export const BUNDESLAENDER = {
         themen: ["pv-dach", "speicher"],
         hoehe: "3.000 € pauschal (PV ab 5 kWp mit Speicher ab 5 kWh); Mehrparteienhaus +1.500 € je Wohneinheit; Speicher-Nachrüstung 1.000 €",
         was: "Rechnungen ab 01.01.2026, Antrag online nach Fertigstellung",
-        status: "Call ab 15.04.2026 – Einreichfrist wird unterschiedlich angegeben",
+        status: "Call 2026 ab 15.04. ausgeschrieben (Kelag); Anträge nach Fertigstellung laut LK Kärnten voraussichtlich ab Mitte Oktober 2026, Richtlinie bis Ende 2026",
+        // Portalstart nur „Mitte Oktober“ angekündigt → 15.10. als voraussichtlicher Tag, am 16.10. erneut prüfen
+        startIso: "2026-10-15",
+        startVoraussichtlich: true,
+        naechstePruefungIso: "2026-10-16",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT_C01,
         pruefen: true,
         url: "https://www.kelag.at/blog/artikel/photovoltaik/22/pv-foerderung-oesterreich-kaernten-aktuelle-foerderungen-im-ueberblick",
         quelle: "LK Kärnten, Kelag",
@@ -660,6 +701,7 @@ export const BUNDESLAENDER = {
     },
     quellen: [
       { label: "LK Kärnten – PV-Fördercall 2026", url: "https://ktn.lko.at/photovoltaik-neuer-f%C3%B6rdercall-gestartet+2400+4411646" },
+      { label: "LK Kärnten – Landesförderung voraussichtlich ab Mitte Oktober (23.09.2026)", url: "https://ktn.lko.at/eag-investitionszuschuss-letzter-f%C3%B6rdercall-2026+2400+4457200" },
       { label: "ORF Kärnten – Energieförderung 2026", url: "https://kaernten.orf.at/stories/3334737/" },
       PVGIS_QUELLE,
     ],
@@ -672,7 +714,7 @@ export const BUNDESLAENDER = {
     // Anzeige: Seitenkopf-Bild (Wikimedia Commons, siehe public/Images/AT/QUELLEN-foerderung.md)
     bild: { src: "/Images/AT/foerderung/land-steiermark-weinstrasse.jpg", alt: "Weinberge an der Südsteirischen Weinstraße", position: "center 55%", motiv: "Südsteirische Weinstraße", urheber: "Simon Legner", lizenz: "CC BY-SA 4.0", href: "https://commons.wikimedia.org/wiki/File:S%C3%BCdsteirische_Weinstra%C3%9Fe_(IMG_20240929_104056).jpg" },
     slugs: ["landesfoerderungen-in-steiermark"],
-    stand: STAND.iso,
+    stand: GEPRUEFT_C01,
     foerderart: "gezielt",
     ertrag: [1170, 1230],
     ertragOrte: [["Graz", 1226], ["Leibnitz", 1218], ["Liezen", 1225], ["Leoben", 1169]],
@@ -684,7 +726,7 @@ export const BUNDESLAENDER = {
       landwirtschaft: "Agri-PV in Vorrangzonen; Ökofonds (Doppelnutzung)",
       gemeinde: "Ökofonds: innovative PV-Doppelnutzung",
       privat: "Sanierungsbonus 2026 ausgeschöpft",
-      speicher: "Ökofonds-Speichercall 2026 abgelaufen",
+      speicher: "Ökofonds „Innovative Energiespeicher 2026“: Modul 1 bis 31.10.2026, Modul 2 bis 31.07.2027",
       energiegemeinschaft: "Ökofonds, Landes-Energieberatung",
     },
     programme: [
@@ -696,8 +738,26 @@ export const BUNDESLAENDER = {
         hoehe: "bis 30 %, max. 250.000 €, plus Boni",
         was: "PV mit Doppelnutzung ab 20 kWp (z. B. Parkplatz, Agri-PV, Lärmschutz)",
         status: "laut Sekundärquellen bis 31.12.2026",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.technik.steiermark.at/cms/ziel/58813567/DE/",
+        quelle: "technik.steiermark.at",
+      },
+      {
+        // Land Steiermark, Kurzinformation vom 24.06.2026 (abgerufen 11.10.2026): Ausschreibung 01.07.2026–31.07.2027,
+        // Budget 1 Mio. € (Modul 1: 100.000 €, Modul 2: 900.000 €), Privatpersonen nicht förderfähig.
+        name: "Ökofonds: Innovative Energiespeicher 2026",
+        traeger: "Land Steiermark",
+        zielgruppen: ["unternehmen", "landwirtschaft", "gemeinde", "energiegemeinschaft"],
+        themen: ["speicher"],
+        hoehe: "Modul 1 (Konzept): 60–80 % der Planungskosten, max. 10.000 €; Modul 2 (Umsetzung): 30–50 % der umweltrelevanten Mehrkosten, max. 200.000 €",
+        was: "Neuerrichtung innovativer Energiespeicher (TRL 7–8) in zwei Modulen: Umsetzungskonzept und konkrete Umsetzung; Mindestinvestition 30.000 €, Bundesförderung vorrangig; Antrag vor Bestellung",
+        status: "Modul 1 bis 31.10.2026, Modul 2 bis 31.07.2027 – Antrag online vor Projektbeginn",
+        startIso: "2026-07-01",
+        fristIso: "2027-07-31",
+        geprueftAm: GEPRUEFT_C01,
+        url: "https://www.technik.steiermark.at/cms/dokumente/13017115_161967760/8a73f732/2026-06-24_%C3%96kofonds_Kurzinformation_Energiespeicher%20v1.pdf",
         quelle: "technik.steiermark.at",
       },
       {
@@ -708,13 +768,14 @@ export const BUNDESLAENDER = {
         hoehe: "max. 35 % der Kosten",
         was: "Investitionen von KMU in Klimaneutralität und Produktion – keine eigene PV-Schiene",
         status: "laufend",
+        geprueftAm: GEPRUEFT,
         url: "https://www.sfg.at/f/klimaneutralitaet-die-steirische-investition-in-den-green-deal/",
         quelle: "sfg.at",
       },
     ],
     ausgelaufen: [
       { programm: "Steirischer Sanierungsbonus 2026 (Private)", ende: "laut Sekundärquellen am 22.04.2026 ausgeschöpft", url: "https://www.technik.steiermark.at/cms/ziel/58813567/DE/" },
-      { programm: "Ökofonds: innovative Energiespeicher", ende: "Einreichfristen 15.01. und 30.04.2026 abgelaufen", url: "https://www.technik.steiermark.at/cms/ziel/58813567/DE/" },
+      { programm: "Ökofonds: innovative Energiespeicher 2025/26", ende: "Einreichfristen 15.01. und 30.04.2026 abgelaufen – Nachfolge-Ausschreibung 2026 seit 01.07.2026 offen (siehe Programme)", url: "https://www.technik.steiermark.at/cms/ziel/58813567/DE/" },
     ],
     energiegemeinschaften: {
       stelle: "Energieberatung Land Steiermark",
@@ -751,6 +812,7 @@ export const BUNDESLAENDER = {
     },
     quellen: [
       { label: "Land Steiermark – Energieförderungen", url: "https://www.technik.steiermark.at/cms/ziel/58813567/DE/" },
+      { label: "Land Steiermark – Ökofonds Innovative Energiespeicher 2026, Kurzinformation (24.06.2026)", url: "https://www.technik.steiermark.at/cms/dokumente/13017115_161967760/8a73f732/2026-06-24_%C3%96kofonds_Kurzinformation_Energiespeicher%20v1.pdf" },
       { label: "SFG – Green!Invest", url: "https://www.sfg.at/f/klimaneutralitaet-die-steirische-investition-in-den-green-deal/" },
       PVGIS_QUELLE,
     ],
@@ -787,6 +849,8 @@ export const BUNDESLAENDER = {
         hoehe: "30 % der Kosten, max. 100 €/kWh, bis 20 kWh (max. 2.000 €)",
         was: "Stromspeicher für Private; Grundsatz „Bund vor Land“",
         status: "laut Sekundärquellen bis 31.12.2026, Antrag bis 6 Monate nach Rechnung",
+        gueltigBisIso: "2026-12-31",
+        geprueftAm: GEPRUEFT,
         pruefen: true,
         url: "https://www.burgenland.at/themen/bauen/wohnen/energie-neu/",
         quelle: "burgenland.at",

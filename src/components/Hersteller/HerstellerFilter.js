@@ -140,9 +140,9 @@ export default function HerstellerFilter({ kategorien = [] }) {
                     <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500/20 text-ov-300">
                       <MonitorCog aria-hidden="true" className="h-6 w-6" />
                     </span>
-                    <p className="mt-6 font-display text-[22px] font-extrabold leading-tight">Plus eigene Fernwartung und SCADA</p>
+                    <p className="mt-6 font-display text-[22px] font-extrabold leading-tight">Plus Fernwartung und SCADA</p>
                     <p className="mt-3 text-[15px] leading-relaxed text-white/70">
-                      Herstellerübergreifend überwachen wir Anlagen zusätzlich mit eigenen Fernwartungs- und SCADA-Systemen – und regeln sie am Netzanschlusspunkt mit unserem Parkregler.
+                      Herstellerübergreifend überwachen wir Anlagen zusätzlich mit Fernwartung und SCADA mit unserem Technologiepartner Solensa – und regeln sie am Netzanschlusspunkt mit unserem Parkregler.
                     </p>
                     <Link href="/technik" className="group/l mt-6 inline-flex min-h-11 items-center gap-2 self-start text-[15px] font-semibold text-ov-300 hover:text-ov-200">
                       Unsere Technik

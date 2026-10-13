@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ANTRAG, ARTEN, STAND, VORHABEN, ZIELGRUPPEN, ermittleProgramme } from "./programme";
 import { KARTE_PFADE, KARTE_VIEWBOX } from "@/components/Forderungen/Shared/kartePfade";
+import ZumDossierKnopf from "@/components/Dossier/ZumDossierKnopf";
 
 /**
  * Förder-Check Österreich: Bundesland → Zielgruppe → Vorhaben → Programme.
@@ -189,7 +190,7 @@ export default function FoerderWizard({ laender = [] }) {
                 return (
                   <label key={z.id} className={`flex cursor-pointer items-center gap-4 rounded-3xl p-4 transition-all focus-within:ring-2 focus-within:ring-ov-500 lg:flex-col lg:items-start ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white hover:ring-ink-300"}`}>
                     <input type="radio" name="zielgruppe" value={z.id} checked={an} onChange={() => setZielgruppe(z.id)} className="sr-only" />
-                    <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${an ? "bg-ov-500 text-white" : "bg-white text-ov-600 ring-1 ring-ink-200"}`}>
+                    <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${an ? "bg-ov-600 text-white" : "bg-white text-ov-600 ring-1 ring-ink-200"}`}>
                       <Icon aria-hidden="true" className="h-6 w-6" />
                     </span>
                     <span>
@@ -214,14 +215,14 @@ export default function FoerderWizard({ laender = [] }) {
                 return (
                   <label key={v.id} className={`relative flex cursor-pointer items-center gap-4 rounded-3xl p-4 transition-all focus-within:ring-2 focus-within:ring-ov-500 sm:p-5 ${an ? "bg-ov-50 ring-2 ring-ov-500" : "bg-sand-50 ring-1 ring-ink-200 hover:bg-white hover:ring-ink-300"}`}>
                     <input type="checkbox" checked={an} onChange={() => setVorhaben((alt) => (alt.includes(v.id) ? alt.filter((x) => x !== v.id) : [...alt, v.id]))} className="sr-only" />
-                    <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors ${an ? "bg-ov-500 text-white" : "bg-white text-ov-600 ring-1 ring-ink-200"}`}>
+                    <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl transition-colors ${an ? "bg-ov-600 text-white" : "bg-white text-ov-600 ring-1 ring-ink-200"}`}>
                       <Icon aria-hidden="true" className="h-6 w-6" />
                     </span>
                     <span className="min-w-0 pr-6">
                       <span className="block font-display text-[17px] font-bold text-ink-900">{v.label}</span>
                       <span className="block text-[13.5px] leading-snug text-ink-500">{v.text}</span>
                     </span>
-                    <span aria-hidden="true" className={`absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full transition-all ${an ? "bg-ov-500 text-white" : "bg-white ring-1 ring-ink-300"}`}>
+                    <span aria-hidden="true" className={`absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full transition-all ${an ? "bg-ov-600 text-white" : "bg-white ring-1 ring-ink-300"}`}>
                       {an && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
                     </span>
                   </label>
@@ -278,6 +279,28 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
     ...vorhaben.map((v) => ({ text: VORHABEN_LABEL[v], schritt: 2 })),
   ];
 
+  /** Ergebnis für das Business-Case-Dossier (B07): Programmnamen und Antragszeitpunkte, keine Personendaten. */
+  const dossierEintrag = () => ({
+    id: "foerdercheck",
+    quelle: "/foerdercheck",
+    titel: `Förder-Check ${land.name} · ${ZG_LABEL[zielgruppe]}`,
+    art: "foerderung",
+    kennzahlen: [
+      { label: "Passende Programme", wert: String(gesamt) },
+      ...Object.keys(ARTEN)
+        .map((art) => ({ label: ARTEN[art], wert: String(alle.filter((p) => p.art === art).length) }))
+        .filter((k) => k.wert !== "0"),
+      ...(vorher > 0 ? [{ label: "Zeitpunkt entscheidet (vor Bestellung/Inbetriebnahme)", wert: String(vorher) }] : []),
+    ],
+    annahmen: [
+      ["Vorhaben", vorhaben.map((v) => VORHABEN_LABEL[v]).join(", ")],
+      ...alle.slice(0, 12).map((p) => [p.name, `${ARTEN[p.art] || p.art}${ANTRAG[p.antrag]?.label ? ` · ${ANTRAG[p.antrag].label}` : ""}`]),
+      "Orientierung ohne Gewähr – maßgeblich sind die Richtlinien der Förderstellen.",
+    ],
+    stand: STAND.label,
+    eingaben: { eag: alle.some((p) => /eag/i.test(`${p.id} ${p.name}`)) },
+  });
+
   return (
     <div>
       <div className="ov-noise relative overflow-hidden rounded-3xl bg-navy-950 p-6 text-white md:p-8">
@@ -309,6 +332,9 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
               {kopiert ? "Link kopiert" : "Link teilen"}
             </button>
           </div>
+        </div>
+        <div className="relative mt-5">
+          <ZumDossierKnopf eintrag={dossierEintrag} stand={`${land.slug}|${zielgruppe}|${vorhaben.join(",")}`} dunkel klein />
         </div>
         <dl className="relative mt-6 grid grid-cols-2 gap-2 sm:grid-cols-5">
           {Object.keys(ARTEN).map((art, i) => {
@@ -370,7 +396,7 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
           )}
           {ergebnis.hinweise.map((h) => (
             <p key={h} className="flex gap-3 rounded-3xl bg-sand-50 p-5 text-[14.5px] leading-relaxed text-ink-700 ring-1 ring-ink-200/70">
-              <Info aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ink-400" />
+              <Info aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ink-500" />
               {h}
             </p>
           ))}
@@ -384,7 +410,7 @@ function Ergebnis({ ergebnis, land, vorhaben, zielgruppe, onNeu, onKopieren, kop
             </p>
           )}
           <p className="flex gap-3 rounded-3xl bg-sand-50 p-5 text-[14.5px] leading-relaxed text-ink-700 ring-1 ring-ink-200/70">
-            <Landmark aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ink-400" />
+            <Landmark aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-ink-500" />
             {land.gemeinden}
           </p>
         </div>

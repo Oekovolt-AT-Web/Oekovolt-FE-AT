@@ -270,7 +270,7 @@ export const QUERVERWEISE = {
   ],
   "/produkte/hersteller": [
     { href: "/produkte/stromspeicher", titel: "Stromspeicher", text: "Welcher Speicher zu welcher Anlagengröße passt." },
-    { href: "/technik/parkregler", titel: "Eigener Parkregler", text: "Herstellerübergreifende Regelung am Netzanschlusspunkt." },
+    { href: "/technik/parkregler", titel: "Parkregler", text: "Herstellerübergreifende Regelung am Netzanschlusspunkt." },
   ],
 
   "/referenzen/projekte": [
@@ -326,7 +326,7 @@ export const QUERVERWEISE = {
   ],
   "/uber-uns": [
     { href: "/uber-uns/team", titel: "Das Team", text: "Die Menschen hinter Ökovolt." },
-    { href: "/technik", titel: "Eigene Technik", text: "Parkregler, Fernwartung und SCADA." },
+    { href: "/technik", titel: "Regelung und Leittechnik", text: "Parkregler, Fernwartung und SCADA – betreut von uns." },
     { href: "/referenzen/projekte", titel: "Referenzen", text: "Anlagen für Industrie, Handel und Tourismus." },
   ],
   "/uber-uns/team": [

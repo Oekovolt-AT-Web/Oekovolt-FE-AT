@@ -6,10 +6,12 @@
 # Formularfelder: kunden_name, email, telefon, plz, ip_adresse, quelle; Datei: pdf (application/pdf, max. 10 MB).
 # Das PDF wird PRIVAT angehängt (is_private=1) und dem Kunden als Kopie per E-Mail geschickt.
 # Aufrufer: API-User mit Rolle „Website API“ (src/app/api/analyse/pdf/route.js). Antwort wird nicht gelesen.
+#
+# Welle A11: Die Team-Mail kommt aus lead_eingang.after_insert (A06, Routing/Score/SLA); hier nur die
+# Mail an den Kunden (PDF im Anhang, kein Freitext; Schalter oekovolt_keine_kundenmail).
 
 import frappe
 from frappe import _
-from frappe.utils import get_url_to_form
 
 from oekovolt_app.website_api import format as fmt
 from oekovolt_app.website_api.helfer import (
@@ -17,7 +19,6 @@ from oekovolt_app.website_api.helfer import (
 	kunde_bestaetigen,
 	nur_website_api,
 	pruefen,
-	team_benachrichtigen,
 )
 
 DOCTYPE = "Solarrechner Anfrage"
@@ -61,9 +62,7 @@ def submit_solarrechner(**kwargs):
 	doc.db_set("pdf", datei.file_url, update_modified=False)
 	frappe.db.commit()
 
-	betreff, html = fmt.team_mail_solarrechner(daten, get_url_to_form(DOCTYPE, doc.name))
-	team_benachrichtigen(betreff, html, DOCTYPE, doc.name, reply_to=daten["email"])
-	betreff, html = fmt.kunden_mail_solarrechner(daten)
+	betreff, html = fmt.kunden_mail_solarrechner(daten, doc.name, frappe.conf.get("oekovolt_website_url"))
 	kunde_bestaetigen(
 		daten["email"], betreff, html, DOCTYPE, doc.name,
 		attachments=[{"fname": dateiname, "fcontent": inhalt}],

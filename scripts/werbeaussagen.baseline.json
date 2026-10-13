@@ -1,0 +1,150 @@
+{
+  "stand": "2026-10-12",
+  "hinweis": "Altbestand unbelegter Werbebegriffe – jede Zeile in docs/projekt-doku/anhang/wellen/A02.md triagiert. Neu erzeugen: node scripts/werbeaussagen.test.mjs --baseline",
+  "funde": [
+    {
+      "datei": "src/app/not-found.js",
+      "zeile": 29,
+      "muster": "garantiert",
+      "text": "Die gesuchte Seite existiert nicht oder wurde verschoben. Diese Wege führen garantiert ans Ziel:"
+    },
+    {
+      "datei": "src/app/service/nachhaltigkeitsmarketing/page.js",
+      "zeile": 60,
+      "muster": "klimaneutral",
+      "text": "{ aussage: \"„Wir sind klimaneutral“ – auf Basis von Kompensationszertifikaten\", urteil: \"nein\", warum: \"Ab 27. 9. 2026 als irreführend verboten, wenn die Aussage auf Kompensation beruht\" },"
+    },
+    {
+      "datei": "src/app/service/nachhaltigkeitsmarketing/page.js",
+      "zeile": 277,
+      "muster": "klimaneutral",
+      "text": "lead=\"Ab 27. September 2026 ist die EU-Richtlinie 2024/825 anzuwenden. Sie verbietet unter anderem allgemeine Umweltaussagen ohne Nachweis und Klimaneutralitäts-Aussagen, die auf Kompensation beruhen."
+    },
+    {
+      "datei": "src/components/Ratgeber/VerguetungsTabelle.js",
+      "zeile": 51,
+      "muster": "garantiert",
+      "text": "Vorsichtige Annahme, keine Zusage: Einspeiseerlöse sind in Österreich marktabhängig und nicht gesetzlich garantiert; Voll- und Überschusseinspeisung werden gleich"
+    },
+    {
+      "datei": "src/components/Service/service.js",
+      "zeile": 31,
+      "muster": "umweltfreundlich",
+      "text": "wir Osmose-Wasser – komplett umweltfreundlich und frei von Chemikalien. Mit speziell entwickelten"
+    },
+    {
+      "datei": "src/components/Wallbox/third.js",
+      "zeile": 9,
+      "muster": "umweltfreundlich",
+      "text": "Umweltfreundlich: <Leaf className=\"text-[#669933] text-3xl\" />,"
+    },
+    {
+      "datei": "src/content/ratgeber/csrd-esg-photovoltaik.js",
+      "zeile": 236,
+      "muster": "klimaneutral",
+      "text": "[\"„Unsere 250-kWp-Anlage hat 2026 rund 250.000 kWh erzeugt.“\", \"„Wir produzieren klimaneutral.“\"],"
+    },
+    {
+      "datei": "src/content/ratgeber/photovoltaik-hotel.js",
+      "zeile": 233,
+      "muster": "klimaneutral",
+      "text": "text: \"**Glaubwürdig ist, was sich messen lässt: erzeugte Kilowattstunden, Anteil am Stromverbrauch des Hauses, geladene Kilowattstunden für Gäste.** Pauschale Aussagen wie „klimaneutrales Hotel“ sind"
+    },
+    {
+      "datei": "src/content/ratgeber/photovoltaik-hotel.js",
+      "zeile": 240,
+      "muster": "klimaneutral",
+      "text": "\"Keine Klimaneutralitätsaussagen, die nur auf Kompensation beruhen.\","
+    },
+    {
+      "datei": "src/content/ratgeber/solarmodule-vergleich.js",
+      "zeile": 80,
+      "muster": "fuehrend",
+      "text": "fussnote: \"Bandbreiten typischer Datenblattwerte führender Hersteller; Einordnung nach Fraunhofer ISE Photovoltaics Report (07/2026): gewichteter Mittelwert kristalliner Module 22,7 % (Q4/2024), Spann"
+    },
+    {
+      "datei": "src/content/ratgeber/stromspeicher-lebensdauer.js",
+      "zeile": 355,
+      "muster": "garantiert",
+      "text": "a: \"Der Hersteller garantiert, dass der Speicher bis zum Ende der Garantie mindestens 70 % seiner ursprünglichen Kapazität speichern kann. Typisch sind 60 bis 80 % nach 10 Jahren, oft kombiniert mit e"
+    },
+    {
+      "datei": "src/data/bundeslaender.js",
+      "zeile": 762,
+      "muster": "klimaneutral",
+      "text": "was: \"Investitionen von KMU in Klimaneutralität und Produktion – keine eigene PV-Schiene\","
+    },
+    {
+      "datei": "src/data/bundeslaender.js",
+      "zeile": 765,
+      "muster": "klimaneutral",
+      "text": "url: \"https://www.sfg.at/f/klimaneutralitaet-die-steirische-investition-in-den-green-deal/\","
+    },
+    {
+      "datei": "src/data/bundeslaender.js",
+      "zeile": 809,
+      "muster": "klimaneutral",
+      "text": "{ label: \"SFG – Green!Invest\", url: \"https://www.sfg.at/f/klimaneutralitaet-die-steirische-investition-in-den-green-deal/\" },"
+    },
+    {
+      "datei": "src/data/einspeiseverguetung.js",
+      "zeile": 89,
+      "muster": "garantiert",
+      "text": "garantiert: false,"
+    },
+    {
+      "datei": "src/data/kunden.js",
+      "zeile": 220,
+      "muster": "fuehrend",
+      "text": "\"Die 1916 gegründete Herba Chemosan Apotheker-AG ist nach eigenen Angaben mit einem Marktanteil von rund 45 % der führende vollsortierte Pharmagroßhändler Österreichs und beliefert mehr als 90 % der h"
+    },
+    {
+      "datei": "src/data/netzbetreiber.js",
+      "zeile": 805,
+      "muster": "garantiert",
+      "text": "{ titel: \"Netzzutrittsangebot\", text: \"Kärnten Netz garantiert eine Einspeiseleistung mindestens in Höhe des erworbenen Strombezugsrechts. Reicht das nicht: alternativer Anschlusspunkt auf eigene Kost"
+    },
+    {
+      "datei": "src/data/regionen/kitzbuehel.js",
+      "zeile": 19,
+      "muster": "groesste-oesterreichs",
+      "text": "\"Die Stadt mit rund 8.300 Einwohnerinnen und Einwohnern liegt auf etwa 760 m im Leukental zwischen Hahnenkamm und Kitzbüheler Horn. Seit der Hahnenkammbahn von 1928 prägt der Skitourismus die Wirtscha"
+    },
+    {
+      "datei": "src/data/regionen/kitzbuehel.js",
+      "zeile": 42,
+      "muster": "groesste-oesterreichs",
+      "text": "{ titel: \"Skigebiet\", text: \"Gemeinsam mit Kirchberg, Jochberg und Pass Thurn eines der größten zusammenhängenden Skigebiete Österreichs.\" },"
+    },
+    {
+      "datei": "src/data/regionen/moedling.js",
+      "zeile": 14,
+      "muster": "groesste-oesterreichs",
+      "text": "lead: \"Südlich von Mödling liegt das größte Gewerbegebiet Österreichs: das Industriezentrum Niederösterreich Süd mit rund 280 Hektar, etwa 380 Unternehmen und über 11.000 Beschäftigten. Hallendächer, "
+    },
+    {
+      "datei": "src/data/regionen/moedling.js",
+      "zeile": 15,
+      "muster": "groesste-oesterreichs",
+      "text": "einleitungTitel: \"Das größte Gewerbegebiet Österreichs\","
+    },
+    {
+      "datei": "src/data/regionen/moedling.js",
+      "zeile": 37,
+      "muster": "groesste-oesterreichs",
+      "text": "text: \"Das IZ NÖ-Süd ist mit rund 280 ha das größte Gewerbegebiet Österreichs und neben der Shopping City Süd einer der größten Wirtschaftsstandorte im Süden Wiens.\","
+    },
+    {
+      "datei": "src/data/regionen/salzburg.js",
+      "zeile": 44,
+      "muster": "fuehrend",
+      "text": "{ titel: \"Handel und Konzernzentralen\", text: \"Salzburg ist Sitz international tätiger Unternehmen, darunter eines führenden österreichischen Handels- und Einkaufszentrenbetreibers.\" },"
+    },
+    {
+      "datei": "src/data/regionen/wien.js",
+      "zeile": 85,
+      "muster": "klimaneutral",
+      "text": "text: \"Die Stadt Wien hat sich zum Ziel gesetzt, bis 2040 klimaneutral zu werden; der Ausbau von Photovoltaik auf Dächern ist ein zentraler Baustein.\","
+    }
+  ]
+}

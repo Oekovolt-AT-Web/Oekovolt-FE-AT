@@ -1,7 +1,7 @@
 # 01 – Anforderungen
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 29148 (Stakeholder-Anforderungen, System-/Softwareanforderungen).
-Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Keine Normkonformität behauptet. Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 **Hinweis zur Herkunft:** Es gibt kein formales Lastenheft im Repository. Die Anforderungen sind aus
 den vorhandenen Dokumenten (`docs/AT-BRIEFING.md`, `docs/AT-UEBERGABE.md`, `docs/AT-DESIGN.md`,
@@ -167,6 +167,28 @@ Statuswerte: **umgesetzt** (im Code belegt, committet) · **umgesetzt (unveröff
 | REQ-INH-01 | Inhalte: 69 Ratgeber-Artikel, Lexikon 142 Begriffe, 51 FAQ, 37 Regionalseiten. | `docs/AT-UEBERGABE.md:27-28` | umgesetzt (laut Übergabe; Zählung nicht erneut geprüft) |
 | REQ-REC-LEG-01 | Rechtsseiten Impressum, AGB, Datenschutz, Barrierefreiheit, Hinweisgeberschutz, Bildnachweis. | `docs/AT-UEBERGABE.md:11-14` | umgesetzt; Rechtsprüfung offen |
 
+### 2.11 Welle A – Verkauf, Werbeaussagen, Lead-Strecke (REQ-WA, seit Version 0.6)
+
+Quelle aller Einträge: Gesamtplan `.claude/uebergabe/gesamtplan.json` (Welle A, Pakete A01–A12) und die verbindlichen
+Entscheidungen des Inhabers vom 03./05./11.10.2026 (09 Abschnitt 3). Status „umgesetzt (unveröff.)“ = im Arbeitsbaum,
+nicht committet; Details je Datei in `anhang/wellen/<Paket>.md`.
+
+| ID | Anforderung | Quelle | Status |
+|---|---|---|---|
+| REQ-WA-01 | Jede Werbeaussage läuft über das Register `src/data/werbeaussagen.js` (`{id, text, fundstellen, beleg, quelle, stand, freigegeben_von, art, freigegeben}`); aktiv nur bei Schalter **und** Beleg **und** Freigabe (`werbeaussageAktiv`). Ohne Beleg AUS: Rangaussage EPC-Errichter 2021, „Marktführer“, WKO-Gütesiegel Meisterbetrieb, Elektrotechnik, eigener Parkregler (zusätzlich `PARKREGLER_RECHTE_GEKLAERT`), Kundenlogo im Hero-Video (Standbild). Ersatzsatz: „Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns.“ | E-A4; A02, A-INT | umgesetzt (unveröff.); **Rest R-63** („eigene(r) Leittechnik“/„eigener Technik“ ohne Schalter) |
+| REQ-WA-02 | Salzburg AG nur neutral sachlich („Gesellschafter: Salzburg AG (49 %)“ auf `/uber-uns`, Impressum-Offenlegung); Werbeformulierungen nur hinter Schalter bis schriftliche Erlaubnis und Anwaltsfreigabe. | E-A3; A02, A05 | umgesetzt (unveröff.); Freigabe F-42 |
+| REQ-WA-03 | Unternehmenskennzahlen (5.000 PV-Anlagen, 510.000 kWp) nur mit „Angaben Ökovolt Österreich · Stand …“ (`KENNZAHLEN_HINWEIS_STAND`). | E-A5; A02, A-INT | umgesetzt (unveröff.) |
+| REQ-WA-04 | Kundennamen, Logos, Zitate, Fotos, Plakette, Live- und Messwerte nur mit der jeweiligen Kundenfreigabe; Freigabe per Einmal-Link (`/referenzen/freigabe/[token]`, sieben getrennte Häkchen, Vertretungsbefugnis Pflicht, Widerruf per Klick); ohne Freigabe Branche + Bundesland, neutrale Slugs (301 der 58 alten URLs). | Orchestrator-Vorgabe (b); A02, A03, A07 | umgesetzt (unveröff.); Projekttitel aus dem Backoffice offen (R-64, F-43) |
+| REQ-WA-05 | Projekt-Plakette statt Solar-Siegel (ohne Prüfzeichen, Wörter Siegel/zertifiziert/klimaneutral/grün/geprüft/ausgezeichnet gesperrt, CO₂ nur mit Messwert); PV-Award als „Unternehmenspreis“ gekennzeichnet, ohne Rechtsweg-Ausschluss, Veröffentlichung optional. | Gesamtplan A07 (EmpCo/UWG seit 27.09.2026) | umgesetzt (unveröff.) |
+| REQ-WA-06 | Lead-Gate 2.0: Pflicht nur Vorname, Nachname, E-Mail (Hinweistext, Art. 6 Abs. 1 lit. b); Telefon erst nach freiwilligem Häkchen `kontakt_ok`; Rechner-Ergebnis am Bildschirm frei, Link/Teilen/PDF/Textbaustein (Stufe 1) bzw. Auswertung eigener Lastgang-Dateien (Stufe 2) erst nach Double-Opt-in (signierter Token 24 h, einmalig, Bestätigung per Klick auf `/freischalten`, Cookie `ov-lead-frei` 30 Tage); statische Inhalte frei; Entscheider-Mappe je Rolle im Druckblatt. | E-A1, E-A2; A09, A11 | umgesetzt (unveröff.); Backoffice-Rollout (F-47), Rechtsprüfung (F-44) |
+| REQ-WA-07 | Commitment-Leiter der Anfragewege (Konfigurator, Kontakt, Termin, Rückruf, `/angebot`): keine Pflicht-Checkbox, keine AGB-Zustimmung, versionierter Hinweistext (`src/lib/einwilligungen.js`); Telefon optional, Anruf nur nach nicht vorangekreuztem `rueckruf_ok` (lit. a, § 174 TKG 2021); kein Download/Export außerhalb des Lead-Gates. | E-A1; A08 | umgesetzt (unveröff.); `vorbelegt` fehlt (R-67) |
+| REQ-WA-08 | Verkaufs-Bausteine: Branchen-Referenzen (abgeleitete Zuordnung), „Kosten des Wartens“ (Monatswert, IFB 22 % bis 31.12.2026 je Rechtsform, Fördercall-Phase ohne Countdown), IFB-Hinweis, Einwand-Karten mit Beleg und nächstem Schritt, Zusagen/Preisanker/Fachberater nur mit Freigabe, Ansprechpartner mit Termin-Link. | Gesamtplan A03 | umgesetzt (unveröff.); Freigaben F-45, F-52 |
+| REQ-WA-09 | Zielgruppenseiten `/gewerbe`, `/gewerbespeicher` (GF-/Technik-Spur, ehrlicher Leistungspreis-Insight mit ElWG-Primärquelle und Stand), Landwirtschaft, Agri-PV, Freifläche, Kommunen (Beschlussvorlage), Tourismus, Ladeinfrastruktur; nur belegte Zahlen mit Quelle. | Gesamtplan A04, A05 | umgesetzt (unveröff.); Seitenlängen (R-38) |
+| REQ-WA-10 | Rechner-Glaubwürdigkeit: Stresstest (konservativ/erwartet/günstig, Break-even-Strompreis, Entscheider-Satz nur bei wahrer Bedingung) im Gewerbe-PV- und Finanzierungsrechner; TOR-Typ nach AC-Summe (WR + Speicher + Bestand, Knapp-Hinweis); EAG-Speicherzuschuss erst ab 0,5 kWh/kWp; Blackout ohne netzbildende Quelle PV = 0; Startseiten-Rechner = Detailrechnung. | Gesamtplan A10 | umgesetzt (unveröff.); Annahmen F-51 |
+| REQ-WA-11 | Speed-to-Lead im Backoffice: Kernschema „Vertrieb“ in fünf DocTypes, Scoring (Fit/Absicht/Engagement, Klassen A/B/C, Gewichte nur in `SCORE_GEWICHTE`), PLZ → Bundesland, Lead-Schlüssel/E.164, Dubletten 30 Tage, Routing hinter `oekovolt_routing_aktiv`, SLA in Geschäftsminuten (A 60, B 240, C nächster Werktag 10:00), Eskalation, Sofortalarm ohne Personendaten; Kundenmails ohne Freitext; DocType `Rechner Lead` mit Double-Opt-in und Löschjob 30 Tage. | Gesamtplan A06, A11 | umgesetzt (unveröff., nur ohne Frappe getestet); Migration/Regeln F-46, F-47 |
+| REQ-WA-12 | Mobile Führung: Primär-CTA mobil im ersten Bildschirm (< 700 px), kontextabhängiges Angebotsziel, Kopf ohne Layout-Shift, Cookie-Banner serverseitig gerendert (kein LCP-Element, gleichwertige Knöpfe), Fokus nie verdeckt, schwebende Knöpfe treten bei Formularfokus zurück. | Gesamtplan A12 | umgesetzt (unveröff.); Startseite mobil (R-70), CLS erster Aufruf (R-69) |
+| REQ-WA-13 | Sicherheits- und Konfigurationsvorlauf: Next 15.5.27, `postcss`-Override, `X-XSS-Protection: 0`, COOP mit Ausnahmen, Bildquellen eingeschränkt, Weiterleitungen ohne Ketten (`/referenzen`, `/foerderungen…`, OÖ-Landesförderung), `security.txt`, Leaflet-Marker lokal; `next dev` ohne Turbopack. | Gesamtplan A01 | umgesetzt (unveröff.); CSP-Report fehlt (R-80) |
+
 ## 3. Nicht-funktionale Anforderungen
 
 | ID | Kategorie | Anforderung | Quelle | Status |
@@ -210,3 +232,6 @@ Statuswerte: **umgesetzt** (im Code belegt, committet) · **umgesetzt (unveröff
 | REQ-NF-WART-01 | Wartbarkeit | Zentrale Konstanten importieren (`src/lib/site.js`, `src/data/navigation.js`). | `docs/AT-BRIEFING.md:24-28` | umgesetzt |
 | REQ-NF-VERF-01 | Verfügbarkeit | Ausfall des Backoffice darf keine 404/500 erzeugen: statische Rückfälle, verständliche Fehlermeldungen. | `src/components/Project/ladeProjekte.js`, `src/lib/api/uber-uns/anfrageWeiterleiten.js:12-13`, Commit `5e40806` | umgesetzt |
 | REQ-NF-TEST-01 | Qualität | Sammellauf aller Node-Tests mit Exit-Code für CI; bekannte Befunde als `todo`, die den Lauf nicht abbrechen. | `scripts/alle-tests.mjs`, `scripts/*.test.mjs` (21), `scripts/lib/` | umgesetzt (unveröff.); `npm test` in `package.json`; keine `todo`-Befunde mehr |
+| REQ-NF-A11Y-04 | Barrierefreiheit | Kontrastregel für neue/geänderte Dateien: `text-ink-400` → `text-ink-500` (Token #646c7e, ≥ 4,5:1 auf hellen Flächen), `text-white/30–45` → `/60`, Weiß auf `bg-ov-500` → `bg-ov-600` (Hover `ov-700`); Trefferflächen ≥ 44 px; Fokus nicht vom Kopf verdeckt (`scroll-margin`). | Gesamtplan Welle A (Wellenregel 5), A12 | umgesetzt für Welle-A-Dateien (unveröff.); Altbestand 359 Fundstellen (R-81) |
+| REQ-NF-PERF-05 | Performance | LCP-Element ist Inhalt (H1/Lead), nicht der Cookie-Banner; Hero-Aktionen ohne Startverzögerung über Deckkraft 0; CLS < 0,1 auch beim ersten Laden. | Gesamtplan A02, A12 | teilweise – LCP und CLS nach Scrollen erfüllt; CLS erster Aufruf mobil 0,139/0,215 (R-69) |
+| REQ-NF-RECHT-01 | Recht/UWG | Keine erfundenen Zahlen, Kunden oder Zitate; Stock-Personenfotos sichtbar als „Symbolbild“; keine pauschalen Umweltaussagen (EmpCo/UWG seit 27.09.2026). | Gesamtplan Welle A (Wellenregel 6), A02 | umgesetzt (unveröff.); Test `werbeaussagen.test.mjs` |

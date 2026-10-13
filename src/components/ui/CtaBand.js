@@ -1,21 +1,23 @@
 import { Fragment } from "react";
-import { Phone, Calculator, ShieldCheck, Clock, BadgeCheck } from "lucide-react";
+import { Phone, Calculator, CalendarDays, ShieldCheck, Clock, BadgeCheck } from "lucide-react";
 import { cn } from "./cn";
 import Button from "./Button";
 import { FIRMA } from "@/lib/site";
 import { w21Woerter } from "./w21-woerter";
 import W21Sicht from "./w21-sicht";
 import W21Aufgang from "./w21-aufgang";
+import { PARKREGLER_KURZ } from "@/data/marke";
 
 const VERSPRECHEN = [
   { icon: BadgeCheck, text: "Seit 2012 in Österreich, Gruppe seit 2010" },
   { icon: ShieldCheck, text: "Planung, Netzanschluss, Montage & Betrieb aus einer Hand" },
-  { icon: Clock, text: "Eigener Parkregler, Fernwartung & SCADA" },
+  // Formulierung je nach Rechteklärung aus src/data/marke.js (derzeit: „… – betreut von uns“)
+  { icon: Clock, text: PARKREGLER_KURZ },
 ];
 
 /**
- * Abschluss-Handlungsaufruf für jede Seite. Dunkle Bühne mit zwei Wegen: Online-Anfrage
- * (niedrige Schwelle) und Telefon (direkt).
+ * Abschluss-Handlungsaufruf für jede Seite. Dunkle Bühne mit drei Wegen: Online-Anfrage
+ * (niedrige Schwelle), Beratungstermin (Standard-Zweitaktion) und Telefon (direkt).
  *
  * Gestaltung (Präfix w21, im Geist des Startseiten-Finales): Über einem Modulfeld geht hinter der
  * Kontaktkarte die Sonne auf (w21-aufgang) und leuchtet weich durch deren Glas. Beim Eintritt
@@ -28,7 +30,7 @@ export default function CtaBand({
   title = "Ihr Dach kann mehr. Wir zeigen Ihnen, wie viel.",
   text = "Persönliche Beratung vom Elektrotechnik-Fachbetrieb aus Ostermiething – für Projekte in ganz Österreich, mit ehrlicher Wirtschaftlichkeitsrechnung und festem Ansprechpartner von der Planung bis zum Betrieb.",
   primary = { label: "Angebot in 2 Minuten anfragen", href: "/angebot" },
-  secondary = { label: "Ertrag berechnen", href: "/solarrechner" },
+  secondary = { label: "Beratungstermin buchen", href: "/termin", icon: CalendarDays },
   className,
 }) {
   return (
@@ -67,7 +69,7 @@ export default function CtaBand({
                   href={secondary.href}
                   size="lg"
                   variant="outlineLight"
-                  icon={secondary.icon === undefined ? Calculator : secondary.icon}
+                  icon={secondary.icon === undefined ? (secondary.href?.startsWith("/termin") ? CalendarDays : Calculator) : secondary.icon}
                   className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
                   {secondary.label}
@@ -81,12 +83,12 @@ export default function CtaBand({
             <span aria-hidden="true" className="w21-c-kante absolute inset-x-8 top-0 h-px" />
             <p className="text-[13px] font-medium text-white/60">Lieber direkt sprechen?</p>
             <a href={FIRMA.telefonHref} className="group mt-2 flex min-h-12 items-center gap-3 rounded-2xl outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ov-500 shadow-[0_8px_24px_-8px_rgba(102,153,51,0.8)] transition-transform duration-300 group-hover:scale-105">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ov-600 shadow-[0_8px_24px_-8px_rgba(102,153,51,0.8)] transition-transform duration-300 group-hover:scale-105">
                 <Phone aria-hidden="true" className="h-5 w-5" />
               </span>
               <span className="ov-num min-w-0 font-display text-[22px] font-extrabold tracking-[-0.02em] transition-colors group-hover:text-sun-300 md:text-[26px]">{FIRMA.telefon}</span>
             </a>
-            <p className="mt-2 text-[13.5px] text-white/55">
+            <p className="mt-2 text-[13.5px] text-white/60">
               {FIRMA.oeffnungszeiten.map((o, i) => (
                 <Fragment key={o.tage}>
                   {i > 0 && " · "}

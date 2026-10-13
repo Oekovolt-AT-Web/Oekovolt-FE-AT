@@ -73,7 +73,7 @@ const LEISTUNGEN = [
   { icon: HardHat, title: "Montage & Elektrotechnik", text: "Montage mit Absturzsicherung, Elektroinstallation nach ÖVE/ÖNORM E 8101 durch unser Elektrotechnik-Gewerbe." },
   { icon: ClipboardCheck, title: "Fertigstellungsmeldung", text: "Prüfung nach ÖVE/ÖNORM EN 62446, Fertigstellungsmeldung, Stromabnehmer und Herkunftsnachweise." },
   { icon: SlidersHorizontal, title: "Parkregler", text: "Eigener EZA-Regler für Einspeiselimit, Blindleistung und Fernsteuerung am Netzanschlusspunkt." },
-  { icon: Activity, title: "Monitoring & Wartung", text: "Eigene Fernwartungs- und SCADA-Systeme, Wartungsverträge nach Anlagengröße." },
+  { icon: Activity, title: "Monitoring & Wartung", text: "Fernwartung und SCADA mit unserem Technologiepartner Solensa, Wartungsverträge nach Anlagengröße." },
 ];
 
 const NETZ = [
@@ -221,8 +221,8 @@ export default function PhotovoltaikPage() {
           />
           <Reveal delay={100}>
             <p className="ov-lead text-ink-600">
-              Bei {FIRMA.name} erhalten Sie Analyse, Planung, Montage, Netzanschluss, Inbetriebnahme und Betrieb von einem Elektrotechnik-Fachbetrieb – mit eigenem
-              Parkregler und eigener Leittechnik.
+              Bei {FIRMA.name} erhalten Sie Analyse, Planung, Montage, Netzanschluss, Inbetriebnahme und Betrieb von einem Elektrotechnik-Fachbetrieb – Parkregler, Fernwartung und SCADA
+              mit unserem Technologiepartner Solensa, parametriert, betreut und gewartet von uns.
             </p>
           </Reveal>
         </div>

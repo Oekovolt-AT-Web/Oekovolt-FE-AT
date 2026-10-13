@@ -41,6 +41,13 @@ export const BO_ANNAHMEN = {
     { last: 1, kg: 0.237 },
   ],
   aggregatGroessenKva: [10, 15, 20, 30, 40, 50, 60, 80, 100, 130, 150, 200, 250, 300, 400, 500, 630, 800, 1000, 1250],
+  // Netzbildung im Inselbetrieb: Ohne netzbildenden Speicher-Wechselrichter oder Aggregat
+  // schalten netzgeführte PV-Wechselrichter im Netzausfall ab (Netz- und Anlagenschutz) –
+  // PV liefert dann nichts. Mit Aggregat, aber ohne Speicher darf die PV das Aggregat nur
+  // bis zu diesem Anteil der momentanen Last entlasten (Mindestlast, Rückleistungsschutz,
+  // Regelstabilität). Annahme für eine einfache PV-Diesel-Kopplung ohne Hybridregler –
+  // die tatsächliche Grenze legt die Auslegung fest.
+  pvAnteilAmAggregat: 0.3,
 };
 
 export const SZENARIEN = [
@@ -208,6 +215,9 @@ export function simuliereAusfall(e) {
   const nutzbar = kap * A.dod;
   const pAgg = e.aggregat ? aus.aggregatKw : 0;
   const pWr = Math.max(aus.leistung, kap * 0.5); // Wechselrichterleistung (mind. kritische Last inkl. Anlauf)
+  // Ohne netzbildenden Speicher oder Aggregat schaltet die PV im Netzausfall ab.
+  const netzbildend = kap > 0 || pAgg > 0;
+  const nurAggregat = kap <= 0 && pAgg > 0;
   let soc = nutzbar * A.socStart;
   let aggAn = false;
   const dauer = Math.max(1, Math.ceil(e.ziel));
@@ -216,12 +226,14 @@ export function simuliereAusfall(e) {
   for (let t = 0; t < dauer; t++) {
     const stunde = ((e.startStunde ?? 8) + t) % 24;
     const last = aus.mittlereLast * lastFaktor(stunde);
-    const pv = pvTag * form[stunde];
+    // PV-Angebot: 0 ohne Netzbildner; mit Aggregat ohne Speicher auf den zulässigen Anteil der Last begrenzt
+    const pv = netzbildend ? pvTag * form[stunde] : 0;
     let rest = last;
-    const pvDirekt = Math.min(pv, rest);
+    const pvDirekt = Math.min(pv, nurAggregat ? rest * A.pvAnteilAmAggregat : rest);
     rest -= pvDirekt;
     let pvUeber = pv - pvDirekt;
-    // Überschuss in den Speicher
+    // Überschuss in den Speicher – begrenzt durch den Speicher-Wechselrichter (PV-Ladung ≤ pWr);
+    // was weder Last noch Speicher aufnehmen, wird abgeregelt
     if (pvUeber > 0 && nutzbar > 0) {
       const lad = Math.min(pvUeber, pWr, (nutzbar - soc) / A.etaSpeicher);
       soc += lad * A.etaSpeicher;
@@ -269,6 +281,8 @@ export function simuliereAusfall(e) {
   const nurAggregatLiter = verlauf.reduce((s, v) => s + v.last * literJeKwh(v.last / Math.max(aus.aggregatKw, 1e-9)), 0);
   return {
     auslegung: aus,
+    netzbildend,
+    pvBegrenzt: nurAggregat,
     verlauf,
     dauer,
     ueberbrueckt: ersteLuecke == null ? dauer : ersteLuecke,

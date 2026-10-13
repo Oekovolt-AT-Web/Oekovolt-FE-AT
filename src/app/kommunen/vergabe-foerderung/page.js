@@ -116,7 +116,7 @@ export default function KommunenVergabeFoerderung() {
             Photovoltaik für Gemeinden: <span className="ov-text-gradient-light">Vergabe und Förderung 2026</span>
           </>
         }
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">PV für die Gemeinde: richtig vergeben, gezielt fördern</span><span className="mt-3 block">Welche Vergabe seit dem Vergaberechtsgesetz 2026 zulässig ist, was der Gemeinderat für seinen Beschluss braucht und welche Mittel von Bund und Klimafonds Gemeinden nutzen können – kompakt, mit Quellen und einem Wegweiser für Ihren Auftragswert.</span></>}
+        lead="Welche Vergabe seit dem Vergaberechtsgesetz 2026 zulässig ist, was der Gemeinderat für seinen Beschluss braucht und welche Mittel von Bund und Klimafonds Gemeinden nutzen können – kompakt, mit Quellen und einem Wegweiser für Ihren Auftragswert."
         image={{ src: HERO_BILD, alt: "Gemeindeamt in Fresach in Kärnten mit Photovoltaikanlage auf dem Dach" }}
         actions={[
           { label: "Vergabeweg prüfen", href: "#wegweiser" },
@@ -130,7 +130,7 @@ export default function KommunenVergabeFoerderung() {
           { text: euro(K.bau.direkt), label: "Direktvergabe Bau – Grenze seit 01.03.2026 (netto)" },
           { text: euro(K.lieferDl.direkt), label: "Direktvergabe Lieferung und Dienstleistung (netto)" },
           { text: euro(DREI_ANGEBOTE_AB), label: "darüber um drei Angebote oder Preisauskünfte bemühen" },
-          { value: 10, suffix: " %", label: "Anteil für schutzbedürftige Haushalte in Energiegemeinschaften ab 01.10.2026" },
+          { value: 10, suffix: " %", label: "Anteil für schutzbedürftige Haushalte in Energiegemeinschaften ab 01.10.2026" },
         ]}
       />
 
@@ -261,7 +261,7 @@ export default function KommunenVergabeFoerderung() {
         </div>
         <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {FOERDERUNGEN.map((f, i) => (
-            <Reveal as="li" key={f.id} delay={(i % 3) * 70} className="flex">
+            <Reveal as="li" key={f.id} delay={(i % 3) * 70} className="flex">
               <article className="ov-card-hover flex w-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
                 <p className="text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">{f.traeger}</p>
                 <h3 className="mt-2 font-display text-[20px] font-bold leading-snug text-ink-900">{f.titel}</h3>
@@ -319,7 +319,7 @@ export default function KommunenVergabeFoerderung() {
                 ElWG ab 01.10.2026
               </p>
               <p className="mt-2 font-display text-[28px] font-extrabold leading-none">
-                <span className="ov-num">mind. 10 %</span>
+                <span className="ov-num">mind. 10 %</span>
               </p>
               <p className="mt-2 text-[13.5px] leading-snug text-white/70">des gemeinsam genutzten Stroms aus Gemeindeanlagen für schutzbedürftige Haushalte</p>
             </div>
@@ -381,7 +381,7 @@ export default function KommunenVergabeFoerderung() {
             {
               modell: "Energiegemeinschaft (EEG oder BEG)",
               wie: "Die Gemeinde liefert Überschuss von Schule, Bauhof oder Kläranlage an Haushalte und Betriebe im Ort.",
-              achten: "Rechtsträger (z. B. Verein, Genossenschaft), Verträge, Abrechnung; ab 01.10.2026 mind. 10 % für schutzbedürftige Haushalte (§ 68 Abs. 6 ElWG).",
+              achten: "Rechtsträger (z. B. Verein, Genossenschaft), Verträge, Abrechnung; ab 01.10.2026 mind. 10 % für schutzbedürftige Haushalte (§ 68 Abs. 6 ElWG).",
             },
             {
               modell: "Genossenschaft",
@@ -427,7 +427,7 @@ export default function KommunenVergabeFoerderung() {
           <SectionHeading
             eyebrow="Checkliste · zum Abhaken"
             title="Unterlagen für den Gemeinderat"
-            lead="Was in die Sitzungsvorlage gehört, damit der Beschluss hält und die Förderung nicht an Formalien scheitert. Mit „Liste kopieren“ übernehmen Sie die Punkte in Ihren Amtsvortrag."
+            lead="Was in die Sitzungsvorlage gehört, damit der Beschluss hält und die Förderung nicht an Formalien scheitert. Mit „Liste kopieren“ übernehmen Sie die Punkte direkt in Ihren Amtsvortrag – ohne Kontaktdaten, es wird nichts übertragen."
           />
           <p className="text-[15px] leading-relaxed text-ink-600">
             Technische Grundlagen wie Dachbewertung, Ertragsprognose, Kostenrahmen und Netzauskunft stellen wir für Ihre Gremien zusammen.{" "}

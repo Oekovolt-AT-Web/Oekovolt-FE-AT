@@ -5,7 +5,7 @@
 // Rechtslage je Land unter /freiflaechen-photovoltaik/widmung/<bundesland>.
 
 import Link from "next/link";
-import { Cable, Calculator, ClipboardCheck, LandPlot, Mountain, Scale } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Cable, Calculator, ClipboardCheck, LandPlot, Mountain, Scale } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -27,6 +27,9 @@ import { LAENDER, STAND } from "@/lib/flaeche/laender";
 import { PACHT } from "@/lib/rechner/pacht";
 import { zahl } from "@/lib/flaeche/format";
 import { BASE_URL } from "@/lib/site";
+import { KAPAZITAET_HINWEIS, KAPAZITAET_PFAD, KAPAZITAET_QUELLEN, KAPAZITAET_STAND } from "@/data/netzkapazitaetQuellen";
+import { OdblHinweis } from "@/components/FlaechenCheck/NetzSchritt";
+import { LUFTLINIE_HINWEIS, ODBL_URL } from "@/lib/flaeche/netz";
 
 const PFAD = "/flaechen-check";
 const SEITE_URL = `${BASE_URL}${PFAD}`;
@@ -82,7 +85,7 @@ const FAQ = [
 const METHODIK = [
   { icon: Scale, titel: "Widmung & Landesrecht", text: "Schwellen, Zonen und Obergrenzen des jeweiligen Landes – aus dem konsolidierten Landesrecht im RIS, Stand " + STAND.label + "." },
   { icon: LandPlot, titel: "Flächengröße", text: `Richtwert ${zahl(PACHT.konzepte[0].kwpProHa)} kWp je Hektar (eNu). Wir planen Freiflächen ab rund ${zahl(MIN_KWP)} kWp – darunter tragen Netzanschluss, Zaun und Genehmigung schwer.` },
-  { icon: Cable, titel: "Weg zum Netz", text: "Trassenlänge im Verhältnis zur Parkgröße – als Faustregel für die Ersteinschätzung. Freie Kapazität bestätigt nur der Netzbetreiber." },
+  { icon: Cable, titel: "Weg zum Netz", text: "Trassenlänge im Verhältnis zur Parkgröße – als Faustregel für die Ersteinschätzung. Auf Wunsch belegt die Karte die Luftlinie zum nächsten Umspannwerk vor (OpenStreetMap, ODbL). Freie Kapazität bestätigt nur der Netzbetreiber." },
   { icon: Mountain, titel: "Hang & Ausrichtung", text: "Eben und Süd sind ideal, Ost/West gut, Nordhänge schwierig; steile Hänge verteuern den Bau. Faustregel, keine Norm." },
 ];
 
@@ -104,7 +107,7 @@ export default async function FlaechenCheckPage({ searchParams }) {
         browserRequirements: "Requires JavaScript",
         inLanguage: "de-AT",
         isAccessibleForFree: true,
-        featureList: ["Eignungsampel", "Widmungsregeln aller neun Bundesländer", "Pachtspanne laut Landwirtschaftskammer", "Checkliste Pachtvertrag"],
+        featureList: ["Eignungsampel", "Widmungsregeln aller neun Bundesländer", "Pachtspanne laut Landwirtschaftskammer", "Checkliste Pachtvertrag", "Luftlinie zum nächsten Umspannwerk (OpenStreetMap, ODbL)"],
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
         publisher: { "@id": `${BASE_URL}/#organization` },
       },
@@ -131,6 +134,8 @@ export default async function FlaechenCheckPage({ searchParams }) {
     LK_OOE_CHECKLISTE,
     { label: "eNu – Agri-PV in Niederösterreich (Leistung je Hektar Freifläche)", url: "https://www.energie-noe.at/agri-pv" },
     ...LAENDER.flatMap((l) => l.quellen.slice(0, 1)),
+    ...KAPAZITAET_QUELLEN.map((q) => ({ label: `${q.name} – ${q.titel}`, url: q.url })),
+    { label: "OpenStreetMap – Urheberrecht und Lizenz (Umspannwerke, © OpenStreetMap-Mitwirkende, ODbL)", url: ODBL_URL },
   ];
 
   return (
@@ -192,6 +197,47 @@ export default async function FlaechenCheckPage({ searchParams }) {
             </li>
           ))}
         </ul>
+      </Section>
+
+      {/* Freie Netzkapazität prüfen (B06) – nur Links, keine Werte */}
+      <Section id="netzkapazitaet" tone="sand" space="sm" className="scroll-mt-24">
+        <div className="grid gap-6 rounded-[2rem] bg-white p-6 ring-1 ring-ink-200/70 md:p-9 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12">
+          <div>
+            <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Nächster Schritt nach der Ampel</p>
+            <h2 className="mt-2 font-display text-[clamp(1.5rem,1.2rem+1vw,2rem)] font-extrabold leading-tight tracking-tight text-ink-900">Freie Netzkapazität prüfen</h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-ink-600">
+              Die Entfernung zum Netz ist nur die halbe Antwort. Ob am Umspannwerk noch Kapazität frei ist, veröffentlichen die Netzbetreiber selbst – quartalsweise und je Umspannwerk. {LUFTLINIE_HINWEIS}
+            </p>
+            <p className="mt-3 text-[13.5px] leading-relaxed text-ink-500">{KAPAZITAET_HINWEIS}</p>
+            <Link href={KAPAZITAET_PFAD} className="mt-5 inline-flex items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
+              Wegweiser: Kapazitäten richtig lesen
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </div>
+          <div>
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {KAPAZITAET_QUELLEN.map((q) => (
+                <li key={q.slug}>
+                  <a
+                    href={q.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex h-full flex-col rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/60 transition hover:bg-ov-50 hover:ring-ov-200"
+                  >
+                    <span className="flex items-center justify-between gap-2 text-[14.5px] font-semibold text-ink-900">
+                      {q.slug === "alle" ? "ebUtilities – alle Netzbetreiber" : q.name}
+                      <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0 text-ov-600" />
+                    </span>
+                    <span className="mt-1 text-[13px] leading-snug text-ink-600">{q.titel}</span>
+                    <span className="sr-only"> (externer Link, neues Fenster)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[12.5px] text-ink-500">Links geprüft am {KAPAZITAET_STAND.label}. Wir übernehmen keine Kapazitätswerte – maßgeblich ist die Seite des Netzbetreibers.</p>
+            <OdblHinweis className="mt-1" />
+          </div>
+        </div>
       </Section>
 
       {/* Dunkle Kontrast-Sektion: Pacht */}

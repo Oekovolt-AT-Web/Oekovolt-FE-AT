@@ -1,6 +1,7 @@
 // energie-live/page.js – Strommarkt Österreich live (Gebotszone AT)
 
-import { Activity, AlertTriangle, BatteryCharging, Clock, Database, ExternalLink, Scale, Sun } from "lucide-react";
+import Link from "next/link";
+import { Activity, AlertTriangle, ArrowRight, BatteryCharging, Clock, Database, ExternalLink, Scale, Sun } from "lucide-react";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Faq from "@/components/ui/Faq";
@@ -16,6 +17,7 @@ import StundenRanking from "@/components/ServiceAT/B/StundenRanking";
 import Abschluss from "@/components/ServiceAT/B/Abschluss";
 import Button from "@/components/ui/Button";
 import { getEnergySnapshot } from "@/lib/energy";
+import { SOLAR_INDEX, SPEICHER_INDEX, ctAusMwh, datumText, eur, monatLabel } from "./_marktindizes/daten";
 import { preisTage, zeitfenster, ct, gw, uhr, spanne, tagLang } from "@/components/EnergieLive/berechnung";
 
 export const revalidate = 900;
@@ -94,7 +96,7 @@ const FAQ = [
   },
   {
     q: "Woher stammen die Daten und wie aktuell sind sie?",
-    a: "Börsenpreise und Stromerzeugung stammen von Energy-Charts des Fraunhofer-Instituts für Solare Energiesysteme ISE; die Preisdaten gibt Energy-Charts mit Bundesnetzagentur und SMARD.de als Quelle an, Lizenz jeweils CC BY 4.0. Fällt diese Quelle aus, nutzen wir für die Preise ersatzweise die stündlichen Day-Ahead-Werte von aWATTar Österreich. Die Seite aktualisiert sich alle fünf Minuten; Erzeugungsdaten laufen mit etwas Verzögerung ein. Alle Angaben ohne Gewähr.",
+    a: "Die Day-Ahead-Preise der Gebotszone AT stammen von SMARD.de, der Strommarkt-Datenplattform der Bundesnetzagentur (Bundesnetzagentur | SMARD.de, Lizenz CC BY 4.0). Strommix, Netzlast und Erneuerbaren-Anteil stammen von Energy-Charts des Fraunhofer-Instituts für Solare Energiesysteme ISE (CC BY 4.0); Energy-Charts dient auch als Ersatzquelle für die Preise, falls SMARD nicht antwortet oder den Folgetag noch nicht veröffentlicht hat. Die Seite aktualisiert sich alle fünf Minuten; Erzeugungsdaten laufen mit etwas Verzögerung ein. Alle Angaben ohne Gewähr.",
   },
 ];
 
@@ -121,6 +123,8 @@ export default async function EnergieLivePage() {
     },
   };
   const nurErzeugung = { stand: s.stand, preis: null, erzeugung: s.erzeugung };
+  const indexSpeicher = SPEICHER_INDEX.monate[SPEICHER_INDEX.monate.length - 1];
+  const indexSolar = SOLAR_INDEX.monate[SOLAR_INDEX.monate.length - 1];
 
   // Zitierfähiger Antwortsatz (auch ohne JavaScript im HTML)
   const antwort = tage.heute
@@ -150,7 +154,10 @@ export default async function EnergieLivePage() {
     keywords: ["Day-Ahead", "Börsenstrompreis", "Gebotszone AT", "Strommix", "Erneuerbare Energien", "Österreich"],
     isAccessibleForFree: true,
     license: "https://creativecommons.org/licenses/by/4.0/",
-    creator: { "@type": "Organization", name: "Fraunhofer-Institut für Solare Energiesysteme ISE – Energy-Charts", url: "https://www.energy-charts.info" },
+    creator: [
+      { "@type": "Organization", name: "Bundesnetzagentur | SMARD.de", url: "https://www.smard.de" },
+      { "@type": "Organization", name: "Fraunhofer-Institut für Solare Energiesysteme ISE – Energy-Charts", url: "https://www.energy-charts.info" },
+    ],
     publisher: { "@id": "https://www.oekovolt.com/#organization" },
     spatialCoverage: { "@type": "Place", name: "Österreich" },
     temporalCoverage: tage.heute ? new Date(tage.heute.start).toISOString().slice(0, 10) : undefined,
@@ -316,6 +323,58 @@ export default async function EnergieLivePage() {
         </div>
       </Section>
 
+      {/* Eigene Marktindizes (B10) */}
+      <Section tone="sand" space="md" id="marktindizes" className="scroll-mt-24">
+        <SectionHeading
+          eyebrow="Eigene Marktindizes"
+          title={
+            <>
+              Was der Strommarkt <span className="ov-text-gradient">Monat für Monat</span> bedeutet
+            </>
+          }
+          lead="Zwei offene Indizes von Ökovolt aus den Day-Ahead-Preisen der Gebotszone AT – mit Methodik, Tabelle und CSV-Download (CC BY 4.0). Eigene Berechnung, nicht amtlich, Richtwert/Orientierung."
+          className="mb-8 md:mb-10"
+        />
+        <div className="grid gap-5 md:grid-cols-2">
+          {[
+            {
+              href: "/energie-live/speicher-index",
+              icon: BatteryCharging,
+              titel: "Speicher-Spread-Index",
+              wert: eur(indexSpeicher.spreadErloesEur),
+              text: `theoretischer Spread-Erlös eines 1-MWh-Speichers im ${monatLabel(indexSpeicher.monat)} – Obergrenze, keine Erlöszusage`,
+              stand: SPEICHER_INDEX.stand,
+              daten: "Bundesnetzagentur | SMARD.de",
+            },
+            {
+              href: "/energie-live/solar-marktwert",
+              icon: Sun,
+              titel: "Solar-Marktwert",
+              wert: ctAusMwh(indexSolar.solarMarktwert),
+              text: `PV-gewichteter Day-Ahead-Preis im ${monatLabel(indexSolar.monat)} bei ${ctAusMwh(indexSolar.mittel)} Monatsmittel – Ökovolt-Schätzung`,
+              stand: SOLAR_INDEX.stand,
+              daten: "Bundesnetzagentur | SMARD.de, Energy-Charts (Fraunhofer ISE)",
+            },
+          ].map((k, i) => (
+            <Reveal key={k.href} delay={i * 80}>
+              <Link href={k.href} className="group flex h-full flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/60 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:ring-ov-300 md:p-7">
+                <span className="flex items-center gap-2 font-display text-[17px] font-bold text-ink-900">
+                  <k.icon aria-hidden="true" className="h-5 w-5 text-ov-600" />
+                  {k.titel}
+                </span>
+                <span className="ov-num mt-4 font-display text-[clamp(1.8rem,1.4rem+1.6vw,2.6rem)] font-extrabold leading-none text-ink-900">{k.wert}</span>
+                <span className="mt-2 text-[15px] leading-relaxed text-ink-600">{k.text}</span>
+                <span className="mt-4 text-[12.5px] text-ink-500">Eigene Berechnung Ökovolt Österreich · Daten: {k.daten} (CC BY 4.0) · Stand {datumText(k.stand)} · Richtwert/Orientierung</span>
+                <span className="mt-5 inline-flex items-center gap-1.5 text-[15px] font-semibold text-ov-700">
+                  Index ansehen
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </Section>
+
       {/* FAQ + Quellen */}
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
@@ -332,25 +391,32 @@ export default async function EnergieLivePage() {
               </h3>
               <ul className="mt-4 space-y-3 text-[14.5px] leading-relaxed text-ink-600">
                 <li className="flex gap-2.5">
-                  <Activity aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-400" />
+                  <Activity aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-500" />
                   <span>
-                    Börsenpreise (Gebotszone AT) und Erzeugung Österreich:{" "}
-                    <a href="https://www.energy-charts.info/?l=de&c=AT" target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
-                      Fraunhofer ISE – Energy-Charts
+                    Börsenpreise (Day-Ahead, Gebotszone AT):{" "}
+                    <a href="https://www.smard.de/home/marktdaten" target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
+                      Bundesnetzagentur | SMARD.de
                       <ExternalLink aria-hidden="true" className="ml-1 inline h-3.5 w-3.5" />
                     </a>
-                    , Preisdaten laut Energy-Charts von Bundesnetzagentur | SMARD.de, Lizenz{" "}
+                    , Lizenz{" "}
                     <a href="https://creativecommons.org/licenses/by/4.0/deed.de" target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
                       CC BY 4.0
                     </a>
                   </span>
                 </li>
                 <li className="flex gap-2.5">
-                  <BatteryCharging aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-400" />
-                  <span>Ersatzquelle für Preise: aWATTar Österreich (stündliche Day-Ahead-Werte)</span>
+                  <BatteryCharging aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-500" />
+                  <span>
+                    Strommix, Netzlast, Erneuerbaren-Anteil (und Ersatzquelle für Preise):{" "}
+                    <a href="https://www.energy-charts.info/?l=de&c=AT" target="_blank" rel="noopener noreferrer" className="font-medium text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
+                      Energy-Charts / Fraunhofer ISE
+                      <ExternalLink aria-hidden="true" className="ml-1 inline h-3.5 w-3.5" />
+                    </a>
+                    , Lizenz CC BY 4.0
+                  </span>
                 </li>
                 <li className="flex gap-2.5">
-                  <Clock aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-400" />
+                  <Clock aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-ink-500" />
                   <span>
                     Datenstand: {tagLang(jetzt)}, {uhr(jetzt)} Uhr · Aktualisierung alle 5 Minuten · Preise netto in ct/kWh (1 €/MWh = 0,1 ct/kWh) ·
                     Jahreswerte (negative Stunden, Durchschnittspreise): eigene Auswertung der Stundenmittel
@@ -370,6 +436,8 @@ export default async function EnergieLivePage() {
           { href: "/service/direktvermarktung", art: "Service", titel: "Reststromvermarktung" },
           { href: "/rechner/dynamischer-stromtarif", art: "Rechner", titel: "Dynamischer-Tarif-Rechner" },
           { href: "/technik/parkregler", art: "Technik", titel: "Parkregler (EZA-Regler)" },
+          { href: "/energie-live/speicher-index", art: "Index", titel: "Speicher-Spread-Index" },
+          { href: "/energie-live/solar-marktwert", art: "Index", titel: "Solar-Marktwert" },
         ]}
       />
       <CtaBand

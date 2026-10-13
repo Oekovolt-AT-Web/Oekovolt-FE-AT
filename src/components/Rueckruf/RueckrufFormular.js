@@ -10,6 +10,12 @@ import KalenderLinks from "./KalenderLinks";
 import { ereignis } from "@/lib/statistik";
 import { herkunft } from "@/lib/herkunft";
 import { tageAusApi } from "@/lib/terminSlots";
+import { einwilligung as einwilligungEintrag, einwilligungFelder } from "@/lib/einwilligungen";
+import { EMAIL_FEHLER, EMAIL_REGEX, PLZ_FEHLER, PLZ_REGEX, TELEFON_PFLICHT_FEHLER } from "@/lib/api/contact/create_contact";
+
+// Rückruf = Anruf auf Wunsch: echte, nicht vorangekreuzte Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 174 TKG 2021).
+// Text und Version kommen aus src/lib/einwilligungen.js und werden mit der Anfrage protokolliert.
+const ANRUF = einwilligungEintrag("rueckruf-anruf");
 
 // Gleiche Terminart wie auf /termin („Telefon“) – so zeigen beide dieselben belegten Zeiten
 const TERMINART = "Telefonische Beratung";
@@ -18,8 +24,6 @@ const TERMINART = "Telefonische Beratung";
 const tageLokal = () =>
   slotsFuerArt("telefon").map((d) => ({ ...d, buchbar: d.slots.length > 0, slots: d.slots.map((s) => ({ ...s, frei: true })) }));
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const PLZ_REGEX = /^\d{4,5}$/; // Österreich 4-stellig, Nachbarländer 5-stellig
 
 const datumText = (iso) =>
   new Intl.DateTimeFormat("de-AT", { timeZone: "Europe/Vienna", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
@@ -135,9 +139,9 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
     e.preventDefault();
     setBeruehrt({ telefon: true, email: true, plz: true, name: true });
     if (!name.trim()) return melden("name", "Bitte geben Sie Ihren Namen an.");
-    if (!telefonOk) return melden("telefon", "Bitte eine gültige österreichische, deutsche oder Schweizer Rufnummer angeben.");
-    if (!emailOk) return melden("email", "Bitte eine gültige E-Mail-Adresse angeben.");
-    if (!plzOk) return melden("plz", "Bitte eine gültige Postleitzahl angeben.");
+    if (!telefonOk) return melden("telefon", TELEFON_PFLICHT_FEHLER);
+    if (!emailOk) return melden("email", EMAIL_FEHLER);
+    if (!plzOk) return melden("plz", PLZ_FEHLER);
     if (!wunschzeit) return melden("wunschzeit", "Bitte wählen Sie eine Wunschzeit.");
     if (!einwilligung) return melden("einwilligung", "Bitte bestätigen Sie, dass wir Sie anrufen dürfen.");
 
@@ -160,6 +164,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           thema,
           nachricht: nachricht.trim(),
           einwilligung: einwilligung ? 1 : 0,
+          ...einwilligungFelder("rueckruf-anruf"),
           quelle: typeof window !== "undefined" ? window.location.pathname : "",
           website: website.current?.value || "",
           // Kampagnen-Zuordnung – /api/rueckruf hängt sie als Textzeile an `nachricht` an (kein eigenes Frappe-Feld)
@@ -190,15 +195,15 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
   }
 
   const t = dunkel
-    ? { text: "text-white", leise: "text-white/65", feld: "bg-white/10 text-white placeholder:text-white/40 ring-white/15 focus-visible:ring-ov-400", chip: "bg-white/10 text-white ring-white/15 hover:ring-white/40", karte: "bg-white/5 ring-white/10", belegt: "bg-white/[0.03] ring-white/10", belegtText: "text-white/30" }
-    : { text: "text-ink-900", leise: "text-ink-600", feld: "bg-white text-ink-900 placeholder:text-ink-500 ring-ink-200 focus-visible:ring-ov-500", chip: "bg-white text-ink-700 ring-ink-200 hover:ring-ov-300", karte: "bg-sand-50 ring-ink-200/70", belegt: "bg-ink-50 ring-ink-100", belegtText: "text-ink-400" };
+    ? { text: "text-white", leise: "text-white/65", feld: "bg-white/10 text-white placeholder:text-white/60 ring-white/15 focus-visible:ring-ov-400", chip: "bg-white/10 text-white ring-white/15 hover:ring-white/40", karte: "bg-white/5 ring-white/10", belegt: "bg-white/[0.03] ring-white/10", belegtText: "text-white/60" }
+    : { text: "text-ink-900", leise: "text-ink-600", feld: "bg-white text-ink-900 placeholder:text-ink-500 ring-ink-200 focus-visible:ring-ov-500", chip: "bg-white text-ink-700 ring-ink-200 hover:ring-ov-300", karte: "bg-sand-50 ring-ink-200/70", belegt: "bg-ink-50 ring-ink-100", belegtText: "text-ink-500" };
 
   // ------------------------------------------------ Bestätigung
   if (zustand === "fertig" && ergebnis) {
     return (
       <div className={cn("text-center", className)} role="status" aria-live="polite">
         <div className="relative mx-auto flex h-20 w-20 items-center justify-center">
-          <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-ov-500 text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.8)]">
+          <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-ov-600 text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.8)]">
             <CalendarClock aria-hidden="true" className="h-9 w-9" />
           </span>
         </div>
@@ -253,6 +258,8 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           <p className={cn("text-[14px]", t.leise)}>Gerade sind keine Zeiten verfügbar. Rufen Sie uns gern direkt an: {FIRMA.telefon}.</p>
         ) : (
           <>
+            {/* Hülle w-0 min-w-full: Die Leiste meldet keine min-content-Breite nach oben (sonst wird /termin mobil abgeschnitten) */}
+            <div className="w-0 min-w-full">
             <div className="ov-no-scrollbar -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
               {tage.map((d, i) => (
                 <button
@@ -266,7 +273,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
                     setWunschzeit("");
                   }}
                   className={cn(
-                    "h-9 shrink-0 rounded-full px-3.5 text-[13px] font-semibold ring-1 ring-inset transition",
+                    "h-11 shrink-0 rounded-full px-3.5 text-[13px] font-semibold ring-1 ring-inset transition",
                     !d.buchbar ? cn("cursor-not-allowed line-through", t.belegt, t.belegtText) : tag === i ? "bg-navy-950 text-white ring-navy-950" : t.chip
                   )}
                 >
@@ -274,7 +281,8 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
                 </button>
               ))}
             </div>
-            <div className="mt-2 grid max-h-[132px] grid-cols-4 gap-1.5 overflow-y-auto pr-0.5">
+            </div>
+            <div className="mt-2 grid max-h-[150px] grid-cols-4 gap-1.5 overflow-y-auto pr-0.5">
               {(tage[tag]?.slots || []).map((s) =>
                 s.frei ? (
                   <button
@@ -287,7 +295,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
                       setFehler("");
                       setFehlerFeld("");
                     }}
-                    className={cn("ov-num h-9 rounded-xl text-[13.5px] font-semibold ring-1 ring-inset transition", wunschzeit === s.start ? "bg-ov-600 text-white ring-ov-600" : t.chip)}
+                    className={cn("ov-num h-11 rounded-xl text-[13.5px] font-semibold ring-1 ring-inset transition", wunschzeit === s.start ? "bg-ov-600 text-white ring-ov-600" : t.chip)}
                   >
                     {s.zeit}
                   </button>
@@ -297,7 +305,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
                     type="button"
                     disabled
                     aria-label={`${s.zeit} Uhr – bereits vergeben`}
-                    className={cn("ov-num h-9 cursor-not-allowed rounded-xl text-[13.5px] font-semibold line-through ring-1 ring-inset", t.belegt, t.belegtText)}
+                    className={cn("ov-num h-11 cursor-not-allowed rounded-xl text-[13.5px] font-semibold line-through ring-1 ring-inset", t.belegt, t.belegtText)}
                   >
                     {s.zeit}
                   </button>
@@ -335,7 +343,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
         <label className="block">
           <span className={cn("mb-1.5 block text-[13px] font-semibold", t.text)}>Telefonnummer</span>
           <span className="relative block">
-            <Phone aria-hidden="true" className={cn("pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2", dunkel ? "text-white/50" : "text-ink-400")} />
+            <Phone aria-hidden="true" className={cn("pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2", dunkel ? "text-white/50" : "text-ink-500")} />
             <input
               ref={telefonFeld}
               type="tel"
@@ -419,7 +427,7 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
               type="button"
               aria-pressed={thema === x}
               onClick={() => setThema(thema === x ? "" : x)}
-              className={cn("h-8 rounded-full px-3 text-[12.5px] font-semibold ring-1 ring-inset transition", thema === x ? "bg-navy-950 text-white ring-navy-950" : t.chip)}
+              className={cn("h-11 rounded-full px-3.5 text-[12.5px] font-semibold ring-1 ring-inset transition", thema === x ? "bg-navy-950 text-white ring-navy-950" : t.chip)}
             >
               {x}
             </button>
@@ -453,8 +461,8 @@ export default function RueckrufFormular({ dunkel = false, autoFokus = false, cl
           aria-describedby={fehler && fehlerFeld === "einwilligung" ? ids.sammel : undefined}
           className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-ov-600" />
         <span className={cn("text-[13px] leading-relaxed", t.leise)}>
-          Ökovolt darf mich unter dieser Nummer zu meiner Anfrage anrufen. Die Angaben werden nur dafür genutzt, Details in der{" "}
-          <Link href="/datenschutz#rueckruf" className={cn("font-semibold underline underline-offset-2", dunkel ? "text-white" : "text-ov-700")}>
+          {ANRUF.text} Details in der{" "}
+          <Link href={ANRUF.link} className={cn("font-semibold underline underline-offset-2", dunkel ? "text-white" : "text-ov-700")}>
             Datenschutzerklärung
           </Link>
           .

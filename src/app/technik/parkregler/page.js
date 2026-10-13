@@ -18,6 +18,7 @@ import {
   Zap,
 } from "lucide-react";
 
+import Link from "next/link";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -26,6 +27,8 @@ import TorTypFinder from "@/components/Technik/TorTypFinder";
 import { TYPEN } from "@/components/Technik/torTypen";
 import SignalketteLive from "@/components/Technik/SignalketteLive";
 import KennlinieInteraktiv from "@/components/Technik/KennlinieInteraktiv";
+import Einlinienschaltbild from "@/components/Technik/Einlinienschaltbild";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import { Hinweis, Kennwerte, Punkte, Tabelle, UnterlagenAufAnfrage } from "@/components/Technik/Bausteine";
 import { JsonLd, seitenMeta, seitenSchema } from "@/components/Technik/seite";
 import AntwortBand from "@/components/ServiceAT/A/AntwortBand";
@@ -226,13 +229,13 @@ export default function ParkreglerPage() {
       <PageHero
         variant="immersive"
         breadcrumbs={[{ name: "Technik", href: "/technik" }, { name: "Parkregler (EZA-Regler)" }]}
-        eyebrow="Eigene Technik · Parkregler für Österreich"
+        eyebrow="Technik · Parkregler für Österreich"
         title={
           <>
             Parkregler für den Netzanschlusspunkt – <span className="ov-text-gradient-light">nach TOR Erzeuger</span>
           </>
         }
-        lead={`${DEFINITION} Ökovolt setzt dafür einen selbst entwickelten Parkregler ein – herstellerunabhängig und dokumentiert.`}
+        lead={`${DEFINITION} ${PARKREGLER_SATZ}`}
         image={{ src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "Freiluft-Schaltanlage eines Umspannwerks in Kärnten unter blauem Himmel" }}
         actions={[
           { label: "Projekt besprechen", href: "/termin?art=video" },
@@ -342,6 +345,20 @@ export default function ParkreglerPage() {
           { titel: "Getrennte Rollen", text: "Die Messung für die Regelung ersetzt nicht den Zähler des Netzbetreibers und nicht den Netzentkupplungsschutz." },
         ]}
       />
+
+      {/* Einlinienschaltbild NE 7 / 6 / 5 */}
+      <Section tone="white" space="md" id="schaltbild" className="scroll-mt-24">
+        <div className="mb-10 grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:items-end lg:gap-14">
+          <SectionHeading eyebrow="Einlinienschaltbild" title="Wo der Parkregler im Anschluss sitzt – Netzebene 7, 6 und 5" />
+          <p className="ov-lead text-ink-600 lg:pb-1">
+            Vom öffentlichen Netz bis zum Modul: Jedes Bauteil zeigt Funktion, TOR-Bezug und den typischen Nachweis. Ob ein Regler nötig ist und ab welcher Leistung, legt Ihr Netzbetreiber fest.{" "}
+            <Link href="/technik/netzanschluss-simulator" className="font-semibold text-ov-700 underline-offset-4 hover:underline">
+              Spannungsänderung am Verknüpfungspunkt abschätzen
+            </Link>
+          </p>
+        </div>
+        <Einlinienschaltbild />
+      </Section>
 
       {/* Fachdetails in Tabs */}
       <Section tone="sand" space="md" id="fachdetails" className="scroll-mt-24">
@@ -478,7 +495,12 @@ export default function ParkreglerPage() {
               minBreite={820}
               quelle="Quellen: TOR Stromerzeugungsanlagen Typ B V1.3, Kap. 8; RKS-AT Typ B V1.1; VDE-AR-N 4105/4110. Deutsche Zertifikate gelten in Österreich nicht automatisch, können aber als Nachweis für einzelne Anforderungen dienen."
             />
-            <UnterlagenAufAnfrage text="Funktionsbeschreibung, Schnittstellen- und Signalliste sowie Prüfprotokoll-Vorlagen unseres Parkreglers stellen wir Planern, Netzbetreibern und Gutachtern projektbezogen zur Verfügung." />
+            <UnterlagenAufAnfrage
+              titel="Fachplaner-Paket: Datenblatt & Inbetriebnahme-Prüfplan"
+              text="Prüfplan mit Sollwertsprüngen, Q-Verfahren-Test und Rückfallwert am Bildschirm erstellen; Druck/PDF nach kurzer E-Mail-Bestätigung. Signalliste und Parameterauszug erhalten Planer, Netzbetreiber und Gutachter projektbezogen."
+              href="/technik/parkregler/datenblatt#pruefplan"
+              linkText="Zum Fachplaner-Paket"
+            />
           </div>
           <div className="grid gap-5">
             <p className="max-w-3xl text-[16px] leading-relaxed text-ink-600">
@@ -528,6 +550,8 @@ export default function ParkreglerPage() {
         lead="Ihre Frage betrifft einen konkreten Netzanschluss? Schicken Sie uns Netzanschlussvertrag oder Anschlusskonzept – wir sagen Ihnen, was der Regler dort leisten muss."
         linkTitel="Technik im Verbund"
         links={[
+          { href: "/technik/netzanschluss-simulator", titel: "Netzanschluss-Simulator" },
+          { href: "/technik/parkregler/datenblatt", titel: "Datenblatt & Prüfplan" },
           { href: "/technik/scada", titel: "SCADA & Leitwarte" },
           { href: "/technik/fernwartung", titel: "Fernwartung & IT-Security" },
           { href: "/service/direktvermarktung", titel: "Reststromvermarktung" },

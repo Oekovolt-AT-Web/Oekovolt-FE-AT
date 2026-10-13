@@ -49,7 +49,7 @@ export const NAVIGATION = [
   {
     title: "Technik",
     slug: "technik",
-    intro: "Eigene Regelungs- und Leittechnik – entwickelt für den österreichischen Netzanschluss.",
+    intro: "Regelungs- und Leittechnik mit Technologiepartner Solensa – für den österreichischen Netzanschluss.",
     groups: [
       {
         label: "Eigene Systeme",

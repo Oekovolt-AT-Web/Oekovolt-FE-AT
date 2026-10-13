@@ -11,9 +11,20 @@ import assert from "node:assert/strict";
 
 import { ANNAHMEN, preisProKwp, speicherPreisProKwh, strompreisGewerbe, betriebskostenProKwp, eagZuschuss } from "../src/data/solarrechner.js";
 import {
+  BETRIEBSTAGE_AUS_SCHICHT,
+  EAG_SPEICHER_MIN_KWH_JE_KWP,
   GEWERBE_PV,
   GEWERBE_PRESETS,
+  acVorschlag,
   annuitaet,
+  breakEvenStrompreisCt,
+  euroGerundet,
+  heroEingabe,
+  irrCa,
+  kwpAusDach,
+  stresstest,
+  stresstestBericht,
+  stresstestSatz,
   arbeitspreisRichtwertCt,
   eagKategorie,
   einspeiseSatzCt,
@@ -23,6 +34,7 @@ import {
   spezifischerErtrag,
   torTyp,
 } from "../src/lib/rechner/gewerbepv.js";
+import { KNAPP_HINWEIS, acSumme, liesZahlDe, torTyp as torTypGemeinsam } from "../src/components/Technik/torTypen.js";
 import {
   NETZBEREICHE,
   PS_ANNAHMEN,
@@ -42,6 +54,7 @@ import {
 } from "../src/lib/rechner/peakshaving.js";
 import { PACHT, netzEinschaetzung, rechnePacht } from "../src/lib/rechner/pacht.js";
 import {
+  BO_ANNAHMEN,
   BRANCHEN,
   auslegung,
   boAusParams,
@@ -126,7 +139,9 @@ describe("data/solarrechner – Preis- und Förderhelfer", () => {
     assert.deepEqual(eagZuschuss(8, 10), { kategorie: "A", pv: 1200, speicher: 1500, summe: 2700 });
     assert.equal(eagZuschuss(20, 0).pv, 2800);
     assert.equal(eagZuschuss(80, 80).speicher, 50 * 150); // max. 50 kWh
-    assert.deepEqual(eagZuschuss(1500, 100), { kategorie: "D", pv: 120000, speicher: 7500, summe: 127500 });
+    assert.deepEqual(eagZuschuss(1500, 600), { kategorie: "D", pv: 120000, speicher: 7500, summe: 127500 });
+    // Speicher erst ab 0,5 kWh je förderfähigem kWp (hier 1.000 kWp → 500 kWh), wie gewerbepv.js und foerdercall.js
+    assert.equal(eagZuschuss(1500, 100).speicher, 0);
     assert.equal(eagZuschuss(0, 10).summe, 0);
     assert.equal(eagZuschuss(-5, 10).summe, 0);
     assert.equal(eagZuschuss(10, -3).speicher, 0);
@@ -476,16 +491,20 @@ describe("pacht (Freiflächen-/Agri-PV)", () => {
     assert.equal(r.eagAnteilig, true);
     assert.equal(rechnePacht({ hektar: 0.5, standort: STANDORT }).eagAnteilig, false);
   });
-  // Befund tests-04 behoben: pacht.js nutzt torTyp() aus gewerbepv.js (inkl. 0,8-kW-Grenze)
-  test("TOR-Typ: dieselbe Staffel wie gewerbepv.torTyp(), unter 0,8 kW „–“", () => {
+  // Befund tests-04 behoben; Welle A (A10): Einstufung nach AC-Maximalkapazität (kWp ÷ 1,15)
+  test("TOR-Typ: gemeinsame Staffel torTyp() nach AC-Leistung, unter 0,8 kW „–“", () => {
     assert.equal(rechnePacht({ hektar: 0, standort: STANDORT }).tor, "–");
-    for (const hektar of [0, 0.0005, 0.001, 0.2, 0.25, 34, 35, 49, 50, 60]) {
+    for (const hektar of [0, 0.0005, 0.001, 0.2, 0.25, 0.3, 34, 35, 49, 50, 60]) {
       const r = rechnePacht({ hektar, standort: STANDORT });
-      assert.equal(r.tor, torTyp(r.kwp).typ, `${hektar} ha`);
-      assert.equal(r.torText, torTyp(r.kwp).text, `${hektar} ha`);
+      assert.equal(r.acKva, acVorschlag(r.kwp), `${hektar} ha`);
+      assert.equal(r.tor, torTyp(r.acKva).typ, `${hektar} ha`);
+      assert.equal(r.torText, torTyp(r.acKva).text, `${hektar} ha`);
     }
-    assert.equal(rechnePacht({ hektar: 0.2, standort: STANDORT }).tor, "A"); // 200 kWp
-    assert.equal(rechnePacht({ hektar: 0.25, standort: STANDORT }).tor, "B"); // 250 kWp
+    assert.equal(rechnePacht({ hektar: 0.2, standort: STANDORT }).tor, "A"); // 200 kWp → 174 kVA
+    assert.equal(rechnePacht({ hektar: 0.25, standort: STANDORT }).tor, "A"); // 250 kWp → 217 kVA
+    assert.equal(rechnePacht({ hektar: 0.25, standort: STANDORT }).torKnapp, false);
+    assert.equal(rechnePacht({ hektar: 0.3, standort: STANDORT }).tor, "B"); // 300 kWp → 261 kVA
+    assert.equal(rechnePacht({ hektar: 0.3, standort: STANDORT }).torKnapp, true);
   });
 });
 
@@ -559,6 +578,32 @@ describe("blackout (Ersatzstrom)", () => {
       assert.ok(s.ueberbrueckt >= vorher, `${speicher} kWh`);
       vorher = s.ueberbrueckt;
     }
+  });
+  // Welle A (A10): ohne Netzbildner (Speicher oder Aggregat) liefert die PV im Netzausfall nichts
+  test("simuliereAusfall: ohne Speicher und ohne Aggregat → PV 0 (PV-Deckung 0 %)", () => {
+    for (const jahreszeit of ["winter", "sommer"]) {
+      const s = simuliereAusfall({ ...prod, kwp: 500, speicher: 0, aggregat: false, jahreszeit, startStunde: 8 });
+      assert.equal(s.energie.pv, 0, jahreszeit);
+      assert.equal(s.anteile.pv, 0, jahreszeit);
+      assert.equal(s.netzbildend, false);
+      assert.ok(s.verlauf.every((v) => v.pv === 0));
+      nahe(s.anteile.offen, 1, 1e-12);
+    }
+  });
+  test("simuliereAusfall: Aggregat ohne Speicher → PV höchstens pvAnteilAmAggregat der Last, Aggregat läuft", () => {
+    const s = simuliereAusfall({ ...prod, kwp: 2000, speicher: 0, aggregat: true, jahreszeit: "sommer", startStunde: 8 });
+    assert.equal(s.netzbildend, true);
+    assert.equal(s.pvBegrenzt, true);
+    assert.ok(s.energie.pv > 0);
+    for (const v of s.verlauf) {
+      assert.ok(v.pv <= v.last * BO_ANNAHMEN.pvAnteilAmAggregat + 1e-9, `Stunde ${v.stunde}`);
+      assert.ok(v.aggregat > 0, `Aggregat bildet das Netz, Stunde ${v.stunde}`);
+    }
+  });
+  test("simuliereAusfall: mit Speicher liefert PV (Sommer, Tag)", () => {
+    const s = simuliereAusfall({ ...prod, kwp: 300, speicher: 170, aggregat: false, jahreszeit: "sommer", startStunde: 8 });
+    assert.equal(s.netzbildend, true);
+    assert.ok(s.energie.pv > 0);
   });
   test("szenarien: drei Szenarien, ersatzstrom=false ohne Vorteil", () => {
     const s = simuliereAusfall({ ...prod, speicher: 170 });
@@ -751,5 +796,180 @@ describe("energiegemeinschaft", () => {
     assert.equal(x.modell, "lokal");
     assert.equal(x.energiepreisCt, 40);
     assert.equal(x.egPreisCt, null);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Welle A, Paket A10: Stresstest, TOR nach AC-Leistung, Hero = Detail, EAG-Speicherregel
+// ---------------------------------------------------------------------------
+describe("A10 – Stresstest Gewerbe-PV", () => {
+  const BASIS = { kwp: 290, dachart: "ost-west", standort: STANDORT, verbrauchKwh: 450000, betriebstage: 6, schichten: 2, eag: true };
+  const SCHWACH = { ...STANDORT, sued35: STANDORT.sued35 * 0.9, ostwest15: STANDORT.ostwest15 * 0.9, flach10: STANDORT.flach10 * 0.9 };
+
+  test("drei Läufe in fester Reihenfolge, günstig ≥ erwartet ≥ konservativ", () => {
+    const st = stresstest(BASIS);
+    assert.deepEqual(st.laeufe.map((l) => l.id), ["konservativ", "erwartet", "guenstig"]);
+    const [k, e, g] = st.laeufe;
+    assert.ok(k.summe < e.summe && e.summe < g.summe);
+    assert.ok(k.irr < e.irr && e.irr < g.irr);
+    assert.ok(k.amortisation > e.amortisation);
+    assert.equal(st.jahre, 25);
+  });
+  test("erwarteter Lauf = rechneGewerbePv (auch mit übergebenem Ergebnis)", () => {
+    const r = rechneGewerbePv(BASIS);
+    nahe(stresstest(BASIS).laeufe[1].summe, r.summe, 1e-6);
+    nahe(stresstest(BASIS, { erwartet: r }).laeufe[1].summe, r.summe, 1e-6);
+  });
+  test("konservativer Lauf = Handrechnung mit −30 % Preis, −10 % Ertrag, 0 % Steigerung", () => {
+    const r = rechneGewerbePv(BASIS);
+    const hand = rechneGewerbePv({ ...BASIS, arbeitspreisCt: r.arbeitspreisCt * 0.7, einspeiseCt: r.einspeiseCt * 0.7, standort: SCHWACH, preissteigerung: 0 });
+    nahe(stresstest(BASIS).laeufe[0].summe, hand.summe, 1e-6);
+  });
+  test("Stresstest-Satz erscheint nur, wenn rechnerisch wahr", () => {
+    // gute Rechnung → Satz mit der konservativen Amortisation
+    const gut = stresstest(BASIS);
+    const k = gut.laeufe[0];
+    assert.ok(k.amortisation != null && k.summe > 0);
+    assert.equal(gut.satz.wahr, true);
+    assert.match(gut.satz.text, /^Wir rechnen Ihnen auch den schlechten Fall vor\. Selbst wenn der Strompreis um 30 % fällt und die Sonne 10 % weniger liefert, liegt Ihre Amortisation bei \d+,\d Jahren\.$/);
+    assert.ok(gut.satz.text.includes(`${(Math.round(k.amortisation * 10) / 10).toFixed(1).replace(".", ",")} Jahren`));
+    // schwache Rechnung → kein Satz, sondern Gesprächsangebot
+    const schlecht = stresstest({ ...BASIS, arbeitspreisCt: 6, einspeiseCt: 2, verbrauchKwh: 30000, eag: false });
+    assert.ok(schlecht.laeufe[0].amortisation == null || schlecht.laeufe[0].summe <= 0);
+    assert.equal(schlecht.satz.wahr, false);
+    assert.equal(schlecht.satz.text, "In diesem Fall rechnet sich die Anlage nicht – sprechen wir über Speicher oder Größe.");
+    // direkt: nur bei Amortisation UND positivem Saldo
+    assert.equal(stresstestSatz([{ id: "konservativ", leasing: false, amortisation: null, summe: 10 }]).wahr, false);
+    assert.equal(stresstestSatz([{ id: "konservativ", leasing: false, amortisation: 12, summe: -1 }]).wahr, false);
+    assert.ok(stresstestSatz([{ id: "konservativ", leasing: false, amortisation: 12.04, summe: 5 }]).text.endsWith("12,0 Jahren."));
+    assert.equal(stresstestSatz([]).wahr, false);
+  });
+  test("Leasing: Zins +2 Pp. wirkt, Satz nur bei positivem Überschuss", () => {
+    const r = rechneGewerbePv(BASIS);
+    const l = stresstest({ ...BASIS, finanzierung: "leasing", leasingZins: 0.05 });
+    const hand = rechneGewerbePv({ ...BASIS, finanzierung: "leasing", leasingZins: 0.07, arbeitspreisCt: r.arbeitspreisCt * 0.7, einspeiseCt: r.einspeiseCt * 0.7, standort: SCHWACH, preissteigerung: 0 });
+    nahe(l.laeufe[0].summe, hand.summe, 1e-6);
+    assert.equal(l.satz.wahr, hand.summe > 0);
+  });
+  test("Break-even-Strompreis: Cashflow nach 25 Jahren genau 0", () => {
+    const r = rechneGewerbePv(BASIS);
+    const be = breakEvenStrompreisCt(r);
+    assert.ok(be > 0 && be < r.arbeitspreisCt);
+    nahe(rechneGewerbePv({ ...BASIS, arbeitspreisCt: be, einspeiseCt: r.einspeiseCt }).summe, 0, 1e-3);
+    const st = stresstest(BASIS);
+    assert.equal(st.breakEven.frage, "Ab welchem Strompreis rechnet sich die Anlage nicht mehr?");
+    assert.match(st.breakEven.antwort, /^Unter \d+,\d ct\/kWh netto – darüber trägt sie sich\.$/);
+    assert.equal(st.breakEven.text, `${st.breakEven.frage} ${st.breakEven.antwort}`);
+  });
+  test("Druckblatt-Zeilen: drei Fälle, IRR mit ca.", () => {
+    const b = stresstestBericht(stresstest(BASIS));
+    assert.equal(b.zeilen.length, 3);
+    assert.ok(b.zeilen.every((z) => z.length === b.spalten.length));
+    assert.ok(b.zeilen.every((z) => /^ca\. \d+ %$|^< 0 %$/.test(z[3])));
+    assert.equal(typeof b.satz, "string");
+    assert.equal(typeof b.breakEven, "string");
+  });
+  test("Formate: große Summen auf Tausender, IRR ganzzahlig", () => {
+    assert.equal(euroGerundet(1153000), "≈ 1,15 Mio. €");
+    assert.equal(euroGerundet(245432), "≈ 245.000 €");
+    assert.equal(euroGerundet(-245432), "≈ −245.000 €");
+    assert.equal(euroGerundet(9876), "9.876 €");
+    assert.equal(irrCa(0.0949), "ca. 9 %");
+    assert.equal(irrCa(-0.01), "< 0 %");
+    assert.equal(irrCa(null), "–");
+  });
+});
+
+describe("A10 – TOR-Typ nach AC-Maximalkapazität", () => {
+  const E = { dachart: "ost-west", standort: STANDORT, verbrauchKwh: 300000, profil: false };
+  test("TOR 290 kWp mit 240 kVA Wechselrichter → Typ A (mit Knapp-Hinweis, ohne Aufteilungs-Empfehlung)", () => {
+    const r = rechneGewerbePv({ ...E, kwp: 290, wrKva: 240 });
+    assert.equal(r.kwp, 290);
+    assert.equal(r.ac.summe, 240);
+    assert.equal(r.tor.typ, "A");
+    assert.equal(r.tor.knapp, true);
+    assert.equal(r.tor.hinweis, KNAPP_HINWEIS);
+    assert.ok(!/aufteil/i.test(r.tor.hinweis));
+  });
+  test("ohne Eingabe: Vorschlag kWp ÷ 1,15", () => {
+    const r = rechneGewerbePv({ ...E, kwp: 290 });
+    assert.equal(acVorschlag(290), 252);
+    assert.equal(r.ac.wrKva, 252);
+    assert.equal(r.tor.typ, "B");
+  });
+  test("AC-Summe inkl. Speicher und bestehender Erzeugung", () => {
+    assert.equal(rechneGewerbePv({ ...E, kwp: 200, wrKva: 180 }).tor.typ, "A");
+    const mitSpeicher = rechneGewerbePv({ ...E, kwp: 200, wrKva: 180, speicherKwh: 200, speicherKva: 100 });
+    assert.equal(mitSpeicher.ac.summe, 280);
+    assert.equal(mitSpeicher.tor.typ, "B");
+    const mitBestand = rechneGewerbePv({ ...E, kwp: 200, wrKva: 180, bestandKw: 80 });
+    assert.equal(mitBestand.ac.summe, 260);
+    assert.equal(mitBestand.tor.typ, "B");
+    const auto = rechneGewerbePv({ ...E, kwp: 200, wrKva: 180, speicherKwh: 200 });
+    assert.equal(auto.ac.speicherKva, Math.round(Math.max(200 * ANNAHMEN.gewerbeSpeicherCRate, 5)));
+    assert.equal(acSumme({ wrKva: 10, speicherKva: -5, bestandKw: "x" }), 10);
+  });
+  test("gemeinsame Staffel: Grenzen, Hochspannung, Knapp-Band 230–270 kW", () => {
+    assert.equal(torTyp, torTypGemeinsam);
+    assert.equal(torTypGemeinsam(249.99).typ, "A");
+    assert.equal(torTypGemeinsam(250).typ, "B");
+    assert.equal(torTypGemeinsam(10, { hochspannung: true }).typ, "D");
+    assert.equal(torTypGemeinsam(229.9).knapp, false);
+    assert.equal(torTypGemeinsam(230).knapp, true);
+    assert.equal(torTypGemeinsam(270).knapp, true);
+    assert.equal(torTypGemeinsam(270.1).knapp, false);
+  });
+  test("Eingabe in österreichischer Schreibweise (QA: Speicher/Bestand wurden als 0 bzw. 1 gelesen)", () => {
+    assert.equal(liesZahlDe("30"), 30);
+    assert.equal(liesZahlDe("1.000"), 1000);
+    assert.equal(liesZahlDe("12.500,5"), 12500.5);
+    assert.equal(liesZahlDe("2,5"), 2.5);
+    assert.equal(liesZahlDe("2.5"), 2.5);
+    assert.ok(Number.isNaN(liesZahlDe("")));
+    assert.ok(Number.isNaN(liesZahlDe("abc")));
+    // TOR-Finder-Fall: PV 230 kW + Speicher 30 kVA = 260 kW → Typ B
+    assert.equal(torTypGemeinsam(acSumme({ wrKva: 230, speicherKva: liesZahlDe("30"), bestandKw: liesZahlDe("") || 0 })).typ, "B");
+    assert.equal(acSumme({ wrKva: 340, bestandKw: liesZahlDe("1.000") }), 1340);
+  });
+});
+
+describe("A10 – Startseiten-Rechner = Detailrechnung", () => {
+  test("gleiche Eingabe Hero/Detail → gleiche kWp und gleiches Ergebnis", () => {
+    for (const flaeche of [500, 1750, 4000, 7000, 15000]) {
+      for (const schichten of [1, 2, 3]) {
+        const hero = heroEingabe({ flaeche, verbrauchMwh: 400, schichten, standort: STANDORT });
+        // Detailrechnung nach Übernahme aus der URL: Fläche + Dachart Ost-West, Betriebstage aus dem Schichtmodell
+        const kwpDetail = kwpAusDach(flaeche, "ost-west");
+        assert.equal(hero.kwp, kwpDetail, `${flaeche} m²`);
+        const rh = rechneGewerbePv(hero);
+        const rd = rechneGewerbePv({ kwp: kwpDetail, dachart: "ost-west", standort: STANDORT, verbrauchKwh: 400000, typ: "gewerbe", betriebstage: BETRIEBSTAGE_AUS_SCHICHT[schichten], schichten, eag: false, ifb: false, profil: false });
+        assert.equal(rh.kwp, rd.kwp);
+        nahe(rh.nutzenJahr1, rd.nutzenJahr1, 1e-6);
+        assert.equal(rh.spezifischerErtrag, STANDORT.ostwest15);
+      }
+    }
+  });
+  test("Startseite: Ost-West 7 m²/kWp, ohne Speicher und Förderung", () => {
+    const h = heroEingabe({ flaeche: 4000, verbrauchMwh: 400, schichten: 2, standort: STANDORT });
+    assert.equal(h.dachart, "ost-west");
+    assert.equal(GEWERBE_PV.dacharten.find((d) => d.id === "ost-west").qmProKwp, 7);
+    assert.equal(h.kwp, 570);
+    assert.equal(h.speicherKwh, 0);
+    assert.equal(h.eag, false);
+    assert.equal(h.ifb, false);
+  });
+});
+
+describe("A10 – EAG-Speicherzuschuss ab 0,5 kWh je kWp", () => {
+  test("zu kleiner Speicher: nur PV gefördert", () => {
+    const r = rechneGewerbePv({ kwp: 200, dachart: "ost-west", standort: STANDORT, verbrauchKwh: 300000, speicherKwh: 50, eag: true, profil: false });
+    assert.equal(r.zuschuss.speicher, 0);
+    assert.equal(r.zuschuss.speicherZuKlein, true);
+    nahe(r.zuschuss.summe, eagZuschuss(200, 0).summe, 1e-9);
+  });
+  test("ausreichender Speicher: Speicher gefördert", () => {
+    const r = rechneGewerbePv({ kwp: 20, dachart: "ost-west", standort: STANDORT, verbrauchKwh: 30000, speicherKwh: 20 * EAG_SPEICHER_MIN_KWH_JE_KWP, eag: true, profil: false });
+    assert.ok(r.zuschuss.speicher > 0);
+    nahe(r.zuschuss.summe, eagZuschuss(20, 10).summe, 1e-9);
   });
 });

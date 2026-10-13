@@ -1,8 +1,10 @@
 import Link from "next/link";
 import {
+  ArrowUpRight,
   Cable,
   Calculator,
   ClipboardCheck,
+  ClipboardList,
   Cog,
   FileSearch,
   Handshake,
@@ -27,7 +29,7 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import LoesungSchema from "@/components/Loesungen/LoesungSchema";
-import { Bildnachweis, Hebel, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
+import { Bildnachweis, Hebel, Hinweis, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
 import KennzahlenBand from "@/components/Loesungen/A/KennzahlenBand";
 import FotoBento from "@/components/Loesungen/A/FotoBento";
 import FlaechenRegler from "@/components/Loesungen/A/FlaechenRegler";
@@ -38,10 +40,30 @@ import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
 import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
+import EinwandKarten from "@/components/Verkauf/EinwandKarten";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
 import { zielgruppenVariante } from "@/data/zielgruppen";
+import { PACHT_BELEG } from "@/lib/flaeche/check";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/freiflaechen-photovoltaik";
+
+// Welle A / A05: Primär-CTA nach CTA-Regel „Mittel“ (Flächendaten eingeben – Auswertung zurück) → /flaechen-check,
+// Zweitaktion → /angebot?objekt=agri (Alias auf „Freifläche / Agri-PV“ im Konfigurator).
+const CTA_PRIMAER = "/flaechen-check";
+const CTA_SEKUNDAER = "/angebot?objekt=agri";
+const EBUTILITIES = "https://www.ebutilities.at/verfuegbare-netzanschlusskapazitaeten";
+// de-DE statt de-AT: Tausenderpunkt („3.000“) wie auf der übrigen Seite, de-AT liefert ein schmales Leerzeichen.
+const zahl = (n) => new Intl.NumberFormat("de-DE").format(n);
+
+// Antwortblock unter der H1 (Definition + Eckdaten). Pacht: belegte Spanne der Landwirtschaftskammern
+// aus src/lib/flaeche/check.js (LK Steiermark 17.05.2022, LK Kärnten 29.09.2022) – Angebotsniveau, kein Marktpreis.
+const ECKDATEN = [
+  { kriterium: "Größe", wert: "ab ca. 500 kWp; 1 MWp braucht etwa 1 bis 1,5 ha", quelle: "Ökovolt-Planungspraxis, Richtwert" },
+  { kriterium: "Widmung", wert: "eigene Widmung oder Sonderausweisung im Flächenwidmungsplan – Grenzen je Bundesland", quelle: "Landesrecht, Rechtsstand 28.09.2026" },
+  { kriterium: "Netz", wert: "Netzebene 5 (Mittelspannung) oder 4 (Umspannwerk); freie Kapazität regional knapp", quelle: "ebUtilities, Orientierung" },
+  { kriterium: "Pacht", wert: `${zahl(PACHT_BELEG.pvVon)} bis ${zahl(PACHT_BELEG.pvBis)} € je ha und Jahr (gebotene Pachten, Durchschnitt)`, quelle: `Landwirtschaftskammern Steiermark und Kärnten, ${PACHT_BELEG.pvJahr}` },
+];
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "Freiflächen-Photovoltaik & Solarparks Österreich | Ökovolt";
 const BESCHREIBUNG =
@@ -74,7 +96,7 @@ const FAQ = [
   },
   {
     q: "Gibt es für Freiflächenanlagen eine Förderung?",
-    a: "Ja, aber mit Einschränkungen. Der EAG-Investitionszuschuss fördert bis 1.000 kWp, größere Anlagen anteilig bis 1.000 kWp; alternativ ist die Teilnahme an den Ausschreibungen für die Marktprämie möglich (Höchstpreis 2026: 7,77 ct/kWh). Auf landwirtschaftlich genutzten Flächen oder im Grünland gilt jeweils ein Abschlag von 25 %; für Deponien, Altlasten, Bergbau- und Infrastrukturstandorte sowie bestimmte Agri-PV-Anlagen entfällt er.",
+    a: "Ja, aber mit Einschränkungen. Der EAG-Investitionszuschuss fördert bis 1.000 kWp, größere Anlagen anteilig bis 1.000 kWp; alternativ ist die Teilnahme an den Ausschreibungen für die Marktprämie möglich (Höchstpreis 2026: 7,77 ct/kWh). Auf landwirtschaftlich genutzten Flächen oder im Grünland gilt jeweils ein Abschlag von 25 %; für Deponien, Altlasten, Bergbau- und Infrastrukturstandorte sowie bestimmte Agri-PV-Anlagen entfällt er.",
   },
   {
     q: "Wie wird der Strom eines Solarparks vermarktet?",
@@ -82,7 +104,7 @@ const FAQ = [
   },
   {
     q: "Wer betreibt den Solarpark nach der Inbetriebnahme?",
-    a: "Auf Wunsch wir: Überwachung über unser eigenes SCADA, Fernwartung, Parkregler-Betrieb gegenüber dem Netzbetreiber, Wartung, Grünpflege und Berichtswesen. Über unsere Beteiligung an der ÖkoInvest GmbH kennen wir den Betrieb von Freiflächen- und Agri-PV auch aus Eigentümersicht.",
+    a: "Auf Wunsch wir: Überwachung über SCADA und Fernwartung unseres Technologiepartners Solensa, Parkregler-Betrieb gegenüber dem Netzbetreiber, Wartung, Grünpflege und Berichtswesen. Die Gründer von Ökovolt betreiben seit 2012 eigene Solarparks; über die Beteiligung an der ÖkoInvest GmbH, der Projektgesellschaft der Gruppe für Freiflächen-PV und Agri-PV, kennen wir den Betrieb auch aus Eigentümersicht.",
   },
   {
     q: "Wie lange dauert ein Solarpark-Projekt von der Idee bis zum Netz?",
@@ -106,7 +128,7 @@ const BEISPIEL = [
   { pos: "Jährlicher Überschuss (vor Steuern)", wert: "ohne Degradation und Preisindexierung", ergebnis: "≈ 298.750 €/Jahr", hervorheben: true },
   { pos: "Investition inkl. Netzanschluss NE 5", wert: "Annahme 550 €/kWp netto", ergebnis: "2,75 Mio. €" },
   { pos: "Statische Amortisation", wert: "2,75 Mio. € ÷ 298.750 €/Jahr", ergebnis: "≈ 9,2 Jahre", hervorheben: true },
-  { pos: "Zum Vergleich: Marktprämie", wert: "Höchstpreis 7,77 ct/kWh; auf Agrar- oder Grünland − 25 % → max. 5,83 ct/kWh anzulegender Wert", ergebnis: "Standort entscheidet" },
+  { pos: "Zum Vergleich: Marktprämie", wert: "Höchstpreis 7,77 ct/kWh; auf Agrar- oder Grünland − 25 % → max. 5,83 ct/kWh anzulegender Wert", ergebnis: "Standort entscheidet" },
 ];
 
 const BIODIVERSITAET = [
@@ -141,16 +163,50 @@ export default async function FreiflaechePage({ searchParams }) {
         lead={v.lead}
         image={{ src: HERO_BILD, alt: "Luftbild eines Photovoltaik-Parks auf einem ehemaligen Kraftwerksgelände in Niederösterreich" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video&thema=freiflaeche" },
-          { label: "Standort prüfen", href: "/standort-check", icon: MapPin },
+          { label: v.cta, href: CTA_PRIMAER },
+          { label: "Projekt anfragen", href: CTA_SEKUNDAER, icon: ClipboardList },
         ]}
-        points={["500 kWp bis in den MW-Bereich", "Netzebene 5 & 4, Umspannwerk", "Eigener Parkregler & SCADA", "PPA, Direktvermarktung, Betrieb"]}
+        points={["500 kWp bis in den MW-Bereich", "Netzebene 5 & 4, Umspannwerk", "Parkregler & SCADA mit Solensa", "PPA, Direktvermarktung, Betrieb"]}
       />
+
+      {/* Antwortblock: Definition zuerst, dann die vier Eckdaten mit Quelle und Stand */}
+      <Section tone="white" space="sm" id="kurz-erklaert" className="scroll-mt-24">
+        <div className="grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+          <div>
+            <h2 className="ov-h3 text-ink-900">Freiflächen-Photovoltaik – kurz erklärt</h2>
+            <Prosa className="mt-4">
+              <p>
+                Freiflächen-Photovoltaik ist eine Solarstromanlage, die nicht auf einem Gebäude, sondern aufgeständert auf einer Fläche steht – als
+                Solarpark ab etwa 500 kWp mit eigener Übergabestation ans Mittelspannungsnetz. Ob sie gebaut werden darf, entscheidet die Widmung der
+                Gemeinde nach Landesrecht; ob sie sich rechnet, entscheiden Netzkapazität, Vermarktung und Pacht. Ökovolt plant, baut und betreibt
+                solche Parks in ganz Österreich.
+              </p>
+            </Prosa>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <StandPille>Stand 09/2026</StandPille>
+              <Link href="/flaechen-check" className="inline-flex min-h-11 items-center gap-2 text-[15px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">
+                Fläche in 2 Minuten prüfen – ohne Daten
+              </Link>
+            </div>
+          </div>
+          <Tabelle
+            dicht
+            caption="Eckdaten für Freiflächen-Photovoltaik in Österreich: Größe, Widmung, Netz und Pacht"
+            spalten={[
+              { key: "kriterium", label: "Kriterium", breite: "w-[18%]" },
+              { key: "wert", label: "Richtwert" },
+              { key: "quelle", label: "Quelle / Stand", breite: "w-[30%]" },
+            ]}
+            zeilen={ECKDATEN}
+            fuss={`Pachtangaben: durchschnittlich gebotene Pachtzahlungen für PV-Freiflächen laut Landwirtschaftskammern Steiermark (17.05.2022) und Kärnten (29.09.2022) – Angebotsniveau, kein Marktpreisspiegel; zum Vergleich Ackerland ${zahl(PACHT_BELEG.ackerland)} €/ha (Statistik Austria ${PACHT_BELEG.agrarJahr}). Aktuelle Angebote hängen von Lage, Netz, Förderung und Vertrag ab.`}
+          />
+        </div>
+      </Section>
 
       <KennzahlenBand
         items={[
           { wert: 7.77, dezimal: 2, nach: " ct", label: "Höchstpreis je kWh in den EAG-Ausschreibungen für die Marktprämie 2026" },
-          { wert: 25, vor: "− ", nach: " %", label: "Abschlag auf Investitionszuschuss und Marktprämie auf Agrar- und Grünlandflächen" },
+          { wert: 25, vor: "− ", nach: " %", label: "Abschlag auf Investitionszuschuss und Marktprämie auf Agrar- und Grünlandflächen" },
           { wert: 2, nach: " ha", label: "darüber braucht es in Niederösterreich eine Landeszone (Sektorales ROP)" },
           { wert: 1000, nach: " kW", label: "darüber elektrizitätsrechtliche Bewilligung für Freiflächen in Oberösterreich" },
         ]}
@@ -203,12 +259,26 @@ export default async function FreiflaechePage({ searchParams }) {
           leitwarte: { titel: "SCADA-Leitwarte", text: "Verfügbarkeit, PR, Abregelung" },
         }}
         texte={{
-          parkregler: "Unser EZA-Regler setzt Blindleistungs- und Wirkleistungsvorgaben des Netzbetreibers am Netzverknüpfungspunkt um – inklusive Einspeiselimit bei Überbauung.",
+          parkregler: "Der EZA-Regler unseres Technologiepartners Solensa – von uns parametriert und betreut – setzt Blindleistungs- und Wirkleistungsvorgaben des Netzbetreibers am Netzverknüpfungspunkt um, inklusive Einspeiselimit bei Überbauung.",
           fernwartung: "Gesicherter Zugang zu Wechselrichtern, Schutz, Zählern und Kameras – ohne Anfahrt reagieren, wo es möglich ist.",
           scada: "Leitwarte für einen oder viele Parks: Verfügbarkeit, Performance Ratio, Abregelungen und Vermarktungsdaten in einem System.",
         }}
         bild={{ src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "" }}
       />
+
+      <Section tone="sand" space="sm" id="netzkapazitaet" className="scroll-mt-24">
+        <Hinweis titel="Netzkapazität zuerst">
+          Bevor Sie einen Pachtvertrag unterschreiben oder eine Widmung beantragen: Die Netzbetreiber veröffentlichen auf{" "}
+          <a href={EBUTILITIES} target="_blank" rel="noopener noreferrer" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+            ebUtilities – verfügbare Netzanschlusskapazitäten
+            <ArrowUpRight aria-hidden="true" className="ml-0.5 inline h-4 w-4 align-text-bottom" />
+            <span className="sr-only">(externer Link, neues Fenster)</span>
+          </a>
+          , wo am Umspannwerk noch Einspeiseleistung frei ist. Das ist eine Orientierung, keine Zusage – verbindlich ist erst die Netzzugangszusage
+          des Netzbetreibers auf Ihre konkrete Anfrage. Wir stellen diese Anfrage im Screening, bevor Kosten für Gutachten entstehen; die Schritte
+          dazu stehen unter <Link href="/netzanmeldung" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">Netzanmeldung</Link>.
+        </Hinweis>
+      </Section>
 
       <Section tone="white" space="md" id="biodiversitaet">
         <W25Biodiversitaet
@@ -228,7 +298,7 @@ export default async function FreiflaechePage({ searchParams }) {
         text="Die Gründer von Ökovolt betreiben seit 2012 eigene Solarparks. Über die Beteiligung an der ÖkoInvest GmbH sind wir an Freiflächen-, Agri-PV-, Contracting- und PPA-Projekten beteiligt. Deshalb planen wir Solarparks mit dem Blick eines Betreibers: auf Verfügbarkeit, Wartbarkeit und Erlöse über die gesamte Laufzeit – nicht nur bis zur Abnahme."
         fakten={[
           { icon: History, titel: "Seit 2012", text: "eigene Solarparks der Gründer – Betrieb aus erster Hand." },
-          { icon: Cog, titel: "Eigene Systeme", text: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung." },
+          { icon: Cog, titel: "Regelung & Leittechnik", text: "Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns." },
         ]}
       >
         <div className="border-t border-white/15 pt-12">
@@ -279,7 +349,7 @@ export default async function FreiflaechePage({ searchParams }) {
                   der 25-%-Abschlag bei Investitionszuschuss und Marktprämie – das verbessert die Wirtschaftlichkeit spürbar.
                 </p>
               </Prosa>
-              <Link href="/termin?art=video&thema=freiflaeche" className="mt-6 inline-flex items-center gap-2 font-semibold text-ov-700 underline decoration-ov-300 underline-offset-4 hover:decoration-current">Fläche kostenlos bewerten</Link>
+              <Link href={CTA_PRIMAER} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-full bg-ov-600 px-5 text-[15px] font-semibold text-white transition hover:bg-ov-700">Fläche kostenlos bewerten</Link>
             </div>
             <ul className="grid gap-3 sm:grid-cols-2">
               {[
@@ -339,7 +409,7 @@ export default async function FreiflaechePage({ searchParams }) {
               <p>
                 <strong>Marktprämie:</strong> Anlagen über 10 kWp bieten in Ausschreibungen einen anzulegenden Wert. 2026 gibt es vier
                 Gebotstermine mit je 175.000 kWp Volumen und einem Höchstpreis von 7,77 ct/kWh; die Prämie läuft 20 Jahre. Auf
-                landwirtschaftlich genutzten Flächen und im Grünland verringert sich der Zuschlagswert um 25 %.
+                landwirtschaftlich genutzten Flächen und im Grünland verringert sich der Zuschlagswert um 25 %.
               </p>
               <p>
                 <strong>PPA:</strong> Ein Abnehmer kauft den Strom über 5 bis 15 Jahre zu einem fixen oder gedeckelten Preis. Das schafft
@@ -403,7 +473,13 @@ export default async function FreiflaechePage({ searchParams }) {
         </FachTabs>
       </Section>
 
-      <Section tone="white" space="md">
+      {/* Einwände vor der FAQ; FAQPage-Schema liefert die FAQ, daher mitSchema aus */}
+      <Section tone="white" space="md" id="einwaende" className="scroll-mt-24">
+        <SectionHeading eyebrow="Einwände" title="Was Grundeigentümer und Investoren vor der Entscheidung fragen" className="mb-8" />
+        <EinwandKarten gruppe="freiflaeche" mitSchema={false} titel={false} />
+      </Section>
+
+      <Section tone="sand" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Investoren, Grundeigentümer und Gemeinden" />
@@ -427,12 +503,16 @@ export default async function FreiflaechePage({ searchParams }) {
 
       <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Widmung, Netz und Vermarktung" />
 
+      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-24">
+        <Ansprechpartner zielgruppe="freiflaeche" />
+      </Section>
+
       <CtaBand
         eyebrow="Fläche oder Projekt?"
         title="Lassen Sie uns Ihre Fläche ehrlich bewerten – bevor Sie sich binden."
-        text="Erstgespräch per Video mit Einschätzung zu Widmungschancen, Netzanschluss, Vermarktung und Wirtschaftlichkeit."
-        primary={{ label: v.cta, href: "/termin?art=video&thema=freiflaeche" }}
-        secondary={{ label: "Projekt anfragen", href: "/angebot?objekt=freiflaeche", icon: Cog }}
+        text="Flächendaten eingeben, Ampel für Widmung, Größe, Netz und Gelände zurückbekommen – danach Erstgespräch mit Einschätzung zu Vermarktung und Wirtschaftlichkeit."
+        primary={{ label: v.cta, href: CTA_PRIMAER }}
+        secondary={{ label: "Projekt anfragen", href: CTA_SEKUNDAER, icon: Cog }}
       />
 
       <Bildnachweis items={nachweise("duernrohr", "solarparkLuftbild", "widmungDornbirn", "spitalberg", "umspannwerk", "molln", "schafe")} />

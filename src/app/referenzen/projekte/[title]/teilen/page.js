@@ -17,7 +17,7 @@ import { BASE_URL } from "@/lib/site";
 export async function generateMetadata({ params }) {
   const { title } = await params;
   const d = await ladeKundenbuehne(title);
-  return kitMetadata(d, {
+  return kitMetadata(d?.kit?.social ? d : null, {
     titel: "Social-Media-Kit",
     beschreibung: d ? `Fertige Bilder und Textvorschläge für LinkedIn und Instagram zur Photovoltaikanlage von ${d.firma}.` : "",
   });
@@ -32,7 +32,7 @@ const BILDER = [
 export default async function TeilenSeite({ params }) {
   const { title } = await params;
   const d = await ladeKundenbuehne(title);
-  if (!d) notFound();
+  if (!d || !d.kit?.social) notFound(); // nennt den Kunden – nur mit Namensfreigabe (A07)
   if (d.veraltet) permanentRedirect(`/referenzen/projekte/${d.projekt.slug}/teilen`);
   const { projekt, firma, zahlen, ort, jahr } = d;
   const slug = projekt.slug;
@@ -57,7 +57,7 @@ export default async function TeilenSeite({ params }) {
         lead="Fertige Bilder im richtigen Format und Texte zum Kopieren – damit Ihre Solaranlage in Ihren Kanälen sichtbar wird. Frei verwendbar für Ihre eigenen Beiträge."
         className="pb-4"
       />
-      <KitNavigation slug={slug} aktiv="teilen" titel={projekt.titel} />
+      <KitNavigation slug={slug} aktiv="teilen" titel={projekt.titel} kit={d.kit} />
 
       <Section tone="white" space="md">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-6">

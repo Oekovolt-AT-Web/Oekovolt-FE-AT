@@ -5,9 +5,14 @@
 // Liefert es keine Projekte (nicht konfiguriert, Fehler, leere Liste), greift der statische
 // Stand aus src/data/projekte.js – damit die bisherigen Projekt-URLs nie ins Leere laufen.
 // Liefert die API mindestens ein Projekt, gilt ausschließlich die API.
+//
+// Kundennamen (Welle A07): Ohne Freigabe „Name“ werden die Projekte hier zentral neutralisiert
+// (projekteNeutralisieren in src/lib/kundenbuehneServer.js) – alle Seiten, die über diese Datei laden,
+// zeigen dann weder in Karten, H1, <title>, Alt-Texten noch im URL-Slug einen Firmennamen.
 import { API_BASE_URL, getApiHeaders, isApiConfigured } from "@/lib/apiBaseUrl";
 import { PROJEKTE } from "@/data/projekte";
 import { normalisiereApiProjekt } from "./projektDaten";
+import { projektNeutralisieren } from "@/lib/kundenbuehne";
 
 export const PROJEKTE_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekte`;
 export const PROJEKT_API = `${API_BASE_URL}oekovolt_app.website_api.projekte.get_projekt`;
@@ -19,10 +24,17 @@ function statischeListe() {
 }
 
 /**
- * Projektliste in API-Form (Einträge wie get_projekte):
+ * Projektliste in API-Form (Einträge wie get_projekte), Kundennamen nur mit Freigabe:
  * { projekte: [...], anzahl, summe_kwp, quelle: "api" | "statisch" }
  */
 export async function ladeProjektListe() {
+  const liste = await ladeProjektListeRoh();
+  // Dynamischer Import: kundenbuehneServer importiert diese Datei selbst (kein Zyklus beim Laden)
+  const { projekteNeutralisieren } = await import("@/lib/kundenbuehneServer");
+  return { ...liste, projekte: await projekteNeutralisieren(liste.projekte, { quelle: liste.quelle }) };
+}
+
+async function ladeProjektListeRoh() {
   if (!isApiConfigured()) return statischeListe();
   try {
     const res = await fetch(PROJEKTE_API, { method: "GET", headers: getApiHeaders(), next: { revalidate: 600 } });
@@ -65,7 +77,8 @@ export async function ladeProjekte() {
 export async function ladeProjektRoh(websiteName) {
   if (!websiteName) return null;
   const liste = await ladeProjektListe();
-  if (liste.quelle !== "api") return liste.projekte.find((p) => p.projekt_website_name === websiteName) || null;
+  const eintrag = liste.projekte.find((p) => p.projekt_website_name === websiteName) || null;
+  if (liste.quelle !== "api") return eintrag;
   try {
     const res = await fetch(`${PROJEKT_API}?projekt_website_name=${encodeURIComponent(websiteName)}`, {
       method: "GET",
@@ -74,7 +87,9 @@ export async function ladeProjektRoh(websiteName) {
     });
     if (!res.ok) return null;
     const p = (await res.json())?.message;
-    return p && typeof p === "object" && p.projekt_website_name ? p : null;
+    if (!p || typeof p !== "object" || !p.projekt_website_name) return null;
+    // Gleicher neutraler Name wie in der Liste (ohne Namensfreigabe)
+    return eintrag?.projekt_anonym ? projektNeutralisieren(p, eintrag.projekt_name) : p;
   } catch (error) {
     console.error("Error fetching projekt:", error);
     return null;

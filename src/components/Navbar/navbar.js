@@ -4,22 +4,29 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ArrowRight, ChevronDown, Menu, Phone, X, Mail, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronDown, Menu, Phone, X, Mail, Sparkles } from "lucide-react";
 
 import { NAVIGATION, KONTAKT } from "@/data/navigation";
 import { iconFor } from "@/components/ui/icons";
 import LiveTicker, { LiveDot } from "@/components/ui/LiveTicker";
 import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
 import useFokusFalle from "@/components/ui/useFokusFalle";
+import { FIRMA } from "@/lib/site";
+import { angebotHref } from "@/lib/kontextAngebot";
 
 /**
  * Seitenkopf 2026
  *
- *  - Schmale Live-Leiste (Börsenstrompreis, Erneuerbare) – klappt beim Scrollen weg
+ *  - Schmale Live-Leiste (Börsenstrompreis, Erneuerbare) – schiebt sich beim Scrollen nach oben weg
+ *  - Ohne Layout-Shift: Der Kopf behält immer seine Höhe (mobil 84 px, ab md 124 px). Beim Scrollen
+ *    wandert nur die sichtbare Ebene per translateY nach oben (Live-Leiste raus, Hauptleiste 84 → 68 px
+ *    sichtbar); Höhen und max-height ändern sich nicht, der Inhalt darunter bleibt stehen (CLS 0).
  *  - Mega-Menü: Icons, Kurzbeschreibungen, hervorgehobene Aktion je Bereich
  *  - Öffnet per Hover mit kurzer Absichtsverzögerung, per Klick und per Tastatur;
  *    Escape schließt und gibt den Fokus an den Auslöser zurück
- *  - Mobil: Vollbild-Menü mit Akkordeons und fester Aktionsleiste
+ *  - Tab führt vom geöffneten Hauptpunkt ins Panel und nach dessen letztem Link zum nächsten Hauptpunkt
+ *  - Mobil: Vollbild-Menü mit Akkordeons und fester Aktionsleiste (Anrufen · Termin · Angebot)
+ *  - „Angebot anfragen“ öffnet auf Branchenseiten den Konfigurator mit passendem Objekt
  */
 export default function Navbar() {
   const pfad = usePathname();
@@ -33,15 +40,16 @@ export default function Navbar() {
   const menueKnopf = useRef(null);
   const megaPanel = useRef(null);
   const perTastatur = useRef(false); // Mega-Menü per Enter/Leertaste geöffnet → Fokus ins Panel
+  const aktionen = useRef(null);
+  const angebot = angebotHref(pfad || "/");
 
   useEffect(() => {
     let raf = 0;
     const pruefen = () => {
       raf = 0;
       const y = window.scrollY;
-      // Collapse only after 80px, expand again only near the very top.
-      // The gap (80 → 4) is larger than the ~56px the header shrinks,
-      // so the layout jump can no longer flip the state back.
+      // Erst ab 80 px einklappen, erst ganz oben (≤ 4 px) wieder ausklappen – die Lücke
+      // verhindert ein Flackern an der Schwelle.
       setGescrollt((alt) => (alt ? y > 4 : y > 80));
     };
     const onScroll = () => {
@@ -93,6 +101,38 @@ export default function Navbar() {
     if (e.relatedTarget && !e.currentTarget.contains(e.relatedTarget)) setOffen(null);
   }, []);
 
+  // Tab auf dem geöffneten Hauptpunkt: weiter ins Panel statt zum nächsten Hauptpunkt
+  const ausloeserTaste = (e, titel) => {
+    if (e.key !== "Tab" || e.shiftKey || offen !== titel) return;
+    const erster = megaPanel.current?.querySelector("a[href]");
+    if (!erster) return;
+    e.preventDefault();
+    erster.focus();
+  };
+
+  // Tab im Panel: nach dem letzten Link zum nächsten Hauptpunkt (bzw. zu den Aktionen rechts),
+  // Umschalt+Tab auf dem ersten Link zurück zum Auslöser
+  const panelTaste = (e) => {
+    if (e.key !== "Tab" || !offen) return;
+    const links = [...(megaPanel.current?.querySelectorAll("a[href], button") || [])];
+    if (!links.length) return;
+    const i = links.indexOf(document.activeElement);
+    if (e.shiftKey && i === 0) {
+      e.preventDefault();
+      ausloeser.current[offen]?.focus();
+      return;
+    }
+    if (!e.shiftKey && i === links.length - 1) {
+      const titel = NAVIGATION.map((n) => n.title);
+      const naechster = ausloeser.current[titel[titel.indexOf(offen) + 1]];
+      const ziel = naechster || [...(aktionen.current?.querySelectorAll("a[href], button") || [])].find((el) => el.offsetParent !== null);
+      if (!ziel) return;
+      e.preventDefault();
+      setOffen(null);
+      ziel.focus();
+    }
+  };
+
   const hoverRein = useCallback((titel) => {
     clearTimeout(schliessTimer.current);
     clearTimeout(oeffnenTimer.current);
@@ -110,12 +150,19 @@ export default function Navbar() {
   const offenesItem = NAVIGATION.find((n) => n.title === offen);
 
   return (
-    <header className="sticky top-0 z-[100] w-full">
+    // pointer-events-none: Der Kopf behält beim Scrollen seine volle Höhe (kein Layout-Shift); der
+    // dann unsichtbare untere Streifen darf keine Klicks auf den Inhalt darunter abfangen.
+    <header data-gescrollt={gescrollt ? "" : undefined} className="pointer-events-none sticky top-0 z-[100] w-full">
+      <div
+        className={`pointer-events-auto transition-transform duration-500 motion-reduce:transition-none ${
+          gescrollt ? "-translate-y-4 md:-translate-y-14" : "translate-y-0"
+        }`}
+      >
       {/* ---------- Live-Leiste ---------- */}
       <div
-        className={`hidden overflow-hidden bg-navy-950 transition-[max-height,opacity] duration-500 md:block ${
-          gescrollt ? "max-h-0 opacity-0" : "max-h-10 opacity-100"
-        }`}
+        aria-hidden={gescrollt ? "true" : undefined}
+        inert={gescrollt ? true : undefined}
+        className={`hidden h-10 overflow-hidden bg-navy-950 transition-opacity duration-500 md:block ${gescrollt ? "opacity-0" : "opacity-100"}`}
       >
         <div className="ov-container flex h-10 items-center justify-between gap-6">
           <LiveTicker />
@@ -142,7 +189,8 @@ export default function Navbar() {
               : "bg-white"
           }`}
         />
-        <div className={`ov-container flex items-center justify-between gap-6 transition-[height] duration-500 ${gescrollt ? "h-[68px]" : "h-[84px]"}`}>
+        {/* Feste Höhe 84 px; gescrollt rückt die Zeile 8 px nach unten und ist dann in 68 px sichtbar mittig */}
+        <div className={`ov-container flex h-[84px] items-center justify-between gap-6 transition-transform xl:gap-4 duration-500 motion-reduce:transition-none ${gescrollt ? "translate-y-2" : ""}`}>
           <Link href="/" aria-label="Ökovolt Solartechnik – zur Startseite" className="relative shrink-0">
             <div className={`relative origin-left transition-transform duration-500 ${gescrollt ? "scale-[0.86]" : ""}`} style={{ width: 168, height: 56 }}>
               <Image src="/logo-oekovolt.png" alt="Ökovolt Solartechnik Österreich" fill priority sizes="168px" className="object-contain object-left" />
@@ -161,18 +209,19 @@ export default function Navbar() {
                       type="button"
                       aria-expanded={istOffen}
                       aria-controls="ov-mega"
+                      onKeyDown={(e) => ausloeserTaste(e, item.title)}
                       onClick={(e) => {
                         // detail === 0: Auslösung per Tastatur (Enter/Leertaste)
                         perTastatur.current = !istOffen && e.detail === 0;
                         setOffen(istOffen ? null : item.title);
                       }}
-                      className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-2 text-[14.5px] font-medium transition-colors ${
+                      className={`relative flex items-center gap-1 whitespace-nowrap rounded-full px-2 py-2 text-[14.5px] font-medium transition-colors ${
                         istOffen ? "bg-ink-100 text-ink-900" : aktiv ? "text-ov-700" : "text-ink-700 hover:text-ink-900"
                       }`}
                     >
                       {item.title}
                       <ChevronDown aria-hidden="true" className={`h-3.5 w-3.5 transition-transform duration-300 ${istOffen ? "rotate-180" : ""}`} />
-                      {aktiv && !istOffen && <span aria-hidden="true" className="absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full bg-ov-500" />}
+                      {aktiv && !istOffen && <span aria-hidden="true" className="absolute inset-x-2 -bottom-0.5 h-0.5 rounded-full bg-ov-600" />}
                     </button>
                   </li>
                 );
@@ -180,16 +229,29 @@ export default function Navbar() {
             </ul>
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div ref={aktionen} className="flex shrink-0 items-center gap-2">
+            {/* Telefon: mobil immer; ab md nur gescrollt (sonst steht die Nummer in der Live-Leiste) */}
             <a
-              href={KONTAKT.telefonHref}
-              aria-label={`Anrufen: ${KONTAKT.telefon}`}
-              className="flex h-11 w-11 items-center justify-center rounded-full text-ink-700 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 hover:text-ov-700 md:hidden"
+              href={FIRMA.telefonHref}
+              aria-label={`Anrufen: ${FIRMA.telefon}`}
+              className={`h-11 w-11 items-center justify-center rounded-full text-ink-700 ring-1 ring-inset ring-ink-200 transition-colors hover:bg-ink-50 hover:text-ov-700 ${
+                gescrollt ? "flex" : "flex md:hidden"
+              }`}
             >
               <Phone aria-hidden="true" className="h-[18px] w-[18px]" />
             </a>
+            {/* Ab lg mit Text; neben dem Hauptmenü (ab xl) reicht der Platz nur für das Icon */}
             <Link
-              href="/angebot"
+              href="/termin"
+              aria-label="Termin buchen"
+              title="Termin buchen"
+              className="hidden h-11 min-w-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 text-[14.5px] font-semibold text-ink-800 transition-colors hover:bg-ink-50 hover:text-ov-700 lg:inline-flex xl:px-0"
+            >
+              <CalendarDays aria-hidden="true" className="h-[18px] w-[18px] shrink-0 text-ov-600" />
+              <span className="xl:sr-only">Termin buchen</span>
+            </Link>
+            <Link
+              href={angebot}
               className="group hidden h-11 shrink-0 items-center gap-2 whitespace-nowrap rounded-full bg-ov-600 pl-5 pr-4 text-[14.5px] font-semibold text-white shadow-[0_8px_24px_-10px_rgba(102,153,51,0.8)] transition-all hover:bg-ov-700 sm:flex"
             >
               Angebot anfragen
@@ -212,6 +274,7 @@ export default function Navbar() {
         <div
           id="ov-mega"
           ref={megaPanel}
+          onKeyDown={panelTaste}
           onMouseEnter={() => clearTimeout(schliessTimer.current)}
           className={`absolute inset-x-0 top-full hidden xl:block ${offen ? "pointer-events-auto" : "pointer-events-none"}`}
         >
@@ -224,13 +287,14 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* Abdunkelung hinter dem Mega-Menü */}
       <div
         aria-hidden="true"
         onClick={() => setOffen(null)}
         className={`fixed inset-0 top-0 -z-20 hidden bg-navy-950/20 backdrop-blur-[2px] transition-opacity duration-300 xl:block ${
-          offen ? "opacity-100" : "pointer-events-none opacity-0"
+          offen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
 
@@ -241,6 +305,7 @@ export default function Navbar() {
         setGruppe={setMobilGruppe}
         pfad={pfad}
         rueckgabeRef={menueKnopf}
+        angebot={angebot}
       />
     </header>
   );
@@ -272,7 +337,7 @@ function MegaPanel({ item, pfad, onNavigate }) {
                         aria-current={aktiv ? "page" : undefined}
                         className={`group flex items-start gap-3.5 rounded-2xl p-3 transition-colors ${aktiv ? "bg-ov-50" : "hover:bg-ink-50"}`}
                       >
-                        <span className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 ${aktiv ? "bg-ov-500 text-white" : "bg-ov-50 text-ov-600 group-hover:bg-ov-500 group-hover:text-white"}`}>
+                        <span className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-all duration-300 ${aktiv ? "bg-ov-600 text-white" : "bg-ov-50 text-ov-600 group-hover:bg-ov-600 group-hover:text-white"}`}>
                           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={1.8} />
                         </span>
                         <span>
@@ -335,7 +400,7 @@ function LivePreis() {
   );
 }
 
-function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }) {
+function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef, angebot = "/angebot" }) {
   const dialog = useRef(null);
   const schliessKnopf = useRef(null);
   useFokusFalle(offen, dialog, { beiEscape: schliessen, startRef: schliessKnopf, rueckgabeRef });
@@ -347,7 +412,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }
       role="dialog"
       aria-modal="true"
       aria-label="Menü"
-      className={`fixed inset-0 z-[120] flex flex-col bg-white transition-[opacity,transform] duration-400 xl:hidden ${
+      className={`pointer-events-auto fixed inset-0 z-[120] flex flex-col bg-white transition-[opacity,transform] duration-400 xl:hidden ${
         offen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-3 opacity-0"
       }`}
     >
@@ -376,7 +441,7 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }
                   className="flex w-full items-center justify-between py-4 text-left font-display text-[19px] font-bold text-ink-900"
                 >
                   {item.title}
-                  <span className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${auf ? "rotate-180 bg-ov-500 text-white" : "bg-ink-100 text-ink-600"}`}>
+                  <span className={`flex h-8 w-8 items-center justify-center rounded-full transition-all ${auf ? "rotate-180 bg-ov-600 text-white" : "bg-ink-100 text-ink-600"}`}>
                     <ChevronDown aria-hidden="true" className="h-4 w-4" />
                   </span>
                 </button>
@@ -413,14 +478,27 @@ function MobileMenu({ offen, schliessen, gruppe, setGruppe, pfad, rueckgabeRef }
         </ul>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 border-t border-ink-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-        <a href={KONTAKT.telefonHref} className="flex h-12 items-center justify-center gap-2 rounded-full text-[15px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200">
-          <Phone aria-hidden="true" className="h-4 w-4" />
+      {/* Aktionsleiste – überall dieselbe Reihenfolge: Anrufen · Termin · Angebot */}
+      <div className="grid grid-cols-3 gap-2 border-t border-ink-100 bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+        <a
+          href={FIRMA.telefonHref}
+          aria-label={`Anrufen: ${FIRMA.telefon}`}
+          className="flex h-12 min-w-0 items-center justify-center gap-1.5 rounded-full text-[14.5px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200"
+        >
+          <Phone aria-hidden="true" className="h-4 w-4 shrink-0" />
           Anrufen
         </a>
-        <Link href="/angebot" onClick={schliessen} className="flex h-12 items-center justify-center gap-2 rounded-full bg-ov-600 text-[15px] font-semibold text-white">
+        <Link
+          href="/termin"
+          onClick={schliessen}
+          className="flex h-12 min-w-0 items-center justify-center gap-1.5 rounded-full text-[14.5px] font-semibold text-ink-900 ring-1 ring-inset ring-ink-200"
+        >
+          <CalendarDays aria-hidden="true" className="h-4 w-4 shrink-0" />
+          Termin
+        </Link>
+        <Link href={angebot} onClick={schliessen} className="flex h-12 min-w-0 items-center justify-center gap-1.5 rounded-full bg-ov-600 text-[14.5px] font-semibold text-white">
           Angebot
-          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+          <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
         </Link>
       </div>
     </div>

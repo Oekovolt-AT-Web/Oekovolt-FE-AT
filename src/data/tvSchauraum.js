@@ -18,12 +18,13 @@
 
 import { FIRMA } from "@/lib/site";
 import { KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_STAND, zahlText } from "@/data/kennzahlen";
-import { REFERENZ_UNTERNEHMEN } from "@/data/hero";
+import { REFERENZ_BRANCHEN, REFERENZ_UNTERNEHMEN } from "@/data/hero";
 import { CLAIM, HALTUNG } from "@/data/unternehmen";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import { STATIONEN } from "@/data/mannschaft";
 
 const standDatum = KENNZAHLEN_STAND.split("-").reverse().join(".");
-const branchen = [...new Set(REFERENZ_UNTERNEHMEN.map((r) => r.branche))];
+const branchen = REFERENZ_BRANCHEN;
 
 export const SCHAURAUM_FOLIEN = [
   {
@@ -42,11 +43,9 @@ export const SCHAURAUM_FOLIEN = [
     dauer: 15,
     kategorie: "Ökovolt Österreich, seit 2012",
     titel: "Photovoltaik aus Ostermiething für ganz Österreich.",
-    zahlen: [
-      ...KENNZAHLEN.map((k) => ({ wert: zahlText(k.zahl), einheit: k.suffix.trim(), label: k.label })),
-      { wert: "TOP 3", label: "der EPC-Errichter Österreichs 2021" },
-    ],
-    fussnote: `${KENNZAHLEN_HINWEIS}, Stand ${standDatum}`,
+    // Welle A02: Rang-Eintrag entfernt (kein Beleg, src/data/werbeaussagen.js). Nur Gesamtzahlen mit Stand.
+    zahlen: [...KENNZAHLEN.map((k) => ({ wert: zahlText(k.zahl), einheit: k.suffix.trim(), label: k.label })), { wert: "seit 2012", label: "in Österreich" }],
+    fussnote: `${KENNZAHLEN_HINWEIS} · Stand ${standDatum}`,
   },
   {
     id: "schauraum-haltung",
@@ -55,7 +54,8 @@ export const SCHAURAUM_FOLIEN = [
     kategorie: HALTUNG.kopf,
     titel: "Wir bauen, was wir selbst betreiben würden.",
     text: "Die Gründer betreiben seit 2012 eigene Solarparks. Wer selbst Betreiber ist, plant anders.",
-    punkte: ["Gesellschafterin: Salzburg AG (49 %)"],
+    // Salzburg AG ist kein Werbeargument (Inhaber 05.10.2026) – stattdessen die belegte Ausstattung.
+    punkte: ["Eigene Montageteams, eigener Lkw, eigene Traktoren"],
     qr: "/uber-uns",
   },
   {
@@ -72,8 +72,9 @@ export const SCHAURAUM_FOLIEN = [
     grafik: "branchen",
     dauer: 15,
     kategorie: "Referenzen",
-    titel: "Diese Unternehmen setzen auf Solarstrom von Ökovolt.",
-    text: `${REFERENZ_UNTERNEHMEN.length} Betriebe aus ${branchen.slice(0, -1).join(", ")} und ${branchen.at(-1)}.`,
+    // Kundennamen nur mit Namensfreigabe (REFERENZ_UNTERNEHMEN liefert sonst Branche und Bundesland).
+    titel: "Betriebe aus ganz Österreich setzen auf Solarstrom von Ökovolt.",
+    text: `Eine Auswahl aus ${branchen.length} Branchen: ${branchen.slice(0, -1).join(", ")} und ${branchen.at(-1)}.`,
     namen: REFERENZ_UNTERNEHMEN.map((r) => ({ name: r.name, branche: r.branche })),
     qr: "/referenzen",
   },
@@ -120,9 +121,9 @@ export const SCHAURAUM_FOLIEN = [
     id: "schauraum-technik",
     grafik: "regelung",
     dauer: 16,
-    kategorie: "Eigene Technik",
-    titel: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung.",
-    text: "Unser EZA-Regler setzt die Vorgaben des Netzbetreibers am Netzanschlusspunkt um. Entwickelt mit unserem Partner Solensa.",
+    kategorie: "Regelung und Leittechnik",
+    titel: "Parkregler, Fernwartung und SCADA – betreut von uns.",
+    text: `Der EZA-Regler setzt die Vorgaben des Netzbetreibers am Netzanschlusspunkt um. ${PARKREGLER_SATZ}`,
     qr: "/technik",
   },
   {

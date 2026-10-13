@@ -3,7 +3,7 @@
 // Systemschema für TechnikSystem (Server-Komponente, reines SVG) – dieselbe Bildsprache wie das
 // Leitstand-Schema der Startseite, aber an den Seitenkontext angepasst:
 //   Erzeugung (gezeichnete Kachel je Kontext: Hallendach, Solarpark, Agri-PV, Hof, Gemeinde)
-//   → Speicher-Abzweig (Laden/Entladen) → Parkregler (eigene Entwicklung) → Netzanschlusspunkt
+//   → Speicher-Abzweig (Laden/Entladen) → Parkregler (EZA-Regler) → Netzanschlusspunkt
 //   → Netzbetreiber; darüber SCADA/Leitwarte, dazwischen gesicherte Fernwartung,
 //   unten die Sollwert-Schleife des Netzbetreibers zum Parkregler.
 // Zwei Fassungen: quer ab lg (Raster 1200 × 650) und hochkant darunter (Raster 360 × 770).
@@ -13,6 +13,7 @@
 // Endzustand. Alle Klassen, Keyframes und IDs tragen das Präfix w23.
 
 import { BatteryCharging, Lock, MonitorDot, PlugZap, UtilityPole } from "lucide-react";
+import { PARKREGLER_RECHTE_GEKLAERT } from "@/data/marke";
 
 const GRUEN = "#8cba58";
 const GRUEN_HELL = "#aed083";
@@ -21,6 +22,9 @@ const NAVY = "#03122b";
 const MODUL = "rgba(174,208,131,0.24)";
 const LINIE = "rgba(255,255,255,0.86)";
 const DISPLAY = { fontFamily: "var(--font-display)" };
+// Entscheidung des Inhabers Nr. 4: „eigene Entwicklung“ nur, wenn die Rechte am Parkregler geklärt sind
+// (Schalter in src/data/marke.js, Standard AUS) – bis dahin wie das Startseiten-Schema (s08).
+const REGLER_PILLE = PARKREGLER_RECHTE_GEKLAERT ? "eigene Entwicklung" : "betreut von uns";
 const rd = (v) => Math.round(v * 10) / 10;
 
 /** Aufbau-Klasse mit Verzögerung (ms) und optionaler Dauer. */
@@ -517,7 +521,7 @@ function SchemaQuer({ k, art }) {
         <g {...an("w23-heben", 1300)}>
           <rect x={X.regler - 98} y={D_PILLE} width="196" height="32" rx="16" fill={GRUEN} />
           <text x={X.regler} y={D_PILLE + 21.5} textAnchor="middle" fontSize="15.5" fontWeight="800" fill={NAVY} style={DISPLAY}>
-            eigene Entwicklung
+            {REGLER_PILLE}
           </text>
         </g>
         <g {...an("w23-pop", 600)}>
@@ -703,7 +707,7 @@ function SchemaHoch({ k, art }) {
           <Regler x={cx} y={ys.regler} s={0.78} takt={TAKT} />
         </g>
         <g {...an("w23-heben", 520)}>
-          <Beschriftung x={lx} y={ys.regler - 14} anker="start" titel="Parkregler" text="EZA-Regler" unterFarbe={GRUEN_HELL} extra={["eigene Entwicklung"]} {...lab} />
+          <Beschriftung x={lx} y={ys.regler - 14} anker="start" titel="Parkregler" text="EZA-Regler" unterFarbe={GRUEN_HELL} extra={[REGLER_PILLE]} {...lab} />
         </g>
         <g {...an("w23-pop", 600)}>
           <Marke x={cx - rp + 2} y={ys.regler - rp + 2} n="01" r={11} fs={10.5} />

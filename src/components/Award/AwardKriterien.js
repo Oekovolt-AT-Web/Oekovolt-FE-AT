@@ -7,7 +7,7 @@
 // beim ersten Sichtkontakt. Daten: KRITERIEN aus ./awardDaten.
 
 import { useEffect, useRef, useState } from "react";
-import { KRITERIEN } from "./awardDaten";
+import { JURY_KLAUSEL, KRITERIEN } from "./awardDaten";
 
 const FARBEN = [
   { band: "bg-sun-400", punkt: "bg-sun-400", text: "text-sun-500" },
@@ -90,6 +90,7 @@ export default function AwardKriterien() {
           </li>
         ))}
       </ol>
+      <p className="mt-5 text-[13.5px] leading-relaxed text-ink-500">{JURY_KLAUSEL}</p>
     </div>
   );
 }

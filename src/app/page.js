@@ -45,7 +45,7 @@ const getProjekte = cache(() => ladeProjekteRoh());
 const META = {
   title: "PV-Anlagen für Unternehmen in ganz Österreich | Ökovolt",
   description:
-    "Ökovolt plant, baut und betreibt Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in allen neun Bundesländern – eigener Parkregler und SCADA, seit 2012.",
+    "Ökovolt plant, baut und betreibt Photovoltaik für Betriebe, Landwirtschaft und Gemeinden in allen neun Bundesländern – Parkregler und SCADA betreut von uns, seit 2012.",
   stand: "2026-09-30",
 };
 

@@ -3,9 +3,9 @@
 | Dokumentenlenkung | |
 |---|---|
 | Dokument | Projektdokumentation Website oekovolt.com + Frappe-Backoffice |
-| Version | 0.5 (Nachführung SEO-Welle P1–P9 und QA) |
-| Datum | 30.09.2026 |
-| Stand des Codes | Branch `at-launch`, Commit `ffd5c00` (30.09.2026, Welle 4 samt Doku 0.4) zzgl. unveröffentlichter Arbeitsbaum-Änderungen der SEO-Welle (siehe [08](08-konfiguration-und-aenderungen.md)) |
+| Version | 0.6 (Nachführung Welle A – Neubau nach Verlust des Stands vom 07.10.2026) |
+| Datum | 11./12.10.2026 |
+| Stand des Codes | Branch `main`, Commit `71829e1` (03.10.2026) zzgl. **nicht committeter** Arbeitsbaum-Änderungen der Welle A (Neubau 11./12.10.2026, siehe [08](08-konfiguration-und-aenderungen.md)); der Arbeitsbaum enthält parallel Teile der Wellen B und C (eigene Notizen `anhang/wellen/B*.md`, `C*.md`, nicht Gegenstand dieser Version) |
 | Autor | Claude (KI-Assistent) im Auftrag der Geschäftsführung |
 | Prüfung | offen |
 | Freigabe | offen |
@@ -64,7 +64,9 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | `docs/FRAPPE-AT-API-SPEZIFIKATION.md` | vollständige Frappe-Schnittstellen für das AT-Backoffice | 03 (führend für Frappe-Methoden) |
 | `docs/Backoffice-Korrekturen.md` | Redaktionelle Korrekturliste Backoffice | 04, 09 |
 | `docs/datenschutz/*` | VVT, DSFA, Handbuch Meldestelle, Beschäftigteninfo | 05 |
-| `docs/frappe-*/README.md` | Installations- und Fachdoku je Frappe-Modul | 03, 07 |
+| `docs/frappe-*/README.md` | Installations- und Fachdoku je Frappe-Modul; neu in Welle A: `docs/frappe-lead-routing/README.md` (Routing, Dubletten, SLA, Eskalation, Alarm – A06), `docs/frappe-referenzfreigabe/README.md` (Referenz-Freigabe per Einmal-Link – A07) | 03, 07 |
+| `anhang/wellen/A01.md` … `A12.md`, `A-INT.md` | Paket-Notizen der Welle A (Änderungen je Datei, Übergaben, Prüfungen, QA-Runden) und Integration der Übergaben; Grundlage der Nachführung 0.6 | 01–10 |
+| `.claude/uebergabe/gesamtplan.json` | Gesamtplan der Website-Offensive (Wellen A–E, Pakete mit Auftrag, Dateien, Abnahme) | 01, 08 |
 | `docs/regionen/` | DE-Recherche (laut `docs/AT-UEBERGABE.md:78` Aufräumkandidat) | – |
 | `Import-Frappe/ANLEITUNG.md` | Installationsablauf Frappe-Pakete (DE-Stand) | 07 |
 | `Import-Backend-Frappe/README.md`, `apps/*/README.md` | AT-Backoffice: Installation, Methoden, Kundenbühne, Heatmap, Löschfristen, Rollen | 03, 05, 07 |
@@ -97,6 +99,14 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | 0.3 | 30.09.2026 | Nachführung Welle 3: zentrale Kennzahlen, Mannschaft & Maschinenpark, Pressekontakt, selbst gehostete Mediathek (Reels), Schalter `HINWEIS_INTERN` + Go-live-Anleitung, WKO-Siegel mit Quellendatei, Drosselung ohne IP geändert; Tests und Lint erneut ausgeführt | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.4 | 30.09.2026 | Nachführung Welle 4: PV-Prognose, Schneelast-Karte, Einspeisung Gewerbe, EG für Betriebe/Gemeinden, Vergabe für Gemeinden, Flächen-Check/Widmung, Finanzierungsvergleich, Teilen & PDF, Lastgang-Analyse, A/B-Infrastruktur, Performance/A11y, Test-Sammellauf (21 Dateien), Datenschutz-Doku AT, Bundesland-Hubs; Auftraggeber-Entscheidungen (KI-Training sperren, Marken, 510 MW, Fachprüfer); neues Kapitel 11 (SEO) | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
 | 0.5 | 30.09.2026 | Nachführung SEO-Welle P1–P9 und QA-Nacharbeit: robots.txt nach E1, `htmlLimitedBots`, Breadcrumbs, 301 alter URLs, robots zentral, Sitemap mit echten Daten, `llms.txt`, IndexNow nur Änderungen, Onpage/Kannibalisierung, Wechselrichter-Seiten, Entität/Fachprüfer/FAQ/DefinedTerm, Datasets, Bundesland ohne Doorway, OeMAG korrigiert, Presse-Grafiken, Offpage-Fahrplan, Datenschutzerklärung an Code angeglichen, HSchG-Fristen ab Eingang, Rechenkorrekturen; Kapitel 11 mit Status M01–M30 | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
+| 0.6 | 11./12.10.2026 | Nachführung **Welle A** („Verkaufsstärkste Hebel sofort – rechtssicher“, Pakete A01–A12 + Integration): Next 15.5.27 und Sicherheitskonfiguration, Werbeaussagen-Register mit Schaltern (Salzburg AG neutral, TOP 3/Marktführer/WKO-Siegel/eigener Parkregler/Kundenlogo AUS), Kennzahlen mit Stand, Verkaufs-Bausteine, Zielgruppenseiten, Referenz-Freigabe und Projekt-Plakette, Commitment-Leiter der Formulare, Lead-Gate 2.0 mit Double-Opt-in und Entscheider-Mappe, Rechner-Stresstest/TOR nach AC, Speed-to-Lead im Backoffice (Kernschema, Scoring, Routing, SLA, Alarm), mobile Führung/Cookie-Banner/Barrierefreiheit; Entscheidungen des Inhabers vom 03./05./11.10.2026 (09 Abschnitt 3); Risiken R-63–R-81, Freigaben F-41–F-52; Tests erneut ausgeführt. **Der erste Stand der Welle A (03.–07.10.2026) ging am 07.10. durch Zurücksetzen des Arbeitsbaums verloren und wurde am 11./12.10. neu gebaut**; eine Doku-Version dieses ersten Stands gab es nicht. | Claude (KI-Assistent) im Auftrag der Geschäftsführung | offen |
+
+**Hinweis zu Version 0.6 (Verlust und Neubau):** Welle A wurde vom 03. bis 07.10.2026 bereits einmal gebaut (rund 352
+Dateien). Am 07.10.2026 um 16:57 wurde der Arbeitsbaum auf den Commit `71829e1` vom 03.10.2026 zurückgesetzt; der Stand war
+nicht committet und ist verloren. Der Inhaber hat am 11.10.2026 den kompletten Neubau beauftragt („ja“). Diese Version
+beschreibt ausschließlich den Neubau. Erkenntnisse aus dem ersten Durchlauf (QA-Schwerpunkte A08, A10, A11, A12;
+Kundennamen standardmäßig ausblenden; `next dev` ohne Turbopack) sind eingeflossen. Sicherungen des Neubaus:
+`refs/sicherung/2026-10-11-2355`, `refs/sicherung/2026-10-12-welle-bc` (R-75).
 
 ## 7. Beim nächsten Nachführen prüfen
 
@@ -126,3 +136,18 @@ Die folgenden Dokumente bleiben unverändert an ihrem Ort und werden von hier au
 | P37 | Dev-Server | Speicherverbrauch von `next dev` (Absturz bei ca. 15,8 GB RAM) beobachten (R-52) |
 | P38 | `docs/AT-UEBERGABE.md` | beschreibt noch den alten IndexNow-Aufruf – vom Eigentümer der Datei nachziehen lassen |
 | P39 | HSchG-Protokoll | inhaltsfreies Zugriffs-/Änderungsprotokoll (§ 8 Abs. 12, § 9 Abs. 6) vor `HINWEIS_INTERN=1` |
+
+### 7.3 Stand nach Welle A und neue Punkte (Version 0.6)
+
+| # | Bereich | Stand / Prüfen |
+|---|---|---|
+| P26/P33 | Commit | SEO-Welle committet (`33ae71a`, Merge `1238d5e`); danach `7148bd5`, `71829e1` („Changes“, 01./03.10.). Welle A **nicht committet** (F-49); vorher Build-Ordner aus dem Arbeitsbaum entfernen (R-76) |
+| P34 | Deploy | weiterhin offen; Push/Deploy für Welle A nicht freigegeben; Fördercall-Termin 08.10. verstrichen |
+| P37 | Dev-Server | verschärft (R-74): Wächter-Server 3001 hing ab 11./12.10.; Prüfungen auf Ersatz-Ports |
+| P40 | Eigen-Technik-Formulierungen | „eigene(r) Leittechnik“/„eigener Technik“ an `PARKREGLER_RECHTE_GEKLAERT` koppeln, Testmuster ergänzen (R-63) |
+| P41 | Restbefunde QA Welle A | CLS mobil (R-69), Startseiten-CTA mobil (R-70), Safari-Schrift (R-71), schwebende Leiste (R-72), Karte „Nach Objektart“ (R-73), Konfigurator-`vorbelegt` (R-67), Rahmen der Schicht-Umschaltung im Hero-Rechner (A02 → A10), Trefferfläche Range-Inputs ≥ 44 px |
+| P42 | Offene Integrationen (A-INT) | `COOKIE_KOPF_SKRIPT` in den `<head>` (eigenes Modul nötig), `bericht().mappe` mit Rohzahlen je Rechner und Stresstest im Druckblatt, `?ref=` für `/lastgang-analyse`, `unpkg`-Prefetch in `layout.js` streichen, `tvSchauraum.js` QR auf `/referenzen/projekte`, toter Code `src/components/Referenzkarte/map.js` |
+| P43 | Backoffice-Rollout | F-46, F-47; Python-Tests nach `bench migrate` im echten Backoffice wiederholen |
+| P44 | Rechts- und Inhaberfreigaben Welle A | F-41–F-45, F-48, F-50–F-52 |
+| P45 | Jahreswechsel 2026/27 | IFB 22 % → 15 %, ElWG-Texte, `security.txt` `Expires` (2027-10-11) – R-77, R-80 |
+| P46 | Wellen B und C | Arbeitsbaum enthält deren Stand (Notizen `anhang/wellen/B*.md`, `C*.md`); in der nächsten Version nachführen |

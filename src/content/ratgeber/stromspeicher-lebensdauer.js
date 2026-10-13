@@ -307,7 +307,7 @@ const artikel = {
         {
           typ: "checkliste",
           punkte: [
-            "**Monitoring einrichten:** Ladestand, Temperaturen, Zyklen und SoH regelmäßig prüfen; Alarme für Kommunikationsausfall und Übertemperatur setzen. Ökovolt betreibt dafür eigene SCADA- und [Fernwartungssysteme](/technik/fernwartung).",
+            "**Monitoring einrichten:** Ladestand, Temperaturen, Zyklen und SoH regelmäßig prüfen; Alarme für Kommunikationsausfall und Übertemperatur setzen. Ökovolt nutzt dafür SCADA und [Fernwartung](/technik/fernwartung) mit unserem Technologiepartner Solensa.",
             "**Firmware aktuell halten:** Updates verbessern oft Lade-Algorithmen und Schutzfunktionen – und sind teils Garantiebedingung.",
             "**Betriebsstrategie anpassen:** prognosebasiert laden, lange Standzeiten bei 100 % vermeiden. Wie Marktpreise und Erzeugung über den Tag schwanken, zeigt [Energie live](/energie-live).",
             "**Thermomanagement warten:** Lüfter, Filter und Klimageräte bei Gewerbespeichern und Containern regelmäßig prüfen.",

@@ -8,6 +8,9 @@
 // Zeitreise (scroll-gebunden, dunkel) → Gesellschafter (Ring) → Organigramm →
 // Abgrenzung AT/DE/CH (#laender) → Haltung (Fotoband) → Einzugsgebiet (Karte) → Register (Akkordeon) →
 // Gemeinsam (Fotokacheln) → FAQ → Querverweise → CtaBand.
+// Welle A02: Markenclaim im Hero, ohne Rangaussage und ohne Salzburg AG als Werbeargument (neutral im
+// Gesellschafter-Abschnitt), Stock-Personenfotos als Symbolbild gekennzeichnet oder ersetzt,
+// PV Award als Unternehmenspreis gekennzeichnet.
 
 import Image from "next/image";
 import {
@@ -23,19 +26,25 @@ import Reveal from "@/components/ui/Reveal";
 import Button from "@/components/ui/Button";
 import Querverweise from "@/components/Reusable/Querverweise";
 import Zeitreise from "@/components/Team/Zeitreise";
-import GesellschafterRing from "@/components/Team/GesellschafterRing";
 import Organigramm from "@/components/Team/Organigramm";
 import Einzugsgebiet from "@/components/Team/Einzugsgebiet";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import FotoKachel from "@/components/Team/FotoKachel";
 import MannschaftSektion from "@/components/Mannschaft/MannschaftSektion";
 import { BETEILIGUNGEN, CLAIM, GESELLSCHAFTEN, HALTUNG, PROFIL, ROLLEN_AT, SALZBURG_AG, STAND, URSPRUNG } from "@/data/unternehmen";
+import { DISPLAY_ZEILEN, PARKREGLER_KURZ, PARKREGLER_SATZ } from "@/data/marke";
+import { KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 import { BASE_URL, FIRMA, SCHWESTER, SITE_NAME, SOLENSA } from "@/lib/site";
+
+/** Sichtbare Kennzeichnung für Stock-Motive auf Fotokacheln (dunkler Verlauf → helle Schrift). */
+function Symbolbild() {
+  return <span className="mt-3 inline-block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Symbolbild</span>;
+}
 
 const PAGE_URL = `${BASE_URL}/uber-uns`;
 const TITEL = "Über Ökovolt – PV-Errichter aus Ostermiething | Ökovolt";
 const BESCHREIBUNG =
-  "Ökovolt Solartechnik GmbH: seit 2012 PV-Errichter in Österreich, Sitz Ostermiething, FN 375708m. Gesellschafter, Geschichte, eigene Technik und Gruppe.";
+  "Ökovolt Solartechnik GmbH: seit 2012 PV-Errichter in Österreich, Sitz Ostermiething, FN 375708m. Gesellschafter, Geschichte, Regelung und Leittechnik, Gruppe.";
 
 export const metadata = {
   title: TITEL,
@@ -97,28 +106,31 @@ const LAENDER = [
   },
 ];
 
+// Kennzahlen der Gesellschaft – eigene Angaben, deshalb mit sichtbarem Hinweis (KENNZAHLEN_HINWEIS_STAND).
+// Welle A02: ohne Rangaussage zu EPC-Errichtern (kein Beleg, src/data/werbeaussagen.js).
 const KENNZAHLEN = [
   { value: "2012", label: "in Österreich eingetragen", text: `${FIRMA.firmenbuch} · ${FIRMA.firmenbuchgericht}` },
   { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "PV-Leistung in einem Jahr" },
-  { value: 3, prefix: "TOP ", label: "EPC-Errichter Österreichs", text: "Stand 2021" },
   { value: 9, label: "Bundesländer", text: "Einzugsgebiet: ganz Österreich" },
 ];
 
-// Foto-Bento „Was die Gesellschaft macht“ – Texte aus ROLLEN_AT
+// Foto-Bento „Was die Gesellschaft macht“ – Texte aus ROLLEN_AT. Stock-Motive mit Personen sind als
+// Symbolbild gekennzeichnet (`symbolbild`) oder durch personenlose Motive ersetzt (Welle A02).
 const BENTO_BILDER = [
   { src: "/Images/AT/loesungen/freiflaeche-spitalberg-kaernten.jpg", alt: "Freiflächen-Photovoltaikanlage auf einer Wiese vor Wald in Kärnten", icon: Building2 },
   { src: "/Images/AT/ratgeber/eza-regler-parkregler.jpg", alt: "Wechselrichter und Regelungstechnik unter einer Photovoltaik-Unterkonstruktion", icon: Wrench },
-  { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker bei Arbeiten an Photovoltaikmodulen auf einem Dach", icon: ShieldCheck },
-  { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Projektbesprechung mit einem Photovoltaikmodul im Büro", icon: Network, pos: "60% 40%" },
+  { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker bei Arbeiten an Photovoltaikmodulen auf einem Dach (Symbolbild)", icon: ShieldCheck, symbolbild: true },
+  { src: "/Images/AT/technik/serverraum-racks.jpg", alt: "Serverschränke in einem Rechenzentrum (Symbolbild für gemeinsame EDV und Standards)", icon: Network, symbolbild: true },
 ];
 
 const GEMEINSAM = [
-  { titel: "Das Team", kopf: "Menschen", text: "Gründer, zweite Generation und die Rollen hinter jeder Anlage.", href: "/uber-uns/team", icon: Users, bild: { src: "/Images/Team/download.jpg", alt: "Fachleute mit Helmen und Warnwesten besprechen sich vor Photovoltaikmodulen" } },
-  { titel: "Jobs in Österreich", kopf: "Karriere", text: "Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service und Lehre.", href: "/uber-uns/jobs", icon: Briefcase, bild: { src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen" } },
-  { titel: "Ökovolt PV Award", kopf: "Auszeichnung", text: "Der jährliche Preis für die besten Anlagen unserer Kundinnen und Kunden.", href: "/pv-award", icon: Trophy, bild: { src: "/Images/Referenzen/Projekte-1.jpg", alt: "Photovoltaikmodule im Abendlicht mit Windrädern im Hintergrund" } },
+  { titel: "Das Team", kopf: "Menschen", text: "Gründer, zweite Generation und die Rollen hinter jeder Anlage.", href: "/uber-uns/team", icon: Users, bild: { src: "/Images/Team/download.jpg", alt: "Fachleute mit Helmen und Warnwesten besprechen sich vor Photovoltaikmodulen (Symbolbild)" }, symbolbild: true },
+  { titel: "Jobs in Österreich", kopf: "Karriere", text: "Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service und Lehre.", href: "/uber-uns/jobs", icon: Briefcase, bild: { src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen (Symbolbild)" }, symbolbild: true },
+  // Kennzeichnung nach A07: Unternehmenspreis der Ökovolt Solartechnik GmbH – keine unabhängige Auszeichnung
+  { titel: "Ökovolt PV Award", kopf: "Unternehmenspreis", text: "Unternehmenspreis der Ökovolt Solartechnik GmbH für ihre Kundinnen und Kunden – jährlich für gelungene Anlagen.", href: "/pv-award", icon: Trophy, bild: { src: "/Images/Referenzen/Projekte-1.jpg", alt: "Photovoltaikmodule im Abendlicht mit Windrädern im Hintergrund" } },
   { titel: "Sponsoring", kopf: "Engagement", text: "Vereine, Kultur, Bildung und Nachwuchs in Österreich – so fragen Sie an.", href: "/sponsoring", icon: HeartHandshake, bild: { src: "/Images/AT/unternehmen-b/sponsoring-musikkapelle-tracht.jpg", alt: "Musikkapelle in Tracht bei einem Umzug" } },
-  { titel: "Elektro-Partner werden", kopf: "Partnerprogramm", text: "Elektrotechnik-Betriebe bauen mit uns gemeinsam die Energiewende.", href: "/partner", icon: Handshake, bild: { src: "/Images/Jobs/jobs2.jpg", alt: "Monteur zeigt auf ein Photovoltaikmodul auf einem Dach" } },
-  { titel: "Referenzen", kopf: "Projekte", text: "Anlagen für Gewerbe, Landwirtschaft und Gemeinden.", href: "/referenzen/projekte", icon: Building2, bild: { src: "/Images/Referenzen/referenzkarte4.jpg", alt: "Drei Personen gehen durch eine Freiflächen-Photovoltaikanlage" } },
+  { titel: "Elektro-Partner werden", kopf: "Partnerprogramm", text: "Elektrotechnik-Betriebe bauen mit uns gemeinsam die Energiewende.", href: "/partner", icon: Handshake, bild: { src: "/Images/Jobs/jobs2.jpg", alt: "Monteur zeigt auf ein Photovoltaikmodul auf einem Dach (Symbolbild)" }, symbolbild: true },
+  { titel: "Referenzen", kopf: "Projekte", text: "Anlagen für Gewerbe, Landwirtschaft und Gemeinden.", href: "/referenzen/projekte", icon: Building2, bild: { src: "/Images/AT/technik-service/solarpark-luftbild.jpg", alt: "Senkrechtes Luftbild eines Solarparks mit Modulreihen (Symbolbild)" }, symbolbild: true },
 ];
 
 const FAQ = [
@@ -127,8 +139,9 @@ const FAQ = [
     a: `Betreiberin von oekovolt.com ist die ${FIRMA.name} mit Sitz in ${FIRMA.plz} ${FIRMA.ort} (${FIRMA.firmenbuch}, ${FIRMA.firmenbuchgericht}). Geschäftsführer ist ${FIRMA.geschaeftsfuehrer}. Gesellschafter sind ${gesellschafterText}.`,
   },
   {
+    // Neutral und sachlich (Registerstand) – kein Werbeargument (Inhaber 05.10.2026)
     q: "Ist die Salzburg AG an Ökovolt beteiligt?",
-    a: `Ja. Die Salzburg AG für Energie, Verkehr und Telekommunikation ist seit 2021 mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält ${FIRMA.geschaeftsfuehrer}. Ökovolt ist bevorzugter PV-Errichter des Salzburg AG Konzerns.`,
+    a: `Ja. Die Salzburg AG für Energie, Verkehr und Telekommunikation ist seit 2021 mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer}. Die Angaben stehen im Firmenbuch (${FIRMA.firmenbuch}).`,
   },
   {
     q: "Wie hängen oekovolt.com und oekovolt.de zusammen?",
@@ -147,8 +160,8 @@ const FAQ = [
     a: `In allen neun Bundesländern. Der Sitz in ${FIRMA.ort} liegt im oberösterreichischen Innviertel direkt an der Grenze zu Salzburg; Projekte für Gewerbe, Industrie, Landwirtschaft und öffentliche Hand setzen wir österreichweit um.`,
   },
   {
-    q: "Welche Technik entwickelt Ökovolt selbst?",
-    a: `Einen eigenen Parkregler (EZA-Regler) für die Anforderungen der österreichischen Netzbetreiber, eigene Fernwartungssysteme und eigene SCADA-Systeme für Überwachung und Reporting. Digitalisierung und IT-Sicherheit entwickeln wir gemeinsam mit der ${SOLENSA.name}.`,
+    q: "Welche Regelungs- und Leittechnik setzt Ökovolt ein?",
+    a: `${PARKREGLER_SATZ} Der EZA-Regler erfüllt die Anforderungen der österreichischen Netzbetreiber nach TOR Erzeuger, Fernwartung und SCADA dienen Überwachung und Reporting. Digitalisierung und IT-Sicherheit kommen von der ${SOLENSA.name}.`,
   },
   {
     q: "Was ist die ÖkoInvest GmbH?",
@@ -185,16 +198,16 @@ export default function UberUnsPage() {
         eyebrow={PROFIL.kopf}
         title={
           <>
-            Photovoltaik aus Ostermiething – <span className="ov-text-gradient-light">für ganz Österreich</span>
+            {DISPLAY_ZEILEN.b[0]} <span className="ov-text-gradient-light">{DISPLAY_ZEILEN.b[1]}</span>
           </>
         }
-        lead={`Die ${FIRMA.name} plant, errichtet und betreut seit 2012 Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und öffentliche Hand – aus dem Innviertel, direkt an der Salzach, in allen neun Bundesländern.`}
+        lead="Seit 2012 in Österreich – mit eigenen Montageteams. Parkregler, Fernwartung und SCADA betreuen wir mit unserem Technologiepartner Solensa."
         image={{
           src: "/Images/AT/unternehmen-b/salzach-ettenau-ostermiething.jpg",
           alt: "Die Salzach in der Ettenau, Gemeinde Ostermiething, mit Schotterbank und Auwald",
           position: "50% 55%",
         }}
-        points={["Firmensitz Ostermiething, Oberösterreich", "Eigene Parkregler, Fernwartung & SCADA", "Salzburg AG seit 2021 Gesellschafterin"]}
+        points={["Firmensitz Ostermiething, Oberösterreich", PARKREGLER_KURZ, "Gründer betreiben seit 2012 eigene Solarparks"]}
         actions={[
           { label: "Projekt besprechen", href: "/termin" },
           { label: "Unsere Geschichte", href: "#geschichte", icon: CalendarCheck2 },
@@ -209,7 +222,7 @@ export default function UberUnsPage() {
         <div className="grid gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
           <SectionHeading
             eyebrow="Auf einen Blick"
-            title={<>Errichter mit eigener Technik – <span className="ov-text-gradient">seit 2012 in Österreich</span></>}
+            title={<>Planen, bauen, betreuen – <span className="ov-text-gradient">seit 2012 in Österreich</span></>}
           />
           <Reveal className="text-[16.5px] leading-relaxed text-ink-600">
             <p>{PROFIL.lead}</p>
@@ -220,6 +233,7 @@ export default function UberUnsPage() {
           </Reveal>
         </div>
         <Kennzahlen items={KENNZAHLEN} className="mt-14 border-t border-ink-200 pt-12 md:mt-16" />
+        <p className="mt-6 text-[12.5px] text-ink-500">{KENNZAHLEN_HINWEIS_STAND}</p>
       </Section>
 
       {/* Was die Gesellschaft macht – Foto-Bento */}
@@ -249,7 +263,9 @@ export default function UberUnsPage() {
                 text={e.text}
                 sizes={i === 2 ? "(max-width: 1024px) 100vw, 66vw" : "(max-width: 768px) 100vw, 33vw"}
                 className="h-full min-h-[300px]"
-              />
+              >
+                {BENTO_BILDER[i + 1].symbolbild && <Symbolbild />}
+              </FotoKachel>
             </Reveal>
           ))}
         </div>
@@ -271,31 +287,29 @@ export default function UberUnsPage() {
         <Zeitreise />
       </section>
 
-      {/* Gesellschafter & Salzburg AG */}
-      <Section tone="white" space="lg" id="gesellschafter" className="scroll-mt-20 overflow-hidden">
-        <div aria-hidden="true" className="absolute -left-40 top-20 h-[380px] w-[380px] rounded-full bg-ov-100/70 blur-[110px]" />
-        <div className="relative grid gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-16">
+      {/* Gesellschafter – neutral und sachlich (Registerstand); die Salzburg AG ist kein Werbeargument (Welle A02).
+          Inhaber-Entscheidung 05.10.2026: nur die sachliche Angabe „Gesellschafter: … (Anteil)“, kein eigenes
+          Schaubild, keine Hervorhebung. Die Zeile „Gesellschafter laut Firmenbuch: …“ erscheint zusätzlich nur mit
+          FIRMA.gesellschafterZeileFreigegeben (Standard AUS). */}
+      <Section tone="white" space="md" id="gesellschafter" className="scroll-mt-20">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start lg:gap-16">
+          <SectionHeading eyebrow={SALZBURG_AG.kopf} title={SALZBURG_AG.titel} />
           <div>
-            <SectionHeading eyebrow={`${SALZBURG_AG.zeitraum} · ${SALZBURG_AG.kopf}`} title={SALZBURG_AG.titel} lead={SALZBURG_AG.text} />
-            <ul className="mt-8 grid gap-3">
-              {SALZBURG_AG.punkte.map((p, i) => (
-                <Reveal as="li" key={p} delay={i * 70} className="flex gap-3 text-[15.5px] leading-relaxed text-ink-700">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ov-500 text-white">
-                    <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={3} />
-                  </span>
-                  {p}
-                </Reveal>
+            <dl className="divide-y divide-ink-200 border-y border-ink-200">
+              {FIRMA.gesellschafter.map((g) => (
+                <div key={g.name} className="flex items-baseline justify-between gap-6 py-4">
+                  <dt className="min-w-0 text-[15.5px] leading-snug text-ink-800">Gesellschafter: {g.name}</dt>
+                  <dd className="ov-num shrink-0 font-display text-[17px] font-bold text-ink-900">{g.anteil}</dd>
+                </div>
               ))}
-            </ul>
+            </dl>
+            {FIRMA.gesellschafterZeileFreigegeben && (
+              <p data-gesellschafter-zeile className="mt-6 text-[14.5px] leading-relaxed text-ink-600">
+                Gesellschafter laut Firmenbuch: {gesellschafterText}.
+              </p>
+            )}
+            <p className="mt-4 text-[13px] leading-relaxed text-ink-500">Quelle: Firmenbuch {FIRMA.firmenbuch}, Stand {datumLang(STAND)}.</p>
           </div>
-          <Reveal dir="scale" className="self-center rounded-[2rem] bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-10">
-            <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Gesellschafterstruktur</p>
-            <p className="mt-2 font-display text-[22px] font-extrabold text-ink-900">{FIRMA.name}</p>
-            <div className="mt-8">
-              <GesellschafterRing zusatz={["Gründer und Geschäftsführer", "Landesenergieversorger – seit 2021"]} />
-            </div>
-            <p className="mt-6 text-[13px] leading-relaxed text-ink-500">Quelle: Firmenbuch {FIRMA.firmenbuch}, Stand {datumLang(STAND)}.</p>
-          </Reveal>
         </div>
       </Section>
 
@@ -344,9 +358,10 @@ export default function UberUnsPage() {
         </ul>
       </Section>
 
-      {/* Haltung – Fotoband */}
+      {/* Haltung – Fotoband (personenloses Symbolbild statt Stock-Personenfoto, Welle A02) */}
       <section className="relative isolate overflow-hidden bg-navy-950 py-24 text-white md:py-36">
-        <Image src="/Images/Referenzen/referenzkarte3.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover object-[50%_35%]" />
+        <Image src="/Images/AT/service-b/solarpark-abend.jpg" alt="" fill sizes="100vw" className="-z-20 object-cover object-[50%_45%]" />
+        <span className="absolute right-4 top-4 z-10 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Symbolbild</span>
         <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/55" />
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10 opacity-50" />
         <div className="ov-container grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:items-center lg:gap-20">
@@ -475,7 +490,9 @@ export default function UberUnsPage() {
         <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {GEMEINSAM.map((g, i) => (
             <Reveal as="li" key={g.href} delay={(i % 3) * 80} className="w-[82%] shrink-0 snap-start sm:w-auto">
-              <FotoKachel href={g.href} bild={g.bild} icon={g.icon} kopf={g.kopf} titel={g.titel} text={g.text} className="h-full min-h-[280px]" />
+              <FotoKachel href={g.href} bild={g.bild} icon={g.icon} kopf={g.kopf} titel={g.titel} text={g.text} className="h-full min-h-[280px]">
+                {g.symbolbild && <Symbolbild />}
+              </FotoKachel>
             </Reveal>
           ))}
         </ul>

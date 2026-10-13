@@ -24,7 +24,7 @@ const artikel = {
     "Photovoltaik Angebot Warnsignale",
   ],
   veroeffentlicht: "2026-09-28",
-  aktualisiert: "2026-09-30",
+  aktualisiert: "2026-10-12",
   kategorie: "Kosten & Wirtschaftlichkeit",
   bild: "/Images/AT/wissen/pv-ingenieur-tablet.jpg",
   bildAlt: "Photovoltaik-Montage auf einem Dach",
@@ -57,6 +57,10 @@ const artikel = {
             ["Technik und Nachweise vergleichen", "Komponenten, Statik, Netz, Brandschutz, Prüfung, Monitoring und Wartung."],
             ["Wirtschaftlichkeit gegenrechnen", "Annahmen des Anbieters mit eigenen, vorsichtigen Werten nachrechnen."],
           ],
+        },
+        {
+          typ: "p",
+          text: "Schritt 2 und 3 unterstützt das Werkzeug [PV-Angebot prüfen](/angebot-pruefen): Es liest Ihr Angebots-PDF nur lokal im Browser (kein Upload), rechnet €/kWp und €/kWh Jahresertrag mit PVGIS und listet die Prüfpunkte zum Nachfragen – ohne Urteil über den Anbieter.",
         },
       ],
     },
@@ -242,7 +246,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Details: [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss), [EZA-Regler und Parkregler](/ratgeber/eza-regler-parkregler) sowie [PV-Anlage anmelden](/ratgeber/photovoltaik-anmelden). Ökovolt setzt dafür einen eigenen [Parkregler](/technik/parkregler) ein.",
+          text: "Details: [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss), [EZA-Regler und Parkregler](/ratgeber/eza-regler-parkregler) sowie [PV-Anlage anmelden](/ratgeber/photovoltaik-anmelden). Wie ein Parkregler am Netzanschlusspunkt arbeitet, zeigt die Seite [Parkregler](/technik/parkregler).",
         },
       ],
     },
@@ -421,6 +425,7 @@ const artikel = {
   ],
 
   passend: [
+    { href: "/angebot-pruefen", titel: "PV-Angebot prüfen", text: "Werkzeug: €/kWp, €/kWh Jahresertrag und Prüfpunkte – das PDF bleibt im Browser." },
     { href: "/ratgeber/solaranlage-kosten", titel: "Photovoltaik Kosten 2026", text: "Preise je kWp nach Größenklassen." },
     { href: "/ratgeber/photovoltaik-amortisation", titel: "Amortisation berechnen", text: "Angebote mit eigenen Annahmen nachrechnen." },
     { href: "/ratgeber/photovoltaik-ablauf", titel: "Ablauf eines Gewerbeprojekts", text: "Vom Lastgang bis zur Inbetriebnahme." },
@@ -441,7 +446,7 @@ const artikel = {
   seitenCta: { titel: "Angebot als Vergleichsbasis?", text: "Vollständiges Gewerbeangebot mit offenen Annahmen anfragen.", href: "/angebot", label: "Anfrage starten" },
   cta: {
     title: "Ein Angebot, das jeden Vergleich aushält.",
-    text: "Ökovolt plant Gewerbeanlagen auf Basis Ihres Lastgangs – mit benannten Komponenten, Netzanmeldung, eigenem Parkregler und eigener Fernwartung aus einer Hand.",
+    text: "Ökovolt plant Gewerbeanlagen auf Basis Ihres Lastgangs – mit benannten Komponenten, Netzanmeldung, Parkregler und Fernwartung aus einer Hand.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "Kontakt", href: "/kontakt" },
   },

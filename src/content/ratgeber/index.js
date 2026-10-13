@@ -24,6 +24,7 @@ import a_negative_strompreise from "./negative-strompreise";
 import a_notstrom_photovoltaik from "./notstrom-photovoltaik";
 import a_oemag_marktpreis from "./oemag-marktpreis";
 import a_peak_shaving_leistungspreis from "./peak-shaving-leistungspreis";
+import a_peer_to_peer_strom_teilen from "./peer-to-peer-strom-teilen";
 import a_photovoltaik_ablauf from "./photovoltaik-ablauf";
 import a_photovoltaik_amortisation from "./photovoltaik-amortisation";
 import a_photovoltaik_angebot_vergleichen from "./photovoltaik-angebot-vergleichen";
@@ -91,6 +92,7 @@ export const INHALTE = [
   a_notstrom_photovoltaik,
   a_oemag_marktpreis,
   a_peak_shaving_leistungspreis,
+  a_peer_to_peer_strom_teilen,
   a_photovoltaik_ablauf,
   a_photovoltaik_amortisation,
   a_photovoltaik_angebot_vergleichen,

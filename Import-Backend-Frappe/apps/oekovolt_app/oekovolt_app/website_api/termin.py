@@ -9,6 +9,11 @@
 # Aufrufer: src/lib/terminKalender.js, src/app/api/termin/route.js, src/app/api/rueckruf/route.js.
 # Reine Logik (Feiertage, Slots, Status, .ics) in termin_logik.py – ohne Frappe testbar.
 #
+# Welle A11: Vertriebsfelder (bezug, Herkunft zerlegt, Hinweistext-Kennung, rueckruf_ok) über format.termin_zusatz;
+# die Team-Mail an die Terminberatung kommt aus lead_eingang.after_insert (A06) – berater_benachrichtigen() wird im
+# Buchungspfad nicht mehr aufgerufen (sonst Doppelmail). Kundenmail ohne Freitext, Referenz im Betreff,
+# Schalter oekovolt_keine_kundenmail.
+#
 # Fehlerverhalten (src/lib/backendFehler.js):
 #   frappe.throw(...)  -> exc_type ValidationError -> Website zeigt den Text (422);
 #   Text mit „nicht mehr verfügbar“ -> Website antwortet 409 und lädt neue Slots.
@@ -20,6 +25,7 @@ import frappe
 from frappe.rate_limiter import rate_limit
 from frappe.utils import cstr, escape_html, get_system_timezone, get_url_to_form, getdate, now_datetime
 
+from oekovolt_app.website_api import format as fmt
 from oekovolt_app.website_api import termin_logik as L
 
 ROLLE_API = "Website API"
@@ -230,6 +236,7 @@ def buche_termin(**kwargs):
 		frappe.throw(str(fehler))
 
 	_besucher_limit(b["ip_adresse"])
+	zusatz = fmt.termin_zusatz(d, b)
 
 	pool = L.POOL[b["terminart"]]
 	with _Sperre(f"{pool}:{b['datum'].isoformat()}"):
@@ -272,6 +279,7 @@ def buche_termin(**kwargs):
 				"quelle": b["quelle"],
 				"herkunft": b["herkunft"],
 				"ip_adresse": b["ip_adresse"],
+				**zusatz,
 			}
 		)
 		doc.flags.von_website = True
@@ -281,7 +289,7 @@ def buche_termin(**kwargs):
 
 	cache_leeren()
 	kunde_bestaetigen(doc)
-	berater_benachrichtigen(doc)
+	# Team-Mail: lead_eingang.after_insert (A06) an die Rolle Terminberatung bzw. laut Routing
 	return {"referenz": doc.referenz}
 
 
@@ -303,34 +311,50 @@ def _termin_dict(doc):
 	}
 
 
+def _termin_kunde(doc):
+	"""Termin-Daten für Kundenmail und .ics OHNE Freitexte (Nachricht, Thema, Adresse) – nur geprüfte Werte."""
+	t = _termin_dict(doc)
+	t.update({"nachricht": "", "thema": "", "adresse": "", "telefon": L.telefon_normalisieren(doc.telefon) or ""})
+	if not L.PLZ_RE.match(doc.plz or ""):
+		t["plz"] = ""
+	return t
+
+
 def kunde_bestaetigen(doc):
-	"""Bestätigungs-E-Mail mit .ics an den Kunden. Darf die Buchung nie verhindern."""
+	"""Bestätigungs-E-Mail mit .ics an den Kunden. Darf die Buchung nie verhindern.
+
+	Kein Freitext aus der Buchung (Anrede gehärtet, Adresse/Nachricht/Thema nicht gespiegelt);
+	abschaltbar per site_config oekovolt_keine_kundenmail."""
+	if frappe.conf.get("oekovolt_keine_kundenmail"):
+		return
 	try:
-		t = _termin_dict(doc)
+		t = _termin_kunde(doc)
 		wann = L.datum_lang(t["start"])
-		name = escape_html(doc.name_komplett or "")
+		anrede = fmt.anrede_name(doc.name_komplett)
+		telefon = escape_html(t["telefon"] or "Ihrer Nummer")
+		referenz = escape_html(doc.referenz or "")
 		if t["rueckruf"]:
-			betreff = f"Ihr Rückruf von {L.FIRMA['kurz']}: {wann}"
-			kopf = f"vielen Dank für Ihre Anfrage – wir rufen Sie am <b>{wann}</b> unter {escape_html(doc.telefon)} an."
+			betreff = f"Ihr Rückruf von {L.FIRMA['kurz']} ({doc.referenz}): {wann}"
+			kopf = f"vielen Dank für Ihre Anfrage – wir rufen Sie am <b>{wann}</b> unter {telefon} an."
 		else:
-			betreff = f"Terminbestätigung: {doc.terminart} am {wann}"
+			betreff = f"Terminbestätigung {doc.referenz}: {doc.terminart} am {wann}"
 			kopf = f"vielen Dank für Ihre Buchung. Ihr Termin: <b>{escape_html(doc.terminart)}</b> am <b>{wann}</b>."
 
 		zusatz = ""
 		if doc.terminart == L.VIDEO:
 			zusatz = "<p>Den Link zur Video-Beratung senden wir Ihnen rechtzeitig vor dem Termin.</p>"
 		elif doc.terminart == L.VOR_ORT:
-			ort = escape_html(doc.adresse or f"PLZ {doc.plz}")
-			zusatz = f"<p>Wir kommen zu Ihnen: {ort}. Wir melden uns vorab zur Abstimmung.</p>"
+			ort = f" (PLZ {escape_html(t['plz'])})" if t["plz"] else ""
+			zusatz = f"<p>Wir kommen zu Ihnen an die angegebene Adresse{ort}. Wir melden uns vorab zur Abstimmung.</p>"
 		elif not t["rueckruf"]:
-			zusatz = f"<p>Wir rufen Sie zum Termin unter {escape_html(doc.telefon)} an.</p>"
+			zusatz = f"<p>Wir rufen Sie zum Termin unter {telefon} an.</p>"
 
 		frappe.sendmail(
 			recipients=[doc.email],
 			subject=betreff,
 			message=(
-				f"<p>Guten Tag {name},</p><p>{kopf}</p>{zusatz}"
-				f"<p>Buchungsnummer: <b>{escape_html(doc.referenz)}</b></p>"
+				f"<p>Guten Tag{' ' + escape_html(anrede) if anrede else ''},</p><p>{kopf}</p>{zusatz}"
+				f"<p>Buchungsnummer: <b>{referenz}</b></p>"
 				"<p>Die angehängte Kalenderdatei (.ics) können Sie in Outlook, Google oder Apple Kalender übernehmen.</p>"
 				f"<p>Sie möchten den Termin ändern oder absagen? Antworten Sie einfach auf diese E-Mail oder rufen Sie uns an: "
 				f"{L.FIRMA['telefon']}.</p>"
@@ -345,7 +369,10 @@ def kunde_bestaetigen(doc):
 
 
 def berater_benachrichtigen(doc):
-	"""E-Mail + Glocke im Desk an alle Nutzer mit Rolle „Terminberatung“. Darf die Buchung nie verhindern."""
+	"""E-Mail + Glocke im Desk an alle Nutzer mit Rolle „Terminberatung“. Darf die Buchung nie verhindern.
+
+	Seit Welle A11 nicht mehr im Buchungspfad (die Team-Mail sendet lead_eingang.after_insert, A06);
+	bleibt für manuelle Aufrufe, z. B. `bench execute … berater_benachrichtigen --args …`."""
 	try:
 		nutzer = _berater()
 		if not nutzer:
@@ -408,6 +435,10 @@ def loesche_alte_termine():
 		"ip_adresse": "",
 		"berater": None,
 		"anonymisiert": 1,
+		# Vertriebsfelder mit Personenbezug (Welle A11)
+		"lead_schluessel": "",
+		"gremium": "",
+		"fruehere_anfragen": "",
 	}
 	for name in namen:
 		frappe.db.set_value(DOCTYPE, name, leer, update_modified=False)

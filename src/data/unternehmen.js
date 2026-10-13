@@ -26,8 +26,9 @@
 
 import { FIRMA, SCHWESTER, SOLENSA } from "@/lib/site";
 import { kz } from "@/data/kennzahlen";
+import { CLAIM_MIT_MARKE, PARKREGLER_SATZ } from "@/data/marke";
 
-export const STAND = "2026-09-28";
+export const STAND = "2026-09-28"; // Registerdaten zuletzt geprüft (Firmenbuch); Texte geändert 11.10.2026 (Welle A02)
 
 /** Kurzprofil für den Einstieg. */
 export const PROFIL = {
@@ -37,8 +38,8 @@ export const PROFIL = {
     "Die Ökovolt Solartechnik GmbH plant, errichtet und betreut seit 2012 Photovoltaikanlagen in Österreich – aus Ostermiething im Innviertel, direkt an der Salzach, für Gewerbe, Industrie, Landwirtschaft und öffentliche Hand in allen neun Bundesländern. Dahinter steht eine Gruppe, die Andreas Wegscheider und Susanne Messmer 2010 in Türkheim gegründet haben. Ihre Entscheidung von damals gilt bis heute: Wir planen nicht nur, wir bauen selbst. Und wir betreiben, was wir bauen.",
 };
 
-/** Schlusssatz des Kapitels. */
-export const CLAIM = "ÖKOVOLT. Wir bauen, was wir selbst betreiben würden.";
+/** Schlusssatz des Kapitels – aus dem Markenkern (src/data/marke.js). */
+export const CLAIM = CLAIM_MIT_MARKE;
 
 /**
  * Kennzahlen für den "Heute"-Abschnitt – nur belegte Werte.
@@ -50,7 +51,7 @@ export const HEUTE = [
   // Gesamtzahlen laut Ökovolt Österreich, siehe src/data/kennzahlen.js
   { wert: `${kz("leistung")} kWp`, label: "installierte Leistung" },
   { wert: "9", label: "Bundesländer im Einzugsgebiet" },
-  { wert: kz("anlagen"), label: "PV-Kraftwerke errichtet" },
+  { wert: kz("anlagen"), label: "PV-Anlagen errichtet" },
   { wert: null, label: "Fachleute in Ostermiething" },
 ];
 
@@ -89,7 +90,7 @@ export const URSPRUNG = {
   absaetze: [
     `Die ${SCHWESTER.name} in ${SCHWESTER.ort} (Deutschland, seit 2010) ist das Stammhaus der Gruppe und rechtlich eine Schwestergesellschaft: Dort werden die technischen Standards gesetzt, nach denen gebaut wird, und dort liegen die Rechte an der Marke Ökovolt und an dieser Website.`,
     `Mit diesem Know-how entstand 2012 die österreichische Gesellschaft, die ${FIRMA.name} in ${FIRMA.ort} – mit denselben Prozessen und derselben Qualitätslatte. Gesellschaftsrechtlich ist sie eigenständig: Gesellschafter sind Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer} und die Salzburg AG.`,
-    "Beide Gesellschaften arbeiten eng verzahnt: Zentraleinkauf, gemeinsame Planungsdienstleistungen und eine gemeinsame EDV-Infrastruktur. In Österreich kommen eigene Systeme für den Netzanschluss dazu – Parkregler, Fernwartung und SCADA.",
+    `Beide Gesellschaften arbeiten eng verzahnt: Zentraleinkauf, gemeinsame Planungsdienstleistungen und eine gemeinsame EDV-Infrastruktur. In Österreich kommt die Regelung und Leittechnik für den Netzanschluss dazu: ${PARKREGLER_SATZ}`,
   ],
   kennzahlen: [
     { wert: "2010", label: "Stammhaus in Türkheim" },
@@ -158,26 +159,22 @@ export const GENERATIONEN = [
 ];
 
 /**
- * Die Salzburg AG – aktuelle Gesellschafterin der österreichischen
- * Gesellschaft (49 %, seit 2021). Bewusst im Präsens.
+ * Gesellschafter der österreichischen Gesellschaft – neutral und sachlich (Registerstand).
+ * Die Salzburg AG ist Gesellschafterin (49 %, seit 2021), aber KEIN Werbeargument
+ * (Inhaber-Entscheidung 05.10.2026, Anwalt prüft): keine „Partnerschaft“, kein Vorzugs-
+ * Errichter-Status, keine Rang-Einordnung. Werbeformulierungen nur über src/data/werbeaussagen.js
+ * (Eintrag „salzburg-ag-bevorzugter-errichter“, Standard AUS). `punkte` bleibt leer.
  */
 export const SALZBURG_AG = {
   zeitraum: "Seit 2021",
-  kopf: "Gesellschafterin in Österreich",
-  titel: "Die Partnerschaft mit der Salzburg AG",
-  text:
-    `Seit 2021 ist die Salzburg AG für Energie, Verkehr und Telekommunikation mit 49 % an der ${FIRMA.name} beteiligt; 51 % hält Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer}. Die Gesellschaft zählte 2021 bereits zu den TOP 3 der EPC-Errichter Österreichs – genau deshalb kam einer der großen Landesenergieversorger auf sie zu: Die Position war der Grund für den Einstieg, nicht sein Ergebnis. Die Partnerschaft verbindet die Umsetzungsstärke eines spezialisierten Errichters mit dem Zugang zu Liegenschaften und Infrastruktur eines Landesversorgers.`,
+  kopf: "Gesellschafter",
+  titel: "Gesellschafter der Ökovolt Solartechnik GmbH",
+  text: `Die ${FIRMA.name} hat zwei Gesellschafter: Gründer und Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und – seit 2021 – die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %).`,
   kennzahlen: [
-    { wert: "TOP 3", label: "EPC-Errichter – schon vor dem Einstieg" },
-    { wert: "49 %", label: "Salzburg AG, seit 2021" },
     { wert: "51 %", label: `${FIRMA.geschaeftsfuehrer}, Gründer und Geschäftsführer` },
+    { wert: "49 %", label: "Salzburg AG, seit 2021" },
   ],
-  punkte: [
-    "Bereits 2021 unter den TOP 3 der EPC-Errichter (Integrierter Photovoltaik-Contractor) Österreichs",
-    "Bevorzugter PV-Errichter des Salzburg AG Konzerns",
-    "Zugang zu Liegenschaften und Infrastrukturprojekten eines Landesenergieversorgers",
-    "Großprojekte im Bereich Freifläche, Agri-PV und gewerbliche Dachanlagen",
-  ],
+  punkte: [],
 };
 
 /**
@@ -189,7 +186,7 @@ export const ROLLEN_AT = {
   kopf: "Österreich",
   titel: "Was die Ökovolt Solartechnik GmbH macht",
   lead:
-    "Die österreichische Gesellschaft ist Errichterin mit eigener Technik: Sie plant, baut, schließt an und betreut Photovoltaikanlagen für Unternehmen, Landwirtschaft und öffentliche Hand – und liefert die Regelungs- und Leittechnik für den Netzanschluss selbst.",
+    "Die österreichische Gesellschaft ist Errichterin: Sie plant, baut, schließt an und betreut Photovoltaikanlagen für Unternehmen, Landwirtschaft und öffentliche Hand – Parkregler, Fernwartung und SCADA mit dem Technologiepartner Solensa, parametriert, betreut und gewartet von ihr selbst.",
   eintraege: [
     {
       icon: "Building2",
@@ -202,10 +199,9 @@ export const ROLLEN_AT = {
     },
     {
       icon: "Wrench",
-      rolle: "Eigene Technik",
+      rolle: "Regelung und Leittechnik",
       name: "Parkregler, Fernwartung, SCADA",
-      text:
-        "Eigener EZA-Regler für die Anforderungen der TOR Erzeuger, eigene Fernwartungssysteme und eigene SCADA-Systeme für Überwachung und Reporting – entwickelt gemeinsam mit Solensa (IT-Security).",
+      text: `EZA-Regler für die Anforderungen der TOR Erzeuger, Fernwartung und SCADA für Überwachung und Reporting. ${PARKREGLER_SATZ}`,
       href: "/technik",
     },
     {
@@ -237,7 +233,7 @@ export const GRUPPE = [
     ebene: 1,
     flagge: "AT",
     name: FIRMA.name,
-    text: `Österreichische Gesellschaft in ${FIRMA.ort} – Projektgeschäft, eigene Technik und Service. Gesellschafter: ${FIRMA.gesellschafter.map((g) => `${g.name.replace(" für Energie, Verkehr und Telekommunikation", "")} ${g.anteil}`).join(", ")}.`,
+    text: `Österreichische Gesellschaft in ${FIRMA.ort} – Projektgeschäft, Regelung und Leittechnik sowie Service. Gesellschafter: ${FIRMA.gesellschafter.map((g) => `${g.name.replace(" für Energie, Verkehr und Telekommunikation", "")} ${g.anteil}`).join(", ")}.`,
     gesellschaft: "at",
   },
   {
@@ -379,10 +375,10 @@ export const MEILENSTEINE = [
   },
   {
     jahr: "2021",
-    titel: "30 MWp und ein Landesversorger als Partner",
+    titel: "30 MWp in einem Jahr und ein neuer Gesellschafter",
     text: [
-      "Allein 2021 errichtet die Ökovolt Solartechnik GmbH PV-Anlagen mit 30 MWp Leistung und zählt damit zu den TOP 3 der EPC-Errichter Österreichs.",
-      "Im selben Jahr beteiligt sich die Salzburg AG, einer der großen österreichischen Landesenergieversorger, mit 49 % an der österreichischen Gesellschaft – eine Partnerschaft, die bis heute besteht. Ökovolt wird bevorzugter PV-Errichter des Salzburg AG Konzerns.",
+      "Allein 2021 errichtet die Ökovolt Solartechnik GmbH PV-Anlagen mit rund 30 MWp Leistung (Planung, Beschaffung und Bau aus einer Hand).",
+      "Im selben Jahr beteiligt sich die Salzburg AG für Energie, Verkehr und Telekommunikation mit 49 % an der österreichischen Gesellschaft; 51 % hält weiterhin Gründer und Geschäftsführer Andreas Wegscheider.",
       "In Deutschland ordnen die Gründer ihre Solarparks neu und bündeln sie in ihrer Beteiligungsgesellschaft; das Stammhaus in Türkheim konzentriert sich seitdem ganz auf Planung, Bau und Inbetriebnahme für Gewerbe, Industrie, Kommunen und Landwirtschaft.",
     ],
     icon: "Network",
@@ -410,7 +406,7 @@ export const MEILENSTEINE = [
     jahr: "Heute",
     titel: "Aus Ostermiething für ganz Österreich",
     text: [
-      "Über 15 Jahre Erfahrung in der Gruppe, seit 2012 in Österreich – für Unternehmen, Landwirtschaft, Gemeinden und Landesversorger in allen neun Bundesländern. Dahinter stehen bis heute dieselben Gründer, die 2010 angefangen haben. Und wir machen weiter: mit eigenen Parkreglern, Fernwartung und SCADA, mit Speichern, Energiegemeinschaften und intelligentem Energiemanagement.",
+      "Über 15 Jahre Erfahrung in der Gruppe, seit 2012 in Österreich – für Unternehmen, Landwirtschaft, Gemeinden und Landesversorger in allen neun Bundesländern. Dahinter stehen bis heute dieselben Gründer, die 2010 angefangen haben. Und wir machen weiter: mit Parkreglern, Fernwartung und SCADA, die wir selbst parametrieren und betreuen, mit Speichern, Energiegemeinschaften und intelligentem Energiemanagement.",
     ],
     icon: "Sunrise",
     hervorgehoben: true,

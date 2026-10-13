@@ -1,0 +1,591 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:RL-{YYYY}-{#####}",
+ "creation": "2026-10-12 10:00:00.000000",
+ "description": "Lead aus dem Lead-Gate der Website (Rechner-Export/-PDF, Auswertungen eigener Daten) mit E-Mail-Bestätigung (Double-Opt-in).",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_anfrage",
+  "status",
+  "verlustgrund",
+  "zustaendig",
+  "anonymisiert",
+  "column_break_anfrage",
+  "rechner",
+  "rechner_name",
+  "aktion",
+  "quelle",
+  "ergebnis_link",
+  "rueckkehr",
+  "sec_bestaetigung",
+  "bestaetigung_erforderlich",
+  "bestaetigt",
+  "bestaetigt_am",
+  "column_break_bestaetigung",
+  "token_gueltig_bis",
+  "bestaetigung_gesendet_am",
+  "bestaetigung_anzahl",
+  "bestaetigungs_token",
+  "sec_kontakt",
+  "vorname",
+  "nachname",
+  "email",
+  "telefon",
+  "column_break_kontakt",
+  "firma",
+  "plz",
+  "mappe_rollen",
+  "sec_vertrieb",
+  "segment",
+  "lead_klasse",
+  "lead_score",
+  "score_gruende",
+  "bundesland",
+  "column_break_vertrieb",
+  "eingang_am",
+  "sla_bis",
+  "erstreaktion_am",
+  "reaktionszeit_min",
+  "lead_schluessel",
+  "fruehere_anfragen",
+  "sec_qualifizierung",
+  "rolle",
+  "gremium",
+  "zeitplan",
+  "column_break_qualifizierung",
+  "rueckruf_ok",
+  "kontakt_ok",
+  "einwilligung_id",
+  "einwilligung_text_version",
+  "sec_ergebnis",
+  "ergebnis",
+  "jahresverbrauch_kwh",
+  "ergebnis_json",
+  "lastgang_kennzahlen",
+  "sec_bearbeitung",
+  "notiz",
+  "sec_herkunft",
+  "herkunft",
+  "herkunft_kanal",
+  "utm_source",
+  "utm_medium",
+  "utm_content",
+  "column_break_herkunft",
+  "utm_campaign",
+  "utm_term",
+  "herkunft_referrer",
+  "einstiegsseite",
+  "ip_adresse"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_anfrage",
+   "fieldtype": "Section Break",
+   "label": "Anfrage"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Neu\nKontaktversuch\nQualifiziert\nTermin vereinbart\nAngebot erstellt\nVerhandlung\nGewonnen\nVerloren\nErledigt\nSpam",
+   "default": "Neu",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "verlustgrund",
+   "fieldtype": "Select",
+   "label": "Verlustgrund",
+   "options": "\nPreis\nMitbewerber\nNetzzusage/Netzebene\nKein Budget/verschoben\nNicht erreichbar\nDach/Fläche ungeeignet\nKein Bedarf\nSonstiges",
+   "depends_on": "eval:doc.status=='Verloren'",
+   "mandatory_depends_on": "eval:doc.status=='Verloren'"
+  },
+  {
+   "fieldname": "zustaendig",
+   "fieldtype": "Link",
+   "label": "Zuständig",
+   "options": "User"
+  },
+  {
+   "fieldname": "anonymisiert",
+   "fieldtype": "Check",
+   "label": "Anonymisiert",
+   "default": "0",
+   "read_only": 1,
+   "description": "Nach Ablauf der Löschfrist (Standard 24 Monate) automatisch gesetzt – außer bei „Angebot erstellt“/„Gewonnen“."
+  },
+  {
+   "fieldname": "column_break_anfrage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rechner",
+   "fieldtype": "Data",
+   "label": "Werkzeug (Kennung)",
+   "length": 40,
+   "read_only": 1,
+   "in_standard_filter": 1,
+   "description": "Kennung aus src/data/leadRechner.js, z. B. gewerbe-pv"
+  },
+  {
+   "fieldname": "rechner_name",
+   "fieldtype": "Data",
+   "label": "Werkzeug",
+   "length": 80,
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "aktion",
+   "fieldtype": "Select",
+   "label": "Aktion am Gate",
+   "options": "\npdf\ndownload\nexport\nlink\nauswertung\nsenden\ndruck\nmail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "quelle",
+   "fieldtype": "Data",
+   "label": "Seite",
+   "length": 255,
+   "read_only": 1
+  },
+  {
+   "fieldname": "ergebnis_link",
+   "fieldtype": "Data",
+   "label": "Ergebnis-Link (Pfad)",
+   "length": 500,
+   "read_only": 1
+  },
+  {
+   "fieldname": "rueckkehr",
+   "fieldtype": "Data",
+   "label": "Rückkehr nach Bestätigung (Pfad)",
+   "length": 500,
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_bestaetigung",
+   "fieldtype": "Section Break",
+   "label": "E-Mail-Bestätigung (Double-Opt-in)"
+  },
+  {
+   "fieldname": "bestaetigung_erforderlich",
+   "fieldtype": "Check",
+   "label": "Bestätigung erforderlich",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bestaetigt",
+   "fieldtype": "Check",
+   "label": "E-Mail bestätigt",
+   "default": "0",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bestaetigt_am",
+   "fieldtype": "Datetime",
+   "label": "Bestätigt am",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_bestaetigung",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "token_gueltig_bis",
+   "fieldtype": "Datetime",
+   "label": "Link gültig bis",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "bestaetigung_gesendet_am",
+   "fieldtype": "Datetime",
+   "label": "Bestätigungsmail zuletzt gesendet",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "bestaetigung_anzahl",
+   "fieldtype": "Int",
+   "label": "Bestätigungsmails gesendet",
+   "read_only": 1,
+   "no_copy": 1,
+   "default": "0"
+  },
+  {
+   "fieldname": "bestaetigungs_token",
+   "fieldtype": "Data",
+   "label": "Token (sha256)",
+   "length": 64,
+   "read_only": 1,
+   "hidden": 1,
+   "no_copy": 1,
+   "search_index": 1,
+   "description": "Nur der Hash wird gespeichert; der Link steht ausschließlich in der Mail."
+  },
+  {
+   "fieldname": "sec_kontakt",
+   "fieldtype": "Section Break",
+   "label": "Kontakt"
+  },
+  {
+   "fieldname": "vorname",
+   "fieldtype": "Data",
+   "label": "Vorname",
+   "length": 80
+  },
+  {
+   "fieldname": "nachname",
+   "fieldtype": "Data",
+   "label": "Nachname",
+   "length": 80,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-Mail",
+   "options": "Email"
+  },
+  {
+   "fieldname": "telefon",
+   "fieldtype": "Data",
+   "label": "Telefon (E.164, nur mit Häkchen)",
+   "options": "Phone",
+   "length": 20
+  },
+  {
+   "fieldname": "column_break_kontakt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "firma",
+   "fieldtype": "Data",
+   "label": "Unternehmen / Organisation",
+   "length": 140
+  },
+  {
+   "fieldname": "plz",
+   "fieldtype": "Data",
+   "label": "PLZ",
+   "length": 10
+  },
+  {
+   "fieldname": "mappe_rollen",
+   "fieldtype": "Small Text",
+   "label": "Bericht für (Entscheider-Mappe)"
+  },
+  {
+   "fieldname": "sec_vertrieb",
+   "fieldtype": "Section Break",
+   "label": "Vertrieb",
+   "description": "Wird beim Eingang automatisch gesetzt (lead_eingang.py, Scoring in format.py). Priorisierung im Vertrieb – keine automatisierte Entscheidung (Art. 22 DSGVO)."
+  },
+  {
+   "fieldname": "segment",
+   "fieldtype": "Select",
+   "label": "Segment",
+   "options": "\nGewerbe & Industrie\nLandwirtschaft\nFreifläche/Agri-PV\nHotellerie & Tourismus\nGemeinde & öffentliche Hand\nChalet & Premium\nPrivat\nService\nPartner\nBewerbung\nPresse\nSonstiges",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "lead_klasse",
+   "fieldtype": "Select",
+   "label": "Lead-Klasse",
+   "options": "\nA\nB\nC",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "lead_score",
+   "fieldtype": "Int",
+   "label": "Lead-Score (0–100)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "score_gruende",
+   "fieldtype": "Small Text",
+   "label": "Score-Gründe",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "bundesland",
+   "fieldtype": "Select",
+   "label": "Bundesland",
+   "options": "\nBurgenland\nKärnten\nNiederösterreich\nOberösterreich\nSalzburg\nSteiermark\nTirol\nVorarlberg\nWien",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_vertrieb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eingang_am",
+   "fieldtype": "Datetime",
+   "label": "Eingang am",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sla_bis",
+   "fieldtype": "Datetime",
+   "label": "Erstreaktion bis (SLA)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "erstreaktion_am",
+   "fieldtype": "Datetime",
+   "label": "Erstreaktion am",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "reaktionszeit_min",
+   "fieldtype": "Int",
+   "label": "Reaktionszeit (Geschäftsminuten)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "lead_schluessel",
+   "fieldtype": "Data",
+   "label": "Lead-Schlüssel",
+   "read_only": 1,
+   "no_copy": 1,
+   "length": 200,
+   "search_index": 1
+  },
+  {
+   "fieldname": "fruehere_anfragen",
+   "fieldtype": "Small Text",
+   "label": "Frühere Anfragen",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sec_qualifizierung",
+   "fieldtype": "Section Break",
+   "label": "Qualifizierung",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "rolle",
+   "fieldtype": "Select",
+   "label": "Rolle der anfragenden Person",
+   "options": "\nGeschäftsführung/Inhaber\nFinanzen\nTechnik/Facility\nEinkauf\nGemeinde/Verwaltung\nLandwirt/Eigentümer\nSonstiges"
+  },
+  {
+   "fieldname": "gremium",
+   "fieldtype": "Small Text",
+   "label": "Entscheidet mit (Gremium)"
+  },
+  {
+   "fieldname": "zeitplan",
+   "fieldtype": "Select",
+   "label": "Zeitplan",
+   "options": "\nSo bald wie möglich\nIn den nächsten 3 Monaten\nIn 3–12 Monaten\nSpäter / Budgetplanung"
+  },
+  {
+   "fieldname": "column_break_qualifizierung",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rueckruf_ok",
+   "fieldtype": "Check",
+   "label": "Rückruf/Anruf erwünscht",
+   "default": "0"
+  },
+  {
+   "fieldname": "kontakt_ok",
+   "fieldtype": "Check",
+   "label": "Kontakt zu diesem Ergebnis erwünscht",
+   "default": "0",
+   "description": "Freiwilliges, nicht vorangekreuztes Häkchen am Lead-Gate. Ohne Häkchen: nur Ergebnis-Link und Antworten auf Rückfragen."
+  },
+  {
+   "fieldname": "einwilligung_id",
+   "fieldtype": "Data",
+   "label": "Hinweis-/Einwilligungstext",
+   "read_only": 1,
+   "length": 40
+  },
+  {
+   "fieldname": "einwilligung_text_version",
+   "fieldtype": "Data",
+   "label": "Textversion",
+   "read_only": 1,
+   "length": 8
+  },
+  {
+   "fieldname": "sec_ergebnis",
+   "fieldtype": "Section Break",
+   "label": "Ergebnis"
+  },
+  {
+   "fieldname": "ergebnis",
+   "fieldtype": "Long Text",
+   "label": "Ergebnis (Zusammenfassung)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "jahresverbrauch_kwh",
+   "fieldtype": "Float",
+   "label": "Jahresverbrauch (kWh)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ergebnis_json",
+   "fieldtype": "Code",
+   "label": "Ergebnis (JSON, wie gesendet)",
+   "options": "JSON",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lastgang_kennzahlen",
+   "fieldtype": "Code",
+   "label": "Lastgang-Kennzahlen (JSON)",
+   "options": "JSON",
+   "read_only": 1,
+   "description": "Nur Kennzahlen, keine Rohdaten."
+  },
+  {
+   "fieldname": "sec_bearbeitung",
+   "fieldtype": "Section Break",
+   "label": "Bearbeitung"
+  },
+  {
+   "fieldname": "notiz",
+   "fieldtype": "Small Text",
+   "label": "Interne Notiz"
+  },
+  {
+   "fieldname": "sec_herkunft",
+   "fieldtype": "Section Break",
+   "label": "Herkunft (Kampagne) und Technik",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "herkunft",
+   "fieldtype": "Small Text",
+   "label": "Herkunft (Zeile)"
+  },
+  {
+   "fieldname": "herkunft_kanal",
+   "fieldtype": "Select",
+   "label": "Kanal",
+   "options": "\nAnzeige\nSocial Media\nE-Mail\nOffline/QR\nKampagne\nSuchmaschine\nKI-Assistent\nVerweis\nDirekt",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "utm_source",
+   "fieldtype": "Data",
+   "label": "UTM-Quelle (utm_source)",
+   "length": 100
+  },
+  {
+   "fieldname": "utm_medium",
+   "fieldtype": "Data",
+   "label": "UTM-Medium (utm_medium)",
+   "length": 100
+  },
+  {
+   "fieldname": "utm_content",
+   "fieldtype": "Data",
+   "label": "UTM-Inhalt (utm_content)",
+   "length": 100
+  },
+  {
+   "fieldname": "column_break_herkunft",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "utm_campaign",
+   "fieldtype": "Data",
+   "label": "Kampagne (utm_campaign)",
+   "length": 100
+  },
+  {
+   "fieldname": "utm_term",
+   "fieldtype": "Data",
+   "label": "Suchbegriff (utm_term)",
+   "length": 100
+  },
+  {
+   "fieldname": "herkunft_referrer",
+   "fieldtype": "Data",
+   "label": "Verweisende Website",
+   "length": 120
+  },
+  {
+   "fieldname": "einstiegsseite",
+   "fieldtype": "Data",
+   "label": "Einstiegsseite",
+   "length": 200
+  },
+  {
+   "fieldname": "ip_adresse",
+   "fieldtype": "Data",
+   "label": "IP-Adresse",
+   "length": 45,
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-12 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Rechner Lead",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "share": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Website API",
+   "create": 1
+  }
+ ],
+ "search_fields": "vorname,email,rechner,plz",
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "nachname",
+ "track_changes": 1
+}

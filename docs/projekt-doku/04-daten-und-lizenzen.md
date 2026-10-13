@@ -3,7 +3,7 @@
 Merkmalsraster (Herkunft, Aktualität, Verantwortung) in Anlehnung an ISO/IEC 25012. Keine
 Normkonformität behauptet. **Keine Rechtsberatung** – die Lizenzbewertung ist eine technische
 Bestandsaufnahme; die rechtliche Prüfung ist offen (siehe 09).
-Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 ## 1. Externe Datenquellen und Namensnennung
 
@@ -64,6 +64,27 @@ Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 | `src/data/reels.js` | Videoliste (derzeit leer) | Reels der eigenen Facebook-Seite (Download Meta Business Suite) | `node scripts/reels-optimieren.mjs` (ffmpeg nötig), danach Texte ergänzen | Marketing | `src/data/reels.js:9-18,38-41` |
 | `src/data/netzbetreiber.js` | Anmeldewege der fünf größten Verteilernetzbetreiber (nach Zählpunkten, E-Control Smart-Meter-Monitoringbericht 2025) | eigene Formulierungen nach Primärquellen (Websites, Formulare, Preisblätter der Netzbetreiber, E-Control, ElWG), Recherche 30.09.2026; jede Aussage mit `quellen`, Ungeklärtes in `offen` | bei Änderungen `GEPRUEFT_AM` je Betreiber und `STAND` anpassen | offen | `src/data/netzbetreiber.js:1-24` (unveröff.) |
 
+### 2.1 Neue Datenbestände der Welle A (12.10.2026)
+
+| Datei | Inhalt | Freigabe / Pflege |
+|---|---|---|
+| `src/data/werbeaussagen.js` | Register der Werbeaussagen (13 Einträge) mit Beleg, Quelle, Stand, Freigabe | Inhaber/Recht (F-41, F-42) |
+| `src/data/marke.js` | Marken-Kern, Claim, Display-Zeilen, Säulen, CTA-Regel, 6 Zusagen (alle `freigegeben: false`), Parkregler-Satz | Inhaber (F-45) |
+| `src/data/branchenZuordnung.js` | Projekt → Zielgruppe, **abgeleitet** aus `kunden.js`/`hero.js` (nicht von Hand); `UNKLAR`: Fuschl am See | F-52 |
+| `src/data/fristen.js` | IFB (22 % bis 31.12.2026, WKO, Stand 2026-10-03), Leistungspreis ab 2027 (ElWG BGBl. I Nr. 91/2025), Spitzenkappung (§ 101 ElWG, Primärquelle prüfen) | Redaktion, Jahreswechsel (R-77) |
+| `src/data/einwaende.js` | zwölf Einwände mit Antwort, Beleg und nächstem Schritt | Vertrieb/Redaktion |
+| `src/data/preisbaender.js` | vier Größenklassen, **Werte leer**, `freigegeben: false` | Inhaber (F-45) |
+| `src/data/fachberater.js` | drei benannte Personen ohne Einwilligung (Rolle, Durchwahl, Foto offen) | F-45 |
+| `src/data/leadRechner.js` | 25 Gate-Kennungen mit Segment und Stufe (gemeinsam mit dem Backoffice) | Entwicklung |
+| `src/data/argumentarien.js` | Entscheider-Mappe (Rollen GF, CFO, Technik, Bank, ESG/Betriebsrat, Gemeinderat); nur Zahlen aus dem Rechnerbericht | Entwicklung/Vertrieb |
+| `src/lib/einwilligungen.js` | sechs versionierte Hinweis-/Einwilligungstexte | Recht (F-44) |
+| `src/data/kunden.js` (geändert) | Freigabeschema `{name, zitat, logo, plakette, livedaten, messwerte, freigegebenAm, beleg}`, überall `false`; Backoffice führend | F-43 |
+| `src/data/kennzahlen.js` (geändert) | `beleg: null`, `abgrenzung`, `KENNZAHLEN_HINWEIS_STAND` („Angaben Ökovolt Österreich · Stand 09/2026“) | F-19, F-33 |
+| `public/Images/leaflet/marker-icon*.png`, `marker-shadow.png` | Kopie aus Leaflet 1.9.4 (BSD-2-Clause, siehe 3) statt Abruf von unpkg.com | – |
+
+Datenqualität: Die Projektdaten liefern derzeit kein `segment`, `ort`, `jahr`, `land` und keine `dacharten` (alle 58
+Projekte) – Filter und Baujahr-Angaben der Referenzseiten haben dadurch keine Datenbasis (R-73).
+
 ## 3. Open-Source-Abhängigkeiten mit Lizenzhinweis
 
 Auszug direkter Abhängigkeiten (Lizenzangabe aus `node_modules/<paket>/package.json` bzw. `LICENSE`, geprüft 30.09.2026):
@@ -78,6 +99,9 @@ Auszug direkter Abhängigkeiten (Lizenzangabe aus `node_modules/<paket>/package.
 | heatmap.js | 2.0.5 | MIT-Text in `LICENSE` (kein `license`-Feld in `package.json`) | Heatmap-Ansicht (`src/components/Statistik/HeatmapAnsicht.js:3`); vom Auftraggeber ausdrücklich gewünscht |
 | @react-pdf/renderer, sanitize-html, qrcode, styled-components, react-icons, @react-google-maps/api | – | MIT | – |
 | lucide-react | 0.511.0 | ISC | – |
+| motion (mit framer-motion, motion-dom, motion-utils) | 12.43.0 | MIT | neu 12.10.2026, /gewerbe-Unikat (Animation) – `docs/projekt-doku/anhang/wellen/GEWERBE-UNIKAT.md` Abschnitt 5 |
+| three | 0.186.1 | MIT | neu 12.10.2026, nur dynamisch in K2 (3D-Hallenmodell) |
+| d3-shape, d3-scale (mit d3-path, d3-array, d3-color, d3-format, d3-interpolate, d3-time, d3-time-format, internmap) | 3.2.0 / 4.0.2 | ISC | neu 12.10.2026, Pfade und Skalen der /gewerbe-Grafiken |
 
 Eine vollständige Lizenzliste (SBOM) ist **offen**.
 

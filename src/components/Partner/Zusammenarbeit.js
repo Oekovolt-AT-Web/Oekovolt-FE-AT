@@ -17,7 +17,7 @@ const STUFEN = [
       { icon: Sun, t: "Projekte in Ihrer Region", x: "mit klar beschriebenem Leistungsumfang" },
       { icon: Boxes, t: "Material aus dem Zentraleinkauf", x: "geliefert nach Projektplan" },
       { icon: PencilRuler, t: "Geprüfte Planung", x: "Belegung, Strings, Verteiler, Statik" },
-      { icon: MonitorDot, t: "Parkregler, Fernwartung, SCADA", x: "aus eigener Entwicklung" },
+      { icon: MonitorDot, t: "Parkregler, Fernwartung, SCADA", x: "mit Technologiepartner Solensa, betreut von uns" },
       { icon: GraduationCap, t: "Schulungen & Technik-Support", x: "Standards, Dokumentation, Rückfragen auf der Baustelle" },
     ],
   },

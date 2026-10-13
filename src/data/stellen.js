@@ -64,7 +64,7 @@ const VORTEILE_BASIS = [
   "Anstellung in einem inhabergeführten Unternehmen mit über 15 Jahren Photovoltaik-Erfahrung in der Gruppe",
   "Bezahlung über dem Kollektivvertrag – abhängig von Qualifikation und Erfahrung",
   "Herstellerschulungen und gezielte Weiterbildung",
-  "Eigene Leittechnik (Parkregler, Fernwartung, SCADA) statt reiner Fremdsysteme",
+  "Leittechnik (Parkregler, Fernwartung, SCADA) mit Technologiepartner Solensa – parametriert und betreut von uns",
   "Kurze Entscheidungswege und echter Gestaltungsspielraum",
 ];
 
@@ -193,7 +193,7 @@ export const STELLEN = [
     skills: ["TOR Erzeuger Typ A/B", "Netzzugang", "Parkregler (EZA-Regler)", "Blindleistung Q(U)/cos φ", "Schutztechnik", "Mittelspannung"],
     kv: { art: "angestellte", einstufung: "Verwendungsgruppe IV", mindest: 3415.01 },
     beschreibung:
-      "Ohne Netzanschluss keine Energiewende: Sie verantworten den technischen Weg vom Netzzugangsantrag bis zur Inbetriebnahme – inklusive Parametrierung unseres eigenen Parkreglers nach den Vorgaben der TOR Erzeuger und des jeweiligen Netzbetreibers.",
+      "Ohne Netzanschluss keine Energiewende: Sie verantworten den technischen Weg vom Netzzugangsantrag bis zur Inbetriebnahme – inklusive Parametrierung des Parkreglers nach den Vorgaben der TOR Erzeuger und des jeweiligen Netzbetreibers.",
     aufgaben: [
       "Netzzugangsanträge und technische Abstimmung mit Netzbetreibern in ganz Österreich",
       "Umsetzung der Anforderungen aus TOR Erzeuger (Typ A und B): Wirk- und Blindleistungsregelung, Einspeisebegrenzung, Schutz",
@@ -225,9 +225,9 @@ export const STELLEN = [
     skills: ["SCADA", "Fernwartung", "Modbus TCP", "Alarmmanagement", "Performance Ratio", "IT/OT-Sicherheit"],
     kv: { art: "angestellte", einstufung: "Verwendungsgruppe III, je nach Erfahrung höher", mindest: 2727.4 },
     beschreibung:
-      "Sie behalten den Anlagenpark im Blick: In unserem eigenen SCADA-System überwachen Sie Erträge, Störungen und Regelbefehle, greifen per Fernwartung ein und machen aus Daten gezielte Serviceeinsätze – in enger Zusammenarbeit mit der Solensa GmbH für IT-Sicherheit.",
+      "Sie behalten den Anlagenpark im Blick: In unserem SCADA-System überwachen Sie Erträge, Störungen und Regelbefehle, greifen per Fernwartung ein und machen aus Daten gezielte Serviceeinsätze – in enger Zusammenarbeit mit der Solensa GmbH für IT-Sicherheit.",
     aufgaben: [
-      "Überwachung von PV-Anlagen und Speichern im eigenen SCADA-System",
+      "Überwachung von PV-Anlagen und Speichern im SCADA-System",
       "Störungsanalyse per Fernwartung und Steuerung von Serviceeinsätzen",
       "Anbindung neuer Anlagen: Datenpunkte, Kommunikation (u. a. Modbus TCP), Alarmregeln",
       "Auswertung von Verfügbarkeit, Performance Ratio und Ertragsabweichungen",
@@ -423,7 +423,7 @@ export const STELLEN = [
       "Lehrlingseinkommen laut Kollektivvertrag: 1. Lehrjahr € 1.000,00, 2. Lehrjahr € 1.148,75, 3. Lehrjahr € 1.493,38, 4. Lehrjahr € 2.000,00 brutto pro Monat (Stand 1.1.2026)",
       "Ausbildung an echten Gewerbe- und Freiflächenanlagen",
       "Persönliche Betreuung durch erfahrene Fachkräfte",
-      "Einblick in unsere eigene Leittechnik: Parkregler, Fernwartung und SCADA",
+      "Einblick in die Leittechnik, die wir mit unserem Technologiepartner Solensa betreuen: Parkregler, Fernwartung und SCADA",
       "Perspektive auf Übernahme nach erfolgreicher Lehrabschlussprüfung",
     ],
   },

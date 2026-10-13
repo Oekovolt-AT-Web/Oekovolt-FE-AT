@@ -125,7 +125,7 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
           ["Leistung", `${fmt(r.kwp / 1000, 1)} MWp`],
           ["Jahresertrag", `${fmt(r.ertragKwh / 1e6, 2)} GWh`],
           ["Haushalte (bilanziell)", fmt(Math.round(r.haushalte / 10) * 10)],
-          ["TOR-Typ", `Typ ${r.tor}`],
+          ["TOR-Typ", `Typ ${r.tor}`, `nach AC-Leistung ≈ ${fmt(r.acKva)} kVA (kWp ÷ 1,15, Annahme)`],
         ],
       },
       {
@@ -256,7 +256,7 @@ export default function PachtRechner({ standorte, startOrt = "st-poelten" }) {
               </p>
               <p className="mt-2 text-[13.5px] leading-relaxed text-white/70">{r.netz.text}</p>
               <p className="mt-3 text-[12.5px] leading-relaxed text-white/55">
-                TOR Typ {r.tor} · Netzebene legt der Netzbetreiber fest, bei Solarparks häufig Mittelspannung (Netzebene 5) oder Umspannwerk (Netzebene 4). Faustregel zur Ersteinschätzung, keine Zusage.
+                TOR Typ {r.tor} (Wechselrichter AC ≈ {fmt(r.acKva)} kVA, Annahme kWp ÷ 1,15){r.torKnapp ? " · Knapp an der Typ-B-Grenze: Auslegung bewusst prüfen" : ""} · Netzebene legt der Netzbetreiber fest, bei Solarparks häufig Mittelspannung (Netzebene 5) oder Umspannwerk (Netzebene 4). Faustregel zur Ersteinschätzung, keine Zusage.
               </p>
             </div>
             <div className="rounded-3xl bg-ink-50 p-5 md:p-6">
@@ -372,7 +372,7 @@ function KonzeptVergleich({ aktiv, standort }) {
           <div className="mb-1 flex items-baseline justify-between gap-3 text-[13px]">
             <span className={cn(w.id === aktiv ? "font-semibold text-ink-900" : "text-ink-600")}>{w.label}</span>
             <span className="ov-num text-ink-600">
-              <strong className="text-ink-900">{fmt(w.mwh)} MWh/ha</strong> <span className="hidden text-ink-400 sm:inline">· Studie Ø AT {fmt(PACHT.bokuMwhProHa[w.id])}</span>
+              <strong className="text-ink-900">{fmt(w.mwh)} MWh/ha</strong> <span className="hidden text-ink-500 sm:inline">· Studie Ø AT {fmt(PACHT.bokuMwhProHa[w.id])}</span>
             </span>
           </div>
           <div className="h-2.5 overflow-hidden rounded-full bg-ink-100">

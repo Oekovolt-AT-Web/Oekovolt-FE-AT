@@ -88,10 +88,10 @@ export const AUSSTATTUNG = [
   { id: "lkw", kurz: "Eigener Lkw", text: "Transport von Material und Werkzeug", icon: "Truck", bestaetigt: true }, // [AG]
   { id: "traktoren", kurz: "Eigene Traktoren", text: "Für Arbeiten auf Freiflächen", icon: "Tractor", bestaetigt: true }, // [AG]
   { id: "montage", kurz: "Eigene Montageteams", text: "Montage aus einer Hand", icon: "HardHat", bestaetigt: true }, // [U-10]
-  { id: "parkregler", kurz: "Eigener Parkregler", text: "EZA-Regler nach TOR Erzeuger", icon: "SlidersHorizontal", bestaetigt: true }, // [U-R]
-  { id: "scada", kurz: "Eigene Fernwartung & SCADA", text: "Mit unserem Partner Solensa", icon: "MonitorDot", bestaetigt: true }, // [U-R]
+  { id: "parkregler", kurz: "Parkregler", text: "EZA-Regler nach TOR Erzeuger", icon: "SlidersHorizontal", bestaetigt: true }, // [U-R]
+  { id: "scada", kurz: "Fernwartung & SCADA", text: "Mit unserem Partner Solensa", icon: "MonitorDot", bestaetigt: true }, // [U-R]
   { id: "fachbetrieb", kurz: "Elektrotechnik-Fachbetrieb", text: `Reglementiertes Gewerbe, GISA ${FIRMA.gisa}`, icon: "BadgeCheck", bestaetigt: true }, // [SITE]
-  { id: "meister", kurz: "Meisterbetrieb", text: "WKO-Gütesiegel", icon: "Award", bestaetigt: true }, // [WKO] – ohne „seit 2012“ (nicht belegt)
+  { id: "meister", kurz: "Meisterbetrieb", text: "WKO-Gütesiegel", icon: "Award", bestaetigt: FIRMA.guetesiegel?.meisterbetrieb?.belegt === true }, // [WKO] – nur mit Beleg (Schalter in src/lib/site.js, Welle A02); ohne „seit 2012“
 
   // ---- Kandidaten: vom Auftraggeber bestätigen, bis dahin unsichtbar ----
   { id: "lager", kurz: "Eigenes Lager", text: "Material vorrätig in Ostermiething", icon: "Warehouse", bestaetigt: false }, // vom Auftraggeber bestätigen
@@ -112,10 +112,10 @@ export const MANNSCHAFT = {
   // Überschrift wird in der Komponente dreiteilig gesetzt (letzter Teil mit Verlauf).
   titel: ["Unsere Leute.", "Unsere Fahrzeuge.", "Unsere Technik."],
   lead:
-    "Planung, Bau und Inbetriebnahme kommen bei Ökovolt aus einer Hand. Material bringt unser eigener Lkw, auf Freiflächen arbeiten unsere eigenen Traktoren, montiert wird von eigenen Teams – und am Netzanschluss wie im Betrieb setzen wir Technik ein, die wir selbst entwickelt haben.",
+    "Planung, Bau und Inbetriebnahme kommen bei Ökovolt aus einer Hand. Material bringt unser eigener Lkw, auf Freiflächen arbeiten unsere eigenen Traktoren, montiert wird von eigenen Teams – und am Netzanschluss wie im Betrieb setzen wir Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa ein – parametriert, betreut und gewartet von uns.",
   // Teaser Startseite: genau zwei Sätze.
   teaser:
-    "Material bringt unser eigener Lkw, auf Freiflächen fahren unsere eigenen Traktoren, montiert wird von eigenen Teams. Parkregler, Fernwartung und SCADA entwickeln wir selbst – Sie haben vom ersten Plan bis zum Betrieb einen festen Ansprechpartner.",
+    "Material bringt unser eigener Lkw, auf Freiflächen fahren unsere eigenen Traktoren, montiert wird von eigenen Teams. Parkregler, Fernwartung und SCADA betreuen wir mit unserem Technologiepartner Solensa – Sie haben vom ersten Plan bis zum Betrieb einen festen Ansprechpartner.",
 };
 
 /**
@@ -155,16 +155,16 @@ export const STATIONEN = [
   {
     id: "netz",
     titel: "Netzanschluss",
-    eigen: "Eigener Parkregler",
+    eigen: "Parkregler, betreut von uns",
     icon: "PlugZap",
-    nutzen: "Unser selbst entwickelter EZA-Regler setzt die Vorgaben des Netzbetreibers und der TOR Erzeuger am Netzanschlusspunkt um.",
+    nutzen: "Der Parkregler (EZA-Regler) mit unserem Technologiepartner Solensa setzt die Vorgaben des Netzbetreibers und der TOR Erzeuger am Netzanschlusspunkt um.",
   }, // [U-R]
   {
     id: "betrieb",
     titel: "Betrieb & Service",
-    eigen: "Eigene Fernwartung & SCADA",
+    eigen: "Fernwartung & SCADA, betreut von uns",
     icon: "MonitorDot",
-    nutzen: "Fernwartung und SCADA aus eigener Entwicklung, gemeinsam mit Solensa. Dazu Wartung, Prüfung und Drohnen-Thermografie als Service.",
+    nutzen: "Fernwartung und SCADA mit unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns. Dazu Wartung, Prüfung und Drohnen-Thermografie als Service.",
   }, // [U-R]
 ];
 

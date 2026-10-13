@@ -1,8 +1,21 @@
 // src/lib/kundenbuehne.js
 //
-// „Kundenbühne“ der Referenzprojekte: Kundenporträt, Solar-Siegel, Social-Media-Kit
+// „Kundenbühne“ der Referenzprojekte: Kundenporträt, Projekt-Plakette, Social-Media-Kit
 // und ESG-Kurzbericht. Reine Funktionen ohne React und ohne Pfad-Aliase – per Node
 // prüfbar und in Server- wie Client-Komponenten nutzbar.
+//
+// FREIGABEN (Welle A07): Firmenname, Zitat, Logo, Fotos der Anlage, Projekt-Plakette,
+// Live-Daten und Messwerte zeigen wir nur mit Freigabe des Kunden. Quelle der Freigabe ist
+// der DocType „Referenz Freigabe“ im Backoffice (get_freigaben, Einmal-Link), ersatzweise
+// src/data/kunden.js (dort überall false). Fehlt beides oder schlägt das Laden fehl, gilt
+// alles als nicht freigegeben.
+//
+// PROJEKT-PLAKETTE statt „Solar-Siegel“: Die UWG-Novelle zur EmpCo-Richtlinie (EU) 2024/825
+// (anwendbar seit 27.09.2026) verbietet Nachhaltigkeitssiegel ohne Zertifizierungssystem.
+// Die Plakette ist deshalb eine sachliche Projektangabe („Photovoltaikanlage errichtet von
+// Ökovolt Solartechnik GmbH · Jahr · kWp“) ohne Rosette, Prüfzeichen-Look, „zertifiziert“
+// oder „grün“. CO₂ erscheint nur mit Messwert der Anlage (quelleErtrag === "anlage"),
+// mit Zeitraum und Verweis auf den Rechenweg.
 //
 // RECHENWEG (auf allen Kundenbühnen-Seiten offengelegt, als Schätzung gekennzeichnet)
 //  1. Jahresertrag [kWh] = Nennleistung [kWp] × spezifischer Ertrag [kWh/kWp].
@@ -59,13 +72,14 @@ export function fmtCa(wert) {
 }
 
 /**
- * Schätzung für Siegel, Social-Kit und ESG-Bericht.
+ * Schätzung für Plakette, Social-Kit und ESG-Bericht.
  * @param {object} e
  * @param {number|null} e.kwp         Nennleistung
- * @param {number|null} [e.ertragKwh] Jahresertrag aus dem Backoffice (hat Vorrang)
- * @returns {null | {kwp, ertragKwh, ertragJeKwp, mwh, co2Kg, co2T, quelleErtrag, texte:{kwp, mwh, co2}}}
+ * @param {number|null} [e.ertragKwh] Jahresertrag aus dem Backoffice (hat Vorrang; nur mit Freigabe „Messwerte“ übergeben)
+ * @param {string|null} [e.zeitraum]  Zeitraum des gemessenen Ertrags, z. B. „2025“ – Pflicht für eine CO₂-Angabe auf der Plakette
+ * @returns {null | {kwp, ertragKwh, ertragJeKwp, mwh, co2Kg, co2T, quelleErtrag, zeitraum, texte:{kwp, mwh, co2}}}
  */
-export function schaetzung({ kwp, ertragKwh = null } = {}) {
+export function schaetzung({ kwp, ertragKwh = null, zeitraum = null } = {}) {
   const k = Number(kwp);
   const api = Number(ertragKwh);
   const hatApi = Number.isFinite(api) && api > 0;
@@ -80,6 +94,7 @@ export function schaetzung({ kwp, ertragKwh = null } = {}) {
     co2Kg,
     co2T: co2Kg / 1000,
     quelleErtrag: hatApi ? "anlage" : "richtwert",
+    zeitraum: hatApi && !leer(zeitraum) ? String(zeitraum).trim().slice(0, 40) : null,
     texte: {
       kwp: k > 0 ? `${fmtKwp(k)} kWp` : "",
       mwh: `ca. ${fmtCa(ertrag / 1000)} MWh`,
@@ -165,9 +180,114 @@ function zitatVon(text, person) {
   return { text: String(text).trim(), person: String(person || "").trim() };
 }
 
+// ---------------------------------------------------------------- Freigaben
+
+/** Schalter einer Referenz-Freigabe – Reihenfolge wie auf der Freigabeseite */
+export const FREIGABE_FELDER = ["name", "logo", "zitat", "fotos", "plakette", "livedaten", "messwerte"];
+
+/** Nichts freigegeben (Standard, auch bei Ladefehlern) */
+export const FREIGABE_LEER = Object.freeze({
+  name: false,
+  logo: false,
+  zitat: false,
+  fotos: false,
+  plakette: false,
+  livedaten: false,
+  messwerte: false,
+  freigegebenAm: null,
+  beleg: null,
+  quelle: "keine",
+});
+
 /**
- * Führt Backoffice-Felder am Projekt und den Eintrag aus src/data/kunden.js zusammen.
- * API-Felder gewinnen, sonst kunden.js. Liefert null, wenn es keinerlei Kundendaten gibt.
+ * Freigabe-Datensatz aus get_freigaben (Backoffice) oder aus kunden.js in die Website-Form bringen.
+ * Backoffice-Schlüssel: freigabe_name, freigabe_logo, freigabe_zitat, freigabe_fotos_anlage,
+ * freigabe_plakette, freigabe_livedaten, freigabe_messwerte, zitat_text, zitat_person_funktion,
+ * freigegeben_am, widerrufen_am, text_version. kunden.js: {name, zitat, logo, plakette, livedaten,
+ * messwerte, freigegebenAm, beleg}. Unbekannt/leer → alles false.
+ */
+export function freigabeNormalisieren(roh, quelle = "backoffice") {
+  if (!roh || typeof roh !== "object") return { ...FREIGABE_LEER };
+  // widerrufen → wie keine Freigabe
+  if (!leer(roh.widerrufen_am) || !leer(roh.widerrufenAm)) return { ...FREIGABE_LEER, quelle };
+  const flag = (...schluessel) => wahr(ersterWert(...schluessel.map((s) => roh[s]))) === true;
+  const f = {
+    name: flag("freigabe_name", "name"),
+    logo: flag("freigabe_logo", "logo"),
+    zitat: flag("freigabe_zitat", "zitat"),
+    fotos: flag("freigabe_fotos_anlage", "fotos"),
+    plakette: flag("freigabe_plakette", "plakette"),
+    livedaten: flag("freigabe_livedaten", "livedaten"),
+    messwerte: flag("freigabe_messwerte", "messwerte"),
+    freigegebenAm: String(ersterWert(roh.freigegeben_am, roh.freigegebenAm) || "").trim() || null,
+    beleg: String(ersterWert(roh.beleg, roh.text_version) || "").trim() || null,
+    quelle,
+  };
+  // Zitattext gehört zur Freigabe (nur, wenn der Kunde das Zitat freigegeben hat)
+  const zitatText = String(ersterWert(roh.zitat_text, roh.zitatText) || "").trim();
+  if (f.zitat && zitatText) f.zitatText = zitatText;
+  if (f.zitat) f.zitatPerson = String(ersterWert(roh.zitat_person_funktion, roh.zitatPerson) || "").trim();
+  return f;
+}
+
+/** Darf der Firmenname des Kunden auf der Website erscheinen? */
+export const nameFrei = (kunde) => !!kunde?.freigabe?.name;
+
+/**
+ * Neutraler Name für Seiten ohne Namensfreigabe, z. B. „Metallbau, Steyregg (Oberösterreich)“.
+ * Fallback: der Projekttitel bzw. „Referenzprojekt“.
+ */
+export function neutralerName(kunde, projektTitel = "") {
+  if (nameFrei(kunde)) return kunde.firma;
+  const teile = [kunde?.branche, kunde?.ort].map((t) => String(t || "").trim()).filter(Boolean);
+  if (teile.length) return teile.join(", ");
+  return String(projektTitel || "").trim() || "Referenzprojekt";
+}
+
+// ---------------------------------------------------------------- Projektliste ohne Kundennamen
+//
+// Die statischen Projekte (src/data/projekte.js) tragen den Firmennamen als projekt_name – und damit
+// in H1, <title>, Bild-Alt-Texten und URL. Ohne Freigabe „Name“ ersetzt ladeProjekte.js den Namen
+// durch eine neutrale Bezeichnung (Branche und Bundesland laut kunden.js, sonst „Referenzanlage {kWp}“).
+// projekt_website_name (alter Slug) bleibt als interner Schlüssel: Die Detailseite leitet alte URLs
+// per 301 auf den neuen, neutralen Slug um (veraltet → permanentRedirect).
+
+const BUNDESLAENDER = ["Burgenland", "Kärnten", "Niederösterreich", "Oberösterreich", "Salzburg", "Steiermark", "Tirol", "Vorarlberg", "Wien"];
+
+/** Neutrale Projektbezeichnung ohne Firmennamen, z. B. „Kunststoffverpackungen, Vorarlberg“ oder „Referenzanlage 409,2 kWp“. */
+export function neutralerProjektName(kunde, roh = null) {
+  const branche = String(kunde?.branche || "")
+    .replace(/\s*\(.*?\)/g, "")
+    .trim();
+  // Nur das Bundesland (wie die anonymen Namen in src/data/hero.js), nicht der Firmensitz
+  const ort = String(kunde?.ort || "").replace(/\s*\(.*?\)/g, "");
+  const land = BUNDESLAENDER.find((b) => ort.includes(b)) || "";
+  if (branche) return land ? `${branche}, ${land}` : branche;
+  const kwp = Number(roh?.leistung);
+  const label = String(roh?.leistung_label || "").trim() || (kwp > 0 ? `${fmtKwp(kwp)} kWp` : "");
+  return label ? `Referenzanlage ${label}` : "Referenzanlage";
+}
+
+/**
+ * Rohprojekt (API-Form) mit neutralem Namen: projekt_name, bild_alt und Alt-Texte der Bilder.
+ * Markiert mit projekt_anonym = true (Seiten nehmen dann Branche/Ort nicht ein zweites Mal in den Title).
+ */
+export function projektNeutralisieren(roh, name) {
+  if (!roh || typeof roh !== "object") return roh;
+  const neutral = String(name || "").trim() || "Referenzanlage";
+  const bilder = Array.isArray(roh.bilder)
+    ? roh.bilder.map((b, i) => (b && typeof b === "object" ? { ...b, bild_alt: `${neutral} – Bild ${i + 1}` } : b))
+    : roh.bilder;
+  const aus = { ...roh, projekt_name: neutral, bild_alt: `${neutral} – Bild 1`, projekt_anonym: true };
+  if (bilder !== undefined) aus.bilder = bilder;
+  for (const feld of ["title", "name"]) if (feld in aus) aus[feld] = neutral;
+  return aus;
+}
+
+/**
+ * Führt Backoffice-Felder am Projekt, den Eintrag aus src/data/kunden.js und die Referenz-Freigabe
+ * (get_freigaben) zusammen. API-Felder gewinnen, sonst kunden.js. Liefert null, wenn es keinerlei
+ * Kundendaten gibt.
  *
  * API (get_projekt, oekovolt_app): website_url, linkedin, instagram, facebook, youtube, xing, tiktok, x
  *      (absolute https-URL oder null), branche, portraet (String oder null), portraet_quellen
@@ -175,9 +295,12 @@ function zitatVon(text, person) {
  *      sonst null), jahr (Zahl oder null). get_projekte liefert website_url und branche.
  *      Optional ausgewertet: freigabe_zitat/freigabe_logo (ausdrückliches Nein), firma.
  * kunden.js: { firma, website, social:{…}, branche, ort, portraet, quellen:[{titel,url}],
- *      geprueftAm, freigabe:{zitat,logo}, zitat }
+ *      geprueftAm, freigabe:{name,zitat,logo,plakette,livedaten,messwerte,freigegebenAm,beleg}, zitat }
+ * freigabe: Datensatz aus get_freigaben (Backoffice gewinnt über kunden.js; null = nicht vorhanden).
+ *      Liegt ein Backoffice-Datensatz vor, entscheiden ausschließlich dessen Schalter – auch über
+ *      Zitat und Logo aus den Projektfeldern.
  */
-export function kundeZusammenfuehren({ api = null, eintrag = null } = {}) {
+export function kundeZusammenfuehren({ api = null, eintrag = null, freigabe = null } = {}) {
   const a = api && typeof api === "object" ? api : {};
   const k = eintrag && typeof eintrag === "object" ? eintrag : {};
   const ks = k.social && typeof k.social === "object" ? k.social : {};
@@ -188,19 +311,33 @@ export function kundeZusammenfuehren({ api = null, eintrag = null } = {}) {
     if (url) social[key] = url;
   }
 
-  // Das Backoffice liefert zitat/zitat_person und logo_url NUR bei Freigabe des Kunden (sonst null) –
-  // ein Wert aus der API gilt daher als freigegeben (außer ein Feld freigabe_* sagt ausdrücklich nein).
-  // Aus kunden.js nur, wenn dort freigabe.zitat bzw. freigabe.logo === true.
+  const backoffice = freigabe && typeof freigabe === "object" ? freigabeNormalisieren(freigabe, "backoffice") : null;
+  const kFrei = freigabeNormalisieren(k.freigabe, "kunden.js");
+  const frei = backoffice || kFrei;
+
+  // Zitat und Logo:
+  // - Mit Backoffice-Freigabe (DocType „Referenz Freigabe“) zählen nur deren Schalter; der Zitattext kommt
+  //   aus der Freigabe, ersatzweise aus den Projektfeldern bzw. kunden.js.
+  // - Ohne Backoffice-Freigabe (Altbestand): Das Backoffice liefert zitat/zitat_person und logo_url NUR bei
+  //   Freigabe am Projekt (sonst null) – ein Wert aus der API gilt daher als freigegeben (außer ein Feld
+  //   freigabe_* sagt ausdrücklich nein). Aus kunden.js nur, wenn dort freigabe.zitat bzw. freigabe.logo === true.
   const apiZitat = zitatVon(a.zitat, a.zitat_person);
   const apiLogo = normUrl(a.logo_url);
-  const kZitatFrei = wahr(k.freigabe?.zitat) === true;
-  const kLogoFrei = wahr(k.freigabe?.logo) === true;
-  const zitatApiFrei = !!apiZitat && wahr(a.freigabe_zitat) !== false;
-  const logoApiFrei = !!apiLogo && wahr(a.freigabe_logo) !== false;
-  const kZitat = kZitatFrei ? zitatVon(k.zitat, ersterWert(k.zitat_person, k.zitatPerson)) : null;
-  const kLogo = kLogoFrei ? normUrl(ersterWert(k.logo, k.logoUrl, k.logo_url)) : "";
-  const zitat = zitatApiFrei ? apiZitat : kZitat;
-  const logoUrl = logoApiFrei ? apiLogo : kLogo;
+  const kZitat = zitatVon(k.zitat, ersterWert(k.zitat_person, k.zitatPerson));
+  const kLogo = normUrl(ersterWert(k.logo, k.logoUrl, k.logo_url));
+  let zitat = null;
+  let logoUrl = "";
+  if (backoffice) {
+    if (backoffice.zitat) {
+      zitat = backoffice.zitatText ? { text: backoffice.zitatText, person: backoffice.zitatPerson || "" } : apiZitat || kZitat;
+    }
+    if (backoffice.logo) logoUrl = apiLogo || kLogo;
+  } else {
+    const zitatApiFrei = !!apiZitat && wahr(a.freigabe_zitat) !== false;
+    const logoApiFrei = !!apiLogo && wahr(a.freigabe_logo) !== false;
+    zitat = zitatApiFrei ? apiZitat : kFrei.zitat ? kZitat : null;
+    logoUrl = logoApiFrei ? apiLogo : kFrei.logo ? kLogo : "";
+  }
 
   const kunde = {
     firma: String(ersterWert(a.firma, k.firma) || "").trim(),
@@ -212,7 +349,18 @@ export function kundeZusammenfuehren({ api = null, eintrag = null } = {}) {
     quellen: quellenListe(ersterWert(a.portraet_quellen, k.quellen)),
     geprueftAm: String(ersterWert(k.geprueftAm) || "").trim(),
     jahr: Number(ersterWert(a.jahr, k.jahr)) || null,
-    freigabe: { zitat: !!zitat, logo: !!logoUrl },
+    freigabe: {
+      name: frei.name,
+      logo: !!logoUrl,
+      zitat: !!zitat,
+      fotos: frei.fotos,
+      plakette: frei.plakette,
+      livedaten: frei.livedaten,
+      messwerte: frei.messwerte,
+      freigegebenAm: frei.freigegebenAm,
+      beleg: frei.beleg,
+      quelle: frei.quelle,
+    },
     zitat,
     logoUrl,
   };
@@ -227,9 +375,9 @@ export const hatPortraet = (kunde) => !!(kunde && (kunde.portraet || kunde.websi
 /** Social-Profile als Liste in fester Reihenfolge */
 export const socialListe = (kunde) => SOCIAL.filter(({ key }) => kunde?.social?.[key]).map((s) => ({ ...s, url: kunde.social[s.key] }));
 
-/** Organisation des Kunden für JSON-LD – nur belegte Werte, sonst null */
+/** Organisation des Kunden für JSON-LD – nur mit Namensfreigabe und belegten Werten, sonst null */
 export function kundeSchema(kunde) {
-  if (!kunde?.firma) return null;
+  if (!kunde?.firma || !nameFrei(kunde)) return null;
   const sameAs = socialListe(kunde).map((s) => s.url);
   if (!kunde.website && !sameAs.length) return null;
   return {
@@ -296,23 +444,32 @@ export function postVorschlaege({ firma, ort = "", jahr = null, zahlen = null, u
 /** LinkedIn-Teilen ohne Skript: reiner Link auf den Share-Dialog */
 export const linkedinShareUrl = (url) => `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 
-// ---------------------------------------------------------------- Solar-Siegel (SVG)
+/// ---------------------------------------------------------------- Projekt-Plakette (SVG)
+//
+// Sachliche Projektangabe für die Website des Kunden – kein Siegel, keine Rosette, kein Prüfzeichen,
+// keine Wörter wie „zertifiziert“, „klimaneutral“ oder „grün“ (UWG/EmpCo, siehe Dateikopf).
+// Ausgeliefert wird sie nur mit Freigabe „Projekt-Plakette“ (src/app/siegel/[slug]/route.js).
 
-export const SIEGEL_FORMATE = {
-  klein: { breite: 340, hoehe: 176, hoeheOhne: 118, label: "Kompakt" },
-  breit: { breite: 728, hoehe: 112, hoeheOhne: 112, label: "Breit" },
+export const PLAKETTE_FORMATE = {
+  klein: { breite: 340, hoehe: 150, hoeheOhne: 112, label: "Kompakt" },
+  breit: { breite: 728, hoehe: 96, hoeheOhne: 96, label: "Breit" },
 };
-export const SIEGEL_STILE = { hell: "Hell", dunkel: "Dunkel" };
+export const PLAKETTE_STILE = { hell: "Hell", dunkel: "Dunkel" };
 
-/** Maße eines Siegels – ohne Kennzahlen (keine Leistung bekannt) ist das kompakte Siegel niedriger */
-export function siegelMasse(format = "klein", zahlen = null) {
-  const f = SIEGEL_FORMATE[format] || SIEGEL_FORMATE.klein;
+/** Wörter, die auf einer Plakette nicht vorkommen dürfen (Test: scripts/kundenbuehne.test.mjs) */
+export const PLAKETTE_VERBOTEN = ["siegel", "zertifiziert", "zertifikat", "klimaneutral", "grün", "geprüft", "ausgezeichnet"];
+
+export const PLAKETTE_ERRICHTER = "Ökovolt Solartechnik GmbH";
+
+/** Maße einer Plakette – ohne Leistung (keine kWp bekannt) ist die kompakte Plakette niedriger */
+export function plaketteMasse(format = "klein", zahlen = null) {
+  const f = PLAKETTE_FORMATE[format] || PLAKETTE_FORMATE.klein;
   return { breite: f.breite, hoehe: zahlen?.kwp ? f.hoehe : f.hoeheOhne };
 }
 
 const FARBEN = {
-  hell: { grund: "#ffffff", rand: "#dfe3ea", text: "#151a24", leise: "#4e5667", akzent: "#558227", trenn: "#eef0f4", sonne: "#f5a70f", flaeche: "#f4f9ee" },
-  dunkel: { grund: "#03122b", rand: "#12305a", text: "#ffffff", leise: "#b8c2d3", akzent: "#aed083", trenn: "#15345f", sonne: "#ffc53d", flaeche: "#0b2446" },
+  hell: { grund: "#ffffff", rand: "#dfe3ea", text: "#151a24", leise: "#4e5667", akzent: "#558227", trenn: "#eef0f4", flaeche: "#f4f9ee" },
+  dunkel: { grund: "#03122b", rand: "#12305a", text: "#ffffff", leise: "#b8c2d3", akzent: "#aed083", trenn: "#15345f", flaeche: "#0b2446" },
 };
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -335,96 +492,101 @@ export function umbrechen(text, max, zeilenMax = 2) {
   return zeilen.map((x) => (x.length > max ? `${x.slice(0, max - 1)}…` : x));
 }
 
-export const siegelAlt = (firma, zahlen) =>
-  `${firma} erzeugt Sonnenstrom${zahlen?.kwp ? ` – ${zahlen.texte.kwp}, ${zahlen.texte.mwh} pro Jahr, ${zahlen.texte.co2} pro Jahr weniger (Schätzung)` : ""}. Solaranlage: Ökovolt`;
+/**
+ * Kernsatz der Plakette: „Photovoltaikanlage errichtet von Ökovolt Solartechnik GmbH · 2024 · 250 kWp“
+ * (Jahr und kWp nur, wenn bekannt).
+ */
+export function plaketteText({ jahr = null, zahlen = null } = {}) {
+  const teile = [`Photovoltaikanlage errichtet von ${PLAKETTE_ERRICHTER}`];
+  if (Number(jahr) > 0) teile.push(String(Number(jahr)));
+  if (zahlen?.kwp) teile.push(zahlen.texte.kwp);
+  return teile.join(" · ");
+}
+
+/**
+ * CO₂-Zeile – nur mit Messwert der Anlage (quelleErtrag === "anlage") und Zeitraum, sonst "".
+ * Der Rechenweg steht auf der ESG-Seite des Projekts (Link wird mit ausgegeben).
+ */
+export function plaketteCo2Text(zahlen) {
+  if (!zahlen || zahlen.quelleErtrag !== "anlage" || !zahlen.zeitraum) return "";
+  return `Ertrag ${zahlen.zeitraum}: ${de(Math.round(zahlen.ertragKwh))} kWh gemessen · vermiedene Emissionen ${zahlen.texte.co2} (${de(CO2_G_PRO_KWH, 1)} g CO₂/kWh)`;
+}
+
+/** Alternativtext/Titel der Plakette (Firmenname nur mit Namensfreigabe) */
+export function plaketteAlt({ firma = "", jahr = null, zahlen = null, nameFrei: mitName = false } = {}) {
+  const kern = plaketteText({ jahr, zahlen });
+  return mitName && firma ? `${firma}: ${kern}` : kern;
+}
 
 const SCHRIFT = "Manrope, Inter, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
-function sonne(x, y, r, f) {
-  const strahlen = Array.from({ length: 8 }, (_, i) => {
-    const w = (i * Math.PI) / 4;
-    const px = (fak) => (x + Math.cos(w) * r * fak).toFixed(1);
-    const py = (fak) => (y + Math.sin(w) * r * fak).toFixed(1);
-    return `<line x1="${px(1.45)}" y1="${py(1.45)}" x2="${px(1.95)}" y2="${py(1.95)}"/>`;
-  }).join("");
-  return `<g stroke="${f.sonne}" stroke-width="${(r * 0.32).toFixed(1)}" stroke-linecap="round">${strahlen}</g><circle cx="${x}" cy="${y}" r="${r}" fill="${f.sonne}"/>`;
+/** Schlichtes Modul-Piktogramm (3 × 2 Zellen) – bewusst kein Rosetten- oder Prüfzeichen-Look */
+function modul(x, y, b, f) {
+  const z = b / 3;
+  const zellen = [];
+  for (let r = 0; r < 2; r++) {
+    for (let c = 0; c < 3; c++) {
+      zellen.push(`<rect x="${(x + c * z + 1).toFixed(1)}" y="${(y + r * z + 1).toFixed(1)}" width="${(z - 2).toFixed(1)}" height="${(z - 2).toFixed(1)}" rx="1.5" fill="${f.akzent}" opacity="${r === 0 ? 0.9 : 0.6}"/>`);
+    }
+  }
+  return `<rect x="${x}" y="${y}" width="${b}" height="${(2 * z).toFixed(1)}" rx="3" fill="${f.flaeche}" stroke="${f.rand}"/>${zellen.join("")}`;
 }
 
-/** Kennzahl: Wert fett, Einheit in Akzentfarbe, darunter die Bedeutung */
-const kennzahl = (x, y, [wert, einheit, label], f, gross) =>
-  `<text x="${x}" y="${y}" font-size="${gross ? 16 : 13.5}" font-weight="800" fill="${f.text}">${esc(wert)}<tspan dx="3" font-size="${gross ? 12 : 10.5}" font-weight="700" fill="${f.akzent}">${esc(einheit)}</tspan></text>` +
-  `<text x="${x}" y="${y + (gross ? 17 : 15)}" font-size="${gross ? 10.5 : 10}" fill="${f.leise}">${esc(label)}</text>`;
-
 /**
- * Solar-Siegel als eigenständiges SVG (ohne externe Schriften/Bilder, für <img> geeignet).
- * @param {object} e  { firma, zahlen (aus schaetzung), stil: hell|dunkel, format: klein|breit }
+ * Projekt-Plakette als eigenständiges SVG (ohne externe Schriften/Bilder, für <img> geeignet).
+ * @param {object} e  { firma, zahlen (aus schaetzung), jahr, stil: hell|dunkel, format: klein|breit,
+ *                      nameFrei (Firmenname nur mit Freigabe „Name“), rechenwegUrl (für die CO₂-Zeile) }
  */
-export function siegelSvg({ firma, zahlen = null, stil = "hell", format = "klein" }) {
+export function plaketteSvg({ firma = "", zahlen = null, jahr = null, stil = "hell", format = "klein", nameFrei: mitName = false, rechenwegUrl = "" } = {}) {
   const f = FARBEN[stil] || FARBEN.hell;
-  const fmt = SIEGEL_FORMATE[format] ? format : "klein";
-  const { breite: B, hoehe: H } = siegelMasse(fmt, zahlen);
-  const werte = zahlen?.kwp
-    ? [
-        [fmtKwp(zahlen.kwp), "kWp", "Leistung"],
-        [`ca. ${fmtCa(zahlen.mwh)}`, "MWh", "Solarstrom pro Jahr"],
-        [`ca. ${fmtCa(zahlen.co2T)}`, "t CO₂", "weniger pro Jahr"],
-      ]
-    : [];
-  const titel = esc(siegelAlt(firma, zahlen));
+  const fmt = PLAKETTE_FORMATE[format] ? format : "klein";
+  const { breite: B, hoehe: H } = plaketteMasse(fmt, zahlen);
+  const titel = esc(plaketteAlt({ firma, jahr, zahlen, nameFrei: mitName }));
+  const name = mitName && firma ? firma : "";
+  const co2 = plaketteCo2Text(zahlen);
   const kopf = `<svg xmlns="http://www.w3.org/2000/svg" width="${B}" height="${H}" viewBox="0 0 ${B} ${H}" role="img" aria-label="${titel}"><title>${titel}</title>`;
-  const rahmen = `<rect x="0.5" y="0.5" width="${B - 1}" height="${H - 1}" rx="14" fill="${f.grund}" stroke="${f.rand}"/>`;
-  const fussY = H - 11;
-  const fuss =
-    `<line x1="18" y1="${H - 29}" x2="${B - 18}" y2="${H - 29}" stroke="${f.trenn}"/>` +
-    `<text x="18" y="${fussY}" font-size="10.5" fill="${f.leise}">Solaranlage: <tspan font-weight="800" fill="${f.text}">Ökovolt</tspan></text>` +
-    (werte.length
-      ? `<text x="${B - 18}" y="${fussY}" font-size="9.5" text-anchor="end" fill="${f.leise}">${fmt === "breit" ? `Schätzung · ${de(ERTRAG_JE_KWP)} kWh/kWp · ${de(CO2_G_PRO_KWH, 1)} g CO₂/kWh` : "Schätzung"}</text>`
-      : "");
+  const rahmen = `<rect x="0.5" y="0.5" width="${B - 1}" height="${H - 1}" rx="10" fill="${f.grund}" stroke="${f.rand}"/>`;
+  const fakten = [Number(jahr) > 0 ? `Inbetriebnahme ${Number(jahr)}` : "", zahlen?.kwp ? `${zahlen.texte.kwp} Nennleistung` : ""].filter(Boolean).join(" · ");
+  const rechenweg = co2 && rechenwegUrl ? ` · Rechenweg: ${urlKurz(rechenwegUrl)}` : "";
+  const richtwert = zahlen?.kwp ? `Rechnerisch ca. ${fmtCa(zahlen.mwh)} MWh Solarstrom pro Jahr (Richtwert ${de(ERTRAG_JE_KWP)} kWh/kWp, Schätzung)` : "";
 
   if (fmt === "breit") {
-    // Feld links (Sonne), Name, rechts drei Kennzahlen
-    const feld = H - 29 - 12 - 12;
-    const maxZ = werte.length ? 29 : 60;
-    const zeilen = umbrechen(firma, maxZ, 2);
-    const fs = zeilen.length > 1 ? 15 : 17;
-    const y0 = zeilen.length > 1 ? 45 : 52;
-    const name = zeilen.map((z, i) => `<text x="${24 + feld}" y="${y0 + i * (fs + 3)}" font-size="${fs}" font-weight="800" fill="${f.text}">${esc(z)}</text>`).join("");
-    const spalteB = 124;
-    const start = B - 18 - werte.length * spalteB + 12;
-    const spalten = werte
-      .map((w, i) => (i ? `<line x1="${start + i * spalteB - 12}" y1="18" x2="${start + i * spalteB - 12}" y2="${H - 41}" stroke="${f.trenn}"/>` : "") + kennzahl(start + i * spalteB, 46, w, f, true))
-      .join("");
-    return `${kopf}${rahmen}<g font-family="${SCHRIFT}"><rect x="12" y="12" width="${feld}" height="${feld}" rx="12" fill="${f.flaeche}"/>${sonne(12 + feld / 2, 12 + feld / 2, 8, f)}<text x="${24 + feld}" y="${y0 - fs - 4}" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="${f.akzent}">ERZEUGT SONNENSTROM</text>${name}${spalten}${fuss}</g></svg>`;
+    const zeilen = name ? umbrechen(name, 44, 1) : [];
+    const y1 = name ? 34 : 40;
+    const nameSvg = zeilen.map((z) => `<text x="76" y="${y1 + 22}" font-size="15" font-weight="800" fill="${f.text}">${esc(z)}</text>`).join("");
+    const kern = `<text x="76" y="${y1}" font-size="${name ? 12.5 : 15}" font-weight="${name ? 600 : 800}" fill="${f.text}">${esc(`Photovoltaikanlage errichtet von ${PLAKETTE_ERRICHTER}`)}</text>`;
+    const fakt = fakten ? `<text x="${B - 18}" y="${y1}" font-size="12.5" font-weight="700" text-anchor="end" fill="${f.akzent}">${esc(fakten)}</text>` : "";
+    const fussText = co2 ? co2 + rechenweg : richtwert || "Planung, Montage und Netzanschluss aus einer Hand";
+    const fuss = `<text x="76" y="${H - 14}" font-size="9.5" fill="${f.leise}">${esc(fussText)}</text>`;
+    return `${kopf}${rahmen}<g font-family="${SCHRIFT}">${modul(18, 24, 42, f)}${kern}${nameSvg}${fakt}<line x1="76" y1="${H - 32}" x2="${B - 18}" y2="${H - 32}" stroke="${f.trenn}"/>${fuss}</g></svg>`;
   }
 
   // kompakt
-  const zeilen = umbrechen(firma, 29, 2);
-  const fs = zeilen.length > 1 ? 15.5 : 18;
-  const name = zeilen.map((z, i) => `<text x="18" y="${57 + i * (fs + 3)}" font-size="${fs}" font-weight="800" fill="${f.text}">${esc(z)}</text>`).join("");
-  const spalteB = (B - 36) / 3;
-  const wy = H - 58;
-  const spalten = werte
-    .map(
-      (w, i) =>
-        (i ? `<line x1="${18 + i * spalteB - 8}" y1="${wy - 14}" x2="${18 + i * spalteB - 8}" y2="${wy + 18}" stroke="${f.trenn}"/>` : "") +
-        kennzahl(18 + i * spalteB, wy, [w[0], w[1], w[2].replace("Solarstrom pro Jahr", "pro Jahr")], f, false)
-    )
+  const zeilen = name ? umbrechen(name, 30, 1) : [];
+  const nameSvg = zeilen.map((z) => `<text x="18" y="78" font-size="15" font-weight="800" fill="${f.text}">${esc(z)}</text>`).join("");
+  const kern = umbrechen(`Photovoltaikanlage errichtet von ${PLAKETTE_ERRICHTER}`, 34, 2)
+    .map((z, i) => `<text x="62" y="${34 + i * 16}" font-size="12.5" font-weight="700" fill="${f.text}">${esc(z)}</text>`)
     .join("");
-  return `${kopf}${rahmen}<g font-family="${SCHRIFT}">${sonne(27, 27, 6, f)}<text x="44" y="31" font-size="9.5" font-weight="700" letter-spacing="1.4" fill="${f.akzent}">ERZEUGT SONNENSTROM</text>${name}${spalten}${fuss}</g></svg>`;
+  const faktY = name ? 100 : 78;
+  const fakt = fakten ? `<text x="18" y="${faktY}" font-size="12" font-weight="700" fill="${f.akzent}">${esc(fakten)}</text>` : "";
+  const fussText = co2 ? `${zahlen.texte.co2} vermieden (${zahlen.zeitraum}, Messwert)${rechenweg}` : richtwert.replace("Solarstrom pro Jahr (Richtwert", "Solarstrom/Jahr (Richtwert");
+  const fuss = zahlen?.kwp ? `<text x="18" y="${H - 14}" font-size="9" fill="${f.leise}">${esc(fussText)}</text>` : "";
+  const trenn = zahlen?.kwp ? `<line x1="18" y1="${H - 30}" x2="${B - 18}" y2="${H - 30}" stroke="${f.trenn}"/>` : "";
+  return `${kopf}${rahmen}<g font-family="${SCHRIFT}">${modul(18, 20, 33, f)}${kern}${nameSvg}${fakt}${trenn}${fuss}</g></svg>`;
 }
 
-/** Adresse des Siegel-Bildes (Standard: hell, kompakt – ohne Parameter) */
-export function siegelBildUrl({ basis = "", slug, stil = "hell", format = "klein" }) {
+/** Adresse des Plaketten-Bildes (Standard: hell, kompakt – ohne Parameter). Pfad /siegel bleibt aus Kompatibilität. */
+export function plaketteBildUrl({ basis = "", slug, stil = "hell", format = "klein" }) {
   const q = [stil !== "hell" && `stil=${stil}`, format !== "klein" && `format=${format}`].filter(Boolean).join("&");
   return `${basis}/siegel/${slug}.svg${q ? `?${q}` : ""}`;
 }
 
 /**
  * Einbau-Code für fremde Websites: Bild-Link, bewusst rel="nofollow" (Google-Richtlinie
- * zu Widget-/Badge-Links), sichtbarer Markenname im Siegel, kein Keyword-Anker.
+ * zu Widget-/Badge-Links), sichtbarer Errichter in der Plakette, kein Keyword-Anker.
  */
-export function einbauCode({ basis, slug, firma, zahlen, stil = "hell", format = "klein" }) {
-  const { breite, hoehe } = siegelMasse(format, zahlen);
-  const bild = siegelBildUrl({ basis, slug, stil, format }).replace(/&/g, "&amp;");
-  return `<a href="${basis}/referenzen/projekte/${slug}" rel="nofollow noopener" target="_blank"><img src="${bild}" alt="${esc(siegelAlt(firma, zahlen))}" width="${breite}" height="${hoehe}" loading="lazy" style="max-width:100%;height:auto;border:0"></a>`;
+export function einbauCode({ basis, slug, firma = "", zahlen = null, jahr = null, stil = "hell", format = "klein", nameFrei: mitName = false }) {
+  const { breite, hoehe } = plaketteMasse(format, zahlen);
+  const bild = plaketteBildUrl({ basis, slug, stil, format }).replace(/&/g, "&amp;");
+  return `<a href="${basis}/referenzen/projekte/${slug}" rel="nofollow noopener" target="_blank"><img src="${bild}" alt="${esc(plaketteAlt({ firma, jahr, zahlen, nameFrei: mitName }))}" width="${breite}" height="${hoehe}" loading="lazy" style="max-width:100%;height:auto;border:0"></a>`;
 }

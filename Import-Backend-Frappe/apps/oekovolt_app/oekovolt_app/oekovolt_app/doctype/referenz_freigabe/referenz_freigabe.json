@@ -1,0 +1,309 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:RF-{YYYY}-{#####}",
+ "creation": "2026-10-11 10:00:00.000000",
+ "description": "Referenz-Freigabe eines Kunden per Einmal-Link (Welle A07): Firmenname, Logo, Zitat, Fotos, Projekt-Plakette, Live-Daten, Messwerte – jeweils einzeln, nie vorangekreuzt. Gespeichert wird nur der SHA-256-Hash des Links.",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_projekt",
+  "projekt",
+  "status",
+  "column_break_projekt",
+  "gueltig_bis",
+  "text_version",
+  "sec_kunde",
+  "kunde_firma",
+  "ansprechperson",
+  "column_break_kunde",
+  "funktion",
+  "email",
+  "sec_freigabe",
+  "vertretungsbefugnis_bestaetigt",
+  "freigabe_name",
+  "freigabe_logo",
+  "freigabe_zitat",
+  "freigabe_fotos_anlage",
+  "column_break_freigabe",
+  "freigabe_plakette",
+  "freigabe_livedaten",
+  "freigabe_messwerte",
+  "sec_zitat",
+  "zitat_text",
+  "zitat_person_funktion",
+  "sec_nachweis",
+  "freigegeben_am",
+  "widerrufen_am",
+  "column_break_nachweis",
+  "ip_kuerzel",
+  "token_hash",
+  "widerruf_token_hash",
+  "notiz"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_projekt",
+   "fieldtype": "Section Break",
+   "label": "Projekt"
+  },
+  {
+   "fieldname": "projekt",
+   "fieldtype": "Link",
+   "label": "Projekt",
+   "options": "Projekt",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Offen\nFreigegeben\nWiderrufen\nAbgelaufen\nLink verbraucht",
+   "default": "Offen",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Wird aus den Zeitstempeln berechnet."
+  },
+  {
+   "fieldname": "column_break_projekt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gueltig_bis",
+   "fieldtype": "Datetime",
+   "label": "Link gültig bis",
+   "read_only": 1,
+   "description": "30 Tage ab Erstellung des Links."
+  },
+  {
+   "fieldname": "text_version",
+   "fieldtype": "Data",
+   "label": "Textfassung der Erklärung",
+   "read_only": 1,
+   "description": "Version des Erklärungstexts auf der Freigabeseite (FREIGABE_TEXT_VERSION der Website)."
+  },
+  {
+   "fieldname": "sec_kunde",
+   "fieldtype": "Section Break",
+   "label": "Kunde"
+  },
+  {
+   "fieldname": "kunde_firma",
+   "fieldtype": "Data",
+   "label": "Firma (Firmenwortlaut)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "ansprechperson",
+   "fieldtype": "Data",
+   "label": "Ansprechperson",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_kunde",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "funktion",
+   "fieldtype": "Data",
+   "label": "Funktion",
+   "description": "z. B. Geschäftsführung, Prokura – die Person muss vertretungsbefugt sein."
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "E-Mail",
+   "options": "Email",
+   "reqd": 1,
+   "description": "Empfängerin bzw. Empfänger des Einmal-Links und der Bestätigung. Wird nie an die Website ausgeliefert."
+  },
+  {
+   "fieldname": "sec_freigabe",
+   "fieldtype": "Section Break",
+   "label": "Freigabe (vom Kunden auf der Freigabeseite gesetzt)"
+  },
+  {
+   "fieldname": "vertretungsbefugnis_bestaetigt",
+   "fieldtype": "Check",
+   "label": "Vertretungsbefugnis bestätigt",
+   "default": "0",
+   "read_only": 1,
+   "description": "„Ich bin berechtigt, diese Erklärung für das Unternehmen abzugeben.“ – Pflicht auf der Freigabeseite."
+  },
+  {
+   "fieldname": "freigabe_name",
+   "fieldtype": "Check",
+   "label": "Firmenname nennen",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "freigabe_logo",
+   "fieldtype": "Check",
+   "label": "Logo zeigen",
+   "default": "0",
+   "read_only": 1,
+   "description": "Die Logodatei wird am Projekt hochgeladen (Feld „Logo“, öffentlich)."
+  },
+  {
+   "fieldname": "freigabe_zitat",
+   "fieldtype": "Check",
+   "label": "Zitat veröffentlichen",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "freigabe_fotos_anlage",
+   "fieldtype": "Check",
+   "label": "Fotos der Anlage (ohne erkennbare Personen)",
+   "default": "0",
+   "read_only": 1,
+   "description": "Nur Anlage und Gebäude. Fotos mit erkennbaren Personen brauchen deren eigene Einwilligung."
+  },
+  {
+   "fieldname": "column_break_freigabe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "freigabe_plakette",
+   "fieldtype": "Check",
+   "label": "Projekt-Plakette",
+   "default": "0",
+   "read_only": 1,
+   "description": "Ohne dieses Häkchen liefert /siegel/<slug> 404."
+  },
+  {
+   "fieldname": "freigabe_livedaten",
+   "fieldtype": "Check",
+   "label": "Live-Daten",
+   "default": "0",
+   "read_only": 1
+  },
+  {
+   "fieldname": "freigabe_messwerte",
+   "fieldtype": "Check",
+   "label": "Messwerte (Ertrag)",
+   "default": "0",
+   "read_only": 1,
+   "description": "Ohne dieses Häkchen rechnet die Website nur mit dem Richtwert 1.050 kWh/kWp."
+  },
+  {
+   "fieldname": "sec_zitat",
+   "fieldtype": "Section Break",
+   "label": "Zitat",
+   "depends_on": "eval:doc.freigabe_zitat"
+  },
+  {
+   "fieldname": "zitat_text",
+   "fieldtype": "Small Text",
+   "label": "Wortlaut",
+   "read_only": 1
+  },
+  {
+   "fieldname": "zitat_person_funktion",
+   "fieldtype": "Data",
+   "label": "Zitierte Person, Funktion",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_nachweis",
+   "fieldtype": "Section Break",
+   "label": "Nachweis",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "freigegeben_am",
+   "fieldtype": "Datetime",
+   "label": "Freigegeben am",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "widerrufen_am",
+   "fieldtype": "Datetime",
+   "label": "Widerrufen am",
+   "read_only": 1,
+   "description": "Wird über den Widerrufslink der Bestätigungsmail gesetzt. Ein formloser Widerruf per E-Mail wird hier von Hand eingetragen (System Manager)."
+  },
+  {
+   "fieldname": "column_break_nachweis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ip_kuerzel",
+   "fieldtype": "Data",
+   "label": "IP-Kürzel",
+   "read_only": 1,
+   "description": "Gekürzte IP-Adresse beim Speichern (IPv4 ohne letztes Oktett, IPv6 /48)."
+  },
+  {
+   "fieldname": "token_hash",
+   "fieldtype": "Data",
+   "label": "Token-Hash (SHA-256)",
+   "read_only": 1,
+   "hidden": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "widerruf_token_hash",
+   "fieldtype": "Data",
+   "label": "Widerruf-Token-Hash (SHA-256)",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "notiz",
+   "fieldtype": "Small Text",
+   "label": "Interne Notiz"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-10-11 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Oekovolt App",
+ "name": "Referenz Freigabe",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1,
+   "export": 1
+  },
+  {
+   "role": "Vertrieb",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1
+  },
+  {
+   "role": "Marketing",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "report": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "naming_rule": "Expression",
+ "title_field": "kunde_firma",
+ "search_fields": "kunde_firma,ansprechperson,projekt"
+}

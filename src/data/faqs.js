@@ -133,7 +133,7 @@ export const FAQ_KATEGORIEN = [
       },
       {
         q: "Was regeln die TOR Erzeuger und welcher Anlagentyp betrifft uns?",
-        a: `Vier Anlagentypen nach Maximalkapazität: Typ A ab 0,8 kW bis unter 250 kW, Typ B 250 kW bis unter 35 MW, Typ C 35 bis unter 50 MW und Typ D ab 50 MW oder mit Anschluss ab 110 kV (TOR Erzeuger der E-Control, ${STAND}). Die Technischen und Organisatorischen Regeln (TOR) legen fest, welche Anforderungen Erzeugungsanlagen am Netz erfüllen müssen. Ab Typ B steigen die Anforderungen an Blindleistung, Wirkleistungsregelung und Fernsteuerbarkeit deutlich – hier setzen wir unseren eigenen Parkregler ein.`,
+        a: `Vier Anlagentypen nach Maximalkapazität: Typ A ab 0,8 kW bis unter 250 kW, Typ B 250 kW bis unter 35 MW, Typ C 35 bis unter 50 MW und Typ D ab 50 MW oder mit Anschluss ab 110 kV (TOR Erzeuger der E-Control, ${STAND}). Die Technischen und Organisatorischen Regeln (TOR) legen fest, welche Anforderungen Erzeugungsanlagen am Netz erfüllen müssen. Ab Typ B steigen die Anforderungen an Blindleistung, Wirkleistungsregelung und Fernsteuerbarkeit deutlich – hier setzen wir einen Parkregler mit unserem Technologiepartner Solensa ein.`,
       },
       {
         q: "Braucht eine PV-Anlage eine Baubewilligung?",
@@ -151,11 +151,11 @@ export const FAQ_KATEGORIEN = [
     items: [
       {
         q: "Was ist ein Parkregler (EZA-Regler) und wann wird er gebraucht?",
-        a: "Ein Parkregler – in Österreich oft EZA-Regler genannt – regelt eine Erzeugungsanlage am Netzanschlusspunkt als Ganzes: Wirkleistungsbegrenzung, Blindleistungsvorgaben, Vorgaben des Netzbetreibers per Fernwirktechnik und Nulleinspeisung. Netzbetreiber verlangen ihn typischerweise bei größeren Anlagen bzw. Anschlüssen in der Mittelspannung. Ökovolt setzt dafür einen selbst entwickelten Parkregler ein.",
+        a: "Ein Parkregler – in Österreich oft EZA-Regler genannt – regelt eine Erzeugungsanlage am Netzanschlusspunkt als Ganzes: Wirkleistungsbegrenzung, Blindleistungsvorgaben, Vorgaben des Netzbetreibers per Fernwirktechnik und Nulleinspeisung. Netzbetreiber verlangen ihn typischerweise bei größeren Anlagen bzw. Anschlüssen in der Mittelspannung. Ökovolt setzt dafür einen Parkregler mit unserem Technologiepartner Solensa ein.",
       },
       {
         q: "Wie werden große PV-Anlagen überwacht?",
-        a: "Über ein Monitoring- bzw. SCADA-System, das Wechselrichter, Zähler, Parkregler und Wetterdaten zusammenführt und Abweichungen meldet. Ökovolt betreibt eigene Fernwartungs- und SCADA-Systeme; die Digitalisierung und IT-Sicherheit entwickeln wir gemeinsam mit der Solensa GmbH. So erkennen wir Ertragsverluste früh und können viele Störungen aus der Ferne beheben.",
+        a: "Über ein Monitoring- bzw. SCADA-System, das Wechselrichter, Zähler, Parkregler und Wetterdaten zusammenführt und Abweichungen meldet. Ökovolt betreibt Fernwartung und SCADA mit unserem Technologiepartner Solensa. So erkennen wir Ertragsverluste früh und können viele Störungen aus der Ferne beheben.",
       },
       {
         q: "Welche Dächer eignen sich für Photovoltaik im Gewerbe?",

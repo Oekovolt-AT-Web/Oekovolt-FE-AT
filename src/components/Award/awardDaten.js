@@ -3,13 +3,29 @@
 // Inhalte des Ökovolt PV Award – gemeinsam genutzt von /pv-award (Seite),
 // dem Einreichungsformular (Client) und /api/award (Server-Validierung).
 //
-// STATUS: Konzept/Vorschlag. Termine, Preise und Jury-Besetzung sind noch nicht
-// fixiert. Solange `TERMINE.fix` false ist, zeigt die Seite keine Daten und
-// gibt KEIN Event-Schema aus. Jury-Mitglieder erst nach Zusage namentlich nennen.
+// STATUS: Konzept/Vorschlag (AWARD_STATUS). Termine, Preise und Jury-Besetzung sind noch
+// nicht fixiert. Solange `TERMINE.fix` false ist bzw. der Award im Konzeptstatus steht,
+// zeigt die Seite keine Daten und gibt KEIN Event-Schema aus. Jury-Mitglieder erst nach
+// Zusage namentlich nennen.
+//
+// RECHT (Welle A07): Der Award ist ein Unternehmenspreis der Ökovolt Solartechnik GmbH für
+// ihre Kundinnen und Kunden – keine unabhängige Auszeichnung, kein Gütezeichen. Das steht
+// als Kennzeichnung auf der Seite und im Formular. Keine Klausel „Rechtsweg ausgeschlossen“;
+// die Einwilligung in die Veröffentlichung ist eine eigene, optionale Checkbox (ohne sie
+// wird anonym bewertet).
 
 export const AWARD_NAME = "Ökovolt PV Award";
 export const AWARD_THEMA = "PV Award – Einreichung";
 export const AWARD_JAHR = 2027;
+
+/** "konzept" | "aktiv" – im Konzeptstatus kein Event-Schema und Hinweis auf der Seite. */
+export const AWARD_STATUS = "konzept";
+
+/** Pflicht-Kennzeichnung auf der Seite, im Formular und in Mitteilungen. */
+export const AWARD_KENNZEICHNUNG = "Unternehmenspreis der Ökovolt Solartechnik GmbH für ihre Kundinnen und Kunden";
+
+/** Ersetzt die frühere Klausel „Rechtsweg ausgeschlossen“. */
+export const JURY_KLAUSEL = "Die Jury entscheidet nach den veröffentlichten Kriterien; ein Anspruch auf Auszeichnung besteht nicht.";
 
 /** Erst auf true setzen, wenn Einreichschluss und Verleihung feststehen. */
 export const TERMINE = {
@@ -79,10 +95,13 @@ export const TEILNAHME = [
   "Teilnahmeberechtigt sind Kundinnen und Kunden der Ökovolt Solartechnik GmbH, deren Anlage von Ökovolt errichtet, erweitert oder betreut wird.",
   "Die Anlage steht in Österreich und ist zum Zeitpunkt der Einreichung in Betrieb.",
   "Einreichen können Anlagenbetreiber:innen oder von ihnen bevollmächtigte Personen; je Anlage ist eine Einreichung möglich, eine Anlage kann nur in einer Kategorie gewinnen.",
-  "Mit der Einreichung willigen Teilnehmende ein, dass Name, Projektbeschreibung, Fotos und Kennzahlen im Rahmen des Awards veröffentlicht werden dürfen (Website, Social Media, Presse). Die Einwilligung kann bis zur Jurysitzung widerrufen werden.",
+  "Die Veröffentlichung von Name, Projektbeschreibung, Fotos und Kennzahlen (Website, Social Media, Presse) ist eine eigene, freiwillige Einwilligung. Ohne sie bewerten wir das Projekt anonym; eine Auszeichnung wird dann ohne Nennung des Betriebs bekannt gegeben. Die Einwilligung kann jederzeit widerrufen werden.",
   "Die Teilnahme ist kostenlos und unabhängig von künftigen Aufträgen. Mitarbeiter:innen von Ökovolt und der Jury sind nicht teilnahmeberechtigt.",
-  "Die Entscheidung der Jury ist endgültig; der Rechtsweg ist ausgeschlossen. Die vollständigen Teilnahmebedingungen werden mit den Terminen veröffentlicht.",
+  `${JURY_KLAUSEL} Die vollständigen Teilnahmebedingungen werden mit den Terminen veröffentlicht.`,
+  `Der ${AWARD_NAME} ist ein ${AWARD_KENNZEICHNUNG} – keine unabhängige oder staatliche Auszeichnung und kein Gütezeichen. Die Jury wird von Ökovolt berufen.`,
 ];
+
+export const JURY_HINWEIS = "Die Jury wird von der Ökovolt Solartechnik GmbH berufen; ihre Mitglieder waren an den eingereichten Projekten nicht beteiligt. Die Besetzung veröffentlichen wir gemeinsam mit den Terminen.";
 
 export const JURY = [
   { icon: "Cpu", titel: "Technik", text: "Fachleute für Photovoltaik, Netzanschluss und Betriebsführung bewerten Ausführung und Anlagendaten." },

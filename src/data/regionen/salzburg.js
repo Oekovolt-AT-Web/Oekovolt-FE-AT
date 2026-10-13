@@ -23,8 +23,9 @@ const salzburg = {
   ],
   schwerpunkte: [
     {
-      titel: "Partner der Salzburg AG",
-      text: "Die Salzburg AG ist Gesellschafterin der Ökovolt Solartechnik GmbH; wir sind bevorzugter PV-Errichter des Salzburg-AG-Konzerns. Für Salzburger Betriebe heißt das eingespielte Abläufe im regionalen Energiesystem.",
+      // Welle A02: Salzburg AG ist kein Werbeargument (Inhaber 05.10.2026) – sachlicher Regionalbezug.
+      titel: "30 km vom Firmensitz",
+      text: "Ostermiething liegt an der Salzach, eine halbe Stunde von der Stadt Salzburg entfernt. Begehung, Netzanschluss bei Salzburg Netz und Bauverfahren klären wir vor Ort – mit eigenen Montageteams aus dem Innviertel.",
     },
     {
       titel: "Hotellerie mit Jahresbetrieb",

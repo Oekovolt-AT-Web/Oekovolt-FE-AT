@@ -1,0 +1,57 @@
+[
+ {
+  "doctype": "Client Script",
+  "name": "Angerufen Kontaktanfrage",
+  "dt": "Kontaktanfrage",
+  "view": "Form",
+  "enabled": 1,
+  "module": "Oekovolt App",
+  "script": "// Welle A06 – Desk-Knopf „Angerufen“: setzt die Erstreaktion (erstreaktion_am, reaktionszeit_min)\n// und den Status „Neu“ -> „Kontaktversuch“ über oekovolt_app.website_api.sla.angerufen.\nfrappe.ui.form.on('Kontaktanfrage', {\n\trefresh(frm) {\n\t\tif (frm.is_new() || frm.doc.erstreaktion_am || !frm.perm[0] || !frm.perm[0].write) return;\n\t\tfrm.add_custom_button(__('Angerufen'), () => {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'oekovolt_app.website_api.sla.angerufen',\n\t\t\t\targs: { doctype: frm.doctype, name: frm.doc.name },\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Erstreaktion wird gespeichert …'),\n\t\t\t\tcallback: () => {\n\t\t\t\t\tfrappe.show_alert({ message: __('Erstreaktion gespeichert'), indicator: 'green' });\n\t\t\t\t\tfrm.reload_doc();\n\t\t\t\t},\n\t\t\t});\n\t\t}).addClass('btn-primary');\n\t},\n});\n",
+  "docstatus": 0,
+  "modified": "2026-10-11 10:00:00.000000"
+ },
+ {
+  "doctype": "Client Script",
+  "name": "Angerufen Angebotsanfrage",
+  "dt": "Angebotsanfrage",
+  "view": "Form",
+  "enabled": 1,
+  "module": "Oekovolt App",
+  "script": "// Welle A06 – Desk-Knopf „Angerufen“: setzt die Erstreaktion (erstreaktion_am, reaktionszeit_min)\n// und den Status „Neu“ -> „Kontaktversuch“ über oekovolt_app.website_api.sla.angerufen.\nfrappe.ui.form.on('Angebotsanfrage', {\n\trefresh(frm) {\n\t\tif (frm.is_new() || frm.doc.erstreaktion_am || !frm.perm[0] || !frm.perm[0].write) return;\n\t\tfrm.add_custom_button(__('Angerufen'), () => {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'oekovolt_app.website_api.sla.angerufen',\n\t\t\t\targs: { doctype: frm.doctype, name: frm.doc.name },\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Erstreaktion wird gespeichert …'),\n\t\t\t\tcallback: () => {\n\t\t\t\t\tfrappe.show_alert({ message: __('Erstreaktion gespeichert'), indicator: 'green' });\n\t\t\t\t\tfrm.reload_doc();\n\t\t\t\t},\n\t\t\t});\n\t\t}).addClass('btn-primary');\n\t},\n});\n",
+  "docstatus": 0,
+  "modified": "2026-10-11 10:00:00.000000"
+ },
+ {
+  "doctype": "Client Script",
+  "name": "Angerufen Rechner Lead",
+  "dt": "Rechner Lead",
+  "view": "Form",
+  "enabled": 1,
+  "module": "Oekovolt App",
+  "script": "// Welle A06 – Desk-Knopf „Angerufen“: setzt die Erstreaktion (erstreaktion_am, reaktionszeit_min)\n// und den Status „Neu“ -> „Kontaktversuch“ über oekovolt_app.website_api.sla.angerufen.\nfrappe.ui.form.on('Rechner Lead', {\n\trefresh(frm) {\n\t\tif (frm.is_new() || frm.doc.erstreaktion_am || !frm.perm[0] || !frm.perm[0].write) return;\n\t\tfrm.add_custom_button(__('Angerufen'), () => {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'oekovolt_app.website_api.sla.angerufen',\n\t\t\t\targs: { doctype: frm.doctype, name: frm.doc.name },\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Erstreaktion wird gespeichert …'),\n\t\t\t\tcallback: () => {\n\t\t\t\t\tfrappe.show_alert({ message: __('Erstreaktion gespeichert'), indicator: 'green' });\n\t\t\t\t\tfrm.reload_doc();\n\t\t\t\t},\n\t\t\t});\n\t\t}).addClass('btn-primary');\n\t},\n});\n",
+  "docstatus": 0,
+  "modified": "2026-10-11 10:00:00.000000"
+ },
+ {
+  "doctype": "Client Script",
+  "name": "Angerufen Solarrechner Anfrage",
+  "dt": "Solarrechner Anfrage",
+  "view": "Form",
+  "enabled": 1,
+  "module": "Oekovolt App",
+  "script": "// Welle A06 – Desk-Knopf „Angerufen“: setzt die Erstreaktion (erstreaktion_am, reaktionszeit_min)\n// und den Status „Neu“ -> „Kontaktversuch“ über oekovolt_app.website_api.sla.angerufen.\nfrappe.ui.form.on('Solarrechner Anfrage', {\n\trefresh(frm) {\n\t\tif (frm.is_new() || frm.doc.erstreaktion_am || !frm.perm[0] || !frm.perm[0].write) return;\n\t\tfrm.add_custom_button(__('Angerufen'), () => {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'oekovolt_app.website_api.sla.angerufen',\n\t\t\t\targs: { doctype: frm.doctype, name: frm.doc.name },\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Erstreaktion wird gespeichert …'),\n\t\t\t\tcallback: () => {\n\t\t\t\t\tfrappe.show_alert({ message: __('Erstreaktion gespeichert'), indicator: 'green' });\n\t\t\t\t\tfrm.reload_doc();\n\t\t\t\t},\n\t\t\t});\n\t\t}).addClass('btn-primary');\n\t},\n});\n",
+  "docstatus": 0,
+  "modified": "2026-10-11 10:00:00.000000"
+ },
+ {
+  "doctype": "Client Script",
+  "name": "Angerufen Website Termin",
+  "dt": "Website Termin",
+  "view": "Form",
+  "enabled": 1,
+  "module": "Oekovolt App",
+  "script": "// Welle A06 – Desk-Knopf „Angerufen“: setzt die Erstreaktion (erstreaktion_am, reaktionszeit_min)\n// und den Status „Neu“ -> „Kontaktversuch“ über oekovolt_app.website_api.sla.angerufen.\nfrappe.ui.form.on('Website Termin', {\n\trefresh(frm) {\n\t\tif (frm.is_new() || frm.doc.erstreaktion_am || !frm.perm[0] || !frm.perm[0].write) return;\n\t\tfrm.add_custom_button(__('Angerufen'), () => {\n\t\t\tfrappe.call({\n\t\t\t\tmethod: 'oekovolt_app.website_api.sla.angerufen',\n\t\t\t\targs: { doctype: frm.doctype, name: frm.doc.name },\n\t\t\t\tfreeze: true,\n\t\t\t\tfreeze_message: __('Erstreaktion wird gespeichert …'),\n\t\t\t\tcallback: () => {\n\t\t\t\t\tfrappe.show_alert({ message: __('Erstreaktion gespeichert'), indicator: 'green' });\n\t\t\t\t\tfrm.reload_doc();\n\t\t\t\t},\n\t\t\t});\n\t\t}).addClass('btn-primary');\n\t},\n});\n",
+  "docstatus": 0,
+  "modified": "2026-10-11 10:00:00.000000"
+ }
+]

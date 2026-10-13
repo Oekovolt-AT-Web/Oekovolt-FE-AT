@@ -5,25 +5,27 @@
 // 2) Gezeichnete Zeitleiste 2012 → heute: maßstäblich (ein Strich je Jahr), die Linie läuft
 //    einmal von links nach rechts, Meilensteine leuchten auf, „heute“ mündet in die Kennzahlen.
 // 3) Foto mit „seit 2012“-Karte + drei Gründe, jeweils mit eigener kleiner Grafik
-//    (Leistungskette, eigene Technik, Gesellschafter-Anteile).
-// Alle Fakten unverändert aus src/data/unternehmen.js, src/data/kennzahlen.js, src/lib/site.js.
+//    (Leistungskette, Regelung und Leittechnik, eigene Leute und Maschinen).
+// Alle Fakten aus src/data/marke.js, src/data/unternehmen.js, src/data/kennzahlen.js, src/lib/site.js.
+// Welle A02: ohne Rangaussage und ohne Salzburg AG (Belegakte src/data/werbeaussagen.js); die doppelte
+// Kennzahlen-Karte ist ein Verweis auf das Kennzahlenband im Hero und /presse.
 // Eingebunden in src/app/page.js.
 
-import { Cpu, MapPin, MonitorDot, RadioTower, Ruler, SlidersHorizontal, Building2 } from "lucide-react";
+import { Cpu, HardHat, MapPin, MonitorDot, RadioTower, Ruler, SlidersHorizontal, Tractor, Truck, Users } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { FIRMA, SCHWESTER } from "@/lib/site";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Button from "@/components/ui/Button";
 import Reveal from "@/components/ui/Reveal";
-import { KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_STAND, kz } from "@/data/kennzahlen";
+import { KENNZAHLEN_HINWEIS_STAND, KENNZAHLEN_STAND, kz } from "@/data/kennzahlen";
+import { AUSSTATTUNG_BESTAETIGT, PARKREGLER_SATZ } from "@/data/marke";
 import S04Buehne from "./s04-Buehne";
-import S04Zahl from "./s04-Zahl";
 import { S04_BASIS, d } from "./s04-stil";
 
 const JAHR_START = 2012;
 const JAHR_HEUTE = Number(KENNZAHLEN_STAND.slice(0, 4));
-const STAND_TEXT = `${KENNZAHLEN_STAND.slice(5, 7)}/${KENNZAHLEN_STAND.slice(0, 4)}`;
 const SPANNE = JAHR_HEUTE - JAHR_START;
 const pos = (jahr) => Math.round(((jahr - JAHR_START) / SPANNE) * 1000) / 10; // Prozent
 const LINIE_MS = 2400;
@@ -32,7 +34,7 @@ const ankunft = (jahr) => Math.round(LINIE_START + (pos(jahr) / 100) * LINIE_MS)
 
 const MEILENSTEINE = [
   { jahr: 2012, text: `Eintrag ins Firmenbuch, Sitz in ${FIRMA.ort}. Im selben Jahr starten die Gründer mit eigenen Solarparks – gebaut und selbst betrieben.` },
-  { jahr: 2021, text: "Rund 30 MWp in einem Jahr – TOP 3 der EPC-Errichter Österreichs. Die Salzburg AG beteiligt sich mit 49 %." },
+  { jahr: 2021, text: "Rund 30 MWp PV-Leistung in einem Jahr – Planung, Beschaffung und Bau aus einer Hand (Angabe Ökovolt Österreich)." },
 ];
 
 const KETTE = ["Lastganganalyse", "Netzantrag", "Statik", "Montage", "Inbetriebnahme", "Wartung"];
@@ -40,6 +42,12 @@ const TECHNIK = [
   { icon: SlidersHorizontal, l: "Parkregler" },
   { icon: RadioTower, l: "Fernwartung" },
   { icon: MonitorDot, l: "SCADA" },
+];
+// Vom Auftraggeber bestätigt (src/data/mannschaft.js [AG]) – Säule „Eigene Leute und Maschinen“ (src/data/marke.js)
+const AUSSTATTUNG = [
+  { icon: HardHat, l: "Eigene Montageteams" },
+  { icon: Truck, l: "Eigener Lkw" },
+  { icon: Tractor, l: "Eigene Traktoren" },
 ];
 
 const CSS = `
@@ -65,8 +73,6 @@ function Punkt({ gross, className, style }) {
 }
 
 export default function StartWarum() {
-  const zahlen = KENNZAHLEN.filter((k) => k.id === "anlagen" || k.id === "leistung");
-
   return (
     <>
       {/* ================= WARUM ÖKOVOLT ================= */}
@@ -78,7 +84,7 @@ export default function StartWarum() {
           <SectionHeading className="lg:col-span-7" eyebrow="Warum Ökovolt" title="Betreiber aus Überzeugung – Errichter mit System." />
           <Reveal delay={120} className="lg:col-span-5">
             <p className="text-[16px] leading-relaxed text-ink-600 md:text-[17px]">
-              Seit 2012 baut Ökovolt Photovoltaik in Österreich – bisher {kz("anlagen")} PV-Kraftwerke mit zusammen {kz("leistung")} kWp. 2021 errichteten wir allein rund 30 MWp und zählten zu den TOP 3 der EPC-Errichter Österreichs. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in {SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.
+              Seit 2012 baut Ökovolt Photovoltaik in Österreich – bisher {kz("anlagen")} PV-Anlagen mit zusammen {kz("leistung")} kWp ({KENNZAHLEN_HINWEIS_STAND}). 2021 errichteten wir allein rund 30 MWp. Standards und Prozesse teilen wir mit unserer deutschen Schwestergesellschaft in {SCHWESTER.ort}, die seit 2010 PV-Anlagen errichtet.
             </p>
           </Reveal>
         </div>
@@ -122,35 +128,31 @@ export default function StartWarum() {
             </ol>
           </div>
 
-          {/* Kennzahlen „heute“ */}
+          {/* „heute“ – Verweis auf das Kennzahlenband im Hero (keine doppelte Kennzahlen-Karte) */}
           <div className="s04-hoch relative rounded-[1.75rem] bg-navy-950 p-6 text-white shadow-[0_30px_60px_-30px_rgba(3,18,43,0.6)] md:p-7" style={d(ankunft(JAHR_HEUTE) + 100)}>
             <div aria-hidden="true" className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-ov-500/25 blur-3xl" />
-            <dl className="relative grid grid-cols-2 gap-5 lg:grid-cols-1 lg:gap-6">
-              {zahlen.map((k, i) => (
-                <div key={k.id} className={i > 0 ? "lg:border-t lg:border-white/10 lg:pt-6" : ""}>
-                  <dt className="text-[13px] text-white/60">{k.label}</dt>
-                  <dd className="mt-1.5 font-display text-[clamp(1.6rem,1.2rem+1.4vw,2.4rem)] font-extrabold leading-none tracking-[-0.03em]">
-                    <S04Zahl wert={k.zahl} verzoegerung={i * 150} />
-                    {k.suffix && <span className="ml-1 text-[0.5em] font-bold text-ov-300">{k.suffix.trim()}</span>}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <p className="relative mt-5 text-[11.5px] text-white/40">
-              {KENNZAHLEN_HINWEIS} · Stand {STAND_TEXT}
+            <p className="relative text-[13px] text-white/70">Heute</p>
+            <p className="relative mt-1.5 font-display text-[clamp(1.3rem,1.1rem+0.8vw,1.7rem)] font-extrabold leading-tight tracking-[-0.02em]">
+              Betriebe, Höfe und Gemeinden in allen neun Bundesländern
             </p>
+            <p className="relative mt-3 text-[14px] leading-relaxed text-white/70">
+              Die Gesamtzahlen – {kz("anlagen")} PV-Anlagen, {kz("leistung")} kWp – stehen im Kennzahlenband oben und auf der Presseseite.
+            </p>
+            <Link href="/presse" className="relative mt-4 inline-flex min-h-11 items-center text-[14px] font-semibold text-ov-300 underline-offset-4 hover:underline">
+              Zahlen für Redaktionen
+            </Link>
+            <p className="relative mt-4 text-[11.5px] text-white/70">{KENNZAHLEN_HINWEIS_STAND}</p>
           </div>
         </S04Buehne>
 
         {/* ---------- Foto + drei Gründe ---------- */}
         <S04Buehne className="mt-20 grid gap-16 md:mt-24 lg:grid-cols-12 lg:items-center lg:gap-16">
           <div className="relative pb-12 sm:pb-8 lg:col-span-5 lg:pb-0">
-            <div aria-hidden="true" className="s04-auf absolute -right-3 -top-3 bottom-9 left-6 rounded-[2.25rem] border border-ov-200 sm:bottom-5 lg:-bottom-3 lg:left-3" style={d(500)} />
             <div className="s04-auf relative aspect-[4/5] overflow-hidden rounded-[2rem] bg-ink-100 shadow-2xl sm:aspect-[5/4] lg:aspect-[4/5]" style={d(0)}>
               <div className="s04-zoom absolute inset-0">
                 <Image
                   src="/Images/AT/service/pv-wartung-techniker.jpg"
-                  alt="Monteur mit Absturzsicherung trägt ein Photovoltaikmodul über ein Blechdach"
+                  alt="Monteur mit Absturzsicherung trägt ein Photovoltaikmodul über ein Blechdach (Symbolbild)"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover object-[62%_50%]"
@@ -158,8 +160,11 @@ export default function StartWarum() {
               </div>
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950/45 via-transparent to-transparent" />
               <div aria-hidden="true" className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-black/5" />
+              {/* Stock-Foto (Commons, keine Ökovolt-Mitarbeiter) – sichtbar als Symbolbild gekennzeichnet (Welle A02).
+                  Oben links; die Ortskarte rückt bis xl darunter, damit weder sie noch die „seit 2012“-Karte (unten) das Label verdeckt. */}
+              <span className="absolute left-3 top-3 rounded-full bg-navy-950/70 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-white/85 backdrop-blur-sm md:left-5 md:top-5">Symbolbild</span>
             </div>
-            <div className="s04-hoch absolute right-3 top-3 rounded-2xl bg-navy-950/85 px-4 py-3 text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md md:right-5 md:top-5" style={d(650)}>
+            <div className="s04-hoch absolute right-3 top-12 rounded-2xl bg-navy-950/85 px-4 py-3 text-white shadow-2xl ring-1 ring-white/10 backdrop-blur-md md:right-5 md:top-14 xl:top-5" style={d(650)}>
               <p className="flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-white/85">
                 <MapPin aria-hidden="true" className="h-3.5 w-3.5 text-ov-300" /> {FIRMA.ort}, {FIRMA.bundesland}
               </p>
@@ -183,7 +188,7 @@ export default function StartWarum() {
                   <ol className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label="Leistungen aus einer Hand">
                     {KETTE.map((k, i) => (
                       <li key={k} className="s04-pop flex min-h-[44px] items-center gap-2.5 rounded-xl bg-sand-50 px-3 py-2 ring-1 ring-ink-200/70" style={d(450 + i * 110)}>
-                        <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ov-500 text-[10.5px] font-bold text-white ov-num">{i + 1}</span>
+                        <span aria-hidden="true" className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-ov-600 text-[10.5px] font-bold text-white ov-num">{i + 1}</span>
                         <span className="text-[13.5px] font-medium leading-tight text-ink-800">{k}</span>
                       </li>
                     ))}
@@ -192,12 +197,12 @@ export default function StartWarum() {
                 </div>
               </li>
 
-              {/* 02 – eigene Technik */}
+              {/* 02 – Regelung und Leittechnik (Formulierung aus src/data/marke.js PARKREGLER_SATZ – Rechteklärung offen) */}
               <li className="s04w-grund s04-hoch relative grid gap-4 border-t border-ink-100 py-7 pl-0 sm:grid-cols-[3.25rem_minmax(0,1fr)] md:py-8 md:pl-5" style={d(260)}>
                 <Nummer n="02" icon={Cpu} />
                 <div className="min-w-0">
-                  <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900 md:text-[20px]">Eigene Regelungs- und Leittechnik</h3>
-                  <ul className="mt-3.5 flex flex-wrap gap-2" aria-label="Eigene Entwicklungen">
+                  <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900 md:text-[20px]">Regelung und Leittechnik</h3>
+                  <ul className="mt-3.5 flex flex-wrap gap-2" aria-label="Regelung und Leittechnik">
                     {TECHNIK.map((t, i) => (
                       <li key={t.l} className="s04-pop inline-flex min-h-[34px] items-center gap-2 rounded-xl bg-navy-950 px-3 text-[13px] font-semibold text-white" style={d(700 + i * 120)}>
                         <t.icon aria-hidden="true" className="h-4 w-4 text-ov-300" strokeWidth={2} />
@@ -205,37 +210,33 @@ export default function StartWarum() {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-3.5 text-[15px] leading-relaxed text-ink-600">Aus eigener Entwicklung – abgestimmt auf TOR Erzeuger und österreichische Netzbetreiber.</p>
+                  <p className="mt-3.5 text-[15px] leading-relaxed text-ink-600">{PARKREGLER_SATZ} Abgestimmt auf TOR Erzeuger und österreichische Netzbetreiber.</p>
                 </div>
               </li>
 
-              {/* 03 – Gesellschafter */}
-              <li className="s04w-grund s04-hoch relative grid gap-4 border-t border-ink-100 py-7 pl-0 sm:grid-cols-[3.25rem_minmax(0,1fr)] md:py-8 md:pl-5" style={d(370)}>
-                <Nummer n="03" icon={Building2} />
-                <div className="min-w-0">
-                  <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900 md:text-[20px]">Starke Gesellschafter</h3>
-                  <div aria-hidden="true" className="mt-4 flex h-3 gap-1 overflow-hidden rounded-full">
-                    <span className="s04-skx h-full rounded-l-full bg-navy-800" style={d(900, { width: "51%", "--s04-t": "1s" })} />
-                    <span className="s04-skx h-full rounded-r-full bg-gradient-to-r from-ov-500 to-ov-300" style={d(1700, { width: "49%", "--s04-t": ".9s" })} />
+              {/* 03 – Eigene Leute und Maschinen (vom Auftraggeber bestätigt; sonst ausgeblendet) */}
+              {AUSSTATTUNG_BESTAETIGT && (
+                <li className="s04w-grund s04-hoch relative grid gap-4 border-t border-ink-100 py-7 pl-0 sm:grid-cols-[3.25rem_minmax(0,1fr)] md:py-8 md:pl-5" style={d(370)}>
+                  <Nummer n="03" icon={Users} />
+                  <div className="min-w-0">
+                    <h3 className="font-display text-[19px] font-bold leading-snug text-ink-900 md:text-[20px]">Eigene Leute und Maschinen</h3>
+                    <ul className="mt-3.5 flex flex-wrap gap-2" aria-label="Eigene Ausstattung">
+                      {AUSSTATTUNG.map((a, i) => (
+                        <li key={a.l} className="s04-pop inline-flex min-h-[34px] items-center gap-2 rounded-xl bg-sand-50 px-3 text-[13px] font-semibold text-ink-800 ring-1 ring-ink-200/70" style={d(900 + i * 120)}>
+                          <a.icon aria-hidden="true" className="h-4 w-4 text-ov-600" strokeWidth={2} />
+                          {a.l}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-3.5 text-[15px] leading-relaxed text-ink-600">
+                      Material kommt mit dem eigenen Lkw, auf Freiflächen arbeiten eigene Traktoren – und montiert wird vom eigenen Elektrotechnik-Fachbetrieb.{" "}
+                      <Link href="/uber-uns#mannschaft" className="font-semibold text-ov-700 underline-offset-4 hover:underline">
+                        Mannschaft und Maschinen
+                      </Link>
+                    </p>
                   </div>
-                  <dl className="mt-3 grid gap-3 text-[14.5px] leading-snug sm:grid-cols-[51fr_49fr] sm:gap-4">
-                    <div>
-                      <dt className="text-ink-900">
-                        <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-navy-800 align-middle" />
-                        Andreas Wegscheider
-                      </dt>
-                      <dd className="mt-0.5 font-display text-[22px] font-extrabold text-ink-900 ov-num">51 %</dd>
-                    </div>
-                    <div>
-                      <dt className="text-ink-900">
-                        <span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-ov-500 align-middle" />
-                        Salzburg AG für Energie, Verkehr und Telekommunikation
-                      </dt>
-                      <dd className="mt-0.5 font-display text-[22px] font-extrabold text-ov-600 ov-num">49 %</dd>
-                    </div>
-                  </dl>
-                </div>
-              </li>
+                </li>
+              )}
             </ol>
             <div className="s04-hoch mt-9" style={d(500)}>
               <Button href="/uber-uns" variant="secondary" pfeil>
@@ -252,7 +253,7 @@ export default function StartWarum() {
 function Nummer({ n, icon: Icon }) {
   return (
     <div className="flex items-center gap-3 sm:block">
-      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)]">
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.8)]">
         <Icon aria-hidden="true" className="h-5 w-5" />
       </span>
       <span className="font-display text-[12px] font-bold tracking-[0.16em] text-ov-700 sm:mt-2.5 sm:block sm:pl-1">{n}</span>

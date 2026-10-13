@@ -329,7 +329,7 @@ const artikel = {
   seitenCta: { titel: "PV für Ihr Hotel?", text: "Anlage passend zu Saison, Lastgang und alpinem Standort planen.", href: "/angebot", label: "Anfrage starten" },
   cta: {
     title: "Solarstrom für Hotel, Bergbahn und Chalet.",
-    text: "Ökovolt plant, montiert und meldet PV-Anlagen in ganz Österreich aus einer Hand – mit eigener Fernwartung und eigenem Parkregler für größere Anlagen.",
+    text: "Ökovolt plant, montiert und meldet PV-Anlagen in ganz Österreich aus einer Hand – mit Fernwartung und, bei größeren Anlagen, Parkregler mit unserem Technologiepartner Solensa.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "Förder-Check", href: "/foerdercheck" },
   },

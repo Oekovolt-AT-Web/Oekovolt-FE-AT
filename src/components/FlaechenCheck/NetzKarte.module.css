@@ -1,0 +1,8 @@
+/* NetzKarte – größere Zoomknöpfe (Tap-Ziel ≥ 44 px, QA-Befund B06). Nur innerhalb dieser Karte. */
+.karte :global(.leaflet-bar a),
+.karte:global(.leaflet-touch) :global(.leaflet-bar a) {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  font-size: 22px;
+}

@@ -38,8 +38,8 @@ import { ladeProjekteRoh, ladeProjektRoh } from "@/components/Project/ladeProjek
 import { BASE_URL, FIRMA } from "@/lib/site";
 import KundenPortraet from "@/components/Kundenbuehne/KundenPortraet";
 import SolarKit from "@/components/Kundenbuehne/SolarKit";
-import { hatPortraet, kundeSchema, schaetzung } from "@/lib/kundenbuehne";
-import { kundeFuerProjekt } from "@/lib/kundenbuehneServer";
+import { hatPortraet, kundeSchema, nameFrei, schaetzung } from "@/lib/kundenbuehne";
+import { kitFreigabe, kundeFuerProjekt, ladeKundeFuerProjekt } from "@/lib/kundenbuehneServer";
 
 const FALLBACK_BILD = "/Images/Referenzen/projekteBanner.jpg";
 
@@ -132,11 +132,13 @@ export async function generateStaticParams() {
  * sonst Sitz/Werk des Unternehmens aus der Kundenbühne (src/data/kunden.js bzw. Backoffice-Kundenfelder).
  */
 function seoKontext(p, kunde) {
+  // Neutralisierte Projekte (ohne Namensfreigabe, A07) tragen Branche und Ort schon im Titel
+  const anonym = !!p.roh?.projekt_anonym;
   return {
     titel: p.titel,
     leistungText: p.kwp != null ? p.leistungText : "",
-    branche: kunde?.branche || "",
-    ort: p.ort || kunde?.ort || "",
+    branche: anonym ? "" : kunde?.branche || "",
+    ort: p.ort || (anonym ? "" : kunde?.ort || ""),
     jahr: p.jahr,
     modul: p.modul,
   };
@@ -323,8 +325,11 @@ export default async function ProjectDetailPage({ params }) {
   const wissen = WISSEN[p.segment] || WISSEN._;
 
   // Kundenbühne: Backoffice-Felder am Projekt gewinnen, sonst src/data/kunden.js (fehlt beides: null)
-  const kunde = kundeFuerProjekt(p.roh, p.slug);
-  const kitFirma = kunde?.firma || p.titel;
+  // Mit Backoffice-Freigaben (Referenz Freigabe, A07): Name, Logo, Zitat, Kit nur mit der jeweiligen Freigabe
+  const kunde = await ladeKundeFuerProjekt(p.roh, p.slug);
+  const kundeNameFrei = nameFrei(kunde);
+  const kitFirma = (kundeNameFrei && kunde?.firma) || p.titel;
+  const kit = kitFreigabe(kunde);
   const kitZahlen = schaetzung({ kwp: p.kwp, ertragKwh: p.ertragApi });
   const kundeOrg = kundeSchema(kunde);
   const seo = seoKontext(p, kunde);
@@ -522,7 +527,7 @@ export default async function ProjectDetailPage({ params }) {
       )}
 
       {/* Kundenporträt – nur mit Kundendaten */}
-      {hatPortraet(kunde) && <KundenPortraet kunde={kunde} ort={p.ort} />}
+      {kundeNameFrei && hatPortraet(kunde) && <KundenPortraet kunde={kunde} ort={p.ort} />}
 
       {/* Steckbrief + Einordnung */}
       <Section tone="sand" space="lg">
@@ -630,7 +635,7 @@ export default async function ProjectDetailPage({ params }) {
       </Section>
 
       {/* Solar-Kit für den Kunden: Siegel, Social-Kit, ESG-Bericht */}
-      <SolarKit slug={p.slug} firma={kitFirma} zahlen={kitZahlen} />
+      <SolarKit slug={p.slug} firma={kitFirma} zahlen={kitZahlen} kit={kit} />
 
       {/* Weitere Projekte */}
       {weitere.length > 0 && (

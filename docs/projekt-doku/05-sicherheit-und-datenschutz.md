@@ -3,7 +3,7 @@
 Gliederung **nur als Ordnungsraster** in Anlehnung an die Themenbereiche von ISO/IEC 27001 Anhang A
 (organisatorisch, personenbezogen, physisch, technologisch). Es besteht **kein ISMS** nach ISO/IEC 27001
 und keine Zertifizierung; die Tabelle ist eine Bestandsaufnahme belegter Maßnahmen und Lücken.
-Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Datenschutzbezug: DSGVO, DSG, TKG 2021. **Keine Rechtsberatung.** Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 Ausführliche Datenschutz-Dokumente (nur verlinkt). **Welle 4:** Verzeichnis für AT überarbeitet und erweitert – Deckblatt `docs/datenschutz/00-Uebersicht-VVT.md` (Verantwortlicher, Aufsichtsbehörde, Systeme, Auftragsverarbeiter, Abweichungstabelle A1–A8) und neue Einträge `VVT-Anfragen.md`, `VVT-Heatmap.md`, `VVT-Kundenbuehne.md`, `VVT-Lastgang-Analyse.md`, `VVT-Mediathek.md`; bestehende Einträge angepasst. Status: Entwurf, rechtlich prüfen. Die folgende Tabelle beschreibt den Stand vor Welle 4:
 
@@ -47,6 +47,7 @@ Nicht Gegenstand des Repositorys (Hosting-Anbieter offen, siehe 02 Verteilungssi
 | Schlüsselerzeugung per Skript, Ausgabe nur als `.env`-Zeilen, Hinweis „nie committen“ | `scripts/ap-schluessel.mjs:1-5` |
 | Frappe kennt vom Scan-Token nur den SHA-256-Hash | `src/lib/scan/backend.js:7-8` |
 | Secrets zeitkonstant verglichen (Kanal-Webhook, Cron, Heatmap-Token) | `src/app/api/kanaele/verteilen/route.js:13-21`, `src/app/api/heatmap/route.js:74-80` |
+| **Welle A:** Lead-Gate-Token HMAC-SHA256 mit `LEAD_GATE_SECRET` (≥ 32 Zeichen; außerhalb production festes Entwicklungs-Geheimnis), ohne E-Mail im Token; Backoffice speichert nur den SHA-256-Hash (`bestaetigungs_token`), Referenz-Freigabe ebenso (`token_hash`, `widerruf_token_hash`) | `src/lib/leadGateServer.js`, `website_api/format.py` (`token_erzeugen`), `…/doctype/referenz_freigabe/freigabe_logik.py` |
 
 **Secret-Prüfung vom 30.09.2026, wiederholt in Welle 2 über `src/`, `scripts/`, `Import-Backend-Frappe/`, `docs/`** (grep über das Repository ohne `node_modules`, `.next*`, `.git`, `public/tesseract`;
 Muster: `sk-ant-…`, `AKIA…`, `AIza…`, `ghp_…`, `xox?-…`, `-----BEGIN … PRIVATE KEY`, Zuweisungen an
@@ -113,6 +114,11 @@ Stand Welle 3: `gedrosselt()` in `anfrageWeiterleiten.js` drosselt ohne ermittel
 | S5 | `src/lib/baseUrl.js` liefert serverseitig in Produktion `http://localhost:3000` | `src/lib/baseUrl.js:9-11` | offen – laut Koordinator nur toter Code; beim Aufräumen entfernen |
 | S6 | Keine Content-Security-Policy | `next.config.mjs` (headers) | offen |
 | S7 | Drosselung nur im Arbeitsspeicher je Instanz; IP aus `X-Forwarded-For` | `src/lib/ipAdresse.js:7` | offen (R-18) |
+| S8 | **Welle A (A01):** Next 15.5.27 (GHSA-2xp9-vwfh-vxw4, GHSA-p293-qw3h-jr36), `postcss` per `overrides` ≥ 8.5.29; `npm audit --omit=dev --audit-level=high` 0 Befunde und Teil von `npm test` | `package.json`, `scripts/alle-tests.mjs` | erledigt; Dev-Abhängigkeit `braces` (5 × High) offen (R-80) |
+| S9 | **Welle A (A01):** `X-XSS-Protection: 0`, `Cross-Origin-Opener-Policy: same-origin` (außer `/tv`, `/einbetten`, `/siegel`), Bildoptimierer nur `backoffice.oekovolt.com/files/**` (unpkg entfernt), `/.well-known/security.txt` (RFC 9116, Kontakt `office@`, `Expires` 2027-10-11) | `next.config.mjs`, `public/.well-known/security.txt` | erledigt; eigenes Sicherheits-Postfach offen (F-50) |
+| S10 | **Welle A:** CSP-Report-Only und `/api/csp-report` aus der Sofort-Welle durch das Zurücksetzen am 07.10. verloren | A01 | offen (R-80) |
+| S11 | **Welle A:** neue Gast-Methoden (`rechner.sende_bestaetigung`, `rechner.bestaetige_lead`, `freigabe.*`) mit `rate_limit`, Einmal-Token und Drossel je IP/E-Mail-Hash; Website-Routen mit Herkunftsprüfung und Größenlimit | `website_api/rechner.py`, `website_api/freigabe.py`, `src/app/api/referenz-freigabe/route.js` | umgesetzt (unveröff.); Einmal-Verbrauch ohne Backoffice nur je Instanz |
+| S12 | **Welle A:** Kundenmails ohne Freitext (keine Nachricht, Firma, Adresse, Ergebnistext), Anrede gehärtet, Rechnernamen nur aus fester Liste (Schutz vor Spam-Verteiler-Missbrauch); Alarm-Nutzlast mit Laufzeitprüfung `nutzlast_ohne_personendaten` | `website_api/format.py`, `website_api/lead_eingang.py` | umgesetzt (unveröff.) |
 
 ### 4.5 Protokollierung und Überwachung
 
@@ -145,6 +151,19 @@ Regelmäßige Backups, Rotation und Wiederherstellungstests: **offen** (vgl. `do
 
 Rechtliche Bewertung (TKG § 165 Abs. 3 für Umami ohne Einwilligung, Heatmap, basemap.at-Kacheln): **offen** (R-09).
 
+**Welle A (Stand 12.10.2026):**
+
+| Aspekt | Umsetzung | Beleg |
+|---|---|---|
+| Cookie-Banner | serverseitig gerendert, sichtbar per Stil vor dem ersten Paint; „Nur notwendige“ und „Alle akzeptieren“ gleichwertig; Detaildialog „Alle akzeptieren“/„Alle ablehnen“ gleichwertig, „Weiter ohne Einwilligung“ → „Auswahl speichern“ (speicherte schon vorher die Auswahl); ohne Einwilligung 0 Anfragen an Google (geprüft) | `src/components/Cookies/cookiecomponent.js`, A12 |
+| Anfragen (Kontakt, Angebot, Termin, Rückruf) | keine Pflicht-Einwilligung, keine AGB-Zustimmung; versionierter Hinweistext (Art. 6 Abs. 1 lit. b DSGVO); Anruf nur mit freiwilligem, nicht vorangekreuztem `rueckruf_ok` (lit. a, § 174 TKG 2021) | `src/lib/einwilligungen.js` (6 Texte), A08 |
+| Lead-Gate (Rechner-Export) | Pflicht Name + E-Mail (lit. b), Telefon nur nach `kontakt_ok` (sonst serverseitig verworfen); Double-Opt-in per Klick; Cookie `ov-lead-frei` (HttpOnly, 30 Tage, technisch notwendig für die angeforderte Freischaltung – rechtlich prüfen); Freischaltung auf dem Gerät entfernbar; unbestätigte Leads nach 30 Tagen gelöscht; Lastgang-Kennzahlen 12 Monate | A09, A11; Datenschutzerklärung `#rechner-export` |
+| Vertrieb (Lead-Bewertung) | Priorisierung nach berechtigtem Interesse (lit. f), keine automatisierte Entscheidung nach Art. 22; Zusammenführung von Dubletten, Zuteilung, Alarm ohne Personendaten; Widerspruch nach Art. 21 | Datenschutzerklärung `#vertrieb`, `website_api/lead_eingang.py` |
+| Referenz-Freigabe | sieben getrennte, nicht vorangekreuzte Häkchen, Vertretungsbefugnis, Widerruf per Klick, Einmal-Link 30 Tage, IP nur gekürzt | `src/app/referenzen/freigabe/[token]/*`, Datenschutzerklärung `#referenz-freigabe` |
+| Datenschutzerklärung | `DATENSCHUTZ_STAND` 12. Oktober 2026; Markierungen „RECHTLICH PRÜFEN“ im Code entfernt und als Prüfauftrag in F-44 überführt | `src/components/Datenschutz/datenschutz.js`, A09 |
+
+Rechtliche Bewertung der Welle-A-Verarbeitungen: **offen** (R-68, F-44).
+
 ## 6. Löschfristen (Zusammenfassung aus den VVT)
 
 | Verarbeitung | Frist laut Dokument | Quelle | Umsetzung |
@@ -161,6 +180,9 @@ Rechtliche Bewertung (TKG § 165 Abs. 3 für Umami ohne Einwilligung, Heatmap, b
 | Heatmap (monatliche Zählwerte, ohne Personenbezug) | höchstens 14 Monate (aktueller + 13 Vormonate), täglicher Job `alte_monate_loeschen` | `Import-Backend-Frappe/apps/oekovoltdeutchland/README.md` (Heatmap, Hooks), Datenschutzerklärung `src/components/Datenschutz/datenschutz.js:280` | umgesetzt (unveröff.) |
 | Kontakt-, Angebots-, Solarrechner-Anfragen (`oekovolt_app`) | 24 Monate ab Anlage → Anonymisierung (außer Status „Angebot erstellt“/„Gewonnen“), PDFs und Nebeneinträge gelöscht; konfigurierbar `oekovolt_loeschfrist_monate` | `Import-Backend-Frappe/apps/oekovolt_app/README.md` (Löschfrist) | umgesetzt (unveröff.); VVT fehlt |
 | Website-Termine (`oekovolt_app`) | eigener Job `termin.loesche_alte_termine` | ebd. | Frist im Repo nicht beziffert (offen) |
+| Rechner-Leads ohne Bestätigung (Welle A) | 30 Tage, täglicher Job `rechner.unbestaetigte_loeschen` | `website_api/rechner.py`, Spezifikation §3b | umgesetzt (unveröff.) |
+| Rechner-Leads, Vertriebsfelder (Welle A) | Anonymisierung wie Anfragen (24 Monate); zusätzlich `firma`, `lead_schluessel`, `gremium`, `fruehere_anfragen`, `ergebnis`, `ergebnis_json`, Links, Token | `website_api/format.py` (`ANONYMISIEREN`) | umgesetzt (unveröff.); rechtlich prüfen |
+| Referenz-Freigaben (Welle A) | Link 30 Tage gültig; Freigabe bis Widerruf | `…/doctype/referenz_freigabe/` | Aufbewahrung nach Widerruf nicht beziffert (offen) |
 
 ## 7. Befunde Datenschutz-Dokumentation
 

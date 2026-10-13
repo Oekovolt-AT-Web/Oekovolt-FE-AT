@@ -2,6 +2,11 @@
   "name": "oekovoltweb",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "next": {
+      "postcss": "^8.5.29"
+    }
+  },
   "browserslist": {
     "production": [
       "chrome >= 90",
@@ -18,7 +23,8 @@
     ]
   },
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev -H 127.0.0.1",
+    "dev:lan": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -27,14 +33,18 @@
   "dependencies": {
     "@fontsource/inter": "^5.3.0",
     "@fontsource/manrope": "^5.3.0",
-    "@next/third-parties": "15.3.0",
+    "@next/third-parties": "15.5.27",
     "@react-google-maps/api": "^2.20.6",
     "@react-pdf/renderer": "^4.9.0",
     "@tesseract.js-data/eng": "^1.0.0",
     "cookies-next": "^5.1.0",
+    "d3-scale": "4.0.2",
+    "d3-shape": "3.2.0",
     "heatmap.js": "^2.0.5",
     "lucide-react": "^0.511.0",
-    "next": "^15.3.0",
+    "motion": "12.43.0",
+    "next": "^15.5.27",
+    "pdfjs-dist": "^6.4.299",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -46,13 +56,16 @@
     "slugify": "^1.6.6",
     "styled-components": "^6.1.18",
     "tesseract.js": "^7.0.0",
+    "three": "0.186.1",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "docx": "^9.10.0",
     "eslint": "^9",
-    "eslint-config-next": "15.3.0",
+    "eslint-config-next": "15.5.27",
+    "exceljs": "^4.4.0",
     "tailwindcss": "^4"
   }
 }

@@ -278,7 +278,7 @@ export default function KontaktPage() {
         <SectionHeading
           eyebrow="Einzugsgebiet"
           title={<>Aus Ostermiething <span className="ov-text-gradient">für ganz Österreich</span></>}
-          lead="Wir planen, errichten und betreuen Photovoltaikanlagen in allen neun Bundesländern – mit denselben Prozessen, eigener Regelungs- und Fernwartungstechnik und einem festen Projektleiter. Wählen Sie Ihr Bundesland."
+          lead="Wir planen, errichten und betreuen Photovoltaikanlagen in allen neun Bundesländern – mit denselben Prozessen, Regelungs- und Fernwartungstechnik mit unserem Technologiepartner Solensa und einem festen Projektleiter. Wählen Sie Ihr Bundesland."
           className="mb-12 max-w-3xl"
         />
         <Einzugsgebiet />

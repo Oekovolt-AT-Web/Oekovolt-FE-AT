@@ -37,9 +37,9 @@ export default function DunkelSektion({ id, eyebrow, title, lead, bild, children
 }
 
 const SYSTEME = [
-  { key: "parkregler", icon: SlidersHorizontal, title: "Eigener Parkregler (EZA-Regler)", href: "/technik/parkregler", text: "Regelt Wirk- und Blindleistung am Netzverknüpfungspunkt nach den Vorgaben des Netzbetreibers und der TOR Erzeuger." },
-  { key: "fernwartung", icon: Radio, title: "Eigene Fernwartung", href: "/technik/fernwartung", text: "Gesicherter Fernzugriff auf Wechselrichter, Regler und Zähler – Störungen erkennen und beheben, oft ohne Anfahrt." },
-  { key: "scada", icon: MonitorDot, title: "Eigenes SCADA", href: "/technik/scada", text: "Erzeugung, Verbrauch, Speicher und Netzvorgaben in einer Leitwarte – mit Berichten für Controlling und Nachhaltigkeit." },
+  { key: "parkregler", icon: SlidersHorizontal, title: "Parkregler (EZA-Regler)", href: "/technik/parkregler", text: "Regelt Wirk- und Blindleistung am Netzverknüpfungspunkt nach den Vorgaben des Netzbetreibers und der TOR Erzeuger." },
+  { key: "fernwartung", icon: Radio, title: "Fernwartung", href: "/technik/fernwartung", text: "Gesicherter Fernzugriff auf Wechselrichter, Regler und Zähler – Störungen erkennen und beheben, oft ohne Anfahrt." },
+  { key: "scada", icon: MonitorDot, title: "SCADA & Leitwarte", href: "/technik/scada", text: "Erzeugung, Verbrauch, Speicher und Netzvorgaben in einer Leitwarte – mit Berichten für Controlling und Nachhaltigkeit." },
 ];
 
 /** Die drei eigenen Systeme als Glas-Karten auf dunklem Grund. texte: { parkregler, fernwartung, scada } */

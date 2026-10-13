@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BatteryCharging, CarFront, House, PiggyBank, Sparkles, Sun, Thermometer, Timer } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, BatteryCharging, CarFront, House, PiggyBank, Sparkles, Sun, Thermometer, Timer } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Tooltip, Zahl, useBreite } from "./bausteine";
@@ -184,8 +185,12 @@ export default function StromspeicherRechner() {
   );
 }
 
-/** Kompakte, mitlaufende Ergebniszeile auf dem Handy */
-export function MobilKurz({ werte }) {
+/**
+ * Kompakte, mitlaufende Ergebniszeile auf dem Handy.
+ * @param {Array<[string, React.ReactNode]>} werte  drei Kennzahlen
+ * @param {{href: string, label: string}} [aktion]  optionaler Knopf (≥ 44 px, ov-600), z. B. Angebot mit diesen Werten
+ */
+export function MobilKurz({ werte, aktion }) {
   return (
     <div className="sticky top-[76px] z-20 -mx-5 -mt-5 mb-6 border-b border-white/10 bg-navy-950/95 px-5 py-3 text-white backdrop-blur sm:-mx-6 sm:-mt-6 sm:px-6 lg:hidden">
       <dl className="grid grid-cols-3 gap-2">
@@ -196,6 +201,15 @@ export function MobilKurz({ werte }) {
           </div>
         ))}
       </dl>
+      {aktion?.href && (
+        <Link
+          href={aktion.href}
+          className="mt-2.5 flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-ov-600 px-4 text-[14px] font-semibold text-white transition-colors hover:bg-ov-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ov-300"
+        >
+          {aktion.label || "Angebot anfragen"}
+          <ArrowRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
+      )}
     </div>
   );
 }

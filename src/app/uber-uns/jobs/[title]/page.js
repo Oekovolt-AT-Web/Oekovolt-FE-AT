@@ -15,6 +15,7 @@ import KurzBewerbung from "@/components/JobDetails/KurzBewerbung";
 import BewerbungsLeiste from "@/components/JobDetails/BewerbungsLeiste";
 import { alleStellen, bewerbungsLink, fmtDatum } from "@/components/Jobs/jobDaten";
 import { STELLEN } from "@/data/stellen";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 
 // Stellen kommen aus src/data/stellen.js. Die Backoffice-Endpunkte der
@@ -97,14 +98,14 @@ export async function generateMetadata({ params }) {
 
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-/** Hero-Foto je Bereich (vorhandene Bilder, siehe /uber-uns/jobs). */
+/** Hero-Foto je Bereich (vorhandene Bilder, siehe /uber-uns/jobs) – Stock-Motive, als Symbolbild gekennzeichnet. */
 const HERO_BILD = {
-  "Projekt & Planung": { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", position: "60% 30%" },
-  "Montage & Service": { src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" },
-  "Netz & Leittechnik": { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" },
-  "Vertrieb & Beratung": { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", position: "60% 40%" },
-  Ausbildung: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul", position: "50% 35%" },
-  standard: { src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen" },
+  "Projekt & Planung": { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage (Symbolbild)", position: "60% 30%" },
+  "Montage & Service": { src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme (Symbolbild)" },
+  "Netz & Leittechnik": { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen (Symbolbild)" },
+  "Vertrieb & Beratung": { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch (Symbolbild)", position: "60% 40%" },
+  Ausbildung: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul (Symbolbild)", position: "50% 35%" },
+  standard: { src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen (Symbolbild)" },
 };
 
 export default async function JobDetailPage({ params }) {
@@ -162,8 +163,8 @@ export default async function JobDetailPage({ params }) {
     },
     url: canonicalUrl,
     datePosted: j.datum ? new Date(String(j.datum).replace(" ", "T")).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
-    // Ganzjährig ausgeschrieben: Gültigkeit rollierend 90 Tage ab Seitenerzeugung
-    ...(j.ganzjaehrig && { validThrough: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0] }),
+    // Ganzjährig ausgeschrieben: kein validThrough (ein rollierendes Datum wäre ein erfundener Bewerbungsschluss;
+    // Google akzeptiert JobPosting ohne validThrough, solange die Stelle offen ist – Welle A02)
     employmentType: j.anstellungSchema,
     directApply: false,
     industry: "Erneuerbare Energien / Photovoltaik",
@@ -231,7 +232,9 @@ export default async function JobDetailPage({ params }) {
           { label: "Jetzt bewerben", href: "#bewerben" },
           { label: "Alle Stellen", href: "/uber-uns/jobs", icon: ArrowLeft },
         ]}
-      />
+      >
+        <p className="mt-6 text-[12px] text-white/60">Foto: Symbolbild.</p>
+      </PageHero>
 
       <Section tone="white" space="lg">
         <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:gap-16">
@@ -249,7 +252,7 @@ export default async function JobDetailPage({ params }) {
                 {listen.map((l, i) => (
                   <Reveal key={l.titel} delay={i * 80} className="rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 md:p-8">
                     <h2 className="flex items-center gap-3 font-display text-[22px] font-extrabold tracking-tight text-ink-900">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white">
                         <l.icon aria-hidden="true" className="h-5 w-5" />
                       </span>
                       {l.titel}
@@ -270,7 +273,7 @@ export default async function JobDetailPage({ params }) {
             {j.entgelt && (
               <Reveal className="mt-5 rounded-3xl bg-ov-50 p-6 ring-1 ring-ov-200 md:p-8">
                 <h2 className="flex items-center gap-3 font-display text-[22px] font-extrabold tracking-tight text-ink-900">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white">
                     <Euro aria-hidden="true" className="h-5 w-5" />
                   </span>
                   Entgelt & Kollektivvertrag
@@ -296,10 +299,10 @@ export default async function JobDetailPage({ params }) {
 
             <Reveal className="mt-14 rounded-3xl bg-navy-950 p-7 text-white md:p-9">
               <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-300">Über Ökovolt</p>
-              <h2 className="mt-3 font-display text-[24px] font-extrabold tracking-tight">Photovoltaik-Errichter mit eigener Technik – seit 2012 in Österreich</h2>
+              <h2 className="mt-3 font-display text-[24px] font-extrabold tracking-tight">Photovoltaik-Errichter, der selbst betreibt – seit 2012 in Österreich</h2>
               <p className="mt-4 text-[16px] leading-relaxed text-white/70">
                 {j.firma ||
-                  `Von unserem Firmensitz in ${FIRMA.ort} im Innviertel planen, errichten und betreuen wir Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich – mit eigenen Parkreglern, Fernwartung und SCADA.`}
+                  `Von unserem Firmensitz in ${FIRMA.ort} im Innviertel planen, errichten und betreuen wir Photovoltaikanlagen für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich. ${PARKREGLER_SATZ}`}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Button href="/uber-uns" variant="outlineLight" size="sm" icon={Users}>

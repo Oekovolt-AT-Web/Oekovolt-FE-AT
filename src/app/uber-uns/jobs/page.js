@@ -22,9 +22,14 @@ import FotoKachel from "@/components/Team/FotoKachel";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import { alleStellen, bewerbungsLink, euro } from "@/components/Jobs/jobDaten";
 import { KV, LEHRLINGSEINKOMMEN } from "@/data/stellen";
+import { PARKREGLER_KURZ } from "@/data/marke";
+import { KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
 import Querverweise from "@/components/Reusable/Querverweise";
+
+/** Sichtbare Kennzeichnung für Stock-Motive auf Fotokacheln (Welle A02). */
+const SYMBOLBILD = <span className="mt-3 inline-block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Symbolbild</span>;
 
 const JOBS_PAGE_URL = `${BASE_URL}/uber-uns/jobs`;
 const TITEL = "Jobs Photovoltaik Österreich – Karriere | Ökovolt";
@@ -51,17 +56,18 @@ export const metadata = {
 const VORTEILE = [
   { icon: Leaf, title: "Sinnvolle Arbeit", text: "Jede Anlage, die Sie mitbauen, erzeugt über Jahrzehnte erneuerbaren Strom für Betriebe, Höfe und Gemeinden." },
   { icon: GraduationCap, title: "Weiterbildung", text: "Herstellerschulungen, Prüf- und Messtechnik, Netzanschluss und Leittechnik – wir investieren in Ihr Know-how." },
-  { icon: Zap, title: "Eigene Technik", text: "Parkregler, Fernwartung und SCADA aus eigener Entwicklung: Sie arbeiten nicht nur mit Fremdsystemen." },
+  { icon: Zap, title: "Regelung und Leittechnik", text: "Parkregler, Fernwartung und SCADA parametrieren, betreuen und warten wir selbst – mit unserem Technologiepartner Solensa. Sie arbeiten nicht nur mit Fremdsystemen." },
   { icon: TrendingUp, title: "Perspektive", text: "Photovoltaik, Speicher und Netzintegration wachsen – und mit ihnen die Aufgaben im Team." },
 ];
 
+// Stock-Motive mit Personen sind Symbolbilder (Alt-Text und sichtbare Kennzeichnung, Welle A02).
 const FELDER = [
-  { icon: Compass, title: "Projekt & Planung", text: "Projektleitung und Elektroplanung für Dach- und Freiflächenanlagen – vom Belegungsplan bis zur Übergabe.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", pos: "50% 30%" } },
+  { icon: Compass, title: "Projekt & Planung", text: "Projektleitung und Elektroplanung für Dach- und Freiflächenanlagen – vom Belegungsplan bis zur Übergabe.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage (Symbolbild)", pos: "50% 30%" }, symbolbild: true },
   { icon: ClipboardList, title: "Netzanschluss", text: "Netzzugang, TOR Erzeuger, Parkregler und Inbetriebnahme mit dem Netzbetreiber.", bild: { src: "/Images/AT/technik/umspannwerk-obersielach.jpg", alt: "Schaltanlagen eines Umspannwerks unter blauem Himmel" } },
-  { icon: MonitorDot, title: "Leittechnik", text: "SCADA, Fernwartung und Monitoring – gemeinsam mit der Solensa GmbH für IT-Sicherheit.", bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" } },
-  { icon: HardHat, title: "Montage & Service", text: "Elektro- und Mechanikmontage, Wartung, Prüfung und Drohnen-Thermografie in ganz Österreich.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%" } },
-  { icon: Briefcase, title: "Vertrieb & Beratung", text: "Key Account Gewerbe und Energieberatung für Betriebe, Landwirtschaft und Gemeinden.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", pos: "60% 40%" } },
-  { icon: GraduationCap, title: "Lehre", text: "Lehrberuf Elektrotechnik – mit Photovoltaik und Speichern von Anfang an.", bild: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul", pos: "50% 35%" } },
+  { icon: MonitorDot, title: "Leittechnik", text: "SCADA, Fernwartung und Monitoring – gemeinsam mit der Solensa GmbH für IT-Sicherheit.", bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen (Symbolbild)" }, symbolbild: true },
+  { icon: HardHat, title: "Montage & Service", text: "Elektro- und Mechanikmontage, Wartung, Prüfung und Drohnen-Thermografie in ganz Österreich.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach (Symbolbild)", pos: "50% 40%" }, symbolbild: true },
+  { icon: Briefcase, title: "Vertrieb & Beratung", text: "Key Account Gewerbe und Energieberatung für Betriebe, Landwirtschaft und Gemeinden.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch (Symbolbild)", pos: "60% 40%" }, symbolbild: true },
+  { icon: GraduationCap, title: "Lehre", text: "Lehrberuf Elektrotechnik – mit Photovoltaik und Speichern von Anfang an.", bild: { src: "/Images/Referenzen/referenzkarte2.jpg", alt: "Junger Monteur in Warnweste montiert ein Photovoltaikmodul (Symbolbild)", pos: "50% 35%" }, symbolbild: true },
 ];
 
 const ABLAUF = [
@@ -136,14 +142,16 @@ export default function JobsPage() {
         breadcrumbs={[{ name: "Über uns", href: "/uber-uns" }, { name: "Jobs" }]}
         eyebrow="Karriere bei Ökovolt Österreich"
         title={<>Jobs mit Zukunft: Machen Sie die <span className="ov-text-gradient-light">Energiewende</span> zum Beruf</>}
-        lead="Wir bauen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich – mit eigener Leittechnik. Dafür suchen wir Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Lehrlinge."
-        image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" }}
+        lead="Wir bauen Photovoltaikanlagen für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich – Parkregler, Fernwartung und SCADA betreuen wir mit unserem Technologiepartner Solensa. Dafür suchen wir Projektleitung, Elektrotechnik, Netzanschluss, SCADA, Service, Vertrieb und Lehrlinge."
+        image={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme (Symbolbild)" }}
         points={[`${jobs.length} offene Stellen`, "Firmensitz Ostermiething", "KV-Mindestentgelt in jeder Anzeige", "Lehre Elektrotechnik"]}
         actions={[
           { label: "Offene Stellen ansehen", href: "#stellen" },
           { label: "Initiativ bewerben", href: bewerbungsLink(), icon: Mail },
         ]}
-      />
+      >
+        <p className="mt-6 text-[12px] text-white/60">Foto: Symbolbild.</p>
+      </PageHero>
 
       {/* Stellen */}
       <Section tone="sand" space="lg" id="stellen" className="scroll-mt-20">
@@ -171,23 +179,26 @@ export default function JobsPage() {
               dark
               eyebrow="Warum Ökovolt"
               title={<>Ihre Vorteile <span className="ov-text-gradient-light">bei Ökovolt</span></>}
-              lead="Ein Errichter mit eigener Technik, kurzen Wegen und Projekten in ganz Österreich."
+              lead="Ein Errichter mit eigenen Montageteams, kurzen Wegen und Projekten in ganz Österreich."
             />
-            <Kennzahlen
-              dunkel
-              items={[
-                { value: "2012", label: "in Österreich gegründet" },
-                { value: 30, suffix: " MWp", label: "allein 2021 errichtet" },
-                { value: 9, label: "Bundesländer im Einsatzgebiet" },
-              ]}
-              klein
-            />
+            <div>
+              <Kennzahlen
+                dunkel
+                items={[
+                  { value: "2012", label: "in Österreich gegründet" },
+                  { value: 30, suffix: " MWp", label: "allein 2021 errichtet" },
+                  { value: 9, label: "Bundesländer im Einsatzgebiet" },
+                ]}
+                klein
+              />
+              <p className="mt-4 text-[12px] text-white/60">{KENNZAHLEN_HINWEIS_STAND}</p>
+            </div>
           </div>
           <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {VORTEILE.map((v, i) => (
               <Reveal as="li" key={v.title} delay={i * 90} className="group ov-glass relative overflow-hidden rounded-3xl p-6 transition-colors hover:bg-white/[0.12] md:p-7">
                 <span aria-hidden="true" className="ov-num absolute -right-2 -top-4 font-display text-[96px] font-extrabold leading-none text-white/[0.05]">{String(i + 1).padStart(2, "0")}</span>
-                <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-500 text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.9)] transition-transform duration-300 group-hover:scale-110">
+                <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-ov-600 text-white shadow-[0_10px_24px_-10px_rgba(102,153,51,0.9)] transition-transform duration-300 group-hover:scale-110">
                   <v.icon aria-hidden="true" className="h-6 w-6" />
                 </span>
                 <h3 className="relative mt-6 font-display text-[19px] font-bold text-white">{v.title}</h3>
@@ -203,7 +214,7 @@ export default function JobsPage() {
         <div className="mb-12 grid items-end gap-6 lg:grid-cols-[1.2fr_1fr] lg:gap-16">
           <SectionHeading eyebrow="Tätigkeitsfelder" title="Sechs Wege in die Photovoltaik" />
           <div className="flex items-start gap-4 rounded-3xl bg-ov-50 p-5 ring-1 ring-ov-200 lg:mb-1">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-500 text-white">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-600 text-white">
               <ShieldCheck aria-hidden="true" className="h-5 w-5" />
             </span>
             <p className="text-[15px] leading-relaxed text-ink-700">
@@ -214,7 +225,9 @@ export default function JobsPage() {
         <ul className="ov-no-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {FELDER.map((f, i) => (
             <Reveal as="li" key={f.title} delay={(i % 3) * 80} className="w-[82%] shrink-0 snap-start sm:w-auto">
-              <FotoKachel bild={f.bild} icon={f.icon} kopf="Tätigkeitsfeld" titel={f.title} text={f.text} className="h-full min-h-[300px]" />
+              <FotoKachel bild={f.bild} icon={f.icon} kopf="Tätigkeitsfeld" titel={f.title} text={f.text} className="h-full min-h-[300px]">
+                {f.symbolbild && SYMBOLBILD}
+              </FotoKachel>
             </Reveal>
           ))}
         </ul>
@@ -278,9 +291,11 @@ export default function JobsPage() {
             "Das Erneuerbaren-Ausbau-Gesetz sieht bis 2030 einen Zubau von 11 TWh Strom aus Photovoltaik vor (§ 4 Abs 4 EAG). Damit neue Anlagen ins Netz dürfen, braucht es Menschen, die sie sauber planen, anschließen, regeln und über Jahrzehnte betreuen.",
             "Bei Ökovolt arbeiten Sie an Gewerbedächern, Freiflächen- und Agri-PV-Anlagen und Gemeindeprojekten – und an der Technik, die diese Anlagen steuerbar macht.",
           ]}
-          points={["Projekte in allen neun Bundesländern", "Eigene Parkregler, Fernwartung und SCADA", "Kurze Wege zwischen Planung, Montage und Service"]}
-          image={{ src: "/Images/Jobs/jobs1.jpg", alt: "Mitarbeiter installieren eine Photovoltaikanlage" }}
-        />
+          points={["Projekte in allen neun Bundesländern", PARKREGLER_KURZ, "Kurze Wege zwischen Planung, Montage und Service"]}
+          image={{ src: "/Images/Jobs/jobs1.jpg", alt: "Monteure installieren eine Photovoltaikanlage (Symbolbild)" }}
+        >
+          <p className="mt-6 text-[12.5px] text-ink-500">Foto: Symbolbild.</p>
+        </SplitMedia>
       </Section>
 
       <Section tone="sand" space="lg">

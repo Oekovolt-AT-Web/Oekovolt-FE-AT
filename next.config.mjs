@@ -89,6 +89,12 @@ const nextConfig = {
 
       // --- Alte URLs der bisherigen oekovolt.com (Linkkraft erhalten) ---
       { source: "/dienstleistungen/agri-photovoltaik", destination: "/agri-pv", permanent: true },
+      // /referenzen hat keine eigene Seite (Welle A01) -> Projektübersicht
+      { source: "/referenzen", destination: "/referenzen/projekte", permanent: true },
+      // Alter Landes-Slug (rankt laut SISTRIX) -> heutiger Slug mit Umlaut-Schreibweise.
+      // Beide Schreibweisen (mit und ohne „oe“ im ersten Segment) direkt, damit keine Kette entsteht.
+      { source: "/forderungen/landesforderungen/landesforderungen-in-oberosterreich", destination: "/forderungen/landesforderungen/landesfoerderungen-in-oberoesterreich", permanent: true },
+      { source: "/foerderungen/landesforderungen/landesforderungen-in-oberosterreich", destination: "/forderungen/landesforderungen/landesfoerderungen-in-oberoesterreich", permanent: true },
       // Alte WordPress-Seiten (SEO-Plan M05). Ziele nach Thema und Keyword-Map
       // (genau eine Zielseite je Suchbegriff), nicht pauschal auf die Startseite:
       //   Unternehmen -> Firmenseite; Leasing -> Ratgeber „photovoltaik leasing“;
@@ -203,11 +209,10 @@ const nextConfig = {
         destination: "/referenzen/projekte",
         permanent: true,
       },
-      {
-        source: "/foerderungen/:path*",
-        destination: "/forderungen/landesforderungen",
-        permanent: true,
-      },
+      // Schreibweise mit „oe“: Einstieg zum Förder-Check, Unterseiten 1:1 auf /forderungen/…
+      // (Ziel-Slugs und Ketten prüft scripts/redirects.test.mjs statisch).
+      { source: "/foerderungen", destination: "/foerdercheck", permanent: true },
+      { source: "/foerderungen/:path+", destination: "/forderungen/:path+", permanent: true },
     ];
   },
 
@@ -231,14 +236,14 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     remotePatterns: [
+      // Nur der öffentliche Dateipfad des Frappe-Backoffice (src/data/projekte.js:
+      // backoffice.oekovolt.com/files/…). /private/ und /api/method/ dienen nicht als
+      // Bildquelle (per grep geprüft, Welle A01). unpkg.com entfällt: Die Leaflet-Marker
+      // liegen unter public/Images/leaflet.
       {
         protocol: "https",
         hostname: "backoffice.oekovolt.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "unpkg.com",
+        pathname: "/files/**",
       },
     ],
   },
@@ -259,13 +264,22 @@ const nextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "X-XSS-Protection", value: "1; mode=block" },
+          // "0" statt "1; mode=block": Der alte Auditor-Filter ist aus aktuellen Browsern
+          // entfernt und konnte in älteren selbst Lecks öffnen (OWASP-Empfehlung).
+          { key: "X-XSS-Protection", value: "0" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()" },
         ],
       },
+      // Cross-Origin-Opener-Policy trennt den Browsing-Kontext von fremden Fenstern.
+      // Nicht für eingebettete Seiten (/tv, /einbetten, /siegel), die in fremden
+      // Systemen laufen (Signage, Kunden-Websites).
       {
-        source: "/(.*)\\.(jpg|jpeg|png|gif|webp|avif|svg|ico|woff|woff2|ttf|otf|eot)",
+        source: "/((?!tv(?:/|$)|einbetten(?:/|$)|siegel(?:/|$)).*)",
+        headers: [{ key: "Cross-Origin-Opener-Policy", value: "same-origin" }],
+      },
+      {
+        source: "/(.*)\\.(jpg|jpeg|png|gif|webp|avif|svg|ico|woff|woff2|ttf|otf|eot|vtt)",
         headers: [
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],

@@ -39,8 +39,55 @@ import FachTabs from "@/components/Loesungen/A/FachTabs";
 import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
 import W24HofSystem from "@/components/Loesungen/w24-HofSystem";
+import MannschaftTeaser from "@/components/Mannschaft/MannschaftTeaser";
+import BranchenReferenzen from "@/components/Referenzen/BranchenReferenzen";
+import IfbHinweis from "@/components/Verkauf/IfbHinweis";
+import EinwandKarten from "@/components/Verkauf/EinwandKarten";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
+import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
 import { zielgruppenVariante } from "@/data/zielgruppen";
+import { AUSSTATTUNG_BESTAETIGT, MANNSCHAFT } from "@/data/mannschaft";
+import { PARKREGLER_RECHTE_GEKLAERT } from "@/data/marke";
 import { BASE_URL } from "@/lib/site";
+
+// Welle A / A05: Fette Hero-Zeile nur, wenn sie die H1 nicht wiederholt – bei Kampagnenvarianten
+// titel + akzent (Message Match), bei der Standardvariante die kurze Zeile `kurz` aus A03 (falls vorhanden).
+// Netzentgelt-Satz zur Energiegemeinschaft: Stand laut /energiegemeinschaften/betriebe-gemeinden
+// (Begutachtungsentwurf SNE-GrundsatzV 07/2026).
+const EG_STAND = "30.09.2026";
+
+// Werbeaussagen-Schalter (Entscheidung des Inhabers 05.10.2026): „eigener Parkregler“/„eigenes SCADA“ ist
+// unbelegt (PARKREGLER_RECHTE_GEKLAERT = false). Der MannschaftTeaser liest seine Texte aus
+// src/data/mannschaft.js; solange dort noch „Eigener Parkregler“ o. Ä. steht, bleibt er hier ausgeblendet
+// (Übergabe an den Besitzer von mannschaft.js in docs/projekt-doku/anhang/wellen/A05.md).
+const UNBELEGT_PARKREGLER = /eigene[rs]? (parkregler|fernwartung|scada)|entwickeln wir selbst|eigene[rn]? entwicklung/i;
+const MANNSCHAFT_TEASER_SAUBER =
+  PARKREGLER_RECHTE_GEKLAERT ||
+  ![MANNSCHAFT.teaser, ...AUSSTATTUNG_BESTAETIGT.flatMap((a) => [a.kurz, a.text])].some((t) => UNBELEGT_PARKREGLER.test(t || ""));
+
+// Kürzerer Hero-Absatz für die Standardvariante: Der volle A03-Lead (sechs Zeilen) plus eigene fette Zeile
+// schob den Primär-CTA bei 1440×900 und 1024×768 unter den ersten Bildschirm (QA Welle A). Die A03-Zeile
+// `kurz` steht jetzt fett am Anfang des Absatzes; Dacharten (H1), Speicher (Hero-Punkt), Energiegemeinschaft
+// und Netzkapazität folgen in eigenen Abschnitten. Kampagnenvarianten behalten Zeile und Lead. Die Hero-Punkte
+// sind auf drei kurze reduziert (eine Zeile ab 1024 px); „Stall, Scheune & Maschinenhalle“ wiederholte die H1.
+const HERO_LEAD_STANDARD = "Steuerlich und förderrechtlich sauber abgestimmt – und wir sagen Ihnen auch, wenn sich Ihr Dach nicht lohnt.";
+
+function heroLead(v) {
+  if (v.id === "standard") {
+    if (!v.kurz) return v.lead;
+    return (
+      <>
+        <strong className="font-semibold text-white">{v.kurz}</strong> {HERO_LEAD_STANDARD}
+      </>
+    );
+  }
+  return (
+    <>
+      <span className="block font-display text-[1.15em] font-bold leading-snug text-white">{`${v.titel} ${v.akzent}`}</span>
+      <span className="mt-3 block">{v.lead}</span>
+    </>
+  );
+}
 
 const PFAD = "/landwirtschaft";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
@@ -63,7 +110,7 @@ const FAQ = [
   },
   {
     q: "Kann ich als pauschalierter Landwirt den Investitionsfreibetrag nutzen?",
-    a: "Nein, der Investitionsfreibetrag setzt eine Gewinnermittlung durch Bilanzierung oder Einnahmen-Ausgaben-Rechnung voraus und steht bei pauschaler Gewinnermittlung nicht zu. Wer buchführt, kann für Anschaffungen bis 31. Dezember 2026 den ökologischen IFB von 22 % geltend machen. Ob sich ein Wechsel lohnt, ist eine Frage für Ihre Steuerberatung.",
+    a: "Nein, der Investitionsfreibetrag setzt eine Gewinnermittlung durch Bilanzierung oder Einnahmen-Ausgaben-Rechnung voraus und steht bei pauschaler Gewinnermittlung nicht zu. Wer buchführt, kann für Anschaffungen bis 31. Dezember 2026 den ökologischen IFB von 22 % geltend machen. Ob sich ein Wechsel lohnt, ist eine Frage für Ihre Steuerberatung.",
   },
   {
     q: "Ist der Stromverkauf einkommensteuerfrei?",
@@ -83,7 +130,7 @@ const FAQ = [
   },
   {
     q: "Welche Förderungen gibt es für PV in der Landwirtschaft?",
-    a: "Bundesweit den EAG-Investitionszuschuss für PV-Anlagen bis 1.000 kWp und Speicher mit 150 € je kWh (bis 50 kWh, mindestens 0,5 kWh je kWp) – 2026 zuletzt im Fördercall von 8. bis 22. Oktober. Für Agri-PV gibt es 30 % Zuschlag. Dazu kommen je nach Bundesland Landes- und Gemeindeförderungen, die unser Förder-Check zusammenfasst.",
+    a: "Bundesweit den EAG-Investitionszuschuss für PV-Anlagen bis 1.000 kWp und Speicher mit 150 € je kWh (bis 50 kWh, mindestens 0,5 kWh je kWp) – 2026 zuletzt im Fördercall von 8. bis 22. Oktober. Für Agri-PV gibt es 30 % Zuschlag. Dazu kommen je nach Bundesland Landes- und Gemeindeförderungen, die unser Förder-Check zusammenfasst.",
   },
   {
     q: "Stört Stallluft die Technik?",
@@ -94,8 +141,8 @@ const FAQ = [
 const BEISPIEL = [
   { pos: "Betrieb", wert: "Milchviehbetrieb, Verbrauch 60.000 kWh/Jahr, Netzebene 7", ergebnis: "–" },
   { pos: "Anlage und Jahresertrag", wert: "50 kWp Stalldach Süd × 1.100 kWh/kWp", ergebnis: "55.000 kWh" },
-  { pos: "Eigenverbrauch mit 30-kWh-Speicher (60 %)", wert: "33.000 kWh × 20 ct (Energie, Netz, Abgaben)", ergebnis: "≈ 6.600 €/Jahr" },
-  { pos: "Einspeisung (40 %)", wert: "22.000 kWh × 6 ct", ergebnis: "≈ 1.320 €/Jahr" },
+  { pos: "Eigenverbrauch mit 30-kWh-Speicher (60 %)", wert: "33.000 kWh × 20 ct (Energie, Netz, Abgaben)", ergebnis: "≈ 6.600 €/Jahr" },
+  { pos: "Einspeisung (40 %)", wert: "22.000 kWh × 6 ct", ergebnis: "≈ 1.320 €/Jahr" },
   { pos: "Wartung, Versicherung", wert: "Annahme 1.000 €/Jahr", ergebnis: "− 1.000 €/Jahr" },
   { pos: "Jährlicher Vorteil", wert: "vor Steuern", ergebnis: "≈ 6.920 €/Jahr", hervorheben: true },
   { pos: "Investition", wert: "Annahme 50 kWp × 1.100 € + 30 kWh × 600 € (netto)", ergebnis: "73.000 €" },
@@ -159,7 +206,7 @@ const BETRIEBE = [
     },
     pvFaktor: 0.7,
     text: "Kühlräume und Obstlager brauchen rund um die Uhr Strom – zur Ernte und Einlagerung am meisten.",
-    punkte: ["Kühlung verbraucht tagsüber mehr, wenn es warm ist", "Über der Anlage: Agri-PV mit 30 % Förderzuschlag"],
+    punkte: ["Kühlung verbraucht tagsüber mehr, wenn es warm ist", "Über der Anlage: Agri-PV mit 30 % Förderzuschlag"],
     link: { label: "Agri-PV kennenlernen", href: "/agri-pv" },
   },
 ];
@@ -179,30 +226,38 @@ export default async function LandwirtschaftPage({ searchParams }) {
         leistungen={["PV auf Stall, Scheune und Maschinenhalle", "Speicher und Notstrom für Melk- und Kühltechnik", "Agri-PV", "Förderantrag EAG", "Wartung"]}
       />
 
+      <FoerdercallHinweis />
+
       <PageHero
         variant="immersive"
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Landwirtschaft" }]}
         eyebrow={v.eyebrow}
         title={<>Photovoltaik für die Landwirtschaft – <span className="ov-text-gradient-light">Stall, Scheune, Maschinenhalle</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+        lead={heroLead(v)}
         image={{ src: HERO_BILD, alt: "Bauernhof mit Photovoltaikanlagen auf den Dächern von Stall und Scheune vor Wald und Wiese", position: "center 60%" }}
         actions={[
           { label: v.cta, href: "/termin?art=vor-ort&thema=landwirtschaft" },
           { label: "Per Video beraten lassen", href: "/termin?art=video&thema=landwirtschaft", icon: CalendarCheck2 },
         ]}
-        points={["Stall, Scheune & Maschinenhalle", "Speicher & Notstrom fürs Melken", "Pauschalierung & Förderung geklärt", "Agri-PV mit 30 % Zuschlag"]}
+        points={["Speicher & Notstrom fürs Melken", "Pauschalierung geklärt", "Agri-PV mit 30 % Zuschlag"]}
       />
 
       <KennzahlenBand
         items={[
           { wert: 150, nach: " €/kWh", label: "EAG-Zuschuss für Stromspeicher bis 50 kWh, gemeinsam mit PV (2026)" },
           { wert: 12500, nach: " kWh", label: "Einspeisung pro Jahr einkommensteuerfrei (natürliche Personen, bis 35 kWp)" },
-          { wert: 30, vor: "+ ", nach: " %", label: "Förderzuschlag für Agri-PV nach EAG-Investitionszuschüsseverordnung" },
-          { wert: 22, nach: " %", label: "Öko-IFB bis Ende 2026 – nur bei Buchführung oder Einnahmen-Ausgaben-Rechnung" },
+          { wert: 30, vor: "+ ", nach: " %", label: "Förderzuschlag für Agri-PV nach EAG-Investitionszuschüsseverordnung" },
+          { wert: 22, nach: " %", label: "Öko-IFB bis Ende 2026 – nur bei Buchführung oder Einnahmen-Ausgaben-Rechnung" },
         ]}
         quelle="Quellen: EAG-IZV 2026 laut Leitfaden Land Oberösterreich (Stand 06/2026); § 3 Abs. 1 Z 39 EStG; WKO (Investitionsfreibetrag)."
       />
+
+      {/* Eigene Leute, eigene Maschinen (nur bestätigte Einträge aus src/data/mannschaft.js) */}
+      {MANNSCHAFT_TEASER_SAUBER && <MannschaftTeaser />}
+
+      {/* Belegte Referenzen aus Lebensmittel und Landtechnik – rendert nichts ohne Treffer (A03) */}
+      <BranchenReferenzen zielgruppe="lebensmittel-agrar" titel="Betriebe aus Lebensmittel und Landtechnik, die schon mit Ökovolt-Strom arbeiten" />
 
       <Section tone="white" space="md">
         <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
@@ -220,7 +275,7 @@ export default async function LandwirtschaftPage({ searchParams }) {
             { icon: Egg, titel: "Schweine & Geflügel", text: "Lüftung, Heizung und Fütterung erzeugen eine hohe Grundlast – ideal für hohen Eigenverbrauch über das ganze Jahr.", bild: "/Images/AT/loesungen-a/lw-stall-pv.jpg", alt: "Langer Stall mit Photovoltaikmodulen auf dem Dach" },
             { icon: Wheat, titel: "Trocknung & Lager", text: "Getreide- und Heutrocknung, Obstlager und Kühlräume verbrauchen saisonal viel Strom, oft genau im Sommer.", bild: "/Images/AT/loesungen-a/lw-scheune-pv.jpg", alt: "Holzscheune mit Photovoltaikanlage auf dem Dach" },
             { icon: BatteryCharging, titel: "Speicher & Notstrom", text: "Bei Netzausfall bleiben Melkanlage, Kühlung, Lüftung und Tränke versorgt – Tierwohl und Blackout-Vorsorge.", bild: "/Images/AT/ratgeber/batteriespeicher-anlage.jpg", alt: "Batteriespeicher-Anlage mit Containern (Symbolbild)", href: "/service/notstrom" },
-            { icon: Sprout, titel: "Agri-PV auf der Fläche", text: "Vertikal zwischen Grünland- und Ackerstreifen oder hoch über Obst und Beeren – mit 30 % Förderzuschlag.", bild: "/Images/AT/loesungen-a/agri-vertikal-getreide.jpg", alt: "Vertikale Agri-PV-Modulreihen in einem Getreidefeld", href: "/agri-pv" },
+            { icon: Sprout, titel: "Agri-PV auf der Fläche", text: "Vertikal zwischen Grünland- und Ackerstreifen oder hoch über Obst und Beeren – mit 30 % Förderzuschlag.", bild: "/Images/AT/loesungen-a/agri-vertikal-getreide.jpg", alt: "Vertikale Agri-PV-Modulreihen in einem Getreidefeld", href: "/agri-pv" },
           ]}
         />
       </Section>
@@ -253,6 +308,34 @@ export default async function LandwirtschaftPage({ searchParams }) {
           bild={{ src: "/Images/AT/loesungen/agri-pv-obstbau.jpg", alt: "Hoch aufgeständerte Agri-PV-Module über einer Apfelanlage" }}
           aktion={{ label: "Agri-PV kennenlernen", href: "/agri-pv" }}
         />
+      </Section>
+
+      {/* Höfe als Erzeuger der Gemeinde-Energiegemeinschaft */}
+      <Section tone="sand" space="md" id="energiegemeinschaft" className="scroll-mt-24">
+        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="Energiegemeinschaft der Gemeinde"
+            title="Höfe als Erzeuger der Gemeinde-Energiegemeinschaft"
+            lead="Große Stall- und Hallendächer erzeugen mehr, als der Hof im Sommer braucht. Statt den Überschuss für wenige Cent einzuspeisen, liefern viele Höfe ihn an Nachbarn, Betriebe und die Gemeinde im Ort."
+          />
+          <div>
+            <Prosa>
+              <p>
+                In einer Erneuerbare-Energie-Gemeinschaft wird der Hof zum Erzeuger für den Ort: Der Strom vom Stalldach versorgt Gemeindeamt, Schule,
+                Gewerbebetrieb oder Haushalte in der Nähe, abgerechnet über die Smart-Meter-Werte des Netzbetreibers. Der Hof bekommt dafür einen
+                Preis, den die Gemeinschaft selbst festlegt – in der Regel über dem Einspeisetarif. Wie Gemeinden und Betriebe eine solche
+                Gemeinschaft aufsetzen, lesen Sie unter{" "}
+                <Link href="/energiegemeinschaften/betriebe-gemeinden">Energiegemeinschaften für Betriebe und Gemeinden</Link>.
+              </p>
+              <p>
+                Für den Gemeinschaftsstrom sinkt bis Ende 2026 der Arbeitspreis des Netznutzungsentgelts bei den Abnehmern – lokal um 57 %, regional
+                um 28 % (Netzebene 6 und 7). Netzentgelt-Reduktionen ab 2027 sind noch nicht verordnet (Stand {EG_STAND}); bekannt ist nur der
+                Begutachtungsentwurf der Grundsatzverordnung. Was Ihr Dach für die Gemeinschaft wert ist, zeigt der{" "}
+                <Link href="/rechner/energiegemeinschaft">Energiegemeinschafts-Rechner</Link> – mit Ihren Dachflächen und den Verbrauchern im Ort.
+              </p>
+            </Prosa>
+          </div>
+        </div>
       </Section>
 
       {/* Werkzeuge: selbst rechnen & vorsorgen */}
@@ -311,6 +394,9 @@ export default async function LandwirtschaftPage({ searchParams }) {
           ]}
         />
       </Section>
+
+      {/* Öko-IFB bis 31.12.2026 – blendet sich nach Fristende selbst aus (A03) */}
+      <IfbHinweis zusatz="nicht bei pauschalierter Gewinnermittlung" />
 
       <Section tone="sand" space="md" id="fachdetails">
         <div className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
@@ -415,7 +501,13 @@ export default async function LandwirtschaftPage({ searchParams }) {
         </FachTabs>
       </Section>
 
-      <Section tone="white" space="md">
+      {/* Einwände vor der FAQ; die FAQ liefert bereits das FAQPage-Schema, daher mitSchema aus */}
+      <Section tone="white" space="md" id="einwaende" className="scroll-mt-24">
+        <SectionHeading eyebrow="Einwände" title="Was Betriebe vor der Entscheidung fragen" className="mb-8" />
+        <EinwandKarten gruppe="landwirtschaft" mitSchema={false} titel={false} />
+      </Section>
+
+      <Section tone="sand" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div>
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen vor der Planung" />
@@ -437,6 +529,10 @@ export default async function LandwirtschaftPage({ searchParams }) {
       </Section>
 
       <Querverweise pfad={PFAD} ueberschrift="Passende Themen für Ihren Betrieb" />
+
+      <Section tone="white" space="md" id="ansprechpartner" className="scroll-mt-24">
+        <Ansprechpartner zielgruppe="landwirtschaft" />
+      </Section>
 
       <CtaBand
         eyebrow="Kostenlos & unverbindlich"

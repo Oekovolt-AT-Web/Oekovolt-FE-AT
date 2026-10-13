@@ -206,7 +206,7 @@ export default function RegelungGrafik({ aktiv }) {
           Überwachung und Reporting
         </text>
         <text x="170" y={SC.y + 142} fontSize="21" fill="rgba(255,255,255,0.62)">
-          aus eigener Entwicklung
+          mit Technologiepartner Solensa
         </text>
 
         {/* schematische Verlaufskurve, ohne Werte */}

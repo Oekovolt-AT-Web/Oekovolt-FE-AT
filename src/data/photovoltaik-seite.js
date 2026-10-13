@@ -27,7 +27,7 @@ export const PV_FAQ = [
   {
     frage: "Was bedeutet TOR Stromerzeugungsanlagen für meine Anlage?",
     antwort:
-      "Die Technischen und organisatorischen Regeln (TOR) legen fest, welche Anforderungen eine Erzeugungsanlage am Netz erfüllen muss. Anlagen ab 0,8 kW bis unter 250 kW sind Typ A, ab 250 kW bis unter 35 MW Typ B. Ab Typ B kommen Anforderungen an Fernsteuerbarkeit, Blindleistung und Nachweise hinzu – dafür setzen wir unseren eigenen Parkregler ein.",
+      "Die Technischen und organisatorischen Regeln (TOR) legen fest, welche Anforderungen eine Erzeugungsanlage am Netz erfüllen muss. Anlagen ab 0,8 kW bis unter 250 kW sind Typ A, ab 250 kW bis unter 35 MW Typ B. Ab Typ B kommen Anforderungen an Fernsteuerbarkeit, Blindleistung und Nachweise hinzu – dafür setzen wir einen Parkregler mit unserem Technologiepartner Solensa ein.",
   },
   {
     frage: "Brauche ich für eine Photovoltaikanlage eine Baubewilligung?",
@@ -52,6 +52,6 @@ export const PV_FAQ = [
   {
     frage: "Übernimmt Ökovolt auch die Wartung?",
     antwort:
-      "Ja. Wir überwachen Anlagen mit eigenen Fernwartungs- und SCADA-Systemen und bieten Wartungsverträge mit Service-Level passend zur Anlagengröße – inklusive wiederkehrender Prüfung, Reinigung und Thermografie auf Wunsch.",
+      "Ja. Wir überwachen Anlagen mit Fernwartung und SCADA mit unserem Technologiepartner Solensa und bieten Wartungsverträge mit Service-Level passend zur Anlagengröße – inklusive wiederkehrender Prüfung, Reinigung und Thermografie auf Wunsch.",
   },
 ];

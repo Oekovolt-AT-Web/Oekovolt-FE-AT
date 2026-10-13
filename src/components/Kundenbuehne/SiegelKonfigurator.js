@@ -1,13 +1,18 @@
 "use client";
 
+// src/components/Kundenbuehne/SiegelKonfigurator.js
+//
+// Konfigurator der Projekt-Plakette (ehemals „Solar-Siegel“, Dateiname aus Kompatibilität):
+// Auswahl hell/dunkel × kompakt/breit, Vorschau und Einbau-Code. Erscheint nur mit Freigabe
+// „Projekt-Plakette“ – die Seite prüft das (src/lib/kundenbuehneServer.js, kit.plakette).
+
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 import KopierFeld from "./KopierFeld";
 
 /**
- * Auswahl hell/dunkel × kompakt/breit, Vorschau und Einbau-Code.
- * varianten: { "hell-klein": { src, code, breite, hoehe }, … } – serverseitig berechnet.
+ * varianten: { "hell-klein": { src, code, breite, hoehe, alt }, … } – serverseitig berechnet.
  */
 const STILE = [
   { id: "hell", label: "Hell" },
@@ -40,11 +45,22 @@ function Umschalter({ label, optionen, wert, setzen }) {
   );
 }
 
-export default function SiegelKonfigurator({ varianten, dateiname }) {
+export default function SiegelKonfigurator({ varianten, dateiname, freigegeben = true }) {
   const [stil, setStil] = useState("hell");
   const [format, setFormat] = useState("klein");
   const [grund, setGrund] = useState("hell");
-  const v = varianten[`${stil}-${format}`];
+  const v = varianten?.[`${stil}-${format}`];
+
+  if (!freigegeben || !v) {
+    return (
+      <div className="rounded-3xl bg-sand-50 p-6 text-[15px] leading-relaxed text-ink-700 ring-1 ring-ink-200/60 md:p-8">
+        <h3 className="font-display text-[20px] font-bold text-ink-900">Projekt-Plakette noch nicht freigegeben</h3>
+        <p className="mt-2">
+          Die Plakette stellen wir erst bereit, wenn Sie sie über Ihren Freigabe-Link ausdrücklich freigegeben haben. Den Link erhalten Sie von Ihrer Projektleitung – oder schreiben Sie uns kurz.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
@@ -78,7 +94,7 @@ export default function SiegelKonfigurator({ varianten, dateiname }) {
       <div>
         <h3 className="font-display text-[20px] font-bold text-ink-900">Einbau-Code</h3>
         <p className="mt-2 text-[15px] leading-relaxed text-ink-600">
-          Fügen Sie diesen HTML-Code dort ein, wo das Siegel erscheinen soll – etwa im Fußbereich oder auf Ihrer Nachhaltigkeitsseite (im CMS meist als „HTML-Block“).
+          Fügen Sie diesen HTML-Code dort ein, wo die Plakette erscheinen soll – etwa im Fußbereich oder auf Ihrer Seite „Über uns“ (im CMS meist als „HTML-Block“).
         </p>
         <KopierFeld className="mt-4" text={v.code} label="Code kopieren" code zeilen={6} />
         <a
@@ -89,6 +105,9 @@ export default function SiegelKonfigurator({ varianten, dateiname }) {
           <Download aria-hidden="true" className="h-4 w-4" />
           SVG herunterladen
         </a>
+        <p className="mt-4 text-[13px] leading-relaxed text-ink-500">
+          Die Plakette ist eine sachliche Projektangabe (Errichter, Jahr, Leistung) – kein Siegel, keine Bewertung und kein Nachhaltigkeitszeichen. Sie können die Freigabe jederzeit widerrufen; die Plakette liefert dann ein leeres Ergebnis.
+        </p>
       </div>
     </div>
   );

@@ -405,7 +405,7 @@ const artikel = {
   seitenCta: { titel: "PV für Ihren Betrieb?", text: "Anlage passend zu Lastgang, Dach und Netzanschluss planen lassen.", href: "/angebot", label: "Anfrage starten" },
   cta: {
     title: "Solarstrom für Ihren Betrieb – ausgelegt auf Ihren Lastgang.",
-    text: "Ökovolt plant, montiert und meldet Gewerbeanlagen in ganz Österreich aus einer Hand – mit eigenem Parkregler, eigener Fernwartung und eigenem SCADA.",
+    text: "Ökovolt plant, montiert und meldet Gewerbeanlagen in ganz Österreich aus einer Hand – mit Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "Förder-Check", href: "/foerdercheck" },
   },

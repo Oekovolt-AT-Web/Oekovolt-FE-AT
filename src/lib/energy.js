@@ -1,12 +1,20 @@
 // src/lib/energy.js
 //
 // Live-Daten zum österreichischen Strommarkt – nur öffentliche, schlüsselfreie Quellen:
-//   - Fraunhofer ISE Energy-Charts (CC BY 4.0): Day-Ahead-Preis der Gebotszone AT
-//     (bzn=AT, 15-Minuten-Auflösung seit 1. Oktober 2025) und öffentliche
-//     Nettostromerzeugung Österreichs je Quelle (country=at).
+//   - SMARD (Bundesnetzagentur, CC BY 4.0): Day-Ahead-Großhandelspreis Österreich
+//     (Filter 4170 „Marktpreis: Österreich“, Region DE, Auflösung quarterhour).
+//     https://www.smard.de – Datenstand Viertelstunde seit 1. Oktober 2025; davor liegen die
+//     Stundenpreise als vier gleiche Viertelstundenwerte vor. Geprüft am 2026-10-11: identisch
+//     mit der Energy-Charts-Reihe bzn=AT (Abweichung 0,000 €/MWh über eine Woche).
+//     Primäre Preisquelle für Live-Seite, Rechner und die Marktindizes (scripts/marktindizes.mjs).
+//   - Fraunhofer ISE Energy-Charts (CC BY 4.0): öffentliche Nettostromerzeugung Österreichs
+//     je Quelle (country=at) für den Strommix; außerdem Ersatzquelle für den Preis, falls
+//     SMARD nicht antwortet (die Preisdaten dort stammen ebenfalls von Bundesnetzagentur | SMARD.de).
 //     https://api.energy-charts.info – geprüft am 2026-09-28 per curl.
-//   - aWATTar Österreich (Fallback für die Preise): stündlicher Day-Ahead-Preis AT.
-//     https://api.awattar.at/v1/marketdata
+//   - aWATTar Österreich wurde als Ersatzquelle entfernt (B10, 2026-10-11): Die API-Seite
+//     erlaubt nur eine kostenlose Nutzung „nach dem Fair-Use-Prinzip (100 Abfragen pro Tag)“ und
+//     räumt keine Lizenz zur Weiterveröffentlichung der EPEX-Spot-Daten ein; eine klare
+//     Erlaubnis für die Anzeige auf einer gewerblichen Website fehlt.
 //
 // Österreich bildet seit 1. Oktober 2018 eine eigene Gebotszone (Trennung der
 // früheren Zone DE-AT-LU). Die Preise weichen deshalb vom deutschen Preis ab.
@@ -20,8 +28,16 @@
 // liefern leere Reihen bzw. null und werden in der Oberfläche weggelassen.
 
 const EC = "https://api.energy-charts.info";
+const SMARD = "https://www.smard.de/app/chart_data";
 export const ZEITZONE = "Europe/Vienna";
 export const GEBOTSZONE = "AT";
+
+/** SMARD-Filter „Marktpreis: Österreich“ (Day-Ahead, €/MWh). Die Nachbarländer liegen unter Region DE. */
+export const SMARD_FILTER_AT = 4170;
+export const SMARD_REGION = "DE";
+export const SMARD_ATTRIBUTION = "Bundesnetzagentur | SMARD.de";
+export const SMARD_LIZENZ = "https://creativecommons.org/licenses/by/4.0/";
+const WOCHE_MS = 7 * 86400000;
 
 // Grobe Orientierung für die Umrechnung „Börsenpreis → Endkundenpreis“ bei einem
 // dynamischen Tarif in Österreich (Haushalt, Netzebene 7), Stand 2026:
@@ -55,31 +71,77 @@ function wienDatum(offsetTage = 0) {
 }
 
 /**
+ * Zeitstempel der SMARD-Wochenblöcke (Montag 0 Uhr Ortszeit, ms) für Filter/Auflösung.
+ * revalidate: Next-Cache in Sekunden (im Skript ohne Wirkung).
+ */
+export async function smardIndex(aufloesung = "quarterhour", revalidate = 3600) {
+  const j = await holeJson(`${SMARD}/${SMARD_FILTER_AT}/${SMARD_REGION}/index_${aufloesung}.json`, revalidate);
+  return Array.isArray(j.timestamps) ? j.timestamps : [];
+}
+
+/**
+ * Day-Ahead-Preise Österreich von SMARD für ein Zeitfenster [von, bis) in ms.
+ * Lädt nur die Wochenblöcke, die das Fenster berühren. Rückgabe: [{ t, eurMwh }] sortiert,
+ * Werte ohne Preis (null, noch nicht veröffentlicht) werden weggelassen.
+ */
+export async function smardPreise(von, bis, { aufloesung = "quarterhour", revalidate = 900 } = {}) {
+  const index = await smardIndex(aufloesung, Math.max(revalidate, 900));
+  const bloecke = index.filter((t) => t < bis && t + WOCHE_MS > von);
+  const punkte = [];
+  for (const t of bloecke) {
+    const j = await holeJson(`${SMARD}/${SMARD_FILTER_AT}/${SMARD_REGION}/${SMARD_FILTER_AT}_${SMARD_REGION}_${aufloesung}_${t}.json`, revalidate);
+    for (const [zeit, wert] of j.series || []) {
+      if (zeit >= von && zeit < bis && typeof wert === "number") punkte.push({ t: zeit, eurMwh: wert });
+    }
+  }
+  return punkte.sort((a, b) => a.t - b.t);
+}
+
+/**
  * Day-Ahead-Preise der Gebotszone AT für heute (und morgen, sobald veröffentlicht –
  * nach der Auktion gegen Mittag). Rückgabe: { quelle, aufloesungMin, punkte: [{ t: ms, eurMwh }] }
+ * Quelle: SMARD (Bundesnetzagentur); Ersatz: Energy-Charts (Fraunhofer ISE).
  */
 export async function getSpotPrices() {
+  const jetzt = Date.now();
+  let smard = [];
   try {
-    const start = wienDatum(0);
-    const ende = wienDatum(2);
-    const j = await holeJson(`${EC}/price?bzn=${GEBOTSZONE}&start=${start}&end=${ende}`, 900);
+    // Fenster großzügig: gestern bis übermorgen, gefiltert wird in getEnergySnapshot nach Wiener Kalendertag
+    smard = await smardPreise(jetzt - 86400000, jetzt + 2 * 86400000, { revalidate: 900 });
+  } catch (e) {
+    console.error("smard price AT:", e.message);
+  }
+  const tagWien = (t) => new Intl.DateTimeFormat("sv-SE", { timeZone: ZEITZONE }).format(new Date(t));
+  const hatMorgen = smard.some((p) => tagWien(p.t) === wienDatum(1));
+  const stundeWien = Number(new Intl.DateTimeFormat("de-AT", { hour: "numeric", hourCycle: "h23", timeZone: ZEITZONE }).format(new Date(jetzt)));
+  // SMARD vollständig (oder Auktion für morgen noch nicht gelaufen) → nur SMARD
+  if (smard.length && (hatMorgen || stundeWien < 13)) {
+    return { quelle: SMARD_ATTRIBUTION, aufloesungMin: aufloesung(smard), punkte: smard };
+  }
+  // Energy-Charts: Ersatz bei SMARD-Ausfall; nach der Mittagsauktion auch Ergänzung für morgen,
+  // falls SMARD den Folgetag noch nicht veröffentlicht hat (Preisdaten dort ebenfalls aus SMARD).
+  try {
+    const j = await holeJson(`${EC}/price?bzn=${GEBOTSZONE}&start=${wienDatum(0)}&end=${wienDatum(2)}`, 900);
     const sek = j.unix_seconds || [];
-    const punkte = sek.map((s, i) => ({ t: s * 1000, eurMwh: j.price?.[i] })).filter((p) => typeof p.eurMwh === "number");
-    const schrittMin = sek.length > 1 ? Math.round((sek[1] - sek[0]) / 60) : 15;
-    if (punkte.length) return { quelle: "Energy-Charts (Fraunhofer ISE)", aufloesungMin: schrittMin === 60 ? 60 : 15, punkte };
+    const ec = sek.map((s, i) => ({ t: s * 1000, eurMwh: j.price?.[i] })).filter((p) => typeof p.eurMwh === "number");
+    if (smard.length) {
+      const letzter = smard[smard.length - 1].t;
+      const dazu = ec.filter((p) => p.t > letzter);
+      const punkte = [...smard, ...dazu];
+      return { quelle: dazu.length ? `${SMARD_ATTRIBUTION} · Energy-Charts (Fraunhofer ISE)` : SMARD_ATTRIBUTION, aufloesungMin: aufloesung(punkte), punkte };
+    }
+    return { quelle: ec.length ? "Energy-Charts (Fraunhofer ISE)" : null, aufloesungMin: aufloesung(ec), punkte: ec };
   } catch (e) {
     console.error("energy-charts price AT:", e.message);
+    if (smard.length) return { quelle: SMARD_ATTRIBUTION, aufloesungMin: aufloesung(smard), punkte: smard };
+    return { quelle: null, aufloesungMin: 15, punkte: [] };
   }
-  try {
-    const j = await holeJson("https://api.awattar.at/v1/marketdata", 900);
-    const punkte = (j.data || [])
-      .map((p) => ({ t: p.start_timestamp, eurMwh: p.marketprice }))
-      .filter((p) => typeof p.eurMwh === "number");
-    return { quelle: punkte.length ? "aWATTar Österreich" : null, aufloesungMin: 60, punkte };
-  } catch (e) {
-    console.error("awattar AT:", e.message);
-    return { quelle: null, aufloesungMin: 60, punkte: [] };
-  }
+}
+
+/** Auflösung einer Preisreihe in Minuten (15 oder 60) aus den ersten beiden Punkten */
+function aufloesung(punkte) {
+  const schrittMin = punkte.length > 1 ? Math.round((punkte[1].t - punkte[0].t) / 60000) : 15;
+  return schrittMin === 60 ? 60 : 15;
 }
 
 /**

@@ -100,13 +100,15 @@ export default function EnergieberatungPage() {
           </>
         }
         lead="Wer weiß, wann und wofür Strom gebraucht wird, investiert richtig. Wir analysieren Ihren Lastgang, unterstützen beim Energieaudit nach EEffG und bei ISO 50001, entwickeln einen Dekarbonisierungsfahrplan und zeigen, welche Förderungen passen."
-        image={{ src: "/Images/AT/service-b/energieberatung-daten.jpg", alt: "Tablet mit Verbrauchsdiagrammen bei der Auswertung von Energiedaten" }}
+        image={{ src: "/Images/AT/service-b/energieberatung-daten.jpg", alt: "Tablet mit Verbrauchsdiagrammen bei der Auswertung von Energiedaten (Symbolbild)" }}
         points={["Lastganganalyse in Viertelstundenwerten", "Energieaudit nach EEffG", "ISO 50001 & Dekarbonisierung", "Förderberatung Bund & Länder"]}
         actions={[
           { label: "Beratung anfragen", href: "#anfrage" },
           { label: "Auditpflicht prüfen", href: "#eeffg", icon: ClipboardList },
         ]}
-      />
+      >
+        <p className="mt-6 text-[12px] text-white/60">Foto: Symbolbild.</p>
+      </HeroBild>
 
       <Kennzahlen
         frage="Was bringt eine Energieberatung mit Lastganganalyse?"
@@ -198,8 +200,9 @@ export default function EnergieberatungPage() {
               titel: "Lastganganalyse",
               text: "Viertelstundenwerte auswerten: Grundlast, Spitzen, Profile und Gleichzeitigkeit mit der PV-Erzeugung – nachvollziehbar gerechnet.",
             },
-            { bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Ingenieur mit Tablet vor einer Photovoltaikanlage" }, icon: ClipboardList, titel: "Energieaudit nach EEffG", text: "Technische Grundlagen und Maßnahmen – in Abstimmung mit Ihrer Auditorin." },
-            { bild: { src: "/Images/AT/service-b/schaltschrank-messung.jpg", alt: "Elektriker misst mit Prüfspitzen in einem Schaltschrank" }, icon: Gauge, titel: "ISO 50001", text: "Messkonzept, Unterzähler, Kennzahlen und Datenerfassung." },
+            // Stock-Motive mit Personen → Symbolbild (Welle A02)
+            { bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Ingenieur mit Tablet vor einer Photovoltaikanlage (Symbolbild)" }, icon: ClipboardList, tag: "Symbolbild", titel: "Energieaudit nach EEffG", text: "Technische Grundlagen und Maßnahmen – in Abstimmung mit Ihrer Auditorin." },
+            { bild: { src: "/Images/AT/service-b/schaltschrank-messung.jpg", alt: "Elektriker misst mit Prüfspitzen in einem Schaltschrank (Symbolbild)" }, icon: Gauge, tag: "Symbolbild", titel: "ISO 50001", text: "Messkonzept, Unterzähler, Kennzahlen und Datenerfassung." },
             { bild: { src: "/Images/AT/ratgeber/pv-gewerbe-dornbirn.jpg", alt: "Gewerbebetrieb mit Photovoltaik in Österreich" }, icon: Route, titel: "Dekarbonisierungsfahrplan", text: "Scope 1 und 2 mit Kosten, Einsparung und Zeitplan." },
             { bild: { src: "/Images/AT/ratgeber/eag-investitionszuschuss.jpg", alt: "Photovoltaikanlage als förderfähige Investition" }, icon: BadgeEuro, titel: "Förderberatung", text: "EAG, Umweltförderung, Länder und Investitionsfreibetrag." },
           ]}

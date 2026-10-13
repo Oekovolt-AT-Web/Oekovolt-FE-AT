@@ -3,13 +3,15 @@ import { ClipboardCheck, Handshake, Ruler, Wrench } from "lucide-react";
 
 import Konfigurator from "@/components/Angebot/Konfigurator";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import { Eyebrow } from "@/components/ui/SectionHeading";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import { BASE_URL } from "@/lib/site";
+import { KENNZAHLEN, KENNZAHLEN_HINWEIS_STAND } from "@/data/kennzahlen";
+
+const ANLAGEN = KENNZAHLEN.find((k) => k.id === "anlagen");
 
 const PAGE_URL = `${BASE_URL}/angebot`;
 const TITEL = "PV-Angebot für Betriebe anfragen | Ökovolt";
@@ -46,10 +48,16 @@ const schema = {
 
 const FAQ = [
   { q: "Ist die Anfrage wirklich kostenlos?", a: "Ja. Die Ersteinschätzung, das Beratungsgespräch und das Angebot sind für Sie kostenlos und unverbindlich." },
-  { q: "Was passiert nach dem Absenden?", a: "Eine Projektleiterin oder ein Projektleiter von Ökovolt aus Ostermiething meldet sich persönlich, klärt Fläche, Lastgang und Netzanschluss und bereitet auf dieser Grundlage ein individuelles Angebot mit Wirtschaftlichkeitsrechnung und Förderprüfung vor." },
+  {
+    q: "Was passiert nach dem Absenden?",
+    a: "Sie erhalten eine Eingangsbestätigung per E-Mail. Eine Projektleiterin oder ein Projektleiter von Ökovolt aus Ostermiething meldet sich persönlich, klärt Fläche, Lastgang und Netzanschluss und bereitet auf dieser Grundlage ein individuelles Angebot mit Wirtschaftlichkeitsrechnung und Förderprüfung vor. Wenn Sie es eilig haben, wählen Sie direkt nach dem Absenden einen Gesprächstermin.",
+  },
   { q: "Wie genau ist die Ersteinschätzung?", a: "Sie ist ein Richtwert: Für Betriebe legen wir die Anlage eigenverbrauchsorientiert auf etwa 70 % des Jahresverbrauchs aus, begrenzt durch die angegebene Fläche, und rechnen mit dem spezifischen Ertrag je kWp. Verschattung, Statik, Netzanschluss und Ihr Lastgang fließen erst in das verbindliche Angebot ein; Preise nennen wir im Gewerbe erst nach dieser Prüfung." },
   { q: "Welche Unterlagen helfen bei Gewerbeprojekten?", a: "Die letzte Strom- und Netzrechnung (Jahresverbrauch, Netzebene, Leistungspreis), der Lastgang in 15-Minuten-Werten vom Netzbetreiber, Dachpläne oder Fotos sowie Angaben zu Trafo bzw. Zählerplatz. Sie können uns die Unterlagen nach der Anfrage einfach per E-Mail schicken." },
-  { q: "Was passiert mit meinen Daten?", a: "Wir nutzen Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage und geben sie nicht an Dritte weiter. Details finden Sie in unserer Datenschutzerklärung." },
+  {
+    q: "Was passiert mit meinen Daten?",
+    a: "Wir nutzen Ihre Angaben ausschließlich zur Bearbeitung Ihrer Anfrage (Art. 6 Abs. 1 lit. b DSGVO) und geben sie nicht an Dritte weiter. Eine Telefonnummer ist freiwillig; angerufen werden Sie nur, wenn Sie das ausdrücklich ankreuzen. Details finden Sie in unserer Datenschutzerklärung.",
+  },
 ];
 
 export default function AngebotPage() {
@@ -57,27 +65,29 @@ export default function AngebotPage() {
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <section className="ov-noise relative isolate overflow-hidden bg-navy-950 pb-40 pt-8 text-white md:pb-48 md:pt-12">
+      <section className="ov-noise relative isolate overflow-hidden bg-navy-950 pb-28 pt-6 text-white md:pb-32 md:pt-8">
         <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10" />
         <div aria-hidden="true" className="absolute -left-32 top-10 -z-10 h-[420px] w-[420px] rounded-full bg-ov-500/25 blur-[120px]" />
         <div aria-hidden="true" className="absolute -right-20 -top-24 -z-10 h-[380px] w-[380px] rounded-full bg-sun-400/15 blur-[120px]" />
         <div className="ov-container">
-          <Breadcrumbs dark items={[{ name: "Angebot anfragen" }]} className="ov-hero-in mb-10" />
-          <div className="max-w-3xl">
-            <div className="ov-hero-in" style={{ "--ov-delay": "60ms" }}>
-              <Eyebrow dark className="mb-5">Angebots-Konfigurator</Eyebrow>
-            </div>
-            <h1 className="ov-h1 ov-hero-in" style={{ "--ov-delay": "120ms" }}>
+          <Breadcrumbs dark items={[{ name: "Angebot anfragen" }]} className="ov-hero-in mb-3" />
+          {/* Kompakter Kopf: Die erste Frage soll bei 1440 px oberhalb von 450 px und mobil im ersten Bildschirm liegen.
+              Die Eyebrow „Angebots-Konfigurator“ entfällt – der Konfigurator zeigt selbst „Schritt 1 von 5“. */}
+          <div className="max-w-5xl">
+            <h1
+              className="ov-hero-in font-display text-[clamp(2rem,1.3rem+2.2vw,3rem)] font-extrabold leading-[1.08] tracking-[-0.03em]"
+              style={{ "--ov-delay": "60ms" }}
+            >
               Ihr PV-Projekt in <span className="ov-text-gradient-light whitespace-nowrap">2 Minuten</span> erfasst.
             </h1>
-            <p className="ov-lead ov-hero-in mt-6 max-w-2xl text-white/70" style={{ "--ov-delay": "200ms" }}>
-              Fünf kurze Fragen zu Vorhaben, Objekt, Fläche, Verbrauch und Netzanschluss – Sie sehen sofort Anlagengröße, Ertrag und Förderkategorie als Richtwert. Für Betriebe, Landwirtschaft und Gemeinden in ganz Österreich; kostenlos und unverbindlich.
+            <p className="ov-hero-in mt-2 max-w-6xl text-[clamp(1rem,0.95rem+0.2vw,1.125rem)] leading-relaxed text-white/70" style={{ "--ov-delay": "120ms" }}>
+              Fünf kurze Fragen – sofort Anlagengröße, Ertrag und Förderkategorie als Richtwert. Kostenlos und unverbindlich.
             </p>
           </div>
         </div>
       </section>
 
-      <div className="ov-container relative z-10 -mt-32 pb-16 md:-mt-40 md:pb-24">
+      <div className="ov-container relative z-10 -mt-24 pb-16 md:-mt-28 md:pb-24">
         <div className="ov-hero-in" style={{ "--ov-delay": "260ms" }}>
           <Suspense fallback={<div className="h-[640px] animate-pulse rounded-[2rem] bg-white shadow-xl" />}>
             <Konfigurator />
@@ -93,7 +103,7 @@ export default function AngebotPage() {
             klein
             items={[
               { value: "2012", label: "in Österreich eingetragen", text: "Ökovolt Solartechnik GmbH" },
-              { value: 30, suffix: " MWp", label: "allein 2021 errichtet", text: "TOP 3 der EPC-Errichter" },
+              { value: ANLAGEN.zahl, label: ANLAGEN.label, text: KENNZAHLEN_HINWEIS_STAND },
               { value: 9, label: "Bundesländer", text: "Vor-Ort-Termine in ganz Österreich" },
               { value: 0, suffix: " €", label: "Ersteinschätzung", text: "kostenlos und unverbindlich" },
             ]}

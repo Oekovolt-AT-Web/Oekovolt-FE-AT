@@ -35,12 +35,16 @@ const OHNE_WIDGET = ["/hinweisgebersystem", "/termin", "/angebot"];
 const ICONS = { Phone, Video, MapPin };
 // Merkt sich, ob der Besucher den großen Launcher auf das Icon verkleinert hat.
 const KLEIN_KEY = "ov-rueckruf-klein";
+// Anteil der Seite, ab dem der Launcher auch ohne Interaktion erscheint
+const SCROLL_SCHWELLE = 0.25;
 
 export default function RueckrufWidget() {
   const pfad = usePathname() || "/";
   const [offen, setOffen] = useState(false);
   const [tab, setTab] = useState("rueckruf");
   const [sichtbar, setSichtbar] = useState(false);
+  // Mobil (< lg): solange der Seitenkopf im Bild ist, bleibt der Launcher weg (lag sonst über Hero-Text)
+  const [imKopf, setImKopf] = useState(false);
   const [geoeffnet, setGeoeffnet] = useState(null);
   const [klein, setKlein] = useState(false);
   const ausloeser = useRef(null);
@@ -81,16 +85,57 @@ export default function RueckrufWidget() {
     ausloeser.current?.focus();
   };
 
-  // Launcher dezent verzögert einblenden
+  // Öffnungsstatus (Punkt „jetzt erreichbar“) jede Minute auffrischen
   useEffect(() => {
     setGeoeffnet(oeffnungsStatus().offen);
-    const t = setTimeout(() => setSichtbar(true), 2500);
     const i = setInterval(() => setGeoeffnet(oeffnungsStatus().offen), 60000);
-    return () => {
-      clearTimeout(t);
-      clearInterval(i);
-    };
+    return () => clearInterval(i);
   }, []);
+
+  // Launcher erst einblenden, wenn der Besucher sich mit der Seite beschäftigt: erste Interaktion
+  // (Tippen, Klicken, Taste) oder 25 % Scrolltiefe – nicht mehr pauschal nach 2,5 s über dem Hero.
+  useEffect(() => {
+    if (sichtbar) return undefined;
+    const zeigen = () => setSichtbar(true);
+    const tiefe = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= SCROLL_SCHWELLE) zeigen();
+    };
+    const optionen = { passive: true };
+    window.addEventListener("scroll", tiefe, optionen);
+    window.addEventListener("pointerdown", zeigen, optionen);
+    window.addEventListener("keydown", zeigen);
+    tiefe();
+    return () => {
+      window.removeEventListener("scroll", tiefe, optionen);
+      window.removeEventListener("pointerdown", zeigen, optionen);
+      window.removeEventListener("keydown", zeigen);
+    };
+  }, [sichtbar]);
+
+  // Mobil: Seitenkopf (PageHero bzw. erste Sektion) beobachten – Launcher erst darunter einblenden
+  useEffect(() => {
+    if (ausgenommen || typeof IntersectionObserver === "undefined") return undefined;
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const kopf = document.querySelector('[data-blk="seitenkopf"]') || document.querySelector("main section");
+    if (!kopf) {
+      setImKopf(false);
+      return undefined;
+    }
+    let imBild = false;
+    const setzen = () => setImKopf(mq.matches && imBild);
+    const io = new IntersectionObserver(([e]) => {
+      imBild = e.isIntersecting;
+      setzen();
+    });
+    io.observe(kopf);
+    mq.addEventListener?.("change", setzen);
+    return () => {
+      io.disconnect();
+      mq.removeEventListener?.("change", setzen);
+    };
+  }, [pfad, ausgenommen]);
+  const launcherDa = (sichtbar && !imKopf) || offen;
 
   // Scroll-Sperre auf Mobilgeräten
   useEffect(() => {
@@ -112,8 +157,8 @@ export default function RueckrufWidget() {
       {!ausgenommen && (
         <div
           className={cn(
-            "ov-rueckruf-launcher fixed bottom-6 left-5 z-[9400] transition-all duration-500 lg:bottom-8 lg:left-8",
-            sichtbar ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
+            "ov-rueckruf-launcher fixed bottom-4 left-3 z-[9400] transition-all duration-500 lg:bottom-8 lg:left-8",
+            launcherDa ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
           )}
           style={{ marginBottom: "env(safe-area-inset-bottom)" }}
         >
@@ -127,13 +172,13 @@ export default function RueckrufWidget() {
             aria-controls="ov-rueckruf-panel"
             aria-label={offen ? "Rückruf-Fenster schließen" : "Kostenlosen Rückruf anfordern"}
             title={klein && !offen ? "Kostenloser Rückruf" : undefined}
-            tabIndex={sichtbar ? 0 : -1}
+            tabIndex={launcherDa ? 0 : -1}
             className={cn(
-              "group flex items-center gap-3 rounded-full bg-navy-950 p-1.5 text-white shadow-[0_18px_40px_-14px_rgba(3,18,43,0.7)] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-0.5",
+              "group flex items-center gap-3 rounded-full bg-navy-950 p-1 lg:p-1.5 text-white shadow-[0_18px_40px_-14px_rgba(3,18,43,0.7)] ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-0.5",
               !klein && "lg:py-2 lg:pl-2 lg:pr-5"
             )}
           >
-            <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-ov-500 lg:h-10 lg:w-10">
+            <span className="relative flex h-11 w-11 items-center justify-center rounded-full bg-ov-600 lg:h-10 lg:w-10">
               {offen ? <X aria-hidden="true" className="h-5 w-5" /> : <PhoneCall aria-hidden="true" className="h-[18px] w-[18px]" />}
               {geoeffnet && !offen && <span aria-hidden="true" className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-ov-300 ring-2 ring-navy-950 motion-safe:animate-pulse" />}
             </span>
@@ -152,7 +197,7 @@ export default function RueckrufWidget() {
               type="button"
               onClick={verkleinern}
               aria-label="Rückruf-Hinweis verkleinern"
-              tabIndex={sichtbar ? 0 : -1}
+              tabIndex={launcherDa ? 0 : -1}
               className="absolute -right-2 -top-2 hidden h-6 w-6 items-center justify-center rounded-full bg-white text-ink-700 shadow-md ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ov-500 lg:flex"
             >
               <X aria-hidden="true" className="h-3.5 w-3.5" />
@@ -221,7 +266,7 @@ export default function RueckrufWidget() {
                         onClick={() => setOffen(false)}
                         className="group flex items-center gap-3.5 rounded-2xl bg-sand-50 p-4 ring-1 ring-ink-200/70 transition hover:bg-white hover:ring-ov-300"
                       >
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200 group-hover:bg-ov-500 group-hover:text-white group-hover:ring-ov-500">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-ov-600 ring-1 ring-ink-200 group-hover:bg-ov-600 group-hover:text-white group-hover:ring-ov-600">
                           <Icon aria-hidden="true" className="h-5 w-5" />
                         </span>
                         <span className="min-w-0 flex-1">
@@ -231,7 +276,7 @@ export default function RueckrufWidget() {
                           </span>
                           <span className="block text-[13px] text-ink-600">{a.dauer} Minuten · kostenlos</span>
                         </span>
-                        <ArrowRight aria-hidden="true" className="h-4 w-4 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-ov-600" />
+                        <ArrowRight aria-hidden="true" className="h-4 w-4 text-ink-500 transition group-hover:translate-x-0.5 group-hover:text-ov-600" />
                       </Link>
                     );
                   })}

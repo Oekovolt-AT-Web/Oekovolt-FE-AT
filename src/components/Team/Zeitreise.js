@@ -19,7 +19,7 @@ const KAPITEL = [
     jahr: "2010",
     ort: "Türkheim · Unterallgäu",
     neben: [],
-    bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%" },
+    bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Symbolbild: Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%", symbol: true },
   },
   {
     jahr: "2012",
@@ -37,7 +37,7 @@ const KAPITEL = [
     jahr: "Heute",
     ort: "Alle neun Bundesländer",
     neben: ["2025"],
-    bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen", pos: "50% 40%" },
+    bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Symbolbild: Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen", pos: "50% 40%", symbol: true },
   },
 ];
 
@@ -102,6 +102,11 @@ export default function Zeitreise() {
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-r from-navy-950 via-navy-950/85 to-navy-950/40" />
           <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-transparent to-navy-950/70" />
           <div aria-hidden="true" className="ov-grid-bg absolute inset-0 opacity-60" />
+          {/* Stockfoto (keine eigene Aufnahme) – sichtbar als Symbolbild gekennzeichnet (A02). Über den Verläufen und
+              oben rechts, damit weder Zeitleiste noch „Nach oben“-Knopf das Label verdecken. */}
+          {DATEN[aktiv]?.bild.symbol && (
+            <span className="absolute right-5 top-24 z-20 rounded-full bg-navy-950/80 px-2.5 py-1 text-[11.5px] font-semibold text-white/85 ring-1 ring-white/15">Symbolbild</span>
+          )}
 
           <div className="ov-container relative grid w-full grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] items-center gap-16 pb-16 pt-16">
             {/* Jahreszahl */}
@@ -211,6 +216,9 @@ export default function Zeitreise() {
             <div className="relative aspect-[16/9]">
               <Image src={k.bild.src} alt={k.bild.alt} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" style={{ objectPosition: k.bild.pos }} />
               <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy-950 via-navy-950/30 to-transparent" />
+              {k.bild.symbol && (
+                <span className="absolute right-3 top-3 rounded-full bg-navy-950/70 px-2.5 py-1 text-[11.5px] font-semibold text-white/80">Symbolbild</span>
+              )}
               <p className="ov-num absolute bottom-4 left-5 font-display text-[3.4rem] font-extrabold leading-none tracking-tight text-white">{k.jahr}</p>
             </div>
             <div className="p-5 sm:p-7">

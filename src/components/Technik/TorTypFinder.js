@@ -4,11 +4,13 @@ import { useId, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Check, FileText, Info, Scale } from "lucide-react";
 import { cn } from "@/components/ui/cn";
-import { TYPEN } from "./torTypen";
+import { DC_AC_VORSCHLAG, TYPEN, acSumme, liesZahlDe, torTyp } from "./torTypen";
 
 /**
- * TOR-Typ-Finder: Maximalkapazität (kW) und Netzanschluss ≥ 110 kV eingeben →
- * Anlagentyp A/B/C/D mit Regelwerk und wesentlichen Anforderungen.
+ * TOR-Typ-Finder: AC-Maximalkapazität (Wechselrichter PV, optional Speicher-AC und
+ * bestehende Erzeugung am selben Netzanschlusspunkt) und Netzanschluss ≥ 110 kV eingeben →
+ * Anlagentyp A/B/C/D mit Regelwerk und wesentlichen Anforderungen. Die Einstufung kommt aus
+ * der gemeinsamen Funktion torTyp() (torTypen.js) – dieselbe wie in den Rechnern.
  * Grenzen nach RfG-Schwellenwert-V der E-Control; Texte aus der Übersicht der
  * Seite (TOR Typ A V1.4, Typ B V1.3, Typ C/D). Vereinfachte Orientierung.
  */
@@ -26,38 +28,43 @@ const LMAX = Math.log10(100000);
 const zuKw = (s) => Math.pow(10, LMIN + (s / 1000) * (LMAX - LMIN));
 const zuSchritt = (kw) => Math.round(((Math.log10(Math.max(0.5, kw)) - LMIN) / (LMAX - LMIN)) * 1000);
 
-const fmt = (kw) =>
-  kw >= 1000
-    ? `${(kw / 1000).toLocaleString("de-DE", { maximumFractionDigits: kw >= 10000 ? 0 : 1 })} MW`
-    : `${kw.toLocaleString("de-DE", { maximumFractionDigits: kw < 10 ? 1 : 0 })} kW`;
-
-function typVon(kw, hs) {
-  if (hs) return "D";
-  if (kw < 0.8) return null;
-  if (kw < 250) return "A";
-  if (kw < 35000) return "B";
-  if (kw < 50000) return "C";
-  return "D";
-}
+// Zahlformat ohne Intl – Server und Browser formatieren identisch
+const zahl = (n, stellen = 0) => {
+  const f = Math.pow(10, stellen);
+  const [ganz, dez] = (Math.round(n * f) / f).toFixed(stellen).split(".");
+  const text = ganz.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return dez && Number(dez) !== 0 ? `${text},${dez}` : text;
+};
+const fmt = (kw) => (kw >= 1000 ? `${zahl(kw / 1000, kw >= 10000 ? 0 : 1)} MW` : `${zahl(kw, kw < 10 ? 1 : 0)} kW`);
+const lies = (t) => {
+  const n = liesZahlDe(t);
+  return Number.isFinite(n) && n > 0 ? Math.min(n, 100000) : 0;
+};
 
 export default function TorTypFinder() {
   const id = useId();
   const [kw, setKw] = useState(750);
   const [eingabe, setEingabe] = useState("750");
   const [hs, setHs] = useState(false);
+  const [speicherText, setSpeicherText] = useState("");
+  const [bestandText, setBestandText] = useState("");
+  const speicherKva = lies(speicherText);
+  const bestandKw = lies(bestandText);
+  const summe = acSumme({ wrKva: kw, speicherKva, bestandKw });
 
-  const typ = typVon(kw, hs);
+  const einstufung = torTyp(summe, { hochspannung: hs });
+  const typ = einstufung.typ === "–" ? null : einstufung.typ;
   const t = typ ? TYPEN[typ] : null;
 
   const hinweise = useMemo(() => {
     const h = [];
-    if (kw > 100 && !hs)
+    if (summe > 100 && !hs)
       h.push({
         icon: Scale,
         titel: "Park- und Anlagenregler",
         text: "Verlangt der Netzbetreiber bei Netzebene 5 oder 6 die Messung für die Blindleistung auf der Mittelspannungsseite, ist ein Park- und Anlagenregler Pflicht, sobald die Summe der Engpassleistungen über 100 kVA (mit MS-Messung) bzw. 400 kVA (ohne) liegt.",
       });
-    if (kw > 7)
+    if (summe > 7)
       h.push({
         icon: AlertTriangle,
         titel: "Spitzenkappung nach § 101 ElWG",
@@ -69,7 +76,7 @@ export default function TorTypFinder() {
       text: "Mehrere Einheiten und Speicher an einem Netzanschlusspunkt zählen zusammen. Die netzwirksame Leistung laut Vertrag ist eine andere Größe – genau die hält der Parkregler ein.",
     });
     return h;
-  }, [kw, hs]);
+  }, [summe, hs]);
 
   const setzeKw = (wert) => {
     const v = Math.min(100000, Math.max(0.5, wert));
@@ -87,25 +94,25 @@ export default function TorTypFinder() {
           <div>
             <p className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Interaktiv · TOR-Typ-Finder</p>
             <h3 className="ov-h3 mt-2 text-ink-900">Welcher Anlagentyp ist Ihre Anlage?</h3>
-            <p className="mt-2 text-[15px] leading-relaxed text-ink-600">Maximalkapazität der Gesamtanordnung am Netzanschlusspunkt eingeben – inklusive Speicher.</p>
+            <p className="mt-2 text-[15px] leading-relaxed text-ink-600">Maßgeblich ist die AC-Maximalkapazität der Gesamtanordnung am Netzanschlusspunkt – Wechselrichter, Speicher und bestehende Erzeugung zusammen, nicht die Modulleistung in kWp.</p>
           </div>
 
           <div>
             <div className="flex items-end justify-between gap-4">
               <label htmlFor={`${id}-kw`} className="text-[14px] font-medium text-ink-700">
-                Maximalkapazität
+                Wechselrichterleistung AC (PV)
               </label>
               <span className="flex items-center gap-2">
                 <input
-                  aria-label="Maximalkapazität in Kilowatt"
+                  aria-label="Wechselrichterleistung AC der PV in Kilowatt"
                   inputMode="decimal"
                   value={eingabe}
                   onChange={(e) => {
                     setEingabe(e.target.value);
-                    const n = Number(e.target.value.replace(/\./g, "").replace(",", "."));
-                    if (!Number.isNaN(n) && n > 0) setKw(Math.min(100000, n));
+                    const n = liesZahlDe(e.target.value);
+                    if (Number.isFinite(n) && n > 0) setKw(Math.min(100000, n));
                   }}
-                  className="ov-num h-11 w-28 rounded-xl border border-ink-200 bg-white px-3 text-right font-display text-[18px] font-extrabold text-ink-900 focus:border-ov-500 focus:outline-none focus:ring-4 focus:ring-ov-500/20"
+                  className="ov-num h-12 w-28 rounded-xl border border-ink-200 bg-white px-3 text-right font-display text-[18px] font-extrabold text-ink-900 focus:border-ov-600 focus:shadow-[0_0_0_1px_#669933] focus:outline-none focus-visible:outline-none"
                 />
                 <span className="text-[14px] font-semibold text-ink-500">kW</span>
               </span>
@@ -121,12 +128,20 @@ export default function TorTypFinder() {
               className="ov-range mt-5 block cursor-pointer"
               style={{ "--ov-fill": `${fill}%` }}
             />
-            <div className="mt-3 flex justify-between text-[11.5px] text-ink-400" aria-hidden="true">
+            <div className="mt-3 flex justify-between text-[11.5px] text-ink-500" aria-hidden="true">
               <span>0,5 kW</span>
               <span>250 kW</span>
               <span>35 MW</span>
               <span>100 MW</span>
             </div>
+            <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+              Nur die Modulleistung bekannt? Als Richtwert kWp ÷ {zahl(DC_AC_VORSCHLAG, 2)} (übliches DC/AC-Verhältnis, Annahme) – maßgeblich ist das Datenblatt der Wechselrichter.
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <ZusatzFeld id={`${id}-sp`} label="Speicher-Wechselrichter AC" hinweis="optional, kVA" wert={speicherText} onChange={setSpeicherText} />
+            <ZusatzFeld id={`${id}-be`} label="Bestehende Erzeugung" hinweis="optional, kW am selben Anschluss" wert={bestandText} onChange={setBestandText} />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -136,7 +151,7 @@ export default function TorTypFinder() {
                 type="button"
                 onClick={() => setzeKw(b.kw)}
                 className={cn(
-                  "min-h-10 rounded-full px-3.5 text-[13px] font-semibold ring-1 transition-colors",
+                  "min-h-11 rounded-full px-3.5 text-[13px] font-semibold ring-1 transition-colors",
                   Math.round(kw) === b.kw ? "bg-navy-950 text-white ring-navy-950" : "bg-white text-ink-700 ring-ink-200 hover:ring-ov-300"
                 )}
               >
@@ -166,7 +181,7 @@ export default function TorTypFinder() {
                   key={k}
                   className={cn(
                     "flex h-11 flex-1 items-center justify-center rounded-xl font-display text-[16px] font-extrabold transition-all duration-500",
-                    k === typ ? "bg-ov-500 text-white shadow-[0_10px_30px_-8px_rgba(102,153,51,0.8)]" : "bg-white/[0.06] text-white/35 ring-1 ring-white/10"
+                    k === typ ? "bg-ov-600 text-white shadow-[0_10px_30px_-8px_rgba(102,153,51,0.8)]" : "bg-white/[0.06] text-white/60 ring-1 ring-white/10"
                   )}
                 >
                   {k}
@@ -176,11 +191,20 @@ export default function TorTypFinder() {
 
             {t ? (
               <div key={typ} className="ov-tab-panel">
-                <p className="mt-7 text-[13px] text-white/55">{fmt(kw)}{hs ? " · Anschluss ≥ 110 kV" : ""} ergibt</p>
+                <p className="mt-7 text-[13px] text-white/60">
+                  {speicherKva > 0 || bestandKw > 0 ? `AC-Summe ${fmt(summe)} (PV ${fmt(kw)}${speicherKva > 0 ? ` + Speicher ${fmt(speicherKva)}` : ""}${bestandKw > 0 ? ` + Bestand ${fmt(bestandKw)}` : ""})` : fmt(summe)}
+                  {hs ? " · Anschluss ≥ 110 kV" : ""} ergibt
+                </p>
                 <p className="font-display text-[44px] font-extrabold leading-none tracking-tight md:text-[52px]">Typ {typ}</p>
                 <p className="mt-2 text-[14px] text-white/65">
                   {t.grenze} · {t.netz}
                 </p>
+                {einstufung.knapp && (
+                  <p className="mt-4 flex items-start gap-2 rounded-xl bg-sun-400/15 px-3.5 py-2.5 text-[13.5px] font-semibold text-sun-300 ring-1 ring-sun-400/30">
+                    <AlertTriangle aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />
+                    {einstufung.hinweis}
+                  </p>
+                )}
                 <p className="mt-4 flex items-start gap-2 rounded-xl bg-white/[0.06] px-3.5 py-2.5 text-[13.5px] text-white/80 ring-1 ring-white/10">
                   <FileText aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
                   {t.regelwerk}
@@ -225,6 +249,26 @@ export default function TorTypFinder() {
         Quelle: E-Control, TOR Stromerzeugungsanlagen Typ A V1.4 und Typ B V1.3; Typeinteilung nach RfG-Schwellenwert-V. Vereinfachte Darstellung – verbindlich sind TOR, Netzanschlussvertrag und
         Ausführungsbestimmungen Ihres Netzbetreibers.
       </p>
+    </div>
+  );
+}
+
+/** Kleines optionales Zahlenfeld (Speicher-AC, Bestand) */
+function ZusatzFeld({ id, label, hinweis, wert, onChange }) {
+  return (
+    <div>
+      <label htmlFor={id} className="block text-[13px] font-semibold leading-snug text-ink-700">
+        {label}
+        <span className="block text-[12px] font-normal text-ink-500">{hinweis}</span>
+      </label>
+      <input
+        id={id}
+        inputMode="decimal"
+        placeholder="0"
+        value={wert}
+        onChange={(e) => onChange(e.target.value)}
+        className="ov-num mt-1.5 h-12 w-full rounded-xl border border-ink-200 bg-white px-3 text-right font-display text-[16px] font-bold text-ink-900 focus:border-ov-600 focus:shadow-[0_0_0_1px_#669933] focus:outline-none focus-visible:outline-none"
+      />
     </div>
   );
 }

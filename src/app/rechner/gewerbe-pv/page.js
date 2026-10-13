@@ -5,8 +5,11 @@ import { CalendarClock, MapPinned, Scale } from "lucide-react";
 import RechnerSeite, { rechnerMetadata } from "@/components/Rechner/RechnerSeite";
 import SectionHeading from "@/components/ui/SectionHeading";
 import GewerbePVRechner from "@/components/RechnerGewerbe/GewerbePVRechner";
+import DachZeichnen from "@/components/RechnerGewerbe/DachZeichnen";
 import { standortGruppen, pvgisStand } from "@/components/RechnerGewerbe/standorte";
 import { GEWERBE_PV } from "@/lib/rechner/gewerbepv";
+import { DACH_ABZUEGE, QM_PRO_KWP_STANDARD } from "@/lib/rechner/flaeche";
+import { alleRegionen } from "@/lib/regionen";
 import { fmt } from "@/lib/rechner/annahmen";
 import { ANNAHMEN, PREISQUELLEN } from "@/data/solarrechner";
 import { VERGUETUNG } from "@/data/einspeiseverguetung";
@@ -22,6 +25,10 @@ export const metadata = rechnerMetadata({
 });
 
 const FAQ = [
+  {
+    q: "Wie messe ich meine Dachfläche, ohne aufs Dach zu steigen?",
+    a: `Mit dem Hallendach-Planer oberhalb des Rechners: Adresse suchen, die Dachecken auf dem Orthofoto von basemap.at anklicken – die Fläche wird geodätisch aus den Koordinaten berechnet (Richtwert, Grundrissfläche). Rand- und Hindernisabzug (Standard ${DACH_ABZUEGE.rand.standard} % und ${DACH_ABZUEGE.hindernisse.standard} %) sind einstellbar, die Belegung rechnet mit ${fmt(QM_PRO_KWP_STANDARD)} m² je kWp für aufgeständerte Ost-West-Anlagen. Wer keine Karte nutzen will, gibt Länge × Breite ein. Das Datenblatt mit Nutzfläche und kWp erscheint nach Bestätigung Ihrer E-Mail-Adresse; die Koordinaten bleiben in Ihrem Browser.`,
+  },
   {
     q: "Wie viel kWp passen auf mein Hallendach?",
     a: `Als Richtwert brauchen aufgeständerte Ost-West-Anlagen auf dem Flachdach rund ${fmt(ANNAHMEN.qmProKwpFlachdach)} m² je kWp, nach Süden aufgeständerte Reihen wegen der größeren Abstände rund 10 m², dachparallele Module auf Trapezblech rund ${fmt(ANNAHMEN.qmProKwp)} m². Eine 5.000-m²-Halle trägt damit – je nach Dachart – etwa 500 bis 1.000 kWp. Abzuziehen sind Randabstände nach OVE R 11-1, Lichtkuppeln, Lüftungsgeräte und Wartungswege; die Statik muss die Zusatzlast aufnehmen.`,
@@ -40,7 +47,7 @@ const FAQ = [
   },
   {
     q: "Was bedeuten TOR-Typ und Netzanschluss für meine Anlage?",
-    a: "Nach den TOR Stromerzeugungsanlagen der E-Control gilt eine Anlage ab 0,8 kW bis unter 250 kW als Typ A, ab 250 kW bis unter 35 MW als Typ B. Ab Typ B steigen die Anforderungen an Blindleistung, Fernsteuerbarkeit und Nachweise; meist ist ein Parkregler nötig. Maßgeblich ist die Maximalkapazität der Wechselrichter – der Rechner setzt vereinfacht die Modulleistung an. Die Netzebene legt der Netzbetreiber im Anschlusskonzept fest.",
+    a: "Nach den TOR Stromerzeugungsanlagen der E-Control gilt eine Anlage ab 0,8 kW bis unter 250 kW als Typ A, ab 250 kW bis unter 35 MW als Typ B. Ab Typ B steigen die Anforderungen an Blindleistung, Fernsteuerbarkeit und Nachweise; meist ist ein Parkregler nötig. Maßgeblich ist die Maximalkapazität am Netzanschlusspunkt – der Rechner setzt dafür die AC-Leistung (Modulleistung ÷ 1,15) plus Speicher und bestehende Anlagen an. Die Netzebene legt der Netzbetreiber im Anschlusskonzept fest.",
   },
   {
     q: "Lohnt sich ein Speicher im Betrieb?",
@@ -51,6 +58,8 @@ const FAQ = [
 export default function Page() {
   const standorte = standortGruppen();
   const pvgis = pvgisStand();
+  // Orte des Rechners mit Koordinaten – der Hallendach-Planer ordnet der Dachmitte den nächsten PVGIS-Ort zu
+  const orteKoord = alleRegionen().map((r) => ({ slug: r.slug, name: r.kurzname || r.name, landName: r.landDaten?.name || "", lat: r.koord[0], lon: r.koord[1] }));
   return (
     <RechnerSeite
       pfad={PFAD}
@@ -59,13 +68,19 @@ export default function Page() {
       eyebrow="Gewerbe-PV-Rechner"
       title={<>Gewerbe-PV-Rechner: <span className="ov-text-gradient-light">Größe, Ertrag, Amortisation</span></>}
       lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">Was bringt Ihr Hallendach?</span><span className="mt-3 block">Dachfläche, Standort und Schichtbetrieb eingeben – Eigenverbrauch, Amortisation, Rendite und Förderung für Ihren Betrieb in Österreich, stündlich über ein Jahr simuliert.</span></>}
-      chips={["PVGIS-Ertrag für 37 Orte", "EAG-Zuschuss & IFB", "Kauf oder Leasing", "Tagesprofil Sommer/Winter"]}
+      actions={[{ label: "Jetzt rechnen", href: "#rechner" }]}
+      chips={["Dach auf dem Orthofoto einzeichnen", "PVGIS-Ertrag für 37 Orte", "EAG-Zuschuss & IFB", "Kauf oder Leasing", "Tagesprofil Sommer/Winter"]}
       app={{
         name: "Ökovolt Gewerbe-PV-Rechner",
         description: "Berechnet Anlagengröße, Ertrag, Eigenverbrauch, Autarkie, Ersparnis, Amortisation, internen Zinsfuß und CO₂-Einsparung einer Photovoltaikanlage auf Gewerbe- und Hallendächern in Österreich.",
-        featureList: ["Stündliche Jahressimulation mit Schichtmodell", "Standortgenauer Ertrag (PVGIS)", "EAG-Investitionszuschuss und Investitionsfreibetrag", "Kauf oder Leasing", "25-Jahres-Cashflow und IRR", "TOR-Typ und EAG-Kategorie"],
+        featureList: ["Hallendach-Planer: Dachfläche auf dem Orthofoto einzeichnen", "Stündliche Jahressimulation mit Schichtmodell", "Standortgenauer Ertrag (PVGIS)", "EAG-Investitionszuschuss und Investitionsfreibetrag", "Kauf oder Leasing", "25-Jahres-Cashflow und IRR", "TOR-Typ und EAG-Kategorie"],
       }}
-      rechner={<GewerbePVRechner standorte={standorte} startOrt="linz" />}
+      rechner={
+        <>
+          <DachZeichnen orte={orteKoord} startOrt="linz" />
+          <GewerbePVRechner standorte={standorte} startOrt="linz" />
+        </>
+      }
       erklaerung={
         <>
           <SectionHeading
@@ -102,6 +117,8 @@ export default function Page() {
       annahmen={[
         ["PV-Ertrag", `PVGIS je Ort und Dachart`],
         ["Fläche je kWp: Ost-West / Süd / Trapez / Shed", `${fmt(ANNAHMEN.qmProKwpFlachdach)} / 10 / ${fmt(ANNAHMEN.qmProKwp)} / 10 m²`],
+        ["Hallendach-Planer: Rand- / Hindernisabzug (Standard, einstellbar)", `${DACH_ABZUEGE.rand.standard} % / ${DACH_ABZUEGE.hindernisse.standard} %`],
+        ["Hallendach-Planer: Flächenformel", "sphärische Polygonformel auf WGS84-Krümmungsradius (Grundriss)"],
         ["Anlagenpreis netto, 100 kWp → 1 MWp", `${fmt(ANNAHMEN.preisProKwp.find((p) => p.kwp === 100).eur)} → ${fmt(ANNAHMEN.preisProKwp.at(-1).eur)} €/kWp`],
         ["Speicherpreis netto", `${fmt(ANNAHMEN.speicherPreise.at(-1).eur)} – ${fmt(ANNAHMEN.speicherPreise[2].eur)} €/kWh`],
         ["Arbeitspreis netto (Richtwert)", `${fmt(ANNAHMEN.strompreisGewerbe.at(-1).ct, 1)} – ${fmt(ANNAHMEN.strompreisGewerbe[0].ct)} ct/kWh`],
@@ -121,12 +138,15 @@ export default function Page() {
         { name: `EAG-Investitionszuschüsseverordnung-Strom (${ANNAHMEN.eagInvestitionszuschuss.quelle})`, url: "https://www.oem-ag.at/fileadmin/user_upload/Dokumente/gesetze/EAG-IZV_Fassung__vom_19.01.2026.pdf" },
         { name: "WKO – Investitionsfreibetrag", url: "https://www.wko.at/steuern/investitionsfreibetrag" },
         { name: "E-Control – TOR Stromerzeugungsanlagen", url: "https://www.e-control.at/marktteilnehmer/strom/marktregeln/tor" },
+        { name: "basemap.at – Orthofoto und Verwaltungsgrundkarte Österreich (CC BY 4.0)", url: "https://www.basemap.at" },
+        { name: "OpenStreetMap Nominatim – Adresssuche (© OpenStreetMap-Mitwirkende, ODbL)", url: "https://nominatim.org" },
+        { name: "Chamberlain & Duquette (NASA JPL 2007) – Some algorithms for polygons on a sphere", url: "https://trs.jpl.nasa.gov/handle/2014/40409" },
       ]}
       faq={FAQ}
       faqTitel="Gewerbe-PV: Fragen & Antworten"
       cta={{
         title: "Vom Rechenergebnis zur geplanten Hallen-PV.",
-        text: "Wir prüfen Statik, Brandschutz nach OVE R 11-1, Lastgang und Netzanschluss und machen daraus ein belastbares Angebot – mit eigenem Parkregler für Anlagen ab 250 kW, in ganz Österreich.",
+        text: "Wir prüfen Statik, Brandschutz nach OVE R 11-1, Lastgang und Netzanschluss und machen daraus ein belastbares Angebot – mit Parkregler für Anlagen ab 250 kW, in ganz Österreich.",
         primary: { label: "Angebot anfragen", href: "/angebot" },
         secondary: { label: "Photovoltaik für Gewerbe", href: "/gewerbe" },
       }}

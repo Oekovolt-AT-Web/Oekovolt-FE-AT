@@ -6,8 +6,8 @@
 // Mehrstufig: 1 Kategorie · 2 Projekt · 3 Kennzahlen · 4 Kontakt & Einwilligung.
 // Jeder Schritt wird vor dem Weitergehen geprüft; gesendet wird dieselbe
 // Nutzlast wie bisher (Feldnamen unverändert, Server-Validierung in /api/award).
-// Nur für Kundinnen und Kunden von Ökovolt; Einwilligung zur Veröffentlichung
-// ist Teilnahmevoraussetzung.
+// Nur für Kundinnen und Kunden von Ökovolt. Die Einwilligung zur Veröffentlichung ist
+// eine eigene, optionale Checkbox – ohne sie wird das Projekt anonym bewertet (Welle A07).
 
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, BarChart3, Check, ClipboardList, LayoutGrid, UserRound } from "lucide-react";
@@ -29,7 +29,7 @@ import {
 } from "@/components/Partner/Formularteile";
 import { BUNDESLAENDER } from "@/components/Partner/partnerDaten";
 import { iconFor } from "@/components/ui/icons";
-import { AWARD_NAME, KATEGORIEN } from "./awardDaten";
+import { AWARD_KENNZEICHNUNG, AWARD_NAME, JURY_KLAUSEL, KATEGORIEN } from "./awardDaten";
 
 const ID = "award";
 
@@ -89,7 +89,6 @@ function pruefe(w) {
   if (!EMAIL_RE.test(t("email"))) f.email = "Bitte eine gültige E-Mail-Adresse angeben.";
   if (!telefonOk(t("telefon"))) f.telefon = "Bitte eine Telefonnummer für Rückfragen angeben.";
   if (!w.kunde) f.kunde = "Der Award steht nur Kundinnen und Kunden von Ökovolt offen.";
-  if (!w.veroeffentlichung) f.veroeffentlichung = "Die Einwilligung zur Veröffentlichung ist Teilnahmevoraussetzung.";
   if (!w.datenschutz) f.datenschutz = "Bitte bestätigen Sie die Datenschutzhinweise.";
   return f;
 }
@@ -205,12 +204,12 @@ export default function AwardEinreichung() {
                   onClick={() => (i < schritt ? geheZu(i) : undefined)}
                   disabled={i > schritt}
                   className={`flex w-full flex-col items-center gap-1.5 rounded-2xl px-1 py-2.5 text-center text-[12.5px] font-semibold transition-colors sm:flex-row sm:px-3 sm:text-left ${
-                    jetzt ? "bg-navy-950 text-white" : erledigt ? "text-ink-800 hover:bg-sand-100" : "text-ink-400"
+                    jetzt ? "bg-navy-950 text-white" : erledigt ? "text-ink-800 hover:bg-sand-100" : "text-ink-500"
                   }`}
                 >
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${
-                      jetzt ? "bg-sun-400 text-navy-950" : erledigt ? "bg-ov-500 text-white" : "bg-white ring-1 ring-ink-200"
+                      jetzt ? "bg-sun-400 text-navy-950" : erledigt ? "bg-ov-600 text-white" : "bg-white ring-1 ring-ink-200"
                     }`}
                   >
                     {erledigt ? <Check aria-hidden="true" className="h-4 w-4" strokeWidth={3} /> : <s.icon aria-hidden="true" className="h-4 w-4" />}
@@ -316,7 +315,7 @@ export default function AwardEinreichung() {
                 Die Anlage wurde von der Ökovolt Solartechnik GmbH errichtet, erweitert oder wird von ihr betreut, und ich bin berechtigt, sie einzureichen. <span className="text-ov-600" aria-hidden="true">*</span>
               </Haken>
               <Haken {...p} name="veroeffentlichung" wert={werte.veroeffentlichung} fehler={fehler.veroeffentlichung}>
-                Ich willige ein, dass Projektname, Betreiber, Standort (Ort), Beschreibung, Fotos und Kennzahlen im Rahmen des {AWARD_NAME} auf oekovolt.com, in sozialen Medien und in Pressemitteilungen veröffentlicht werden. Widerruf bis zur Jurysitzung möglich. <span className="text-ov-600" aria-hidden="true">*</span>
+                Ich willige ein, dass Projektname, Betreiber, Standort (Ort), Beschreibung, Fotos und Kennzahlen im Rahmen des {AWARD_NAME} auf oekovolt.com, in sozialen Medien und in Pressemitteilungen veröffentlicht werden (optional). Ohne diese Einwilligung bewerten wir das Projekt anonym und nennen den Betrieb nicht. Widerruf jederzeit möglich.
               </Haken>
               <Haken {...p} name="monitoring" wert={werte.monitoring} fehler={fehler.monitoring}>
                 Ökovolt darf für die Bewertung Betriebsdaten der Anlage aus Monitoring und Fernwartung heranziehen (optional).
@@ -325,6 +324,9 @@ export default function AwardEinreichung() {
                 <DatenschutzText zweck="zur Durchführung des PV Award (Prüfung, Jurybewertung, Kontaktaufnahme)" />
               </Haken>
             </div>
+            <p className="text-[13px] leading-relaxed text-ink-500">
+              {AWARD_NAME}: {AWARD_KENNZEICHNUNG}. {JURY_KLAUSEL}
+            </p>
             {werte.kategorie && (
               <p className="flex flex-wrap items-center gap-2 text-[13.5px] text-ink-600">
                 Ihre Einreichung:

@@ -324,7 +324,7 @@ const artikel = {
 
   seitenCta: { titel: "Speicherprojekt prüfen?", text: "Standort, Netzanschluss und Erlösszenarien für Ihren Speicher.", href: "/gewerbespeicher", label: "Zu den Speicherlösungen" },
   cta: {
-    title: "Großspeicher planen – mit eigener Regelungstechnik.",
+    title: "Großspeicher planen – mit passender Regelungstechnik.",
     text: "Wir prüfen Standort und Netzanschluss, rechnen Erlösszenarien und integrieren Speicher mit Parkregler und SCADA in Ihre PV-Anlage.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "SCADA-Systeme", href: "/technik/scada" },

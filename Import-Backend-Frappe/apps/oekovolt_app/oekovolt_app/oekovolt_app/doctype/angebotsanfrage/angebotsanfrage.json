@@ -7,6 +7,7 @@
  "field_order": [
   "sec_anfrage",
   "status",
+  "verlustgrund",
   "zustaendig",
   "anonymisiert",
   "vorhaben",
@@ -14,11 +15,46 @@
   "gebaeudetyp",
   "eigentuemer",
   "startzeitpunkt",
+  "quelle",
   "sec_objekt",
   "dachform",
   "dachausrichtung",
   "column_break_objekt",
   "jahresverbrauch_kwh",
+  "sec_gewerbe",
+  "objekt",
+  "netzebene",
+  "lastgang_vorhanden",
+  "flaeche_m2",
+  "kwp_wunsch",
+  "column_break_gewerbe",
+  "zweck",
+  "thema",
+  "bezug",
+  "lastgang_kennzahlen",
+  "sec_vertrieb",
+  "segment",
+  "lead_klasse",
+  "lead_score",
+  "score_gruende",
+  "bundesland",
+  "firma",
+  "column_break_vertrieb",
+  "eingang_am",
+  "sla_bis",
+  "erstreaktion_am",
+  "reaktionszeit_min",
+  "lead_schluessel",
+  "fruehere_anfragen",
+  "sec_qualifizierung",
+  "rolle",
+  "gremium",
+  "zeitplan",
+  "column_break_qualifizierung",
+  "rueckruf_ok",
+  "kontakt_ok",
+  "einwilligung_id",
+  "einwilligung_text_version",
   "sec_kontakt",
   "vorname",
   "nachname",
@@ -68,11 +104,19 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Neu\nIn Bearbeitung\nAngebot erstellt\nGewonnen\nVerloren\nErledigt\nSpam",
+   "options": "Neu\nKontaktversuch\nQualifiziert\nTermin vereinbart\nAngebot erstellt\nVerhandlung\nGewonnen\nVerloren\nErledigt\nSpam\nIn Bearbeitung",
    "default": "Neu",
    "reqd": 1,
    "in_list_view": 1,
    "in_standard_filter": 1
+  },
+  {
+   "fieldname": "verlustgrund",
+   "fieldtype": "Select",
+   "label": "Verlustgrund",
+   "options": "\nPreis\nMitbewerber\nNetzzusage/Netzebene\nKein Budget/verschoben\nNicht erreichbar\nDach/Fläche ungeeignet\nKein Bedarf\nSonstiges",
+   "depends_on": "eval:doc.status=='Verloren'",
+   "mandatory_depends_on": "eval:doc.status=='Verloren'"
   },
   {
    "fieldname": "zustaendig",
@@ -117,6 +161,13 @@
    "label": "Startzeitpunkt"
   },
   {
+   "fieldname": "quelle",
+   "fieldtype": "Data",
+   "label": "Seite",
+   "read_only": 1,
+   "length": 255
+  },
+  {
    "fieldname": "sec_objekt",
    "fieldtype": "Section Break",
    "label": "Dach und Verbrauch"
@@ -140,6 +191,228 @@
    "fieldtype": "Float",
    "label": "Jahresverbrauch (kWh)",
    "precision": "0"
+  },
+  {
+   "fieldname": "sec_gewerbe",
+   "fieldtype": "Section Break",
+   "label": "Gewerbe-Angaben (Konfigurator)"
+  },
+  {
+   "fieldname": "objekt",
+   "fieldtype": "Select",
+   "label": "Objekt (Kennung)",
+   "options": "\ngewerbe\nlandwirtschaft\nfreiflaeche\nhotellerie\ngemeinde\nchalet\nprivat\nsonstiges"
+  },
+  {
+   "fieldname": "netzebene",
+   "fieldtype": "Select",
+   "label": "Netzebene",
+   "options": "\n7\n6\n5\n4\nunbekannt"
+  },
+  {
+   "fieldname": "lastgang_vorhanden",
+   "fieldtype": "Check",
+   "label": "Lastgang (15-Minuten-Werte) vorhanden",
+   "default": "0"
+  },
+  {
+   "fieldname": "flaeche_m2",
+   "fieldtype": "Float",
+   "label": "Verfügbare Fläche (m²)"
+  },
+  {
+   "fieldname": "kwp_wunsch",
+   "fieldtype": "Float",
+   "label": "Wunschleistung (kWp)"
+  },
+  {
+   "fieldname": "column_break_gewerbe",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "zweck",
+   "fieldtype": "Select",
+   "label": "Zweck",
+   "options": "\nangebot\nbeschlussvorlage\nzweitmeinung\nfoerderung\nfinanzierung\nnetzanmeldung\nwartung\nausschreibung"
+  },
+  {
+   "fieldname": "thema",
+   "fieldtype": "Select",
+   "label": "Thema (Link)",
+   "options": "\nnetzanmeldung\nbeschlussvorlage\nlastgang\nspeicher\nladeinfrastruktur\nnotstrom\nrepowering\nwartung\nfoerderung\nfinanzierung\nzweitmeinung"
+  },
+  {
+   "fieldname": "bezug",
+   "fieldtype": "Data",
+   "label": "Website-Referenz",
+   "length": 24,
+   "search_index": 1,
+   "description": "z. B. AK-20261011-7F3K – verknüpft Anfrage, Termin und Lastgang-Analyse"
+  },
+  {
+   "fieldname": "lastgang_kennzahlen",
+   "fieldtype": "Code",
+   "label": "Lastgang-Kennzahlen (JSON)",
+   "options": "JSON",
+   "read_only": 1,
+   "description": "Nur Kennzahlen, keine Rohdaten (Lastgang-Analyse, auf Klick gesendet)"
+  },
+  {
+   "fieldname": "sec_vertrieb",
+   "fieldtype": "Section Break",
+   "label": "Vertrieb",
+   "description": "Wird beim Eingang automatisch gesetzt (lead_eingang.py, Scoring in format.py). Priorisierung im Vertrieb – keine automatisierte Entscheidung (Art. 22 DSGVO)."
+  },
+  {
+   "fieldname": "segment",
+   "fieldtype": "Select",
+   "label": "Segment",
+   "options": "\nGewerbe & Industrie\nLandwirtschaft\nFreifläche/Agri-PV\nHotellerie & Tourismus\nGemeinde & öffentliche Hand\nChalet & Premium\nPrivat\nService\nPartner\nBewerbung\nPresse\nSonstiges",
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "lead_klasse",
+   "fieldtype": "Select",
+   "label": "Lead-Klasse",
+   "options": "\nA\nB\nC",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "lead_score",
+   "fieldtype": "Int",
+   "label": "Lead-Score (0–100)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "score_gruende",
+   "fieldtype": "Small Text",
+   "label": "Score-Gründe",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "bundesland",
+   "fieldtype": "Select",
+   "label": "Bundesland",
+   "options": "\nBurgenland\nKärnten\nNiederösterreich\nOberösterreich\nSalzburg\nSteiermark\nTirol\nVorarlberg\nWien",
+   "in_standard_filter": 1,
+   "description": "Aus der PLZ (Bereichstabelle, 5121 = Oberösterreich)"
+  },
+  {
+   "fieldname": "firma",
+   "fieldtype": "Data",
+   "label": "Unternehmen / Organisation",
+   "length": 140
+  },
+  {
+   "fieldname": "column_break_vertrieb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eingang_am",
+   "fieldtype": "Datetime",
+   "label": "Eingang am",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sla_bis",
+   "fieldtype": "Datetime",
+   "label": "Erstreaktion bis (SLA)",
+   "read_only": 1,
+   "no_copy": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "erstreaktion_am",
+   "fieldtype": "Datetime",
+   "label": "Erstreaktion am",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "reaktionszeit_min",
+   "fieldtype": "Int",
+   "label": "Reaktionszeit (Geschäftsminuten)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "lead_schluessel",
+   "fieldtype": "Data",
+   "label": "Lead-Schlüssel",
+   "read_only": 1,
+   "no_copy": 1,
+   "length": 200,
+   "search_index": 1,
+   "description": "E-Mail normalisiert – erkennt mehrere Anfragen derselben Person"
+  },
+  {
+   "fieldname": "fruehere_anfragen",
+   "fieldtype": "Small Text",
+   "label": "Frühere Anfragen",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "sec_qualifizierung",
+   "fieldtype": "Section Break",
+   "label": "Qualifizierung",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "rolle",
+   "fieldtype": "Select",
+   "label": "Rolle der anfragenden Person",
+   "options": "\nGeschäftsführung/Inhaber\nFinanzen\nTechnik/Facility\nEinkauf\nGemeinde/Verwaltung\nLandwirt/Eigentümer\nSonstiges"
+  },
+  {
+   "fieldname": "gremium",
+   "fieldtype": "Small Text",
+   "label": "Entscheidet mit (Gremium)"
+  },
+  {
+   "fieldname": "zeitplan",
+   "fieldtype": "Select",
+   "label": "Zeitplan",
+   "options": "\nSo bald wie möglich\nIn den nächsten 3 Monaten\nIn 3–12 Monaten\nSpäter / Budgetplanung"
+  },
+  {
+   "fieldname": "column_break_qualifizierung",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "rueckruf_ok",
+   "fieldtype": "Check",
+   "label": "Rückruf/Anruf erwünscht",
+   "default": "0",
+   "description": "Nur mit Häkchen, Termin oder Rückrufwunsch anrufen."
+  },
+  {
+   "fieldname": "kontakt_ok",
+   "fieldtype": "Check",
+   "label": "Kontakt zu diesem Ergebnis erwünscht",
+   "default": "0",
+   "description": "Freiwilliges Häkchen am Lead-Gate (E-Mail, mit Nummer auch Anruf)."
+  },
+  {
+   "fieldname": "einwilligung_id",
+   "fieldtype": "Data",
+   "label": "Hinweis-/Einwilligungstext",
+   "read_only": 1,
+   "length": 40
+  },
+  {
+   "fieldname": "einwilligung_text_version",
+   "fieldtype": "Data",
+   "label": "Textversion",
+   "read_only": 1,
+   "length": 8
   },
   {
    "fieldname": "sec_kontakt",
@@ -377,7 +650,7 @@
  ],
  "index_web_pages_for_search": 0,
  "links": [],
- "modified": "2026-09-30 10:00:00.000000",
+ "modified": "2026-10-12 10:00:00.000000",
  "modified_by": "Administrator",
  "module": "Oekovolt App",
  "name": "Angebotsanfrage",

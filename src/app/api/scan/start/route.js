@@ -4,6 +4,7 @@ import { ipAdresse } from "@/lib/ipAdresse";
 import { sitzungStarten, scanVerfuegbar, GUELTIG_MINUTEN } from "@/lib/scan/backend";
 import { emailGueltig, gedrosselt, sauber } from "@/lib/rueckrufApi";
 import { telefonNormalisieren } from "@/data/erreichbarkeit";
+import { quelleFuerZweck, zweckGueltig } from "@/lib/angebot/pruefung";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +36,10 @@ export async function POST(request) {
   if (!emailGueltig(email)) return antwort({ fehler: "email" }, 400);
   if (e.telefon && !telefon) return antwort({ fehler: "telefon" }, 400);
   if (plz && !/^\d{4,5}$/.test(plz)) return antwort({ fehler: "plz" }, 400);
+  // Optionaler Zweck aus der festen Liste (B08: angebot | zweitmeinung | hof | stoerung) – wird als
+  // Quelle „Website · <Zweck>“ gespeichert; unbekannte Zwecke lehnen wir ab (kein Backend-Umbau nötig).
+  const zweck = e.zweck == null || e.zweck === "" ? null : sauber(e.zweck, 20);
+  if (zweck !== null && !zweckGueltig(zweck)) return antwort({ fehler: "zweck" }, 400);
   if (gedrosselt(`scan:start:${email}`, 5, 3600_000)) return antwort({ fehler: "zu_viele" }, 429);
 
   const r = e.rechner || {};
@@ -44,7 +49,7 @@ export async function POST(request) {
       email,
       telefon: telefon || "",
       plz,
-      quelle: sauber(e.quelle, 40) || "Website",
+      quelle: zweck ? quelleFuerZweck(zweck) : sauber(e.quelle, 40) || "Website",
       seite: sauber(e.seite, 300),
       kwp: zahl(r.kwp, 0, 1000) ?? "",
       verbrauch: zahl(r.verbrauch, 0, 1_000_000) ?? "",

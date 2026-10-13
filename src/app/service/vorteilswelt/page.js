@@ -57,7 +57,7 @@ const FAQ = [
   },
   {
     q: "Wie nehme ich am Ökovolt PV Award teil?",
-    a: "Mit dem PV Award zeichnen wir jährlich Kundinnen und Kunden für die besten Anlagen und Nachhaltigkeitsinvestitionen aus. Informationen zu Kategorien und Einreichung finden Sie auf der Seite zum PV Award.",
+    a: "Der PV Award ist ein Unternehmenspreis der Ökovolt Solartechnik GmbH für ihre Kundinnen und Kunden – keine unabhängige Auszeichnung. Jährlich würdigen wir damit gelungene Anlagen und Nachhaltigkeitsinvestitionen. Informationen zu Kategorien und Einreichung finden Sie auf der Seite zum PV Award.",
   },
   {
     q: "Ich bin Elektrotechniker – kann ich mit Ökovolt zusammenarbeiten?",
@@ -88,13 +88,15 @@ export default function VorteilsweltPage() {
           </>
         }
         lead="Sie sind mit Ihrer Anlage zufrieden? Dann empfehlen Sie Ökovolt weiter – an Geschäftspartner, Nachbarbetriebe, Ihre Gemeinde oder Bekannte. Dazu gehören in der Vorteilswelt der Ökovolt PV Award, Nachhaltigkeitsmarketing mit Solensa und das Partnerprogramm für Elektrotechnikbetriebe."
-        image={{ src: "/Images/AT/service-b/handschlag-partner.jpg", alt: "Handschlag zweier Geschäftspartner" }}
+        image={{ src: "/Images/AT/service-b/handschlag-partner.jpg", alt: "Handschlag zweier Geschäftspartner (Symbolbild)" }}
         points={["Empfehlungsprogramm mit Prämie", "Textvorschläge für Betriebe & Gemeinden", "Ökovolt PV Award", "Nachhaltigkeitsmarketing mit Solensa"]}
         actions={[
           { label: "Als Empfehlungsgeber registrieren", href: "#anmelden" },
           { label: "Text zum Teilen", href: "#baukasten", icon: Send },
         ]}
-      />
+      >
+        <p className="mt-6 text-[12px] text-white/60">Foto: Symbolbild.</p>
+      </HeroBild>
 
       <Kennzahlen
         zahlen={[
@@ -123,10 +125,12 @@ export default function VorteilsweltPage() {
               text: "Empfehlen Sie Ökovolt weiter und erhalten Sie eine Prämie, wenn daraus ein Vertrag entsteht – gemäß Teilnahmebedingungen.",
               href: "#anmelden",
             },
-            { bild: { src: "/Images/AT/loesungen/agri-pv-vertikal-bifazial.jpg", alt: "Vertikale Agri-PV-Anlage" }, icon: Trophy, titel: "Ökovolt PV Award", text: "Jährliche Auszeichnung für die besten Anlagen und Nachhaltigkeitsinvestitionen.", href: "/pv-award" },
+            // PV Award: Unternehmenspreis der Ökovolt Solartechnik GmbH (Kennzeichnung nach A07) – keine unabhängige Auszeichnung
+            { bild: { src: "/Images/AT/loesungen/agri-pv-vertikal-bifazial.jpg", alt: "Vertikale Agri-PV-Anlage" }, icon: Trophy, tag: "Unternehmenspreis", titel: "Ökovolt PV Award", text: "Unternehmenspreis der Ökovolt Solartechnik GmbH für ihre Kundinnen und Kunden – jährlich für gelungene Anlagen und Nachhaltigkeitsinvestitionen.", href: "/pv-award" },
             { bild: { src: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Luftaufnahme eines Hotels mit Photovoltaik" }, icon: Clapperboard, titel: "Nachhaltigkeitsmarketing", text: `Video, Imagespot und ESG-Kennzahlen – umgesetzt von der ${SOLENSA.name}.`, href: "/service/nachhaltigkeitsmarketing" },
-            { bild: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker bei der Wartung einer PV-Anlage" }, icon: Wrench, titel: "Service für Bestandskunden", text: "Wartung, Anlagenprüfung, Repowering-Check und Speicher-Nachrüstung.", href: "/service/wartung" },
-            { bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Elektrotechniker vor einer Photovoltaikanlage" }, icon: Handshake, titel: "Elektro-Partnerprogramm", text: "Als Subunternehmer registrieren und an Projekten in ganz Österreich mitarbeiten.", href: "/partner" },
+            // Stock-Motive mit Personen → Symbolbild (Welle A02)
+            { bild: { src: "/Images/AT/service/pv-wartung-techniker.jpg", alt: "Techniker bei der Wartung einer PV-Anlage (Symbolbild)" }, icon: Wrench, tag: "Symbolbild", titel: "Service für Bestandskunden", text: "Wartung, Anlagenprüfung, Repowering-Check und Speicher-Nachrüstung.", href: "/service/wartung" },
+            { bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Elektrotechniker vor einer Photovoltaikanlage (Symbolbild)" }, icon: Handshake, tag: "Symbolbild", titel: "Elektro-Partnerprogramm", text: "Als Subunternehmer registrieren und an Projekten in ganz Österreich mitarbeiten.", href: "/partner" },
             { icon: HeartHandshake, ton: "gruen", titel: "Sponsoring", text: "Vereine, Kultur und Nachwuchs in der Region – Anfragen über das Sponsoring-Formular.", href: "/sponsoring" },
           ]}
         />
@@ -161,9 +165,9 @@ export default function VorteilsweltPage() {
       {/* PV Award */}
       <Bildband
         bild={{ src: "/Images/AT/loesungen/tourismus-pv-skigebiet-wildkogel.jpg", alt: "Photovoltaikanlage in einem alpinen Skigebiet" }}
-        eyebrow="Ökovolt PV Award"
-        titel="Die besten Anlagen des Jahres verdienen eine Bühne"
-        text="Mit dem PV Award zeichnen wir jährlich Kundinnen und Kunden für besonders gelungene Anlagen und Nachhaltigkeitsinvestitionen aus. Ein Video oder eine gute Projektdokumentation – etwa mit der Solensa GmbH – ist eine starke Grundlage für die Einreichung."
+        eyebrow="Ökovolt PV Award · Unternehmenspreis der Ökovolt Solartechnik GmbH"
+        titel="Gelungene Anlagen verdienen eine Bühne"
+        text="Der PV Award ist ein Unternehmenspreis der Ökovolt Solartechnik GmbH für ihre Kundinnen und Kunden – keine unabhängige Auszeichnung. Jährlich würdigen wir damit gelungene Anlagen und Nachhaltigkeitsinvestitionen. Ein Video oder eine gute Projektdokumentation – etwa mit der Solensa GmbH – ist eine gute Grundlage für die Einreichung."
       >
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Button href="/pv-award" icon={Trophy}>

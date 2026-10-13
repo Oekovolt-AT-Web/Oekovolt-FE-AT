@@ -50,7 +50,7 @@ const siteSchema = {
       },
       image: { "@type": "ImageObject", url: `${BASE_URL}/og-image.jpg` },
       description:
-        "Photovoltaik für Gewerbe, Industrie, Landwirtschaft, Gemeinden und anspruchsvolle Privatobjekte in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Gewerbespeicher, Ladeinfrastruktur, Energiegemeinschaften, eigener Parkregler (EZA-Regler), Fernwartung und SCADA – geplant, gebaut und betreut aus einer Hand.",
+        "Photovoltaik für Gewerbe, Industrie, Landwirtschaft, Gemeinden und anspruchsvolle Privatobjekte in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Gewerbespeicher, Ladeinfrastruktur, Energiegemeinschaften, Parkregler (EZA-Regler), Fernwartung und SCADA – geplant, gebaut und betreut aus einer Hand.",
       slogan: "Wir bauen, was wir selbst betreiben würden.",
       foundingDate: "2012-02-16",
       founder: { "@type": "Person", name: "Andreas Wegscheider" },
@@ -157,7 +157,7 @@ export const metadata = {
     template: "%s",
   },
   description:
-    "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Speicher, Ladeinfrastruktur, eigener Parkregler & SCADA. Seit 2012.",
+    "Photovoltaik für Gewerbe, Industrie, Landwirtschaft und Gemeinden in ganz Österreich: Dach- und Freiflächenanlagen, Agri-PV, Speicher, Ladeinfrastruktur, Parkregler & SCADA. Seit 2012.",
   keywords: [
     "Photovoltaik Gewerbe Österreich",
     "PV-Anlage Unternehmen",

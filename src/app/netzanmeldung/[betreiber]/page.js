@@ -1,12 +1,13 @@
 // src/app/netzanmeldung/[betreiber]/page.js
 //
-// „PV-Anlage bei <Netzbetreiber> anmelden“ – statische Seiten für die fünf
-// größten Verteilernetzbetreiber. Gleiche Struktur für alle (Neutralität).
-// Inhalte und Quellen: src/data/netzbetreiber.js.
+// „PV-Anlage bei <Netzbetreiber> anmelden“ – statische Seiten für zehn
+// Verteilernetzbetreiber in allen neun Bundesländern. Gleiche Struktur für alle
+// (Neutralität): Ablauf, Unterlagen, Fristen, Kosten, Sonderfälle, Energiegemeinschaft,
+// Peer-to-Peer, Balkonkraftwerk, EAG-Bezug. Inhalte und Quellen: src/data/netzbetreiber.js.
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, ArrowUpRight, CalendarClock, CircleHelp, Clock, Coins, ExternalLink, FileCheck2, FileText, Hash, Mail, Phone, PlugZap, Power, Receipt, Send, Wrench, Zap } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CalendarClock, CircleHelp, Clock, Coins, ExternalLink, FileCheck2, FileText, Hash, Mail, Phone, PlugZap, Power, Receipt, Send, Sun, Users, Wrench, Zap } from "lucide-react";
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -18,7 +19,7 @@ import Prozess from "@/components/Forderungen/Shared/Prozess";
 import { Bildnachweis, Glow, KennzahlenBand } from "@/components/Forderungen/Shared/Premium";
 import { Checkliste, Hinweis, Quellen, StandPille } from "@/components/Forderungen/Shared/Bausteine";
 import BetreiberKarten from "@/components/Netzanmeldung/BetreiberKarten";
-import { BETREIBER_SLUGS, DRUCK_PFAD, EAG_BEZUG, HINWEIS_GEWAEHR, NETZBETREIBER, PFAD, betreiberFaq, betreiberFuerSlug, betreiberPfad, datumLabel } from "@/data/netzbetreiber";
+import { BETREIBER_SLUGS, DRUCK_PFAD, EAG_BEZUG, EEG_PFAD, HINWEIS_GEWAEHR, KAPAZITAET_PFAD, NETZBETREIBER, PFAD, ZAEHLPUNKT_PFAD, betreiberFaq, betreiberFuerSlug, betreiberPfad, datumLabel } from "@/data/netzbetreiber";
 import { BASE_URL } from "@/lib/site";
 
 export const dynamicParams = false;
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }) {
   return {
     title,
     description,
-    keywords: [`PV-Anlage anmelden ${b.kurz}`, `${b.kurz} Photovoltaik Anmeldung`, `${b.kurz} Einspeisezählpunkt`, `${b.kurz} Netzzugangsantrag`, `Balkonkraftwerk anmelden ${b.bundesland}`, "Einspeisezählpunkt EAG Fördercall"],
+    keywords: [`PV-Anlage anmelden ${b.kurz}`, `${b.kurz} Photovoltaik Anmeldung`, `${b.kurz} Einspeisezählpunkt`, `${b.kurz} Netzzugangsantrag`, `Balkonkraftwerk anmelden ${b.bundesland}`, `Energiegemeinschaft ${b.kurz} Datenfreigabe`, `Peer-to-Peer ${b.kurz}`, "Einspeisezählpunkt EAG Fördercall"],
     alternates: { canonical: url },
     openGraph: {
       type: "article",
@@ -68,6 +69,8 @@ export async function generateMetadata({ params }) {
 }
 
 const LINK = "font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800";
+// Tap-Ziel mindestens 44 px hoch (Touch), ohne das Fließtext-Layout zu sprengen.
+const TAP = "inline-block py-3";
 const SCHRITT_ICONS = [<Send key="1" />, <FileCheck2 key="2" />, <Hash key="3" />, <Wrench key="4" />, <Receipt key="5" />, <Power key="6" />, <Zap key="7" />];
 
 function ExternerLink({ href, children, className }) {
@@ -178,9 +181,9 @@ export default async function NetzbetreiberPage({ params }) {
                       <span className="min-w-0">
                         <span className="block text-[12.5px] font-semibold uppercase tracking-wider text-ink-500">{k.label}</span>
                         {extern ? (
-                          <ExternerLink href={k.href} className="break-all text-[15px] font-semibold text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{k.wert}</ExternerLink>
+                          <ExternerLink href={k.href} className="inline-block break-all py-3 text-[15px] font-semibold leading-snug text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{k.wert}</ExternerLink>
                         ) : (
-                          <a href={k.href} className="break-all text-[15px] font-semibold text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{k.wert}</a>
+                          <a href={k.href} className="inline-block break-all py-3 text-[15px] font-semibold leading-snug text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{k.wert}</a>
                         )}
                         {k.hinweis && <span className="block text-[13px] text-ink-500">{k.hinweis}</span>}
                       </span>
@@ -291,6 +294,105 @@ export default async function NetzbetreiberPage({ params }) {
         </div>
       </Section>
 
+      {/* Energiegemeinschaft, Peer-to-Peer, Balkonkraftwerk */}
+      <Section tone="sand" space="md" id="energiegemeinschaft" className="scroll-mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading eyebrow="Gemeinsame Energienutzung und Kleinstanlagen" title={`Energiegemeinschaft, Peer-to-Peer und Balkonkraftwerk bei ${b.kurz}`} lead="Datenfreigabe für Energiegemeinschaften, der Anmeldeweg für Peer-to-Peer-Verträge nach ElWG und die vereinfachte Meldung von Kleinsterzeugungsanlagen bis 800 W – so beschreibt es der Netzbetreiber." />
+          <StandPille className="shrink-0 self-start md:self-auto">Geprüft am {stand}</StandPille>
+        </div>
+        <div className="grid gap-5 lg:grid-cols-3">
+          <Reveal className="flex flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
+            <p className="flex items-center gap-2 font-display text-[19px] font-bold text-ink-900">
+              <Users aria-hidden="true" className="h-5 w-5 text-ov-600" />
+              Energiegemeinschaft
+            </p>
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">{b.energiegemeinschaft?.datenfreigabe || "Die Datenfreigabe beschreibt der Netzbetreiber nicht öffentlich."}</p>
+            <dl className="mt-4 space-y-2.5 text-[14px]">
+              {b.energiegemeinschaft?.formular && (
+                <div>
+                  <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">Datenfreigabe</dt>
+                  <dd>
+                    <ExternerLink href={b.energiegemeinschaft.formular.url} className={`${LINK} ${TAP}`}>{b.energiegemeinschaft.formular.name}</ExternerLink>
+                  </dd>
+                </div>
+              )}
+              {b.energiegemeinschaft?.nahbereich && (
+                <div>
+                  <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">Nahbereich prüfen</dt>
+                  <dd>
+                    <ExternerLink href={b.energiegemeinschaft.nahbereich.url} className={`${LINK} ${TAP}`}>{b.energiegemeinschaft.nahbereich.name}</ExternerLink>
+                  </dd>
+                </div>
+              )}
+              {b.energiegemeinschaft?.kontakt && (
+                <div>
+                  <dt className="text-[12px] font-semibold uppercase tracking-wider text-ink-500">Kontakt</dt>
+                  <dd>
+                    <a href={b.energiegemeinschaft.kontakt.href} className="inline-block break-all py-3 font-semibold text-ink-900 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">{b.energiegemeinschaft.kontakt.wert}</a>
+                  </dd>
+                </div>
+              )}
+            </dl>
+            <Link href={`${EEG_PFAD}#anmeldewege`} className="mt-auto inline-flex items-center gap-2 pt-5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+              Anmeldewege aller Netzbetreiber vergleichen
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </Reveal>
+          <Reveal delay={80} className="flex flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
+            <p id="peer-to-peer" className="flex scroll-mt-28 items-center gap-2 font-display text-[19px] font-bold text-ink-900">
+              <Zap aria-hidden="true" className="h-5 w-5 text-ov-600" />
+              Peer-to-Peer
+            </p>
+            {b.p2p?.offen && <span className="mt-2 inline-flex w-fit rounded-full bg-sun-300/35 px-2.5 py-0.5 text-[12px] font-semibold text-ink-800">Beim Netzbetreiber zu prüfen</span>}
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">{b.p2p?.anmeldeweg || "Den Peer-to-Peer-Anmeldeweg beschreibt der Netzbetreiber nicht öffentlich."}</p>
+            <p className="mt-4 text-[13px] leading-relaxed text-ink-500">Rahmen nach ElWG: neue Modelle ab 05.10.2026 innerhalb eines Netzbetreibers, netzübergreifend voraussichtlich ab April 2027; reduzierte Netzentgelte erst nach der neuen Entgeltverordnung.</p>
+            <Link href={`${EEG_PFAD}#anmeldewege`} className="mt-auto inline-flex items-center gap-2 pt-5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+              Peer-to-Peer bei allen Netzbetreibern
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </Reveal>
+          <Reveal delay={140} className="flex flex-col rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 md:p-7">
+            <p id="balkonkraftwerk" className="flex scroll-mt-28 items-center gap-2 font-display text-[19px] font-bold text-ink-900">
+              <Sun aria-hidden="true" className="h-5 w-5 text-ov-600" />
+              Balkonkraftwerk bis 800 W
+            </p>
+            <p className="mt-3 text-[14.5px] leading-relaxed text-ink-600">{b.kleinsterzeugung?.text || b.sonderfaelle[0].text}</p>
+            {b.kleinsterzeugung?.formular && (
+              <p className="mt-4 text-[14px]">
+                <span className="block text-[12px] font-semibold uppercase tracking-wider text-ink-500">Meldung</span>
+                <ExternerLink href={b.kleinsterzeugung.formular.url} className={`${LINK} ${TAP}`}>{b.kleinsterzeugung.formular.name}</ExternerLink>
+              </p>
+            )}
+            <Link href={`${PFAD}#balkonkraftwerk`} className="mt-auto inline-flex items-center gap-2 pt-5 text-[14.5px] font-semibold text-ov-700 hover:text-ov-800">
+              Was für alle Netzbetreiber gilt
+              <ArrowRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </Reveal>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <Link href={KAPAZITAET_PFAD} className="group flex items-start gap-4 rounded-3xl bg-navy-950 p-6 text-white transition-colors hover:bg-navy-800">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-ov-300">
+              <PlugZap aria-hidden="true" className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block font-display text-[17px] font-bold">Kapazitäts-Wegweiser: Ist im Netz von {b.kurz} Platz?</span>
+              <span className="mt-1 block text-[14px] leading-relaxed text-white/70">Was freie Netzkapazität bedeutet, wo {b.kurz} sie veröffentlicht und warum der Trafo vor Ort entscheidet.</span>
+            </span>
+            <ArrowRight aria-hidden="true" className="ml-auto mt-1 h-5 w-5 shrink-0 text-ov-300 transition-transform group-hover:translate-x-1" />
+          </Link>
+          <Link href={ZAEHLPUNKT_PFAD} className="group flex items-start gap-4 rounded-3xl bg-white p-6 ring-1 ring-ink-200/70 transition-colors hover:ring-ov-200">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-ov-50 text-ov-700 ring-1 ring-ov-100">
+              <Hash aria-hidden="true" className="h-5 w-5" />
+            </span>
+            <span>
+              <span className="block font-display text-[17px] font-bold text-ink-900">Zählpunkt prüfen</span>
+              <span className="mt-1 block text-[14px] leading-relaxed text-ink-600">33 Stellen zerlegen, Netzbetreiber-Kennung erkennen und wissen, warum für den EAG-Antrag nur der Einspeisezählpunkt zählt – nur im Browser.</span>
+            </span>
+            <ArrowRight aria-hidden="true" className="ml-auto mt-1 h-5 w-5 shrink-0 text-ov-600 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </Section>
+
       {/* EAG-Bezug */}
       <Section tone="green" space="md" id="eag" className="scroll-mt-24">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-start lg:gap-14">
@@ -312,13 +414,13 @@ export default async function NetzbetreiberPage({ params }) {
       {/* Weitere Netzbetreiber */}
       <Section tone="white" space="md" id="weitere" className="scroll-mt-24">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-          <SectionHeading eyebrow="Andere Netzgebiete" title="Weitere Netzbetreiber im Vergleich" />
+          <SectionHeading eyebrow="Andere Netzgebiete" title="Weitere Netzbetreiber in allen Bundesländern" />
           <Link href={PFAD} className="inline-flex shrink-0 items-center gap-2 text-[15px] font-semibold text-ov-700 hover:text-ov-800">
             Übersicht Netzanmeldung
             <ArrowRight aria-hidden="true" className="h-4 w-4" />
           </Link>
         </div>
-        <BetreiberKarten betreiber={NETZBETREIBER} aktiv={b.slug} kompakt />
+        <BetreiberKarten betreiber={NETZBETREIBER} aktiv={b.slug} kompakt className="lg:grid-cols-5" />
       </Section>
 
       {/* FAQ + Quellen */}

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { BatteryCharging, Award, Cpu } from "lucide-react";
-import { kz } from "@/data/kennzahlen";
+import { KENNZAHLEN_HINWEIS_STAND, kz } from "@/data/kennzahlen";
 
 const FEATURES = [
     {
@@ -11,12 +11,12 @@ const FEATURES = [
     {
         icon: Award,
         title: "Seit 2012 in Österreich",
-        text: `Seit 2012 begleiten wir Betriebe, Landwirtschaft und Gemeinden in ganz Österreich von der Lastganganalyse über Planung und Bau bis zum Betrieb – aus einer Hand. Bisher sind es ${kz("anlagen")} PV-Kraftwerke mit zusammen ${kz("leistung")} kWp – allein 2021 kamen rund 30 MWp dazu.`,
+        text: `Seit 2012 begleiten wir Betriebe, Landwirtschaft und Gemeinden in ganz Österreich von der Lastganganalyse über Planung und Bau bis zum Betrieb – aus einer Hand. Bisher sind es ${kz("anlagen")} PV-Anlagen mit zusammen ${kz("leistung")} kWp – allein 2021 kamen rund 30 MWp dazu (${KENNZAHLEN_HINWEIS_STAND}).`,
     },
     {
         icon: Cpu,
-        title: "Eigene Fern- und Leittechnik",
-        text: "Mit eigener Fernwartung und eigenem SCADA-System behalten wir Ihre Anlage im Blick, erkennen Leistungsabfälle früh und sichern die Erträge – über die gesamte Lebensdauer.",
+        title: "Fern- und Leittechnik",
+        text: "Mit Fernwartung und SCADA mit unserem Technologiepartner Solensa behalten wir Ihre Anlage im Blick, erkennen Leistungsabfälle früh und sichern die Erträge – über die gesamte Lebensdauer.",
     },
 ];
 

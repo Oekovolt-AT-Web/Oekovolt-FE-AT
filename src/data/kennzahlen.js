@@ -17,13 +17,20 @@ export const CO2_ZEITRAUM = "";
 /** CO₂-Kennzahl (Angabe Geschäftsführung) – veröffentlicht nur mit Zeitraum. */
 export const CO2_KENNZAHL = { id: "co2", zahl: 112000, suffix: " t", label: `CO₂-Einsparung${CO2_ZEITRAUM ? ` ${CO2_ZEITRAUM}` : ""}` };
 
+// `beleg`: externer Beleg (Dokument/URL) – null = nur Angabe der Geschäftsführung, deshalb IMMER mit
+// KENNZAHLEN_HINWEIS_STAND ausweisen. `abgrenzung`: was gezählt wird (gegen Missverständnisse, UWG).
+const ABGRENZUNG = "errichtete PV-Anlagen jeder Größe, Angabe Ökovolt Österreich";
+
 export const KENNZAHLEN = [
-  { id: "anlagen", zahl: 5000, suffix: "", label: "PV-Kraftwerke errichtet" },
-  { id: "leistung", zahl: 510000, suffix: " kWp", label: "installierte Leistung" },
-  ...(CO2_ZEITRAUM ? [CO2_KENNZAHL] : []),
+  { id: "anlagen", zahl: 5000, suffix: "", label: "PV-Anlagen errichtet", beleg: null, abgrenzung: ABGRENZUNG },
+  { id: "leistung", zahl: 510000, suffix: " kWp", label: "installierte Leistung", beleg: null, abgrenzung: ABGRENZUNG },
+  ...(CO2_ZEITRAUM ? [{ ...CO2_KENNZAHL, beleg: null, abgrenzung: ABGRENZUNG }] : []),
 ];
 
 export const KENNZAHLEN_HINWEIS = "Angaben Ökovolt Österreich";
+
+/** Sichtbarer Hinweis in einheitlicher Form: „Angaben Ökovolt Österreich · Stand MM/JJJJ“. */
+export const KENNZAHLEN_HINWEIS_STAND = `${KENNZAHLEN_HINWEIS} · Stand ${KENNZAHLEN_STAND.slice(5, 7)}/${KENNZAHLEN_STAND.slice(0, 4)}`;
 
 /**
  * Zahl mit Tausenderpunkt und Dezimalkomma, unabhängig von der Laufzeitumgebung
@@ -39,4 +46,4 @@ export const zahlText = (n) => {
 export const kz = (id) => zahlText(KENNZAHLEN.find((k) => k.id === id)?.zahl ?? "");
 
 /** Ein Satz für Fließtexte und llms.txt. */
-export const KENNZAHLEN_SATZ = `${kz("anlagen")} PV-Kraftwerke errichtet, ${kz("leistung")} kWp installierte Leistung${CO2_ZEITRAUM ? `, ${kz("co2")} t CO₂-Einsparung ${CO2_ZEITRAUM}` : ""}`;
+export const KENNZAHLEN_SATZ = `${kz("anlagen")} PV-Anlagen errichtet, ${kz("leistung")} kWp installierte Leistung${CO2_ZEITRAUM ? `, ${kz("co2")} t CO₂-Einsparung ${CO2_ZEITRAUM}` : ""}`;

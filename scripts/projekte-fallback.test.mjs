@@ -7,8 +7,8 @@
 // Geprüft wird:
 //  - ohne API-Zugang (keine Env-Variablen) und mit API, die leer / fehlerhaft / nicht erreichbar ist,
 //    liefert ladeProjekte() den statischen Stand;
-//  - jeder bisherige Live-Slug löst wie auf der Detailseite auf, generateSlug(projekt_name) und
-//    projektSlug() ergeben exakt den Slug, ladeProjektRoh() liefert das Projekt samt Bildern;
+//  - jeder bisherige Live-Slug löst wie auf der Detailseite auf (ohne Namensfreigabe per 301 auf den
+//    neutralen Slug, Welle A07), ladeProjektRoh() liefert das Projekt samt Bildern;
 //  - liefert die API Projekte, gewinnt die API (statischer Stand wird ignoriert).
 
 import test from "node:test";
@@ -121,7 +121,8 @@ if (MODUS === "ohne-env") {
     for (const slug of slugs) {
       const r = await loese(slug);
       assert.ok(r, `Slug nicht auflösbar: ${slug}`);
-      assert.equal(projektSlug(r.detail), slug);
+      // Ohne Namensfreigabe (A07): 301 vom alten Slug auf den neutralen Slug
+      assert.ok(projektSlug(r.detail) === slug || r.detail.projekt_anonym, `${slug}: Umleitung ohne Neutralisierung`);
     }
   });
 } else {
@@ -174,9 +175,13 @@ if (MODUS === "ohne-env") {
         for (const slug of await liveSlugs()) {
           const r = await loese(slug);
           assert.ok(r, `Slug nicht auflösbar: ${slug}`);
-          assert.equal(projektSlug(r.detail), slug, "Detailseite würde umleiten (veraltet)");
-          assert.equal(generateSlug(r.detail.projekt_name), slug);
-          assert.ok(normal.some((p) => p.slug === slug), `Liste/Sitemap ohne ${slug}`);
+          // Kundennamen nur mit Freigabe (A07): Ohne Freigabe „Name“ leitet der alte Live-Slug per 301
+          // auf den neutralen Slug um (veraltet); dieser Ziel-Slug muss in Liste und Sitemap stehen.
+          const ziel = projektSlug(r.detail);
+          assert.ok(ziel === slug || r.detail.projekt_anonym, `${slug}: Umleitung ohne Neutralisierung`);
+          assert.equal(generateSlug(r.detail.projekt_name), ziel);
+          assert.equal(r.detail.projekt_website_name, slug, "alter Slug bleibt als Schlüssel (Umleitung, kunden.js, Freigaben)");
+          assert.ok(normal.some((p) => p.slug === ziel), `Liste/Sitemap ohne ${ziel}`);
         }
       } finally {
         globalThis.fetch = echterFetch;

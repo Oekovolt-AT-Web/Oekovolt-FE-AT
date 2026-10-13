@@ -1,26 +1,14 @@
+// /gewerbe – Unikat-Seite „Ein Betrieb, 35.040 Viertelstunden“ (Konzept docs/projekt-doku/anhang/wellen/GEWERBE-UNIKAT.md).
+//
+// Oben steht der Standard-Seitenkopf der Lösungsseiten (PageHero, Entscheidung des Inhabers vom 12.10.2026:
+// „Den Hero-Bereich nicht abweichen von den anderen Seiten“). Direkt darunter beginnt die Unikat-Strecke:
+// Wochen-Puls mit Rollen-Weiche und Kurzantwort (Hero.js), danach acht Kapitel mit je eigenem Instrument
+// (src/components/GewerbeUnikat/K1…K8). Alle Kapitel sind Server-Komponenten mit vollständigem SSR-Inhalt
+// (Texte, Zahlen, Tabellen, figcaption); die interaktiven Bühnen laden erst in Bildschirmnähe nach.
+// Die geteilten Bausteine (Loesungen/*, Verkauf/*, Referenzen/*) werden nur importiert, nie verändert.
+
 import Link from "next/link";
-import {
-  Activity,
-  BadgeEuro,
-  BatteryCharging,
-  Calculator,
-  Car,
-  ClipboardList,
-  Cog,
-  Factory,
-  FileSpreadsheet,
-  Gauge,
-  HandCoins,
-  Leaf,
-  LineChart,
-  MapPin,
-  Receipt,
-  TrendingUp,
-  Users,
-  Warehouse,
-  Wrench,
-  Zap,
-} from "lucide-react";
+import { Activity, ArrowRight, Video } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -29,18 +17,30 @@ import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
 import Querverweise from "@/components/Reusable/Querverweise";
 import LoesungSchema from "@/components/Loesungen/LoesungSchema";
-import { Bildnachweis, Hebel, Hinweis, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
+import { Bildnachweis } from "@/components/Loesungen/Bausteine";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
-import KennzahlenBand from "@/components/Loesungen/A/KennzahlenBand";
-import FotoBento from "@/components/Loesungen/A/FotoBento";
-import LastprofilExplorer from "@/components/Loesungen/A/LastprofilExplorer";
-import TechnikSystem from "@/components/Loesungen/A/TechnikSystem";
-import FachTabs from "@/components/Loesungen/A/FachTabs";
-import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
-import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
-import W24KwhWert from "@/components/Loesungen/w24-KwhWert";
+import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
+import BranchenReferenzen from "@/components/Referenzen/BranchenReferenzen";
+import IfbHinweis from "@/components/Verkauf/IfbHinweis";
+import UnsereZusagen from "@/components/Verkauf/UnsereZusagen";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
+import { DC_AC_VORSCHLAG, TOR_GRENZEN } from "@/components/Technik/torTypen";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
+
+import Hero from "@/components/GewerbeUnikat/Hero";
+import K1Lastgang from "@/components/GewerbeUnikat/K1Lastgang";
+import K2Hallendach from "@/components/GewerbeUnikat/K2Hallendach";
+import K3Anlagengroesse from "@/components/GewerbeUnikat/K3Anlagengroesse";
+import K4KwhWert from "@/components/GewerbeUnikat/K4KwhWert";
+import K5Leistungspreis from "@/components/GewerbeUnikat/K5Leistungspreis";
+import K6Netzanschluss from "@/components/GewerbeUnikat/K6Netzanschluss";
+import K7Wirtschaftlichkeit from "@/components/GewerbeUnikat/K7Wirtschaftlichkeit";
+import K8Fahrplan from "@/components/GewerbeUnikat/K8Fahrplan";
+import { beispielServer } from "@/components/GewerbeUnikat/_server";
+import { STAND, prozent, zahl } from "@/components/GewerbeUnikat/_tokens";
+import { HAUPT_CTA, HAUPT_HREF, HAUPT_ZUSATZ, TERMIN_CTA } from "@/components/GewerbeUnikat/_cta";
 
 const PFAD = "/gewerbe";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
@@ -56,7 +56,8 @@ export const metadata = {
   openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}/og-image.jpg`, width: 1200, height: 630 }] },
 };
 
-const FAQ = [
+// Die acht bisherigen Fragen bleiben wörtlich (FAQPage-Schema nur hier, über Faq).
+const FAQ_BISHER = [
   {
     q: "Lohnt sich Photovoltaik für einen Gewerbebetrieb in Österreich?",
     a: "Für die meisten Betriebe mit Tagverbrauch ja. Jede selbst genutzte Kilowattstunde spart nicht nur den Energiepreis, sondern auch Netznutzungs- und Netzverlustentgelt sowie die Elektrizitätsabgabe, denn selbst erzeugter und verbrauchter Solarstrom ist davon befreit. In unserer Beispielrechnung für 300 kWp auf Netzebene 6 liegt die statische Amortisation bei rund sechs Jahren – entscheidend ist aber Ihr eigener Lastgang.",
@@ -71,7 +72,7 @@ const FAQ = [
   },
   {
     q: "Senkt eine PV-Anlage den Leistungspreis?",
-    a: "Teilweise. In Österreich wird bei gemessener Leistung der Mittelwert der zwölf höchsten Monats-Viertelstunden verrechnet. Liegen Ihre Spitzen im Sommer zur Mittagszeit, drückt die PV-Anlage diese Monatswerte. Winterspitzen und Schichtbeginn am frühen Morgen fängt dagegen nur ein Speicher mit Lastmanagement ab – das rechnen wir getrennt aus.",
+    a: "Nur anteilig und nicht planbar. In Österreich wird bei gemessener Leistung der Mittelwert der zwölf höchsten Monats-Viertelstunden verrechnet. Liegen Ihre Spitzen im Sommer zur Mittagszeit, drückt die PV-Anlage diese Monatswerte – aber nur an sonnigen Tagen. Winterspitzen und Schichtbeginn am frühen Morgen senken nur ein Speicher und Lastmanagement zuverlässig; das rechnen wir getrennt aus.",
   },
   {
     q: "Brauchen wir für die PV-Anlage eine gewerberechtliche Genehmigung?",
@@ -91,92 +92,77 @@ const FAQ = [
   },
 ];
 
-const NETZENTGELTE = [
-  { ne: "Netzebene 5 (Mittelspannung)", ooe: "57,72 €/kW · 1,29 ct/kWh", sbg: "64,20 €/kW · 1,68 ct/kWh", wien: "55,32 €/kW · 1,31 ct/kWh" },
-  { ne: "Netzebene 6 (Umspannung MS/NS)", ooe: "65,88 €/kW · 2,37 ct/kWh", sbg: "66,60 €/kW · 2,86 ct/kWh", wien: "59,52 €/kW · 1,93 ct/kWh" },
-  { ne: "Netzebene 7 (Niederspannung, gemessen)", ooe: "52,56 €/kW · 4,68 ct/kWh", sbg: "71,64 €/kW · 3,91 ct/kWh", wien: "82,92 €/kW · 4,21 ct/kWh" },
-];
+const ORT_NAME = { linz: "Linz" };
+const AUSRICHTUNG_NAME = { ostwest: "Ost-West", sued: "Süd", flach: "flach aufgeständert" };
 
-const BEISPIEL = [
-  { pos: "Anlage und Jahresertrag", wert: "300 kWp × 1.050 kWh/kWp", ergebnis: "315.000 kWh" },
-  { pos: "Eigenverbrauch (70 %)", wert: "Produktion im Zweischichtbetrieb", ergebnis: "220.500 kWh" },
-  { pos: "Vermiedene Kosten je kWh", wert: "Energie 11,00 + Netznutzung 2,37 + Netzverlust 0,454 + Elektrizitätsabgabe 0,82 ct", ergebnis: "14,64 ct/kWh" },
-  { pos: "Ersparnis Eigenverbrauch", wert: "220.500 kWh × 14,64 ct", ergebnis: "≈ 32.290 €/Jahr" },
-  { pos: "Erlös Überschuss (30 %)", wert: "94.500 kWh × 6,0 ct", ergebnis: "≈ 5.670 €/Jahr" },
-  { pos: "Betrieb, Wartung, Versicherung", wert: "1,5 % der Investition", ergebnis: "− 3.600 €/Jahr" },
-  { pos: "Jährlicher Überschuss", wert: "vor Steuern, ohne Leistungspreiseffekt", ergebnis: "≈ 34.360 €/Jahr", hervorheben: true },
-  { pos: "Investition", wert: "Annahme 800 €/kWp netto", ergebnis: "240.000 €" },
-  { pos: "EAG-Investitionszuschuss", wert: "Annahme: Zuschlag bei 100 €/kWp (Kategorie D)", ergebnis: "− 30.000 €" },
-  { pos: "Statische Amortisation", wert: "210.000 € ÷ 34.360 €/Jahr", ergebnis: "≈ 6,1 Jahre", hervorheben: true },
-  { pos: "Öko-IFB 22 % (Anschaffung bis 31.12.2026)", wert: "Freibetrag auf 210.000 €, Körperschaftsteuer 23 %", ergebnis: "≈ 10.600 € Steuerwirkung" },
-];
+/** Zwei neue Fragen mit Werten aus dem synthetischen Beispielbetrieb (beispielServer) – gekennzeichnet, Richtwerte. */
+function neueFragen() {
+  const { kennzahlen, kappung, ueberschussRuhe } = beispielServer();
+  const pv = kennzahlen.pv;
+  const emp = pv?.empfehlung;
+  const kwp = emp?.kwp ?? 0;
+  const ort = ORT_NAME[pv?.ortId] || "Linz";
+  const ausrichtung = AUSRICHTUNG_NAME[pv?.ausrichtung] || "Ost-West";
+  const mwh = zahl(kennzahlen.jahresverbrauch / 1000);
 
-const NETZEBENEN = [
-  { ne: "Netzebene 7", ort: "Niederspannung 400 V, Hausanschluss oder eigener Anschlusskasten", groesse: "bis etwa 100–250 kWp, je nach Netzsituation", tor: "Typ A (bis < 250 kW)" },
-  { ne: "Netzebene 6", ort: "Anschluss an der Trafostation des Netzbetreibers (Niederspannungsseite)", groesse: "etwa 150 kWp bis 1 MWp", tor: "Typ A oder B" },
-  { ne: "Netzebene 5", ort: "Mittelspannung, meist kundeneigene Trafostation mit Mittelspannungsschaltanlage", groesse: "etwa 0,5 bis 10 MWp", tor: "Typ B (250 kW bis < 35 MW)" },
-];
+  // TOR: AC-Leistung aus kWp über das offengelegte DC/AC-Verhältnis, dazu der Speicher-Wechselrichter des
+  // K5-Beispiels (Deckel 230 kW). Gerundete Einzelwerte, damit die Summe im Text aufgeht.
+  const acKva = Math.round(kwp / DC_AC_VORSCHLAG);
+  const speicher = kappung.find((k) => k.schwelle === 230 && k.moeglich);
+  const speicherKw = speicher ? Math.round(speicher.leistungKw) : null;
+  const summe = speicherKw ? acKva + speicherKw : null;
+  const typ = (kw) => (kw >= TOR_GRENZEN.B ? "Typ B" : "Typ A");
 
-
-// Typisierte Beispielprofile (relativ, Stundenwerte) – Veranschaulichung, keine Messwerte.
-const BRANCHEN = [
-  {
-    id: "produktion",
-    label: "Produktion",
-    icon: "Factory",
-    titel: "Produktion im Zweischichtbetrieb",
-    last: [0.3, 0.28, 0.28, 0.28, 0.3, 0.45, 0.85, 0.95, 0.98, 1, 0.98, 0.92, 0.95, 1, 0.98, 0.95, 0.92, 0.9, 0.88, 0.85, 0.8, 0.7, 0.45, 0.32],
-    pvFaktor: 0.6,
-    marken: [{ h: 6, label: "Schichtbeginn" }],
-    text: "Hohe Tages-Grundlast aus Druckluft, Lüftung, Absaugung und Maschinen – oft 60–90 % Eigenverbrauch möglich.",
-    punkte: ["Spitzen beim Anfahren von Pressen, Öfen und Kompressoren", "Frühe Schicht- und Winterspitzen fängt nur ein Speicher ab"],
-    link: { label: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv" },
-  },
-  {
-    id: "logistik",
-    label: "Logistik & Lager",
-    icon: "Warehouse",
-    titel: "Logistik, Lager & Hallen",
-    last: [0.2, 0.2, 0.2, 0.2, 0.22, 0.3, 0.45, 0.55, 0.55, 0.55, 0.55, 0.5, 0.52, 0.55, 0.55, 0.52, 0.48, 0.4, 0.32, 0.28, 0.25, 0.22, 0.2, 0.2],
-    pvFaktor: 1.6,
-    text: "Große Dächer, eher geringe Last: Der Überschuss ist hoch – Vermarktung, Energiegemeinschaft und Ladeinfrastruktur werden wichtig.",
-    punkte: ["Flurförderzeuge und E-Transporter mittags laden", "Überschuss an OeMAG, Händler oder PPA"],
-    link: { label: "E-Flotten-Rechner", href: "/rechner/e-flotte" },
-  },
-  {
-    id: "kuehlung",
-    label: "Handel & Kühlung",
-    icon: "Snowflake",
-    titel: "Lebensmittelhandel & Kühlhäuser",
-    last: [0.5, 0.48, 0.47, 0.47, 0.48, 0.55, 0.7, 0.82, 0.88, 0.92, 0.95, 0.98, 1, 1, 1, 0.98, 0.95, 0.92, 0.88, 0.8, 0.65, 0.55, 0.52, 0.5],
-    lastSaison: {
-      uebergang: [0.45, 0.43, 0.42, 0.42, 0.43, 0.5, 0.64, 0.75, 0.8, 0.83, 0.85, 0.87, 0.88, 0.88, 0.88, 0.86, 0.84, 0.82, 0.8, 0.72, 0.58, 0.5, 0.47, 0.45],
-      winter: [0.42, 0.4, 0.4, 0.4, 0.41, 0.48, 0.62, 0.72, 0.76, 0.78, 0.79, 0.8, 0.8, 0.8, 0.8, 0.79, 0.8, 0.82, 0.8, 0.7, 0.55, 0.47, 0.44, 0.42],
+  return [
+    {
+      q: "Wie groß sollte die PV-Anlage für unseren Betrieb sein?",
+      a:
+        `So groß, dass Ihr Betrieb den Großteil des Solarstroms selbst nutzt – die Größe folgt dem Lastgang, nicht der Dachfläche. ` +
+        `Im synthetischen Beispielbetrieb dieser Seite (zwei Schichten Mo–Fr, ${mwh} MWh im Jahr, keine Messdaten) ergibt das Modell ` +
+        `${zahl(kwp)} kWp ${ausrichtung} in ${ort}: rund ${prozent(emp?.evQuote ?? 0)} Eigenverbrauch und ${prozent(emp?.autarkie ?? 0)} Autarkie ` +
+        `(PVGIS-Monatssummen, Richtwert, ${STAND.werte}). Schon bei dieser Größe fallen ${prozent(ueberschussRuhe)} des Überschusses an Wochenenden, ` +
+        `Feiertagen und im Betriebsurlaub an; größere Anlagen erhöhen vor allem die Einspeisung. Mit Ihren Viertelstundenwerten rechnen wir die passende Größe für Ihren Betrieb.`,
     },
-    pvFaktor: 0.5,
-    text: "Kälte, Beleuchtung und Backstationen laufen tagsüber und im Sommer auf Hochlast – sehr hohe Gleichzeitigkeit mit der Solarkurve.",
-    punkte: ["Kälteanlagen auf Hochlast, wenn die Sonne am stärksten scheint", "Kältespeicher verschiebt zusätzlichen Eigenverbrauch"],
-    link: { label: "Peak-Shaving-Rechner", href: "/rechner/peak-shaving" },
-  },
-  {
-    id: "handwerk",
-    label: "Handwerk & KMU",
-    icon: "Wrench",
-    titel: "Handwerk & kleine Betriebe",
-    last: [0.1, 0.1, 0.1, 0.1, 0.1, 0.12, 0.35, 0.8, 0.9, 0.95, 0.92, 0.7, 0.65, 0.9, 0.92, 0.85, 0.6, 0.3, 0.18, 0.15, 0.12, 0.1, 0.1, 0.1],
-    pvFaktor: 0.9,
-    marken: [{ h: 12, label: "Mittagspause" }],
-    text: "Werkstatt, Büro und Fuhrpark – kleiner, aber mit hohem Eigenverbrauch, oft auf Netzebene 7.",
-    punkte: ["Mittagspause und Wochenende erzeugen Überschuss", "Speicher oder E-Fuhrpark heben den Eigenverbrauch"],
-    link: { label: "Gewerbe-PV-Rechner", href: "/rechner/gewerbe-pv" },
-  },
+    {
+      q: "Ab wann gilt für eine PV-Anlage TOR Typ B?",
+      a:
+        `Ab ${zahl(TOR_GRENZEN.B)} kW Maximalkapazität (AC) am Netzanschlusspunkt. Gezählt wird die Wechselrichterleistung aller Erzeugungsanlagen dort, ` +
+        `einschließlich Speicher-Wechselrichter und Bestandsanlagen – nicht die Modulleistung in kWp. Typ B verlangt erweiterte Nachweise, etwa zu Blindleistung, ` +
+        `Wirkleistungsreduktion auf Vorgabe und Fernwirkanbindung; meist übernimmt das ein Parkregler am Netzverknüpfungspunkt. ${PARKREGLER_SATZ} ` +
+        (summe
+          ? `Beispiel (Richtwert): ${zahl(kwp)} kWp ergeben bei einem DC/AC-Verhältnis von ${zahl(DC_AC_VORSCHLAG, 2)} rund ${zahl(acKva)} kVA (${typ(acKva)}); ` +
+            `mit einem Speicher-Wechselrichter von ${zahl(speicherKw)} kW sind es ${zahl(summe)} kW und damit ${typ(summe)}. Die Netzebene legt der Netzbetreiber fest.`
+          : "Die Netzebene legt der Netzbetreiber fest."),
+    },
+  ];
+}
+
+// CLS: Die Ersatzschrift („Manrope Fallback“) bricht die H1 des Seitenkopfs in zwei Breitenbändern eine Zeile
+// früher um als Manrope 800 (gemessen 13.10.2026 auf :3002, Chromium: 358–402 px 3 → 4 Zeilen, 448–504 px
+// 2 → 3 Zeilen; sonst gleich). Kommt die Webschrift erst nach dem ersten Bild, sprangen Lead und CTAs
+// (CLS 0,14 mobil). PageHero ist geteilt und bleibt unverändert – die Reserve gilt nur auf dieser Seite und
+// steht VOR dem Seitenkopf im HTML, damit sie schon beim ersten Bild greift. ov-h1: line-height 1,06.
+// Zweitens: Der Inhalt des Seitenkopfs ist hier in jeder Breite höher als dessen Mindesthöhe (gemessen 320–1920 px),
+// die Ausrichtung nach unten (justify-end + mb-auto der Breadcrumbs) wirkt im fertigen Bild also nicht. Sie wirkte
+// aber, wenn der Browser bei langsamem Netz einen halb geladenen Seitenkopf malte: Der Block saß unten und sprang
+// nach oben, sobald H1 und Lead eintrafen (CLS 0,18 in etwa jedem zehnten Lauf, Fast 3G + 4× CPU). Oben ausgerichtet
+// wächst er nur nach unten – im fertigen Bild ohne sichtbaren Unterschied.
+const SEITENKOPF_CSS = `@media (width < 404px){[data-seite="gewerbe-unikat"] [data-blk="seitenkopf"] h1{min-height:calc(4 * 1.06em)}}@media (404px <= width < 506px){[data-seite="gewerbe-unikat"] [data-blk="seitenkopf"] h1{min-height:calc(3 * 1.06em)}}[data-seite="gewerbe-unikat"] [data-blk="seitenkopf"]>.ov-container{justify-content:flex-start}[data-seite="gewerbe-unikat"] [data-blk="seitenkopf"]>.ov-container>.mb-auto{margin-bottom:0}`;
+
+// Links vor dem Erstgespräch (gefüllt, keine Rahmen) – ersetzen die frühere RechnerLeiste neben der FAQ
+const VORAB = [
+  { label: "Lastgang selbst auswerten", href: "/lastgang-analyse" },
+  { label: "Förder-Check", href: "/foerdercheck" },
+  { label: "Standort-Check: Schnee & Wind", href: "/standort-check" },
 ];
 
 export default async function GewerbePage({ searchParams }) {
   const v = zielgruppenVariante("gewerbe", await searchParams);
+  const faq = [...FAQ_BISHER, ...neueFragen()];
 
   return (
-    <div data-variante={v.id}>
+    <div data-variante={v.id} data-seite="gewerbe-unikat">
+      <style dangerouslySetInnerHTML={{ __html: SEITENKOPF_CSS }} />
       <LoesungSchema
         pfad={PFAD}
         name="Photovoltaik für Gewerbe und Industrie in Österreich"
@@ -187,358 +173,91 @@ export default async function GewerbePage({ searchParams }) {
         leistungen={["Lastganganalyse und Anlagenauslegung", "PV-Anlagen auf Hallen- und Flachdächern", "Netzanschluss Netzebene 7 bis 5 inkl. Parkregler", "Gewerbespeicher und Peak Shaving", "Ladeinfrastruktur", "Wartung und Reststromvermarktung"]}
       />
 
-      <PageHero
-        variant="immersive"
-        className="pb-4 md:pb-6"
-        breadcrumbs={[{ name: "Gewerbe & Industrie" }]}
-        eyebrow={v.eyebrow}
-        title={<>Photovoltaik für Gewerbe und Industrie <span className="ov-text-gradient-light">in Österreich</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
-        image={{ src: HERO_BILD, alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
-        actions={[
-          { label: v.cta, href: "/termin?art=video&thema=gewerbe" },
-          { label: "Anfrage mit Lastgang", href: "/angebot?objekt=gewerbe", icon: FileSpreadsheet },
-        ]}
-        points={["Auslegung nach Viertelstundenwerten", "Netzebene 7 bis 5 inkl. Parkregler", "Förderung, IFB & Netzzugang geklärt", "Wartung & Vermarktung aus einer Hand"]}
-      />
+      {/* Blendet sich nach Call-Ende (22.10.2026) selbst aus */}
+      <FoerdercallHinweis />
 
-      <KennzahlenBand
-        items={[
-          { wert: 22, nach: " %", label: "Öko-Investitionsfreibetrag für PV, Speicher & Ladestationen (Anschaffung bis 31.12.2026)" },
-          { wert: 120, nach: " €/kWp", label: "höchstzulässiger EAG-Investitionszuschuss 2026, Kategorie D (100–1.000 kWp)" },
-          { wert: 0, nach: " ct", label: "Elektrizitätsabgabe auf selbst erzeugten und verbrauchten Solarstrom" },
-          { wert: 12, label: "Monatsspitzen bilden den Leistungspreis bei gemessener Leistung" },
-        ]}
-        quelle="Quellen: WKO (Investitionsfreibetrag), EAG-Investitionszuschüsseverordnung-Strom 2026 laut Leitfaden Land Oberösterreich (Stand 06/2026), § 2 Elektrizitätsabgabegesetz, § 52 ElWOG 2010 / SNE-V 2018."
-      />
-
-      <Section tone="white" space="md">
-        <div className="mb-10 grid gap-6 md:mb-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
-          <SectionHeading eyebrow="Lösungen" title="Photovoltaik, die in den Betrieb passt – nicht nur aufs Dach" />
-          <p className="ov-lead text-ink-600">
-            Gewerbliche Photovoltaik in Österreich ist ein Energieprojekt: Anlage, Netzanschluss, Speicher, Ladepunkte und Vermarktung müssen zum
-            Lastgang passen. Diese Bausteine planen und bauen wir aus einer Hand.
-          </p>
-        </div>
-        <FotoBento
-          items={[
-            { format: "gross", icon: Warehouse, titel: "Hallen- & Flachdächer", text: "Aufgeständert Ost-West oder Süd, ballastiert oder mechanisch befestigt – nach Statik, Schneelast, Dachhaut und Brandabschnitten.", bild: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", position: "center 70%", alt: "Photovoltaikanlage auf dem Flachdach einer Gewerbehalle in Dornbirn mit Bergpanorama" },
-            { icon: Factory, titel: "Produktion & Kühlung", text: "Grundlast aus Druckluft, Lüftung und Kälte deckt sich gut mit der Solarkurve.", bild: "/Images/Home/download-2.jpg", alt: "Aufgeständerte Photovoltaikmodule mit Ballastierung auf einem Flachdach" },
-            { icon: BatteryCharging, titel: "Gewerbespeicher & Peak Shaving", text: "Lastspitzen kappen, Überschüsse in Abend- und Nachtstunden verschieben.", bild: "/Images/AT/loesungen/gewerbespeicher-batteriecontainer.jpg", alt: "Batteriespeicher-Container an einem Kraftwerksstandort in Niederösterreich", href: "/gewerbespeicher" },
-            { icon: Car, titel: "E-Flotte & Ladeinfrastruktur", text: "Flotte mit Solarstrom laden – mit Lastmanagement passend zum Anschluss.", bild: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Solar-Carports mit Ladepunkten auf einem Parkplatz, Luftbild (Symbolbild)", href: "/ladeinfrastruktur" },
-            { icon: TrendingUp, titel: "Reststromvermarktung", text: "OeMAG-Marktpreis, Stromhändler, Direktvermarktung, PPA oder Energiegemeinschaft.", bild: "/Images/AT/ratgeber/hochspannungsleitung-weitendorf.jpg", alt: "Hochspannungsleitung über einem Feld in der Steiermark", href: "/service/direktvermarktung" },
+      {/* Standard-Seitenkopf wie auf allen Lösungsseiten (H1 = einzige H1 der Seite). Entscheidung des Inhabers
+          (12.10.2026): Der Seitenkopf weicht nicht von den anderen Lösungsseiten ab – alles Eigene folgt darunter. */}
+      <div className="relative">
+        <PageHero
+          variant="immersive"
+          breadcrumbs={[{ name: "Gewerbe & Industrie" }]}
+          eyebrow={v.eyebrow}
+          title={<>Photovoltaik für Gewerbe und Industrie <span className="ov-text-gradient-light">in Österreich</span></>}
+          lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+          image={{ src: HERO_BILD, alt: "Luftaufnahme eines Gewerbegebäudes mit Photovoltaikanlagen auf den Flachdächern" }}
+          actions={[
+            // Haupt-CTA seitenweit gleich (Jury 13.10.2026); Kampagnen-Varianten behalten ihr Versprechen (Message-Match)
+            { label: v.id === "standard" ? HAUPT_CTA : v.cta, href: HAUPT_HREF },
+            { label: "Eigenen Lastgang darüberlegen", href: "#lastgang", icon: Activity },
           ]}
+          points={["Auslegung nach Viertelstundenwerten", "Netzebene 7 bis 5 inkl. Parkregler", "Förderung, IFB & Netzzugang geklärt", "Wartung, Fernwartung & Reststromvermarktung"]}
         />
-      </Section>
+      </div>
 
-      {/* Bühne: der Lastgang entscheidet (dunkel, interaktiv) */}
-      <Section tone="navy" space="lg" id="branchen" className="ov-noise overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg absolute inset-0 opacity-60" />
-        <div aria-hidden="true" className="absolute -left-48 top-24 h-[560px] w-[560px] rounded-full bg-ov-500/[0.14] blur-[140px]" />
-        <div aria-hidden="true" className="absolute -right-40 bottom-0 h-[520px] w-[520px] rounded-full bg-navy-500/30 blur-[130px]" />
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-ov-300/30 to-transparent" />
-        <LastprofilExplorer
-          dunkel
-          className="relative"
-          ueberschrift="h2"
-          eyebrow="Branchen · interaktiv"
-          titel={<>Jede Branche hat ihren <span className="ov-text-gradient-light">eigenen Lastgang.</span></>}
-          lead="Die richtige Anlagengröße ergibt sich nicht aus der Dachfläche, sondern aus der Deckung von Solarkurve und Verbrauch. Deshalb werten wir zuerst Ihre Viertelstundenwerte aus: Grundlast am Wochenende, Anlaufspitzen bei Schichtbeginn, Sommer- und Winterprofil."
-          profile={BRANCHEN}
-        />
-      </Section>
+      {/* Kapitel 00: Wochen-Puls, Rollen-Weiche, Kurzantwort (#kurzantwort), DaumenLeiste, Kapitel-Schiene */}
+      <Hero v={v} />
 
-      {/* Was eine selbst genutzte kWh wert ist */}
-      <Section tone="white" space="lg" id="wirtschaftlichkeit-kurz">
-        <W24KwhWert
-          eyebrow="Wirtschaftlichkeit in Österreich"
-          titel="Jede selbst genutzte kWh spart mehr als den Energiepreis."
-          text="Eine gewerbliche PV-Anlage rechnet sich in Österreich über fünf Hebel – der Überschusserlös ist nur der sechste:"
-          hebel={[
-            { titel: "Energiepreis", text: "aus Ihrem Liefervertrag entfällt für jede selbst genutzte kWh." },
-            { titel: "Netzentgelte", text: "Netznutzungs- und Netzverlustentgelt fallen für Eigenverbrauch nicht an." },
-            { titel: "Elektrizitätsabgabe", text: "Eigenverbrauch aus Erneuerbaren ist nach § 2 ElAbgG befreit." },
-            { titel: "Leistungspreis", text: "Mittagsspitzen im Sommer sinken – jeder Monat zählt." },
-            { titel: "Steuer", text: "Öko-IFB 22 % bis Ende 2026, dazu lineare oder degressive AfA." },
-          ]}
-          kopf={{ titel: "Was eine Kilowattstunde vom Dach wert ist", chip: "Beispiel · 300 kWp · Netzebene 6 · OÖ" }}
-          summe="14,64"
-          posten={[
-            { label: "Energiepreis", wert: "11,00", farbe: "#669933" },
-            { label: "Netznutzung", wert: "2,37", farbe: "#1f5aa1" },
-            { label: "Netzverlust", wert: "0,454", farbe: "#7fa7d6" },
-            { label: "Elektrizitätsabgabe", wert: "0,82", farbe: "#f5a70f" },
-          ]}
-          einspeisung={{ label: "Eingespeist – Überschusserlös", wert: "6,0" }}
-          faktor="2,4"
-          ergebnis={[
-            { wert: "≈ 6,1 J.", label: "statische Amortisation" },
-            { wert: "≈ 34.360 €", label: "Überschuss pro Jahr, vor Steuern" },
-            { wert: "≈ 10.600 €", label: "Steuerwirkung Öko-IFB" },
-          ]}
-          fuss="Arbeitspreise netto, Stand 09/2026. Annahmen und Rechenweg im Fachteil – kein Angebot."
-          fussLink={{ label: "Beispielrechnung ansehen", href: "#beispielrechnung" }}
-          aktionen={[
-            { label: "Eigene Zahlen rechnen", href: "/rechner/gewerbe-pv" },
-            { label: "Anfrage mit Lastgang", href: "/angebot?objekt=gewerbe" },
-          ]}
-        />
-      </Section>
+      {/* Akt I – Verstehen */}
+      <K1Lastgang />
+      <K2Hallendach />
 
-      {/* Werkzeuge: selbst rechnen */}
-      <Section tone="sand" space="lg" id="rechner" className="overflow-hidden">
-        <div aria-hidden="true" className="ov-grid-bg-light absolute inset-x-0 top-0 h-[520px]" />
-        <RechnerLeiste
-          className="relative"
-          variante="schaufenster"
-          eyebrow="Selbst rechnen"
-          titel={<>Ihr Betrieb in Zahlen&nbsp;– <span className="ov-text-gradient">bevor wir sprechen.</span></>}
-          text="Kostenlose Werkzeuge mit österreichischen Netzentgelten, Förderungen und Standortdaten: Hallendach, Leistungspreis, Flotte und Klimabilanz."
-          alle={{ label: "Alle Rechner & Tools", href: "/rechner" }}
-          items={[
-            { format: "gross", motiv: "gewerbe", icon: Calculator, tag: "Neu", titel: "Gewerbe-PV-Rechner", text: "Anlagengröße, Eigenverbrauch und Amortisation nach Ihrem Verbrauch – mit IRR, EAG-Zuschuss und Investitionsfreibetrag.", href: "/rechner/gewerbe-pv", cta: "Hallendach durchrechnen" },
-            { motiv: "peak", icon: Gauge, titel: "Peak-Shaving-Rechner", text: "Was ein Speicher am Leistungspreis der zwölf Monatsspitzen spart.", href: "/rechner/peak-shaving" },
-            { motiv: "flotte", icon: Car, titel: "E-Flotten-Rechner", text: "Ladebedarf der Flotte gegen Solarstrom vom eigenen Dach.", href: "/rechner/e-flotte" },
-            { motiv: "co2", icon: Leaf, titel: "CO₂- & ESG-Rechner", text: "Scope-2-Wirkung Ihrer Anlage für den Nachhaltigkeitsbericht.", href: "/rechner/co2-esg" },
-            { icon: Wrench, tag: "Service", titel: "Wartungsvertrag", text: "Service-Level nach Anlagengröße: Inspektion, Thermografie, Reinigung, Störungsbehebung.", href: "/service/wartung" },
-            { icon: Users, tag: "Service", titel: "Energiegemeinschaft", text: "Überschuss an Mitarbeitende, Nachbarbetriebe oder die Gemeinde weitergeben.", href: "/energiegemeinschaften" },
-          ]}
-        />
-      </Section>
+      {/* Akt II – Gestalten */}
+      <K3Anlagengroesse />
+      <K4KwhWert />
+      <K5Leistungspreis />
+      <K6Netzanschluss />
 
-      <TechnikSystem
-        id="technik"
-        eyebrow="Netzanschluss & Technik"
-        title="Netzebene 7, 6 oder 5 – der Anschluss bestimmt die Technik."
-        lead="Auf welcher Netzebene Ihre Anlage einspeist, legt der Netzbetreiber nach einer Netzverträglichkeitsprüfung fest. Davon hängen Trafostation, Schutztechnik, Regler und Kosten ab – ab Typ B übernimmt am Netzverknüpfungspunkt ein Parkregler."
-        fakten={[
-          { wert: "NE 7–5", label: "Niederspannung bis Mittelspannung" },
-          { wert: "Typ A/B", label: "TOR Erzeuger, ab 250 kW Typ B" },
-          { wert: "R 11-1", label: "OVE-Richtlinie Brandschutz" },
-        ]}
-        knoten={{
-          erzeugung: { titel: "PV-Hallendach", text: "Module, Strings, Wechselrichter" },
-          zusatz: { titel: "Speicher & Ladepunkte", text: "Peak Shaving, E-Flotte, Betrieb" },
-          netz: { titel: "Netzbetreiber", text: "Netzebene 7, 6 oder 5" },
-        }}
-        texte={{
-          parkregler: "Für Anlagen auf Netzebene 5: Blindleistung Q(U) oder cos φ, Einspeiselimit und Fernsteuerbefehle des Netzbetreibers – TOR-konform nachgewiesen.",
-          fernwartung: "Gesicherter Zugriff auf Wechselrichter, Zähler und Schutz – Störungen erkennen, bevor sie Ertrag kosten.",
-          scada: "Erzeugung, Lastgang, Speicher und Ladepunkte in einer Oberfläche – mit Kennzahlen für Controlling und Nachhaltigkeitsbericht.",
-        }}
-        bild={{ src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "" }}
-      />
+      {/* Blendet sich nach 31.12.2026 selbst aus */}
+      <IfbHinweis />
 
-      <Section tone="white" space="md">
-        <SectionHeading eyebrow="Ablauf" title="Vom Lastgang zur laufenden Anlage" className="mb-12" />
-        <AblaufLeiste
-          items={[
-            { icon: FileSpreadsheet, title: "Lastgang & Dach", text: "Viertelstundenwerte, Netzrechnung, Dachpläne und Statik auswerten – daraus ergeben sich Grundlast, Anlagengröße und Netzebene." },
-            { icon: HandCoins, title: "Wirtschaftlichkeit & Förderung", text: "Varianten mit und ohne Speicher, Überschussvermarktung, EAG-Zuschuss, IFB und Finanzierung nebeneinander." },
-            { icon: ClipboardList, title: "Netz & Genehmigung", text: "Netzzugangsantrag, Förderantrag vor Inbetriebnahme, Abstimmung mit Behörde, Versicherung und Feuerwehr." },
-            { icon: Wrench, title: "Montage im laufenden Betrieb", text: "Baustelleneinrichtung nach Ihren Schichtplänen, Inbetriebnahme mit Prüfprotokoll und Anlagenbuch." },
-            { icon: LineChart, title: "Betrieb & Service", text: "Monitoring über unser SCADA, Wartungsvertrag, E-Check und Reststromvermarktung – über die gesamte Laufzeit." },
-            { icon: Zap, title: "Ausbau", text: "Speicher, Ladepunkte, Wärmepumpe oder Energiegemeinschaft später ergänzen – die Anlage ist dafür vorbereitet." },
-          ]}
-        />
-      </Section>
+      {/* Akt III – Entscheiden */}
+      <K7Wirtschaftlichkeit />
+      <K8Fahrplan />
 
-      <Section tone="sand" space="md" id="fachdetails">
-        <div className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
-          <SectionHeading eyebrow="Für Technik & Einkauf" title="Netz, Rechenweg und Recht im Detail" />
-          <div className="flex flex-col items-start gap-3 lg:items-end">
-            <StandPille>Werte Stand 09/2026 – SNE-V 2018 Novelle 2026</StandPille>
-          </div>
-        </div>
-        <FachTabs
-          tabs={[
-            { id: "netzebenen", label: "Netzebenen & Dach" },
-            { id: "beispielrechnung", label: "Beispielrechnung" },
-            { id: "wirtschaftlichkeit", label: "Wirtschaftlichkeit & Netzentgelte" },
-            { id: "recht", label: "Genehmigung & Recht" },
-          ]}
-        >
-          <div>
-            <h3 className="ov-h3 text-ink-900">Netzebenen für gewerbliche PV-Anlagen in Österreich</h3>
-            <Tabelle
-              className="mt-6"
-              dicht
-              caption="Netzebenen für gewerbliche PV-Anlagen in Österreich"
-              spalten={[
-                { key: "ne", label: "Netzebene", breite: "w-[18%]" },
-                { key: "ort", label: "Anschlusspunkt" },
-                { key: "groesse", label: "Typische Anlagengröße" },
-                { key: "tor", label: "TOR Erzeuger" },
-              ]}
-              zeilen={NETZEBENEN}
-              fuss="Richtwerte – die Netzebene legt der Netzbetreiber fest. Typen nach TOR Erzeuger (E-Control): Typ A ≥ 0,8 kW bis < 250 kW, Typ B 250 kW bis < 35 MW, Typ C 35 bis < 50 MW, Typ D ≥ 50 MW oder Anschluss ≥ 110 kV."
-            />
-            <Prosa className="mt-8 grid gap-6 xl:grid-cols-2 xl:gap-10 [&>p]:mt-0!">
-              <p>
-                <strong>Ab Typ B verlangt der Netzbetreiber zusätzliche Nachweise</strong> – unter anderem zur Blindleistungsbereitstellung, zur
-                Wirkleistungsreduktion auf Vorgabe und zur Fernwirkanbindung. Auf Mittelspannung übernimmt das ein Parkregler (EZA-Regler) am
-                Netzverknüpfungspunkt. Den entwickeln wir selbst, ebenso Fernwartung und SCADA – damit bleibt die Verantwortung für das
-                Zusammenspiel bei einem Ansprechpartner. Hintergründe im Ratgeber{" "}
-                <Link href="/ratgeber/tor-erzeuger-netzanschluss">TOR Erzeuger und Netzanschluss</Link>.
-              </p>
-              <p>
-                <strong>Beim Dach zählen Statik und Schnee.</strong> Wir bemessen nach ÖNORM B 1991-1-3 (Schneelast) und B 1991-1-4 (Wind) und
-                prüfen die Schneelast Ihres Standorts – schnell vorab mit dem <Link href="/standort-check">Standort-Check</Link>. Den
-                Brandschutz planen wir nach OVE-Richtlinie R 11-1 mit Freihaltezonen, Abschaltkonzept und Feuerwehrplan.
-              </p>
-            </Prosa>
-          </div>
+      {/* Beweise: echte Projekte der Zielgruppe – ohne freigegebene Treffer rendert die Komponente nichts */}
+      <BranchenReferenzen zielgruppe="industrie" />
 
-          <div>
-            <h3 className="ov-h3 text-ink-900">300 kWp auf einer Produktionshalle in Oberösterreich</h3>
-            <p className="mt-2 max-w-3xl text-[15.5px] leading-relaxed text-ink-600">
-              Ein nachvollziehbares Rechenbeispiel mit offengelegten Annahmen – kein Angebot. Ihre Zahlen hängen von Lastgang, Dach, Liefervertrag und
-              Förderzuschlag ab.
-            </p>
-            <Tabelle
-              className="mt-6"
-              dicht
-              caption="Beispielrechnung Wirtschaftlichkeit einer 300-kWp-PV-Anlage auf Netzebene 6"
-              spalten={[
-                { key: "pos", label: "Position", breite: "w-[30%]" },
-                { key: "wert", label: "Annahme / Rechnung" },
-                { key: "ergebnis", label: "Ergebnis", breite: "w-[20%]", className: "font-semibold text-ink-900" },
-              ]}
-              zeilen={BEISPIEL}
-              fuss="Beispiel, Stand 09/2026. Annahmen: Standort Innviertel (spezifischer Ertrag 1.050 kWh/kWp, Richtwert nach PVGIS), Netzebene 6 im Netzbereich Oberösterreich, Energiepreis 11 ct/kWh netto, Überschusserlös 6 ct/kWh, Investition 800 €/kWp netto (Marktannahme, kein Ökovolt-Preis), EAG-Zuschuss nur bei Zuschlag. Nicht enthalten: Leistungspreiseffekt, Degradation, Preissteigerungen, Finanzierung. Förderungen können die Bemessungsgrundlage des IFB mindern – bitte mit der Steuerberatung abstimmen."
-            />
-          </div>
-
-          <div className="grid gap-10 xl:grid-cols-[1fr_1fr] xl:gap-14">
-            <Prosa>
-              <p>
-                <strong>Der Arbeitspreis, den ein Betrieb für Netzstrom zahlt, besteht aus mehreren Teilen</strong> – und fast alle entfallen für
-                Solarstrom, den Sie selbst verbrauchen: der Energiepreis aus Ihrem Liefervertrag, das Netznutzungsentgelt (Arbeitspreis), das
-                Netzverlustentgelt, verbrauchsabhängige Förderbeiträge und die Elektrizitätsabgabe. Selbst erzeugter und verbrauchter Strom aus
-                erneuerbaren Quellen ist nach § 2 Elektrizitätsabgabegesetz ohne Mengengrenze von der Abgabe befreit. 2026 beträgt die Abgabe für
-                Unternehmen befristet 0,82 ct/kWh, regulär 1,5 ct/kWh.
-              </p>
-              <p>
-                <strong>Der Leistungspreis folgt in Österreich einer eigenen Logik.</strong> Bei gemessener Leistung verrechnet der Netzbetreiber
-                den Mittelwert der höchsten Viertelstundenleistung jedes Monats (§ 52 ElWOG 2010). Anders als bei einer einzigen Jahresspitze
-                zählt also jeder Monat – eine PV-Anlage, die Sommerspitzen zur Mittagszeit senkt, wirkt anteilig. Mehr dazu auf der Seite{" "}
-                <Link href="/gewerbespeicher">Gewerbespeicher und Peak Shaving</Link> und im Ratgeber{" "}
-                <Link href="/ratgeber/peak-shaving-leistungspreis">Leistungspreis in Österreich senken</Link>.
-              </p>
-              <p>
-                <strong>Steuerlich</strong> gilt die Anlage als abnutzbares Wirtschaftsgut mit linearer oder degressiver Abschreibung. Für
-                Anschaffungen von November 2025 bis 31. Dezember 2026 ist der ökologische Investitionsfreibetrag auf 22 % erhöht (ab 2027 wieder
-                15 %); begünstigt sind neben PV-Anlagen auch Stromspeicher, E-Ladestationen und emissionsfreie Fahrzeuge. Details im Ratgeber{" "}
-                <Link href="/ratgeber/investitionsfreibetrag-photovoltaik">Investitionsfreibetrag für Photovoltaik</Link> und unter{" "}
-                <Link href="/forderungen/steuerlich">steuerliche Vorteile</Link>.
-              </p>
-              <p>
-                <strong>Förderung:</strong> Der <Link href="/ratgeber/eag-investitionszuschuss">EAG-Investitionszuschuss</Link> fördert 2026 Anlagen
-                bis 1.000 kWp; in den Kategorien C und D wird nach dem beantragten Fördersatz gereiht, maximal 130 bzw. 120 € je kWp. Anlagen über
-                10 kWp können alternativ an den Ausschreibungen für die Marktprämie teilnehmen (Höchstpreis 2026: 7,77 ct/kWh).
-              </p>
-            </Prosa>
-            <div>
-              <h3 className="ov-h3 text-ink-900">Netznutzungsentgelte 2026 im Vergleich</h3>
-              <p className="mt-3 text-[15.5px] leading-relaxed text-ink-600">
-                Leistungspreis je kW und Jahr sowie Arbeitspreis je kWh, jeweils netto. Die Netzebene steht auf Ihrer Netzrechnung.
-              </p>
-              <Tabelle
-                className="mt-6"
-                dicht
-                caption="Netznutzungsentgelte 2026 für Netzebene 5, 6 und 7 in Oberösterreich, Salzburg und Wien"
-                spalten={[
-                  { key: "ne", label: "Netzebene", breite: "w-[31%]" },
-                  { key: "ooe", label: "Oberösterreich" },
-                  { key: "sbg", label: "Salzburg" },
-                  { key: "wien", label: "Wien" },
-                ]}
-                zeilen={NETZENTGELTE}
-                fuss="Quelle: Systemnutzungsentgelte-Verordnung 2018 – Novelle 2026, BGBl. II Nr. 305/2025 (E-Control), § 5. Zusätzlich fällt das Netzverlustentgelt an, z. B. Netzebene 6 Oberösterreich 0,454 ct/kWh. Werte für alle Netzbereiche in der Verordnung."
-              />
-            </div>
-            <Hebel
-              className="xl:col-span-2"
-              cols={3}
-              items={[
-                { icon: Receipt, titel: "Steuer", text: "Öko-IFB 22 % bis Ende 2026, danach 15 %. Dazu Abschreibung – linear oder degressiv." },
-                { icon: HandCoins, titel: "Förderung", text: "EAG-Investitionszuschuss bis 1.000 kWp, Speicher mit 150 €/kWh bis 50 kWh, Made-in-Europe-Bonus möglich." },
-                { icon: Gauge, titel: "Planbarkeit", text: "Ein großer Teil der Stromkosten ist für 25 Jahre und mehr kalkulierbar – unabhängig vom Spotpreis." },
-              ]}
-            />
-          </div>
-
-          <div>
-            <h3 className="ov-h3 text-ink-900">Was ein Gewerbeprojekt rechtlich braucht</h3>
-            <p className="mt-2 max-w-3xl text-[15.5px] leading-relaxed text-ink-600">
-              Für eine Dachanlage im Betrieb sind in Österreich meist wenige Verfahren nötig – aber die richtigen, in der richtigen Reihenfolge.
-            </p>
-            <Prosa className="mt-6">
-              <ul className="grid gap-x-10 gap-y-3 xl:grid-cols-2">
-                <li>
-                  <strong>Netzzugang:</strong> Antrag beim Netzbetreiber (z. B. Netz Oberösterreich, Salzburg Netz, Wiener Netze, Netz Niederösterreich), Netzverträglichkeitsprüfung, Netzzugangsvertrag und Einspeisezählpunkt. Rechtsgrundlage ist seit 2025/2026 schrittweise das Elektrizitätswirtschaftsgesetz (ElWG, BGBl. I Nr. 91/2025).
-                </li>
-                <li>
-                  <strong>Gewerberecht:</strong> Überschusseinspeiser sind Teil der Betriebsanlage; laut Erlass des Wirtschaftsministeriums vom 1. März 2021 im Regelfall ohne eigene Genehmigung – außer bei Sonderfällen wie Fluchtwegen, Ex-Zonen oder Blendung.
-                </li>
-                <li>
-                  <strong>Elektrizitätsrecht des Landes:</strong> Dach- und Parkplatzanlagen sind vielfach bewilligungsfrei – in Oberösterreich etwa auf künstlichen Strukturen unabhängig von der Leistung. Volleinspeiser und Freiflächen können eine Anzeige oder Bewilligung brauchen.
-                </li>
-                <li>
-                  <strong>Bauordnung:</strong> je Bundesland unterschiedlich – auf Dächern meist bewilligungs- und anzeigefrei, aber Orts- und Landschaftsbild, Statik und Brandschutz gelten immer. Überblick unter <Link href="/forderungen/baurecht">Baurecht der Bundesländer</Link>.
-                </li>
-                <li>
-                  <strong>Förderung:</strong> EAG-Antrag vor der Inbetriebnahme; alle Anzeigen und Genehmigungen müssen zu diesem Zeitpunkt in erster Instanz vorliegen.
-                </li>
-                <li>
-                  <strong>Versicherung & Brandschutz:</strong> Abstimmung mit Betriebsversicherung und Feuerwehr, Errichtung nach ÖVE/ÖNORM E 8101 und Erstprüfung nach ÖVE/ÖNORM EN 62446-1.
-                </li>
-              </ul>
-              <p>
-                Ausführlich im Ratgeber <Link href="/ratgeber/photovoltaik-genehmigung">Photovoltaik-Genehmigung in Österreich</Link> und unter{" "}
-                <Link href="/forderungen/richtlinien">Richtlinien &amp; Netzanschluss</Link>.
-              </p>
-            </Prosa>
-            <Hinweis titel="Orientierung, keine Rechts- oder Steuerberatung" className="mt-8">
-              Die Angaben geben den Stand 09/2026 wieder. Landesrecht, Förderbedingungen und Netzentgelte ändern sich regelmäßig – wir prüfen
-              sie für Ihr Projekt tagesaktuell.
-            </Hinweis>
-          </div>
-        </FachTabs>
-      </Section>
-
-      <Section tone="white" space="md">
-        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <div>
+      <Section tone="white" space="md" id="faq" data-kapitel="faq">
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div className="lg:sticky lg:top-28 lg:self-start">
             <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Geschäftsführung, Technik und Einkauf" />
-            <p className="mt-10 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Vor dem Erstgespräch</p>
-            <RechnerLeiste
-              className="mt-4"
-              kompakt
-              mini
-              spaltenKlasse="grid-cols-1 sm:grid-cols-2 lg:grid-cols-1"
-              items={[
-                { icon: Activity, titel: "Lastgang selbst auswerten", text: "", href: "/lastgang-analyse" },
-                { icon: BadgeEuro, titel: "Förder-Check", text: "", href: "/foerdercheck" },
-                { icon: MapPin, titel: "Standort-Check: Schnee & Wind", text: "", href: "/standort-check" },
-              ]}
-            />
+            <p className="mt-8 text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700 md:mt-10">Vor dem Erstgespräch</p>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {VORAB.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="group inline-flex min-h-11 items-center gap-2 rounded-full bg-ink-100 px-4 text-[14.5px] font-semibold text-ink-900 transition-colors duration-200 hover:bg-ink-200"
+                  >
+                    {l.label}
+                    <ArrowRight aria-hidden="true" className="h-4 w-4 text-ov-700 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-          <Faq items={FAQ} />
+          <Faq items={faq} />
         </div>
       </Section>
 
       <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Wirtschaftlichkeit, Technik & Recht" />
 
+      {/* Zusagen (nur freigegebene) und Ansprechpartner (nur mit Einwilligung, sonst Teamfunktion) */}
+      <UnsereZusagen rahmen />
+      <Ansprechpartner zielgruppe="gewerbe" rahmen />
+
+      {/* Gleicher Haupt-CTA wie Seitenkopf, Daumenleiste und Kapitel; der Termin ist der klar benannte Zweitweg */}
       <CtaBand
-        eyebrow="Kostenlos & unverbindlich"
+        eyebrow={`Ersteinschätzung – ${HAUPT_ZUSATZ}`}
         title="Schicken Sie uns Ihren Lastgang – wir zeigen, was Ihr Dach leisten kann."
-        text="Erstgespräch per Video oder vor Ort, mit erster Einschätzung zu Anlagengröße, Netzebene, Eigenverbrauch, Förderung und Wirtschaftlichkeit."
-        primary={{ label: v.cta, href: "/termin?art=video&thema=gewerbe" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=gewerbe", icon: Cog }}
+        text="Erste Einschätzung zu Anlagengröße, Netzebene, Eigenverbrauch, Förderung und Wirtschaftlichkeit – Rechenweg inklusive. Ohne Lastgang reichen Jahresverbrauch und Netzrechnung; kein Angebot ohne Ihre Zahlen."
+        primary={{ label: HAUPT_CTA, href: HAUPT_HREF }}
+        secondary={{ label: "Erstgespräch per Video vereinbaren", href: TERMIN_CTA.href, icon: Video }}
       />
 
-      <Bildnachweis items={nachweise("flachdachDornbirn", "batteriecontainer", "carport", "weitendorf", "leitwarte")} />
+      {/* Nur tatsächlich genutzte Fremdbilder: Flachdach Dornbirn (Projektsteckbrief in K8) */}
+      <Bildnachweis items={nachweise("flachdachDornbirn")} />
     </div>
   );
 }

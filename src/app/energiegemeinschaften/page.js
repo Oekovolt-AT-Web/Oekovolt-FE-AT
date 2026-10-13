@@ -32,6 +32,7 @@ import Rechenbeleg from "@/components/Loesungen/B/Rechenbeleg";
 import DunkelSektion from "@/components/Loesungen/B/DunkelSektion";
 import EnergieFluss from "@/components/Loesungen/B/EnergieFluss";
 import { zielgruppenVariante } from "@/data/zielgruppen";
+import { EEG_JE_BUNDESLAND, PFAD as NETZ_PFAD, STAND as NETZ_STAND, betreiberPfad, eegAnmeldewege } from "@/data/netzbetreiber";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/energiegemeinschaften";
@@ -113,6 +114,20 @@ const ERSPARNIS = [
   { pos: "Entfall Elektrizitätsabgabe", wert: "2026 für Haushalte 0,1 ct/kWh, regulär 1,5 ct/kWh", ergebnis: "3 bis 45 €/Jahr" },
   { pos: "Energiepreis", wert: "vereinbart die EEG selbst – oft zwischen Einspeise- und Lieferpreis", ergebnis: "je nach EEG" },
 ];
+
+const LINK = "font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800";
+const ANMELDEWEGE = eegAnmeldewege();
+const zahl = (n) => n.toLocaleString("de-DE");
+
+/** Externer Link mit Screenreader-Hinweis (Netzbetreiber-Portale). */
+function Extern({ href, children }) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={LINK}>
+      {children}
+      <span className="sr-only"> (externer Link, neues Fenster)</span>
+    </a>
+  );
+}
 
 const ZEITPLAN = [
   { d: "24.12.2025", t: "ElWG teilweise in Kraft (Günstiger-Strom-Gesetz)" },
@@ -366,10 +381,109 @@ export default async function EnergiegemeinschaftenPage({ searchParams }) {
         />
       </Section>
 
+      {/* EEG-Anmeldewege je Netzbetreiber + EEG je Bundesland (Daten: src/data/netzbetreiber.js, Paket C06) */}
+      <Section tone="white" space="lg" id="anmeldewege" className="scroll-mt-24">
+        <div className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <SectionHeading
+            eyebrow="Je Netzbetreiber"
+            title="EEG-Anmeldewege im Vergleich: Datenfreigabe, Nahbereich, Peer-to-Peer"
+            lead="Die Registrierung läuft seit 05.10.2026 für alle über ebUtilities und die EDA. Unterschiedlich ist, wo die Teilnehmenden ihre Daten freigeben, wie der Nahbereich geprüft wird und was der Netzbetreiber zu Peer-to-Peer sagt – hier für zehn Netzbetreiber in allen neun Bundesländern, Angaben in eigenen Worten nach den Seiten der Netzbetreiber."
+          />
+          <StandPille className="shrink-0 self-start md:self-auto">Geprüft am {NETZ_STAND.label}</StandPille>
+        </div>
+        <Tabelle
+          mobil="karten"
+          caption="EEG-Anmeldewege je Netzbetreiber: Datenfreigabe der Teilnehmenden, Nahbereichsprüfung und Peer-to-Peer"
+          spalten={[
+            { key: "betreiber", label: "Netzbetreiber", breite: "w-[17%]" },
+            { key: "datenfreigabe", label: "Datenfreigabe der Teilnehmenden" },
+            { key: "nahbereich", label: "Nahbereich prüfen", breite: "w-[16%]" },
+            { key: "p2p", label: "Peer-to-Peer", breite: "w-[27%]" },
+          ]}
+          zeilen={ANMELDEWEGE.map((z) => ({
+            betreiber: (
+              <span className="block [font-feature-settings:normal] [font-variant-numeric:normal]">
+                <Link href={`${betreiberPfad(z.slug)}#energiegemeinschaft`} className={LINK}>
+                  {z.kurz}
+                </Link>
+                <span className="mt-0.5 block text-[12.5px] font-normal text-ink-500">{z.bundesland}</span>
+                {z.kontakt && (
+                  <a href={z.kontakt.href} className="mt-1 block break-all py-3.5 text-[12.5px] font-normal text-ink-600 underline decoration-ink-200 underline-offset-2 hover:text-ov-700">
+                    {z.kontakt.wert}
+                  </a>
+                )}
+              </span>
+            ),
+            datenfreigabe: (
+              <span className="block text-[14px] leading-relaxed [font-feature-settings:normal] [font-variant-numeric:normal]">
+                {z.datenfreigabe}
+                {z.formular && (
+                  <span className="mt-1.5 block">
+                    <Extern href={z.formular.url}>{z.formular.name}</Extern>
+                  </span>
+                )}
+              </span>
+            ),
+            nahbereich: z.nahbereich ? (
+              <span className="block text-[14px] leading-relaxed [font-feature-settings:normal] [font-variant-numeric:normal]">
+                <Extern href={z.nahbereich.url}>{z.nahbereich.name}</Extern>
+              </span>
+            ) : (
+              <span className="text-[14px] text-ink-500 [font-feature-settings:normal] [font-variant-numeric:normal]">nicht veröffentlicht</span>
+            ),
+            p2p: (
+              <span className="block text-[14px] leading-relaxed [font-feature-settings:normal] [font-variant-numeric:normal]">
+                {z.p2pOffen && <span className="mb-1 inline-flex rounded-full bg-sun-300/35 px-2 py-0.5 text-[11.5px] font-semibold text-ink-800">beim Netzbetreiber zu prüfen</span>}
+                <span className="block">{z.p2p}</span>
+              </span>
+            ),
+          }))}
+          fuss={
+            <>
+              Quellen: Seiten der Netzbetreiber zu Energiegemeinschaften und Bürgerenergiemodellen, geprüft am {NETZ_STAND.label}; die Links und Quellen je Netzbetreiber stehen auf den Seiten unter{" "}
+              <Link href={NETZ_PFAD} className={LINK}>
+                Netzanmeldung
+              </Link>
+              . Ökovolt ist kein Netzbetreiber; Angaben ohne Gewähr, maßgeblich sind die Unterlagen des Netzbetreibers. Neue Modelle (Peer-to-Peer, Eigenversorgung) seit 05.10.2026 innerhalb eines Netzbetreibers, netzübergreifend voraussichtlich ab April 2027; reduzierte Netzentgelte dafür erst mit der Entgeltverordnung ab 01.01.2027.
+            </>
+          }
+        />
+
+        <div id="eeg-je-bundesland" className="mt-16 grid scroll-mt-24 gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading
+            eyebrow="EEG je Bundesland"
+            title="Wie viele Erneuerbare-Energie-Gemeinschaften es schon gibt"
+            lead={`Stand ${EEG_JE_BUNDESLAND.stichtag.label}: ${zahl(EEG_JE_BUNDESLAND.gesamt)} EEG in Österreich, dazu ${zahl(EEG_JE_BUNDESLAND.beg)} Bürgerenergiegemeinschaften und ${zahl(EEG_JE_BUNDESLAND.gea)} gemeinschaftliche Erzeugungsanlagen. Zahlen der E-Control je Netzbereich, manuell nachgeführt.`}
+          />
+          <Tabelle
+            dicht
+            mobil="scroll"
+            caption={`Anzahl der Erneuerbare-Energie-Gemeinschaften je Bundesland (Netzbereich), Stichtag ${EEG_JE_BUNDESLAND.stichtag.label}`}
+            spalten={[
+              { key: "land", label: "Netzbereich" },
+              { key: "eeg", label: "Anzahl EEG", breite: "w-[28%]" },
+              { key: "anteil", label: "Anteil", breite: "w-[18%]" },
+            ]}
+            zeilen={[
+              ...EEG_JE_BUNDESLAND.zeilen.map((z) => ({ land: z.land, eeg: zahl(z.eeg), anteil: `${((z.eeg / EEG_JE_BUNDESLAND.gesamt) * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 })} %` })),
+              { land: "Österreich gesamt", eeg: zahl(EEG_JE_BUNDESLAND.gesamt), anteil: "100 %", hervorheben: true },
+            ]}
+            fuss={
+              <>
+                Quelle:{" "}
+                <Extern href={EEG_JE_BUNDESLAND.quelle.url}>{EEG_JE_BUNDESLAND.quelle.titel}</Extern>, Stand Juli 2026, Stichtag {EEG_JE_BUNDESLAND.stichtag.label}. {EEG_JE_BUNDESLAND.hinweis} Anteile gerundet, Richtwert zur Orientierung.
+              </>
+            }
+          />
+        </div>
+      </Section>
+
       <Section tone="white" space="md">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
-          <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen vor der Gründung" />
-          <Faq items={FAQ} />
+          <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen vor der Gründung" className="min-w-0" />
+          <div className="min-w-0 hyphens-auto break-words">
+            <Faq items={FAQ} />
+          </div>
         </div>
       </Section>
 

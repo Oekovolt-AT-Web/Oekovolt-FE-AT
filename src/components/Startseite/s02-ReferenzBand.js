@@ -5,6 +5,8 @@
 // Client-Insel für S02Referenzen: Kennzahl (zählt beim Eintritt hoch), Branchen-Legende
 // (ein Modul = ein Betrieb, wie die TV-Folie „Branchen“) und das typografische Laufband.
 // Branche überfahren/antippen → Laufband hebt diese Betriebe hervor, die Kennzahl zeigt deren Anzahl.
+// Welle A02: Die Kennzahl zählt Branchen („Auswahl aus 6 Branchen“), nicht Betriebe; Kundennamen
+// kommen nur mit Namensfreigabe aus src/data/hero.js (sonst Branche und Bundesland, ohne Link).
 // Laufband: hält bei Hover/Fokus an, Knopf zum Anhalten (WCAG 2.2.2); bei reduzierter Bewegung
 // steht es als ruhige, umbrechende Namensliste da. Ohne JavaScript ist alles sichtbar.
 
@@ -64,7 +66,7 @@ function Firma({ f, branche, gedimmt, kopie }) {
       {f.link && <ArrowUpRight aria-hidden="true" className="s02r-pfeil h-[0.62em] w-[0.62em] shrink-0" strokeWidth={2.4} />}
     </>
   );
-  return f.link ? (
+  return f.link && f.slug ? (
     <Link href={`/referenzen/projekte/${f.slug}`} className={klasse} data-b={branche} tabIndex={kopie ? -1 : undefined}>
       {inhalt}
     </Link>
@@ -87,7 +89,7 @@ function Reihe({ gruppen, fokus, kopie }) {
             {g.branche}
           </Li>,
           ...g.firmen.map((f, i) => (
-            <Li key={f.slug} className="flex items-center">
+            <Li key={f.slug || `${g.branche}-${i}`} className="flex items-center">
               {i > 0 && <span aria-hidden="true" className={`s02r-trenner ${aus ? "s02r-gedimmt" : ""}`} />}
               <Firma f={f} branche={g.branche} gedimmt={aus} kopie={kopie} />
             </Li>
@@ -107,10 +109,10 @@ export default function ReferenzBand({ gruppen, kopf, link }) {
   const [angehalten, setAngehalten] = useState(false);
 
   const reihen = useMemo(() => reihenBilden(gruppen), [gruppen]);
-  const gesamt = gruppen.reduce((s, g) => s + g.firmen.length, 0);
   const fokus = vorschau ?? aktiv;
   const fokusGruppe = gruppen.find((g) => g.branche === fokus);
-  const zahl = useZahl(fokusGruppe ? fokusGruppe.firmen.length : gesamt, an);
+  // Ohne Fokus zählt die Kennzahl die Branchen der Auswahl, mit Fokus die Betriebe der Branche
+  const zahl = useZahl(fokusGruppe ? fokusGruppe.firmen.length : gruppen.length, an);
 
   useEffect(() => {
     setJs(true);
@@ -137,20 +139,20 @@ export default function ReferenzBand({ gruppen, kopf, link }) {
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-8">
           <div className="lg:col-span-7">{kopf}</div>
 
-          {/* Kennzahl: Anzahl der hier gezeigten Betriebe (bzw. der hervorgehobenen Branche) */}
+          {/* Kennzahl: Branchen der Auswahl (bzw. Betriebe der hervorgehobenen Branche) */}
           <div className="flex items-end gap-5 lg:col-span-5 lg:justify-self-end">
             <p className="s02r-zahl" aria-hidden="true">
               {zahl}
             </p>
             <div className="pb-1.5">
               <p className="sr-only" aria-live="polite">
-                {fokusGruppe ? `${fokusGruppe.firmen.length} Betriebe aus der Branche ${fokusGruppe.branche}` : `${gesamt} Betriebe aus ${gruppen.length} Branchen`}
+                {fokusGruppe ? `${fokusGruppe.firmen.length} Betriebe aus der Branche ${fokusGruppe.branche}` : `Auswahl aus ${gruppen.length} Branchen`}
               </p>
               <p aria-hidden="true" className="font-display text-[clamp(1.3rem,1.1rem+0.6vw,1.6rem)] font-bold leading-tight tracking-[-0.02em] text-ink-900">
-                {zahl === 1 ? "Betrieb" : "Betriebe"}
+                {fokusGruppe ? (zahl === 1 ? "Betrieb" : "Betriebe") : "Branchen"}
               </p>
               <p aria-hidden="true" className="mt-0.5 text-[15px] text-ink-500">
-                {fokusGruppe ? <>aus der Branche <span className="font-semibold text-ov-700">{fokusGruppe.branche}</span></> : `aus ${gruppen.length} Branchen`}
+                {fokusGruppe ? <>aus der Branche <span className="font-semibold text-ov-700">{fokusGruppe.branche}</span></> : "eine Auswahl unserer Referenzen"}
               </p>
               <div className="mt-2.5 -mb-2.5">{link}</div>
             </div>
@@ -160,7 +162,7 @@ export default function ReferenzBand({ gruppen, kopf, link }) {
         {/* Branchen-Legende: ein Modul je Betrieb */}
         <div className="mt-10 flex items-center gap-3 md:mt-14">
           <div className="s02r-chips -ml-5 flex min-w-0 flex-1 items-center gap-2.5 overflow-x-auto py-1 pl-5 pr-6 md:ml-0 md:flex-wrap md:overflow-visible md:p-0 md:gap-3">
-          <p className="mr-2 hidden text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-400 md:block">Branchen</p>
+          <p className="mr-2 hidden text-[12px] font-semibold uppercase tracking-[0.16em] text-ink-500 md:block">Branchen</p>
           {gruppen.map((g) => {
             const gedrueckt = aktiv === g.branche;
             return (
@@ -174,9 +176,9 @@ export default function ReferenzBand({ gruppen, kopf, link }) {
                 className={`s02r-chip ${gedrueckt ? "s02r-chip-an" : ""} ${fokus && fokus !== g.branche ? "s02r-chip-aus" : ""}`}
               >
                 <span aria-hidden="true" className="flex items-center gap-[3px]">
-                  {g.firmen.map((f) => {
+                  {g.firmen.map((f, k) => {
                     const i = modulIndex++;
-                    return <span key={f.slug} className="s02r-modul" style={{ "--s02r-i": i }} />;
+                    return <span key={f.slug || `${g.branche}-${k}`} className="s02r-modul" style={{ "--s02r-i": i }} />;
                   })}
                 </span>
                 <span>{g.branche}</span>
@@ -244,22 +246,21 @@ const STIL = `
   flex-shrink: 0; white-space: nowrap;
   display: inline-flex; align-items: center; gap: 0.6rem;
   min-height: 44px; padding: 0 0.95rem 0 0.8rem;
-  border-radius: 999px; background: #fff;
-  box-shadow: inset 0 0 0 1px var(--color-ink-200);
+  border-radius: 999px; background: var(--color-sand-100);
+  box-shadow: none;
   font-size: 14px; font-weight: 600; color: var(--color-ink-800);
   transition: background-color 300ms, box-shadow 300ms, color 300ms, opacity 300ms, transform 300ms cubic-bezier(.22,1,.36,1);
   -webkit-tap-highlight-color: transparent;
 }
-.s02r-chip:hover { box-shadow: inset 0 0 0 1px var(--color-ink-300), 0 8px 20px -14px rgba(3,18,43,.35); }
+.s02r-chip:hover { background: var(--color-ink-100); box-shadow: 0 8px 20px -14px rgba(3,18,43,.35); }
 .s02r-chip:focus-visible { outline: 2px solid var(--color-ov-500); outline-offset: 3px; }
-.s02r-chip-an { background: var(--color-navy-950); color: #fff; box-shadow: inset 0 0 0 1px var(--color-navy-950), 0 10px 24px -14px rgba(3,18,43,.7); }
-.s02r-chip-an:hover { box-shadow: inset 0 0 0 1px var(--color-navy-950), 0 10px 24px -14px rgba(3,18,43,.7); }
+.s02r-chip-an, .s02r-chip-an:hover { background: var(--color-navy-950); color: #fff; box-shadow: 0 10px 24px -14px rgba(3,18,43,.7); }
 .s02r-chip-aus { opacity: 0.55; }
 .s02r-anzahl {
   font-variant-numeric: tabular-nums; font-size: 12px; font-weight: 700;
   min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--color-ink-100); color: var(--color-ink-600);
+  background: #fff; color: var(--color-ink-600);
   transition: background-color 300ms, color 300ms;
 }
 .s02r-chip-an .s02r-anzahl { background: rgba(255,255,255,.12); color: var(--color-ov-300); }
@@ -284,10 +285,10 @@ const STIL = `
 .s02r-pause {
   display: inline-flex; align-items: center; justify-content: center;
   width: 44px; height: 44px; border-radius: 999px; color: var(--color-ink-500);
-  box-shadow: inset 0 0 0 1px var(--color-ink-200); background: #fff;
-  transition: color 200ms, box-shadow 200ms;
+  background: var(--color-sand-100);
+  transition: color 200ms, background-color 200ms;
 }
-.s02r-pause:hover { color: var(--color-ink-900); box-shadow: inset 0 0 0 1px var(--color-ink-300); }
+.s02r-pause:hover { color: var(--color-ink-900); background: var(--color-ink-100); }
 .s02r-pause:focus-visible { outline: 2px solid var(--color-ov-500); outline-offset: 3px; }
 
 .s02r-linie {

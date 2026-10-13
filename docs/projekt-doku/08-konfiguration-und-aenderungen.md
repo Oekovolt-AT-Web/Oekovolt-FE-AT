@@ -1,7 +1,7 @@
 # 08 – Konfigurationsmanagement und Änderungsprotokoll
 
 Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE 12207 (Identifikation,
-Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Änderungssteuerung, Statusbericht). Keine Normkonformität behauptet. Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 ## 1. Konfigurationseinheiten
 
@@ -13,7 +13,7 @@ Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE
 | Frappe-Pakete | `Import-Backend-Frappe/` (maßgeblich für AT, in `add3074` committet), `Import-Frappe/` (DE-Stand, für AT nicht mehr nötig) | Git |
 | Laufzeitkonfiguration | Umgebungsvariablen (Hosting), Frappe `site_config.json` | **nicht** in Git (bewusst); Stand je Umgebung offen |
 | Backoffice-Inhalte | Frappe-Datenbank | außerhalb Git |
-| Projektdokumentation | `docs/projekt-doku/` (Version 0.5; 0.3 in `add3074`, 0.4 in `ffd5c00` committet) | Git (noch nicht committet) |
+| Projektdokumentation | `docs/projekt-doku/` (Version 0.6; 0.3 in `add3074`, 0.4 in `ffd5c00`, 0.5 in `33ae71a` committet) | Git (0.6 noch nicht committet) |
 
 ## 2. Branch-Modell (Ist, aus `git log`/`git branch -a` abgeleitet)
 
@@ -22,7 +22,8 @@ Gliederung in Anlehnung an den Konfigurationsmanagement-Prozess von ISO/IEC/IEEE
 | `main` | Hauptzweig; letzter Commit `922a0a1` (27.09.2026); früher über Pull Requests aus `develop` gespeist (Merge-Commits „Merge pull request 'develop' (#…)“) | `git log main` |
 | `develop`, `general` | historische Arbeitszweige (nur in Merge-Nachrichten sichtbar, nicht mehr als Branch vorhanden) | Merge-Commits `3c5c0b0`, `3090dbf` |
 | `redesign-2026` | früherer Upstream-Zweig (Merge `3034c02`) | `git log` |
-| `at-launch` | **aktueller Arbeitszweig** für die österreichische Website; zweigt bei `922a0a1` von `main` ab; 7 Commits voraus; lokal 1 Commit vor `origin/at-launch` (`11472bf` nicht gepusht) | `git log main..at-launch`, `git status -sb` |
+| `main` (seit Oktober 2026) | **aktueller Arbeitszweig** lokal; Merge `1238d5e` (30.09.) und Commits `7148bd5`, `71829e1` („Changes“, 01./03.10.); Grundlage des Neubaus der Welle A | `git log` |
+| `at-launch` | früherer Arbeitszweig (bis 30.09.2026) für die österreichische Website; zweigt bei `922a0a1` von `main` ab; 7 Commits voraus; lokal 1 Commit vor `origin/at-launch` (`11472bf` nicht gepusht) | `git log main..at-launch`, `git status -sb` |
 
 Offen: Zielprozess für den Livegang (Merge `at-launch` → `main`? Tagging? Review/Freigabe?). Hinweis:
 `docs/AT-UEBERGABE.md:3` nennt den Branch „lokal, nicht gepusht“ – inzwischen existiert `origin/at-launch`.
@@ -47,7 +48,79 @@ Verweis auf Anforderungs-IDs (`REQ-…`) aus Kapitel 01, damit die Matrix in Kap
 Format in Anlehnung an „Keep a Changelog“. Kategorien: Hinzugefügt · Geändert · Behoben · Entfernt · Sicherheit.
 Einträge werden beim Nachführen aus `git log` und `git diff --stat` gebildet.
 
-### [Unveröffentlicht] – Arbeitsbaum am 30.09.2026 nach der SEO-Welle P1–P9 und QA (nicht committet)
+### [Unveröffentlicht] – Arbeitsbaum am 12.10.2026 nach Welle A (Neubau, nicht committet)
+
+**Vorgeschichte:** Welle A wurde vom 03. bis 07.10.2026 bereits einmal gebaut (rund 352 Dateien, nie committet). Am
+07.10.2026 um 16:57 wurde der Arbeitsbaum auf `71829e1` (03.10.2026) zurückgesetzt; dieser Stand ist verloren. Am
+11.10.2026 beauftragte der Inhaber den kompletten Neubau („ja“). Die folgenden Einträge beschreiben nur den Neubau
+(Paket-Notizen `anhang/wellen/A01.md` … `A12.md`, Integration `A-INT.md`). Sicherungen: `refs/sicherung/2026-10-11-2355`
+(`f772202`), `refs/sicherung/2026-10-12-welle-bc` (`a2eb350`).
+
+Umfang gegenüber `71829e1` laut `git diff --shortstat HEAD` (12.10.2026, **einschließlich paralleler Arbeiten der Wellen B
+und C**, die hier nicht beschrieben werden): 219 geänderte versionierte Dateien (+13.988/−3.067 Zeilen), dazu rund 176
+neue Pfade (ohne Build-Ordner). Push und Deploy sind nicht freigegeben.
+
+**Sicherheit**
+- A01: `next`, `eslint-config-next`, `@next/third-parties` auf 15.5.27 (GHSA-2xp9-vwfh-vxw4, GHSA-p293-qw3h-jr36); npm
+  `overrides` `next.postcss: ^8.5.29` → `npm audit --omit=dev --audit-level=high` 0 Befunde; `X-XSS-Protection: 0`;
+  `Cross-Origin-Opener-Policy: same-origin` außer `/tv`, `/einbetten`, `/siegel`; `images.remotePatterns` ohne unpkg,
+  Backoffice nur `/files/**`; `public/.well-known/security.txt` (RFC 9116); Leaflet-Marker lokal.
+
+**Hinzugefügt**
+- A02: `src/data/marke.js` (Kern, Claim, Lead, Display-Zeilen, Säulen, CTA-Regel, 6 Zusagen ohne Freigabe, Boilerplate,
+  `PARKREGLER_RECHTE_GEKLAERT = false`, `PARKREGLER_SATZ`/`_KURZ`), `src/data/werbeaussagen.js` (Register, 13 Einträge),
+  `scripts/werbeaussagen.test.mjs` + Baseline; Experiment k4 (inaktiv).
+- A03: `src/data/{branchenZuordnung,fristen,einwaende,preisbaender,fachberater}.js`, Bausteine `BranchenReferenzen`,
+  `Verkauf/{KostenDesWartens,IfbHinweis,EinwandKarten,UnsereZusagen,PreisAnker,Ansprechpartner}`, `scripts/verkauf.test.mjs`.
+- A06: DocType `Lead Routing Regel`, `website_api/lead_eingang.py` (Segment, Score, Dubletten 30 Tage, Routing hinter
+  Schalter, Team-Mail, Sofortalarm ohne Personendaten), `website_api/sla.py` (Geschäftsminuten, Eskalation, Cron alle 5 min),
+  Rollen Vertriebsleitung u. a., `tests/test_lead_routing.py`, `docs/frappe-lead-routing/README.md`.
+- A07: DocType `Referenz Freigabe` mit `freigabe_logik.py` und Tests, `website_api/freigabe.py`, Seite
+  `/referenzen/freigabe/[token]`, Route `/api/referenz-freigabe`, Projekt-Plakette (`plaketteSvg`), Vorlagen (anwaltlich
+  prüfen), `docs/frappe-referenzfreigabe/README.md`.
+- A08: `src/lib/einwilligungen.js` (versionierte Hinweis-/Einwilligungstexte), Neubau `Konfigurator.js`.
+- A09: `src/data/leadRechner.js` (25 Gate-Kennungen), `src/lib/rechnerLead.js`, `src/lib/leadGateServer.js`, Routen
+  `/api/rechner_lead`, `/api/lead-gate/status`, `/api/lead-gate/bestaetigen`, Seite `/freischalten`, `src/components/LeadGate/*`,
+  `src/data/argumentarien.js` (Entscheider-Mappe), `scripts/lead-gate.test.mjs`.
+- A10: gemeinsame TOR-Staffel `src/components/Technik/torTypen.js`, Stresstest in `gewerbepv.js`/`finanzierung.js`,
+  `StresstestFinanzierung.js` (Integration).
+- A11: Kernschema „Vertrieb“ in fünf DocTypes, DocType `Rechner Lead`, `website_api/rechner.py` (#17–#19, Löschjob),
+  `format.py` (Scoring, PLZ → Bundesland, E.164, Anrede-Härtung, Mails ohne Freitext, Token), `tests/test_rechner_lead.py`;
+  Spezifikation #4/#5/#6/#8, §3a/§3b, #17–#19.
+- A12: `src/lib/kontextAngebot.js`.
+
+**Geändert**
+- A02: Salzburg AG nur sachlich; Rangaussage, „bevorzugter PV-Errichter“, WKO-Siegel, Hero-Video, Eigen-Parkregler hinter
+  Schaltern (AUS); Kennzahlen mit „Angaben Ökovolt Österreich · Stand 09/2026“; Referenzband anonym; Stock-Personenfotos als
+  „Symbolbild“ gekennzeichnet oder ersetzt; Kontrastregel in eigenen Dateien.
+- A04/A05: `/gewerbe`, `/gewerbespeicher` (GF-/Technik-Spur, Leistungspreis-Insight ohne PV-Versprechen, Fristen ohne
+  Countdown), `/landwirtschaft`, `/agri-pv`, `/freiflaechen-photovoltaik`, `/kommunen`, `/kommunen/vergabe-foerderung`,
+  `/hotellerie-tourismus`, `/ladeinfrastruktur` (Bausteine aus A03, Solensa-Formulierung, ohne Salzburg AG).
+- A07: `kunden.js`-Freigabeschema (alles `false`), `kundenbuehneServer.js` (`ladeFreigaben`, Backoffice führend), `/siegel`
+  nur mit Plakette-Freigabe (sonst 404), PV-Award (Jury-Klausel, optionales Veröffentlichungs-Häkchen, Kennzeichnung
+  „Unternehmenspreis“), 58 Projekt-URLs per 301 auf neutrale Slugs, Referenzkarte ohne deutsche Orte.
+- A08: Kontakt, Konfigurator, Termin, Rückruf: Hinweistext statt Pflicht-Häkchen, Telefon optional mit `rueckruf_ok`; „TOP 3“
+  auf `/angebot` entfernt; Lead-APIs reichen neue Felder durch.
+- A09: Teilen/PDF/CO₂-Text/Lastgang-Auswertung über `useLeadGate`; statische Checklisten ohne Gate;
+  Datenschutzerklärung Stand 12.10.2026 (`#vertrieb`, `#rechner-export`, `#referenz-freigabe`, Cookie `ov-lead-frei`);
+  `docs/datenschutz/VVT-Anfragen.md`.
+- A10: Gewerbe-PV-Rechner (Stresstest, TOR nach AC-Summe, EAG-Speicher erst ab 0,5 kWh/kWp, IFB getrennt), Startseiten-
+  Rechner = Detailrechnung, Blackout ohne netzbildende Quelle PV = 0, Pacht/TOR-Finder über `torTypen.js`, Hydration-Fix.
+- A11: `kontakt.py`, `angebot.py`, `solarrechner.py`, `termin.py` (Team-Mail aus `lead_eingang`, Telefon optional,
+  Kundenmail ohne Freitext, .ics ohne Nachricht/Adresse).
+- A12: `PageHero` (Actions mobil oben, Lead einklappbar), Navbar ohne Layout-Shift, Cookie-Banner serverseitig gerendert,
+  `--color-ink-500` #646c7e, `scroll-margin`, schwebende Knöpfe bei Formularfokus ausgeblendet, Rückruf-Launcher nach
+  Interaktion, Barrierefreiheitserklärung Stand 12.10.2026, `CtaBand` mit Termin-Zweitaktion.
+- Integration (A-INT): Solensa-Formulierung in rund 55 weiteren Dateien; Website-Token im Backoffice-Bestätigungslink;
+  Kundenbühne-Freigaben in Plakette/Kit/ESG; Kennzahlen-Hinweis auf Referenzseiten.
+- `package.json`: `dev` = `next dev -H 127.0.0.1`, neu `dev:lan` (beide ohne `--turbopack`).
+
+**Entfernt**
+- `siegel*`-Aliase (A-INT), deutsche Orte der Referenzkarte, Pflicht-Einwilligung in Anfragen, Rechtsweg-Ausschluss beim Award.
+
+**Bekannt offen:** siehe 09 (R-63–R-81, F-41–F-52) und 00 Abschnitt 7.3.
+
+### [33ae71a] – 30.09.2026 (SEO-Welle P1–P9 und QA; vorher „Unveröffentlicht“)
 
 Umfang gegenüber `ffd5c00` laut `git diff --shortstat HEAD`: 161 geänderte versionierte Dateien (+3.449/−1.916 Zeilen,
 einschließlich dieser Dokumentation), dazu 5 neue Pfade (`docs/seo/`, `public/presse/`, `src/app/produkte/wechselrichter/`,
@@ -239,12 +312,13 @@ ISO-Doku, Sicherheitsfixes“. Inhalt wie bis Version 0.3 unter „Unveröffentl
 GA statt Umami (`889295d`), UI-Korrekturen (`7dd016d`), Hinweisgebersystem vorerst über IntegrityLine (`922a0a1`).
 Details: `git log main`.
 
-## 5. Statusbericht Konfiguration (30.09.2026, nach der SEO-Welle)
+## 5. Statusbericht Konfiguration (12.10.2026, nach Welle A)
 
 | Punkt | Stand |
 |---|---|
-| HEAD | `ffd5c00` auf `at-launch` (enthält Welle 4) |
-| Remote | nicht erneut geprüft (Stand 0.3: `origin/at-launch` einen Commit zurück) |
-| Arbeitsbaum | 161 versionierte Dateien geändert, 5 neue Pfade (SEO-Welle, siehe „Unveröffentlicht“) |
+| HEAD | `71829e1` auf `main` (03.10.2026); `at-launch` nur noch als `origin/at-launch` |
+| Remote | nicht erneut geprüft; Push nicht freigegeben |
+| Arbeitsbaum | 219 versionierte Dateien geändert, rund 176 neue Pfade (Welle A sowie Teile der Wellen B/C, siehe „Unveröffentlicht“); nicht ignorierte Build-Ordner `.next-qa-c06/`, `.next-qa-c06b/`, `.next-verify-a07/`, `.next-tps/` (R-76) |
+| Sicherungen | `refs/sicherung/2026-10-11-2355`, `refs/sicherung/2026-10-12-welle-bc` |
 | Zeilenenden | Git meldet LF→CRLF-Umwandlung für mehrere Dateien (`.gitattributes` vorhanden) – unkritisch, beim Commit beachten |
-| Nächster Schritt | Commit der SEO-Welle, Deploy vor 05.10.2026 (R-53) |
+| Nächster Schritt | Build-Ordner entfernen bzw. ignorieren, lokaler Commit der Welle A nach Freigabe (F-49); kein Push/Deploy ohne Freigabe |

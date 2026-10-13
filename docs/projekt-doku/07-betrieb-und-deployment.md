@@ -1,7 +1,7 @@
 # 07 – Betrieb und Deployment (Betriebsanleitung)
 
 Gliederung in Anlehnung an ISO/IEC/IEEE 26514 (Informationen für Betreiber: Voraussetzungen, Konfiguration,
-Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Abläufe, Wartung). Keine Normkonformität behauptet. Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 ## 1. Voraussetzungen
 
@@ -42,6 +42,9 @@ Arbeitsbaum). Werte gehören **nie** ins Repository (`.gitignore`: `.env*`).
 | `NEXT_DIST_DIR` | optional | alternatives Build-Verzeichnis (z. B. `.next-verify`) | `next.config.mjs:7` |
 | `NODE_ENV`, `NEXT_PHASE` | automatisch | von Next.js gesetzt | `src/lib/baseUrl.js:9,19` u. a. |
 | `DEBUG`, `PROJEKTE_TEST_MODUS` | nur Test | Steuerung von `scripts/projekte-fallback.test.mjs` | `scripts/projekte-fallback.test.mjs:63-65` |
+| `LEAD_GATE_SECRET` (**Welle A**) | in production ja (≥ 32 Zeichen) | HMAC-Schlüssel für Lead-Gate-Token und Freischalt-Cookie; außerhalb production festes Entwicklungs-Geheimnis | `src/lib/leadGateServer.js` |
+| `LEAD_GATE_BASIS_URL` (**Welle A**) | nein | abweichende Basis des Bestätigungslinks (production sonst immer `BASE_URL`, nie Host-Header) | `src/lib/leadGateServer.js` |
+| `KONTRAST_KLASSEN_STRENG` (**Welle A**) | nur Test | `1` macht die Kontrast-Fundliste zu Fehlern (Welle E) | `scripts/kontrast-klassen.test.mjs` |
 
 Vorlage für AT: **`Import-Backend-Frappe/installation/website_env.txt`** – laut Kopfkommentar vollständig mit
 `grep "process.env." src/` abgeglichen (Stand 30.09.2026), mit korrigierter Zuordnung von `KONTAKT_API_KEY`
@@ -65,6 +68,9 @@ z. B. `SITE=backoffice.oekovolt.com KANAL_SECRET=… HEATMAP_TOKEN=… bash …/
 | optional `oekovolt_drossel` | Drosselung je `ip_adresse` und Stunde anpassen (Standard Kontakt 5, Angebot 5, Solarrechner 10) | `apps/oekovolt_app/README.md` |
 | optional `oekovolt_loeschfrist_monate` | Löschfrist Anfragen (Standard 24) | ebd. |
 | optional `oekovolt_benachrichtigung_an`, `oekovolt_keine_kundenmail` | zusätzliche Empfänger, Bestätigungsmail an Kunden abschalten | ebd. |
+| `oekovolt_website_url` (**Welle A**) | Basis der Links in Kundenmails und Bestätigungslinks (nur https) | `website_api/format.py` (`website_basis`), Spezifikation |
+| optional `oekovolt_routing_aktiv` (**Welle A**) | `1` schaltet die Zuweisung nach `Lead Routing Regel` ein (Scoring, SLA, Dubletten, Alarm laufen immer) | `docs/frappe-lead-routing/README.md` |
+| optional `oekovolt_alarm_webhook`, `oekovolt_alarm_sms_an`, `oekovolt_eskalation_an` (**Welle A**) | Sofortalarm A-Leads (Teams/Slack-Webhook, SMS über SMS Settings), Empfänger Eskalation Stufe 2 | ebd. |
 
 ## 3. Build und Deployment
 
@@ -72,7 +78,9 @@ z. B. `SITE=backoffice.oekovolt.com KANAL_SECRET=… HEATMAP_TOKEN=… bash …/
 
 | Befehl | Wirkung |
 |---|---|
-| `npm run dev` | `next dev --turbopack` |
+| `npm run dev` | `next dev -H 127.0.0.1` (**ohne** Turbopack seit Welle A; Port 3001 per Argument bzw. über den Wächter `scripts/dev-waechter.mjs`) |
+| `npm run dev:lan` | `next dev -H 0.0.0.0` (Welle A) |
+| `npm test` | `node scripts/alle-tests.mjs` inkl. `npm audit --omit=dev --audit-level=high` (`--ohne-audit` lässt ihn aus) |
 | `npm run build` | `next build` |
 | `npm run start` | `next start` |
 | `npm run lint` | `next lint` |
@@ -116,6 +124,10 @@ Aus `docs/AT-UEBERGABE.md:101-106`, ergänzt um Belege aus dem Code.
 | Aufgabe | Intervall | Ort | Hilfsmittel |
 |---|---|---|---|
 | OeMAG-Marktpreis | monatlich | `src/data/einspeiseverguetung.js` | – |
+| `security.txt` erneuern (**Welle A**) | jährlich, nächste Fälligkeit 2027-10-11 | `public/.well-known/security.txt` (`Expires`) | – |
+| Jahreswechsel 2026/27 (**Welle A**) | einmalig zum 01.01.2027 | `src/data/fristen.js` (IFB 22 % → 15 %), Kacheln „Steuerwirkung Öko-IFB 22 %“ auf `/gewerbe`, ElWG-Texte (`ELWG_RIS`, `SNE_ENTWURF`) | R-77 |
+| Werbeaussagen-Register prüfen (**Welle A**) | bei jeder Textänderung / Beleg-Eingang | `src/data/werbeaussagen.js`, `scripts/werbeaussagen.test.mjs --baseline` (nur nach Triage) | Abschnitt „Belege“ in 09 (F-41) |
+| Kundenfreigaben (**Welle A**) | laufend | Desk: `Referenz Freigabe` → `neuer_link`; Widerrufe | `docs/frappe-referenzfreigabe/README.md` |
 | E-Control-Quartalsmarktpreise | quartalsweise | Inhalte/Daten | – |
 | EAG-Fördercalls (nächster 08.–22.10.2026) | je Call | `src/lib/foerdercall.js` | `node scripts/foerdercall.test.mjs` |
 | Landesförderungen (`STAND`) | mindestens vierteljährlich | `src/data/bundeslaender.js:13-22` | – |
@@ -178,6 +190,21 @@ Erinnerungsmails Solar Lead.
 Neustart unter neuer Prozess-ID). Bei Prüfläufen gegen den Dev-Server Abrufe nicht parallelisieren und Speicherverbrauch
 beobachten; für Crawls besser einen Produktions-Build in eigenem Verzeichnis nutzen (`NEXT_DIST_DIR`, siehe 3.2). R-52.
 
+**Welle A (11./12.10.2026):** `next dev` läuft ohne Turbopack über den Wächter `scripts/dev-waechter.mjs` auf Port 3001
+(startet nur bei Absturz neu). Der Server hing ab 11.10. ca. 23:20 bzw. 12.10. ca. 02:30 (Port offen, keine Antworten);
+Pakete prüften auf eigenen, danach beendeten Servern (Ports 3000, 3003, 3012, 3018, Build-Ordner `.next-verify-a…`).
+Solche Ordner nach der Prüfung löschen; sie stehen nicht in `.gitignore` (R-74, R-76).
+
+### 5c. Rollout der Welle A (Website und Backoffice gemeinsam)
+
+1. Backoffice: `bench --site <at-backoffice> migrate` und `clear-cache` (A06 und A11 gemeinsam), Rollen-Fixtures, Scheduler `enabled`,
+   ausgehendes Mailkonto prüfen; `site_config` laut 2.1 (mindestens `oekovolt_website_url`).
+2. Abnahme-curl laut `docs/FRAPPE-AT-API-SPEZIFIKATION.md` §8 (inkl. #17–#19), Testmail Double-Opt-in, Testfreigabe mit echtem Token.
+3. Website: `LEAD_GATE_SECRET` setzen, bauen, deployen. **Nicht umgekehrt** – das alte Backend lehnt Anfragen ohne Telefon mit 422 ab (R-66).
+4. Vertriebsleitung legt Routing-Regeln an und schaltet `oekovolt_routing_aktiv` erst danach ein (F-46).
+
+Push und Deploy der Welle A sind am 12.10.2026 **nicht freigegeben**.
+
 ## 6. Störungen – Erstmaßnahmen
 
 | Symptom | Wahrscheinliche Ursache | Maßnahme | Beleg |
@@ -192,3 +219,8 @@ beobachten; für Crawls besser einen Produktions-Build in eigenem Verzeichnis nu
 | PV-Prognose zeigt älteren Modelllauf | GeoSphere-Budget erschöpft → Antwort aus Cache (bis 12 h) | abwarten; Budget/Zellgröße prüfen | `src/lib/prognose/geosphere.js:19-25` |
 | `/einspeisung-gewerbe` zeigt Warnhinweis | `STAND.geprueftAm` älter als 35 Tage | Monatswert eintragen | `src/data/oemag.js:26` |
 | Schneelast-Richtwert „–“ auf Bundesland-Hubs | Raster bei ISR nicht ausgeliefert | `outputFileTracingIncludes` für `/photovoltaik-bundesland/[land]` prüfen | `next.config.mjs` |
+| Kontaktformular meldet „Bitte geben Sie eine Telefonnummer … an“ (**Welle A**) | Website neu, Backoffice noch nicht migriert | Backoffice migrieren (5c) | A08, A11 |
+| Bestätigungslink des Lead-Gates „ungültig“ (**Welle A**) | `LEAD_GATE_SECRET` zwischen Instanzen verschieden oder geändert; Token älter als 24 h oder schon verwendet | Variable prüfen; Link erneut anfordern | `src/lib/leadGateServer.js` |
+| Rechner-Lead: production antwortet 503 (**Welle A**) | Backoffice nicht erreichbar bzw. Methode fehlt | Backoffice/Migration prüfen | `src/app/api/rechner_lead/route.js` |
+| `next dev` startet nicht / SWC-Fehler (**Welle A**) | Windows Smart App Control blockiert `@next/swc-win32-x64-msvc` bei Turbopack | ohne `--turbopack` starten (Standard in `package.json`) | A01 |
+| Dev-Server 3001 antwortet nicht mehr, Port offen (**Welle A**) | Überlastung/Webpack-Cache-Fehler (`ENOENT … .pack.gz_`) | Wächter-Neustart nur durch den Orchestrator; Prüfungen gegen Produktions-Build | R-74 |

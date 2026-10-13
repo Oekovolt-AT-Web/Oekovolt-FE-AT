@@ -2,11 +2,13 @@ import Link from "next/link";
 import {
   Apple,
   BadgeEuro,
+  Cable,
   ClipboardList,
   CloudHail,
   Cog,
   FileCheck2,
   HandCoins,
+  Landmark,
   Leaf,
   LineChart,
   MapPin,
@@ -33,14 +35,37 @@ import AblaufLeiste from "@/components/Loesungen/A/AblaufLeiste";
 import FachTabs from "@/components/Loesungen/A/FachTabs";
 import RechnerLeiste from "@/components/Loesungen/A/RechnerLeiste";
 import { nachweise } from "@/components/Loesungen/A/bildnachweise";
+import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
 import { zielgruppenVariante } from "@/data/zielgruppen";
+import { AUSSTATTUNG_BESTAETIGT } from "@/data/mannschaft";
 import { BASE_URL } from "@/lib/site";
 
 const PFAD = "/agri-pv";
+
+// Welle A / A05: Ausschlusskriterien vor dem Ablauf. Quellen: EAG-IZV § 6 Abs. 3 (RIS, Fassung 2026);
+// Widmungsgrenzen je Land aus src/lib/rechner/pacht.js (WIDMUNG, Rechtsstand 28.09.2026) –
+// die Grenzen reichen von 35 m² (Burgenland) bis 200 m² Kollektorfläche (Salzburg), eine
+// einheitliche Hektargrenze gibt es nicht. Keine Agri-PV-Referenz: BranchenReferenzen bewusst nicht eingebunden.
+const EAG_IZV_6 = "https://ogd.ris.bka.gv.at/Dokumente/Bundesnormen/NOR40275221/NOR40275221.html";
+const KRITERIEN_STAND = "Stand 09/2026";
+// Nachweis-Box „Eigene Traktoren“ nur, wenn der Eintrag vom Auftraggeber bestätigt ist.
+const TRAKTOREN = AUSSTATTUNG_BESTAETIGT.find((a) => a.id === "traktoren") || null;
+
+// Fette Hero-Zeile nur, wenn sie die H1 nicht wiederholt: Variante → titel + akzent, Standard → `kurz` (A03).
+function heroLead(v) {
+  const zeile = v.id === "standard" ? v.kurz : `${v.titel} ${v.akzent}`;
+  if (!zeile) return v.lead;
+  return (
+    <>
+      <span className="block font-display text-[1.15em] font-bold leading-snug text-white">{zeile}</span>
+      <span className="mt-3 block">{v.lead}</span>
+    </>
+  );
+}
 const PAGE_URL = `${BASE_URL}${PFAD}`;
 const TITEL = "Agri-PV Österreich: Planung, Förderung & Widmung | Ökovolt";
 const BESCHREIBUNG =
-  "Agri-PV in Österreich: vertikal bifazial, hoch aufgeständert oder nachgeführt – für Obst, Wein, Beeren, Acker und Weide. 30 % EAG-Zuschlag, Widmung und Planung.";
+  "Agri-PV in Österreich: vertikal bifazial, hoch aufgeständert oder nachgeführt – für Obst, Wein, Beeren, Acker und Weide. 30 % EAG-Zuschlag, Widmung und Planung.";
 const HERO_BILD = "/Images/AT/loesungen/agri-pv-vertikal-bifazial.jpg";
 
 export const metadata = {
@@ -53,15 +78,15 @@ export const metadata = {
 const FAQ = [
   {
     q: "Was unterscheidet Agri-PV von einer normalen Freiflächenanlage?",
-    a: "Bei Agri-PV bleibt die landwirtschaftliche Nutzung die Hauptnutzung, der Strom ist ein zusätzlicher Ertrag. Die Module stehen vertikal zwischen bewirtschafteten Streifen, hoch aufgeständert über der Kultur oder nachgeführt. Eine klassische Freiflächenanlage nutzt die Fläche dagegen vorrangig zur Stromerzeugung und wird in der EAG-Förderung auf Agrarflächen mit einem Abschlag von 25 % belegt.",
+    a: "Bei Agri-PV bleibt die landwirtschaftliche Nutzung die Hauptnutzung, der Strom ist ein zusätzlicher Ertrag. Die Module stehen vertikal zwischen bewirtschafteten Streifen, hoch aufgeständert über der Kultur oder nachgeführt. Eine klassische Freiflächenanlage nutzt die Fläche dagegen vorrangig zur Stromerzeugung und wird in der EAG-Förderung auf Agrarflächen mit einem Abschlag von 25 % belegt.",
   },
   {
     q: "Welche Förderung gibt es für Agri-PV in Österreich?",
-    a: "Agri-PV-Anlagen, die die Anforderungen nach § 6 Abs. 3 der EAG-Investitionszuschüsseverordnung erfüllen, gelten als innovative Anlagen: Sie erhalten einen Zuschlag von 30 % auf den Investitionszuschuss, und der Abschlag für landwirtschaftliche Flächen entfällt. Gefördert wird bis 1.000 kWp – größere Anlagen anteilig bis 1.000 kWp – oder alternativ über die Ausschreibungen für die Marktprämie.",
+    a: "Agri-PV-Anlagen, die die Anforderungen nach § 6 Abs. 3 der EAG-Investitionszuschüsseverordnung erfüllen, gelten als innovative Anlagen: Sie erhalten einen Zuschlag von 30 % auf den Investitionszuschuss, und der Abschlag für landwirtschaftliche Flächen entfällt. Gefördert wird bis 1.000 kWp – größere Anlagen anteilig bis 1.000 kWp – oder alternativ über die Ausschreibungen für die Marktprämie.",
   },
   {
     q: "Welche technischen Voraussetzungen gelten für den Förderzuschlag?",
-    a: "Die Module müssen vertikal montiert oder so aufgeständert sein, dass die Modultischunterkante mindestens 2 m über ebenem Boden liegt. Dazu kommen ein landwirtschaftliches Nutzungskonzept mit Nutzungsplan, Angaben zu Aufständerung und Flächenverlust sowie eine Verpflichtungserklärung zu Bearbeitbarkeit, Wasserverfügbarkeit und Bodenerosion. Laut klimaaktiv muss die landwirtschaftliche Nutzung mindestens 75 % der Fläche umfassen.",
+    a: "Die Module müssen vertikal montiert oder so aufgeständert sein, dass die Modultischunterkante mindestens 2 m über ebenem Boden liegt. Dazu kommen ein landwirtschaftliches Nutzungskonzept mit Nutzungsplan, Angaben zu Aufständerung und Flächenverlust sowie eine Verpflichtungserklärung zu Bearbeitbarkeit, Wasserverfügbarkeit und Bodenerosion. Laut klimaaktiv muss die landwirtschaftliche Nutzung mindestens 75 % der Fläche umfassen.",
   },
   {
     q: "Schützt Agri-PV Obstkulturen vor Hagel?",
@@ -81,7 +106,7 @@ const FAQ = [
   },
   {
     q: "Wer baut und betreibt die Agri-PV-Anlage?",
-    a: "Sie können selbst investieren, die Fläche an einen Betreiber verpachten oder ein Beteiligungsmodell wählen. Ökovolt plant und errichtet die Anlage samt Netzanschluss und Regelungstechnik; über unsere Beteiligung an der ÖkoInvest GmbH kennen wir Agri-PV auch aus Betreibersicht. Den Betrieb übernehmen wir auf Wunsch mit Wartungsvertrag.",
+    a: "Sie können selbst investieren, die Fläche an einen Betreiber verpachten oder ein Beteiligungsmodell wählen. Ökovolt plant und errichtet die Anlage samt Netzanschluss und Regelungstechnik; über unsere Beteiligung an der ÖkoInvest GmbH, der Projektgesellschaft der Gruppe für Freiflächen-PV, Agri-PV, Contracting und PPA, können wir auch Pacht- und Beteiligungsmodelle anbieten. Den Betrieb übernehmen wir auf Wunsch mit Wartungsvertrag.",
   },
 ];
 
@@ -96,12 +121,12 @@ const KULTUREN = [
 
 const BEISPIEL = [
   { pos: "Anlage und Jahresertrag", wert: "1.000 kWp vertikal bifazial Ost-West × 1.000 kWh/kWp", ergebnis: "1.000.000 kWh" },
-  { pos: "Eigenverbrauch am Hof (20 %)", wert: "200.000 kWh × 14 ct (Energie, Netz, Abgaben)", ergebnis: "≈ 28.000 €/Jahr" },
-  { pos: "Verkauf Überschuss (80 %)", wert: "800.000 kWh × 7 ct (Morgen-/Abendprofil, PPA oder Direktvermarktung)", ergebnis: "≈ 56.000 €/Jahr" },
+  { pos: "Eigenverbrauch am Hof (20 %)", wert: "200.000 kWh × 14 ct (Energie, Netz, Abgaben)", ergebnis: "≈ 28.000 €/Jahr" },
+  { pos: "Verkauf Überschuss (80 %)", wert: "800.000 kWh × 7 ct (Morgen-/Abendprofil, PPA oder Direktvermarktung)", ergebnis: "≈ 56.000 €/Jahr" },
   { pos: "Betrieb, Wartung, Versicherung", wert: "Annahme 15 €/kWp und Jahr", ergebnis: "− 15.000 €/Jahr" },
   { pos: "Jährlicher Überschuss (vor Steuern)", wert: "landwirtschaftlicher Ertrag nicht eingerechnet", ergebnis: "≈ 69.000 €/Jahr", hervorheben: true },
   { pos: "Investition", wert: "Annahme 750 €/kWp netto inkl. Netzanschluss", ergebnis: "750.000 €" },
-  { pos: "EAG-Investitionszuschuss mit Agri-PV-Zuschlag", wert: "Annahme Zuschlag 100 €/kWp + 30 % = 130 €/kWp", ergebnis: "− 130.000 €" },
+  { pos: "EAG-Investitionszuschuss mit Agri-PV-Zuschlag", wert: "Annahme Zuschlag 100 €/kWp + 30 % = 130 €/kWp", ergebnis: "− 130.000 €" },
   { pos: "Statische Amortisation", wert: "620.000 € ÷ 69.000 €/Jahr", ergebnis: "≈ 9 Jahre", hervorheben: true },
 ];
 
@@ -166,27 +191,29 @@ export default async function AgriPvPage({ searchParams }) {
         leistungen={["Agri-PV-Konzept und Nutzungsplan", "Vertikale bifaziale Agri-PV", "Hoch aufgeständerte Agri-PV für Sonderkulturen", "Förderantrag EAG mit Agri-PV-Zuschlag", "Netzanschluss und Parkregler", "Betrieb und Wartung"]}
       />
 
+      <FoerdercallHinweis />
+
       <PageHero
         variant="immersive"
         className="pb-4 md:pb-6"
         breadcrumbs={[{ name: "Landwirtschaft", href: "/landwirtschaft" }, { name: "Agri-PV" }]}
         eyebrow={v.eyebrow}
         title={<>Agri-PV in Österreich: <span className="ov-text-gradient-light">Strom und Ernte auf derselben Fläche</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+        lead={heroLead(v)}
         image={{ src: HERO_BILD, alt: "Luftbild einer Agri-PV-Anlage mit vertikalen bifazialen Modulreihen auf Grünland" }}
         actions={[
           { label: v.cta, href: "/termin?art=vor-ort&thema=freiflaeche" },
           { label: "Per Video beraten lassen", href: "/termin?art=video&thema=freiflaeche", icon: ClipboardList },
         ]}
-        points={["30 % Förderzuschlag nach EAG-IZV", "Vertikal, hoch aufgeständert, nachgeführt", "Nutzungskonzept & Widmung", "Netzanschluss & Parkregler"]}
+        points={["30 % Förderzuschlag nach EAG-IZV", "Vertikal, hoch aufgeständert, nachgeführt", "Nutzungskonzept & Widmung", "Netzanschluss & Parkregler"]}
       />
 
       <KennzahlenBand
         items={[
-          { wert: 30, vor: "+ ", nach: " %", label: "Zuschlag auf den EAG-Investitionszuschuss für innovative Agri-PV" },
+          { wert: 30, vor: "+ ", nach: " %", label: "Zuschlag auf den EAG-Investitionszuschuss für innovative Agri-PV" },
           { wert: 2, nach: " m", label: "Mindesthöhe der Modultischunterkante – oder vertikale Montage" },
-          { wert: 75, nach: " %", label: "der Fläche müssen landwirtschaftlich genutzt bleiben (klimaaktiv)" },
-          { wert: 0, nach: " %", label: "Abschlag – der 25-%-Abschlag für Agrarflächen entfällt bei Agri-PV" },
+          { wert: 75, nach: " %", label: "der Fläche müssen landwirtschaftlich genutzt bleiben (klimaaktiv)" },
+          { wert: 0, nach: " %", label: "Abschlag – der 25-%-Abschlag für Agrarflächen entfällt bei Agri-PV" },
         ]}
         quelle="Quellen: EAG-Investitionszuschüsseverordnung-Strom § 6 laut Leitfaden Land Oberösterreich 2026 und WKO; klimaaktiv, Agri-PV: Landwirtschaft trifft Energiewende."
       />
@@ -235,11 +262,11 @@ export default async function AgriPvPage({ searchParams }) {
       <TechnikSystem
         eyebrow="Technik"
         title="Netzanschluss und Regelung wie bei jedem Solarpark"
-        lead="Agri-PV-Anlagen ab einigen hundert kWp speisen meist auf Netzebene 6 oder 5 ein und fallen ab 250 kW unter TOR Erzeuger Typ B. Parkregler, Fernwartung und Leitwarte kommen bei uns aus eigener Entwicklung."
+        lead="Agri-PV-Anlagen ab einigen hundert kWp speisen meist auf Netzebene 6 oder 5 ein und fallen ab 250 kW unter TOR Erzeuger Typ B. Parkregler, Fernwartung und SCADA kommen von unserem Technologiepartner Solensa – parametriert, betreut und gewartet von uns."
         fakten={[
           { wert: "NE 6/5", label: "typische Netzebene" },
           { wert: "Typ B", label: "TOR Erzeuger ab 250 kW" },
-          { wert: "+ 30 %", label: "Förderzuschlag Agri-PV" },
+          { wert: "+ 30 %", label: "Förderzuschlag Agri-PV" },
         ]}
         knoten={{
           erzeugung: { titel: "Agri-PV-Feld", text: "vertikal, hoch oder nachgeführt" },
@@ -255,8 +282,91 @@ export default async function AgriPvPage({ searchParams }) {
         bild={{ src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "" }}
       />
 
+      {/* Ehrliche Ausschlusskriterien – vor dem Ablauf */}
+      <Section tone="sand" space="md" id="passt-nicht" className="scroll-mt-24">
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
+          <SectionHeading
+            eyebrow="Ehrlich vorab"
+            title="Wann Agri-PV für Ihren Betrieb NICHT passt"
+            lead="Drei Kriterien entscheiden, bevor wir überhaupt ein Konzept zeichnen. Trifft eines nicht zu, sagen wir es Ihnen beim Feldbesuch – nicht erst im Angebot."
+          />
+          <div className="flex lg:justify-end">
+            <StandPille>{KRITERIEN_STAND}</StandPille>
+          </div>
+        </div>
+        <ul className="grid gap-5 md:grid-cols-3">
+          {[
+            {
+              icon: HandCoins,
+              titel: "Landwirtschaft nicht vorrangig",
+              text: (
+                <>
+                  Der Förderzuschlag von 30 % gilt nur, wenn die landwirtschaftliche Nutzung nachweislich die Hauptnutzung bleibt – mit
+                  Nutzungskonzept, Nutzungsplan und Verpflichtungserklärung nach{" "}
+                  <a href={EAG_IZV_6} target="_blank" rel="noopener noreferrer" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    § 6 Abs. 3 EAG-IZV
+                  </a>
+                  . Wer die Fläche in Wahrheit stilllegen will, bekommt keinen Zuschlag, sondern den 25-%-Abschlag für Agrarflächen.
+                </>
+              ),
+            },
+            {
+              icon: Landmark,
+              titel: "Keine Widmung in Sicht",
+              text: (
+                <>
+                  Auch Agri-PV ist eine Stromerzeugungsanlage im Grünland und braucht in fast allen Bundesländern eine eigene Widmung oder
+                  Sonderausweisung – die Grenzen reichen von 35 m² Modulfläche (Burgenland) über 50 m² (Oberösterreich) bis 200 m²
+                  Kollektorfläche (Salzburg); Anlagen für den landwirtschaftlichen Eigenbedarf sind teils ausgenommen. Ohne Rückhalt in
+                  Gemeinde und Land scheitert das Projekt, bevor es beginnt. Details je Land:{" "}
+                  <Link href="/freiflaechen-photovoltaik/widmung" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    Widmung je Bundesland
+                  </Link>
+                  .
+                </>
+              ),
+            },
+            {
+              icon: Cable,
+              titel: "Keine freie Netzkapazität",
+              text: (
+                <>
+                  Im ländlichen Raum ist die Einspeisekapazität auf Netzebene 6 und 5 oft ausgeschöpft. Ohne freie Kapazität am nächsten
+                  Umspannwerk bleibt nur Eigenverbrauch mit Einspeiselimit – das trägt eine große Anlage selten. Wir stellen die Netzanfrage
+                  deshalb vor der Planung; die Übersicht der Netzbetreiber auf{" "}
+                  <a href="https://www.ebutilities.at/verfuegbare-netzanschlusskapazitaeten" target="_blank" rel="noopener noreferrer" className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2">
+                    ebUtilities
+                  </a>{" "}
+                  ist eine Orientierung, keine Zusage.
+                </>
+              ),
+            },
+          ].map((k) => (
+            <li key={k.titel} className="flex gap-4 rounded-[1.5rem] bg-white p-6 ring-1 ring-ink-200/70">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-ov-100 text-ov-700">
+                <k.icon aria-hidden="true" className="h-5 w-5" />
+              </span>
+              <div>
+                <h3 className="font-display text-[18px] font-bold leading-snug text-ink-900">{k.titel}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink-700">{k.text}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-5 text-[13px] leading-relaxed text-ink-500">
+          Quellen: EAG-Investitionszuschüsseverordnung-Strom § 6 (RIS, Fassung 2026); Widmungsgrenzen laut Landesrecht, Rechtsstand 28.09.2026 (siehe
+          Flächen-Check); Netzkapazitäten laut ebUtilities (Verband der österreichischen Netzbetreiber). Keine Rechtsberatung.
+        </p>
+      </Section>
+
       <Section tone="white" space="md">
         <SectionHeading eyebrow="Ablauf" title="Vom Feldbesuch zur Doppelernte" className="mb-12" />
+        {TRAKTOREN && (
+          <Hinweis className="mb-10" titel={`${TRAKTOREN.kurz} für Arbeiten auf Freiflächen`}>
+            Angabe Ökovolt Österreich, Stand 09/2026: eigene Traktoren für Arbeiten auf Freiflächen. Auf dem Feld arbeiten eigene Maschinen und
+            eigene Montageteams; Bodenschutz und Bauzeiten stimmen wir auf Ihre Bewirtschaftung ab.
+          </Hinweis>
+        )}
         <AblaufLeiste
           items={[
             { icon: MapPin, title: "Feldbesuch", text: "Fläche, Kultur, Maschinenbreiten, Bodenverhältnisse und Netzanschluss aufnehmen – mit erster Einschätzung zu Konzept und Ertrag." },
@@ -301,17 +411,17 @@ export default async function AgriPvPage({ searchParams }) {
           </div>
 
           <div>
-            <h3 className="ov-h3 text-ink-900">30 % Zuschlag – wenn die Landwirtschaft nachweislich vorn bleibt.</h3>
+            <h3 className="ov-h3 text-ink-900">30 % Zuschlag – wenn die Landwirtschaft nachweislich vorn bleibt.</h3>
             <p className="mt-2 max-w-3xl text-[15.5px] leading-relaxed text-ink-600">
               Österreich fördert Agri-PV über das Erneuerbaren-Ausbau-Gesetz (EAG) gezielt besser als Freiflächen auf Agrarland. Voraussetzung sind
               die Kriterien des § 6 Abs. 3 der EAG-Investitionszuschüsseverordnung-Strom.
             </p>
             <Prosa className="mt-6 grid gap-8 xl:grid-cols-2 xl:gap-12 [&>*+*]:mt-0">
               <ul>
-                <li><strong>Zuschlag 30 %</strong> auf den Investitionszuschuss für innovative Agri-PV-Anlagen; der 25-%-Abschlag für landwirtschaftlich genutzte Flächen und Grünland entfällt.</li>
+                <li><strong>Zuschlag 30 %</strong> auf den Investitionszuschuss für innovative Agri-PV-Anlagen; der 25-%-Abschlag für landwirtschaftlich genutzte Flächen und Grünland entfällt.</li>
                 <li><strong>Technik:</strong> vertikal montierte Module oder Modultischunterkante mindestens 2 m über ebenem Boden.</li>
                 <li><strong>Nachweise:</strong> landwirtschaftliches Nutzungskonzept, Nutzungsplan mit der Hauptnutzung, Angaben zu Aufständerung und Flächenverlust, Verpflichtungserklärung zu Bearbeitbarkeit, Wasserverfügbarkeit und Bodenerosion.</li>
-                <li><strong>Größe:</strong> Investitionszuschuss bis 1.000 kWp; 2026 in Kategorie D höchstens 120 €/kWp vor Zuschlag. Bei innovativen Anlagen ist der Zuschuss mit 65 % (kleine), 55 % (mittlere) bzw. 45 % (große Unternehmen) der förderfähigen Kosten gedeckelt.</li>
+                <li><strong>Größe:</strong> Investitionszuschuss bis 1.000 kWp; 2026 in Kategorie D höchstens 120 €/kWp vor Zuschlag. Bei innovativen Anlagen ist der Zuschuss mit 65 % (kleine), 55 % (mittlere) bzw. 45 % (große Unternehmen) der förderfähigen Kosten gedeckelt.</li>
                 <li><strong>Marktprämie:</strong> Anlagen über 10 kWp können alternativ an den EAG-Ausschreibungen teilnehmen; auch dort entfällt der Abschlag für bestimmte Agri-PV-Anlagen.</li>
                 <li><strong>Fördercall:</strong> Der letzte Call 2026 läuft von 8. bis 22. Oktober; der Antrag ist vor der Inbetriebnahme und mit allen Genehmigungen in erster Instanz zu stellen.</li>
               </ul>

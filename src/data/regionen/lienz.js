@@ -55,7 +55,7 @@ const lienz = {
     },
     {
       q: "Betreut Ökovolt Anlagen in Osttirol auch nach der Montage?",
-      a: "Ja. Wir überwachen die Anlagen über unsere eigenen Fernwartungs- und SCADA-Systeme und planen Wartungseinsätze gebündelt. Reaktionszeiten und Leistungen legen wir im Wartungsvertrag fest.",
+      a: "Ja. Wir überwachen die Anlagen per Fernwartung und SCADA und planen Wartungseinsätze gebündelt. Reaktionszeiten und Leistungen legen wir im Wartungsvertrag fest.",
     },
   ],
   cta: {

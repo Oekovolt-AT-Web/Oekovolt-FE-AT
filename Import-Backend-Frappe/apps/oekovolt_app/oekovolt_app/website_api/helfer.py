@@ -13,7 +13,16 @@ ROLLE_WEB = "Website API"
 ROLLE_VERTRIEB = "Vertrieb"
 
 # Anfragen je IP-Adresse und Stunde (Überschreiben per site_config: "oekovolt_drossel": {"kontakt": 10})
-DROSSEL_JE_STUNDE = {"kontakt": 5, "angebot": 5, "solarrechner": 10}
+DROSSEL_JE_STUNDE = {
+	"kontakt": 5,
+	"angebot": 5,
+	"solarrechner": 10,
+	# Rechner-Lead-Gate (A11): Firmen-IPs mit vielen Mitarbeitenden
+	"rechner": 20,
+	"rechner-mail": 5,
+	"bestaetigung": 20,
+	"bestaetigung-mail": 10,
+}
 # Obergrenze je Formular und Stunde, wenn die Website keine IP-Adresse mitschickt
 DROSSEL_OHNE_IP = 200
 
@@ -64,10 +73,19 @@ def _empfaenger(rolle):
 	return sorted(nutzer), [e for e in extra if e]
 
 
-def team_benachrichtigen(betreff, html, doctype, name, reply_to=None, rolle=ROLLE_VERTRIEB):
-	"""E-Mail + Glocke (Notification Log) für alle Nutzer der Rolle. Darf die Anfrage nie verhindern."""
+def team_benachrichtigen(betreff, html, doctype, name, reply_to=None, rolle=ROLLE_VERTRIEB, empfaenger=None):
+	"""E-Mail + Glocke (Notification Log) für alle Nutzer der Rolle. Darf die Anfrage nie verhindern.
+
+	empfaenger=[…] (Welle A06, Lead-Routing): feste Liste aus Benutzern und/oder E-Mail-Adressen statt der Rolle;
+	das Sammelpostfach aus site_config wird dann NICHT automatisch ergänzt (lead_eingang.py übergibt es selbst).
+	Die Glocke bekommen nur die Einträge, die ein Benutzer sind. Bestehende Aufrufe ohne `empfaenger` bleiben gleich."""
 	try:
-		nutzer, extra = _empfaenger(rolle)
+		if empfaenger is not None:
+			liste = [e for e in dict.fromkeys(empfaenger) if e]
+			nutzer = [u for u in liste if frappe.db.exists("User", u) and frappe.db.get_value("User", u, "enabled")]
+			extra = [e for e in liste if e not in nutzer and frappe.utils.validate_email_address(e)]
+		else:
+			nutzer, extra = _empfaenger(rolle)
 		empfaenger = nutzer + [e for e in extra if e not in nutzer]
 		if empfaenger:
 			frappe.sendmail(

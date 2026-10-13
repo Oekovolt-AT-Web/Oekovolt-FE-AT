@@ -38,8 +38,8 @@ export const metadata = seitenMeta({
 
 const FAQ = [
   {
-    q: "Warum entwickelt ein PV-Errichter eigene Regelungs- und Leittechnik?",
-    a: "Weil Netzanschluss, Einspeiselimits und Direktvermarktung heute über die Wirtschaftlichkeit einer Anlage mitentscheiden – und weil herstellergebundene Lösungen bei gemischten Anlagen, Erweiterungen und neuen Vorgaben der Netzbetreiber an Grenzen stoßen. Mit eigenem Parkregler, eigener Leitwarte und eigener Fernwartung können wir Anlagen herstellerunabhängig regeln, schnell an neue Vorgaben anpassen und Sicherheit aus einer Hand verantworten.",
+    q: "Warum kümmert sich ein PV-Errichter selbst um Regelungs- und Leittechnik?",
+    a: "Weil Netzanschluss, Einspeiselimits und Direktvermarktung heute über die Wirtschaftlichkeit einer Anlage mitentscheiden – und weil herstellergebundene Lösungen bei gemischten Anlagen, Erweiterungen und neuen Vorgaben der Netzbetreiber an Grenzen stoßen. Mit Parkregler, Leitwarte und Fernwartung mit unserem Technologiepartner Solensa können wir Anlagen herstellerunabhängig regeln, schnell an neue Vorgaben anpassen und Sicherheit aus einer Hand verantworten.",
   },
   {
     q: "Funktioniert die Ökovolt-Technik mit Wechselrichtern verschiedener Hersteller?",
@@ -126,13 +126,13 @@ export default function TechnikPage() {
       <PageHero
         variant="immersive"
         breadcrumbs={[{ name: "Technik" }]}
-        eyebrow="Eigene Technik · entwickelt für Österreich"
+        eyebrow="Technik · für den österreichischen Netzanschluss"
         title={
           <>
-            Regelung, Leitwarte, Fernwartung – <span className="ov-text-gradient-light">aus eigener Entwicklung</span>
+            Regelung, Leitwarte, Fernwartung – <span className="ov-text-gradient-light">betreut aus einer Hand</span>
           </>
         }
-        lead="Wir bauen nicht nur PV-Anlagen, wir betreiben sie auch – die Gründer seit 2012 eigene Solarparks. Deshalb haben wir eigene Parkregler, SCADA- und Fernwartungssysteme entwickelt, gemeinsam mit der Solensa GmbH als Partnerin für Digitalisierung und IT-Security."
+        lead="Wir bauen nicht nur PV-Anlagen, wir betreiben sie auch – die Gründer seit 2012 eigene Solarparks. Deshalb setzen wir Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa ein – parametriert, betreut und gewartet von uns."
         image={{ src: BILD.hero, alt: "Umspannwerk mit Hochspannungsleitungen zur blauen Stunde", position: "70% 60%" }}
         actions={[
           { label: "Technik kennenlernen", href: "/termin?art=video" },

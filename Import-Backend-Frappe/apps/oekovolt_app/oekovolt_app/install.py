@@ -11,6 +11,14 @@ ROLLEN = (
 	("Website API", 0),  # nur API-User der Website (API_KEY/API_SECRET) – kein Desk
 	("Vertrieb", 1),  # bearbeitet Anfragen, bekommt E-Mail + Glocke
 	("Terminberatung", 1),  # Berater, deren Kalender Termine blockiert (Termin-Teil)
+	# Lead-Routing/Eskalation (A06) – müssen vor dem DocType-Sync existieren
+	("Vertriebsleitung", 1),
+	("Service", 1),
+	("Personal", 1),
+	("Einkauf", 1),
+	("Marketing", 1),
+	("Geschäftsführung", 1),
+	("Monitoring", 1),
 )
 
 

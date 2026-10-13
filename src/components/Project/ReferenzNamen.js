@@ -19,9 +19,9 @@ export function ReferenzNamenBand({ titel = "Unternehmen, die mit uns Strom erze
     <div className={cn("border-y py-7 md:py-9", dunkel ? "border-white/10 bg-navy-950" : "border-ink-100 bg-white", className)}>
       <p className={cn("ov-container mb-5 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em]", dunkel ? "text-white/55" : "text-ink-500")}>{titel}</p>
       <Marquee speed={60} fade={dunkel ? "from-navy-950" : "from-white"}>
-        {REFERENZ_UNTERNEHMEN.map((r) => (
-          <span key={r.slug} className="flex items-center gap-12 md:gap-16">
-            <span className={cn("whitespace-nowrap font-display text-[20px] font-bold tracking-tight md:text-[24px]", dunkel ? "text-white/70" : "text-ink-400")}>{r.name}</span>
+        {REFERENZ_UNTERNEHMEN.map((r, i) => (
+          <span key={`${r.slug || r.name}-${i}`} className="flex items-center gap-12 md:gap-16">
+            <span className={cn("whitespace-nowrap font-display text-[20px] font-bold tracking-tight md:text-[24px]", dunkel ? "text-white/70" : "text-ink-500")}>{r.name}</span>
             <span aria-hidden="true" className={cn("h-1.5 w-1.5 rounded-full", dunkel ? "bg-ov-400/60" : "bg-ov-300")} />
           </span>
         ))}
@@ -54,8 +54,8 @@ export function ReferenzWand({ vorhandeneSlugs = new Set(), telefon, telefonHref
           <span aria-hidden="true" className="ov-num pointer-events-none absolute -bottom-10 -right-2 font-display text-[220px] font-extrabold leading-none text-white/[0.04]">{gross.firmen.length}</span>
           <Kopf name={gross.name} anzahl={gross.firmen.length} gross />
           <ul className="relative mt-6 grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-            {gross.firmen.map((f) => (
-              <Firma key={f.slug} firma={f} verlinkt={vorhandeneSlugs.has(f.slug)} gross />
+            {gross.firmen.map((f, j) => (
+              <Firma key={`${f.slug || f.name}-${j}`} firma={f} verlinkt={vorhandeneSlugs.has(f.slug)} gross />
             ))}
           </ul>
           <p className="relative mt-auto pt-8 text-[13.5px] leading-relaxed text-white/50">Produktion, Verarbeitung und Automation – Betriebe mit großen Dachflächen und hohem Tagesverbrauch.</p>
@@ -65,8 +65,8 @@ export function ReferenzWand({ vorhandeneSlugs = new Set(), telefon, telefonHref
             <Reveal key={b.name} delay={80 + i * 70} className={cn("rounded-3xl bg-white/[0.05] p-5 ring-1 ring-white/10 md:p-6", b.firmen.length > 2 && "sm:col-span-2")}>
               <Kopf name={b.name} anzahl={b.firmen.length} />
               <ul className={cn("mt-4 grid gap-y-1", b.firmen.length > 2 && "sm:grid-cols-2 sm:gap-x-6")}>
-                {b.firmen.map((f) => (
-                  <Firma key={f.slug} firma={f} verlinkt={vorhandeneSlugs.has(f.slug)} />
+                {b.firmen.map((f, j) => (
+                  <Firma key={`${f.slug || f.name}-${j}`} firma={f} verlinkt={vorhandeneSlugs.has(f.slug)} />
                 ))}
               </ul>
             </Reveal>

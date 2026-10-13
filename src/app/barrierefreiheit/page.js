@@ -29,7 +29,7 @@ export const metadata = {
 };
 
 /** Datum der Erstellung bzw. letzten Überprüfung dieser Erklärung */
-const STAND = "29. September 2026";
+const STAND = "12. Oktober 2026";
 
 const extern = { target: "_blank", rel: "noopener noreferrer" };
 const NeuerTab = () => <span className="sr-only"> (öffnet in neuem Tab)</span>;
@@ -52,6 +52,8 @@ export default function BarrierefreiheitPage() {
           <li>Angebots-Konfigurator (Anfrage einer Photovoltaik-Ersteinschätzung)</li>
           <li>Rechner und Werkzeuge (u. a. Solarrechner, Standort-Check, Stromspeicher- und Finanzierungsrechner, Förder-Check)</li>
           <li>Rückruf-Service und Online-Terminbuchung</li>
+          <li>Freischaltung von Auswertungen und Downloads mit E-Mail-Bestätigung (Lead-Gate-Dialog)</li>
+          <li>Cookie-Banner und Privatsphäre-Einstellungen</li>
           <li>Kontaktformular, Partner-Registrierung, Sponsoring-Anfrage, Einreichung zum PV Award und Kurzbewerbung</li>
           {HINWEIS_INTERN && <li>Hinweisgebersystem nach dem HinweisgeberInnenschutzgesetz (Meldeformular und Postfach)</li>}
         </ul>
@@ -79,8 +81,9 @@ export default function BarrierefreiheitPage() {
           <li>
             <strong>Bedienung per Tastatur:</strong> Alle Menüs, Formulare, Rechner und Dialoge lassen sich ohne Maus bedienen.
             Ein Sprunglink führt direkt zum Hauptinhalt, der Tastaturfokus ist deutlich sichtbar. Dialoge (Menü, Rückruf,
-            Cookie-Einstellungen) halten den Fokus, lassen sich mit der Escape-Taste schließen und geben den Fokus an den
-            Auslöser zurück.
+            Cookie-Einstellungen, Lead-Gate-Dialog) halten den Fokus, lassen sich mit der Escape-Taste schließen und geben
+            den Fokus an den Auslöser zurück. Beim Navigieren per Tastatur bleibt das fokussierte Element sichtbar – es wird
+            nicht vom mitlaufenden Seitenkopf, der mobilen Handlungsleiste oder dem Cookie-Banner verdeckt.
           </li>
           <li>
             <strong>Screenreader:</strong> Seiten sind mit Überschriften, Landmarken und Listen gegliedert. Bedienelemente,
@@ -88,8 +91,13 @@ export default function BarrierefreiheitPage() {
             Tabellen haben Beschriftungen und Kopfzellen, Diagramme eine textliche bzw. tabellarische Alternative.
           </li>
           <li>
-            <strong>Kontraste und Farbe:</strong> Texte und Bedienelemente erfüllen die geforderten Mindestkontraste.
-            Informationen werden nicht allein über Farbe vermittelt.
+            <strong>Kontraste und Farbe:</strong> Das Designsystem ist auf die geforderten Mindestkontraste ausgelegt
+            (Ausnahmen siehe „Bekannte Einschränkungen“). Informationen werden nicht allein über Farbe vermittelt.
+          </li>
+          <li>
+            <strong>Cookie-Banner:</strong> Der Banner ist von Beginn an Teil der Seite, per Tastatur direkt nach dem
+            Sprunglink erreichbar und verdeckt keine Bedienelemente des Seitenkopfs. „Nur notwendige“ und „Alle
+            akzeptieren“ sind gleichwertig gestaltet; die Einstellungen öffnen einen beschrifteten Dialog.
           </li>
           <li>
             <strong>Bewegung:</strong> Die Einstellung „Bewegung reduzieren“ Ihres Betriebssystems wird berücksichtigt –
@@ -103,7 +111,8 @@ export default function BarrierefreiheitPage() {
           <li>
             <strong>Keine Zeitbegrenzungen:</strong> Formulare und Terminbuchung haben keine Zeitlimits; Eingaben gehen beim
             Wechsel zwischen den Schritten nicht verloren. Ausnahme ist der QR-Code für Unterlagen per Smartphone, der aus
-            Sicherheitsgründen nach 45 Minuten abläuft und jederzeit neu erzeugt werden kann.
+            Sicherheitsgründen nach 45 Minuten abläuft und jederzeit neu erzeugt werden kann, sowie der Bestätigungslink im
+            Lead-Gate-Dialog, der 24 Stunden gültig ist und sich jederzeit neu anfordern lässt.
           </li>
           <li>
             <strong>Sprache:</strong> Die Seiten sind als deutschsprachig ausgezeichnet, damit Vorleseprogramme die richtige
@@ -121,6 +130,23 @@ export default function BarrierefreiheitPage() {
 
         <h3>Bekannte Einschränkungen</h3>
         <ul className="space-y-1.5">
+          <li>
+            <strong>Farbkontraste einzelner Texte:</strong> Auf älteren und einzelnen neuen Seiten erreichen manche
+            Nebentexte (hellgraue Hinweise, halbtransparente Schrift auf dunklen Flächen, weiße Schrift auf hellgrünen
+            Knöpfen) noch nicht das Kontrastverhältnis von 4,5 : 1. Die Grundfarbe für Nebentexte haben wir bereits
+            abgedunkelt; die übrigen Stellen werden im nächsten Überarbeitungsschritt seitenweise behoben.
+          </li>
+          <li>
+            <strong>Lead-Gate-Dialog</strong> (Freischaltung von Auswertungen und Downloads): Die Freischaltung erfolgt
+            über einen Link in einer Bestätigungs-E-Mail. Dafür ist ein Wechsel in Ihr E-Mail-Programm nötig.{" "}
+            <em>Alternative:</em> Rufen Sie uns an oder schreiben Sie uns (siehe „Alternative Zugangswege“) – wir besprechen
+            die Auswertung dann persönlich mit Ihnen.
+          </li>
+          <li>
+            <strong>Cookie-Banner:</strong> Der Banner liegt am unteren Bildschirmrand über dem Seiteninhalt, bis Sie eine
+            Auswahl treffen. Fokussierte Elemente werden darüber gehalten; auf sehr kleinen Bildschirmen oder bei starker
+            Vergrößerung kann er dennoch Teile des Inhalts verdecken. Treffen Sie eine Auswahl, verschwindet er.
+          </li>
           <li>
             <strong>Eingebettete Google-Maps-Karte</strong> (Kontaktseite): Die Karte eines Drittanbieters ist nicht
             vollständig per Tastatur und Screenreader bedienbar. <em>Alternative:</em> Unsere Anschrift steht als Text auf der

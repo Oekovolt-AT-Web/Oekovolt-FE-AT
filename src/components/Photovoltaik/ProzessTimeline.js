@@ -95,7 +95,7 @@ const PHASEN = [
     titel: "Monitoring, Wartung & Service",
     dauer: "über die gesamte Laufzeit",
     api: [],
-    lead: "Wir überwachen die Anlage mit eigenen Fernwartungs- und SCADA-Systemen, erkennen Leistungsabfälle früh und bieten Wartungsverträge nach Anlagengröße.",
+    lead: "Wir überwachen die Anlage mit Fernwartung und SCADA mit unserem Technologiepartner Solensa, erkennen Leistungsabfälle früh und bieten Wartungsverträge nach Anlagengröße.",
     sie: ["Erträge im Portal verfolgen", "Wartungsvertrag wählen"],
     wir: ["Monitoring, Fernwartung und Störungsbehebung", "Wiederkehrende Prüfung und Wartung", "Erweiterung um Speicher, Ladeinfrastruktur oder Energiegemeinschaft"],
   },

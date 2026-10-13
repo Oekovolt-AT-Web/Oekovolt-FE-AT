@@ -149,7 +149,7 @@ export default function Kennlinien() {
           <span className="block font-display text-[17px] font-bold text-ink-900">Q(U)-Kennlinie – empfohlene Standard-Stützpunkte</span>
           <span className="mt-1 block text-[13.5px] leading-relaxed text-ink-600">
             a = 0,92 Un · b = 0,96 Un · c = 1,05 Un · d = 1,08 Un; Dynamik PT1 mit τ = 5 s (einstellbar 3–60 s), 95 % des Sollwerts innerhalb 3 τ.
-            Qmax/Pmax bei Typ A: 0,436.
+            Bezugsgröße bei Typ A: Qmax = ±0,436·Sr (cos φ 0,9, bezogen auf die Bemessungsscheinleistung Sr; bis 3,68 kVA 0,312·Sr) – nicht auf Pmax.
           </span>
         </figcaption>
         <KennlinieQU />

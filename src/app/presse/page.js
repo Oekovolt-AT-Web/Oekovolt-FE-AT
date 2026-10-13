@@ -17,6 +17,7 @@ import { KATEGORIEN, BASE_URL, veroeffentlichungen } from "@/lib/kanaele/veroeff
 import { alleArtikel, artikelPfad, datumLang } from "@/lib/ratgeber";
 import { FIRMA, SCHWESTER } from "@/lib/site";
 import { KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_STAND } from "@/data/kennzahlen";
+import { BOILERPLATE } from "@/data/marke";
 import PresseKontakt from "@/components/Presse/PresseKontakt";
 import { STAND as OEMAG_STAND } from "@/data/oemag";
 // Metadaten des Schneelast-Rasters (GeoSphere SNOWGRID-CL, eigene Auswertung) – hier nur Quelle und Stand
@@ -43,16 +44,16 @@ export const metadata = {
   other: { "fediverse:creator": "@oekovolt@oekovolt.com" },
 };
 
-// Kurzprofil für Redaktionen – nur verifizierte Angaben (docs/AT-BRIEFING.md, src/lib/site.js)
-const BOILERPLATE = `Die ${FIRMA.name} mit Sitz in ${FIRMA.ort} (${FIRMA.bundesland}) plant, errichtet und betreut seit ${FIRMA.gegruendet} Photovoltaikanlagen in ganz Österreich – für Gewerbe und Industrie, Landwirtschaft, Gemeinden und Energieversorger. Das Elektrotechnik-Unternehmen entwickelt eigene Parkregler (EZA-Regler), Fernwartungs- und SCADA-Systeme. Gesellschafter sind Geschäftsführer ${FIRMA.geschaeftsfuehrer} (51 %) und die Salzburg AG für Energie, Verkehr und Telekommunikation (49 %). Die deutsche Schwestergesellschaft ${SCHWESTER.name} (${SCHWESTER.ort}) ist seit 2010 am Markt.${FIRMA.verbaende.length ? ` Ökovolt ist ${FIRMA.verbaende.map((v) => `${v.status} im ${v.name}`).join(" und ")}.` : ""}`;
+// Kurzprofil für Redaktionen – aus dem Markenkern (src/data/marke.js BOILERPLATE): nur Registerdaten
+// und belegte Aussagen, Gesellschafter neutral, keine Eigen-Parkregler-Aussage ohne Rechteklärung.
 
 // Zahlen für Redaktionen – Gesamtzahlen zentral aus src/data/kennzahlen.js (Angabe Ökovolt Österreich).
-// Die CO₂-Zahl erscheint dort erst mit festgelegtem Zeitraum (SEO-Plan M25). „TOP 3 der EPC-Errichter 2021“
-// laut docs/AT-BRIEFING.md (wie Startseite, src/data/hero.js).
+// Die CO₂-Zahl erscheint dort erst mit festgelegtem Zeitraum (SEO-Plan M25). Welle A02: ohne
+// Rangaussage zu EPC-Errichtern 2021 (kein Beleg, src/data/werbeaussagen.js).
 const FAKTEN = [
   ...KENNZAHLEN.map((k) => ({ wert: k.zahl, suffix: k.suffix, text: k.label })),
   { wert: "2012", text: "gegründet in Ostermiething, Oberösterreich" },
-  { wert: "TOP 3", text: "der EPC-Errichter Österreichs 2021" },
+  { wert: "9", text: "Bundesländer im Einzugsgebiet" },
 ].slice(0, 4);
 
 // Grafiken aus eigenen Datenauswertungen (public/presse/grafiken, erzeugt in Welle 4 / P6) – Vorschau und Download.
@@ -177,7 +178,7 @@ export default async function PressePage({ searchParams }) {
                 ].map((z) => (
                   <div key={z.dt} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                     <z.icon aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-ov-300" />
-                    <dt className="w-32 shrink-0 text-white/50">{z.dt}</dt>
+                    <dt className="w-32 shrink-0 text-white/60">{z.dt}</dt>
                     <dd className="min-w-0 font-medium text-white/90">{z.dd}</dd>
                   </div>
                 ))}
@@ -296,7 +297,7 @@ export default async function PressePage({ searchParams }) {
             ))}
           </dl>
           <p className="mt-5 text-[13.5px] text-white/60">
-            {KENNZAHLEN_HINWEIS}, Stand {standLang(KENNZAHLEN_STAND)}. Nicht die Summe der online dokumentierten Referenzprojekte.
+            {KENNZAHLEN_HINWEIS} · Stand {standLang(KENNZAHLEN_STAND)}. Errichtete PV-Anlagen jeder Größe – nicht die Summe der online dokumentierten Referenzprojekte.
           </p>
 
           <div className="mt-10 grid gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
@@ -312,7 +313,7 @@ export default async function PressePage({ searchParams }) {
               <ul className="mt-5 flex flex-wrap gap-2">
                 {THEMEN.map((t) => (
                   <li key={t.href}>
-                    <Link href={t.href} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-white/[0.07] px-4 text-[14px] font-medium text-white/85 ring-1 ring-white/10 transition-colors hover:bg-ov-500 hover:text-white">
+                    <Link href={t.href} className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-white/[0.07] px-4 text-[14px] font-medium text-white/85 ring-1 ring-white/10 transition-colors hover:bg-ov-600 hover:text-white">
                       {t.titel}
                       <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 opacity-60" />
                     </Link>
@@ -338,14 +339,14 @@ export default async function PressePage({ searchParams }) {
               <PresseKontakt />
             </div>
             <a href={`mailto:${FIRMA.email}?subject=Presseanfrage`} className="group ov-card-hover flex flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-300">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white">
                 <Mail aria-hidden="true" className="h-5 w-5" />
               </span>
               <p className="mt-5 font-display text-[17px] font-bold text-ink-900">Presseanfragen</p>
               <p className="mt-1 text-[14.5px] text-ink-600">{FIRMA.email}</p>
             </a>
             <a href={FIRMA.telefonHref} className="group ov-card-hover flex flex-col rounded-3xl bg-sand-50 p-6 ring-1 ring-ink-200/60 hover:bg-white hover:ring-ov-300">
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-500 text-white">
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ov-600 text-white">
                 <Phone aria-hidden="true" className="h-5 w-5" />
               </span>
               <p className="mt-5 font-display text-[17px] font-bold text-ink-900">Telefon</p>

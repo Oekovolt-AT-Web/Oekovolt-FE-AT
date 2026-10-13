@@ -53,8 +53,33 @@ test("Verzeichnis: K1 vorhanden, standardmäßig inaktiv, gültige Felder", () =
   for (const e of EXPERIMENTE) {
     assert.match(e.id, /^[a-z0-9]{1,12}$/);
     assert.ok(["client", "server"].includes(e.ort));
+    for (const v of e.varianten) assert.match(v, /^[a-z0-9]{1,8}$/, `${e.id}: Variante ${v}`);
     assert.equal(new Set(EXPERIMENTE.map((x) => x.id)).size, EXPERIMENTE.length, "IDs eindeutig");
   }
+});
+
+test("Verzeichnis: K4 (Hero-Display-Zeile) vorbereitet, inaktiv, Kontrolle = Zeile B, Ziel cta_klick auf /angebot", () => {
+  const k4 = EXPERIMENTE.find((e) => e.id === "k4");
+  assert.ok(k4, "k4 vorhanden");
+  assert.equal(k4.aktiv, false, "k4 ist AUS");
+  assert.deepEqual(k4.seiten, ["/"]);
+  assert.deepEqual(k4.varianten, ["b", "a"], "Kontrolle (varianten[0]) ist die Standardzeile B");
+  assert.equal(k4.ort, "server", "oberhalb der Falz → serverseitig (kein Flackern)");
+  assert.deepEqual(k4.ziel, { ereignis: "cta_klick", pfad: "/angebot" });
+  assert.ok(endeVon(k4.bis));
+  // Inaktiv → überall Kontrolle „b“, Middleware setzt keinen Header, Vorschau zeigt „a“ ohne Zählung
+  assert.equal(varianteAusHeader("k4=a", "k4"), "b");
+  assert.equal(middlewareZuweisung("/"), "");
+  assert.equal(vorschauVariante("?ov-exp=k4:a", "k4"), "a");
+  _zuruecksetzen();
+  assert.equal(zuweisen("k4", { pfad: "/" }), "b");
+  assert.equal(expFuerEreignis(), "");
+  // Aktiv (Testkopie): Middleware lost auf „/“ aus, nicht auf anderen Pfaden
+  const aktiv = [{ ...k4, aktiv: true, bis: "2027-12-31" }];
+  assert.equal(middlewareZuweisung("/", { zufall: () => 0.9, jetzt: JETZT, verzeichnis: aktiv }), "k4=a");
+  assert.equal(middlewareZuweisung("/", { zufall: () => 0.1, jetzt: JETZT, verzeichnis: aktiv }), "k4=b");
+  assert.equal(middlewareZuweisung("/angebot", { jetzt: JETZT, verzeichnis: aktiv }), "");
+  assert.equal(varianteAusHeader("k4=a", "k4", { jetzt: JETZT, verzeichnis: aktiv }), "a");
 });
 
 test("laeuft: aktiv, Enddatum einschließlich, inaktiv", () => {

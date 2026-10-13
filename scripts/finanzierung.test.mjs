@@ -11,6 +11,7 @@ import {
   leasingEffektivzins,
   monatsfaktor,
   rechneFinanzierung,
+  stresstestFinanzierung,
   zahl,
 } from "../src/lib/rechner/finanzierung.js";
 
@@ -182,6 +183,56 @@ test("Standardwerte: plausible, endliche Ergebnisse", () => {
     assert.ok(Number.isFinite(m.summe), `${m.id} Summe`);
   }
   assert.ok(MODELLE.some((m) => m.id === r.besterId));
+});
+
+// ---------------------------------------------------------------------------
+// Welle A (A10): Stresstest konservativ / erwartet / günstig
+// ---------------------------------------------------------------------------
+test("Stresstest: drei Läufe, erwartet = rechneFinanzierung, Reihenfolge der Ergebnisse", () => {
+  const st = stresstestFinanzierung({});
+  assert.deepEqual(st.laeufe.map((l) => l.id), ["konservativ", "erwartet", "guenstig"]);
+  assert.equal(st.jahre, 20);
+  const r = rechneFinanzierung({});
+  st.laeufe[1].modelle.forEach((m, i) => nahe(m.summe, r.modelle[i].summe, 1e-6, `erwartet ${m.id}`));
+  for (const id of MODELLE.map((m) => m.id)) {
+    const [k, e, g] = st.laeufe.map((l) => l.modelle.find((m) => m.id === id));
+    assert.ok(k.summe < e.summe, `konservativ < erwartet (${id})`);
+    assert.ok(e.summe < g.summe, `erwartet < günstig (${id})`);
+  }
+});
+test("Stresstest konservativ = Handrechnung (−30 % Preis/Einspeisung, −10 % Ertrag, 0 % Steigerung, Zinsen +2 Pp.)", () => {
+  const S = FINANZIERUNG;
+  const k = stresstestFinanzierung({}).laeufe[0];
+  const eff = leasingEffektivzins(S.leasing.faktor, S.leasing.jahre, S.leasing.restwert);
+  const hand = rechneFinanzierung({
+    strompreisCt: S.strompreisCt * 0.7,
+    einspeiseCt: rechneFinanzierung({}).basis.einspeiseCt * 0.7,
+    ertragProKwp: S.ertragProKwp * 0.9,
+    strompreisSteigerung: 0,
+    kalkulationszins: S.kalkulationszins + 0.02,
+    kredit: { ...S.kredit, zins: S.kredit.zins + 0.02 },
+    leasing: { ...S.leasing, faktor: monatsfaktor(eff + 0.02, S.leasing.jahre, S.leasing.restwert) },
+  });
+  k.modelle.forEach((m, i) => nahe(m.summe, hand.modelle[i].summe, 1e-6, `konservativ ${m.id}`));
+  // Leasingfaktor steigt mit dem Zins
+  assert.ok(monatsfaktor(eff + 0.02, S.leasing.jahre, 0) > S.leasing.faktor);
+});
+test("Stresstest günstig: Strompreissteigerung +1 Pp.", () => {
+  const g = stresstestFinanzierung({}).laeufe[2];
+  const hand = rechneFinanzierung({ strompreisSteigerung: FINANZIERUNG.strompreisSteigerung + 0.01 });
+  g.modelle.forEach((m, i) => nahe(m.summe, hand.modelle[i].summe, 1e-6, `günstig ${m.id}`));
+});
+test("Stresstest Break-even: Summe beim Break-even-Strompreis = 0", () => {
+  const st = stresstestFinanzierung({});
+  for (const b of st.breakEven) {
+    assert.ok(typeof b.text === "string" && b.text.length > 0);
+    if (b.ct == null) continue;
+    const r = rechneFinanzierung({ strompreisCt: b.ct });
+    nahe(r.modelle.find((m) => m.id === b.id).summe, 0, 1e-3, `Break-even ${b.id}`);
+  }
+  const ek = st.breakEven.find((b) => b.id === "eigenkapital");
+  assert.ok(ek.ct > 0 && ek.ct < FINANZIERUNG.strompreisCt);
+  assert.match(ek.text, /^Ab welchem Strompreis rechnet sich die Anlage nicht mehr: \d+,\d ct\/kWh$/);
 });
 
 console.log(`\n${n} Tests bestanden.`);

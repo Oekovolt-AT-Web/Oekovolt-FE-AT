@@ -1,0 +1,32 @@
+/* src/components/GewerbeUnikat/HeroSignatur.module.css – nur Keyframes und deren Anwendung (keine globalen Selektoren).
+   Die Karte blendet nach dem Seitenkopf ein (600 ms, y ≤ 12 px), die Woche zeichnet sich einmal von links nach
+   rechts (clip-path, 1,4 s). Bei reduzierter Bewegung steht sofort das Endbild. */
+
+@media (prefers-reduced-motion: no-preference) {
+  .karte {
+    animation: karteEin 600ms cubic-bezier(0.16, 1, 0.3, 1) 700ms both;
+  }
+  .zeichnen {
+    animation: zeichnen 1400ms cubic-bezier(0.65, 0, 0.35, 1) 1000ms both;
+  }
+}
+
+@keyframes karteEin {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes zeichnen {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}

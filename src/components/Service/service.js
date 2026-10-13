@@ -28,7 +28,7 @@ const ServiceSection = () => {
         </p>
         <p>
           Unsere erfahrenen Expert:innen übernehmen auch die professionelle Reinigung Ihrer PV-Anlage. Dabei verwenden
-          wir Osmose-Wasser – komplett umweltfreundlich und frei von Chemikalien. Mit speziell entwickelten
+          wir Osmose-Wasser ohne Reinigungsmittel und Chemikalien. Mit speziell entwickelten
           Reinigungsgeräten werden die PV-Module gründlich und schonend von Schmutz, Staub und Ablagerungen befreit.
         </p>
       </div>

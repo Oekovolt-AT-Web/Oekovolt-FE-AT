@@ -9,6 +9,10 @@
 // steht der Endzustand. Alle Klassen, Keyframes und IDs tragen das Präfix s08.
 
 import { LayoutGrid, Lock, MonitorDot, PlugZap, UtilityPole, Zap } from "lucide-react";
+import { PARKREGLER_RECHTE_GEKLAERT } from "@/data/marke";
+
+// Welle A02: „eigene Entwicklung“ nur, wenn die Rechte am Parkregler geklärt sind (src/data/marke.js).
+const REGLER_PILLE = PARKREGLER_RECHTE_GEKLAERT ? "eigene Entwicklung" : "betreut von uns";
 
 const GRUEN = "#8cba58";
 const GRUEN_HELL = "#aed083";
@@ -114,7 +118,7 @@ const D = {
   lockY: 204,
 };
 const D_SC_U = D.sc.y + D.sc.h;
-const D_PILLE = D.cy - D.rp - 48; // „eigene Entwicklung“
+const D_PILLE = D.cy - D.rp - 48; // Pille REGLER_PILLE
 const D_LABEL = 476;
 const D_SOLL = `M${D.mx[4]} 512C${D.mx[4]} 578 ${D.mx[2]} 578 ${D.mx[2]} 518`;
 const TAKT = 2700; // erster Sollwert-Impuls, danach alle 6 s
@@ -304,7 +308,7 @@ function SchemaQuer() {
                 <g {...an("s08-heben", 1300)}>
                   <rect x={mx[i] - 98} y={D_PILLE} width="196" height="32" rx="16" fill={GRUEN} />
                   <text x={mx[i]} y={D_PILLE + 21.5} textAnchor="middle" fontSize="15.5" fontWeight="800" fill={NAVY} style={DISPLAY}>
-                    eigene Entwicklung
+                    {REGLER_PILLE}
                   </text>
                 </g>
                 <g {...an("s08-pop", 600)}>
@@ -438,7 +442,7 @@ function SchemaHoch() {
         const y = ys[i] - h;
         const eigen = k.id === "regler";
         const zeilen = eigen ? ["Parkregler"] : k.id === "nap" ? ["Netzanschluss-", "punkt"] : [k.l];
-        const unter = eigen ? "EZA-Regler · eigene Entwicklung" : k.unter;
+        const unter = eigen ? `EZA-Regler · ${REGLER_PILLE}` : k.unter;
         const basis = ys[i] - (zeilen.length > 1 ? 14 : 4) + (unter ? -4 : 6);
         return (
           <g key={k.id} data-g={k.g}>

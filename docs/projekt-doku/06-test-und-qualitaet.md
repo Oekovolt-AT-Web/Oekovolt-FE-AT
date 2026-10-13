@@ -2,14 +2,16 @@
 
 Testdokumentation in Anlehnung an ISO/IEC/IEEE 29119-3 (Testfälle, Testprotokoll, Testbericht) und
 Qualitätsmerkmale in Anlehnung an ISO/IEC 25010. Keine Normkonformität behauptet.
-Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
+Stand: Version 0.6, 12.10.2026 (Nachführung Welle A – Neubau am 11./12.10.2026 nach Verlust des Stands vom 07.10.2026).
 
 ## 1. Testumgebung
 
 | Merkmal | Wert |
 |---|---|
-| Datum | 30.09.2026 (Welle 1 und Welle 2) |
-| Arbeitsstand | `at-launch` @ `11472bf` + Arbeitsbaum (siehe 08 „Unveröffentlicht“) |
+| Datum | 12.10.2026 (Welle A; frühere Läufe 30.09.2026) |
+| Arbeitsstand | `main` @ `71829e1` + Arbeitsbaum Welle A (enthält auch Teile der Wellen B/C; siehe 08 „Unveröffentlicht“) |
+| Next.js | 15.5.27 (`next dev` ohne Turbopack, Port 3001 über `scripts/dev-waechter.mjs`; Builds nur mit `NEXT_DIST_DIR=.next-verify…`) |
+| Browser-Prüfung (Welle A) | Playwright (`playwright-core`) mit Chromium, WebKit, Firefox; Viewports 360, 390, iPhone 14, iPad, 1280, 1440 |
 | Betriebssystem | Windows 11 Pro (Git Bash) |
 | Node.js | v24.21.0 |
 | Python | 3.14.7 (Tests mit `python -B`, es werden keine Bytecode-Dateien geschrieben) |
@@ -28,6 +30,10 @@ Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 | T-ALLE | `scripts/alle-tests.mjs` (Welle 4) | Sammellauf aller `scripts/*.test.mjs`; `todo`-Befunde brechen nicht ab | Runner, 21 Dateien (Stand 30.09.2026) | `node scripts/alle-tests.mjs` (Snippet `"test": "node scripts/alle-tests.mjs"` für `package.json` noch nicht übernommen) |
 | T-W4 | neu in Welle 4: `prognose` (27), `schneelast-seite` (17), `einspeisung` (10 Gruppen), `eg-betriebe`, `kommunen-vergabe`, `flaeche` (15), `finanzierung` (14), `rechner-teilen` (13), `lastgang` (23), `experimente` (12), `kontrast` (18), `rechner-gewerbe` (68), `rechner-mobilitaet` (29), `rechner-privat` (43), `kundenbuehne` (23), `kennzahlen` (8), `heatmap-frontend` (11), `bundesland` (15) | Fachlogik der neuen Werkzeuge, Rechner, Kundenbühne, Kennzahlen, Heatmap-Validierung (Website), Farbkontrast | node:test bzw. node:assert | über T-ALLE |
 | T-VERTRAG | `Import-Backend-Frappe/apps/oekovolt_app/tests/pruefe_vertrag.py` | Vertrag Website ↔ Backend ohne Frappe: Antwortformen `get_projekte`/`get_projekt`/`get_referenzkarte`, Formularprüfung (Honeypot, Pflichtfelder, PLZ, PDF), Herkunftszeile nicht in Kunden-Mail, DocType-Felder und Berechtigungen, Whitelist-Pfade mit Rollenprüfung | Prüfskript, 186 Prüfungen | im Ordner `Import-Backend-Frappe`: `python apps/oekovolt_app/tests/pruefe_vertrag.py` |
+| T-WA | neu bzw. erweitert in Welle A: `redirects` (7, A01), `kontrast-klassen` (Fundliste als `todo`, A01), `werbeaussagen` (6, Register + Baseline, A02), `verkauf` (37, Fristen/IFB/Einwände/Freigabe-Filter, A03), `kundenbuehne` (40, Freigabe/Plakette/Award, A07), `lead-gate` (22, Kennungen/Pflichtfelder/Token/Cookie/Drossel, A09), `rechner-gewerbe` (88, Stresstest/TOR nach AC/Hero = Detail/Blackout, A10), `finanzierung` (Stresstest, A10), `rechner-privat` (45), `kennzahlen` (9), `experimente` (k4) | Werbeaussagen, Verkaufslogik, Freigaben, Lead-Gate, Rechenkern | node:test bzw. node:assert | über T-ALLE; `npm audit --omit=dev --audit-level=high` läuft am Ende mit (`--ohne-audit` lässt ihn aus) |
+| T-ROUTING | `Import-Backend-Frappe/apps/oekovolt_app/tests/test_lead_routing.py` (A06) | Routing, Dubletten, SLA-Geschäftsminuten, Eskalation, Alarm ohne Personendaten – ohne Frappe | Unit (unittest), 52 Tests | `python -B tests/test_lead_routing.py` |
+| T-RLEAD | `Import-Backend-Frappe/apps/oekovolt_app/tests/test_rechner_lead.py` (A11/Integration) | Double-Opt-in-Ablauf mit Frappe-Attrappe: 24 h, ungültige/verbrauchte Token, erneut senden, Honeypot, Drossel, Schalter, Löschjob 30 Tage, Website-Token | Unit (unittest), 10 Tests | `python -B tests/test_rechner_lead.py` |
+| T-FREIGABE | `…/oekovolt_app/doctype/referenz_freigabe/test_freigabe_logik.py` (A07) | Token, Hash, IP-Kürzel, Auswahlprüfung, Status, Mailtexte der Referenz-Freigabe | Unit (unittest), 13 Tests | im Ordner des DocTypes: `python -B test_freigabe_logik.py` |
 
 **Lücken:**
 - Laut `docs/AT-UEBERGABE.md:40` ist die Rechner-Logik `src/lib/rechner/*` „mit Node getestet“ – **Testdateien dazu sind
@@ -40,6 +46,43 @@ Stand: Version 0.5, 30.09.2026 (Nachführung SEO-Welle P1–P9 und QA).
 - Kein Test für das Erzeugungsskript `scripts/schneelast-raster-erzeugen.py` (braucht ca. 0,9 GB Eingangsdaten); geprüft wird nur das Ergebnis (T-SNOW).
 
 ## 3. Testprotokoll
+
+### 3.0000 Welle A (11./12.10.2026, Neubau)
+
+Läufe der Dokumentation am 12.10.2026 auf dem aktuellen Arbeitsbaum (enthält auch Wellen B/C):
+
+| Test | Ergebnis | Exit-Code | Bemerkung |
+|---|---|---|---|
+| `node scripts/alle-tests.mjs` | **41 von 41 Dateien bestanden**, 0 fehlgeschlagen (13,5 s) | 0 | `npm audit --omit=dev --audit-level=high`: keine Befunde ab high; bekannter Befund (`todo`): `kontrast-klassen.test.mjs` 359 Fundstellen (11.10.: 445) |
+| T-VERTRAG `pruefe_vertrag.py` | **361/361** | 0 | 186 (0.5) → 356 (A11) → 361 (Integration) |
+| T-RLEAD | 10 OK | 0 | neu |
+| T-ROUTING | 52 OK | 0 | neu |
+| T-TERMIN | 37 OK | 0 | unverändert |
+| T-FREIGABE | 13 OK | 0 | neu |
+| ESLint `npx eslint src scripts -f json` | **1.220 Dateien, 0 Fehler, 0 Warnungen** | 0 | Paketläufe A01–A12 je ohne Befund |
+
+Ergebnisse der Pakete (laut Notizen `anhang/wellen/A*.md`):
+
+| Prüfung | Ergebnis | Quelle |
+|---|---|---|
+| Produktions-Build `NEXT_DIST_DIR=.next-verify npx next build` | grün, Next 15.5.27, 355 statische Seiten (11.10., nach A01); `.next` nicht angefasst | A01 |
+| Produktions-Server (`next start`, Port 3006) | Weiterleitungen ohne Ketten (308), `security.txt` 200 nach RFC 9116, Header (HSTS, `X-XSS-Protection: 0`, COOP außer `/tv`, `/einbetten`, `/siegel`), `/_next/image` nur `…/files/…` (AVIF 200; `/private/…` und unpkg 400), Referenzkarte ohne Anfrage an unpkg.com | A01 |
+| Werbeaussagen-Scan der QA-Seiten | kein „TOP 3“, kein „bevorzugter PV-Errichter“, kein `<video>`, keine WKO-Siegel, keine Gesellschafter-Zeile; „Angaben Ökovolt Österreich · Stand 09/2026“ und „Symbolbild“ sichtbar; CTA-Gruppe 96 ms nach `domInteractive` sichtbar (Abnahme ≤ 800 ms) | A02 (Runden 1–3) |
+| Mobile Führung | Primär-CTA (Unterkante) bei 390 × 844: `/gewerbe` 532 px, `/landwirtschaft` 532 px, `/agri-pv` 477 px (Ziel < 700 px); Cookie-Banner mobil 164 px, Desktop 90 px, gleichwertige Knöpfe, ohne Einwilligung 0 Anfragen an Google; CLS nach Scrollen 0; Mega-Menü per Tastatur | A12 |
+| Kundennamen | auf `/` nach Durchscrollen keine Kundennamen (Steinbacher, PENN, ALPLA, Andritz, Hammerer, B&R, F&S Agrar) | A02 Runde 3 |
+| Backoffice-Logik | nur ohne Frappe (Attrappen); `bench migrate`, echte Token, `get_freigaben`-Merge und Positivfall `/siegel/<slug>` nicht geprüft | A06, A07, A11 |
+
+**QA-Sichtprüfung über 10 Geräte-/Browser-Kombinationen (Runden 1–3, 12.10.2026):** A04, A05, A08, A09 ohne Restbefund.
+Restbefunde (in 09 als Risiken geführt): A02 – „eigener Leittechnik“/„eigener Technik“ ohne Schalter (R-63), Rahmen der
+Schicht-Umschaltung im Hero-Rechner; A03 – nur Last-Zeitüberschreitungen des Produktionsservers 3002 (kein Code-Befund);
+A06 – schwebende Leiste über Inhalten (R-72), Safari-Schriftstärke und Frappe-Prüfungen offen; A07 – leere Karte „Nach
+Objektart“ und Texte ohne Datenbasis (R-73); A10 – Hero-Fließtext „eigener Leittechnik“ (R-63); A11 – Startwerte des
+Konfigurators verzerren das Scoring (R-67); A12 – CLS beim ersten Laden mobil (R-69), Startseiten-CTA mobil (R-70),
+WebKit-Schrift dünn (R-71).
+
+**Einschränkungen:** Der Wächter-Dev-Server (3001) antwortete ab 11./12.10. nicht mehr; Sichtprüfungen liefen auf
+Ersatz-Servern bzw. dem Produktionsserver 3002 mit Zeitüberschreitungen (R-74). A10 hat kein eigenes Kontrollbild
+(Skripte `welle-a/A10/sicht.cjs`, `qa2.cjs` liegen für die QA bereit). Eine Prüfung auf echtem iPhone/Safari fehlt.
 
 ### 3.000 SEO-Welle P1–P9 und QA (30.09.2026)
 
@@ -119,6 +162,7 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 
 | Welle | Aufruf | Ergebnis |
 |---|---|---|
+| A | `npx eslint src scripts -f json` (12.10.2026, inkl. Wellen B/C im Arbeitsbaum) | 1.220 Dateien, **0 Fehler, 0 Warnungen** |
 | 5 | `npx eslint src scripts -f json` (ohne Cache) | 977 Dateien, **0 Fehler, 0 Warnungen** |
 | 4 | wie oben | 976 Dateien, 0 Fehler, 0 Warnungen |
 | 3 | `npx eslint src -f json` | 865 Dateien, 0 Fehler, 0 Warnungen |
@@ -132,6 +176,8 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | Stand | Ergebnis | Quelle |
 |---|---|---|
 | 29.09.2026 (vor Commit `11472bf`) | Produktions-Build fehlerfrei; QA-Crawl 199 Sitemap-URLs: 0 Fehlerseiten, 0 interne 404, Title/Description/Canonical/H1/JSON-LD gültig | `docs/AT-UEBERGABE.md:3-5` |
+| 11.10.2026, Welle A nach A01 | `NEXT_DIST_DIR=.next-verify npx next build` grün (Next 15.5.27, 355 statische Seiten) | `anhang/wellen/A01.md` |
+| 12.10.2026, Welle A Ende | kein vollständiger Build der Dokumentation; QA prüfte gegen einen Produktionsserver auf Port 3002 (neu gestartet 12.10., 11:55) und Paket-Builds in eigenen Verzeichnissen (`.next-verify-a07`, `-a08`, `-a12`) | Paket-Notizen, QA-Restbefunde |
 | 30.09.2026, Wellen 2–4 | Build übernimmt der Koordinator (parallel) – **Ergebnis bei Redaktionsschluss nicht gemeldet**; laut Koordinator Sitemap mit 311 URLs | beim nächsten Nachführen eintragen (P9) |
 
 ## 4. Manuelle Sichtprüfungen
@@ -161,7 +207,7 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | ID | Punkt | Priorität (Vorschlag) |
 |---|---|---|
 | Q-01 | Tests für `src/lib/rechner/*` ins Repo aufnehmen (laut Übergabe vorhanden gewesen) | hoch |
-| Q-02 | `npm test` bzw. Sammelskript für alle `scripts/*.test.mjs` und Python-Tests | mittel |
+| Q-02 | `npm test` bzw. Sammelskript für alle `scripts/*.test.mjs` und Python-Tests | mittel – `npm test` vorhanden; Python-Tests weiter einzeln |
 | Q-03 | Ergebnis des Produktions-Builds (Koordinator) hier eintragen | hoch |
 | Q-04 | Barrierefreiheits-Prüfung (z. B. automatisiert + manuell nach WCAG 2.2 AA) dokumentieren | hoch (BaFG) |
 | Q-05 | Tests für `src/lib/heatmap.js` (Website-Validierung) und die Drosselung der API-Routen | mittel |
@@ -177,3 +223,10 @@ Keine neuen Testdateien in Welle 3 (neue Module `kennzahlen.js`, `mannschaft.js`
 | Q-15 | Crawler-Test (`curl -A`), Rich-Results-Test und IndexNow-Lauf im Produktions-Build nach dem Deploy | hoch |
 | Q-16 | `scratchpad/indexnow-statuscodes.test.mjs` (12 Prüfungen) als `scripts/indexnow.test.mjs` übernehmen | niedrig |
 | Q-17 | Restliche ca. 150 Kundenbühne-Unterseiten nachcrawlen | niedrig |
+| Q-18 | Testmuster „eigene(r) Leittechnik“/„eigene Technik“ in `scripts/werbeaussagen.test.mjs` (R-63) | hoch |
+| Q-19 | CLS beim ersten Laden mobil < 0,1 (`/gewerbe`, `/kontakt`) nachweisen (R-69) | hoch |
+| Q-20 | Sichtprüfung auf echtem iPhone/Safari (Schriftstärke, `/termin`) (R-71) | mittel |
+| Q-21 | Backoffice-Abnahme nach `bench migrate`: Double-Opt-in mit echter Mail, Referenz-Freigabe mit echtem Token, Routing/SLA/Alarm (Spezifikation §8) | hoch |
+| Q-22 | Kontrast-Altbestand (359) abbauen und `KONTRAST_KLASSEN_STRENG=1` (Welle E) | mittel |
+| Q-23 | Vollständiger Produktions-Build des Endstands Welle A mit Ergebnis hier eintragen | hoch |
+| Q-24 | Test, dass der Konfigurator `vorbelegt` sendet (R-67) | mittel |

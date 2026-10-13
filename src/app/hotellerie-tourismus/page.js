@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ClipboardList, Cog, HandCoins, Leaf, LineChart, Megaphone, Mountain, Wrench } from "lucide-react";
+import { BatteryCharging, ClipboardList, Cog, HandCoins, Leaf, LineChart, Megaphone, Mountain, PlugZap, ShieldAlert, Sun, Wrench } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -21,8 +21,27 @@ import FachTabs from "@/components/Loesungen/B/FachTabs";
 import Rechenbeleg from "@/components/Loesungen/B/Rechenbeleg";
 import DunkelSektion, { SystemKarten } from "@/components/Loesungen/B/DunkelSektion";
 import SaisonProfil from "@/components/Loesungen/B/SaisonProfil";
+import BranchenReferenzen from "@/components/Referenzen/BranchenReferenzen";
+import IfbHinweis from "@/components/Verkauf/IfbHinweis";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
+
+// Welle A / A05: Termin-Links mit thema=tourismus (Kurzform in src/data/erreichbarkeit.js
+// nachziehen – Übergabe an A08). Gästekommunikation nur mit belegten Werten: Richtlinie (EU) 2024/825
+// (anzuwenden seit 27.09.2026) und § 2 UWG – keine pauschalen Umwelt- oder Neutralitätsaussagen.
+const TERMIN = "/termin?art=video&thema=tourismus";
+
+// Fette Hero-Zeile nur, wenn sie die H1 nicht wiederholt: Variante → titel + akzent, Standard → `kurz` (A03), sonst nur lead.
+function heroLead(v) {
+  const zeile = v.id === "standard" ? v.kurz : `${v.titel} ${v.akzent}`;
+  if (!zeile) return v.lead;
+  return (
+    <>
+      <span className="block font-display text-[1.15em] font-bold leading-snug text-white">{zeile}</span>
+      <span className="mt-3 block">{v.lead}</span>
+    </>
+  );
+}
 
 const PFAD = "/hotellerie-tourismus";
 const PAGE_URL = `${BASE_URL}${PFAD}`;
@@ -52,7 +71,7 @@ const FAQ = [
   },
   {
     q: "Wie viel Strom brauchen Bergbahnen und Beschneiung?",
-    a: "Laut Fachverband der Seilbahnen in der WKO liegt der Strombedarf aller Seilbahnen in Österreich inklusive technischer Beschneiung bei rund 750 GWh im Jahr, etwa 1,2 % des österreichischen Strombedarfs. Für die Beschneiung von 30 ha Pistenfläche nennt der Fachverband rund 525.000 kWh pro Winter. Photovoltaik an Stationen, Garagen und Hangflächen deckt einen Teil davon und lässt sich mit Speicher und Energiegemeinschaft kombinieren.",
+    a: "Laut Fachverband der Seilbahnen in der WKO liegt der Strombedarf aller Seilbahnen in Österreich inklusive technischer Beschneiung bei rund 750 GWh im Jahr, etwa 1,2 % des österreichischen Strombedarfs. Für die Beschneiung von 30 ha Pistenfläche nennt der Fachverband rund 525.000 kWh pro Winter. Photovoltaik an Stationen, Garagen und Hangflächen deckt einen Teil davon und lässt sich mit Speicher und Energiegemeinschaft kombinieren.",
   },
   {
     q: "Hält eine PV-Anlage die Schneelast in den Alpen aus?",
@@ -60,7 +79,7 @@ const FAQ = [
   },
   {
     q: "Gibt es eine höhere Förderung für einen PV-Carport auf dem Gästeparkplatz?",
-    a: "Ja. PV-Anlagen als Parkplatzüberdachung ab 10 Stellplätzen, bei denen die Module die Überdachung bilden, gelten im EAG als innovative Anlagen und erhalten 30 % Zuschlag auf den Investitionszuschuss. Gleiches gilt für gebäudeintegrierte Photovoltaik, etwa in der Fassade. Der Antrag ist vor Inbetriebnahme im Fördercall zu stellen.",
+    a: "Ja. PV-Anlagen als Parkplatzüberdachung ab 10 Stellplätzen, bei denen die Module die Überdachung bilden, gelten im EAG als innovative Anlagen und erhalten 30 % Zuschlag auf den Investitionszuschuss. Gleiches gilt für gebäudeintegrierte Photovoltaik, etwa in der Fassade. Der Antrag ist vor Inbetriebnahme im Fördercall zu stellen.",
   },
   {
     q: "Welche Ladestationen brauchen Hotelgäste?",
@@ -83,18 +102,18 @@ const FAQ = [
 const BEISPIEL = [
   { pos: "Betrieb", wert: "4-Stern-Hotel mit Wellness, Ganzjahresbetrieb, Netzebene 6 (Tirol)", ergebnis: "–" },
   { pos: "Anlage und Jahresertrag", wert: "100 kWp Dach + 100 kWp Carport × 1.100 kWh/kWp", ergebnis: "220.000 kWh" },
-  { pos: "Eigenverbrauch (85 %)", wert: "187.000 kWh × 15,06 ct (Energie 11 + Netz 2,95 + Verlust 0,29 + E-Abgabe 0,82)", ergebnis: "≈ 28.160 €/Jahr" },
-  { pos: "Einspeisung (15 %)", wert: "33.000 kWh × 6 ct", ergebnis: "≈ 1.980 €/Jahr" },
-  { pos: "Betrieb, Wartung, Versicherung", wert: "1,5 % der Investition", ergebnis: "− 2.850 €/Jahr" },
+  { pos: "Eigenverbrauch (85 %)", wert: "187.000 kWh × 15,06 ct (Energie 11 + Netz 2,95 + Verlust 0,29 + E-Abgabe 0,82)", ergebnis: "≈ 28.160 €/Jahr" },
+  { pos: "Einspeisung (15 %)", wert: "33.000 kWh × 6 ct", ergebnis: "≈ 1.980 €/Jahr" },
+  { pos: "Betrieb, Wartung, Versicherung", wert: "1,5 % der Investition", ergebnis: "− 2.850 €/Jahr" },
   { pos: "Jährlicher Überschuss", wert: "vor Steuern", ergebnis: "≈ 27.290 €/Jahr", hervorheben: true },
   { pos: "Investition", wert: "Annahme 950 €/kWp netto (Dach und Carport gemittelt)", ergebnis: "190.000 €" },
-  { pos: "EAG-Investitionszuschuss", wert: "Annahme 100 €/kWp Dach; Carport 100 €/kWp + 30 % Innovationszuschlag", ergebnis: "− 23.000 €" },
+  { pos: "EAG-Investitionszuschuss", wert: "Annahme 100 €/kWp Dach; Carport 100 €/kWp + 30 % Innovationszuschlag", ergebnis: "− 23.000 €" },
   { pos: "Statische Amortisation", wert: "167.000 € ÷ 27.290 €/Jahr", ergebnis: "≈ 6,1 Jahre", hervorheben: true },
 ];
 
 const HEBEL = [
-  { icon: HandCoins, titel: "Förderung", text: "EAG-Zuschuss bis 1.000 kWp, 30 % Zuschlag für Carport und gebäudeintegrierte Module, Speicher 150 €/kWh." },
-  { icon: Leaf, titel: "Zertifikate", text: "Energiekennzahlen aus unserem SCADA als Nachweis für Umweltzeichen, Nachhaltigkeitsbericht und Kreditgeber." },
+  { icon: HandCoins, titel: "Förderung", text: "EAG-Zuschuss bis 1.000 kWp, 30 % Zuschlag für Carport und gebäudeintegrierte Module, Speicher 150 €/kWh." },
+  { icon: Leaf, titel: "Zertifikate", text: "Energiekennzahlen aus dem SCADA (Technologiepartner Solensa) als Nachweis für Umweltzeichen, Nachhaltigkeitsbericht und Kreditgeber." },
   { icon: Megaphone, titel: "Marketing", text: "Ihre Anlage als Geschichte: Live-Anzeige im Foyer, Video und Imagespot mit Solensa." },
 ];
 
@@ -159,10 +178,10 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         breadcrumbs={[{ name: "Hotellerie & Tourismus" }]}
         eyebrow={v.eyebrow}
         title={<>Photovoltaik für Hotels, <span className="ov-text-gradient-light">Thermen und Bergbahnen</span></>}
-        lead={<><span className="block font-display text-[1.15em] font-bold leading-snug text-white">{v.titel} {v.akzent}</span><span className="mt-3 block">{v.lead}</span></>}
+        lead={heroLead(v)}
         image={{ src: HERO_BILD, alt: "Berghotel mit Schindeldächern vor verschneiten Gipfeln im Abendrot", position: "60% 60%" }}
         actions={[
-          { label: v.cta, href: "/termin?art=video&thema=gewerbe" },
+          { label: v.cta, href: TERMIN },
           { label: "Schneelast & Standort prüfen", href: "/standort-check", icon: Mountain },
         ]}
         points={["Hotel, Therme, Bergbahn", "Alpine Schneelast & Winterertrag", "Gäste-Laden & Carport", "Geschichte für Ihr Marketing"]}
@@ -171,13 +190,16 @@ export default async function HotellerieTourismusPage({ searchParams }) {
 
       <KennzahlenBand
         items={[
-          { wert: 750, suffix: " GWh", label: "Strombedarf aller Seilbahnen inkl. Beschneiung – rund 1,2 % des Strombedarfs Österreichs" },
+          { wert: 750, suffix: " GWh", label: "Strombedarf aller Seilbahnen inkl. Beschneiung – rund 1,2 % des Strombedarfs Österreichs" },
           { wert: 525000, suffix: " kWh", label: "Strom pro Winter, um ein Skigebiet mit 30 ha Pistenfläche technisch zu beschneien" },
-          { wert: 30, prefix: "+ ", suffix: " %", label: "EAG-Zuschlag für PV-Parkplatzüberdachungen ab 10 Stellplätzen und gebäudeintegrierte PV" },
+          { wert: 30, prefix: "+ ", suffix: " %", label: "EAG-Zuschlag für PV-Parkplatzüberdachungen ab 10 Stellplätzen und gebäudeintegrierte PV" },
           { text: "UZ 200", label: "Richtlinie des Österreichischen Umweltzeichens für Tourismus- und Gastronomiebetriebe" },
         ]}
         quelle="Quellen: WKO, Fachverband der Seilbahnen – Factsheet Seilbahnen und Energie; EAG-IZV § 6 laut Leitfaden Land Oberösterreich 2026; Österreichisches Umweltzeichen, Richtlinie UZ 200."
       />
+
+      {/* Belegte Tourismus-Referenzen (Zuordnung in src/data/branchenZuordnung.js, A03) – rendert nichts ohne Treffer */}
+      <BranchenReferenzen zielgruppe="tourismus" titel="Tourismusbetriebe, die schon mit Ökovolt-Strom arbeiten" />
 
       <Section tone="white" space="lg">
         <SectionHeading
@@ -190,7 +212,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
           items={[
             { bild: "/Images/AT/loesungen-b/tourismus-hotel-pv-winter.jpg", alt: "Alpines Hotel mit Photovoltaikmodulen auf dem Dach im Winter", tag: "Hotellerie", titel: "Hotels & Resorts", text: "Dach, Fassade und Carport: Küche, Wäscherei, Lüftung, Klima und Aufzüge laufen täglich – oft mit sehr hohem Eigenverbrauch." },
             { bild: "/Images/AT/loesungen-b/tourismus-wellness-pool.jpg", alt: "Überdachter Außenpool mit Blick auf verschneiten Wald", titel: "Thermen & Wellness", text: "Pumpen, Filter, Saunen und Wärmepumpen erzeugen ganzjährig Grundlast. PV plus Wärmepumpe senkt Strom- und Wärmekosten gemeinsam." },
-            { bild: "/Images/Dienstleistungen/Photovoltaik/fuschl-am-see-scaled-1.jpg", alt: "Luftbild eines Hotels am See mit Photovoltaikanlagen auf mehreren Dachflächen", titel: "Gastronomie & Kühlung", text: "Kühlräume, Tiefkühler und Klimaanlagen haben ihre Lastspitze im Sommer zur Mittagszeit – genau mit der Solarkurve." },
+            { bild: "/Images/AT/home/hotel-pv-dach-luftbild.jpg", alt: "Luftbild eines Hotels mit Restaurantterrasse und Photovoltaikmodulen auf den Flachdächern (Symbolbild)", titel: "Gastronomie & Kühlung", text: "Kühlräume, Tiefkühler und Klimaanlagen haben ihre Lastspitze im Sommer zur Mittagszeit – genau mit der Solarkurve." },
             { bild: "/Images/AT/loesungen-b/tourismus-gondelbahn.jpg", alt: "Gondeln einer Seilbahn vor einem verschneiten Gipfel", titel: "Bergbahnen & Lifte", text: "Tal- und Bergstationen, Garagen, Fassaden und Hangflächen – mit Einstrahlung in Höhenlage und Schneereflexion.", href: "#bergbahnen" },
             { bild: "/Images/AT/loesungen/tourismus-pv-skigebiet-wildkogel.jpg", alt: "Photovoltaikanlage auf einem verschneiten Hang im Skigebiet Wildkogel-Arena", titel: "Beschneiung & Speicherteiche", text: "Pumpen und Schneeerzeuger brauchen im Winter viel Leistung. Speicher, Lastmanagement und Energiegemeinschaft verteilen sie besser.", position: "center 70%" },
             { bild: "/Images/AT/loesungen/ladeinfrastruktur-solarcarport.jpg", alt: "Luftbild von Solar-Carports mit Ladestationen auf einem Hotelparkplatz (Symbolbild)", titel: "Laden für Gäste", text: "AC-Ladepunkte für Übernachtungsgäste, DC-Lader für Tagesgäste – als PV-Carport mit Förderzuschlag.", href: "/ladeinfrastruktur" },
@@ -215,15 +237,15 @@ export default async function HotellerieTourismusPage({ searchParams }) {
             title="Ein Hotel verbraucht Strom, wenn die Sonne scheint."
             bild={{ src: "/Images/AT/loesungen-b/chalets-lech-winter.jpg", alt: "Verschneiter Tourismusort mit Hotels und Chalets im Tal" }}
             text={[
-              "Die meisten Hotels haben ein Lastprofil, das gut zur Photovoltaik passt: Frühstück und Küche am Vormittag, Wäscherei und Reinigung tagsüber, Kühlung und Klima am Nachmittag. In Sommerbetrieben und Häusern mit Wellnessbereich sind Eigenverbrauchsquoten von über 80 % realistisch.",
+              "Die meisten Hotels haben ein Lastprofil, das gut zur Photovoltaik passt: Frühstück und Küche am Vormittag, Wäscherei und Reinigung tagsüber, Kühlung und Klima am Nachmittag. In Sommerbetrieben und Häusern mit Wellnessbereich sind Eigenverbrauchsquoten von über 80 % realistisch.",
               "Wichtig ist die Saison: Ein reiner Wintersaisonbetrieb erzeugt im Hochwinter weniger, als er verbraucht, im Frühling und Herbst viel Überschuss. Dann helfen Speicher, steilere Modulneigung, Fassadenmodule und die Weitergabe über eine Energiegemeinschaft.",
             ]}
             points={[
-              { title: "Dach & Fassade", text: "auch gebäudeintegriert – mit 30 % Förderzuschlag." },
+              { title: "Dach & Fassade", text: "auch gebäudeintegriert – mit 30 % Förderzuschlag." },
               { title: "Carport", text: "Gästeparkplatz als Kraftwerk und Ladepark zugleich." },
               { title: "Speicher", text: "Abendspitze in Küche und Wellness abfedern, Notstrom für kritische Verbraucher." },
             ]}
-            action={{ label: "Hotel bewerten lassen", href: "/termin?art=video&thema=gewerbe" }}
+            action={{ label: "Hotel bewerten lassen", href: TERMIN }}
           />
           <Kapitel
             delay={120}
@@ -232,7 +254,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
             bild={{ src: "/Images/AT/loesungen/tourismus-seilbahn-pv-fassade.jpg", alt: "Bergstation einer Seilbahn in Vorarlberg mit Photovoltaikmodulen an der Fassade" }}
             text={[
               "Seilbahnen und Beschneiung haben ihren Strombedarf überwiegend im Winter. Photovoltaik in Höhenlage erzeugt in dieser Zeit mehr als im Tal: klarere Luft, weniger Nebel und die Reflexion der Schneedecke, die bifaziale Module auch auf der Rückseite nutzen. Steile Aufstellung oder Fassaden bleiben schneefrei.",
-              "Netzanschlüsse am Berg sind oft schwach und lang. Unser Parkregler hält Einspeiselimits am Übergabepunkt ein, die Leitwarte zeigt Erzeugung, Lifte und Beschneiung in einem System.",
+              "Netzanschlüsse am Berg sind oft schwach und lang. Der Parkregler unseres Technologiepartners Solensa – von uns parametriert – hält Einspeiselimits am Übergabepunkt ein, die Leitwarte zeigt Erzeugung, Lifte und Beschneiung in einem System.",
             ]}
             points={[
               { title: "Stationsgebäude & Garagen", text: "Dach- und Fassadenflächen ohne zusätzlichen Flächenverbrauch." },
@@ -261,13 +283,13 @@ export default async function HotellerieTourismusPage({ searchParams }) {
       >
         <ul className="grid gap-x-10 border-t border-white/10 md:grid-cols-2 lg:grid-cols-3">
           {ALPIN.map((a, i) => (
-            <Reveal as="li" key={a.titel} delay={(i % 3) * 80} className="border-b border-white/10 py-6">
+            <Reveal as="li" key={a.titel} delay={(i % 3) * 80} className="border-b border-white/10 py-6">
               <p className="font-display text-[18px] font-bold text-white">{a.titel}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-white/65">{a.text}</p>
             </Reveal>
           ))}
           <Reveal as="li" delay={160} className="flex items-center border-b border-white/10 py-6">
-            <Link href="/standort-check" className="group inline-flex items-center gap-3 rounded-full bg-white/[0.06] px-5 py-3 text-[15px] font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-ov-500 hover:ring-ov-500">
+            <Link href="/standort-check" className="group inline-flex items-center gap-3 rounded-full bg-white/[0.06] px-5 py-3 text-[15px] font-semibold text-white ring-1 ring-white/15 transition-colors hover:bg-ov-600 hover:ring-ov-600">
               <Mountain aria-hidden="true" className="h-4 w-4 text-ov-300 group-hover:text-white" />
               Standort-Check starten
             </Link>
@@ -294,7 +316,29 @@ export default async function HotellerieTourismusPage({ searchParams }) {
             { icon: LineChart, title: "Betrieb & Geschichte", text: "Monitoring, Wartungsvertrag, Live-Anzeige für Gäste und Kommunikation Ihrer Anlage." },
           ]}
         />
+        <p className="mt-12 text-center text-[12.5px] font-semibold uppercase tracking-[0.16em] text-ov-700">Selbst rechnen – in 2 Minuten, ohne Daten</p>
+        <div className="mt-4 flex flex-wrap justify-center gap-3 text-[15px]">
+          <Link href="/rechner/gewerbe-pv" className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-ink-700 ring-1 ring-ink-200 transition-colors hover:text-ov-700 hover:ring-ov-300">
+            <Sun aria-hidden="true" className="mr-1.5 inline h-4 w-4 text-ov-600" />
+            Gewerbe-PV-Rechner für Ihr Haus
+          </Link>
+          <Link href="/rechner/ladeinfrastruktur" className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-ink-700 ring-1 ring-ink-200 transition-colors hover:text-ov-700 hover:ring-ov-300">
+            <PlugZap aria-hidden="true" className="mr-1.5 inline h-4 w-4 text-ov-600" />
+            Ladeinfrastruktur-Rechner für Gästeparkplätze
+          </Link>
+          <Link href="/rechner/blackout" className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-ink-700 ring-1 ring-ink-200 transition-colors hover:text-ov-700 hover:ring-ov-300">
+            <ShieldAlert aria-hidden="true" className="mr-1.5 inline h-4 w-4 text-ov-600" />
+            Blackout-Rechner: Küche, Kühlung, Lifte
+          </Link>
+          <Link href="/gewerbespeicher" className="inline-flex min-h-11 items-center rounded-full bg-white px-4 text-ink-700 ring-1 ring-ink-200 transition-colors hover:text-ov-700 hover:ring-ov-300">
+            <BatteryCharging aria-hidden="true" className="mr-1.5 inline h-4 w-4 text-ov-600" />
+            Speicher gegen die Abendspitze
+          </Link>
+        </div>
       </Section>
+
+      {/* Öko-IFB bis 31.12.2026 – blendet sich nach Fristende selbst aus (A03) */}
+      <IfbHinweis />
 
       <Section tone="white" space="lg" id="wirtschaftlichkeit" className="scroll-mt-24">
         <SectionHeading
@@ -332,7 +376,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
                     titel="Hotel mit Carport, Tirol"
                     caption="Beispielrechnung Photovoltaik für ein Hotel mit Carport"
                     zeilen={BEISPIEL}
-                    fuss="Beispiel, Stand 09/2026. Netzentgelte Netzebene 6 Netzbereich Tirol laut SNE-V 2018 – Novelle 2026 (BGBl. II Nr. 305/2025): 2,95 ct/kWh Arbeitspreis, 0,292 ct/kWh Netzverlust; Elektrizitätsabgabe 2026 0,82 ct/kWh. Energiepreis 11 ct/kWh netto, Investitionskosten und Zuschlag im Fördercall sind Annahmen (kein Ökovolt-Preis). Nicht enthalten: Leistungspreiseffekt, Ladeerlöse, Steuerwirkung (Öko-IFB 22 % bis Ende 2026), Degradation."
+                    fuss="Beispiel, Stand 09/2026. Netzentgelte Netzebene 6 Netzbereich Tirol laut SNE-V 2018 – Novelle 2026 (BGBl. II Nr. 305/2025): 2,95 ct/kWh Arbeitspreis, 0,292 ct/kWh Netzverlust; Elektrizitätsabgabe 2026 0,82 ct/kWh. Energiepreis 11 ct/kWh netto, Investitionskosten und Zuschlag im Fördercall sind Annahmen (kein Ökovolt-Preis). Nicht enthalten: Leistungspreiseffekt, Ladeerlöse, Steuerwirkung (Öko-IFB 22 % bis Ende 2026), Degradation."
                   />
                 </div>
               ),
@@ -344,10 +388,19 @@ export default async function HotellerieTourismusPage({ searchParams }) {
               inhalt: (
                 <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
                   <div>
-                    <h3 className="ov-h3 text-ink-900">Gäste buchen Haltung – zeigen Sie sie.</h3>
+                    <h3 className="ov-h3 text-ink-900">Gäste buchen Haltung – zeigen Sie sie mit Zahlen.</h3>
                     <p className="mt-4 text-[16px] leading-relaxed text-ink-600">
-                      Photovoltaik ist die sichtbarste Klimaschutzmaßnahme eines Tourismusbetriebs. Richtig kommuniziert, stärkt sie Marke, Zertifizierung und Mitarbeiterbindung.
+                      Photovoltaik ist eine sichtbare Klimaschutzmaßnahme eines Tourismusbetriebs. Richtig kommuniziert – mit belegten Werten statt
+                      Schlagworten – stärkt sie Marke, Zertifizierung und Mitarbeiterbindung.
                     </p>
+                    <Hinweis className="mt-6" ton="warn" titel="Was Sie Gästen sagen dürfen">
+                      Seit 27. September 2026 ist die Richtlinie (EU) 2024/825 anzuwenden: Allgemeine Umweltaussagen ohne Nachweis und
+                      Neutralitäts-Versprechen beim Klima, die auf Kompensation beruhen, sind unzulässig; irreführende Werbung verbietet § 2 UWG.
+                      Sagen Sie stattdessen, was messbar ist: erzeugte Kilowattstunden je Jahr aus dem Monitoring, Anteil am Strombedarf des
+                      Hauses, Zeitraum und Stand. Diese Werte liefert das SCADA – Beispiele unter{" "}
+                      <Link href="/service/nachhaltigkeitsmarketing" className="font-semibold text-ov-700 underline">Nachhaltigkeitsmarketing</Link>.
+                      Keine Rechtsberatung.
+                    </Hinweis>
                   </div>
                   <div>
                     <Prosa>
@@ -389,7 +442,7 @@ export default async function HotellerieTourismusPage({ searchParams }) {
         eyebrow="Kostenlos & unverbindlich"
         title="Planen wir Ihre Anlage für die nächste Zwischensaison."
         text="Erstgespräch per Video oder vor Ort – mit Einschätzung zu Flächen, Schneelast, Eigenverbrauch, Förderung und Ladepunkten für Gäste."
-        primary={{ label: v.cta, href: "/termin?art=video&thema=gewerbe" }}
+        primary={{ label: v.cta, href: TERMIN }}
         secondary={{ label: "Anfrage starten", href: "/angebot?objekt=hotellerie", icon: Cog }}
       />
 

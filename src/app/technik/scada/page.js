@@ -145,7 +145,7 @@ export default function ScadaPage() {
           service: {
             name: "SCADA, Monitoring und Reporting für Photovoltaik",
             serviceType: "Anlagenüberwachung und Portfolio-Monitoring",
-            beschreibung: "Eigene SCADA-Systeme mit Leitwarte, Kennzahlen nach IEC 61724, Alarmmanagement, Reporting und Schnittstellen zu Netzbetreiber, Direktvermarkter und Kundensystemen.",
+            beschreibung: "SCADA mit unserem Technologiepartner Solensa: Leitwarte, Kennzahlen nach IEC 61724, Alarmmanagement, Reporting und Schnittstellen zu Netzbetreiber, Direktvermarkter und Kundensystemen.",
             audience: "Asset Manager, Investoren, Gewerbe, Stadtwerke, Energiegemeinschaften",
           },
         })}
@@ -160,7 +160,7 @@ export default function ScadaPage() {
             Ein Blick auf jede Anlage – <span className="ov-text-gradient-light">und aufs ganze Portfolio</span>
           </>
         }
-        lead="Unsere eigenen SCADA-Systeme bündeln Wechselrichter, Zähler, Wetterstation und Parkregler in einer Leitwarte: mit Kennzahlen nach IEC 61724, Alarmmanagement und Berichten, die Geschäftsführung, Bank und Direktvermarkter verstehen."
+        lead="Unsere SCADA-Systeme (mit unserem Technologiepartner Solensa) bündeln Wechselrichter, Zähler, Wetterstation und Parkregler in einer Leitwarte: mit Kennzahlen nach IEC 61724, Alarmmanagement und Berichten, die Geschäftsführung, Bank und Direktvermarkter verstehen."
         image={{ src: "/Images/Jobs/renewable-energy-eco-technology-electric-power-fl-2025-01-29-12-30-39-utc.jpg", alt: "Luftaufnahme einer großen PV-Anlage mit zwei Technikern bei der Kontrolle" }}
         actions={[
           { label: "Leitwarte vorstellen lassen", href: "/termin?art=video" },

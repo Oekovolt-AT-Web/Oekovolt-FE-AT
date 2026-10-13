@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BatteryCharging, Cog, FileSpreadsheet, Flame, Gauge, HandCoins, ShieldCheck, Wrench } from "lucide-react";
+import { Activity, BatteryCharging, Cog, FileSpreadsheet, Flame, Gauge, HandCoins, ShieldCheck, Wrench } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -8,6 +8,7 @@ import SplitMedia from "@/components/ui/SplitMedia";
 import Steps from "@/components/ui/Steps";
 import Faq from "@/components/ui/Faq";
 import CtaBand from "@/components/ui/CtaBand";
+import Button from "@/components/ui/Button";
 import Querverweise from "@/components/Reusable/Querverweise";
 import LoesungSchema from "@/components/Loesungen/LoesungSchema";
 import { Bildnachweis, Hinweis, Prosa, StandPille, Tabelle } from "@/components/Loesungen/Bausteine";
@@ -17,6 +18,12 @@ import FachTabs from "@/components/Loesungen/B/FachTabs";
 import Rechenbeleg from "@/components/Loesungen/B/Rechenbeleg";
 import DunkelSektion, { SystemKarten } from "@/components/Loesungen/B/DunkelSektion";
 import Lastkurve from "@/components/Loesungen/B/Lastkurve";
+import FoerdercallHinweis from "@/components/Foerdercall/FoerdercallHinweis";
+import BranchenReferenzen from "@/components/Referenzen/BranchenReferenzen";
+import IfbHinweis from "@/components/Verkauf/IfbHinweis";
+import EinwandKarten from "@/components/Verkauf/EinwandKarten";
+import UnsereZusagen from "@/components/Verkauf/UnsereZusagen";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
 import { zielgruppenVariante } from "@/data/zielgruppen";
 import { BASE_URL } from "@/lib/site";
 
@@ -32,6 +39,14 @@ export const metadata = {
   description: BESCHREIBUNG,
   alternates: { canonical: PAGE_URL },
   openGraph: { type: "website", locale: "de_AT", url: PAGE_URL, siteName: "Ökovolt Österreich", title: TITEL, description: BESCHREIBUNG, images: [{ url: `${BASE_URL}${HERO_BILD}`, width: 1920, height: 1280 }] },
+};
+
+// Primärquellen zur Leistungskomponente ab 2027 (Welle A04, geprüft am 11.10.2026 im Volltext des Entwurfs).
+const ELWG_RIS = { titel: "ElWG, BGBl. I Nr. 91/2025 (RIS)", href: "https://www.ris.bka.gv.at/eli/bgbl/I/2025/91" };
+const SNE_ENTWURF = {
+  titel: "E-Control – Begutachtungsentwurf SNE-G-V samt Erläuterungen",
+  href: "https://www.e-control.at/documents/1785851/0/V+SNE+01_26+SNE-G-V+Begutachtungsentwurf+samt+Erl%C3%A4uterungen.pdf",
+  stand: "Entwurf vom 29.06.2026",
 };
 
 const FAQ = [
@@ -130,6 +145,9 @@ export default async function GewerbespeicherPage({ searchParams }) {
         leistungen={["Lastganganalyse und Speicherdimensionierung", "Peak Shaving", "Eigenverbrauchsoptimierung", "Notstrom und Ersatzstrom", "Spotpreis-Optimierung", "Brandschutzkonzept für Batteriespeicher"]}
       />
 
+      {/* Blendet sich nach Call-Ende (22.10.2026) selbst aus */}
+      <FoerdercallHinweis />
+
       <PageHero
         variant="immersive"
         breadcrumbs={[{ name: "Gewerbe & Industrie", href: "/gewerbe" }, { name: "Gewerbespeicher" }]}
@@ -143,7 +161,21 @@ export default async function GewerbespeicherPage({ searchParams }) {
         ]}
         points={["Leistungspreis nach österreichischer Mechanik", "Dimensionierung aus dem Lastgang", "Notstrom & Blackout-Vorsorge", "Brandschutz nach OVE R 20"]}
         className="[&>div.ov-container]:pb-28 md:[&>div.ov-container]:pb-36"
-      />
+      >
+        {/* Einstieg für Betriebe mit bestehender PV: Lastgang im Browser auswerten, Speicher nachrüsten */}
+        <Link
+          href="/lastgang-analyse?zweck=speicher-nachruesten"
+          className="w21-auf group mt-5 inline-flex min-h-11 max-w-full items-center gap-3 rounded-full bg-white/10 py-2 pl-2 pr-4 text-[14px] text-white/90 ring-1 ring-inset ring-white/20 backdrop-blur-sm transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          style={{ "--w21-d": "860ms" }}
+        >
+          <span aria-hidden="true" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ov-600 text-white">
+            <Activity className="h-4 w-4" />
+          </span>
+          <span className="min-w-0 leading-snug">
+            <strong className="font-semibold text-white">Ich habe bereits eine PV-Anlage</strong> – Lastgang auswerten und Speicher nachrüsten
+          </span>
+        </Link>
+      </PageHero>
 
       <KennzahlenBand
         items={[
@@ -154,6 +186,9 @@ export default async function GewerbespeicherPage({ searchParams }) {
         ]}
         quelle="Quellen: § 52 ElWOG 2010; SNE-V 2018 – Novelle 2026, BGBl. II Nr. 305/2025; EAG-IZV 2026 laut Leitfaden Land Oberösterreich (06/2026); WKO (Investitionsfreibetrag)."
       />
+
+      {/* Blendet sich nach 31.12.2026 selbst aus */}
+      <IfbHinweis zusatz="Stromspeicher zählen als ökologische Investition." />
 
       <Section tone="white" space="lg">
         <SectionHeading
@@ -174,6 +209,9 @@ export default async function GewerbespeicherPage({ searchParams }) {
         />
       </Section>
 
+      {/* Beweise: echte Projekte der Zielgruppe (A03) – ohne Treffer rendert die Komponente nichts */}
+      <BranchenReferenzen zielgruppe="industrie" max={4} />
+
       <Section tone="sand" space="lg" id="leistungspreis">
         <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-16">
           <SectionHeading eyebrow="Leistungspreis in Österreich" title="Nicht die Jahresspitze zählt, sondern zwölf Monatsspitzen." />
@@ -185,6 +223,19 @@ export default async function GewerbespeicherPage({ searchParams }) {
           </div>
         </div>
         <Lastkurve netzbereiche={NETZBEREICHE} standardBereich="Salzburg" />
+
+        {/* Der Leistungspreis-Hebel gehört hierher: Speicher planbar, PV nur anteilig */}
+        <div className="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-10">
+          <Hinweis titel="Speicher kappt Spitzen planbar – die PV allein nur an sonnigen Tagen.">
+            Die Leistungskomponente richtet sich nach Ihrer höchsten Viertelstunde im Monat. Eine PV-Anlage senkt sie nur, wenn die Spitze zur Mittagszeit und bei Sonne
+            liegt; Winterspitzen, Schichtbeginn und Anfahrvorgänge fängt nur ein Speicher mit Lastmanagement ab – Monat für Monat, unabhängig vom Wetter. Wie viel das bei
+            Ihrem Leistungspreis ausmacht, zeigt der Peak-Shaving-Rechner mit den Netzentgelten Ihres Netzbereichs.
+          </Hinweis>
+          <div className="flex flex-col gap-3 lg:items-start">
+            <Button href="/rechner/peak-shaving" size="lg" pfeil icon={Gauge}>Peak-Shaving-Rechner</Button>
+            <p className="text-[13.5px] leading-snug text-ink-600">Ohne Anmeldung, mit Ihren Monatsspitzen – Richtwert, kein Angebot.</p>
+          </div>
+        </div>
       </Section>
 
       <Section tone="white" space="lg">
@@ -205,7 +256,7 @@ export default async function GewerbespeicherPage({ searchParams }) {
       <DunkelSektion
         eyebrow="Technik"
         title="Speicher, PV und Netz aus einer Steuerung"
-        lead="Ein Speicher ist nur so gut wie sein Energiemanagement. Unsere eigenen Systeme verbinden Lastgang, PV, Speicher, Ladepunkte und Netzvorgaben."
+        lead="Ein Speicher ist nur so gut wie sein Energiemanagement. Parkregler, Fernwartung und SCADA setzen wir mit unserem Technologiepartner Solensa um – parametriert, betreut und gewartet von uns – und verbinden Lastgang, PV, Speicher, Ladepunkte und Netzvorgaben."
         bild={{
           src: "/Images/AT/loesungen-b/speicher-schaltanlage.jpg",
           alt: "Reihe von Schalt- und Schutzschränken in einem hellen Technikraum",
@@ -229,7 +280,7 @@ export default async function GewerbespeicherPage({ searchParams }) {
             { icon: FileSpreadsheet, title: "Lastgang-Analyse", text: "12 Monate Viertelstundenwerte, Netzrechnung und PV-Daten auswerten – mit Spitzenprofil je Monat." },
             { icon: BatteryCharging, title: "Dimensionierung & Nutzen", text: "Leistung, Kapazität und Betriebsstrategie; jeder Nutzen einzeln bewertet, mit und ohne Förderung." },
             { icon: Flame, title: "Brandschutz & Genehmigung", text: "Aufstellort, Konzept mit Feuerwehr und Versicherung, Anzeige beim Netzbetreiber, gegebenenfalls Bauverfahren." },
-            { icon: Wrench, title: "Installation & Betrieb", text: "Montage, Inbetriebnahme, Einbindung in unser SCADA und Wartungsvertrag über die gesamte Laufzeit." },
+            { icon: Wrench, title: "Installation & Betrieb", text: "Montage, Inbetriebnahme, Einbindung in SCADA und Fernwartung, Wartungsvertrag über die gesamte Laufzeit." },
           ]}
         />
       </Section>
@@ -256,12 +307,15 @@ export default async function GewerbespeicherPage({ searchParams }) {
                     </p>
                     <p>
                       <strong>Was das für den Speicher heißt:</strong> Er muss nicht jede denkbare Spitze des Jahres abfangen, sondern Monat für Monat zuverlässig arbeiten. Winterspitzen, Schichtbeginn und Anfahrvorgänge sind die
-                      typischen Ziele – die PV-Anlage senkt dagegen eher die Spitzen der Sommermonate.
+                      typischen Ziele – die PV-Anlage senkt dagegen nur die Spitzen sonniger Sommermonate.
                     </p>
                     <p>
-                      <strong>Ausblick 2027:</strong> Mit dem Elektrizitätswirtschaftsgesetz (ElWG) wird die Netzentgeltstruktur umgebaut; laut Entwürfen soll die Leistungskomponente auch auf Netzebene 7 an Gewicht gewinnen. Die
-                      konkrete Verordnung der E-Control stand im September 2026 noch aus – wir rechnen mit den geltenden Werten und zeigen die Sensitivität. Mehr im Ratgeber{" "}
-                      <Link href="/ratgeber/peak-shaving-leistungspreis">Peak Shaving und Leistungspreis</Link>.
+                      <strong>Ausblick 2027 – geplant laut Entwurf:</strong> Das ElWG (
+                      <a href={ELWG_RIS.href} target="_blank" rel="noopener noreferrer">BGBl. I Nr. 91/2025</a>) ordnet die Netzentgelte neu. Der Begutachtungsentwurf der E-Control zur
+                      Systemnutzungsentgelte-Grundsatzverordnung (<a href={SNE_ENTWURF.href} target="_blank" rel="noopener noreferrer">SNE-G-V, {SNE_ENTWURF.stand}</a>) sieht ab 1. Jänner 2027 einen
+                      Monatsleistungspreis auf Basis des höchsten Viertelstundenwerts je Kalendermonat vor – grundsätzlich für jeden Entnehmer, auf Netzebene 7 zweistufig ab 10 kW – und als Zielwert binnen
+                      drei Jahren je 50 % Arbeits- und Leistungsanteil. Die Beträge legt die Tarifverordnung fest, die noch aussteht; wir rechnen mit den geltenden Werten und zeigen die Sensitivität. Mehr im
+                      Ratgeber <Link href="/ratgeber/peak-shaving-leistungspreis">Peak Shaving und Leistungspreis</Link>.
                     </p>
                   </Prosa>
                   <Tabelle
@@ -290,7 +344,8 @@ export default async function GewerbespeicherPage({ searchParams }) {
                   >
                     <Hinweis className="mt-8" titel="Erste Orientierung">
                       Für eine grobe Größenordnung nutzen Sie den <Link href="/rechner/stromspeicher" className="text-ov-700 underline">Stromspeicher-Rechner</Link>, für Peak Shaving den{" "}
-                      <Link href="/rechner/peak-shaving" className="text-ov-700 underline">Peak-Shaving-Rechner</Link>. Den Lastgang erhalten Sie im Kundenportal Ihres Netzbetreibers.
+                      <Link href="/rechner/peak-shaving" className="text-ov-700 underline">Peak-Shaving-Rechner</Link>. Den Lastgang erhalten Sie im Kundenportal Ihres Netzbetreibers – oder Sie werten ihn
+                      vorab selbst aus: <Link href="/lastgang-analyse?zweck=speicher-nachruesten" className="text-ov-700 underline">Lastgang-Analyse im Browser</Link>.
                     </Hinweis>
                   </TabKopf>
                   <Tabelle
@@ -385,6 +440,9 @@ export default async function GewerbespeicherPage({ searchParams }) {
         />
       </Section>
 
+      {/* Einwände vor der FAQ – die Seite hat eine eigene FAQ mit Schema, daher ohne zweites FAQPage-Schema */}
+      <EinwandKarten gruppe="gewerbe" ids={["netz-voll", "zu-teuer", "strompreise"]} mitSchema={false} rahmen />
+
       <Section tone="sand" space="lg">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <SectionHeading eyebrow="Häufige Fragen" title="Gut zu wissen für Technik, Controlling und Geschäftsführung" />
@@ -394,12 +452,16 @@ export default async function GewerbespeicherPage({ searchParams }) {
 
       <Querverweise pfad={PFAD} ueberschrift="Vertiefen: Leistungspreis, Kosten & Sicherheit" />
 
+      {/* Zusagen (nur freigegebene) und Ansprechpartner (nur mit Einwilligung, sonst Teamfunktion) – A03 */}
+      <UnsereZusagen rahmen />
+      <Ansprechpartner zielgruppe="gewerbe" rahmen />
+
       <CtaBand
-        eyebrow="Kostenlos & unverbindlich"
+        eyebrow="Lastgang rein, Speicherauslegung raus"
         title="Senden Sie uns Ihren Lastgang – wir zeigen, was ein Speicher bringt."
-        text="Wir werten Ihre Monatsspitzen aus und sagen Ihnen offen, ob sich ein Speicher lohnt – und in welcher Größe."
+        text="Wir werten Ihre Monatsspitzen aus und sagen Ihnen offen, ob sich ein Speicher lohnt – und in welcher Größe. Jeder Nutzen einzeln gerechnet, mit und ohne Förderung."
         primary={{ label: v.cta, href: "/termin?art=video&thema=speicher" }}
-        secondary={{ label: "Anfrage starten", href: "/angebot?objekt=gewerbe&speicher=1", icon: Cog }}
+        secondary={{ label: "Anfrage mit Lastgang starten", href: "/angebot?objekt=gewerbe&speicher=1", icon: Cog }}
       />
 
       <Bildnachweis

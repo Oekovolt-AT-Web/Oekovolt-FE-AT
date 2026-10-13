@@ -7,8 +7,28 @@
 
 import { EAG_IZ, KPC_PROGRAMME, MARKTPRAEMIE, STEUER } from "@/components/Forderungen/Shared/bund";
 import { alleBundeslaender, STAND, VORHABEN, ZIELGRUPPEN } from "@/data/bundeslaender";
+import { datumKurzIso, naechsterTermin, programmStatus, STATUS_LABEL } from "@/lib/programmStatus";
 
 export { STAND, VORHABEN, ZIELGRUPPEN };
+
+/** Datumsfelder eines Programms (für programmStatus) – nur die, die gesetzt sind. */
+const DATUMSFELDER = ["startIso", "fristIso", "gueltigBisIso", "geprueftAm", "anzeigeStatus", "pruefen"];
+const datumsfelder = (p) => Object.fromEntries(DATUMSFELDER.filter((k) => p[k] !== undefined).map((k) => [k, p[k]]));
+
+/**
+ * Sichtbarer Statustext für die Ergebnisliste – zur Laufzeit berechnet (im Browser beim Aufruf),
+ * damit ein Statuswechsel ohne Deploy greift. Gibt { code, label, termin } zurück.
+ */
+export function statusFuer(p, jetzt = Date.now()) {
+  const code = programmStatus(p, jetzt);
+  const termin = naechsterTermin(p, jetzt);
+  const terminText = termin ? ` (${termin.art === "start" ? (p.startVoraussichtlich ? "voraussichtlich ab" : "ab") : "bis"} ${datumKurzIso(termin.iso)})` : "";
+  // Angekündigter Start erreicht, aber nicht bestätigt → nicht „offen“ melden
+  if (p.startVoraussichtlich && p.startIso && (code === "offen" || code === "bald")) {
+    return { code, label: `Start erwartet ab ${datumKurzIso(p.startIso)} – bitte bei der Förderstelle prüfen`, termin };
+  }
+  return { code, label: `${STATUS_LABEL[code]}${terminText}`, termin };
+}
 
 // Art -> Darstellung im Ergebnis
 export const ARTEN = {
@@ -42,8 +62,11 @@ export const BUND = [
     themen: PV,
     zielgruppen: ALLE_ZG,
     hoehe: "150 €/kWp (A) bis max. 120 €/kWp (D)",
-    kurz: `Zuschuss für neue oder erweiterte PV bis 1.000 kWp; max. 30 % der förderfähigen Kosten (netto bei Vorsteuerabzug, sonst brutto). Nächster Fördercall: ${EAG_IZ.naechsterCall.zeitraum}.`,
+    kurz: `Zuschuss für neue oder erweiterte PV bis 1.000 kWp; max. 30 % der förderfähigen Kosten (netto bei Vorsteuerabzug, sonst brutto). Letzter Fördercall 2026: ${EAG_IZ.naechsterCall.zeitraum}; ab 2027 angekündigte Umstellung auf ein laufendes Antragsmodell (nicht beschlossen).`,
     bedingungen: ["Kategorie C und D: Gebot in €/kWp, Reihung nach niedrigstem Förderbedarf", "Freifläche und Grünland: 25 % Abschlag", "Agri-PV mit Hauptnutzung Landwirtschaft ohne Abschlag, vertikal bzw. ab 2 m Unterkante +30 %", "Genehmigungen und Netzbestätigung müssen beim Antrag vorliegen"],
+    startIso: EAG_IZ.naechsterCall.start,
+    fristIso: EAG_IZ.naechsterCall.ende,
+    geprueftAm: EAG_IZ.calls[EAG_IZ.calls.length - 1].geprueftAm,
     antrag: "vorIbn",
     extern: { href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/", label: "EAG-Abwicklungsstelle" },
     intern: { href: "/forderungen/bundesfoerderung", label: "EAG-Zuschuss im Detail" },
@@ -58,6 +81,9 @@ export const BUND = [
     hoehe: "150 €/kWh",
     kurz: "Speicherzuschuss gemeinsam mit einer neuen oder erweiterten PV-Anlage im selben Förderantrag.",
     bedingungen: ["mindestens 0,5 kWh je kWp", "gefördert werden max. 50 kWh je Anlage", "Speicher allein oder Erweiterung eines bestehenden Speichers nicht förderfähig"],
+    startIso: EAG_IZ.naechsterCall.start,
+    fristIso: EAG_IZ.naechsterCall.ende,
+    geprueftAm: EAG_IZ.calls[EAG_IZ.calls.length - 1].geprueftAm,
     antrag: "vorIbn",
     extern: { href: "https://www.eag-abwicklungsstelle.at/wissen/investitionszuschuss-photovoltaik-und-speicher/", label: "EAG-Abwicklungsstelle" },
     intern: { href: "/forderungen/bundesfoerderung#kategorien", label: "Speicherförderung" },
@@ -70,8 +96,11 @@ export const BUND = [
     themen: PV,
     zielgruppen: ["unternehmen", "landwirtschaft", "gemeinde", "energiegemeinschaft"],
     hoehe: "bis 7,77 ct/kWh anzulegender Wert",
-    kurz: `Alternative zum Investitionszuschuss für Anlagen über 10 kWp: Prämie über 20 Jahre. Nächster Gebotstermin: ${MARKTPRAEMIE.termine[3].datum}.`,
+    kurz: `Alternative zum Investitionszuschuss für Anlagen über 10 kWp: Prämie über 20 Jahre. Nächster Gebotstermin: ${MARKTPRAEMIE.termine[3].datum}${MARKTPRAEMIE.termine[3].pruefen ? " (laut Leitfaden Land OÖ, bitte prüfen)" : ""}.`,
     bedingungen: ["175.000 kWp Volumen je Gebotstermin", "Freifläche im Grünland: 25 % Abschlag auf den Zuschlagswert", "nicht zusammen mit dem Investitionszuschuss"],
+    fristIso: MARKTPRAEMIE.termine[3].fristIso,
+    geprueftAm: MARKTPRAEMIE.termine[3].geprueftAm,
+    pruefen: Boolean(MARKTPRAEMIE.termine[3].pruefen),
     antrag: "gebot",
     extern: { href: "https://www.eag-abwicklungsstelle.at", label: "EAG-Abwicklungsstelle" },
     intern: { href: "/forderungen/bundesfoerderung#marktpraemie", label: "Marktprämie" },
@@ -86,6 +115,9 @@ export const BUND = [
     hoehe: `${STEUER.ifb.satzOekoTemp} % der Anschaffungskosten`,
     kurz: `Zusätzliche Betriebsausgabe für PV, Speicher und Ladestationen bei Anschaffung ${STEUER.ifb.zeitraum}; ab 2027 wieder 15 %.`,
     bedingungen: ["Bemessungsgrundlage max. 1 Mio. € je Wirtschaftsjahr", "Behaltefrist 4 Jahre", "nicht bei pauschaler Gewinnermittlung"],
+    startIso: STEUER.ifb.startIso,
+    gueltigBisIso: STEUER.ifb.gueltigBisIso,
+    geprueftAm: STEUER.ifb.geprueftAm,
     antrag: "automatisch",
     intern: { href: "/forderungen/steuerlich#ifb-rechner", label: "IFB-Rechner" },
   },
@@ -99,6 +131,7 @@ export const BUND = [
     hoehe: "0 € Abgabe auf Eigenverbrauch",
     kurz: "Selbst erzeugter und verbrauchter Strom aus Erneuerbaren ist ohne Mengengrenze befreit – auch innerhalb einer Erneuerbare-Energie-Gemeinschaft.",
     bedingungen: ["Anzeige beim Finanzamt", "Aufzeichnung von Erzeugung und Eigenverbrauch"],
+    geprueftAm: STAND.iso,
     antrag: "anzeige",
     intern: { href: "/forderungen/steuerlich", label: "Steuervorteile" },
   },
@@ -112,6 +145,8 @@ export const BUND = [
     hoehe: "−57 % lokal, −28 % regional (NE 6/7)",
     kurz: "Reduktion auf den Arbeitspreis des Netznutzungsentgelts für Strom innerhalb einer Erneuerbare-Energie-Gemeinschaft, Sätze bis 31.12.2026.",
     bedingungen: ["ab 01.10.2026 Regeln des ElWG", "Sätze ab 2027 legt die E-Control neu fest", "Bürgerenergiegemeinschaften ohne Reduktion"],
+    gueltigBisIso: "2026-12-31",
+    geprueftAm: STAND.iso,
     antrag: "automatisch",
     intern: { href: "/energiegemeinschaften", label: "Energiegemeinschaften" },
   },
@@ -125,6 +160,7 @@ export const BUND = [
     hoehe: p.hoehe,
     kurz: p.was,
     bedingungen: [p.status, p.pruefen ? `Stand ${STAND.label}, bitte bei der Förderstelle prüfen` : null].filter(Boolean),
+    ...datumsfelder(p),
     antrag: p.id === "insel" ? "vorher" : "frist",
     extern: { href: p.url, label: "Zum Programm" },
   })),
@@ -148,42 +184,64 @@ export function laenderFuerCheck() {
     kurz: l.kurz,
     gemeinden: l.gemeinden,
     eg: { stelle: l.energiegemeinschaften.stelle, url: l.energiegemeinschaften.url },
-    programme: l.programme.map((p) => ({ name: p.name, traeger: p.traeger, zielgruppen: p.zielgruppen, themen: p.themen, hoehe: p.hoehe, was: p.was, status: p.status, pruefen: Boolean(p.pruefen), url: p.url, quelle: p.quelle })),
+    programme: l.programme.map((p) => ({ name: p.name, traeger: p.traeger, zielgruppen: p.zielgruppen, themen: p.themen, hoehe: p.hoehe, was: p.was, status: p.status, pruefen: Boolean(p.pruefen), url: p.url, quelle: p.quelle, ...datumsfelder(p) })),
   }));
+}
+
+/** Statuszeile für die Bedingungen – abgelaufene und wartende Programme werden deutlich markiert. */
+function statusZeile(p, jetzt) {
+  const s = statusFuer(p, jetzt);
+  if (s.code === "offen" && !s.termin) return null;
+  return `Status: ${s.label}`;
 }
 
 /**
  * Ergebnis berechnen.
  * land: Eintrag aus laenderFuerCheck(); vorhaben: string[]; zielgruppe: string
+ * jetzt: Zeitpunkt für den Status (Standard: Aufrufzeit – im Wizard also die Uhr des Browsers)
  */
-export function ermittleProgramme({ land, vorhaben, zielgruppe }) {
+export function ermittleProgramme({ land, vorhaben, zielgruppe, jetzt = Date.now() }) {
   const passt = (themen) => themen.some((t) => vorhaben.includes(t));
 
-  const bund = BUND.filter((p) => passt(p.themen) && p.zielgruppen.includes(zielgruppe)).map((p) => ({
-    ...p,
-    ebene: "bund",
-    fuer: p.themen.filter((t) => vorhaben.includes(t)),
-  }));
+  const bund = BUND.filter((p) => passt(p.themen) && p.zielgruppen.includes(zielgruppe)).map((p) => {
+    const status = statusFuer(p, jetzt);
+    return {
+      ...p,
+      ebene: "bund",
+      fuer: p.themen.filter((t) => vorhaben.includes(t)),
+      status: status.code,
+      statusLabel: status.label,
+      bedingungen: [statusZeile(p, jetzt), ...p.bedingungen].filter(Boolean),
+    };
+  });
 
   const landProgramme = (land?.programme || [])
     .filter((p) => passt(p.themen) && p.zielgruppen.includes(zielgruppe))
-    .map((p, i) => ({
-      id: `land-${land.key}-${i}`,
-      name: p.name,
-      traeger: p.traeger,
-      art: "zuschuss",
-      ebene: "land",
-      fuer: p.themen.filter((t) => vorhaben.includes(t)),
-      hoehe: p.hoehe,
-      kurz: p.was,
-      bedingungen: [p.status, p.pruefen ? `Stand ${STAND.label}, bitte bei der Förderstelle prüfen` : null].filter(Boolean),
-      antrag: /nach (Fertigstellung|Inbetriebnahme)|nach Rechnung/i.test(p.status) ? "nachher" : "vorher",
-      extern: { href: p.url, label: p.quelle },
-      intern: { href: `/forderungen/landesforderungen/${land.slug}`, label: `Förderung in ${land.name}` },
-    }));
+    .map((p, i) => {
+      const status = statusFuer(p, jetzt);
+      return {
+        id: `land-${land.key}-${i}`,
+        name: p.name,
+        traeger: p.traeger,
+        art: "zuschuss",
+        ebene: "land",
+        fuer: p.themen.filter((t) => vorhaben.includes(t)),
+        hoehe: p.hoehe,
+        kurz: p.was,
+        status: status.code,
+        statusLabel: status.label,
+        geprueftAm: p.geprueftAm,
+        bedingungen: [statusZeile(p, jetzt), p.status, p.pruefen ? `Stand ${STAND.label}, bitte bei der Förderstelle prüfen` : null].filter(Boolean),
+        antrag: /nach (Fertigstellung|Inbetriebnahme)|nach Rechnung/i.test(p.status) ? "nachher" : "vorher",
+        extern: { href: p.url, label: p.quelle },
+        intern: { href: `/forderungen/landesforderungen/${land.slug}`, label: `Förderung in ${land.name}` },
+      };
+    });
 
   const hinweise = vorhaben.filter((v) => LUECKEN[v]).map((v) => LUECKEN[v]);
   const kombinationD = zielgruppe !== "privat" && vorhaben.some((v) => PV.includes(v)) && landProgramme.length > 0;
+  // Abgelaufene Programme bleiben sichtbar (Suchintention), zählen aber nicht als „passend“
+  const abgelaufen = [...bund, ...landProgramme].filter((p) => p.status === "abgelaufen").length;
 
-  return { bund, land: landProgramme, hinweise, kombinationD };
+  return { bund, land: landProgramme, hinweise, kombinationD, abgelaufen };
 }

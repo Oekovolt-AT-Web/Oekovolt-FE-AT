@@ -91,7 +91,7 @@ export default function MannschaftSektion({ className }) {
                   </span>
                 )}
               </div>
-              <ul className="mt-4 grid grid-cols-2 gap-x-3 gap-y-3 sm:gap-x-5 lg:grid-cols-1 lg:gap-y-2.5">
+              <ul className="mt-4 grid grid-cols-1 gap-y-3 sm:grid-cols-2 sm:gap-x-5 lg:grid-cols-1 lg:gap-y-2.5">
                 {AUSSTATTUNG_BESTAETIGT.map((a) => {
                   const Icon = mannschaftIcon(a.icon);
                   return (

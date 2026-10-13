@@ -1,6 +1,6 @@
 # 11 – SEO- und GEO-Plan (Kurzfassung und Umsetzungsstand)
 
-Kapitel seit Version 0.4. Keine Norm-Gliederung (fachlicher Plan). Stand: Version 0.5, 30.09.2026 (nach der SEO-Umsetzungswelle
+Kapitel seit Version 0.4. Keine Norm-Gliederung (fachlicher Plan). Stand: Version 0.6, 12.10.2026 (Welle A: SEO-Folgen in Abschnitt 5; davor Version 0.5 nach der SEO-Umsetzungswelle
 P1–P9 und der QA-Nacharbeit).
 
 **Vollständiger Plan:** [anhang/seo-umsetzungsplan-2026-09-30.md](anhang/seo-umsetzungsplan-2026-09-30.md) (Maßnahmen M01–M30,
@@ -80,3 +80,14 @@ Finanzierungsseite neutral; **QA-Nacharbeit** H1–H3, M1–M7, N1–N8 laut Koo
 - Sichtbare Inhaltsänderung: Eintrag in `GEAENDERT` (`src/app/sitemap.js`), danach `node scripts/indexnow.mjs`.
 - Bundesland-Hubs: vor neuen gemeinsamen Textbausteinen Überschneidung messen (R-62).
 - OeMAG monatlich (07).
+
+## 5. SEO-Folgen der Welle A (Version 0.6, 12.10.2026)
+
+| Thema | Stand | Bezug |
+|---|---|---|
+| Neue Weiterleitungen (308, ohne Ketten) | `/referenzen` → `/referenzen/projekte`; `/foerderungen` → `/foerdercheck`; `/foerderungen/:path+` → `/forderungen/:path+`; OÖ-Landesförderung alter Slug → `…/landesfoerderungen-in-oberoesterreich` (rankt laut SISTRIX) | A01, `scripts/redirects.test.mjs` |
+| Projekt-URLs | 58 Projekt-URLs mit Kundennamen per 301 auf neutrale Slugs (z. B. `…/kunststoffverpackungen-vorarlberg`); bei Namensfreigabe gilt wieder der alte Slug, die neutrale URL ergibt 404 | A07, R-65 |
+| Neue Seiten | `/freischalten` (noindex, `no-referrer`), `/referenzen/freigabe/[token]` (noindex, nofollow, noarchive) – nicht in Sitemap/`llms.txt` aufnehmen | A07, A09 |
+| FAQ-Schema | Einwand-Karten auf den Zielgruppenseiten mit `mitSchema={false}` – je Seite nur ein FAQPage-Schema | A03, A04 |
+| Titles/Descriptions | Meta-Descriptions in `layout.js`/`page.js` ohne „eigener Parkregler“ (Solensa-Formulierung) | A-INT |
+| Offen | `GEAENDERT` in `src/app/sitemap.js` und `NICHT_INDEXIERT` (`src/lib/llms.js`) für die Welle-A-Seiten nicht nachweislich nachgeführt (P35); Seitenlängen (R-38) | 00 P35 |

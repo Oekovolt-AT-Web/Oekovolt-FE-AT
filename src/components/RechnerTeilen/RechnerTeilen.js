@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, ChevronDown, FileDown, Link2, Share2 } from "lucide-react";
+import { Check, ChevronDown, FileDown, Link2, Lock, Share2 } from "lucide-react";
 import Teilen from "@/components/ui/Teilen";
 import { cn } from "@/components/ui/cn";
 import { ereignis } from "@/lib/statistik";
 import { berichtBereinigen, dokumentTitel, teilenLink, wegAus, zeitpunktText } from "./kodierung";
 import Druckblatt, { BLATT_KLASSE, DRUCK_KLASSE } from "./Druckblatt";
+import useLeadGate from "@/components/LeadGate/useLeadGate";
+import { mappeBereinigen } from "@/data/argumentarien";
+import { segmentFuer } from "@/data/leadRechner";
 
 // Geteilte Links zeigen immer auf die Live-Domain (wie Solarrechner und bisherige Teilen-Leisten).
 const basisUrl = () => (process.env.NODE_ENV === "production" ? "https://www.oekovolt.com" : window.location.origin);
@@ -34,8 +37,23 @@ async function inZwischenablage(text) {
   }
 }
 
+/** Kennzahlen des Berichts als einfache Werte für den Lead (Vertrieb sieht, was gerechnet wurde). */
+function kennzahlenFuerLead(bericht) {
+  try {
+    const b = berichtBereinigen(bericht ? bericht() : {});
+    return Object.fromEntries(b.kennzahlen.map(([l, w]) => [l, w]));
+  } catch {
+    return {};
+  }
+}
+
 /**
  * „Ergebnis teilen“ und „Als PDF für Geschäftsführung/Bank“ für die Gewerbe-Rechner.
+ *
+ * Lead-Gate 2.0 (Welle A, Paket A09): Das Ergebnis am Bildschirm bleibt frei. Link kopieren, Teilen und PDF
+ * (Entscheider-Mappe) gehen erst nach bestätigter E-Mail (useLeadGate, Kennung = rechner). Der Bestätigungslink
+ * führt auf genau diese Berechnung zurück (pfad + query). bericht().mappe liefert die Zahlen für die
+ * Rollenkapitel (src/data/argumentarien.js).
  *
  * props:
  *  rechner    Kennung wie in components/Rechner/tools.js (z. B. "gewerbe-pv") – für die Statistik
@@ -54,10 +72,21 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
   const [druck, setDruck] = useState(null);
   const panelId = useId();
   const linkId = useId();
+  const hinweisId = useId();
+  const segment = segmentFuer(rechner);
+  const gate = useLeadGate({
+    kennung: rechner,
+    modus: "pdf",
+    kontext: { mappe: true, segment, rueckkehr: query ? `${pfad}?${query}` : pfad },
+  });
+  // Rollen der Entscheider-Mappe: im Dialog gewählt, beim Drucken gelesen (Folgeaktion läuft nach dem Dialog)
+  const rollenRef = useRef(gate.rollen);
+  rollenRef.current = gate.rollen;
+  const gesperrt = gate.geprueft ? !gate.freigegeben : true;
 
   const url = basis ? teilenLink(basis, pfad, query) : "";
 
-  const kopieren = async () => {
+  const kopierenFrei = async () => {
     const b = basis || basisUrl();
     if (!basis) setBasis(b);
     const u = teilenLink(b, pfad, query);
@@ -74,10 +103,13 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
     ereignis("rechner_geteilt", { rechner, weg: "link" });
   };
 
-  const umschalten = () => {
+  const kopieren = () => gate.ausfuehren("link", kopierenFrei, { titel: "Link zu Ihrer Berechnung", ergebnis: kennzahlenFuerLead(bericht) });
+
+  const umschaltenFrei = () => {
     if (!basis) setBasis(basisUrl());
     setOffen((o) => !o);
   };
+  const umschalten = () => (offen ? setOffen(false) : gate.ausfuehren("link", umschaltenFrei, { titel: "Ergebnis teilen", weiterLabel: "Teilen-Optionen öffnen", ergebnis: kennzahlenFuerLead(bericht) }));
 
   // Klicks in der Netzwerk-Leiste messen (LinkedIn, WhatsApp, E-Mail …)
   const netzwerkKlick = (e) => {
@@ -86,7 +118,7 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
     ereignis("rechner_geteilt", { rechner, weg: wegAus(el.getAttribute("aria-label") || el.textContent) });
   };
 
-  const drucken = () => {
+  const druckenFrei = () => {
     const jetzt = new Date();
     let daten = {};
     try {
@@ -96,12 +128,15 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
     }
     setDruck({
       bericht: berichtBereinigen({ ...daten, rechner, titel: name }),
+      mappe: mappeBereinigen(daten.mappe),
+      rollen: rollenRef.current,
       url: teilenLink(basis || basisUrl(), pfad, query),
       zeitpunkt: zeitpunktText(jetzt),
       dokument: dokumentTitel(name, jetzt),
     });
-    ereignis("rechner_pdf", { rechner });
+    ereignis("rechner_pdf", { rechner, rollen: (rollenRef.current || []).length });
   };
+  const drucken = () => gate.ausfuehren("pdf", druckenFrei, { ergebnis: kennzahlenFuerLead(bericht) });
 
   // Druck starten, sobald das Blatt im DOM steht; danach aufräumen
   useEffect(() => {
@@ -143,39 +178,56 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
     };
   }, [druck]);
 
-  const knopf = "inline-flex h-10 items-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-2";
+  const knopf = "inline-flex h-11 items-center justify-center gap-1.5 rounded-full px-4 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ov-500 focus-visible:ring-offset-2";
 
   return (
     <div className={cn("rounded-2xl bg-white ring-1 ring-ink-200/70", className)}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 p-2 pl-4">
-        <p className="flex min-w-0 items-center gap-2 text-[14px] font-semibold text-ink-800">
+        <p className="order-1 flex min-w-0 items-center gap-2 text-[14px] font-semibold text-ink-800">
           <Share2 aria-hidden="true" className="h-4 w-4 shrink-0 text-ov-600" />
           <span>Ergebnis teilen</span>
-          <span className="hidden text-[12.5px] font-normal text-ink-500 2xl:inline">· Link mit Ihren Eingaben, ohne persönliche Daten</span>
         </p>
-        <div className="ml-auto flex flex-wrap items-center gap-1.5">
-          <button type="button" onClick={kopieren} className={cn(knopf, kopiert ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-800 hover:bg-ink-200")}>
-            {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : <Link2 aria-hidden="true" className="h-4 w-4" />}
+        {/* Mobil: „Mehr“ rechts in der Kopfzeile, Link/PDF als zwei gleich breite Knöpfe darunter; ab sm alles in einer Reihe */}
+        <div className="order-3 grid w-full grid-cols-2 gap-1.5 sm:order-2 sm:ml-auto sm:flex sm:w-auto sm:items-center">
+          <button
+            type="button"
+            onClick={kopieren}
+            aria-describedby={gesperrt ? hinweisId : undefined}
+            className={cn(knopf, kopiert ? "bg-ov-600 text-white" : "bg-ink-100 text-ink-800 hover:bg-ink-200")}
+          >
+            {kopiert ? <Check aria-hidden="true" className="h-4 w-4" /> : gesperrt ? <Lock aria-hidden="true" className="h-4 w-4" /> : <Link2 aria-hidden="true" className="h-4 w-4" />}
             {kopiert ? "Kopiert" : "Link kopieren"}
           </button>
-          <button type="button" onClick={drucken} className={cn(knopf, "bg-navy-950 text-white hover:bg-ov-600")}>
-            <FileDown aria-hidden="true" className="h-4 w-4" />
+          <button type="button" onClick={drucken} aria-describedby={gesperrt ? hinweisId : undefined} className={cn(knopf, "bg-navy-950 text-white hover:bg-ov-600")}>
+            {gesperrt ? <Lock aria-hidden="true" className="h-4 w-4" /> : <FileDown aria-hidden="true" className="h-4 w-4" />}
             <span>
               Als PDF<span className="hidden sm:inline"> für Geschäftsführung/Bank</span>
             </span>
           </button>
-          <button
-            type="button"
-            onClick={umschalten}
-            aria-expanded={offen}
-            aria-controls={panelId}
-            className={cn(knopf, "px-3 text-ov-700 hover:bg-ov-50")}
-          >
-            Mehr
-            <ChevronDown aria-hidden="true" className={cn("h-4 w-4 transition-transform duration-200", offen && "rotate-180")} />
-          </button>
         </div>
+        <button
+          type="button"
+          onClick={umschalten}
+          aria-expanded={offen}
+          aria-controls={panelId}
+          aria-describedby={gesperrt ? hinweisId : undefined}
+          className={cn(knopf, "order-2 ml-auto px-3 text-ov-700 hover:bg-ov-50 sm:order-3 sm:ml-0")}
+        >
+          Mehr
+          <ChevronDown aria-hidden="true" className={cn("h-4 w-4 transition-transform duration-200", offen && "rotate-180")} />
+        </button>
       </div>
+      <p id={hinweisId} className="border-t border-ink-100 px-4 py-2 text-[12.5px] leading-snug text-ink-500">
+        {gesperrt ? (
+          <>
+            Link mit Ihren Eingaben, ohne persönliche Daten – Freischaltung einmalig mit Name und E-Mail<span className="sr-only"> (mit Ihren Kontaktdaten)</span>.
+          </>
+        ) : gate.geradeBestaetigt ? (
+          <span className="font-semibold text-ov-800">E-Mail bestätigt – Link und PDF sind freigeschaltet.</span>
+        ) : (
+          "Link mit Ihren Eingaben, ohne persönliche Daten. PDF mit Kapiteln für Ihre Entscheider."
+        )}
+      </p>
       <p className="sr-only" role="status" aria-live="polite">
         {meldung}
       </p>
@@ -197,9 +249,15 @@ export default function RechnerTeilen({ rechner, name, pfad, query, titel, text,
           <div onClickCapture={netzwerkKlick}>
             <Teilen url={url} titel={titel} text={text} kampagne={kampagne} netze={["linkedin", "whatsapp", "xing", "x"]} kompakt />
           </div>
+          {gate.freigegeben && (
+            <button type="button" onClick={gate.entfernen} className="min-h-11 text-[12.5px] text-ink-500 underline underline-offset-2 hover:text-ink-800">
+              Freischaltung auf diesem Gerät entfernen
+            </button>
+          )}
         </div>
       )}
-      {druck && typeof document !== "undefined" && createPortal(<Druckblatt bericht={druck.bericht} url={druck.url} zeitpunkt={druck.zeitpunkt} />, document.body)}
+      {druck && typeof document !== "undefined" && createPortal(<Druckblatt bericht={druck.bericht} url={druck.url} zeitpunkt={druck.zeitpunkt} rollen={druck.rollen} mappe={druck.mappe} />, document.body)}
+      {gate.dialog}
     </div>
   );
 }

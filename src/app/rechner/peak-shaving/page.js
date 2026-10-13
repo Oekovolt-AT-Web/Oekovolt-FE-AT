@@ -4,6 +4,7 @@ import Link from "next/link";
 import RechnerSeite, { rechnerMetadata } from "@/components/Rechner/RechnerSeite";
 import PeakRechner from "@/components/RechnerGewerbe/PeakRechner";
 import SectionHeading from "@/components/ui/SectionHeading";
+import IndexVerweis from "@/app/energie-live/_marktindizes/IndexVerweis";
 import { fmt } from "@/lib/rechner/annahmen";
 import { NETZBEREICHE, NETZ_QUELLE, PS_ANNAHMEN, netzpreise } from "@/lib/rechner/peakshaving";
 import { ANNAHMEN as SOLAR, PREISQUELLEN } from "@/data/solarrechner";
@@ -85,6 +86,7 @@ export default function Page() {
               <Link href="/ratgeber/gewerbespeicher-kosten">Gewerbespeicher Kosten</Link>; Systeme und Umsetzung auf der Seite <Link href="/gewerbespeicher">Gewerbespeicher</Link>.
             </p>
           </div>
+          <IndexVerweis fokus="speicher" className="mt-10 max-w-3xl" />
         </>
       }
       annahmen={[

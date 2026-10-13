@@ -84,6 +84,9 @@ export const THEMEN = ["Gewerbe & Industrie", "Freifläche & Agri-PV", "Landwirt
 // Kurzformen für Links (/termin?thema=gewerbe) – die Zielgruppenseiten geben so ihr Thema mit
 const THEMA_KURZ = {
   gewerbe: "Gewerbe & Industrie",
+  // /hotellerie-tourismus (A05): Hotels und Bergbahnen laufen im Backoffice unter Gewerbe
+  tourismus: "Gewerbe & Industrie",
+  hotellerie: "Gewerbe & Industrie",
   freiflaeche: "Freifläche & Agri-PV",
   landwirtschaft: "Landwirtschaft",
   gemeinde: "Gemeinde & öffentliche Hand",

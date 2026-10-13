@@ -55,7 +55,7 @@ const stPoelten = {
     },
     {
       q: "Wie weit ist St. Pölten von Ökovolt entfernt?",
-      a: "Rund 250 km Straße über die Westautobahn von unserem Firmensitz in Ostermiething. Die Vorplanung erfolgt mit Ihren Daten, Begehung und Montage vereinbaren wir fix, im Betrieb überwachen wir die Anlage über unsere eigene Fernwartung.",
+      a: "Rund 250 km Straße über die Westautobahn von unserem Firmensitz in Ostermiething. Die Vorplanung erfolgt mit Ihren Daten, Begehung und Montage vereinbaren wir fix, im Betrieb überwachen wir die Anlage per Fernwartung.",
     },
   ],
   cta: {

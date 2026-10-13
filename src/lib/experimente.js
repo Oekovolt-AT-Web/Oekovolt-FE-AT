@@ -76,6 +76,25 @@ export const EXPERIMENTE = [
     bis: "2026-12-31",
     ort: "client",
   },
+  {
+    // K4: Display-Zeile im Hero der Startseite (src/components/Startseite/S01Hero.js, Texte in
+    // src/data/marke.js DISPLAY_ZEILEN). Kontrolle = Zeile B (Standard, varianten[0]):
+    //   b = „Wir bauen, was wir / selbst betreiben würden.“
+    //   a = „Gebaut von Betreibern. / Geregelt mit eigener Technik.“
+    // Ziel: cta_klick auf /angebot (Klick auf „Ersteinschätzung anfordern“ im Hero).
+    // Ort „server“, weil die Zeile beim ersten Bild sichtbar ist (kein Flackern): Vor dem Aktivieren
+    // "/" als Literal in config.matcher von src/middleware.js eintragen und in src/app/page.js die
+    // Variante per headers() + varianteAusHeader(wert, "k4") lesen und an <StartHero variante> geben.
+    id: "k4",
+    titel: "Startseite: Display-Zeile im Hero – B (Betreiber-Claim) gegen A (Gebaut von Betreibern)",
+    seiten: ["/"],
+    varianten: ["b", "a"],
+    gewichte: [50, 50],
+    ziel: { ereignis: "cta_klick", pfad: "/angebot" },
+    aktiv: false, // vorbereitet, AUS – Inhaber entscheidet über Start und Testdauer
+    bis: "2027-03-31",
+    ort: "server",
+  },
 ];
 
 /** Name des Request-/Response-Headers für serverseitig ausgeloste Varianten. */

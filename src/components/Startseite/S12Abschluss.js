@@ -17,6 +17,7 @@ import { Fragment } from "react";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Calculator, Clock, Phone, ShieldCheck } from "lucide-react";
 import { FIRMA } from "@/lib/site";
+import { CLAIM, KERN, PARKREGLER_KURZ } from "@/data/marke";
 import S10Sicht from "./s10-sicht";
 import S10Sonnenfeld from "./s10-sonnenfeld";
 
@@ -33,10 +34,11 @@ const BILDNACHWEIS = [
   "Leitwarte: Dpysh w, CC BY 3.0 (Symbolbild)",
 ];
 
+// Nur belegte Aussagen (src/data/marke.js, src/data/werbeaussagen.js) – Parkregler-Formulierung aus PARKREGLER_KURZ (Rechteklärung offen)
 const VERSPRECHEN = [
   { icon: BadgeCheck, text: "Seit 2012 in Österreich, Gruppe seit 2010" },
   { icon: ShieldCheck, text: "Planung, Netzanschluss, Montage & Betrieb aus einer Hand" },
-  { icon: Clock, text: "Eigener Parkregler, Fernwartung & SCADA" },
+  { icon: Clock, text: PARKREGLER_KURZ },
 ];
 
 export default function StartAbschluss() {
@@ -52,9 +54,10 @@ export default function StartAbschluss() {
           <div aria-hidden="true" className="ov-grid-bg absolute inset-0 -z-10 opacity-50" />
 
           <div className="relative mx-auto max-w-[74rem] px-5 pt-16 text-center sm:px-8 md:pt-24 lg:pt-28">
+            {/* Markenkern: Claim als Auftakt, Kern im Text (src/data/marke.js) */}
             <p className="s10-e-auf inline-flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.18em] text-ov-300" style={{ "--s10-d": "0ms" }}>
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-sun-400 shadow-[0_0_12px_2px_rgba(255,197,61,0.6)]" />
-              Kostenlos &amp; unverbindlich
+              {CLAIM}
             </p>
             <h2
               id="s10-abschluss-titel"
@@ -71,9 +74,8 @@ export default function StartAbschluss() {
                 </span>
               </span>
             </h2>
-            <p className="s10-e-auf mx-auto mt-6 max-w-[44rem] text-[16.5px] leading-[1.65] text-white/70 md:text-[18.5px]" style={{ "--s10-d": "800ms" }}>
-              Persönliche Beratung vom Elektrotechnik-Fachbetrieb aus {FIRMA.ort}: ehrliche Wirtschaftlichkeitsrechnung, Förderprüfung und ein
-              fester Ansprechpartner von der Planung bis zum Betrieb – in ganz Österreich.
+            <p className="s10-e-auf mx-auto mt-6 max-w-[46rem] text-[16.5px] leading-[1.65] text-white/70 md:text-[18.5px]" style={{ "--s10-d": "800ms" }}>
+              {KERN} Kostenlos und unverbindlich: Wirtschaftlichkeitsrechnung mit Rechenweg, Förderprüfung und Beratung vom Elektrotechnik-Fachbetrieb aus {FIRMA.ort} – in ganz Österreich.
             </p>
             <div className="s10-e-auf mt-9 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center" style={{ "--s10-d": "950ms" }}>
               <Link
@@ -106,9 +108,9 @@ export default function StartAbschluss() {
                 <Phone aria-hidden="true" className="h-5 w-5" />
               </span>
               <span className="min-w-0">
-                <span className="block text-[12.5px] font-medium text-white/55">Lieber direkt sprechen?</span>
+                <span className="block text-[12.5px] font-medium text-white/60">Lieber direkt sprechen?</span>
                 <span className="ov-num block font-display text-[21px] font-extrabold tracking-[-0.02em] transition-colors group-hover:text-sun-300 md:text-[24px]">{FIRMA.telefon}</span>
-                <span className="block text-[12.5px] text-white/50">
+                <span className="block text-[12.5px] text-white/60">
                   {FIRMA.oeffnungszeiten.map((o, i) => (
                     <Fragment key={o.tage}>
                       {i > 0 && " · "}

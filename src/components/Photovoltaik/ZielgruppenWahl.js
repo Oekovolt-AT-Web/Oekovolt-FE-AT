@@ -21,7 +21,7 @@ const ERGAENZUNG = {
     punkte: [
       "Planung nach Lastgang in Viertelstundenwerten",
       "Hallendach mit Ballast, Trapezblech oder Ost-West",
-      "Netzanschluss nach TOR mit eigenem Parkregler",
+      "Netzanschluss nach TOR inklusive Parkregler",
     ],
     link: { href: "/gewerbe", label: "Photovoltaik für Gewerbe & Industrie" },
   },

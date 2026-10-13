@@ -3,13 +3,13 @@ import { ArrowLeft, BadgeCheck, FileBarChart2, Share2 } from "lucide-react";
 import { cn } from "@/components/ui/cn";
 
 const PUNKTE = [
-  { id: "siegel", label: "Solar-Siegel", icon: BadgeCheck },
-  { id: "teilen", label: "Social-Media-Kit", icon: Share2 },
-  { id: "esg", label: "ESG-Kurzbericht", icon: FileBarChart2 },
+  { id: "siegel", freigabe: "plakette", label: "Projekt-Plakette", icon: BadgeCheck },
+  { id: "teilen", freigabe: "social", label: "Social-Media-Kit", icon: Share2 },
+  { id: "esg", freigabe: "esg", label: "ESG-Kurzbericht", icon: FileBarChart2 },
 ];
 
-/** Umschalter zwischen den Kit-Seiten + Rückweg zur Projektseite */
-export default function KitNavigation({ slug, aktiv, titel }) {
+/** Umschalter zwischen den Kit-Seiten + Rückweg zur Projektseite; nur freigegebene Teile (kit aus kitFreigabe) */
+export default function KitNavigation({ slug, aktiv, titel, kit = null }) {
   const basis = `/referenzen/projekte/${slug}`;
   return (
     <nav aria-label="Solar-Kit" className="border-b border-ink-200/70 bg-white print:hidden">
@@ -19,7 +19,7 @@ export default function KitNavigation({ slug, aktiv, titel }) {
           <span className="max-w-[46ch] truncate">Zum Projekt {titel}</span>
         </Link>
         <ul className="-mx-1 flex gap-1 overflow-x-auto">
-          {PUNKTE.map((p) => (
+          {PUNKTE.filter((p) => !kit || kit[p.freigabe]).map((p) => (
             <li key={p.id}>
               <Link
                 href={`${basis}/${p.id}`}

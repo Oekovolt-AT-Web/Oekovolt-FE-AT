@@ -5,13 +5,30 @@ import { BadgeEuro, BatteryCharging, Factory, Gauge, Leaf, PiggyBank, Receipt, S
 import Button from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { Auswahl, Gruppe, Kennzahl, Regler, Schalter, Zahl } from "@/components/Rechner/bausteine";
+import KostenDesWartens from "@/components/Verkauf/KostenDesWartens";
 import { MobilKurz } from "@/components/Rechner/StromspeicherRechner";
 import { fmt } from "@/lib/rechner/annahmen";
 import { angebotUrl } from "@/lib/rechner/angebot";
-import { GEWERBE_PV, GEWERBE_PRESETS, arbeitspreisRichtwertCt, einspeiseSatzCt, kwpAusFlaeche, rechneGewerbePv } from "@/lib/rechner/gewerbepv";
+import {
+  DC_AC_VORSCHLAG,
+  BETRIEBSTAGE_AUS_SCHICHT,
+  GEWERBE_PV,
+  GEWERBE_PRESETS,
+  STRESSTEST_LAEUFE,
+  acVorschlag,
+  amortisationText,
+  arbeitspreisRichtwertCt,
+  einspeiseSatzCt,
+  euroGerundet,
+  irrCa,
+  kwpAusDach,
+  rechneGewerbePv,
+  stresstest,
+  stresstestBericht,
+} from "@/lib/rechner/gewerbepv";
 import { VERGUETUNG } from "@/data/einspeiseverguetung";
 import { ANNAHMEN } from "@/data/solarrechner";
-import { DiagrammKarte, KumuliertDiagramm, Posten, PresetLeiste, StandortWahl, eur } from "./GewerbePVBausteine";
+import { DiagrammKarte, KumuliertDiagramm, Posten, PresetLeiste, StandortWahl, Umschalter, ZahlfeldDe, eur } from "./GewerbePVBausteine";
 import GewerbePVTagesprofil from "./GewerbePVTagesprofil";
 import useRechnerErgebnis from "@/lib/useRechnerErgebnis";
 import RechnerTeilen from "@/components/RechnerTeilen/RechnerTeilen";
@@ -44,10 +61,15 @@ function teilenFelder(orte, startOrt) {
     { name: "eag", k: "eg", typ: "bool", standard: true },
     { name: "ifb", k: "ifb", typ: "bool", standard: true },
     { name: "einspeiseManuell", k: "ep", typ: "zahl", min: 0, max: 12, raster: 0.25, standard: null },
+    { name: "wrKva", k: "wr", typ: "zahl", min: 5, max: 5000, raster: 1, standard: null },
+    { name: "speicherKva", k: "sk", typ: "zahl", min: 1, max: 5000, raster: 1, standard: null },
+    { name: "bestandKw", k: "bk", typ: "zahl", min: 0, max: 50000, raster: 1, standard: 0 },
   ];
 }
 
 const mwh = (kwh) => (kwh >= 10000 ? fmt(kwh / 1000) : fmt(kwh / 1000, 1));
+// Große Jahresbeträge für Kacheln: ab 10.000 € auf Tausender, sonst auf Hunderter
+const rundJahr = (v) => (Math.abs(v) >= 10000 ? Math.round(v / 1000) * 1000 : Math.round(v / 100) * 100);
 
 export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   const orte = useMemo(() => standorte.flatMap((g) => g.orte), [standorte]);
@@ -70,24 +92,48 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   const [eag, setEag] = useState(true);
   const [ifb, setIfb] = useState(true);
   const [einspeiseManuell, setEinspeiseManuell] = useState(null);
+  // TOR: Wechselrichterleistung AC (null = Vorschlag kWp ÷ 1,15), Speicher-AC (null = aus der Simulation), Bestand
+  const [wrKva, setWrKva] = useState(null);
+  const [speicherKva, setSpeicherKva] = useState(null);
+  const [bestandKw, setBestandKw] = useState(0);
+  const [fall, setFall] = useState("konservativ");
+  const [vonStart, setVonStart] = useState(false);
 
-  // Werte aus dem Mini-Rechner der Startseite übernehmen (?flaeche=m²&verbrauch=MWh&schichten=1–3).
+  // Werte aus dem Mini-Rechner der Startseite übernehmen
+  // (?flaeche=m²&verbrauch=MWh&schichten=1–3&dachart=ost-west&ort=slug).
   // Erst nach dem Laden gelesen, damit die Seite statisch bleibt und nichts falsch hydriert.
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     const zahl = (k, min, max) => {
       const v = Number(q.get(k));
-      return Number.isFinite(v) && v >= min && v <= max ? v : null;
+      return q.get(k) != null && Number.isFinite(v) && v >= min && v <= max ? v : null;
     };
     const f = zahl("flaeche", 100, 50000);
     const v = zahl("verbrauch", 10, 20000);
     const sch = zahl("schichten", 1, 3);
-    if (f == null && v == null && sch == null) return;
+    const d = GEWERBE_PV.dacharten.some((x) => x.id === q.get("dachart")) ? q.get("dachart") : null;
+    const o = orte.some((x) => x.slug === q.get("ort")) ? q.get("ort") : null;
+    // foerderung=0: Startseite rechnet ohne Förderung → EAG und IFB aus, damit Hero und Detail übereinstimmen
+    const ohneFoerderung = q.get("foerderung") === "0";
+    if (f == null && v == null && sch == null && d == null && o == null && !ohneFoerderung) return;
+    if (ohneFoerderung) {
+      setEag(false);
+      setIfb(false);
+    }
     setPreset(null);
-    if (f != null) { setModus("flaeche"); setFlaeche(Math.round(f)); }
+    if (f != null) {
+      setModus("flaeche");
+      setFlaeche(Math.round(f));
+    }
     if (v != null) setVerbrauchMwh(Math.round(v));
-    if (sch != null) setSchichten(Math.round(sch));
-  }, []);
+    if (sch != null) {
+      setSchichten(Math.round(sch));
+      setTage(BETRIEBSTAGE_AUS_SCHICHT[Math.round(sch)]);
+    }
+    if (d) setDachart(d);
+    if (o) setOrtSlug(o);
+    setVonStart(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Geteilter Link: Eingaben wiederherstellen (nach dem Laden, siehe useTeilenStart)
   const felder = useMemo(() => teilenFelder(orte, startOrt), [orte, startOrt]);
@@ -111,6 +157,9 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     eag: setEag,
     ifb: setIfb,
     einspeiseManuell: setEinspeiseManuell,
+    wrKva: setWrKva,
+    speicherKva: setSpeicherKva,
+    bestandKw: setBestandKw,
   };
   useTeilenStart(felder, (w) => Object.entries(w).forEach(([k, v]) => setzer[k]?.(v)));
   const teilenQuery = kodiere(felder, {
@@ -133,11 +182,14 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     eag,
     ifb,
     einspeiseManuell,
+    wrKva,
+    speicherKva,
+    bestandKw,
   });
 
   const ort = orte.find((o) => o.slug === ortSlug) || orte[0];
-  const kwpRoh = modus === "flaeche" ? kwpAusFlaeche(flaeche, dachart) : kwpDirekt;
-  const kwp = Math.max(5, Math.round(kwpRoh / 5) * 5);
+  // gleiche Rundung wie der Startseiten-Rechner (kwpAusDach)
+  const kwp = modus === "flaeche" ? kwpAusDach(flaeche, dachart) : Math.max(5, Math.round(kwpDirekt / 5) * 5);
   const verbrauch = verbrauchMwh * 1000;
   const richtpreis = arbeitspreisRichtwertCt(verbrauch);
   const preisCt = preisManuell ?? richtpreis;
@@ -160,6 +212,9 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     leasingZins: leasingZins / 100,
     eag,
     ifb,
+    wrKva: wrKva ?? undefined,
+    speicherKva: speicherKva ?? undefined,
+    bestandKw,
   };
   // Ziehen am Regler bleibt flüssig: Simulation mit zurückgestellter Eingabe
   const schluessel = useDeferredValue(JSON.stringify({ ...eingabe, standort: ort.slug }));
@@ -167,6 +222,12 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     const w = JSON.parse(schluessel);
     return rechneGewerbePv({ ...w, standort: orte.find((o) => o.slug === w.standort) || orte[0] });
   }, [schluessel, orte]);
+  // CFO-Stresstest: konservativ / erwartet / günstig (erwarteter Lauf = r, keine zweite Simulation)
+  const st = useMemo(() => {
+    const w = JSON.parse(schluessel);
+    return stresstest({ ...w, standort: orte.find((o) => o.slug === w.standort) || orte[0] }, { erwartet: r });
+  }, [schluessel, orte, r]);
+  const fallErgebnis = st.laeufe.find((l) => l.id === fall) || st.laeufe[0];
 
   const ladePreset = (p) => {
     setPreset(p.id);
@@ -191,8 +252,14 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   const leasing = r.leasing != null;
   const leasingEingabe = finanzierung === "leasing";
   const href = angebotUrl({ objekt: "gewerbe", kwp, verbrauch, speicher: speicherAn ? speicher : 0 });
+  // Die mobile Leiste (MobileCta) übernimmt den Angebotslink mit den aktuellen Werten
+  useEffect(() => {
+    const t = setTimeout(() => window.dispatchEvent(new CustomEvent("ov-rechner-angebot", { detail: { url: href } })), 300);
+    return () => clearTimeout(t);
+  }, [href]);
   const amortText = r.amortisation != null ? `${fmt(r.amortisation, 1).replace(",0", "")} J.` : "–";
-  const irrAnzeige = r.irr == null ? "–" : r.irr < 0 ? "< 0 %" : null;
+  const irrAnzeige = irrCa(r.irr);
+  const acText = `AC ${fmt(r.ac.summe)} kVA${r.ac.speicherKva > 0 || r.ac.bestandKw > 0 ? " inkl. Speicher/Bestand" : ""}`;
   useRechnerErgebnis("gewerbe-pv", r);
 
   // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
@@ -201,8 +268,8 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
     kennzahlen: [
       ["Anlagengröße", `${fmt(r.kwp)} kWp`, `≈ ${fmt(Math.round(r.flaecheQm / 10) * 10)} m² Dach`],
       leasing ? ["Überschuss Jahr 1", eur(r.cashflow[1].netto), `nach Leasingrate ${eur(r.leasing.rate)}`] : ["Vorteil Jahr 1", eur(r.nutzenJahr1), "Ersparnis + Einspeisung − Betrieb"],
-      leasing ? ["Laufzeit Leasing", `${r.leasing.jahre} Jahre`, "danach voller Vorteil"] : ["Amortisation", r.amortisation != null ? `${fmt(r.amortisation, 1)} Jahre` : "> 25 Jahre", `Investition ${eur(r.investition)}`],
-      ["Rendite (IRR)", leasing ? "–" : (irrAnzeige ?? `${fmt(r.irr * 100, 1)} %`), leasing ? "bei Leasing nicht sinnvoll" : `über ${r.jahre} Jahre, vor Steuern`],
+      leasing ? ["Laufzeit Leasing", `${r.leasing.jahre} Jahre`, "danach voller Vorteil"] : ["Amortisation", amortisationText(r.amortisation, r.jahre), `Investition ${euroGerundet(r.investition)}`],
+      ["Rendite (IRR)", leasing ? "–" : irrAnzeige, leasing ? "bei Leasing nicht sinnvoll" : `über ${r.jahre} Jahre, vor Steuern`],
     ],
     eingaben: [
       {
@@ -252,8 +319,8 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
           [`PV-Anlage ${fmt(r.kwp)} kWp`, eur(r.anlagenpreis)],
           r.speicherpreis > 0 && [`Speicher ${fmt(speicher)} kWh`, eur(r.speicherpreis)],
           r.zuschuss.summe > 0 && [`EAG-Zuschuss Kat. ${r.zuschuss.kategorie}`, eur(-r.zuschuss.summe)],
-          ["Investition", eur(r.investition)],
-          r.ifb.aktiv && [`IFB ${pct(r.ifb.satz)} % → Steuereffekt`, eur(r.ifb.steuereffekt), `bei ${pct(r.ifb.koest)} % KöSt`],
+          ["Investition", euroGerundet(r.investition)],
+          r.ifb.aktiv && [`IFB ${pct(r.ifb.satz)} % → Steuereffekt`, euroGerundet(r.ifb.steuereffekt), `bei ${pct(r.ifb.koest)} % KöSt, separat ausgewiesen`],
         ],
       },
       {
@@ -264,14 +331,14 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
           ["Betriebskosten (Jahr 1)", eur(-r.betriebskosten)],
           leasing && ["Leasingrate pro Jahr", eur(-r.leasing.rate), `bis Jahr ${r.leasing.jahre}`],
           !leasing && ["Amortisation", amortText],
-          !leasing && ["Rendite (IRR)", irrAnzeige ?? `${fmt(r.irr * 100, 1)} %`],
-          [`Kumulierter Cashflow nach ${r.jahre} Jahren`, eur(r.summe)],
+          !leasing && ["Rendite (IRR)", irrAnzeige],
+          [`Kumulierter Cashflow nach ${r.jahre} Jahren`, euroGerundet(r.summe)],
         ],
       },
       {
         titel: "Technik & Förderung",
         zeilen: [
-          ["TOR Stromerzeugungsanlagen", `Typ ${r.tor.typ}`],
+          ["TOR Stromerzeugungsanlagen", `Typ ${r.tor.typ}`, `${acText}${r.ac.wrVorschlag ? ` (Wechselrichter ≈ kWp ÷ ${fmt(DC_AC_VORSCHLAG, 2)}, Annahme)` : ""}${r.tor.knapp ? ` – ${r.tor.hinweis}` : ""}`],
           ["EAG-Kategorie", r.eag.id ? `Kat. ${r.eag.id}` : "– (über 1.000 kWp)"],
           ["Überschuss-Vermarktung", r.oemagMoeglich ? "OeMAG (unter 500 kWp)" : "Direktvermarktung / PPA"],
         ],
@@ -287,8 +354,11 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
       r.ifb.aktiv && `Investitionsfreibetrag ${pct(r.ifb.satz)} % für Öko-Investitionen bei Anschaffung bis 31.12.2026, Steuereffekt mit ${pct(r.ifb.koest)} % KöSt im ersten Jahr.`,
       leasingEingabe && "Leasingrate als Annuität ohne Restwert; der Zinssatz ist ein Beispielwert, keine Kondition eines Finanzierungspartners.",
       `CO₂-Vermeidung mit ${fmt(ANNAHMEN.co2KgProKwh * 1000, 1)} g CO₂äqu je kWh substituierten Stroms (Marktentwicklung 2024, Berechnung Technikum Wien auf Basis E-Control).`,
+      `Stresstest: konservativ = Strompreis und Einspeiseerlös −30 % ab Jahr 1, Ertrag −10 %, keine Preissteigerung, Zins +2 Prozentpunkte (wirkt auf den Leasingzins); günstig = Preissteigerung +1 Prozentpunkt.`,
+      `TOR-Typ nach AC-Maximalkapazität am Netzanschlusspunkt (Wechselrichter + Speicher-AC + bestehende Erzeugung)${r.ac.wrVorschlag ? `; Wechselrichterleistung als Vorschlag kWp ÷ ${fmt(DC_AC_VORSCHLAG, 2)}` : ""}.`,
       "Mit Ihrem echten Viertelstunden-Lastgang (Smart Meter/Netzbetreiber) wird die Rechnung genauer.",
     ],
+    stresstest: stresstestBericht(st),
   });
 
   return (
@@ -296,6 +366,7 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
         {/* ---------------- Eingaben ---------------- */}
         <div className="relative border-b border-ink-100 bg-sand-50 p-5 sm:p-6 md:p-8 lg:border-b-0 lg:border-r">
+          {/* Ohne eigenen Angebotsknopf: die MobileCta (A12) führt per „ov-rechner-angebot“ zum Angebot mit diesen Werten – sonst zwei Sticky-Leisten mit derselben Aktion. */}
           <MobilKurz
             werte={[
               ["Anlage", <Zahl key="k" wert={r.kwp} suffix=" kWp" />],
@@ -305,6 +376,11 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
           />
 
           <div className="space-y-8">
+            {vonStart && (
+              <p role="status" className="rounded-2xl bg-ov-50 px-4 py-3 text-[13.5px] leading-relaxed text-ov-800 ring-1 ring-ov-200">
+                Von der Startseite übernommen – wie dort ohne Speicher und Förderung. Hier zusätzlich Standort, Speicher, EAG-Zuschuss und IFB zuschaltbar.
+              </p>
+            )}
             <PresetLeiste presets={GEWERBE_PRESETS} aktiv={preset} onWahl={ladePreset} />
 
             <Gruppe titel="Dach & Standort">
@@ -448,7 +524,7 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
               )}
               <Schalter
                 icon={BadgeEuro}
-                label="EAG-Investitionszuschuss"
+                label={eag ? "Mit EAG-Investitionszuschuss" : "Ohne EAG-Investitionszuschuss"}
                 beschreibung={r.eag.id ? `Kategorie ${r.eag.id}: ${r.eag.id === "C" || r.eag.id === "D" ? "höchstens " : ""}${r.eag.eurProKwp} €/kWp – nur mit Zuschlag im Fördercall` : "über 1.000 kWp kein Investitionszuschuss"}
                 an={eag}
                 onChange={setEag}
@@ -477,6 +553,46 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
                   </button>
                 )}
               </div>
+            </Gruppe>
+
+            <Gruppe titel="Netzanschluss (TOR-Typ)">
+              <div>
+                <ZahlfeldDe
+                  label="Wechselrichterleistung AC (kVA)"
+                  wert={wrKva ?? r.ac.vorschlagKva}
+                  min={5}
+                  max={5000}
+                  einheit="kVA"
+                  onChange={(v) => setWrKva(Math.round(v))}
+                />
+                <p className="mt-2 text-[12.5px] leading-relaxed text-ink-500">
+                  {wrKva == null
+                    ? `Vorschlag: ${fmt(kwp)} kWp ÷ ${fmt(DC_AC_VORSCHLAG, 2)} = ${fmt(acVorschlag(kwp))} kVA (übliches DC/AC-Verhältnis, Annahme). Maßgeblich ist das Datenblatt der Wechselrichter.`
+                    : "Eigene Eingabe."}
+                </p>
+                {wrKva != null && (
+                  <button type="button" onClick={() => setWrKva(null)} className="mt-1 min-h-11 text-[13px] font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:text-ov-800">
+                    Vorschlag übernehmen
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 items-stretch gap-3">
+                <ZahlfeldDe
+                  label="Speicher-AC (kVA)"
+                  wert={speicherAn ? (speicherKva ?? r.ac.speicherKva) : 0}
+                  min={0}
+                  max={5000}
+                  einheit="kVA"
+                  disabled={!speicherAn}
+                  onChange={(v) => speicherAn && setSpeicherKva(Math.round(v) || null)}
+                />
+                <ZahlfeldDe label="Bestehende Erzeugung (kW)" wert={bestandKw} min={0} max={50000} einheit="kW" onChange={(v) => setBestandKw(Math.round(v))} />
+              </div>
+              <p className="-mt-2 text-[12.5px] leading-relaxed text-ink-500">
+                {speicherAn ? "Speicher-AC aus der Lade-/Entladeleistung der Simulation, änderbar. " : "Ohne Speicher zählt keine Speicherleistung. "}
+                Bestand = andere Erzeugungsanlagen am selben Netzanschlusspunkt. Summe AC: <strong className="text-ink-800">{fmt(r.ac.summe)} kVA → Typ {r.tor.typ}</strong>
+                {r.tor.knapp ? ` · ${r.tor.hinweis}` : ""}
+              </p>
             </Gruppe>
           </div>
         </div>
@@ -508,31 +624,35 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
               <Zahl wert={pct(r.autarkie)} suffix=" %" />
             </Kennzahl>
             <Kennzahl ton="gruen" icon={PiggyBank} label={leasing ? "Überschuss Jahr 1" : "Vorteil Jahr 1"} zusatz={leasing ? `nach Leasingrate ${eur(r.leasing.rate)}` : `Ersparnis + Einspeisung − Betrieb`}>
-              <Zahl wert={Math.round(leasing ? r.cashflow[1].netto : r.nutzenJahr1)} suffix=" €" />
+              <Zahl wert={rundJahr(leasing ? r.cashflow[1].netto : r.nutzenJahr1)} prefix="≈ " suffix=" €" />
             </Kennzahl>
-            <Kennzahl icon={Timer} label={leasing ? "Laufzeit Leasing" : "Amortisation"} zusatz={leasing ? `danach voller Vorteil` : `Investition ${eur(r.investition)}`}>
+            <Kennzahl icon={Timer} label={leasing ? "Laufzeit Leasing" : "Amortisation"} zusatz={leasing ? `danach voller Vorteil` : `Investition ${euroGerundet(r.investition)}`}>
               {leasing ? <Zahl wert={r.leasing.jahre} suffix=" Jahre" /> : r.amortisation != null ? <Zahl wert={r.amortisation} stellen={1} suffix=" Jahre" /> : "> 25 J."}
             </Kennzahl>
-            <Kennzahl icon={TrendingUp} label="Rendite (IRR)" zusatz={leasing ? "bei Leasing ohne Eigenkapital nicht sinnvoll" : r.ifb.aktiv ? `ohne IFB ${r.irrOhneIfb != null ? `${fmt(r.irrOhneIfb * 100, 1)} %` : "–"}` : "über 25 Jahre, vor Steuern"}>
-              {irrAnzeige ?? <Zahl wert={r.irr * 100} stellen={1} suffix=" %" />}
+            <Kennzahl icon={TrendingUp} label="Rendite (IRR)" zusatz={leasing ? "bei Leasing ohne Eigenkapital nicht sinnvoll" : r.ifb.aktiv ? `ohne IFB ${irrCa(r.irrOhneIfb)}` : "über 25 Jahre, vor Steuern"}>
+              {leasing ? "–" : irrAnzeige}
             </Kennzahl>
             <Kennzahl icon={Leaf} label="CO₂ vermieden" zusatz="pro Jahr (Substitution)">
               <Zahl wert={r.co2Tonnen} stellen={r.co2Tonnen < 100 ? 1 : 0} suffix=" t" />
             </Kennzahl>
           </div>
 
+          <KostenDesWartens className="mt-4" ersparnisJahr={r.nutzenJahr1} investitionNetto={r.investition} />
+
+          <Stresstest st={st} fall={fall} setFall={setFall} ergebnis={fallErgebnis} />
+
           <DiagrammKarte
             titel={`Kumulierter Cashflow über ${r.jahre} Jahre`}
             rechts={
               <span className="ov-num text-[13px] text-ink-500">
-                nach {r.jahre} Jahren <strong className={cn("font-display text-[15px]", r.summe >= 0 ? "text-ov-700" : "text-ink-900")}>{eur(r.summe)}</strong>
+                nach {r.jahre} Jahren <strong className={cn("font-display text-[15px]", r.summe >= 0 ? "text-ov-700" : "text-ink-900")}>{euroGerundet(r.summe)}</strong>
               </span>
             }
             fuss={
               <ul className="flex flex-wrap gap-x-5 gap-y-2 text-[12.5px] text-ink-600">
                 <li className="flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-[3px] bg-[#b9c2d0]" />noch im Minus</li>
                 <li className="flex items-center gap-2"><span aria-hidden="true" className="h-3 w-3 rounded-[3px] bg-[#7fae4a]" />im Plus</li>
-                {r.ifb.aktiv && <li className="ov-num">inkl. IFB-Steuereffekt {eur(r.ifb.steuereffekt)} im Jahr 1</li>}
+                {r.ifb.aktiv && <li className="ov-num">inkl. IFB-Steuereffekt {euroGerundet(r.ifb.steuereffekt)} im Jahr 1</li>}
                 {leasing && <li className="ov-num">Leasingrate {eur(r.leasing.rate)}/Jahr bis Jahr {r.leasing.jahre}</li>}
               </ul>
             }
@@ -541,8 +661,9 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
               reihe={r.cashflow}
               marke={leasing ? null : r.amortisation}
               markeLabel={`Amortisiert · ${amortText}`}
+              key={leasing ? "leasing" : "kauf"}
               startLabel={leasing ? "0" : "Start"}
-              ariaLabel={`Kumulierter Cashflow über ${r.jahre} Jahre: Start ${eur(r.cashflow[0].kumuliert)}, Ende ${eur(r.summe)}`}
+              ariaLabel={`Kumulierter Cashflow über ${r.jahre} Jahre: Start ${euroGerundet(r.cashflow[0].kumuliert)}, Ende ${euroGerundet(r.summe)}`}
               tooltip={(c) => {
                 if (c.jahr === 0) return [[leasing ? "Start Leasing" : "Investition"], ["Stand", eur(c.kumuliert)]];
                 const z = [[`Nach ${c.jahr} ${c.jahr === 1 ? "Jahr" : "Jahren"}`], ["Stand", eur(c.kumuliert)], ["Ersparnis", eur(c.ersparnis)], ["Einspeisung", eur(c.einspeisung)], ["Betrieb", eur(-c.betrieb)]];
@@ -561,20 +682,26 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
             <div className="rounded-3xl bg-ink-50 p-5 md:p-6">
               <h3 className="font-display text-[16px] font-bold text-ink-900">Investition {leasing ? "(finanziert)" : ""} netto</h3>
               <dl className="mt-2 divide-y divide-ink-200/70">
-                <Posten label={`PV-Anlage ${fmt(r.kwp)} kWp`} wert={eur(r.anlagenpreis)} />
-                {r.speicherpreis > 0 && <Posten label={`Speicher ${fmt(speicher)} kWh`} wert={eur(r.speicherpreis)} />}
-                {r.zuschuss.summe > 0 && <Posten label={`EAG-Zuschuss Kat. ${r.zuschuss.kategorie}`} wert={eur(-r.zuschuss.summe)} ton="gruen" />}
-                <Posten label="Investition" wert={eur(r.investition)} stark />
-                {r.ifb.aktiv && <Posten label={`IFB ${pct(r.ifb.satz)} % → Steuereffekt (${pct(r.ifb.koest)} % KöSt)`} wert={eur(r.ifb.steuereffekt)} ton="sonne" />}
+                <Posten label={`PV-Anlage ${fmt(r.kwp)} kWp`} wert={euroGerundet(r.anlagenpreis)} />
+                {r.speicherpreis > 0 && <Posten label={`Speicher ${fmt(speicher)} kWh`} wert={euroGerundet(r.speicherpreis)} />}
+                <Posten label={eag ? `EAG-Zuschuss${r.zuschuss.kategorie ? ` Kat. ${r.zuschuss.kategorie}` : ""}` : "EAG-Zuschuss"} wert={eag ? (r.zuschuss.summe > 0 ? euroGerundet(-r.zuschuss.summe) : "–") : "nicht angesetzt"} ton={eag && r.zuschuss.summe > 0 ? "gruen" : undefined} />
+                <Posten label="Investition" wert={euroGerundet(r.investition)} stark />
+              </dl>
+              <dl className="mt-3 rounded-2xl bg-white px-4 ring-1 ring-ink-200/70">
+                <Posten
+                  label={r.ifb.aktiv ? `IFB ${pct(r.ifb.satz)} % → Steuereffekt (${pct(r.ifb.koest)} % KöSt)` : "Investitionsfreibetrag (IFB)"}
+                  wert={r.ifb.aktiv ? euroGerundet(r.ifb.steuereffekt) : leasingEingabe ? "beim Leasinggeber" : "nicht angesetzt"}
+                  ton={r.ifb.aktiv ? "sonne" : undefined}
+                />
               </dl>
               <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
-                Richtwerte schlüsselfertig aus der österreichischen Marktstatistik, keine Ökovolt-Preise. {r.ifb.aktiv ? `Der IFB von ${eur(r.ifb.betrag)} wirkt wie eine zusätzliche Betriebsausgabe; die Steuerersparnis ist separat ausgewiesen.` : ""}
+                Richtwerte schlüsselfertig aus der österreichischen Marktstatistik, keine Ökovolt-Preise. {r.ifb.aktiv ? `Der IFB von ${euroGerundet(r.ifb.betrag)} wirkt wie eine zusätzliche Betriebsausgabe; die Steuerersparnis ist getrennt vom EAG-Zuschuss ausgewiesen und nur im Cashflow des Jahres 1 enthalten.` : ""}
               </p>
             </div>
             <div className="rounded-3xl bg-navy-950 p-5 text-white md:p-6">
               <h3 className="font-display text-[16px] font-bold">Technik & Förderung automatisch</h3>
               <dl className="mt-3 space-y-3 text-[14px]">
-                <Einordnung label="TOR Stromerzeugungsanlagen" wert={`Typ ${r.tor.typ}`} text={r.tor.text} />
+                <Einordnung label="TOR Stromerzeugungsanlagen" wert={`Typ ${r.tor.typ}`} text={`${acText} · ${r.tor.text}${r.tor.knapp ? ` · ${r.tor.hinweis}` : ""}`} />
                 <Einordnung label="EAG-Investitionszuschuss" wert={r.eag.id ? `Kat. ${r.eag.id}` : "–"} text={r.eag.text} />
                 <Einordnung label="Flächenbedarf" wert={`${fmt(Math.round(r.flaecheQm / 10) * 10)} m²`} text={`${fmt(r.qmProKwp)} m² je kWp · ${r.dachartLabel}`} />
                 <Einordnung label="Überschuss-Vermarktung" wert={r.oemagMoeglich ? "OeMAG" : "Direktverm."} text={r.oemagMoeglich ? "Marktpreis-Abnahme unter 500 kWp möglich" : "ab 500 kWp Direktvermarktung / PPA"} />
@@ -607,14 +734,55 @@ export default function GewerbePVRechner({ standorte, startOrt = "linz" }) {
   );
 }
 
+/** Zeile der Einordnung – gültige Struktur dl > div > dt/dd (Erläuterung als zweites dd). */
 function Einordnung({ label, wert, text }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-3 last:border-0 last:pb-0">
-      <div className="min-w-0">
-        <dt className="text-white/60">{label}</dt>
-        <p className="mt-0.5 text-[12.5px] leading-snug text-white/55">{text}</p>
-      </div>
-      <dd className="ov-num shrink-0 rounded-full bg-white/10 px-3 py-1 font-display text-[14px] font-bold text-ov-300">{wert}</dd>
+    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 border-b border-white/10 pb-3 last:border-0 last:pb-0">
+      <dt className="text-white/70">{label}</dt>
+      <dd className="ov-num row-span-2 shrink-0 rounded-full bg-white/10 px-3 py-1 font-display text-[14px] font-bold text-ov-300">{wert}</dd>
+      <dd className="mt-0.5 text-[12.5px] leading-snug text-white/60">{text}</dd>
     </div>
+  );
+}
+
+/**
+ * CFO-Stresstest: Segment-Schalter konservativ / erwartet / günstig mit Amortisation,
+ * IRR und kumuliertem Cashflow; der Entscheider-Satz erscheint nur, wenn die Rechnung ihn trägt.
+ */
+function Stresstest({ st, fall, setFall, ergebnis }) {
+  const optionen = STRESSTEST_LAEUFE.map((l) => ({ id: l.id, label: l.label }));
+  return (
+    <section aria-labelledby="stresstest-titel" className="mt-6 rounded-3xl bg-sand-50 p-5 ring-1 ring-ink-200/70 md:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 id="stresstest-titel" className="font-display text-[17px] font-bold text-ink-900">
+          Stresstest: Was, wenn es schlechter läuft?
+        </h3>
+        <Umschalter optionen={optionen} wert={fall} onChange={setFall} label="Fall im Stresstest" />
+      </div>
+      <p className="mt-2 text-[13px] leading-relaxed text-ink-500">{ergebnis.annahme}</p>
+      {/* Handy: 2 + 1 (Summe über volle Breite), ab sm drei nebeneinander; Werte brechen nicht um */}
+      <dl className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="min-w-0 rounded-2xl bg-white px-3 py-3 ring-1 ring-ink-200/70 sm:px-4">
+          <dt className="whitespace-nowrap text-[12px] text-ink-500">Amortisation</dt>
+          <dd className="ov-num mt-1 whitespace-nowrap font-display text-[17px] font-extrabold text-ink-900 sm:text-[19px]">{ergebnis.leasing ? "–" : amortisationText(ergebnis.amortisation, st.jahre)}</dd>
+        </div>
+        <div className="min-w-0 rounded-2xl bg-white px-3 py-3 ring-1 ring-ink-200/70 sm:px-4">
+          <dt className="whitespace-nowrap text-[12px] text-ink-500">Rendite (IRR)</dt>
+          <dd className="ov-num mt-1 whitespace-nowrap font-display text-[17px] font-extrabold text-ink-900 sm:text-[19px]">{ergebnis.leasing ? "–" : irrCa(ergebnis.irr)}</dd>
+        </div>
+        <div className="col-span-2 min-w-0 rounded-2xl bg-white px-3 py-3 ring-1 ring-ink-200/70 sm:col-span-1 sm:px-4">
+          <dt className="whitespace-nowrap text-[12px] text-ink-500">Nach {st.jahre} Jahren</dt>
+          <dd className={cn("ov-num mt-1 whitespace-nowrap font-display text-[17px] font-extrabold sm:text-[19px]", ergebnis.summe >= 0 ? "text-ov-700" : "text-ink-900")}>{euroGerundet(ergebnis.summe)}</dd>
+        </div>
+      </dl>
+      <p className={cn("mt-4 rounded-2xl px-4 py-3 text-[14px] font-semibold leading-relaxed", st.satz.wahr ? "bg-ov-50 text-ov-800 ring-1 ring-ov-200" : "bg-white text-ink-800 ring-1 ring-ink-200")}>{st.satz.text}</p>
+      <dl className="mt-4">
+        <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-500">Break-even-Strompreis · erwarteter Fall</dt>
+        <dd className="mt-1 text-[14px] font-semibold leading-snug text-ink-900">
+          {st.breakEven.frage} <span className="text-ov-800">{st.breakEven.antwort}</span>
+        </dd>
+        <dd className="mt-1 text-[12.5px] leading-relaxed text-ink-500">{st.breakEven.erklaerung}</dd>
+      </dl>
+    </section>
   );
 }

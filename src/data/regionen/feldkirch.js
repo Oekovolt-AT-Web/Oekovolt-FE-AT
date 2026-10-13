@@ -56,7 +56,7 @@ const feldkirch = {
     },
     {
       q: "Wie weit ist Feldkirch von Ökovolt entfernt?",
-      a: "Rund 360 km Straße von unserem Firmensitz in Ostermiething. Wir planen digital vor, bündeln Montage- und Serviceeinsätze und überwachen Anlagen laufend über unsere eigene Fernwartung.",
+      a: "Rund 360 km Straße von unserem Firmensitz in Ostermiething. Wir planen digital vor, bündeln Montage- und Serviceeinsätze und überwachen Anlagen laufend per Fernwartung.",
     },
   ],
   cta: {

@@ -14,9 +14,11 @@ export const ZIELGRUPPEN = {
   landwirtschaft: {
     standard: {
       eyebrow: "Für land- und forstwirtschaftliche Betriebe",
-      titel: "Solarstrom vom Hof –",
-      akzent: "für Stall, Scheune und Maschinenhalle.",
-      lead: "Photovoltaik auf Stall-, Scheunen- und Hallendächern, Speicher für Melk- und Kühltechnik, Überschuss in die Energiegemeinschaft der Gemeinde: Wir planen Anlagen, die zum Betrieb passen – steuerlich sauber abgestimmt und mit Blick auf die Förderung.",
+      titel: "Vom Hofbesuch bis zum Netzanschluss –",
+      akzent: "eigene Leute, eigene Maschinen, ein Ansprechpartner.",
+      // kurz: Zeile für die Standardvariante ohne Wiederholung der H1 (A05 rendert sie statt titel/akzent)
+      kurz: "Melken, Kühlen, Trocknen mit Strom vom eigenen Dach.",
+      lead: "Photovoltaik auf Stall-, Scheunen- und Hallendächern, Speicher für Melk- und Kühltechnik, Überschuss in die Energiegemeinschaft der Gemeinde: Wir planen Anlagen, die zum Betrieb passen – steuerlich sauber abgestimmt und mit Blick auf die Förderung. Wir sagen Ihnen auch, wenn sich Ihr Dach nicht lohnt – etwa wegen Statik oder Netzkapazität.",
       cta: "Hofdach bewerten lassen",
     },
     varianten: [
@@ -52,12 +54,38 @@ export const ZIELGRUPPEN = {
       eyebrow: "Für Gewerbe, Industrie & Handel in Österreich",
       titel: "Solarstrom, der zum",
       akzent: "Lastgang Ihres Betriebs passt.",
-      lead: "Photovoltaik auf Hallen- und Bürodächern, Gewerbespeicher gegen Lastspitzen, Ladeinfrastruktur für die E-Flotte und eigene Regelungstechnik: Wir legen Anlagen nach Ihren Viertelstundenwerten aus – nicht nach der Dachfläche.",
+      lead: "Photovoltaik auf Hallen- und Bürodächern, Gewerbespeicher gegen Lastspitzen, Ladeinfrastruktur für die E-Flotte und Parkregler mit unserem Technologiepartner Solensa: Wir legen Anlagen nach Ihren Viertelstundenwerten aus – nicht nach der Dachfläche.",
       cta: "Lastgang auswerten lassen",
     },
     varianten: [
       {
-        schluessel: ["speicher", "peak", "lastspitze", "leistungspreis"],
+        // Für Finanzverantwortliche: Rechenweg, Steuerwirkung, Fristen – ohne Zusagen zu Preisen
+        schluessel: ["cfo", "finanz", "investition", "ifb"],
+        eyebrow: "Für Geschäftsführung und Finanzen",
+        titel: "Eine Investition mit Rechenweg –",
+        akzent: "den Ihre Steuerberatung prüfen kann.",
+        lead: "Stromgestehungskosten gegen Netzbezug, interner Zinsfuß über 25 Jahre, Öko-Investitionsfreibetrag und Abschreibung getrennt ausgewiesen, Stresstest mit fallendem Strompreis: Sie bekommen die Rechnung, nicht nur die Amortisationszahl – und die Fristen, die den Zeitpunkt beeinflussen.",
+        cta: "Rechenweg anfordern",
+      },
+      {
+        // Technisch ehrliche Botschaft zur Leistungskomponente (ElWG): PV allein senkt die Spitze nicht planbar
+        schluessel: ["leistungspreis", "netzentgelt", "elwg", "leistungskomponente"],
+        eyebrow: "Netzentgelt & Leistungskomponente",
+        titel: "Vier Teile auf Ihrer Stromrechnung –",
+        akzent: "drei davon senkt Photovoltaik.",
+        lead: "Sie zahlen für Energie, Netz, Leistung und Abgaben. Photovoltaik senkt Energie, Netz-Arbeitsentgelt und Abgaben – die Leistungsspitze senken Speicher und Lastmanagement planbar.",
+        cta: "Stromrechnung analysieren lassen",
+      },
+      {
+        schluessel: ["handel", "filiale", "supermarkt", "grosshandel", "einzelhandel", "kuehlregal", "markt"],
+        eyebrow: "Für Handel & Filialbetriebe",
+        titel: "Kühlen, Beleuchten, Laden –",
+        akzent: "tagsüber mit Strom vom eigenen Dach.",
+        lead: "Kühlregale, Beleuchtung und Kassen laufen in den Öffnungszeiten, Kundenparkplätze bieten Platz für Ladepunkte: Flachdächer von Märkten und Logistikhallen passen zum Lastgang des Handels. Wir planen je Standort nach den Viertelstundenwerten – und für Filialnetze mit einheitlicher Technik und einem Monitoring.",
+        cta: "Standort prüfen lassen",
+      },
+      {
+        schluessel: ["speicher", "peak", "lastspitze"],
         eyebrow: "Gewerbespeicher & Peak Shaving",
         titel: "Lastspitzen kappen,",
         akzent: "Leistungspreis senken.",
@@ -116,6 +144,7 @@ export const ZIELGRUPPEN = {
       eyebrow: "Agri-PV in Österreich",
       titel: "Ernten Sie doppelt –",
       akzent: "Strom und Ertrag auf derselben Fläche.",
+      kurz: "30 % Förderzuschlag – wenn die Landwirtschaft im Vordergrund bleibt.",
       lead: "Vertikal bifazial zwischen Grünland- und Ackerstreifen, hoch aufgeständert über Obst, Wein und Beeren oder nachgeführt: Agri-PV erhält im EAG einen Zuschlag von 30 % auf den Investitionszuschuss – wenn die landwirtschaftliche Nutzung nachweislich im Vordergrund bleibt.",
       cta: "Agri-PV-Fläche prüfen lassen",
     },
@@ -134,8 +163,8 @@ export const ZIELGRUPPEN = {
   tourismus: {
     standard: {
       eyebrow: "Hotellerie, Thermen & Bergbahnen",
-      titel: "Gäste kommen wegen der Natur –",
-      akzent: "Ihr Strom kann von dort kommen.",
+      titel: "Strom vom eigenen Dach in der Hauptsaison –",
+      akzent: "und eine Geschichte, die Ihre Gäste glauben.",
       lead: "Photovoltaik für Hotels, Thermen, Bergbahnen und Skigebiete: Küche, Kühlung, Wellness, Lifte und Beschneiung brauchen viel Strom. Wir planen alpin – mit Schneelast, Speicher, Gäste-Ladestationen und einer Geschichte, die Sie erzählen können.",
       cta: "Betrieb bewerten lassen",
     },
@@ -186,11 +215,11 @@ export const ZIELGRUPPEN = {
 
   gemeinden: {
     standard: {
-      eyebrow: "Für Gemeinden, Länder & Stadtwerke",
-      titel: "Die Energiewende vor Ort –",
-      akzent: "planbar und vergabesicher umgesetzt.",
-      lead: "Photovoltaik auf Schulen, Bauhöfen, Kläranlagen und Freibädern, Energiegemeinschaften der Gemeinde, Ladeinfrastruktur und Freiflächen: Wir planen, bauen und betreuen Anlagen, die Gemeindebudgets entlasten – als bevorzugter PV-Errichter des Salzburg AG Konzerns.",
-      cta: "Beratungstermin vereinbaren",
+      eyebrow: "Für Bürgermeister, Amtsleitung und Gemeinderat",
+      titel: "Gemeinderatstauglich –",
+      akzent: "vom ersten Termin an.",
+      lead: "Wirtschaftlichkeit, Förderweg und Vergabeweg für Ihre Liegenschaften auf einer Seite: Wir liefern die Unterlagen, die der Gemeinderat für einen Beschluss braucht – und bauen, betreuen und warten die Anlage danach.",
+      cta: "Beschlussvorlage anfordern",
     },
     varianten: [],
   },

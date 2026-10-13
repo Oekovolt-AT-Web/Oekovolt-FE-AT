@@ -7,7 +7,12 @@
 // - firma: Firmenwortlaut laut Impressum der Kunden-Website (Abweichungen zum Projektnamen sind gewollt).
 // - social: nur Profile, die im Kopf-/Fußbereich der offiziellen Website verlinkt sind; sonst null.
 // - portraet: in eigenen Worten, ausschließlich aus den eigenen Angaben der Unternehmen (quellen).
-// - freigabe: immer false – Zitat und Logo dürfen erst nach Freigabe durch den Kunden gezeigt werden.
+// - freigabe: überall false – Firmenname, Zitat, Logo, Projekt-Plakette, Live-Daten und Messwerte dürfen
+//   erst nach Freigabe durch den Kunden gezeigt werden (Welle A07). Schema je Eintrag:
+//     { name, zitat, logo, plakette, livedaten, messwerte: false, freigegebenAm: null, beleg: null }
+//   freigegebenAm = Datum der Erklärung (ISO), beleg = Ablage/Referenz der Freigabe (z. B. „RF-2026-00012“).
+//   Führend ist der DocType „Referenz Freigabe“ im Backoffice (get_freigaben, Einmal-Link); er gewinnt
+//   über diese Datei. Ohne freigabe.name erscheint der Kunde auf der Website nur mit Branche und Ort.
 //
 // Bewusst NICHT aufgenommen (keine eindeutige Zuordnung bzw. keine belegbare Quelle):
 //   gs-altotec-gmbh, spar-ingrid-teufelberger, stahl-hacksteiner-metall-gmbh,
@@ -51,7 +56,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – ALPLA", url: "https://www.alpla.com/de/unternehmen" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -68,7 +73,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – Aumayr GmbH", url: "https://www.aumayr.com/unternehmen/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -90,7 +95,7 @@ export const KUNDEN = {
       { titel: "Firmen A–Z (WKO) – ANDRITZ Fabrics and Rolls GmbH", url: "https://firmen.wko.at/andritz-fabrics-and-rolls-gmbh-andritz-fabrics-and-rolls-gmbh/nieder%C3%B6sterreich/?firmaid=e1c7ae00-4c57-430a-aafd-683940e44095" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -110,7 +115,7 @@ export const KUNDEN = {
       { titel: "History – AUSTRIACARD", url: "https://www.austriacard.com/company/history/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -130,7 +135,7 @@ export const KUNDEN = {
       { titel: "Über uns – B&R", url: "https://www.br-automation.com/de/ueber-uns/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -152,7 +157,7 @@ export const KUNDEN = {
       { titel: "Impressum – Sampo GmbH", url: "https://sampo.at/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -174,7 +179,7 @@ export const KUNDEN = {
       { titel: "Über uns – F/LIST", url: "https://f-list.at/ueber-uns/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -197,7 +202,7 @@ export const KUNDEN = {
       { titel: "Impressum – HABA-Beton", url: "https://www.haba-beton.com/at/impressum" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -218,7 +223,7 @@ export const KUNDEN = {
       { titel: "Impressum – Herba Chemosan", url: "https://www.herba-chemosan.at/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -236,7 +241,7 @@ export const KUNDEN = {
       { titel: "Standorte – Holzindustrie Herbert Handlos", url: "https://www.handlos.at/de/unternehmen/standorte.html" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -254,7 +259,7 @@ export const KUNDEN = {
       { titel: "Standorte – Holzindustrie Herbert Handlos", url: "https://www.handlos.at/de/unternehmen/standorte.html" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -274,7 +279,7 @@ export const KUNDEN = {
       { titel: "Über uns – Holz Reisecker", url: "https://www.holz-reisecker.at/unternehmen/ueber-uns" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -294,7 +299,7 @@ export const KUNDEN = {
       { titel: "Über uns – NEMETZ-FLEISCH", url: "https://www.nemetz-fleisch.at/ueber_uns/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -311,7 +316,7 @@ export const KUNDEN = {
       { titel: "Über uns – Neuschmied", url: "https://www.neuschmied.at/unternehmen/ueber-uns/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -334,7 +339,7 @@ export const KUNDEN = {
       { titel: "PENN GmbH – Startseite", url: "https://www.penn.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -351,7 +356,7 @@ export const KUNDEN = {
       { titel: "Söllinger Holz – Startseite", url: "https://www.saegewerk-soellinger.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -373,7 +378,7 @@ export const KUNDEN = {
       { titel: "SP-Verpackungen – Startseite", url: "https://www.sp-verpackungen.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -394,7 +399,7 @@ export const KUNDEN = {
       { titel: "Vital- & Sporthotel Brixen – Startseite", url: "https://www.vital-sporthotel.at/de/index.php" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -414,7 +419,7 @@ export const KUNDEN = {
       { titel: "Stallinger – Startseite", url: "https://www.stallinger.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -432,7 +437,7 @@ export const KUNDEN = {
       { titel: "Über uns – Stauss-Perlite", url: "https://www.stauss-perlite.at/unternehmen/ueber-uns" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -453,7 +458,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – Steinbacher", url: "https://www.steinbacher.at/unternehmen/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -473,7 +478,7 @@ export const KUNDEN = {
       { titel: "WIND TPK – Startseite", url: "https://www.windtpk.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -491,7 +496,7 @@ export const KUNDEN = {
       { titel: "Stahl- und Blechbearbeitung – Tomandl & Gattinger", url: "https://www.toga.at/stahlbearbeitung-blechbearbeitung.html" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -508,7 +513,7 @@ export const KUNDEN = {
       { titel: "Geschichte – TRANSDANUBIA", url: "https://www.transdanubia.com/unternehmen/geschichte" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -525,7 +530,7 @@ export const KUNDEN = {
       { titel: "WIESERHOLZ – Startseite", url: "https://www.wieserholz.at/wieserholz/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -548,7 +553,7 @@ export const KUNDEN = {
       { titel: "Würth in Österreich – Würth Österreich", url: "https://www.wuerth.at/de/wuerth_at/company/das_unternehmen/wuerth_in_oesterreich.php" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -569,7 +574,7 @@ export const KUNDEN = {
       { titel: "Ziegler Stahlbau – Startseite", url: "https://www.stahlbau.at/de/start/index.asp" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -586,7 +591,7 @@ export const KUNDEN = {
       { titel: "SUNPOR – Startseite", url: "https://www.sunpor.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -607,7 +612,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – Stein & Co", url: "https://www.steinundco.com/?seite=unternehmen&sprache=de" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -624,7 +629,7 @@ export const KUNDEN = {
       { titel: "Spitzschuh – Startseite", url: "https://www.spitzschuh.com/de" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -647,7 +652,7 @@ export const KUNDEN = {
       { titel: "Impressum – Hammerer Aluminium Industries", url: "https://www.hai-aluminium.com/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -670,7 +675,7 @@ export const KUNDEN = {
       { titel: "Impressum – GOURMET", url: "https://www.gourmet.at/footer/rechtliche-navigation/impressum" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -687,7 +692,7 @@ export const KUNDEN = {
       { titel: "Über uns – Gerhard Rauch", url: "https://www.gerhard-rauch.at/de/unternehmen/ueber-uns" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -710,7 +715,7 @@ export const KUNDEN = {
       { titel: "Impressum – WOERLE", url: "https://www.woerle.at/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -729,7 +734,7 @@ export const KUNDEN = {
       { titel: "Das Unternehmen – Stemeseder", url: "https://stemeseder.com/stemeseder-das-unternehmen-gruen/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -749,7 +754,7 @@ export const KUNDEN = {
       { titel: "Fuschlseebad – Startseite", url: "https://www.fuschlseebad.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -772,7 +777,7 @@ export const KUNDEN = {
       { titel: "Hauer – Startseite", url: "https://www.hfl.co.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -792,7 +797,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – Fischer Parkett", url: "https://www.fischerparkett.com/unternehmen/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -815,7 +820,7 @@ export const KUNDEN = {
       { titel: "History – Fill", url: "https://www.fill.co.at/en/company/discover-the-history-of-fill" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -832,7 +837,7 @@ export const KUNDEN = {
       { titel: "Felbermayer – Startseite", url: "https://www.felbermayerfenster.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -849,7 +854,7 @@ export const KUNDEN = {
       { titel: "Impressum – DGT Duscher Galvanotechnik", url: "https://galvanoduscher.at/html/impressum.html" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -866,7 +871,7 @@ export const KUNDEN = {
       { titel: "Destalles – Startseite", url: "https://www.ford-destalles-linz.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -887,7 +892,7 @@ export const KUNDEN = {
       { titel: "Campingwelt Brixen – Startseite", url: "https://www.camping-brixen.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -904,7 +909,7 @@ export const KUNDEN = {
       { titel: "Über uns – Braunegger", url: "https://www.braunegger.tirol/ueber-uns-42.html" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -921,7 +926,7 @@ export const KUNDEN = {
       { titel: "Impressum – Biomontan", url: "https://www.biomontan.at/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -941,7 +946,7 @@ export const KUNDEN = {
       { titel: "Unternehmen – BK Metallbau", url: "https://bkmetallbau.at/unternehmen/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -958,7 +963,7 @@ export const KUNDEN = {
       { titel: "Impressum – Sochor", url: "https://www.sochor.at/impressum/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -975,7 +980,7 @@ export const KUNDEN = {
       { titel: "Impressum – austyrol", url: "https://www.austyrol.at/impressum" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -998,7 +1003,7 @@ export const KUNDEN = {
       { titel: "Impressum – RATH Group", url: "https://www.rath-group.com/impressum" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -1015,7 +1020,7 @@ export const KUNDEN = {
       { titel: "Autohaus Weichselbaumer – Startseite", url: "https://www.ford-weichselbaumer-pinsdorf.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -1032,7 +1037,7 @@ export const KUNDEN = {
       { titel: "AC Auto Vertrieb und Service – Startseite", url: "https://www.ford-dornach-linz-dornach.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 
@@ -1049,7 +1054,7 @@ export const KUNDEN = {
       { titel: "4you Store – Startseite", url: "https://www.ford-4youstore-voecklabruck.at/" },
     ],
     geprueftAm: GEPRUEFT,
-    freigabe: { zitat: false, logo: false },
+    freigabe: { name: false, zitat: false, logo: false, plakette: false, livedaten: false, messwerte: false, freigegebenAm: null, beleg: null },
     zitat: null,
   },
 };

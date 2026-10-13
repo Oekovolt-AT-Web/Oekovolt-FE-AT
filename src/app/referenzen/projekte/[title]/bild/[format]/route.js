@@ -83,7 +83,8 @@ export async function GET(request, { params }) {
   const f = FORMATE[format];
   if (!f) return new Response("Format unbekannt", { status: 404 });
   const d = await ladeKundenbuehne(title);
-  if (!d) return new Response("Projekt nicht gefunden", { status: 404 });
+  // Social-Bilder nennen den Kunden – nur mit Namensfreigabe (kit.social, A07)
+  if (!d || !d.kit?.social) return new Response("Projekt nicht gefunden", { status: 404 });
 
   const { w, h } = f;
   const hoch = format === "story";

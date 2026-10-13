@@ -4,8 +4,10 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Calculator, Zap } from "lucide-react";
 
-import { berechne } from "@/lib/solarrechner";
-import { ANNAHMEN, SCHICHTEN, zielgruppeGrenzen } from "@/data/solarrechner";
+import { heroEingabe, rechneGewerbePv } from "@/lib/rechner/gewerbepv";
+import { ANNAHMEN, SCHICHTEN } from "@/data/solarrechner";
+import pvgis from "@/data/regionen-pvgis.json";
+import { DeltaChip } from "@/components/RechnerGewerbe/GewerbePVBausteine";
 import useEnergyLive, { fmtCt } from "@/components/ui/useEnergyLive";
 import { LiveDot } from "@/components/ui/LiveTicker";
 import S01Zahl from "@/components/Startseite/s01-zahl";
@@ -14,12 +16,12 @@ import { zahlText } from "@/data/kennzahlen";
 /**
  * Live-Mini-Rechner im Startseiten-Hero: „Was bringt Ihr Hallendach?“
  * Drei Eingaben (Dachfläche, Jahresverbrauch, Schichtbetrieb) → Anlagengröße,
- * Ersparnis, Amortisation und CO₂. Rechenkern ist der Solarrechner
- * (`berechne`, Zielgruppe „gewerbe“: stündliche Jahressimulation mit
- * Betriebs-Lastprofil, Preise netto). Annahmen wie im Solarrechner:
- * aufgeständertes Flachdach (Süd, flach), 7 m² Dach je kWp, ohne Speicher und
- * ohne Förderung. Richtwert – die Detailrechnung (/rechner/gewerbe-pv) rechnet
- * mit Standort, Dachart, Speicher, EAG-Zuschuss und IFB.
+ * Ersparnis, Amortisation und CO₂. Rechenkern ist derselbe wie in der Detailrechnung
+ * (/rechner/gewerbe-pv, rechneGewerbePv über heroEingabe): stündliche Jahressimulation
+ * mit Betriebs-Lastprofil, Preise netto, Flachdach Ost-West aufgeständert mit 7 m² je kWp
+ * und PVGIS-Ertrag Ost-West für den Standard-Standort Linz, ohne Speicher und ohne
+ * Förderung. Gleiche Eingabe → gleiche kWp und gleiche Ergebnisse wie die Detailrechnung
+ * mit EAG/IFB aus; der Detail-Link übergibt Fläche, Verbrauch, Schichten, Dachart und Ort.
  *
  * Gestaltung (Startseiten-Hero, Präfix s01 – Stile in Startseite/S01Hero.js):
  * Die Glaskarte setzt sich beim Laden zusammen (.s01-teil gestaffelt), die Ergebnisse
@@ -27,13 +29,17 @@ import { zahlText } from "@/data/kennzahlen";
  * gleitenden Schieber. Rechenlogik unverändert.
  */
 
-const GRENZEN = zielgruppeGrenzen("gewerbe");
+// Standard-Standort der Detailrechnung (startOrt) – PVGIS-Werte für Ost-West, Süd und flach
+const ORT = "linz";
+const STANDORT = {
+  sued35: pvgis.orte[ORT].sued35_kwh_kwp,
+  ostwest15: pvgis.orte[ORT].ostwest15_kwh_kwp,
+  flach10: pvgis.orte[ORT].flach10_kwh_kwp,
+};
 const FLAECHE = { min: 500, max: 15000, step: 250, start: 4000 };
 // Jahresverbrauch in MWh – nichtlineare Stufen, damit 50 MWh und 5 GWh am selben Regler gut greifbar sind
 const MWH_STUFEN = [50, 75, 100, 150, 200, 250, 300, 400, 500, 600, 800, 1000, 1250, 1500, 2000, 2500, 3000, 4000, 5000];
 const MWH_START = MWH_STUFEN.indexOf(400);
-// Schichtmodell → Betriebstage im Lastprofil (3 Schichten = rund um die Uhr, 7 Tage)
-const BETRIEBSTAGE = { 1: 5, 2: 5, 3: 7 };
 
 // Tausenderpunkt ohne Intl – Server und Browser formatieren identisch (keine Hydration-Unterschiede)
 const zahl = (n) => zahlText(Math.round(n));
@@ -57,24 +63,13 @@ export default function HeroGewerbeRechner() {
   const karte = useRef(null);
 
   const mwh = MWH_STUFEN[stufe];
-  const kwpRoh = flaeche / ANNAHMEN.qmProKwpFlachdach;
-  const kwp = Math.min(Math.max(Math.round(kwpRoh / 5) * 5, GRENZEN.kwp.min), GRENZEN.kwp.max);
-  const gedeckelt = kwpRoh > GRENZEN.kwp.max;
+  const kwp = heroEingabe({ flaeche, verbrauchMwh: mwh, schichten, standort: STANDORT }).kwp;
 
   // Regler bleiben flüssig: die Jahressimulation läuft mit zurückgestellter Eingabe
-  const eingabe = useDeferredValue(`${kwp}|${mwh}|${schichten}`);
+  const eingabe = useDeferredValue(`${flaeche}|${mwh}|${schichten}`);
   const r = useMemo(() => {
-    const [k, m, s] = eingabe.split("|").map(Number);
-    return berechne({
-      kwp: k,
-      ausrichtung: "sued",
-      neigung: "flach",
-      verbrauch: m * 1000,
-      speicherKwh: 0,
-      zielgruppe: "gewerbe",
-      betriebstage: BETRIEBSTAGE[s],
-      schichten: s,
-    });
+    const [f, m, s] = eingabe.split("|").map(Number);
+    return rechneGewerbePv(heroEingabe({ flaeche: f, verbrauchMwh: m, schichten: s, standort: STANDORT }));
   }, [eingabe]);
 
   const fillFlaeche = ((flaeche - FLAECHE.min) / (FLAECHE.max - FLAECHE.min)) * 100;
@@ -82,14 +77,16 @@ export default function HeroGewerbeRechner() {
   const schicht = SCHICHTEN.find((s) => s.id === schichten);
   const schichtIndex = Math.max(0, SCHICHTEN.findIndex((s) => s.id === schichten));
   const angebot = `/angebot?objekt=gewerbe&verbrauch=${mwh * 1000}&kwp=${kwp}`;
-  const detail = `/rechner/gewerbe-pv?flaeche=${flaeche}&verbrauch=${mwh}&schichten=${schichten}`;
+  // foerderung=0: Detailrechnung startet wie der Hero ohne EAG-Zuschuss und IFB (gleiche Amortisation)
+  const detail = `/rechner/gewerbe-pv?flaeche=${flaeche}&verbrauch=${mwh}&schichten=${schichten}&dachart=ost-west&ort=${ORT}&foerderung=0`;
   const eigen = Math.round(r.eigenverbrauchsquote * 100);
-  const ersparnis = Math.round(r.nutzenProJahr / 100) * 100;
+  const ersparnis = Math.round(r.nutzenJahr1 / 100) * 100;
+  const amortisation = r.amortisation != null && r.amortisation > 0 ? r.amortisation : null;
 
   // Ruhige Live-Region: nur eine Ansage, wenn die Eingaben zur Ruhe gekommen sind;
   // der erste Stand wird nicht angesagt (steht ohnehin sichtbar da).
   const zusammenfassung = `Richtwert: Anlage ${zahl(kwp)} kWp, Ersparnis ca. ${zahl(ersparnis)} Euro pro Jahr, ${
-    r.amortisationJahre ? `Amortisation ca. ${zahl1(r.amortisationJahre)} Jahre, ` : ""
+    amortisation ? `Amortisation ca. ${zahl1(amortisation)} Jahre, ` : ""
   }Eigenverbrauch ${eigen} Prozent.`;
   const [ansage, setAnsage] = useState("");
   const [erstAnsage, setErstAnsage] = useState(zusammenfassung);
@@ -182,7 +179,7 @@ export default function HeroGewerbeRechner() {
         <fieldset className="s01-teil mt-5" style={{ "--i": 3 }}>
           <legend className="flex w-full items-baseline justify-between gap-3 text-[13.5px] text-white/70">
             <span>Schichtbetrieb</span>
-            <span className="text-[12px] text-white/50">{schichten === 3 ? "7 Tage, rund um die Uhr" : `Mo–Fr, ${schicht?.zeit}`}</span>
+            <span className="text-[12px] text-white/60">{schichten === 3 ? "7 Tage, rund um die Uhr" : `Mo–Fr, ${schicht?.zeit}`}</span>
           </legend>
           <div className="relative mt-2.5 grid grid-cols-3 rounded-full bg-white/[0.07] p-1 ring-1 ring-inset ring-white/10">
             <span
@@ -211,7 +208,10 @@ export default function HeroGewerbeRechner() {
         <div className="s01-teil s01-ergebnis relative mt-6 overflow-hidden rounded-[20px] ring-1 ring-inset ring-white/10" style={{ "--i": 4 }}>
           <div className="flex items-end justify-between gap-4 px-4 pb-4 pt-4 sm:px-5">
             <div className="min-w-0">
-              <p className="text-[12.5px] text-white/60">Ersparnis pro Jahr, ca.</p>
+              <p className="flex items-center gap-2 whitespace-nowrap text-[12.5px] text-white/60">
+                Ersparnis pro Jahr, ca.
+                <DeltaChip wert={ersparnis} dunkel />
+              </p>
               <p className="ov-num mt-2 whitespace-nowrap font-display text-[36px] font-extrabold leading-none tracking-[-0.035em] sm:text-[44px]">
                 <span className="s01-ergebnis-zahl">
                   <S01Zahl wert={ersparnis} {...AUFTAKT} />
@@ -230,9 +230,9 @@ export default function HeroGewerbeRechner() {
             <div className="px-3 py-3.5 sm:px-5">
               <dt className="text-[11.5px] text-white/55">Amortisation</dt>
               <dd className="ov-num mt-1 whitespace-nowrap font-display text-[17px] font-extrabold">
-                {r.amortisationJahre ? (
+                {amortisation ? (
                   <>
-                    ~<S01Zahl wert={r.amortisationJahre} stellen={1} {...AUFTAKT} /> J.
+                    ~<S01Zahl wert={amortisation} stellen={1} {...AUFTAKT} /> J.
                   </>
                 ) : (
                   "–"
@@ -242,7 +242,7 @@ export default function HeroGewerbeRechner() {
             <div className="border-l border-white/10 px-3 py-3.5 sm:px-5">
               <dt className="text-[11.5px] text-white/55">CO₂ / Jahr</dt>
               <dd className="ov-num mt-1 whitespace-nowrap font-display text-[17px] font-extrabold">
-                <S01Zahl wert={r.co2ProJahr / 1000} {...AUFTAKT} /> t
+                <S01Zahl wert={r.co2Tonnen} {...AUFTAKT} /> t
               </dd>
             </div>
             <div className="border-l border-white/10 px-3 py-3.5 sm:px-5">
@@ -260,7 +260,7 @@ export default function HeroGewerbeRechner() {
         <div className="s01-teil mt-5 grid gap-2.5 sm:grid-cols-[1.35fr_1fr]" style={{ "--i": 5 }}>
           <Link
             href={angebot}
-            className="group flex min-h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 py-3 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.9)] transition-all hover:bg-ov-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ov-300"
+            className="group flex min-h-12 items-center justify-center gap-2 rounded-full bg-ov-600 px-5 py-3 text-[15px] font-semibold text-white shadow-[0_12px_30px_-10px_rgba(102,153,51,0.9)] transition-all hover:bg-ov-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ov-300"
           >
             Angebot mit diesen Werten
             <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -273,8 +273,8 @@ export default function HeroGewerbeRechner() {
             Detailrechnung
           </Link>
         </div>
-        <p className="s01-teil mt-4 text-[11.5px] leading-snug text-white/45" style={{ "--i": 6 }}>
-          Richtwert, netto: aufgeständertes Flachdach ({zahl(ANNAHMEN.qmProKwpFlachdach)} m²/kWp{gedeckelt ? `, gedeckelt bei ${zahl(GRENZEN.kwp.max)} kWp` : ""}), ohne Speicher und Förderung.
+        <p className="s01-teil mt-4 text-[11.5px] leading-snug text-white/60" style={{ "--i": 6 }}>
+          Richtwert, netto: Flachdach Ost-West aufgeständert ({zahl(ANNAHMEN.qmProKwpFlachdach)} m²/kWp, PVGIS-Ertrag Ost-West für Linz), ohne Speicher und Förderung – wie die Detailrechnung.
         </p>
       </div>
     </div>

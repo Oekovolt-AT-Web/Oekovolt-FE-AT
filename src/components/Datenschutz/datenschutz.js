@@ -11,7 +11,9 @@ import { EXPERIMENTE, laeuft } from "@/lib/experimente";
  * Stand der Datenschutzerklärung – bei jeder inhaltlichen Änderung anpassen.
  *
  * Abgleich mit dem Code am 30.09.2026 (Befunde D7, D10, D11 in docs/projekt-doku/05-sicherheit-und-datenschutz.md,
- * Tabelle A1–A8 in docs/datenschutz/00-Uebersicht-VVT.md) – RECHTLICH PRÜFEN. Fristen und ihre Quelle im Code:
+ * Tabelle A1–A8 in docs/datenschutz/00-Uebersicht-VVT.md) und am 12.10.2026 (Welle A, Paket A09: Lead-Gate mit
+ * E-Mail-Bestätigung, Vertriebs-Priorisierung, Referenz-Freigabe, Lastgang-Kennzahlen). Die anwaltliche Prüfung
+ * steht als Menschen-Auftrag in docs/projekt-doku/anhang/wellen/A09.md. Fristen und ihre Quelle im Code:
  *  - Formular-Anfragen (Kontakt, Konfigurator, PDF-Analyse, Sponsoring, Partner, Award): Anonymisierung 24 Monate ab
  *    Anlage, ausgenommen Status „Angebot erstellt“/„Gewonnen“ – oekovolt_app/website_api/helfer.py
  *    (anfragen_aufraeumen), format.py (LOESCHFRIST_MONATE, ANONYMISIEREN)
@@ -20,11 +22,13 @@ import { EXPERIMENTE, laeuft } from "@/lib/experimente";
  *  - Unterlagen per Smartphone („Solar Lead“): 12 Monate, offene Vorgänge 24 h – solar_lead/api.py (aufraeumen)
  *  - Heatmap: 14 Monate – heatmap_zelle/heatmap_logik.py (AUFBEWAHRUNG_MONATE)
  *  - Hinweisgebersystem: 5 Jahre nach Abschluss – hinweis/hinweis.py, api.py (loesche_abgelaufene_hinweise)
+ *  - Rechner-Leads (Lead-Gate): unbestätigt 30 Tage, sonst wie Formular-Anfragen; Lastgang-Kennzahlen 12 Monate –
+ *    Backoffice-Paket A11 (rechner.py, ANONYMISIEREN); Freischalt-Cookie 30 Tage – src/lib/leadGateServer.js
  * CloudTalk (src/lib/rueckrufApi.js) ist nirgends eingebunden und wird deshalb nicht genannt. Wird der Sofort-Rückruf
  * eingebaut, Abschnitt „Rückruf“ und die Empfängerliste wieder ergänzen.
  * Abschnittsnummern werden aus `inhalt` berechnet – Querverweise immer mit nr("id") schreiben, nie als feste Zahl.
  */
-export const DATENSCHUTZ_STAND = "30. September 2026";
+export const DATENSCHUTZ_STAND = "12. Oktober 2026";
 
 const extern = { target: "_blank", rel: "noopener noreferrer" };
 const NeuerTab = () => <span className="sr-only"> (öffnet in neuem Tab)</span>;
@@ -63,11 +67,13 @@ const inhalt = (umami) => [
   ["statistik", statistikTitel(umami)],
   ["karten", "Karten: Google Maps und OpenStreetMap"],
   ["anfragen", "Kontaktformular, Angebots- und Serviceanfragen"],
+  ["vertrieb", "Bearbeitung und Priorisierung von Anfragen im Vertrieb"],
   ["herkunft", "Herkunft Ihrer Anfrage (Kampagnen-Zuordnung)"],
   ["ip-adresse", "Speicherung der IP-Adresse bei Anfragen"],
   ["rueckruf", "Rückruf und Online-Terminbuchung"],
   ["unterlagen", "Unterlagen per Smartphone, Texterkennung und KI-Auswertung"],
   ["analyse", "PDF-Analyse aus dem Solarrechner"],
+  ["rechner-export", "Rechner-Ergebnisse: Export, Freischaltung per E-Mail und Kontaktwunsch"],
   ["standort-check", "Standort-Check, Schneelast-Karte und PV-Prognose"],
   ["lastgang", "Lastgang-Analyse im Browser"],
   ["partner", "Registrierung als Elektro-Partner"],
@@ -76,6 +82,7 @@ const inhalt = (umami) => [
   ["bewerbung", "Bewerbungen"],
   ["kunden", "Kunden, Projekte, Monitoring und Fernwartung"],
   ["kundenbuehne", "Referenzprojekte und Kundenporträts"],
+  ["referenz-freigabe", "Referenz-Freigabe durch Kundinnen und Kunden"],
   ["energiedaten", "Energiemarktdaten (Energie live)"],
   ["teilen", "Teilen-Funktionen und „Mit KI zusammenfassen“"],
   ["push", "Push-Benachrichtigungen"],
@@ -205,6 +212,15 @@ const PrivacyPolicy = () => {
           Cookie „cookieConsent“, in dem Ihre Auswahl im Cookie-Banner für ein Jahr gespeichert wird, sowie einzelne Einträge
           im lokalen Speicher Ihres Browsers, die sich merken, dass Sie einen Hinweis geschlossen haben. Diese Einträge
           enthalten keine Kennungen, mit denen wir Sie wiedererkennen könnten.
+        </p>
+        <p id="cookie-lead-frei" className="scroll-mt-28">
+          Haben Sie den Export oder die Auswertung eines unserer Rechner per E-Mail freigeschaltet (Punkt {nr("rechner-export")}),
+          setzen wir das Cookie „ov-lead-frei“. Es enthält nur die Ablaufzeit und die Kurzbezeichnungen der freigeschalteten
+          Rechner (z. B. „gewerbe-pv“), ist mit einem Schlüssel signiert, für Skripte im Browser nicht lesbar (HttpOnly) und
+          wird nach 30 Tagen automatisch gelöscht. Namen oder E-Mail-Adressen stehen darin nicht. Es ist unbedingt
+          erforderlich, damit die von Ihnen ausdrücklich angeforderte Funktion – Export bzw. Auswertung ohne erneute
+          Bestätigung – funktioniert (§ 165 Abs. 3 TKG 2021); Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Sie können es
+          jederzeit über „Freischaltung auf diesem Gerät entfernen“ im Rechner oder in Ihrem Browser löschen.
         </p>
         <p>
           {umami ? (
@@ -390,6 +406,46 @@ const PrivacyPolicy = () => {
         </p>
       </Abschnitt>
 
+      <Abschnitt id="vertrieb" titel={T("vertrieb")}>
+        <p>
+          Damit jede Anfrage schnell bei der richtigen Person landet, organisieren wir die Bearbeitung in unserem Backoffice
+          wie folgt. Rechtsgrundlage ist jeweils unser berechtigtes Interesse an einer zügigen, geordneten Bearbeitung Ihrer
+          Anfrage (Art. 6 Abs. 1 lit. f DSGVO); Sie können dem nach Art. 21 DSGVO widersprechen.
+        </p>
+        <ul className="mt-2 space-y-1.5">
+          <li>
+            <strong>Priorisierung:</strong> Aus Ihren Angaben zum Vorhaben (z. B. Art des Betriebs, Jahresverbrauch,
+            Netzebene, gewünschter Zeitplan, gewähltes Formular) bildet das System eine Punktzahl und eine Klasse (A, B oder
+            C), die nur die Reihenfolge und die angestrebte Reaktionszeit unserer Bearbeitung bestimmt. Jede Anfrage wird von
+            einem Menschen bearbeitet; eine ausschließlich automatisierte Entscheidung mit rechtlicher oder ähnlich
+            erheblicher Wirkung im Sinne von Art. 22 DSGVO findet nicht statt. Auf Wunsch nennen wir Ihnen die Gründe der
+            Einstufung.
+          </li>
+          <li>
+            <strong>Zusammenführung:</strong> Gehen von derselben E-Mail-Adresse oder Telefonnummer innerhalb kurzer Zeit
+            mehrere Anfragen ein, verknüpfen wir sie, damit Sie nur einen Ansprechpartner haben und nicht mehrfach
+            kontaktiert werden; frühere Anfragen der letzten Monate werden der zuständigen Person angezeigt.
+          </li>
+          <li>
+            <strong>Zuteilung:</strong> Nach Region (Postleitzahl bzw. Bundesland), Art des Vorhabens und Abwesenheiten wird
+            die Anfrage einer Mitarbeiterin oder einem Mitarbeiter aus Vertrieb oder Technik zugeteilt.
+          </li>
+          <li>
+            <strong>Benachrichtigung ohne Personendaten:</strong> Bei dringenden Anfragen erhält das Vertriebsteam eine
+            Kurzmeldung (z. B. per SMS oder Team-Nachricht), die nur Klasse, Art des Vorhabens, Region und einen Link ins
+            Backoffice enthält – keine Namen, Adressen, E-Mail-Adressen oder Telefonnummern.
+          </li>
+          <li>
+            <strong>Telefonische Kontaktaufnahme:</strong> Wir rufen Sie nur an, wenn Sie das ausdrücklich angekreuzt haben
+            (Rückruf- oder Kontaktwunsch), einen Termin gebucht oder einen Rückruf angefordert haben. Sonst antworten wir per
+            E-Mail.
+          </li>
+        </ul>
+        <p className="mt-3">
+          Für diese Angaben gelten dieselben Fristen wie für die Anfrage selbst (Punkt {nr("anfragen")} bzw. {nr("rueckruf")}).
+        </p>
+      </Abschnitt>
+
       <Abschnitt id="herkunft" titel={T("herkunft")}>
         <p>
           Wenn Sie uns eine Anfrage senden (z. B. Kontakt, Rückruf, Terminbuchung, PDF-Analyse, Angebots-Konfigurator oder
@@ -495,6 +551,42 @@ const PrivacyPolicy = () => {
         </p>
       </Abschnitt>
 
+      <Abschnitt id="rechner-export" titel={T("rechner-export")}>
+        <p>
+          Die Ergebnisse unserer Online-Rechner (z. B. Gewerbe-PV, Peak Shaving, CO₂ & ESG, Energiegemeinschaft) sehen Sie
+          ohne Angabe von Daten am Bildschirm. Für Export, PDF-Bericht, Link zum Teilen und Textbausteine sowie für
+          Auswertungen eigener Daten (z. B. Lastgang-Analyse, Anlagen-Check) bitten wir einmalig um Vorname, Nachname und
+          E-Mail-Adresse; optional um Postleitzahl, Funktion und die Rollen, für die der Bericht gedacht ist. Wir senden
+          Ihnen an diese Adresse einen Bestätigungslink (24 Stunden gültig, einmal verwendbar). Erst nach dem Klick ist die
+          Funktion freigeschaltet – so stellen wir sicher, dass niemand fremde E-Mail-Adressen einträgt.
+        </p>
+        <p>
+          Gespeichert werden Ihre Angaben, der Name des Rechners, die Kennzahlen Ihres Ergebnisses (z. B. Anlagengröße,
+          Investition, Amortisation – keine hochgeladenen Dateien), die Seite, die Kampagnen-Herkunft (Punkt {nr("herkunft")}),
+          die IP-Adresse (Punkt {nr("ip-adresse")}), der Zeitpunkt der Bestätigung und die Fassung des angezeigten
+          Hinweistextes. Zweck ist die Bereitstellung des Ergebnisses und die Beantwortung Ihrer Rückfragen dazu;
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Die Angabe von Name und E-Mail ist für den Export erforderlich,
+          weil wir Ihnen sonst keinen Link senden und Rückfragen nicht zuordnen können. Einen Newsletter senden wir nicht.
+        </p>
+        <p>
+          <strong>Kontaktwunsch (freiwillig):</strong> Nur wenn Sie das Häkchen „darf mich zu diesem Ergebnis kontaktieren“
+          setzen, melden wir uns von uns aus per E-Mail und – wenn Sie eine Nummer angeben – telefonisch. Rechtsgrundlage ist
+          Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO, § 174 TKG 2021). Sie ist keine Voraussetzung für den Export und
+          jederzeit widerrufbar, etwa per E-Mail an {FIRMA.email}. Das Telefonfeld erscheint erst nach dem Häkchen.
+        </p>
+        <p>
+          <strong>Kennzahlen an einen Fachberater senden:</strong> Nach einer Lastgang-Analyse können Sie auf Klick nur die
+          Kennzahlen (Jahresverbrauch, Grundlast, Spitzenlast, zwölf Monatsspitzen, Wochenendanteil, Deckungsgrad) an uns
+          senden – nie die Datei. Wir verwenden sie ausschließlich, um Ihnen eine passende Anlage auszulegen, und löschen sie
+          zwölf Monate nach Eingang, sofern kein Angebot oder Auftrag entsteht.
+        </p>
+        <p>
+          <strong>Speicherdauer:</strong> Nicht bestätigte Anfragen löschen wir nach 30 Tagen. Bestätigte Anfragen, aus denen
+          kein Angebot oder Auftrag entsteht, anonymisieren wir wie unter Punkt {nr("anfragen")} beschrieben 24 Monate nach
+          Eingang. Für die Freischaltung auf Ihrem Gerät setzen wir das Cookie „ov-lead-frei“ (Punkt {nr("cookies")}).
+        </p>
+      </Abschnitt>
+
       <Abschnitt id="standort-check" titel={T("standort-check")}>
         <p>
           Mit dem <Link href="/standort-check">Standort-Check</Link>, der <Link href="/schneelast">Schneelast-Karte</Link> und
@@ -567,6 +659,12 @@ const PrivacyPolicy = () => {
           (Jahresverbrauch, Anlagengröße, Speicher) – nicht Ihre Datei. Erst wenn Sie die Anfrage absenden, verarbeiten wir
           diese Angaben wie unter Punkt {nr("anfragen")} beschrieben.
         </p>
+        <p>
+          Die Auswertung Ihrer eigenen Datei schalten Sie einmalig mit Name und E-Mail-Adresse frei (Punkt{" "}
+          {nr("rechner-export")}); übertragen werden dabei nur diese Kontaktdaten, nicht die Datei. Die Datei wartet bis zur
+          Bestätigung nur im Arbeitsspeicher der geöffneten Seite. Der Beispiel-Lastgang ist ohne Freischaltung nutzbar.
+          Kennzahlen senden Sie uns nur, wenn Sie das ausdrücklich anklicken (Punkt {nr("rechner-export")}).
+        </p>
       </Abschnitt>
 
       <Abschnitt id="partner" titel={T("partner")}>
@@ -612,8 +710,9 @@ const PrivacyPolicy = () => {
         </p>
         <p>
           Namen, Fotos und Projektbeschreibungen von Nominierten und Preisträgern veröffentlichen wir (z. B. auf der Website,
-          im Newsroom und in sozialen Medien) nur mit Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die Sie jederzeit
-          widerrufen können; ein Widerruf bis zur Jurysitzung führt dazu, dass Ihre Einreichung nicht öffentlich genannt wird.
+          im Newsroom und in sozialen Medien) nur mit Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) über ein eigenes,
+          nicht vorangekreuztes Häkchen bei der Einreichung – ohne dieses Häkchen bewerten wir das Projekt anonym. Die
+          Einwilligung können Sie jederzeit widerrufen; ein Widerruf bis zur Jurysitzung führt dazu, dass Ihre Einreichung nicht öffentlich genannt wird.
           Freiwillig freigegebene Monitoring-Daten der Anlage verwenden wir nur für die Bewertung. Mit der Einreichung bestätigen Sie, dass Sie über die Rechte an den eingereichten Fotos verfügen
           und abgebildete Personen einverstanden sind. Nicht prämierte Einreichungen werden 24 Monate nach Eingang automatisch
           anonymisiert (Punkt {nr("anfragen")}).
@@ -654,11 +753,13 @@ const PrivacyPolicy = () => {
 
       <Abschnitt id="kundenbuehne" titel={T("kundenbuehne")}>
         {/* Quelle: docs/datenschutz/VVT-Kundenbuehne.md; Code: src/lib/kundenbuehne*.js, src/data/kunden.js,
-            src/components/Kundenbuehne/ – RECHTLICH PRÜFEN (Befund D11, Art. 14 DSGVO, § 1 DSG). */}
+            src/components/Kundenbuehne/ (Befund D11, Art. 14 DSGVO, § 1 DSG – anwaltliche Prüfung siehe A09.md). */}
         <p>
           Auf den Seiten unserer <Link href="/referenzen/projekte">Referenzprojekte</Link> stellen wir Anlagen und unsere Kundinnen und
-          Kunden vor – mit Kundenporträt, Siegel, Vorlagen für soziale Medien und einem ESG-Kurzbericht mit geschätzten
-          Kennzahlen der Anlage. Dafür verwenden wir eigene Projektdaten (z. B. Leistung, Jahr, Ort und Bilder der Anlage)
+          Kunden vor – mit Kundenporträt, Projekt-Plakette, Vorlagen für soziale Medien und einem ESG-Kurzbericht mit
+          Kennzahlen der Anlage. Ohne Freigabe der Kundin bzw. des Kunden (Punkt {nr("referenz-freigabe")}) zeigen wir nur
+          Anlagendaten (Leistung, Jahr, Ort) und eine neutrale Beschreibung (Branche, Ort) – ohne Firmenname, Logo, Zitat,
+          Fotos, Plakette oder Messwerte. Dafür verwenden wir eigene Projektdaten (z. B. Leistung, Jahr, Ort und Bilder der Anlage)
           sowie Angaben, die die Unternehmen selbst öffentlich machen: Firmenwortlaut, Branche, Standort, Website, die dort
           verlinkten Social-Media-Profile und eine kurze, in eigenen Worten verfasste Beschreibung. Diese Angaben stammen aus
           öffentlich zugänglichen Quellen, vor allem den offiziellen Websites der Unternehmen (Impressum, „Über uns“); die
@@ -669,7 +770,7 @@ const PrivacyPolicy = () => {
           Die Darstellung betrifft überwiegend Unternehmen. Personenbezogene Daten können enthalten sein, wenn ein Name im
           Firmenwortlaut steht oder die Beschreibung Gründerinnen, Gründer oder Inhaber nennt. Rechtsgrundlage ist insoweit
           unser berechtigtes Interesse, unsere Arbeit anhand realer Projekte zu zeigen (Art. 6 Abs. 1 lit. f DSGVO). Zitate mit
-          dem Namen der zitierten Person und Firmenlogos zeigen wir nur mit Freigabe (Art. 6 Abs. 1 lit. a DSGVO). Empfänger
+          dem Namen der zitierten Person, Firmennamen und Firmenlogos zeigen wir nur mit Freigabe (Art. 6 Abs. 1 lit. a DSGVO). Empfänger
           ist die Öffentlichkeit; die Vorlagen für soziale Medien laden die Kundinnen und Kunden selbst herunter.
         </p>
         <p>
@@ -680,11 +781,30 @@ const PrivacyPolicy = () => {
         </p>
       </Abschnitt>
 
+      <Abschnitt id="referenz-freigabe" titel={T("referenz-freigabe")}>
+        <p>
+          Bevor wir ein Projekt mit Firmenname, Logo, Zitat, Fotos der Anlage, Projekt-Plakette, Live-Daten oder gemessenen
+          Erträgen zeigen, bitten wir die Kundin bzw. den Kunden um eine Freigabe – über einen persönlichen Link (30 Tage
+          gültig) oder auf Papier. Jede Angabe wird einzeln freigegeben; nichts ist vorangekreuzt. Dabei verarbeiten wir Name
+          und Funktion der freigebenden Person, die E-Mail-Adresse (nur für Link und Bestätigung), bei einem Zitat Name und
+          Funktion der zitierten Person sowie zum Nachweis Datum, Fassung der Erklärung, die Bestätigung der
+          Vertretungsbefugnis und eine gekürzte IP-Adresse.
+        </p>
+        <p>
+          Rechtsgrundlage für Zitat und Personendaten ist die Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), für den Nachweis
+          der Freigabe unser berechtigtes Interesse (Art. 6 Abs. 1 lit. f DSGVO). Die Freigabe ist freiwillig, ohne
+          Gegenleistung und jederzeit ganz oder teilweise widerrufbar – über den Link in der Bestätigungsmail oder per
+          E-Mail an {FIRMA.email}; wir entfernen die betroffenen Inhalte dann innerhalb weniger Werktage. Den Nachweis
+          bewahren wir auf, solange die Referenz veröffentlicht ist, und danach drei Jahre. Fotos mit erkennbaren Personen
+          veröffentlichen wir nur mit deren eigener Einwilligung.
+        </p>
+      </Abschnitt>
+
       <Abschnitt id="energiedaten" titel={T("energiedaten")}>
         <p>
           Börsenstrompreise und Erzeugungsdaten auf unserer Seite <Link href="/energie-live">Energie live</Link> und in
           einzelnen Rechnern beziehen wir serverseitig von öffentlichen Datenquellen (u. a. Energy-Charts des Fraunhofer ISE
-          und aWATTar). Beim Abruf werden keine personenbezogenen Daten von Ihnen an diese Anbieter übermittelt; die
+          und Bundesnetzagentur | SMARD.de). Beim Abruf werden keine personenbezogenen Daten von Ihnen an diese Anbieter übermittelt; die
           Diagramme werden in Ihrem Browser aus den bei uns zwischengespeicherten Daten erzeugt.
         </p>
       </Abschnitt>
@@ -735,7 +855,7 @@ const PrivacyPolicy = () => {
         {HINWEIS_INTERN ? (
           <>
             {/* Eigenes Hinweisgebersystem (HINWEIS_INTERN=1). Frist wie im Backend umgesetzt (Frappe-DocType „Hinweis“:
-                Löschung 5 Jahre nach Abschluss) – RECHTLICH PRÜFEN, siehe docs/frappe-hinweisgebersystem/GO-LIVE-AT.md. */}
+                Löschung 5 Jahre nach Abschluss) – anwaltliche Prüfung siehe A09.md und docs/frappe-hinweisgebersystem/GO-LIVE-AT.md. */}
             <p>
               Hinweise auf Rechtsverletzungen nach dem HinweisgeberInnenschutzgesetz (HSchG) können Sie vertraulich und auf
               Wunsch anonym über unser eigenes <Link href="/hinweisgebersystem">Hinweisgebersystem</Link> abgeben.
@@ -816,6 +936,11 @@ const PrivacyPolicy = () => {
           </li>
           <li>Rückrufe und Termine: Anonymisierung 24 Monate nach dem Termin (Punkt {nr("rueckruf")})</li>
           <li>
+            Rechner-Export und Auswertungen: nicht bestätigte Anfragen 30 Tage, sonst Anonymisierung 24 Monate nach Eingang;
+            gesendete Lastgang-Kennzahlen zwölf Monate; Freischalt-Cookie 30 Tage (Punkt {nr("rechner-export")})
+          </li>
+          <li>Referenz-Freigaben: Nachweis bis drei Jahre nach Ende der Veröffentlichung (Punkt {nr("referenz-freigabe")})</li>
+          <li>
             Unterlagen per Smartphone ohne Angebot oder Auftrag: Löschung zwölf Monate nach Eingang, nicht abgeschlossene
             Vorgänge 24 Stunden nach Ablauf des QR-Codes bzw. Links (Punkt {nr("unterlagen")})
           </li>
@@ -841,8 +966,9 @@ const PrivacyPolicy = () => {
         </ul>
         <p className="mt-3">
           Zur Ausübung Ihrer Rechte genügt eine formlose Nachricht an <a href={`mailto:${FIRMA.email}?subject=Datenschutz`}>{FIRMA.email}</a>.
-          Wir können einen Identitätsnachweis verlangen, wenn Zweifel an Ihrer Identität bestehen. Eine automatisierte
-          Entscheidungsfindung einschließlich Profiling (Art. 22 DSGVO) findet nicht statt.
+          Wir können einen Identitätsnachweis verlangen, wenn Zweifel an Ihrer Identität bestehen. Eine ausschließlich
+          automatisierte Entscheidung im Sinne von Art. 22 DSGVO findet nicht statt; wie wir eingehende Anfragen für die
+          Bearbeitung reihen, steht unter Punkt {nr("vertrieb")}.
         </p>
         <p>
           Wenn Sie der Ansicht sind, dass die Verarbeitung Ihrer Daten gegen das Datenschutzrecht verstößt, können Sie sich bei

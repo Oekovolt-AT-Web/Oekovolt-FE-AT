@@ -211,7 +211,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Ökovolt bietet Reststrom- und Direktvermarktung als Leistung an. Für die technische Anbindung stehen eigene Parkregler (EZA-Regler) und eigene SCADA- und Fernwartungssysteme zur Verfügung; Details zum Ablauf finden Sie auf der Seite [Direktvermarktung](/service/direktvermarktung).",
+          text: "Ökovolt bietet Reststrom- und Direktvermarktung als Leistung an. Für die technische Anbindung stehen Parkregler (EZA-Regler), SCADA und Fernwartung mit unserem Technologiepartner Solensa zur Verfügung; Details zum Ablauf finden Sie auf der Seite [Direktvermarktung](/service/direktvermarktung).",
         },
       ],
     },
@@ -347,7 +347,7 @@ const artikel = {
     },
     {
       q: "Bietet Ökovolt Reststromvermarktung an?",
-      a: "Ja, Ökovolt bietet Reststrom- bzw. Direktvermarktung als Leistung an und bindet Anlagen mit eigenen Parkreglern und SCADA-Systemen an. Den Ablauf beschreibt die Seite [Direktvermarktung](/service/direktvermarktung).",
+      a: "Ja, Ökovolt bietet Reststrom- bzw. Direktvermarktung als Leistung an und bindet Anlagen mit Parkregler und SCADA mit unserem Technologiepartner Solensa an. Den Ablauf beschreibt die Seite [Direktvermarktung](/service/direktvermarktung).",
     },
   ],
 

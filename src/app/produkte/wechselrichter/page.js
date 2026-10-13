@@ -121,7 +121,7 @@ export default function WechselrichterPage() {
             Wechselrichter für Gewerbe-PV – <span className="ov-text-gradient-light">nach TOR ausgelegt</span>
           </>
         }
-        lead="Der Wechselrichter entscheidet über Ertrag, Netzkonformität und Ausfallrisiko Ihrer Anlage. Wir verbauen Geräte von Fronius, Huawei und Solis und legen sie nach Dachflächen, Lastgang und Vorgaben des Netzbetreibers aus – bei größeren Anlagen zusammen mit unserem eigenen Parkregler."
+        lead="Der Wechselrichter entscheidet über Ertrag, Netzkonformität und Ausfallrisiko Ihrer Anlage. Wir verbauen Geräte von Fronius, Huawei und Solis und legen sie nach Dachflächen, Lastgang und Vorgaben des Netzbetreibers aus – bei größeren Anlagen zusammen mit dem Parkregler, den wir parametrieren und betreuen."
         image={{ src: "/Images/AT/ratgeber/eza-regler-parkregler.jpg", alt: "Wechselrichter und Regelungstechnik einer Gewerbe-PV-Anlage" }}
         actions={[
           { label: "Angebot anfragen", href: "/angebot" },

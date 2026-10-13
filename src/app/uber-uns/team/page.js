@@ -21,6 +21,7 @@ import RollenPfad from "@/components/Team/RollenPfad";
 import Kennzahlen from "@/components/Team/Kennzahlen";
 import FotoKachel from "@/components/Team/FotoKachel";
 import { GENERATIONEN, STAND } from "@/data/unternehmen";
+import { PARKREGLER_SATZ } from "@/data/marke";
 import { FACHPRUEFER_SICHTBAR, fachprueferSchema } from "@/data/fachpruefer";
 import { BASE_URL, FIRMA, SITE_NAME } from "@/lib/site";
 import { hreflangLanguages } from "@/lib/hreflang";
@@ -61,13 +62,14 @@ const WERTE = [
   { icon: Leaf, title: "Nachhaltigkeit", text: "Jede Anlage ist ein Beitrag zur Energiewende – ökologisch sinnvoll und wirtschaftlich nachvollziehbar gerechnet." },
 ];
 
+// Rollen-Fotos sind Stock-Motive (Symbolbilder, im Alt-Text und sichtbar unter dem Rollenpfad gekennzeichnet).
 const ROLLEN = [
-  { phase: "Erstgespräch", titel: "Vertrieb & Beratung", text: "Klärt Ziele, Lastgang und Flächen und erstellt ein Angebot, das zu Betrieb, Netzanschluss und Budget passt.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch", pos: "60% 40%" } },
-  { phase: "Projektstart", titel: "Projektleitung", text: "Koordiniert Termine, Material, Gewerke und Partnerbetriebe – und hält Sie während des Projekts auf dem Laufenden.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage", pos: "50% 30%" } },
-  { phase: "Planung", titel: "Planung & Engineering", text: "Modulbelegung, Statik und Schneelast, Wechselrichter, Speicher und Kabelnetz – digital geplant und wirtschaftlich durchgerechnet.", bild: { src: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", alt: "Photovoltaikanlage auf einem großen Flachdach eines Gewerbebaus" } },
-  { phase: "Netz", titel: "Netzanschluss & Elektrotechnik", text: "Netzzugangsantrag, Anforderungen nach TOR Erzeuger, AC-Installation, Prüfung und Inbetriebnahme mit dem Netzbetreiber.", bild: { src: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator in einem Umspannwerk" } },
-  { phase: "Betrieb", titel: "Leittechnik & Fernwartung", text: "Eigene Parkregler, Fernwartung und SCADA: Die Anlage bleibt steuerbar, überwacht und dokumentiert.", bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen" } },
-  { phase: "Bau & Service", titel: "Montage & Service", text: "Montage auf Hallen-, Flach- und Steildächern sowie auf Freiflächen, danach Wartung, Prüfung und Thermografie.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach", pos: "50% 40%" } },
+  { phase: "Erstgespräch", titel: "Vertrieb & Beratung", text: "Klärt Ziele, Lastgang und Flächen und erstellt ein Angebot, das zu Betrieb, Netzanschluss und Budget passt.", bild: { src: "/Images/Team/in-diverse-workspace-project-manager-presents-eco-2025-01-08-23-29-22-utc-1.jpg", alt: "Beratungsgespräch mit einem Photovoltaikmodul am Besprechungstisch (Symbolbild)", pos: "60% 40%" } },
+  { phase: "Projektstart", titel: "Projektleitung", text: "Koordiniert Termine, Material, Gewerke und Partnerbetriebe – und hält Sie während des Projekts auf dem Laufenden.", bild: { src: "/Images/Jobs/jobs4.jpg", alt: "Projektleiter mit Tablet vor einer Photovoltaikanlage (Symbolbild)", pos: "50% 30%" } },
+  { phase: "Planung", titel: "Planung & Engineering", text: "Modulbelegung, Statik und Schneelast, Wechselrichter, Speicher und Kabelnetz – digital geplant und wirtschaftlich durchgerechnet.", bild: { src: "/Images/AT/ratgeber/photovoltaik-flachdach.jpg", alt: "Photovoltaikanlage auf einem großen Flachdach eines Gewerbebaus (Symbolbild)" } },
+  { phase: "Netz", titel: "Netzanschluss & Elektrotechnik", text: "Netzzugangsantrag, Anforderungen nach TOR Erzeuger, AC-Installation, Prüfung und Inbetriebnahme mit dem Netzbetreiber.", bild: { src: "/Images/AT/technik/umspannwerk-transformator.jpg", alt: "Transformator in einem Umspannwerk (Symbolbild)" } },
+  { phase: "Betrieb", titel: "Leittechnik & Fernwartung", text: `${PARKREGLER_SATZ} Die Anlage bleibt steuerbar, überwacht und dokumentiert.`, bild: { src: "/Images/AT/technik/leitwarte-netzbetrieb.jpg", alt: "Leitwarte mit Bildschirmen zur Überwachung von Energieanlagen (Symbolbild)" } },
+  { phase: "Bau & Service", titel: "Montage & Service", text: "Montage auf Hallen-, Flach- und Steildächern sowie auf Freiflächen, danach Wartung, Prüfung und Thermografie.", bild: { src: "/Images/Jobs/jobs1.jpg", alt: "Monteure tragen ein Photovoltaikmodul über ein Dach (Symbolbild)", pos: "50% 40%" } },
 ];
 
 const KENNZAHLEN = [
@@ -80,7 +82,7 @@ const KENNZAHLEN = [
 const FAQ = [
   {
     q: "Wer leitet die Ökovolt Solartechnik GmbH?",
-    a: `Geschäftsführer ist ${FIRMA.geschaeftsfuehrer}, der die Gruppe 2010 gemeinsam mit Susanne Messmer gegründet hat. Er hält 51 % der österreichischen Gesellschaft, die Salzburg AG 49 %.`,
+    a: `Geschäftsführer ist ${FIRMA.geschaeftsfuehrer}, der die Gruppe 2010 gemeinsam mit Susanne Messmer gegründet hat und Mehrheitsgesellschafter (51 %) der österreichischen Gesellschaft ist. Die Gesellschafterstruktur steht auf der Unternehmensseite.`,
   },
   {
     q: "Wo sitzt das Team?",
@@ -140,8 +142,9 @@ export default async function TeamPage() {
         eyebrow="Ökovolt Solartechnik GmbH · Ostermiething"
         title={<>Das Team hinter <span className="ov-text-gradient-light">Ihrer PV-Anlage</span></>}
         lead="Gründer, die seit 2012 eigene Solarparks betreiben, eine zweite Generation für Digitalisierung und Vertrieb – und Fachleute für Projektleitung, Elektrotechnik, Netzanschluss, Leittechnik und Service."
-        image={{ src: "/Images/Team/download.jpg", alt: "Fachleute mit Helmen und Warnwesten besprechen sich vor Photovoltaikmodulen", position: "65% 35%" }}
-        points={["Firmensitz Ostermiething", "Seit 2012 in Österreich", "Projektleitung bis Inbetriebnahme", "Eigene Leittechnik & Service"]}
+        // Eigenes Motiv (Standbild aus dem Ökovolt-Imagevideo) statt Stock-Personenfoto (Welle A02)
+        image={{ src: "/Images/AT/home/hero-gewerbedach-luftbild.jpg", alt: "Luftaufnahme: Photovoltaik-Montage auf dem Flachdach einer Industriehalle", position: "60% 50%" }}
+        points={["Firmensitz Ostermiething", "Seit 2012 in Österreich", "Projektleitung bis Inbetriebnahme", "Leittechnik & Service aus einer Hand"]}
         actions={[
           { label: "Projekt besprechen", href: "/termin" },
           { label: "Offene Stellen", href: "/uber-uns/jobs", icon: Briefcase },
@@ -199,6 +202,7 @@ export default async function TeamPage() {
           </Reveal>
         </div>
         <RollenPfad rollen={ROLLEN} />
+        <p className="mt-6 text-[12.5px] text-ink-500">Fotos: Symbolbilder.</p>
       </Section>
 
       {/* Gründer & zweite Generation */}
@@ -265,9 +269,9 @@ export default async function TeamPage() {
           ]}
           points={[
             { title: "Eine Projektleitung", text: "vom Erstgespräch bis zur Inbetriebnahme" },
-            { title: "Eigene Leittechnik", text: "Parkregler, Fernwartung und SCADA" },
+            { title: "Leittechnik, die wir betreuen", text: "Parkregler, Fernwartung und SCADA – mit unserem Technologiepartner Solensa" },
           ]}
-          image={{ src: "/Images/Team/solar-power-6860359_1280.jpg", alt: "Photovoltaikmodule auf einem Dach in der Montage" }}
+          image={{ src: "/Images/Team/solar-power-6860359_1280.jpg", alt: "Photovoltaikmodule auf einem Dach in der Montage (Symbolbild)" }}
           action={{ label: "Mehr über das Unternehmen", href: "/uber-uns" }}
         />
       </Section>
@@ -295,24 +299,28 @@ export default async function TeamPage() {
             <Reveal>
               <FotoKachel
                 href="/uber-uns/jobs"
-                bild={{ src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen" }}
+                bild={{ src: "/Images/Jobs/download.jpg", alt: "Monteure mit Helmen arbeiten auf einem Flachdach mit Photovoltaikmodulen (Symbolbild)" }}
                 icon={Briefcase}
                 kopf="Jobs & Lehre"
                 titel="Offene Stellen in Ostermiething"
                 text="Mit KV-Mindestentgelt in jeder Anzeige."
                 className="h-full min-h-[320px]"
-              />
+              >
+                <span className="mt-3 inline-block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Symbolbild</span>
+              </FotoKachel>
             </Reveal>
             <Reveal delay={100}>
               <FotoKachel
                 href="/partner"
-                bild={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme" }}
+                bild={{ src: "/Images/Jobs/drone-view-of-technician-installing-solar-panels-2025-03-08-04-40-16-utc.jpg", alt: "Techniker montieren Solarmodule auf einem Dach, Luftaufnahme (Symbolbild)" }}
                 icon={Handshake}
                 kopf="Für Betriebe"
                 titel="Elektro-Partner werden"
                 text="Elektrotechnik-Betriebe bauen gemeinsam mit uns."
                 className="h-full min-h-[320px]"
-              />
+              >
+                <span className="mt-3 inline-block text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Symbolbild</span>
+              </FotoKachel>
             </Reveal>
           </div>
         </div>

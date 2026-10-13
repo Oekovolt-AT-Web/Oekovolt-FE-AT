@@ -139,7 +139,7 @@ const artikel = {
         },
         {
           typ: "p",
-          text: "Bei Anlagen ab Typ B oder mit mehreren Wechselrichtern an einem Netzanschlusspunkt übernimmt meist ein übergeordneter Regler die Vorgaben für Wirk- und Blindleistung am Netzanschlusspunkt. Ökovolt setzt dafür einen selbst entwickelten [Parkregler](/technik/parkregler) ein. Den Weg zum Netzanschluss beschreiben die Ratgeber [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss) und [EZA-Regler und Parkregler](/ratgeber/eza-regler-parkregler); was das neue ElWG für Betreiber bedeutet, erklärt der Ratgeber [ElWG](/ratgeber/elwg-elektrizitaetswirtschaftsgesetz).",
+          text: "Bei Anlagen ab Typ B oder mit mehreren Wechselrichtern an einem Netzanschlusspunkt übernimmt meist ein übergeordneter Regler die Vorgaben für Wirk- und Blindleistung am Netzanschlusspunkt. Ökovolt setzt dafür einen [Parkregler](/technik/parkregler) mit unserem Technologiepartner Solensa ein. Den Weg zum Netzanschluss beschreiben die Ratgeber [TOR Erzeuger und Netzanschluss](/ratgeber/tor-erzeuger-netzanschluss) und [EZA-Regler und Parkregler](/ratgeber/eza-regler-parkregler); was das neue ElWG für Betreiber bedeutet, erklärt der Ratgeber [ElWG](/ratgeber/elwg-elektrizitaetswirtschaftsgesetz).",
         },
       ],
     },
@@ -358,7 +358,7 @@ const artikel = {
   seitenCta: { titel: "Wechselrichter für Ihre Anlage?", text: "TOR-konform ausgelegt, mit Parkregler und Monitoring.", href: "/angebot", label: "Anfrage starten" },
   cta: {
     title: "Wechselrichter, Parkregler und Monitoring aus einer Hand.",
-    text: "Wir legen Wechselrichter passend zu Dach, Lastgang und Netzanschluss aus, erfüllen die TOR-Anforderungen und überwachen die Anlage mit eigener Fernwartung.",
+    text: "Wir legen Wechselrichter passend zu Dach, Lastgang und Netzanschluss aus, erfüllen die TOR-Anforderungen und überwachen die Anlage per Fernwartung.",
     primary: { label: "Anfrage starten", href: "/angebot" },
     secondary: { label: "Parkregler", href: "/technik/parkregler" },
   },

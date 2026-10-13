@@ -5,7 +5,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
 import { srcUrl } from "./lib/alias.mjs";
-import { CO2_KENNZAHL, CO2_ZEITRAUM, KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_SATZ, KENNZAHLEN_STAND, kz, zahlText } from "../src/data/kennzahlen.js";
+import { CO2_KENNZAHL, CO2_ZEITRAUM, KENNZAHLEN, KENNZAHLEN_HINWEIS, KENNZAHLEN_HINWEIS_STAND, KENNZAHLEN_SATZ, KENNZAHLEN_STAND, kz, zahlText } from "../src/data/kennzahlen.js";
 
 describe("zahlText – Tausenderpunkt ohne Intl", () => {
   test("ganze Zahlen", () => {
@@ -47,9 +47,20 @@ describe("KENNZAHLEN / kz", () => {
     for (const k of KENNZAHLEN) {
       assert.ok(Number.isInteger(k.zahl) && k.zahl > 0, k.id);
       assert.ok(k.label && !k.label.endsWith(" "), k.id);
+      // Welle A02: „PV-Anlagen“ statt „PV-Kraftwerke“, Beleg und Abgrenzung je Kennzahl
+      assert.doesNotMatch(k.label, /Kraftwerk/, `${k.id}: Label ohne „Kraftwerk“`);
+      assert.ok("beleg" in k, `${k.id}: Feld beleg`);
+      assert.equal(k.beleg, null, `${k.id}: kein externer Beleg – Angabe Ökovolt Österreich`);
+      assert.equal(k.abgrenzung, "errichtete PV-Anlagen jeder Größe, Angabe Ökovolt Österreich", `${k.id}: abgrenzung`);
     }
+    assert.equal(KENNZAHLEN.find((k) => k.id === "anlagen").label, "PV-Anlagen errichtet");
     assert.match(KENNZAHLEN_STAND, /^\d{4}-\d{2}-\d{2}$/);
     assert.equal(KENNZAHLEN_HINWEIS, "Angaben Ökovolt Österreich");
+  });
+  test("KENNZAHLEN_HINWEIS_STAND: „Angaben Ökovolt Österreich · Stand MM/JJJJ“", () => {
+    const [jahr, monat] = KENNZAHLEN_STAND.split("-");
+    assert.equal(KENNZAHLEN_HINWEIS_STAND, `Angaben Ökovolt Österreich · Stand ${monat}/${jahr}`);
+    assert.match(KENNZAHLEN_HINWEIS_STAND, /^Angaben Ökovolt Österreich · Stand \d{2}\/\d{4}$/);
   });
   test("kz: formatierter Wert, unbekannte id leer", () => {
     assert.equal(kz("anlagen"), "5.000");
@@ -58,7 +69,7 @@ describe("KENNZAHLEN / kz", () => {
     assert.equal(kz("gibt-es-nicht"), "");
   });
   test("KENNZAHLEN_SATZ: Fließtext ohne Zeitraum-Platzhalter", () => {
-    const erwartet = `5.000 PV-Kraftwerke errichtet, 510.000 kWp installierte Leistung${CO2_ZEITRAUM ? `, 112.000 t CO₂-Einsparung ${CO2_ZEITRAUM}` : ""}`;
+    const erwartet = `5.000 PV-Anlagen errichtet, 510.000 kWp installierte Leistung${CO2_ZEITRAUM ? `, 112.000 t CO₂-Einsparung ${CO2_ZEITRAUM}` : ""}`;
     assert.equal(KENNZAHLEN_SATZ, erwartet);
     if (!CO2_ZEITRAUM) assert.doesNotMatch(KENNZAHLEN_SATZ, /CO₂/);
     assert.doesNotMatch(KENNZAHLEN_SATZ, /undefined|NaN|\s$/);
@@ -69,5 +80,18 @@ describe("KENNZAHLEN / kz", () => {
     assert.ok(liste, "Kennzahl „510.000 kWp“ in hero.js gefunden");
     assert.ok(liste.some((x) => x.wert === "5.000" && x.zahl === 5000));
     assert.equal(liste.some((x) => x.wert === "112.000 t"), Boolean(CO2_ZEITRAUM), "CO₂-Kennzahl nur mit Zeitraum");
+    // Welle A02: kein TOP-3-Eintrag mehr in den Kernfakten (kein Beleg), kein Video ohne Logo-Freigabe
+    assert.ok(!liste.some((x) => /TOP/.test(x.wert || "") || x.prefix === "TOP "), "TOP 3 entfernt");
+    assert.equal(hero.HOME_HERO.video, null, "Hero-Video aus bis zur Logo-Freigabe");
+    assert.ok(!hero.HOME_HERO.punkte.some((p) => /Salzburg AG/.test(p)), "Hero-Punkte ohne Salzburg AG");
+    assert.ok(hero.HOME_HERO.punkte.some((p) => /Gründer betreiben seit 2012/.test(p)));
+    // Kundennamen nur mit Namensfreigabe – ohne Freigabe Branche/Bundesland und kein Projekt-Link
+    for (const r of hero.REFERENZ_UNTERNEHMEN) {
+      if (!r.freigegeben) {
+        assert.equal(r.slug, null, `${r.name}: kein Link ohne Freigabe`);
+        assert.ok(!hero.REFERENZ_KUNDEN.some((k) => k.name === r.name), `${r.name}: anonymisiert`);
+      }
+    }
+    assert.equal(hero.REFERENZ_BRANCHEN.length, 6);
   });
 });

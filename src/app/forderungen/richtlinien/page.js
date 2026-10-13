@@ -72,7 +72,7 @@ const FAQ = [
   },
   {
     q: "Brauche ich für eine PV-Anlage einen Parkregler?",
-    a: "Ab Typ B (250 kW) verlangen die Netzbetreiber in der Regel einen Park- bzw. EZA-Regler, der Blindleistung und Wirkleistung am Netzanschlusspunkt nach Vorgabe regelt und fernsteuerbar ist. Ökovolt setzt dafür einen selbst entwickelten Parkregler und eigene Fernwartungs- und SCADA-Systeme ein.",
+    a: "Ab Typ B (250 kW) verlangen die Netzbetreiber in der Regel einen Park- bzw. EZA-Regler, der Blindleistung und Wirkleistung am Netzanschlusspunkt nach Vorgabe regelt und fernsteuerbar ist. Ökovolt setzt dafür Parkregler, Fernwartung und SCADA mit unserem Technologiepartner Solensa ein – parametriert, betreut und gewartet von uns.",
   },
 ];
 
@@ -162,8 +162,8 @@ export default function Richtlinien() {
           ))}
         </ul>
         <p className="mt-4 text-[13px] text-ink-500">Netzebenen als Richtwert; maßgeblich ist der vom Netzbetreiber festgelegte Anschlusspunkt. Aktuelle Fassung der TOR: e-control.at, Stand 09/2026 bitte dort prüfen.</p>
-        <Hinweis titel="Parkregler aus eigener Entwicklung" className="mt-6">
-          Für Anlagen ab Typ B setzen wir unseren selbst entwickelten Parkregler (EZA-Regler) ein – mit eigener Fernwartung und SCADA. Wie Blindleistung Q(U), cos φ und Wirkleistungsbegrenzung geregelt werden, erklärt der Ratgeber{" "}
+        <Hinweis titel="Parkregler mit Technologiepartner Solensa" className="mt-6">
+          Für Anlagen ab Typ B setzen wir einen Parkregler (EZA-Regler) mit Fernwartung und SCADA mit unserem Technologiepartner Solensa ein – parametriert und betreut von uns. Wie Blindleistung Q(U), cos φ und Wirkleistungsbegrenzung geregelt werden, erklärt der Ratgeber{" "}
           <Link href="/ratgeber/eza-regler-parkregler" className={LINK}>EZA-Regler und Parkregler</Link>, die Netzanschlussregeln der Ratgeber{" "}
           <Link href="/ratgeber/tor-erzeuger-netzanschluss" className={LINK}>TOR Erzeuger und Netzanschluss</Link>.
         </Hinweis>
@@ -301,7 +301,7 @@ export default function Richtlinien() {
       <CtaBand
         eyebrow="Technik & Netz aus einer Hand"
         title="Netzanschluss, TOR-Nachweise und Parkregler – von uns."
-        text="Wir stellen Netzzugangsantrag und Nachweise, stimmen Blindleistungsverfahren und Einspeisebegrenzung mit dem Netzbetreiber ab und regeln größere Anlagen mit eigenem Parkregler."
+        text="Wir stellen Netzzugangsantrag und Nachweise, stimmen Blindleistungsverfahren und Einspeisebegrenzung mit dem Netzbetreiber ab und regeln größere Anlagen per Parkregler."
         primary={{ label: "Projekt anfragen", href: "/angebot" }}
         secondary={{ label: "Baurecht der Bundesländer", href: "/forderungen/baurecht" }}
       />

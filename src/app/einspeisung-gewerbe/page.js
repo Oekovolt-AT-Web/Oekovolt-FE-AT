@@ -26,6 +26,7 @@ import Datenfrische from "@/components/Einspeisung/Datenfrische";
 import ErloesRechner from "@/components/Einspeisung/ErloesRechner";
 import Verlauf from "@/components/Einspeisung/Verlauf";
 import WerteTabelle from "@/components/Einspeisung/WerteTabelle";
+import IndexVerweis from "@/app/energie-live/_marktindizes/IndexVerweis";
 import {
   AUSGLEICHSENERGIE_PV,
   AUSGLEICHSENERGIE_WIND_2026,
@@ -368,6 +369,8 @@ export default function EinspeisungGewerbe() {
             Quartalspreise: E-Control-Marktpreis-Archiv. Die Grundlage je Monat stammt aus der Kommentarspalte der OeMAG und stimmt mit dem berechneten Korridor überein.
           </p>
         </Fachdetails>
+
+        <IndexVerweis fokus="solar" className="mt-8" />
       </Section>
 
       {/* Korridor */}

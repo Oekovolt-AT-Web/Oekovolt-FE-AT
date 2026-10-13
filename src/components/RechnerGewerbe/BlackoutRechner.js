@@ -75,6 +75,19 @@ export default function BlackoutRechner() {
   const speicherMax = Math.max(500, Math.ceil((vorschlag * 4) / 100) * 100);
   const liter48 = useMemo(() => (e.ziel >= 48 ? sim.liter : simuliereAusfall({ ...volle, ziel: 48 }).liter), [sim]); // eslint-disable-line react-hooks/exhaustive-deps
   useRechnerErgebnis("blackout", sim);
+  // Ohne Speicher: PV ist nur mit Aggregat (begrenzt) oder gar nicht nutzbar
+  const pvAnteilAgg = fmt(BO_ANNAHMEN.pvAnteilAmAggregat * 100);
+  const ohneSpeicherText =
+    speicher > 0 || !(e.kwp > 0)
+      ? null
+      : e.aggregat
+        ? `Ohne netzbildenden Speicher oder Aggregat schaltet die PV im Netzausfall ab. Hier bildet das Aggregat das Inselnetz – die PV entlastet es nur bis rund ${pvAnteilAgg} % der Last (Annahme ohne Hybridregler).`
+        : "Ohne netzbildenden Speicher oder Aggregat schaltet die PV im Netzausfall ab. Die PV-Anlage liefert in dieser Kombination deshalb keinen Ersatzstrom.";
+
+  // Aggregat-Größe: gewählt → Auslegung; nicht gewählt → nur als Größe für eine spätere Ergänzung
+  const aggregatZusatz = e.aggregat ? `inkl. Anlaufreserve · Aggregat ${fmt(aus.kva)} kVA` : "inkl. Anlaufreserve · kein Aggregat gewählt";
+  const aggregatZeile = e.aggregat ? "Aggregat (cos φ 0,8)" : "Aggregat, falls ergänzt (cos φ 0,8)";
+  const stundenText = (n) => (n === 0 ? "keine Stunde" : n === 1 ? "1 Stunde" : `${fmt(n)} Stunden`);
 
   // Druckbericht – wird erst beim Klick auf „Als PDF“ berechnet
   const bericht = () => ({
@@ -82,7 +95,7 @@ export default function BlackoutRechner() {
     kennzahlen: [
       ["Blackout 48 h", euro(Math.round(blackout.ohne / 100) * 100), "Kosten ohne Ersatzstrom"],
       ["Vermieden", euro(Math.max(0, Math.round(blackout.vermieden / 100) * 100)), sim.vollGedeckt ? `mit ${fmt(e.ziel)} h Überbrückung` : `nur ${fmt(sim.ueberbrueckt)} von ${fmt(e.ziel)} h gedeckt`],
-      ["Ersatzstrom-Leistung", `${fmt(Math.round(aus.leistung))} kW`, `Aggregat ${fmt(aus.kva)} kVA`],
+      ["Ersatzstrom-Leistung", `${fmt(Math.round(aus.leistung))} kW`, aggregatZusatz],
       [`Diesel für ${fmt(e.ziel)} h`, e.aggregat ? `${fmt(Math.round(sim.liter))} l` : "–", e.aggregat ? `nur Aggregat: ${fmt(sim.nurAggregatLiter)} l` : "kein Aggregat gewählt"],
     ],
     eingaben: [
@@ -125,7 +138,7 @@ export default function BlackoutRechner() {
         titel: "Auslegung",
         zeilen: [
           ["Kritische Last × Anlaufreserve", `${fmt(e.last)} × ${fmt(b.anlauf, 2)} = ${fmt(aus.leistung)} kW`],
-          ["Aggregat (cos φ 0,8)", `${fmt(aus.kva)} kVA`],
+          [aggregatZeile, `${fmt(aus.kva)} kVA`],
           [`Energie für ${fmt(e.ziel)} h`, `${fmt(aus.energie)} kWh`],
           ["Nur Speicher (ohne PV/Aggregat)", `${fmt(Math.ceil(aus.speicherNur / 10) * 10)} kWh`],
           speicher > 0 && ["Speicher Richtinvest (netto)", `≈ ${euro(Math.round(sim.speicherInvest / 100) * 100)}`, "Richtwert"],
@@ -145,6 +158,7 @@ export default function BlackoutRechner() {
     ],
     hinweise: [
       !sim.vollGedeckt && `Ersatzstrom reicht ${sim.ueberbrueckt} von ${sim.dauer} Stunden – mehr Speicher, mehr PV oder ein Aggregat schließen die Lücke.`,
+      ohneSpeicherText,
       "PV und Speicher liefern nur mit Ersatzstromfunktion: automatische Netztrennung, netzbildender Wechselrichter, Schwarzstart – nach TOR und ÖVE/ÖNORM E 8101 geplant und lokal bedienbar.",
     ],
     annahmen: [
@@ -152,6 +166,7 @@ export default function BlackoutRechner() {
       "GfKV: Bei einem Blackout rechnet Österreich mit 10–48 Stunden ohne Strom.",
       `Vereinfachte Stundensimulation, ${JAHRESZEITEN.find((j) => j.id === e.jahreszeit)?.label}, Beginn ${e.startStunde} Uhr; PV mit ${fmt(BO_ANNAHMEN.ertragProKwp)} kWh/kWp, Speicher-Ladezustand bei Ausfallbeginn ${fmt(BO_ANNAHMEN.socStart * 100)} %.`,
       `Dieselverbrauch nach Datenblattwerten (Deutz 2011, ${fmt(BO_ANNAHMEN.dichte, 3)} kg/l, Generator ${fmt(BO_ANNAHMEN.etaGenerator * 100)} %); das Aggregat läuft im Bestpunkt und lädt den Speicher mit.`,
+      `PV liefert im Netzausfall nur mit Netzbildner (Speicher-Wechselrichter oder Aggregat); mit Aggregat ohne Speicher höchstens ${pvAnteilAgg} % der Last (Annahme), Speicherladung aus PV begrenzt durch die Wechselrichterleistung.`,
       "Kritische Lasten und Anlaufströme werden vor Ort gemessen – kein Angebot.",
     ],
   });
@@ -269,7 +284,7 @@ export default function BlackoutRechner() {
               <Kennzahl ton="gruen" icon={ShieldCheck} label="Vermieden" zusatz={sim.vollGedeckt ? `mit ${fmt(e.ziel)} h Überbrückung` : `nur ${fmt(sim.ueberbrueckt)} von ${fmt(e.ziel)} h gedeckt`}>
                 <Zahl wert={Math.max(0, Math.round(blackout.vermieden / 100) * 100)} suffix=" €" />
               </Kennzahl>
-              <Kennzahl icon={Gauge} label="Ersatzstrom-Leistung" zusatz={`inkl. Anlaufreserve · Aggregat ${fmt(aus.kva)} kVA`}>
+              <Kennzahl icon={Gauge} label="Ersatzstrom-Leistung" zusatz={aggregatZusatz}>
                 <Zahl wert={Math.round(aus.leistung)} suffix=" kW" />
               </Kennzahl>
               <Kennzahl icon={Fuel} label={`Diesel für ${fmt(e.ziel)} h`} zusatz={e.aggregat ? `nur Aggregat: ${fmt(sim.nurAggregatLiter)} l` : "kein Aggregat gewählt"}>
@@ -279,7 +294,14 @@ export default function BlackoutRechner() {
 
             {!sim.vollGedeckt && (
               <Hinweis ton="warn" titel={`Ersatzstrom reicht ${sim.ueberbrueckt} von ${sim.dauer} Stunden`} className="mt-4">
-                Ohne Aggregat trägt die Kombination die kritische Last nicht über die gewünschte Dauer. Mehr Speicher, mehr PV oder ein Aggregat schließen die Lücke.
+                {e.aggregat
+                  ? "Die Kombination trägt die kritische Last nicht über die gewünschte Dauer. Ein größeres Aggregat oder mehr Speicher schließen die Lücke."
+                  : "Ohne Aggregat trägt die Kombination die kritische Last nicht über die gewünschte Dauer. Mehr Speicher, mehr PV oder ein Aggregat schließen die Lücke."}
+              </Hinweis>
+            )}
+            {ohneSpeicherText && (
+              <Hinweis ton={e.aggregat ? "info" : "warn"} titel="Ohne Speicher" className="mt-4">
+                {ohneSpeicherText}
               </Hinweis>
             )}
 
@@ -293,10 +315,10 @@ export default function BlackoutRechner() {
                     <p className={cn("text-[12.5px]", s.id === "blackout" ? "text-white/60" : "text-ink-500")}>{s.sub}</p>
                     <div className="mt-4 space-y-2.5">
                       <SzenarioBalken label="ohne Ersatzstrom" wert={s.ohne} max={max} dunkel={s.id === "blackout"} klasse={s.id === "blackout" ? "bg-white/35" : "bg-ink-300"} />
-                      <SzenarioBalken label="mit Ersatzstrom" wert={s.mit} max={max} dunkel={s.id === "blackout"} klasse="bg-ov-500" />
+                      <SzenarioBalken label="mit Ersatzstrom" wert={s.mit} max={max} dunkel={s.id === "blackout"} klasse={s.mit < s.ohne ? "bg-ov-500" : s.id === "blackout" ? "bg-white/35" : "bg-ink-300"} />
                     </div>
                     <p className={cn("mt-3 text-[12.5px] leading-snug", s.id === "blackout" ? "text-white/70" : "text-ink-500")}>
-                      {s.wareOhne > 0 && s.wareMit === 0 ? (b.stillsetzen && s.offen > 0 ? "Anlagen werden geordnet stillgesetzt – kein Ausschuss." : `${b.wareLabel} bleibt erhalten.`) : s.wareMit > 0 ? `${b.wareLabel} geht verloren – Überbrückung zu kurz.` : s.offen > 0 ? `${fmt(s.offen)} h ohne Ersatzstrom.` : "Kritische Prozesse laufen durch."}
+                      {s.wareOhne > 0 && s.wareMit === 0 ? (b.stillsetzen && s.offen > 0 ? "Anlagen werden geordnet stillgesetzt – kein Ausschuss." : `${b.wareLabel} bleibt rechnerisch erhalten.`) : s.wareMit > 0 ? `${b.wareLabel} geht verloren – Überbrückung zu kurz.` : s.offen > 0 ? `${fmt(s.offen)} h ohne Ersatzstrom.` : "Kritische Last rechnerisch gedeckt."}
                     </p>
                   </div>
                 );
@@ -318,7 +340,7 @@ export default function BlackoutRechner() {
                 </h3>
                 <dl className="mt-3 divide-y divide-ink-200/70 text-[14px]">
                   <Zeile k="Kritische Last × Anlaufreserve" v={`${fmt(e.last)} × ${fmt(b.anlauf, 2)} = ${fmt(aus.leistung)} kW`} />
-                  <Zeile k="Aggregat (cos φ 0,8)" v={`${fmt(aus.kva)} kVA`} />
+                  <Zeile k={aggregatZeile} v={`${fmt(aus.kva)} kVA`} />
                   <Zeile k={`Energie für ${fmt(e.ziel)} h`} v={`${fmt(aus.energie)} kWh`} />
                   <Zeile k="Nur Speicher (ohne PV/Aggregat)" v={`${fmt(Math.ceil(aus.speicherNur / 10) * 10)} kWh`} />
                   {speicher > 0 && <Zeile k="Speicher Richtinvest (netto)" v={`≈ ${euro(Math.round(sim.speicherInvest / 100) * 100)}`} marke />}
@@ -338,7 +360,7 @@ export default function BlackoutRechner() {
                   </dl>
                 ) : (
                   <p className="mt-3 text-[14px] leading-relaxed text-white/75">
-                    Ohne Aggregat überbrückt die Kombination {sim.ueberbrueckt} Stunden. Für Nächte und trübe Wintertage ist ein Aggregat meist die robuste Ergänzung – der Speicher verkürzt seine Laufzeit.
+                    Ohne Aggregat überbrückt die Kombination {stundenText(sim.ueberbrueckt)}{speicher > 0 ? "" : " – ohne Speicher liefert auch die PV nichts"}. Für Nächte und trübe Wintertage ist ein Aggregat meist die robuste Ergänzung – der Speicher verkürzt seine Laufzeit.
                   </p>
                 )}
                 <p className="mt-3 text-[12px] leading-relaxed text-white/55">

@@ -13,11 +13,16 @@
 // hauptseite() – für Wien ist das /photovoltaik/wien. Schneelast verlinkt auf die Sprungmarke
 // im Hub /schneelast#<land>, weil die Landesvarianten dort zusammengeführt sind (5-Wort-
 // Überschneidung 0,64 ≥ 0,35). Messung der Hubseiten untereinander: max. 0,31 < 0,35.
+//
+// Welle C, Paket C08: Marktdaten je Land (ÖNIP-Bedarf 2030 und Erfüllungsgrad laut PV Austria,
+// ./marktdaten.js), Solarkataster-Link (src/data/solarkataster.js, nur Links), Links zu den
+// Netzanmeldungs-Leitfäden der landesweiten Netzbetreiber und ein Ansprechpartner-Block.
+// Ansprechpartner über src/components/Verkauf/Ansprechpartner.js (Paket A03).
 
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Building2, CalendarCheck2, ClipboardCheck, Compass, Factory, Gauge, HandCoins, Landmark, MapPin, Mountain, PlugZap, Snowflake, Sun, Users } from "lucide-react";
+import { ArrowRight, BarChart3, Building2, CalendarCheck2, ClipboardCheck, Compass, Factory, Gauge, HandCoins, Landmark, MapPin, Mountain, PlugZap, Snowflake, Sun, SunMedium, Users } from "lucide-react";
 
 import PageHero from "@/components/ui/PageHero";
 import Section from "@/components/ui/Section";
@@ -33,10 +38,16 @@ import { ladeProjekte } from "@/components/Project/ladeProjekte";
 import ErtragVergleich from "@/components/Bundesland/ErtragVergleich";
 import MonatsProfil from "@/components/Bundesland/MonatsProfil";
 import { Etikett, ExternerLink, PfeilLink } from "@/components/Bundesland/Bausteine";
+import { StandPille } from "@/components/Forderungen/Shared/Bausteine";
+import Ansprechpartner from "@/components/Verkauf/Ansprechpartner";
 import { ZIELGRUPPEN, PRUEFEN_HINWEIS } from "@/data/bundeslaender";
+import { BETREIBER_SLUGS } from "@/data/netzbetreiber";
+import { SOLARKATASTER_STATUS, solarkatasterFuerLand } from "@/data/solarkataster";
 import { bundeslandDaten } from "@/lib/bundesland/daten";
 import { LAENDER, datumText, hauptseite, istHauptseite, jahresertrag, landPfad, schneelastAnker, seoTitel, zahl } from "@/lib/bundesland/auswertung";
 import { BASE_URL, LOCALE, SITE_NAME } from "@/lib/site";
+import { netzSlugsFuer } from "@/app/photovoltaik/[stadt]/weiter";
+import { MARKTDATEN_STAND, MARKT_OESTERREICH, MARKT_QUELLEN, marktdatenFuerLand, offenerBedarfMw } from "./marktdaten";
 
 export const revalidate = 3600;
 export const dynamicParams = false;
@@ -95,10 +106,25 @@ export async function generateMetadata({ params }) {
   };
 }
 
+/** Landesweite Netzbetreiber (bundeslaender.js) mit Leitfaden-Slug, sofern der Leitfaden existiert. */
+function landesNetz(d) {
+  return (d.netz.landesweit || []).map((n) => {
+    const slug = netzSlugsFuer({ name: n.name }).find((s) => BETREIBER_SLUGS.includes(s)) || null;
+    return { ...n, slug, href: slug ? d.netz.betreiberPfad(slug) : null };
+  });
+}
+
 /** FAQ ausschließlich aus den Daten der Seite – sichtbar und im Schema identisch. */
 function faqFuer(d) {
   const f = [];
   const e = d.ertrag;
+  const m = marktdatenFuerLand(d.slug);
+  if (m) {
+    f.push({
+      q: `Wie weit ist ${d.name} beim Photovoltaik-Ausbau?`,
+      a: `Laut PV-Austria-Dashboard (Datenstand ${MARKTDATEN_STAND.datenstand}) waren bis ${m.erfuellungStichtag} rund ${m.erfuellungProzent} % der PV-Leistung installiert, die der Netzinfrastrukturplan ÖNIP für ${d.name} bis 2030 vorsieht${m.oenipZiel2030Mw ? ` (Bedarf laut ÖNIP-Entwurf 2023: ${zahl(m.oenipZiel2030Mw)} MWp)` : ""}; Österreich gesamt lag bei ${MARKT_OESTERREICH.erfuellungProzent} %. ${m.landeszielHinweis} Richtwerte zur Orientierung, Stand ${MARKTDATEN_STAND.label}.`,
+    });
+  }
   if (e) {
     f.push({
       q: `Wie viel Strom erzeugt eine PV-Anlage ${d.imLand}?`,
@@ -148,6 +174,11 @@ export default async function BundeslandSeite({ params }) {
   const { quelle: pvgisQuelle, abgerufen } = d.pvgisQuelle;
   const eg = d.energiegemeinschaften;
   const hauptstadt = d.orte.find((o) => o.hauptstadt);
+  const markt = marktdatenFuerLand(d.slug);
+  const offen = offenerBedarfMw(markt);
+  const kataster = solarkatasterFuerLand(d.slug);
+  const katasterStatus = kataster ? SOLARKATASTER_STATUS[kataster.status] : null;
+  const netzLand = landesNetz(d);
 
   return (
     <div>
@@ -242,8 +273,88 @@ export default async function BundeslandSeite({ params }) {
         </Section>
       )}
 
+      {/* Marktdaten: ÖNIP-Bedarf 2030 und Erfüllungsgrad laut PV Austria */}
+      {markt && (
+        <Section tone="white" space="lg" id="marktdaten">
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+            <div>
+              <SectionHeading
+                eyebrow={`Marktdaten ${d.name}`}
+                title={`PV-Ausbau ${d.imLand}: ${zahl(markt.erfuellungProzent)} % des ÖNIP-Bedarfs 2030 erreicht`}
+                lead={`Der Integrierte österreichische Netzinfrastrukturplan (ÖNIP) beziffert, wie viel PV-Leistung jedes Bundesland bis 2030 braucht. PV Austria vergleicht dagegen, was bis ${markt.erfuellungStichtag} installiert war.`}
+              />
+              <div className="mt-5 flex flex-wrap gap-2">
+                <StandPille>Stand {MARKTDATEN_STAND.label} · Datenstand PV Austria {MARKTDATEN_STAND.datenstand}</StandPille>
+              </div>
+              <p className="mt-5 text-[14.5px] leading-relaxed text-ink-700">{markt.landeszielHinweis}</p>
+              {markt.stichtagHinweis && <p className="mt-2 text-[13.5px] leading-relaxed text-ink-600">{markt.stichtagHinweis}</p>}
+              <p className="mt-4 text-[13.5px] leading-relaxed text-ink-600">
+                Richtwerte zur Orientierung aus Sekundärquellen – keine eigene Erhebung. Quellen:{" "}
+                <ExternerLink href={markt.dashboardUrl} className="text-[13.5px]">
+                  {MARKT_QUELLEN.dashboard.label}
+                </ExternerLink>
+                {markt.oenipZiel2030Mw ? (
+                  <>
+                    ,{" "}
+                    <ExternerLink href={MARKT_QUELLEN.oenipEntwurf.url} className="text-[13.5px]">
+                      {MARKT_QUELLEN.oenipEntwurf.label}
+                    </ExternerLink>
+                  </>
+                ) : null}
+                ,{" "}
+                <ExternerLink href={MARKT_QUELLEN.oenip.url} className="text-[13.5px]">
+                  {MARKT_QUELLEN.oenip.label}
+                </ExternerLink>
+                .
+              </p>
+            </div>
+            <Reveal className="overflow-hidden rounded-3xl bg-sand-50 ring-1 ring-ink-200/60">
+              <dl className="grid gap-px bg-ink-200/60 sm:grid-cols-3">
+                <div className="bg-sand-50 p-6">
+                  <dt className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                    <BarChart3 aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                    ÖNIP-Bedarf 2030
+                  </dt>
+                  <dd className="ov-num mt-2 font-display text-[28px] font-extrabold leading-tight text-ink-900">{markt.oenipZiel2030Mw ? `${zahl(markt.oenipZiel2030Mw / 1000, 1)} GW` : "zu prüfen"}</dd>
+                  <dd className="mt-1 text-[13px] leading-snug text-ink-600">{markt.oenipZiel2030Mw ? `${zahl(markt.oenipZiel2030Mw)} MWp laut ÖNIP-Entwurf 2023 (PV Austria, 07.07.2023)` : "MWp-Wert nur in den Grafiken des Dashboards – wir übernehmen keine abgelesenen Zahlen."}</dd>
+                </div>
+                <div className="bg-sand-50 p-6">
+                  <dt className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                    <SunMedium aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                    Erfüllungsgrad bis {markt.erfuellungStichtag}
+                  </dt>
+                  <dd className="ov-num mt-2 font-display text-[28px] font-extrabold leading-tight text-ink-900">{zahl(markt.erfuellungProzent)} %</dd>
+                  <dd className="mt-1 text-[13px] leading-snug text-ink-600">Österreich gesamt: {zahl(MARKT_OESTERREICH.erfuellungProzent)} % bis {MARKT_OESTERREICH.erfuellungStichtag} (PV Austria)</dd>
+                </div>
+                <div className="bg-sand-50 p-6">
+                  <dt className="flex items-center gap-2 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-ink-500">
+                    <Gauge aria-hidden="true" className="h-4 w-4 text-ov-600" />
+                    Rechnerisch offen bis 2030
+                  </dt>
+                  <dd className="ov-num mt-2 font-display text-[28px] font-extrabold leading-tight text-ink-900">{offen != null ? `${zahl(offen)} MWp` : "–"}</dd>
+                  <dd className="mt-1 text-[13px] leading-snug text-ink-600">{offen != null ? "Bedarf × (100 % − Erfüllungsgrad), gerundet – Richtwert" : "ohne belegten MWp-Wert nicht berechenbar"}</dd>
+                </div>
+              </dl>
+              <div className="p-6">
+                <div className="flex items-center justify-between text-[13px] text-ink-600">
+                  <span>
+                    {d.name}: {zahl(markt.erfuellungProzent)} %
+                  </span>
+                  <span>Österreich: {zahl(MARKT_OESTERREICH.erfuellungProzent)} %</span>
+                </div>
+                <div className="relative mt-2 h-3 overflow-hidden rounded-full bg-ink-200/70" role="img" aria-label={`${d.name} ${markt.erfuellungProzent} Prozent des ÖNIP-Bedarfs 2030, Österreich ${MARKT_OESTERREICH.erfuellungProzent} Prozent`}>
+                  <span aria-hidden="true" className="absolute inset-y-0 left-0 rounded-full bg-ov-600" style={{ width: `${markt.erfuellungProzent}%` }} />
+                  <span aria-hidden="true" className="absolute inset-y-0 w-0.5 bg-navy-950" style={{ left: `${MARKT_OESTERREICH.erfuellungProzent}%` }} />
+                </div>
+                <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">Balken: Anteil des ÖNIP-Bedarfs 2030, der bis {markt.erfuellungStichtag} installiert war; Strich: Österreich gesamt. Was bis 2030 fehlt, entsteht zu einem großen Teil auf Gewerbe- und Hallendächern.</p>
+              </div>
+            </Reveal>
+          </div>
+        </Section>
+      )}
+
       {/* Standortseiten */}
-      <Section tone="white" space="lg" id="standorte">
+      <Section tone={markt ? "sand" : "white"} space="lg" id="standorte">
         <SectionHeading
           eyebrow="Standortseiten"
           title={d.orte.length === 1 ? `Unsere Standortseite ${d.imLand}` : `${d.orte.length} Orte ${d.imLand} mit eigener Seite`}
@@ -463,6 +574,27 @@ export default async function BundeslandSeite({ params }) {
                 Ablauf, Unterlagen und Fristen der großen Netzbetreiber haben wir auf einer eigenen Seite zusammengestellt.
                 {d.recht.energieberatung && <> Unabhängige Energieberatung für Betriebe im Land: {d.recht.energieberatung.name}.</>}
               </p>
+              {netzLand.length > 0 && (
+                <p className="mt-3 text-[13.5px] leading-relaxed text-ink-600">
+                  Landesweit zuständig {d.imLand}:{" "}
+                  {netzLand.map((n, i) => (
+                    <span key={n.name}>
+                      {i > 0 && ", "}
+                      {n.href ? (
+                        <Link href={n.href} className="font-semibold text-ov-700 underline decoration-ov-300 underline-offset-2 hover:decoration-current">
+                          {n.name}
+                        </Link>
+                      ) : (
+                        <a href={n.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink-800 underline decoration-ink-300 underline-offset-2 hover:decoration-current">
+                          {n.name}
+                          <span className="sr-only"> (öffnet neues Fenster)</span>
+                        </a>
+                      )}
+                    </span>
+                  ))}
+                  .
+                </p>
+              )}
               <div className="mt-3 flex flex-wrap gap-x-6">
                 <PfeilLink href={d.netz.pfad} icon={PlugZap}>
                   PV beim Netzbetreiber anmelden
@@ -470,6 +602,32 @@ export default async function BundeslandSeite({ params }) {
                 {d.recht.energieberatung && <ExternerLink href={d.recht.energieberatung.url}>Energieberatung</ExternerLink>}
               </div>
             </Reveal>
+            {kataster && (
+              <Reveal delay={160} className="rounded-3xl bg-white p-6 ring-1 ring-ink-200/70">
+                <p className="flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-ov-700">
+                  <SunMedium aria-hidden="true" className="h-4 w-4" />
+                  {katasterStatus?.ueberschrift(d.name) ?? `Solarkataster ${d.name}`}
+                </p>
+                <h3 className="mt-3 font-display text-[18px] font-bold leading-snug text-ink-900">{kataster.name}</h3>
+                <p className="mt-1 text-[13px] text-ink-500">
+                  {kataster.betreiber} · {katasterStatus?.label}
+                </p>
+                <p className="mt-3 text-[14px] leading-relaxed text-ink-700">{kataster.hinweis}</p>
+                <div className="mt-3 flex flex-wrap gap-x-6">
+                  <ExternerLink href={kataster.url} className="text-[14px]">
+                    {katasterStatus?.link ?? "Zum Solarkataster"}
+                  </ExternerLink>
+                  {kataster.dokumentation && (
+                    <ExternerLink href={kataster.dokumentation} className="text-[14px]">
+                      Dokumentation
+                    </ExternerLink>
+                  )}
+                </div>
+                <p className="mt-3 text-[12.5px] leading-relaxed text-ink-500">
+                  {katasterStatus?.geprueft ?? "Link geprüft am"} {datumText(kataster.geprueft)}. Angebot des Landes, nicht von Ökovolt; Katasterwerte sind theoretische Potenziale – für Ihr Dach rechnen wir mit Lastgang, Verschattung und Statik.
+                </p>
+              </Reveal>
+            )}
           </div>
         </div>
       </Section>
@@ -624,8 +782,16 @@ export default async function BundeslandSeite({ params }) {
         </Section>
       )}
 
+      {/* Ansprechpartner (A03): Person nur mit Einwilligung, sonst Teamfunktion */}
+      <Section tone="sand" space="md" id="ansprechpartner">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeading eyebrow="Ansprechpartner" title={`Wer Ihr Projekt ${d.imLand} betreut`} lead="Ein Team, ein Ansprechpartner – von der ersten Dachprüfung bis zur Wartung. Namen und Fotos zeigen wir erst mit Einwilligung der Mitarbeiterinnen und Mitarbeiter." />
+          <Ansprechpartner zielgruppe="gewerbe" bundesland={d.slug} headingAs="h3" />
+        </div>
+      </Section>
+
       {/* Weitere Bundesländer, Quellen */}
-      <Section tone="sand" space="md">
+      <Section tone="white" space="md">
         <SectionHeading eyebrow="Weitere Bundesländer" title="Photovoltaik in den Nachbarländern" className="mb-8" />
         <ul className="flex flex-wrap gap-3">
           {d.nachbarn.map((n) => (
@@ -658,7 +824,8 @@ export default async function BundeslandSeite({ params }) {
         </div>
         <p className="mt-8 max-w-4xl text-[12.5px] leading-relaxed text-ink-500">
           Quellen: Ertrag {pvgisQuelle}; Schneelast eigene Auswertung GeoSphere Austria SNOWGRID-CL (CC BY 4.0); Verteilnetzbetreiber laut E-Control-Tarifkalkulator je Postleitzahl (Recherche auf den
-          Standortseiten); Förderung und Energiegemeinschaften Stand {d.foerderung.standLabel} mit Quellen auf der Seite zur Landesförderung; Referenzkunden: Unternehmenssitz laut Impressum der Kunden,
+          Standortseiten); Förderung und Energiegemeinschaften Stand {d.foerderung.standLabel} mit Quellen auf der Seite zur Landesförderung; Marktdaten {MARKT_QUELLEN.dashboard.label} und PV Austria zum
+          ÖNIP-Entwurf (07.07.2023), abgerufen {MARKTDATEN_STAND.label}; Solarkataster: Link des Landes, geprüft {kataster ? datumText(kataster.geprueft) : "–"}; Referenzkunden: Unternehmenssitz laut Impressum der Kunden,
           geprüft am {datumText(d.referenzen.stand)}. Foto im Seitenkopf: {bild.alt} – Nachweis unter{" "}
           <Link href="/bildnachweis" className="underline decoration-ink-300 underline-offset-2 hover:decoration-current">
             Bildnachweis
